@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
