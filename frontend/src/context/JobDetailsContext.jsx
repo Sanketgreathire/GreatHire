@@ -31,25 +31,50 @@ export const JobDetailsProvider = ({ children }) => {
     fetchJobs();
   }, []);
 
-  const changeBookmarkStatus = () => {
-    setSelectedJob((prevJob) => ({
-      ...prevJob,
-      isBookmark: !prevJob.isBookmark,
-    }));
-  };
+  const toggleBookmarkStatus = (jobId, userId) => {
+    setJobsList((prevJobs) =>
+      prevJobs.map((job) => {
+        if (job._id === jobId) {
+          const isBookmarked = job.saveJob?.includes(userId);
+          return {
+            ...job,
+            saveJob: isBookmarked
+              ? job.saveJob.filter((id) => id !== userId) // Remove userId if exists
+              : [...(job.saveJob || []), userId], // Add userId if not exists
+          };
+        }
+        return job;
+      })
+    );
+  
+    setOriginalJobsList((prevJobs) =>
+      prevJobs.map((job) => {
+        if (job._id === jobId) {
+          const isBookmarked = job.saveJob?.includes(userId);
+          return {
+            ...job,
+            saveJob: isBookmarked
+              ? job.saveJob.filter((id) => id !== userId)
+              : [...(job.saveJob || []), userId],
+          };
+        }
+        return job;
+      })
+    );
+  
+    setSelectedJob((prevJob) => {
+      if (!prevJob || prevJob._id !== jobId) return prevJob;
+  
+      const isBookmarked = prevJob.saveJob?.includes(userId);
+      return {
+        ...prevJob,
+        saveJob: isBookmarked
+          ? prevJob.saveJob.filter((id) => id !== userId)
+          : [...(prevJob.saveJob || []), userId],
+      };
+    });
+  };  
 
-  const changeBlockStatus = () => {
-    setSelectedJob((prevJob) => ({
-      ...prevJob,
-      isBlock: true,
-    }));
-    setJobsList((prevJobsList) =>
-      prevJobsList.filter((job) => job.id !== prevJob.id)
-    );
-    setOriginalJobsList((prevJobsList) =>
-      prevJobsList.filter((job) => job.id !== prevJob.id)
-    );
-  };
 
   const filterJobs = (titleKeyword, location) => {
     const filteredJobs = originalJobsList.filter((job) => {
@@ -60,12 +85,7 @@ export const JobDetailsProvider = ({ children }) => {
       }
 
       const isTitleMatch = titleKeyword
-        ? [
-            jobDetails.title,
-            jobDetails.companyName,
-            jobDetails.location,
-            jobDetails.details,
-          ]
+        ? [jobDetails.title, jobDetails.companyName]
             .map((field) => (field ? field.toLowerCase().trim() : ""))
             .some((field) => field.includes(titleKeyword.toLowerCase().trim()))
         : true;
@@ -139,8 +159,7 @@ export const JobDetailsProvider = ({ children }) => {
         setSelectedJob,
         filterJobs,
         resetFilter,
-        changeBookmarkStatus,
-        changeBlockStatus,
+        toggleBookmarkStatus,
         addApplicationToJob,
         error,
       }}

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { IoIosStar } from "react-icons/io";
 import { IoMdSend } from "react-icons/io";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
+import { FaBookmark } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
 import { IoMdLink } from "react-icons/io";
 import { RiShareBoxFill } from "react-icons/ri";
@@ -14,18 +14,14 @@ import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
 //import { selectIsJobApplied } from "@/redux/appliedJobSlice";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const JobsForYou = () => {
-  const {
-    jobs,
-    selectedJob,
-    setSelectedJob,
-    changeBookmarkStatus,
-    changeBlockStatus,
-  } = useJobDetails(); // Access functions from context
-
+  const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
+    useJobDetails(); // Access functions from context
   const navigate = useNavigate();
-  const [isClickOnThreeDot, setClickOnThreeDot] = useState(false);
   const { user } = useSelector((state) => state.auth);
 
   const isApplied =
@@ -42,12 +38,29 @@ const JobsForYou = () => {
         )
     );
 
+  const isJobBookmarked = (userId) => selectedJob.saveJob.includes(userId);
+
   // for bookmark job for particular user
-  const handleBookmark = () => {};
+  const handleBookmark = async (jobId) => {
+    try {
+      const response = await axios.get(
+        `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
+        {
+          withCredentials: true,
+        }
+      );
 
-  // for hide job for particular user
-  const handleHiddenJob = () => {};
-
+      if (response.data.success) {
+        toggleBookmarkStatus(jobId, user?._id);
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Error bookmarking job:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
@@ -60,10 +73,6 @@ const JobsForYou = () => {
     const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Divide by the number of milliseconds in a day
 
     return activeDays;
-  };
-
-  const checkIfJobApplied = (jobId) => {
-    return false;
   };
 
   return (
@@ -94,28 +103,6 @@ const JobsForYou = () => {
                 <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
                   Urgent Hiring
                 </p>
-              )}
-              <BsThreeDotsVertical
-                onClick={() => setClickOnThreeDot(!isClickOnThreeDot)}
-              />
-              {selectedJob?._id === job._id && isClickOnThreeDot && (
-                <div className="absolute top-10 right-2 border border-black rounded-lg p-2 flex-col justify-center gap-10 z-20 transform origin-left animate-slide-in-right">
-                  <p className="p-2 flex gap-2 items-center text-gray-800 hover:bg-gray-200 rounded-lg">
-                    <CiBookmark size={25} />
-                    <span>Save job</span>
-                  </p>
-                  <p className="p-2 flex gap-2 items-center text-gray-800 hover:bg-gray-200 rounded-lg">
-                    <MdBlock size={25} />
-                    <span>Not interested</span>
-                  </p>
-                  <p
-                    className="p-2 flex gap-2 items-center text-gray-800 hover:bg-gray-200 rounded-lg"
-                    onClick={() => navigate(`/report-job/${selectedJob?._id}`)}
-                  >
-                    <BsFlagFill />
-                    <span>Is there a problem with job?</span>
-                  </p>
-                </div>
               )}
             </div>
             <h3 className="text-lg font-semibold">{job.jobDetails?.title}</h3>
@@ -244,23 +231,20 @@ const JobsForYou = () => {
                   </button>
                 )}
               </div>
-              <div
-                className={`p-2 ${
-                  selectedJob?.isBookmark ? "bg-green-200 " : "bg-gray-300 "
-                } rounded-lg text-gray-800 cursor-pointer`}
-              >
-                <CiBookmark size={25} onClick={() => changeBookmarkStatus()} />
-              </div>
-              <div
-                className={`p-2 ${
-                  selectedJob?.isBlock ? "bg-red-200 " : "bg-gray-300 "
-                } rounded-lg text-gray-800 cursor-pointer `}
-              >
-                <MdBlock size={25} onClick={() => changeBlockStatus()} />
-              </div>
-              <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer">
-                <IoMdLink size={25} />
-              </div>
+              {user &&
+                (isJobBookmarked(user?._id) ? (
+                  <FaBookmark
+                    size={25}
+                    onClick={() => handleBookmark(selectedJob._id)}
+                    className="text-green-700 cursor-pointer"
+                  />
+                ) : (
+                  <CiBookmark
+                    size={25}
+                    onClick={() => handleBookmark(selectedJob._id)}
+                    className="cursor-pointer"
+                  />
+                ))}
             </div>
           </div>
 
