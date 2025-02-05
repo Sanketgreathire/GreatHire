@@ -39,12 +39,13 @@ import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetai
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
-import CandidatePlans from "./pages/recruiter/CandidatePlans";
+import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 
 // Admin Routes
 import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
+import AdminLayout from "./components/admin/AdminLayout";
 
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
@@ -91,7 +92,7 @@ const appRouter = createBrowserRouter([
     element: <Jobs />,
   },
   {
-    path: "/description/:id",
+    path: "/description",
     element: <JobDescription />,
   },
   {
@@ -139,6 +140,7 @@ const appRouter = createBrowserRouter([
     element: <RecruiterSignup />,
   },
 
+  // Recruiter dashboard navlink
   {
     path: "/recruiter/dashboard",
     element: <RecruiterDashboard />,
@@ -184,7 +186,7 @@ const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/admin",
+    path: "/admin/signup",
     element: <AdminSignup />,
   },
   {
@@ -192,9 +194,14 @@ const appRouter = createBrowserRouter([
     element: <AdminLogin />,
   },
   {
+    path: "/admin/*",
+    element: <AdminLayout />,
+  },
+  {
     path: "*",
     element: <PageNotFound />,
   },
+
 ]);
 
 function App() {

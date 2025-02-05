@@ -12,7 +12,6 @@ import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
-  const [resume, setResume] = useState(null);
   const [resumeUrl, setResumeUrl] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
@@ -38,9 +37,24 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     user?.profile?.profilePhoto || ""
   );
 
+  const maxBioChars = 500;
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setInput((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "bio") {
+      // Count the number of characters in the bio field
+      const charCount = value.length;
+
+      if (charCount <= maxBioChars) {
+        setInput((prev) => ({ ...prev, [name]: value }));
+      } else {
+        // Optionally, show an error message or prevent further input
+        toast.error("Bio cannot exceed 500 characters");
+      }
+    } else {
+      // Handle other fields as normal
+      setInput((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleFileChange = (e) => {
@@ -76,13 +90,13 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("number", input.number);
-    formData.append("city", input.city); 
+    formData.append("city", input.city);
     formData.append("state", input.state);
     formData.append("country", input.country);
     formData.append("experience", input.experience || "");
     formData.append("jobProfile", input.jobProfile || "");
     formData.append("currentCTC", input.currentCTC || "");
-    formData.append("expectedCTC", input.expectedCTC); 
+    formData.append("expectedCTC", input.expectedCTC);
     formData.append("bio", input.bio) || "";
     formData.append("skills", input.skills || "");
     if (input.resume instanceof File) {
@@ -289,9 +303,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               value={input.bio}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="2" 
+              rows="2"
               placeholder="Enter your bio..."
             />
+            <p className="text-sm text-gray-600 mt-1 text-right">
+              {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-2 w-full">

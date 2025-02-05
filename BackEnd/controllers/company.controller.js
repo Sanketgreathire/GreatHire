@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
+import JobReport from "../models/jobReport.model.js";
 
 export const isUserAssociated = async (companyId, userId) => {
   try {
@@ -25,6 +26,7 @@ export const isUserAssociated = async (companyId, userId) => {
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
+    return isUserAssociated;
   } catch (err) {
     console.log("error in recruiter validation");
   }
@@ -379,13 +381,15 @@ export const getCandidateData = async (req, res) => {
     }
 
     const candidates = await User.find({
-      "profile.bio": jobTitle,
+      "profile.experience.jobProfile": {
+        $regex: new RegExp(`^${jobTitle}$`, "i"),
+      }, // Case-insensitive match
       "profile.experience.duration": experience,
       "profile.expectedCTC": salaryBudget,
       "profile.resume": { $exists: true, $ne: "" }, // Ensure resume exists
     }).select({
       fullname: 1,
-      "profile.bio": 1,
+      "profile.experience.jobProfile": 1,
       "profile.skills": 1,
       "profile.experience.duration": 1,
       "profile.expectedCTC": 1,
@@ -445,7 +449,7 @@ export const getCompanyApplicants = async (req, res) => {
     const applications = await Application.find({ job: { $in: jobIds } })
       .populate("applicant") // Only populate applicant details
       .sort({ createdAt: -1 }); // Sort latest first
-    
+
     res.status(200).json({
       success: true,
       totalApplications: applications.length,
@@ -454,5 +458,36 @@ export const getCompanyApplicants = async (req, res) => {
   } catch (error) {
     console.error("Error fetching applicants:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const reportJob = async (req, res) => {
+  try {
+    const { jobId, reportTitle, description } = req.body;
+    const userId = req.id;
+    console.log(req.body, req.id)
+
+    if (!jobId || !userId || !reportTitle) {
+      return res
+        .status(400)
+        .json({ message: "Job ID, User ID, and Report Title are required." });
+    }
+
+    const newReport = new JobReport({
+      userId,
+      jobId,
+      reportTitle,
+      description: reportTitle === "Other" && !description ? null : description,
+    });
+
+    await newReport.save();
+    res.status(201).json({
+      success: true,
+      message: "Report submitted successfully.",
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
   }
 };

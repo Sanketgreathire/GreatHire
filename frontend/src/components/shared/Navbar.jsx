@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { CiMenuBurger } from "react-icons/ci";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
@@ -123,7 +124,7 @@ const Navbar = ({ showJobDetails, setShowJobDetails }) => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30 ">
+      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
 
           {/* Logo replacing with back button for jobsforyou small screen job details page */}
@@ -261,34 +262,28 @@ const Navbar = ({ showJobDetails, setShowJobDetails }) => {
 
           {/* Mobile Menu Button */}
           <button
-            className={`lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-all fixed z-50 ${
-              isMenuOpen ? "left-4 top-4" : "right-4 top-4"
-            }`}
+            className={`lg:hidden p-2  hover:bg-gray-100  rounded-lg transition-all fixed z-50 right-4 top-2 `}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
           >
-            <svg
-              className={`w-6 h-6 transition-transform duration-300 ${
-                isMenuOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d={isMenuOpen ? "M9 19l7-7-7-7" : "M4 6h16M4 12h16M4 18h16"}
-              />
-            </svg>
+            {!isMenuOpen ? (
+              user?<img
+              src={
+                user?.profile?.profilePhoto || "https://github.com/shadcn.png"
+              }
+              alt={`${user?.fullname || "User"}'s avatar`}
+              className=" h-10 w-10 rounded-full border object-cover"
+            />:<CiMenuBurger size={25}/>
+            ) : (
+              "X"
+            )}
           </button>
         </div>
 
         {/* Mobile Navigation Overlay */}
         <div
-          className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm  lg:hidden transition-opacity duration-300  ${
             isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setIsMenuOpen(false)}
@@ -296,38 +291,36 @@ const Navbar = ({ showJobDetails, setShowJobDetails }) => {
           {/* Mobile Menu Panel */}
           <div
             ref={mobileMenuRef}
-            className={`fixed top-0 right-0 h-full w-full sm:w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+            className={`fixed top-0 right-0 h-full w-2/3 sm:w-80 z-20 shadow-lg transform transition-transform duration-300 ease-in-out bg-white  ${
               isMenuOpen ? "translate-x-0" : "translate-x-full"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Mobile User Section */}
             <div className="p-4 border-b">
-              {user ? (
-                <div className="flex items-center gap-3">
-                  <img
-                    src={
-                      user?.profile?.profilePhoto ||
-                      "https://github.com/shadcn.png"
-                    }
-                    alt="Profile"
-                    className="h-12 w-12 rounded-full border object-cover"
-                  />
-                  <div>
-                    <p className="font-medium">{user.fullname || "User"}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
+              {
+                user ? (
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={
+                        user?.profile?.profilePhoto ||
+                        "https://github.com/shadcn.png"
+                      }
+                      alt="Profile"
+                      className="h-12 w-12 rounded-full border object-cover"
+                    />
+                    <div>
+                      <p className="font-medium">{user.fullname || "User"}</p>
+                      <p className="text-sm text-gray-500">{user.email}</p>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                null  //remove the login and signup button from here and put that below policy
-              )}
+                ) : null //remove the login and signup button from here and put that below policy
+              }
             </div>
 
             {/* Mobile Navigation Links */}
-            <div className="py-4">
-              <div className="px-4 py-2 mt-4">
-                <p className="text-lg font-medium text-gray-500">Navigation</p>
-              </div>
+            <div>
+              <div className="px-4 py-2"></div>
               {navLinks.map(({ to, label }) => (
                 <Link
                   key={to}
@@ -359,40 +352,40 @@ const Navbar = ({ showJobDetails, setShowJobDetails }) => {
               {/* Mobile User Actions updated with login and signup button */}
               {!user ? (
                 <div className="mt-4 border-t p-4">
-                <Link
-                  to="/login"
-                  className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <button
-                  onClick={() => {
-                    setIsSignupModalOpen(true);
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors block mt-2"
-                >
-                  Signup
-                </button>
-              </div>
-            ) : (
-              <div className="mt-4 border-t p-4">
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  View Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+                  <Link
+                    to="/login"
+                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsSignupModalOpen(true);
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors block mt-2"
+                  >
+                    Signup
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-4 border-t p-4">
+                  <Link
+                    to="/profile"
+                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    View Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

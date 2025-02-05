@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useJobDetails } from "@/context/JobDetailsContext";
+import axios from "axios";
+import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const ReportJob = () => {
+  const { selectedJob } = useJobDetails();
   const navigate = useNavigate();
+
   const [selectedProblem, setSelectedProblem] = useState("");
   const [description, setDescription] = useState("");
 
@@ -16,95 +21,116 @@ const ReportJob = () => {
     "Other",
   ];
 
-  const handleSubmit = () => {
-    if (!selectedProblem || !description) {
-      alert("Please fill in all fields before submitting.");
+  const handleSubmit = async () => {
+    if (!selectedProblem) {
+      toast.error("Please select a problem before submitting.");
       return;
     }
-    // Handle report submission logic here
-    console.log({ selectedProblem, description });
-    alert("Your report has been submitted successfully!");
+    if (selectedProblem === "Other" && !description) {
+      toast.error("Please provide a description for 'Other'.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${COMPANY_API_END_POINT}/report-job`,
+        {
+          jobId: selectedJob?._id,
+          reportTitle: selectedProblem,
+          description: selectedProblem === "Other" ? description : "",
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate(-1);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to submit the report. Please try again later.");
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="p-4 bg-white rounded-lg shadow-lg max-w-lg z-20 flex flex-col">
-        {/* Header */}
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+      <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-col">
         <div className="flex justify-between items-center border-b pb-2">
-          <h2 className="text-lg font-semibold">Choose a Problem</h2>
+          <h2 className="text-lg font-semibold">Report a Job</h2>
           <button
             onClick={() => navigate(-1)}
             className="text-gray-500 hover:text-gray-800"
           >
-            X
+            ✖
           </button>
         </div>
 
-        {/* Problem Options */}
-        <div className="mt-4 space-y-2 flex flex-col gap-2">
-          <div>
-            <p className="font-semibold">Job Title</p>
-            <p className="text-gray-500 text-sm">Company Title</p>
-          </div>
+        <div className="mt-4">
+          <p className="font-semibold text-gray-800">
+            {selectedJob?.jobDetails?.title}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {selectedJob?.jobDetails?.companyName}
+          </p>
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2">
           {problems.map((problem, index) => (
-            <div key={index} className="flex items-center space-x-2 gap-2 ">
+            <label
+              key={index}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <input
                 type="radio"
-                id={`problem-${index}`}
                 name="problem"
                 value={problem}
                 checked={selectedProblem === problem}
                 onChange={(e) => setSelectedProblem(e.target.value)}
-                className="text-indigo-600"
-                style={{ transform: "scale(2.5)" }}
+                className="hidden"
               />
-              <label
-                htmlFor={`problem-${index}`}
-                className="text-gray-500 font-semibold text-md"
+              <span
+                className={`w-5 h-5 flex items-center justify-center border rounded-full ${
+                  selectedProblem === problem
+                    ? "bg-blue-600 border-blue-600"
+                    : "border-gray-400"
+                }`}
               >
-                {problem}
-              </label>
-            </div>
+                {selectedProblem === problem && (
+                  <span className="w-2 h-2 bg-white rounded-full"></span>
+                )}
+              </span>
+              <span className="text-gray-600">{problem}</span>
+            </label>
           ))}
         </div>
 
-        {/* Description Textarea */}
         <div className="mt-6">
-          <label
-            htmlFor="description"
-            className="block text-gray-700 font-medium"
-          >
-            Describe your problem below:
+          <label className="block text-gray-700 font-medium">
+            Describe your problem:
           </label>
           <textarea
-            id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="0 / 300"
             maxLength={300}
             rows={4}
             className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
-        {/* Privacy Note */}
-        <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2 ">
-          <BsFillInfoCircleFill size={35} className="text-blue-600"/>
-          <div>
-            <p className="font-semibold text-xl">Protect your privacy</p>
-            <p className="text-gray-500 text-sm">Avoid disclosing personal information like your name, phone number, or any details that may personally identify you.</p>
-          </div>
+        <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
+          <BsFillInfoCircleFill size={20} className="text-blue-600" />
+          <span>
+            Do not disclose personal details like your name or phone number.
+          </span>
         </div>
 
-        {/* Submit Button */}
-        <div className="mt-6">
-          <button
-            onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          >
-            Report to Great Hire
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+        >
+          Report to Great Hire
+        </button>
       </div>
     </div>
   );

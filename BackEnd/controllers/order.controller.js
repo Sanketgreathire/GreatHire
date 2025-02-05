@@ -2,7 +2,7 @@ import Razorpay from "razorpay";
 import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
-import { Company } from "../models/company.model.js";
+import { isUserAssociated } from "./company.controller.js";
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -60,21 +60,7 @@ export const createOrderForJobPlan = async (req, res) => {
 
     const userId = req.id;
 
-    // Find the company by ID
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({
-        message: "Company not found.",
-        success: false,
-      });
-    }
-
-    // Check if the user is associated with the company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-
-    if (!isUserAssociated) {
+    if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
@@ -90,9 +76,8 @@ export const createOrderForJobPlan = async (req, res) => {
 
     // Check if there's an active or "created" subscription for this company
     const existingSubscription = await JobSubscription.findOne({
-      planName,
       company: companyId,
-      paymentStatus: "created",
+      status: { $in: ["Hold", "Expired"] },
     });
 
     if (existingSubscription) {
@@ -140,21 +125,7 @@ export const createOrderForCandidatePlan = async (req, res) => {
     const { planName, companyId, amount, creditBoost } = req.body;
     const userId = req.id;
 
-    // Find the company by ID
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({
-        message: "Company not found.",
-        success: false,
-      });
-    }
-
-    // Check if the user is associated with the company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-
-    if (!isUserAssociated) {
+    if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
@@ -169,10 +140,9 @@ export const createOrderForCandidatePlan = async (req, res) => {
     }
 
     // Check for an existing order
-    const existingSubscription = await CandidateSubscription.findOne({
-      planName,
+    const existingSubscription = await JobSubscription.findOne({
       company: companyId,
-      paymentStatus: "created",
+      status: { $in: ["Hold", "Expired"] },
     });
 
     // If an existing order is found, delete it before creating a new one

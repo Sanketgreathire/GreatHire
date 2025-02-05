@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import {
   VERIFICATION_API_END_POINT,
   ORDER_API_END_POINT,
+  REVENUE_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import GreatHireLogo from "../../assets/Great.png";
 
@@ -95,6 +96,20 @@ const CollectUserDetails = ({ selectedPlan }) => {
 
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
+            // Call revenue API to store details
+            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+              itemDetails: {
+                itemType: "Job Service Plan",
+                itemName: selectedPlan.headline,
+                price: selectedPlan.price,
+              },
+              companyName: "",
+              userDetails: {
+                userName: userDetails.name,
+                email: userDetails.email,
+                phoneNumber: userDetails.phone,
+              },
+            });
           } else {
             toast.error("Payment Verification Failed!");
           }

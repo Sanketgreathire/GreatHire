@@ -32,11 +32,6 @@ const Job = ({ job }) => {
       (application) => application.applicant === user?._id
     ) || false;
 
-  const handleEasyApply = () => {
-    setSelectedJob(job); // Set selected job
-    navigate(`/apply/${job._id}`);
-  };
-
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
       <div className="flex justify-between items-center mb-2 ">
@@ -54,8 +49,7 @@ const Job = ({ job }) => {
       <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
         <div>
-          {job?.jobDetails?.companyName} - rating {job?.jobDetails?.rating}
-          <IoIosStar className="inline text-yellow-500" />
+          {job?.jobDetails?.companyName} 
         </div>
         <div>
           <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
@@ -93,19 +87,15 @@ const Job = ({ job }) => {
           </p>
         </div>
         <div className="flex items-center text-sm text-blue-700 gap-2">
-          {isApplied ? (
-            <span className="text-green-600">Applied</span>
-          ) : (
-            <div onClick={handleEasyApply}>
-              <span className="text-black cursor-pointer">Easy Apply</span>
-              <IoMdSend size={20} />
-            </div>
-          )}
+          {isApplied && <span className="text-green-600">Applied</span>}
         </div>
       </div>
       <div className="flex w-full items-center justify-between gap-4 ">
         <Button
-          onClick={() => navigate(`/description/${job._id}`)}
+          onClick={() => {
+            setSelectedJob(job);
+            navigate(`/description`);
+          }}
           variant="outline"
           className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white"
         >

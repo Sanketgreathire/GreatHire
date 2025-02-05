@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
@@ -9,6 +9,8 @@ import axios from "axios";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import { ProgressBar } from "react-step-progress-bar";
+import "react-step-progress-bar/styles.css";
 
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const dispatch = useDispatch();
@@ -66,14 +68,14 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
-      <div className="flex items-center mb-6">
+      <ProgressBar percent={100} filledBackground="green"/>
+      <div className="flex items-center mt-4 mb-4">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
           onClick={handleReview1}
         />
         <h6 className="ml-2 text-sm text-gray-500">Application step 5 of 5</h6>
       </div>
-
       <h2 className="text-2xl font-semibold mb-6">
         Please review your application
       </h2>

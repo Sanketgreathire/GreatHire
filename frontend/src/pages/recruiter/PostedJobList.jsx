@@ -122,7 +122,7 @@ const PostedJobList = () => {
     if (user && company) {
       fetchAllJobs(company?._id);
     }
-  }, [user]);
+  }, [user, company]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -131,7 +131,7 @@ const PostedJobList = () => {
   return (
     <>
       {company && user.isVerify ? (
-        <div className="p-5 bg-gray-50 shadow-md rounded-lg min-h-screen">
+        <div className="p-5 bg-gray-50 shadow-md rounded-lg">
           <div className="mb-6">
             <div className="p-10 bg-white shadow-md rounded-lg flex justify-center items-center">
               <button
@@ -149,7 +149,8 @@ const PostedJobList = () => {
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap justify-between mb-2 gap-4">
+              {/* Filters Section */}
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-4">
                 <div className="relative w-full md:w-1/3">
                   <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
                   <input
@@ -161,119 +162,135 @@ const PostedJobList = () => {
                   />
                 </div>
 
-                <select
-                  className="p-2 border border-gray-300 rounded-md w-full md:w-1/6"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                <div className="w-full md:w-1/6">
+                  <select
+                    className="p-2 border border-gray-300 rounded-md w-full"
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                    {statusOptions.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <Table className="w-full border-collapse border border-gray-300">
-                <TableHeader className="bg-gray-300 ">
-                  <TableRow>
-                    <TableHead className="text-center">Sr No.</TableHead>
-                    <TableHead className="text-center">Date</TableHead>
-                    <TableHead className="text-center">Job Role</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+              {/* Table Container with overflow for responsiveness */}
+              <div className="overflow-x-auto w-full">
+                <Table className="w-full  border border-gray-300">
+                  <TableHeader className="bg-gray-300">
+                    <TableRow>
+                      <TableHead className="text-center">Sr No.</TableHead>
+                      <TableHead className="text-center">Date</TableHead>
+                      <TableHead className="text-center">Job Role</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
 
-                <TableBody className="text-center">
-                  {currentJobs.length > 0 ? (
-                    currentJobs.map((job, index) => (
-                      <TableRow
-                        key={job._id}
-                        className="hover:bg-gray-50 transition duration-150"
-                      >
-                        <TableCell>
-                          {(currentPage - 1) * jobsPerPage + index + 1}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(job.createdAt).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
-                        </TableCell>
-                        <TableCell>{job.jobDetails.title}</TableCell>
-                        {job?.created_by === user?._id ||
-                        user?.emailId.email === company?.adminEmail ? (
-                          <TableCell className="py-3 px-6 flex justify-center">
-                            {statusLoading[job._id] ? (
-                              "loading..."
-                            ) : job.jobDetails.isActive ? (
-                              <FaToggleOn
-                                className="text-green-500 cursor-pointer"
-                                onClick={(event) =>
-                                  toggleActive(
-                                    event,
-                                    job._id,
-                                    !job.jobDetails.isActive
-                                  )
-                                }
-                                size={30}
-                              />
-                            ) : (
-                              <FaToggleOff
-                                className="text-red-500 cursor-pointer"
-                                onClick={(event) =>
-                                  toggleActive(
-                                    event,
-                                    job._id,
-                                    !job.jobDetails.isActive
-                                  )
-                                }
-                                size={30}
-                              />
+                  <TableBody className="text-center">
+                    {currentJobs.length > 0 ? (
+                      currentJobs.map((job, index) => (
+                        <TableRow
+                          key={job._id}
+                          className="hover:bg-gray-50 transition duration-150 cursor-pointer"
+                          onClick={() => handleJobDetailsClick(job._id)}
+                        >
+                          <TableCell>
+                            {(currentPage - 1) * jobsPerPage + index + 1}
+                          </TableCell>
+                          <TableCell>
+                            {new Date(job.createdAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              }
                             )}
                           </TableCell>
-                        ) : (
-                          <TableCell>-----</TableCell>
-                        )}
-                        <TableCell className="space-x-2">
-                          <button
-                            onClick={() => handleJobDetailsClick(job._id)}
-                            className="bg-blue-700 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
-                          >
-                            Job Details
-                          </button>
-                          <button
-                            onClick={() => handleApplicantsClick(job._id)}
-                            className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
-                          >
-                            Applicants Details
-                          </button>
+                          <TableCell>{job.jobDetails.title}</TableCell>
+                          {job?.created_by === user?._id ||
+                          user?.emailId.email === company?.adminEmail ? (
+                            <TableCell className="place-items-center ">
+                              {statusLoading[job._id] ? (
+                                "loading..."
+                              ) : job.jobDetails.isActive ? (
+                                <FaToggleOn
+                                  className="text-green-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      job._id,
+                                      !job.jobDetails.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              ) : (
+                                <FaToggleOff
+                                  className="text-red-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      job._id,
+                                      !job.jobDetails.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              )}
+                            </TableCell>
+                          ) : (
+                            <TableCell>-----</TableCell>
+                          )}
+                          <TableCell className=" p-3 text-center flex justify-center gap-3 ">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleJobDetailsClick(job._id);
+                              }}
+                              className="bg-blue-700 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
+                            >
+                              Job Details
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleApplicantsClick(job._id);
+                              }}
+                              className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
+                            >
+                              Applicants Details
+                            </button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan="6"
+                          className="text-center text-gray-500 py-4"
+                        >
+                          No jobs found.
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan="6"
-                        className="text-center text-gray-500 py-4"
-                      >
-                        No jobs found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
 
+              {/* Pagination */}
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 border ${
+                  className={`px-4 py-2 border rounded ${
                     currentPage === 1
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-700 text-white"
+                      : "bg-blue-700 text-white hover:bg-blue-600"
                   }`}
                 >
                   Previous
@@ -284,10 +301,10 @@ const PostedJobList = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 border ${
+                  className={`px-4 py-2 border rounded ${
                     currentPage === totalPages
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-700 text-white"
+                      : "bg-blue-700 text-white hover:bg-blue-600"
                   }`}
                 >
                   Next

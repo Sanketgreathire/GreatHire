@@ -32,7 +32,7 @@ const RecruiterDashboard = () => {
     if (!user) {
       navigate("/login");
     }
-  }, []);
+  }, [user, navigate]);
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
@@ -56,7 +56,7 @@ const RecruiterDashboard = () => {
     if (!company) {
       fetchCompanyByUserId();
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, company]);
 
   useEffect(() => {
     if (company) {
@@ -71,7 +71,7 @@ const RecruiterDashboard = () => {
         dispatch(fetchCurrentPlan(company?._id));
       }
     }
-  }, [company]);
+  }, [company, user, recruiters, jobPlan, dispatch]);
 
   // 🔹 Socket.IO for Real-time Plan Expiration Updates
   useEffect(() => {
@@ -89,7 +89,7 @@ const RecruiterDashboard = () => {
     return () => {
       socket.off("planExpired");
     };
-  }, [company]);
+  }, [company, dispatch]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -97,11 +97,11 @@ const RecruiterDashboard = () => {
       <Navbar />
 
       {/* Main Content */}
-      <div className="flex">
+      <div className="flex flex-1">
         <DashboardNavigations />
-        <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-full">
+        <div className="flex-1 bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 overflow-y-auto">
           {loading ? (
-            <div className="text-center text-gray-500">Loading...</div>
+            <div className="text-center text-gray-500 py-10">Loading...</div>
           ) : (
             <Outlet /> // Render nested routes
           )}

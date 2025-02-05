@@ -167,107 +167,109 @@ const RecruiterJob = ({ recruiterId }) => {
       </div>
 
       {/* Table displaying jobs */}
-      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-        <thead>
-          <tr>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Job Title
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Company
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Location
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Job Type
-            </th>
-            {(recruiterId === user?._id ||
-              user?.emailId.email === company?.adminEmail) && (
-              <>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Actions
-                </th>
-              </>
-            )}
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job) => (
-              <tr
-                key={job._id}
-                className="border-b cursor-pointer"
-                onClick={() => handleJobDetailsClick(job?._id)}
-              >
-                <td className="py-3 px-6">{job.jobDetails.title}</td>
-                <td className="py-3 px-6">{job.jobDetails.companyName}</td>
-                <td className="py-3 px-6">{job.jobDetails.location}</td>
-                <td className="py-3 px-6">{job.jobDetails.jobType}</td>
-                {(recruiterId === user?._id ||
-                  user?.emailId.email === company?.adminEmail) && (
-                  <>
-                    <td className="py-3 px-6">
-                      {loading[job._id] ? (
-                        "loading..."
-                      ) : job.jobDetails.isActive ? (
-                        <FaToggleOn
-                          className="text-green-500 cursor-pointer"
-                          onClick={(event) =>
-                            toggleActive(
-                              event,
-                              job._id,
-                              !job.jobDetails.isActive
-                            )
-                          }
-                          size={30}
-                        />
-                      ) : (
-                        <FaToggleOff
-                          className="text-red-500 cursor-pointer"
-                          onClick={(event) =>
-                            toggleActive(
-                              event,
-                              job._id,
-                              !job.jobDetails.isActive
-                            )
-                          }
-                          size={30}
-                        />
-                      )}
-                    </td>
-                    <td className="py-3 px-6">
-                      {dloading[job._id] ? (
-                        "loading..."
-                      ) : (
-                        <button
-                          onClick={(event) => deleteJob(event, job._id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <FaTrash size={20} />
-                        </button>
-                      )}
-                    </td>
-                  </>
-                )}
-              </tr>
-            ))
-          ) : (
+      <div className="w-72 flex overflow-x-scroll md:w-full">
+        <table className="bg-white border border-gray-200 rounded-lg">
+          <thead>
             <tr>
-              <td colSpan="5" className="py-3 px-6 text-center">
-                No jobs found
-              </td>
+              <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                Job Title
+              </th>
+              <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                Company
+              </th>
+              <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                Location
+              </th>
+              <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                Job Type
+              </th>
+              {(recruiterId === user?._id ||
+                user?.emailId.email === company?.adminEmail) && (
+                <>
+                  <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </>
+              )}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {filteredJobs.length > 0 ? (
+              filteredJobs.map((job) => (
+                <tr
+                  key={job._id}
+                  className="border-b cursor-pointer"
+                  onClick={() => handleJobDetailsClick(job?._id)}
+                >
+                  <td className="py-3 px-6">{job.jobDetails.title}</td>
+                  <td className="py-3 px-6">{job.jobDetails.companyName}</td>
+                  <td className="py-3 px-6">{job.jobDetails.location}</td>
+                  <td className="py-3 px-6">{job.jobDetails.jobType}</td>
+                  {(recruiterId === user?._id ||
+                    user?.emailId.email === company?.adminEmail) && (
+                    <>
+                      <td className="py-3 px-6 place-items-center">
+                        {loading[job._id] ? (
+                          "loading..."
+                        ) : job.jobDetails.isActive ? (
+                          <FaToggleOn
+                            className="text-green-500 cursor-pointer"
+                            onClick={(event) =>
+                              toggleActive(
+                                event,
+                                job._id,
+                                !job.jobDetails.isActive
+                              )
+                            }
+                            size={30}
+                          />
+                        ) : (
+                          <FaToggleOff
+                            className="text-red-500 cursor-pointer"
+                            onClick={(event) =>
+                              toggleActive(
+                                event,
+                                job._id,
+                                !job.jobDetails.isActive
+                              )
+                            }
+                            size={30}
+                          />
+                        )}
+                      </td>
+                      <td className="py-3 px-6 text-center">
+                        {dloading[job._id] ? (
+                          "loading..."
+                        ) : (
+                          <button
+                            onClick={(event) => deleteJob(event, job._id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <FaTrash size={20} />
+                          </button>
+                        )}
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="py-3 px-6 text-center">
+                  No jobs found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination */}
-      <div className="flex justify-between mt-4">
+      <div className="flex w-72 md:w-full justify-between mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

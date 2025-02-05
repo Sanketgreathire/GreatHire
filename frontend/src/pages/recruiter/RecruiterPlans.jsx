@@ -12,6 +12,8 @@ import axios from "axios";
 import GreatHireLogo from "../../assets/Great.png";
 import { updateMaxPostJobs } from "@/redux/companySlice";
 import { addJobPlan } from "@/redux/jobPlanSlice";
+import { REVENUE_API_END_POINT } from "../../utils/ApiEndPoint";
+import { useNavigate } from "react-router-dom";
 
 function RecruiterPlans() {
   const plans = [
@@ -64,6 +66,7 @@ function RecruiterPlans() {
   ];
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState(plans[1].name);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
@@ -142,6 +145,21 @@ function RecruiterPlans() {
             toast.success("Payment Successful!");
             dispatch(updateMaxPostJobs(plan.jobBoost));
             dispatch(addJobPlan(verificationResponse.data.plan));
+            // Call revenue API to store details
+            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+              itemDetails: {
+                itemType: "Job Posting Plan",
+                itemName: plan.name,
+                price: plan.price,
+              },
+              companyName: company?.companyName,
+              userDetails: {
+                userName: user?.fullname,
+                email: user.emailId.email,
+                phoneNumber: user.phoneNumber.number,
+              },
+            });
+            navigate("/recruiter/dashboard/post-job");
           } else {
             toast.error("Payment Verification Failed!");
           }

@@ -458,7 +458,55 @@ export const toggleActive = async (req, res) => {
   }
 };
 
-export const updateJob = async (req, res) => {};
+export const updateJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const jobData = req.body;
+    // Normalize skills input: If it's a string, split it into an array; otherwise, use it as is
+    const skillsArray = Array.isArray(jobData.skills)
+      ? jobData.skills
+      : jobData.skills.split(",").map((skill) => skill.trim());
+
+    // Remove empty values from arrays (benefits, qualifications, responsibilities)
+    const cleanArray = (arr) =>
+      Array.isArray(arr) ? arr.filter((item) => item.trim() !== "") : [];
+
+    // Find the job by its ID and update
+    const updatedJob = await Job.findByIdAndUpdate(
+      jobId,
+      {
+        $set: {
+          "jobDetails.details": jobData.details,
+          "jobDetails.skills": skillsArray, // Convert to an array
+          "jobDetails.qualifications": cleanArray(jobData.qualifications),
+          "jobDetails.benefits": cleanArray(jobData.benefits), // Remove empty values
+          "jobDetails.responsibilities": cleanArray(jobData.responsibilities),
+          "jobDetails.experience": jobData.experience,
+          "jobDetails.salary": jobData.salary,
+          "jobDetails.jobType": jobData.jobType,
+          "jobDetails.location": jobData.location,
+          "jobDetails.numberOfOpening": jobData.numberOfOpening,
+          "jobDetails.respondTime": jobData.respondTime,
+          "jobDetails.duration": jobData.duration,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedJob) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job updated successfully",
+      updatedJob,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating job", error: err.message });
+  }
+};
 
 export const getJobsStatistics = async (req, res) => {
   try {

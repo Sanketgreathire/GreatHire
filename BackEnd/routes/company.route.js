@@ -9,6 +9,7 @@ import {
   getCandidateData,
   decreaseCandidateCredits,
   getCompanyApplicants,
+  reportJob,
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -30,4 +31,5 @@ router
   .route("/decrease-credit/:id")
   .get(isAuthenticated, decreaseCandidateCredits);
 
+router.route("/report-job").post(isAuthenticated, reportJob);
 export default router;

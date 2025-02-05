@@ -3,18 +3,19 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch} from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { decreaseMaxPostJobs } from "@/redux/companySlice";
+import axios from "axios";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -71,6 +72,10 @@ const PostJob = () => {
         if (response.data.success) {
           if (company?.maxPostJobs !== null) dispatch(decreaseMaxPostJobs(1));
           toast.success("Job post successfully");
+          // Redirect to the dashboard after 2 seconds
+          setTimeout(() => {
+            navigate("/recruiter/dashboard/home");
+          }, 2000);
         } else {
           toast.error("Job post failed");
         }
@@ -123,9 +128,15 @@ const PostJob = () => {
   ];
 
   return (
-    <div className=" py-6 min-h-screen">
-      <div className="w-full max-w-3xl mx-auto  p-6 bg-white  shadow-lg rounded-lg">
-        <div className="mb-10">
+    <div className="px-2 py-4">
+      <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg">
+        <h1>
+          {/* Display only the title of the current step */}
+          <h2 className="md:hidden font-bold text-2xl text-blue-700 py-7">
+            {steps[step].title}
+          </h2>
+        </h1>
+        <div className="mb-10 w-full hidden md:block">
           <Stepper
             steps={steps}
             activeStep={step}

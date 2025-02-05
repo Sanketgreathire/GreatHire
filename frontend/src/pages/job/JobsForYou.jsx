@@ -7,12 +7,10 @@ import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
 import { MdBlock } from "react-icons/md";
 import { IoMdLink } from "react-icons/io";
-import { RiShareBoxFill } from "react-icons/ri";
-import { BsFlagFill } from "react-icons/bs";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Navbar from "@/components/shared/Navbar";
 //import { selectIsJobApplied } from "@/redux/appliedJobSlice";
 
@@ -52,15 +50,6 @@ const JobsForYou = () => {
   // for hide job for particular user
   const handleHiddenJob = () => {};
 
-  useEffect(() => {
-    // Set the initial selected job if it's not already set
-    if (!selectedJob) {
-      const defaultJob = jobs.find(
-        (job) => job._id === "678233e5103cc54b0fd68b2d"
-      ); // Find the job with a specific ID
-      setSelectedJob(defaultJob); // Set default selected job
-    }
-  }, [jobs]);
 
   useEffect(() => {
     if (jobDetailsRef.current) {

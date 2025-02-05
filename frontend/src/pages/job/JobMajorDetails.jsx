@@ -5,10 +5,11 @@ import { PiMoneyWavyFill } from "react-icons/pi";
 import { FaToolbox } from "react-icons/fa";
 import { BsFlagFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
-
+  const { user } = useSelector((state) => state.auth);
   return (
     <div>
       {/* profile insight */}
@@ -50,16 +51,16 @@ const JobMajorDetails = ({ selectedJob }) => {
             <span className="text-xl font-bold text-black">Pay</span>
           </h3>
           <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 font-semibold">
-              {selectedJob?.jobDetails?.salary
-                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                .split("-")
-                .map((part, index) => (
-                  <span key={index}>
-                    ₹{part.trim()}
-                    {index === 0 ? " - " : ""}
-                  </span>
-                ))}
-            </div>
+            {selectedJob?.jobDetails?.salary
+              .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+              .split("-")
+              .map((part, index) => (
+                <span key={index}>
+                  ₹{part.trim()}
+                  {index === 0 ? " - " : ""}
+                </span>
+              ))}
+          </div>
         </div>
 
         {/* Experience Section */}
@@ -99,44 +100,8 @@ const JobMajorDetails = ({ selectedJob }) => {
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Full Job Description</h1>
         <p className="font-semibold">
-          Please Note: After the submission of your application, you will
-          receive an email to complete a virtual interview via our online
-          interviewing platform/tool, “Verint”. This online interview must be
-          completed for prompt consideration of employment applications as it
-          takes the place of an in-person/telephone interview. Work Location:
-          This is work from office position for Navi Mumbai location. Build Your
-          Future! Come join our thriving team as a Call Center Representative!
-          We are seeking ambitious, self-motivated and driven people just like
-          you for a rewarding career in the customer service arena.
-        </p>
-        <p>
-          Make outbound contact to debtors regarding delinquent accounts and
-          negotiates settlement/ Payment options. · Take inbound telephone calls
-          from debtors regarding delinquent accounts and negotiates
-          settlement/Payment options. · Update collection notes and change
-          account statuses based on established procedures. · Research disputed
-          delinquent account balances and makes necessary corrections. · Review
-          collection up unit and changes account status based on established
-          procedures. Review accounts to be recommended for closure and assists
-          in report preparation. · Participate in regular meetings and
-          communicates opportunities for process improvement. · All other duties
-          as assigned.
-        </p>
-        <p>
-          Previous legal collections experience a plus. · Previous collections,
-          customer service, sales, or telemarketing experience required. ·
-          Regular attendance and adherence to a set schedule required, which
-          includes breaks and lunches. · Strong oral communication and
-          interpersonal skills required. Must be an active listener. · Excellent
-          computer navigation skills required. · Experience using automated
-          dialers preferred.
-        </p>
-        <p className="font-semibold">
-          This job description is not an exclusive or exhaustive list of all job
-          functions that a team member in this position may be asked to perform.
-          Duties and responsibilities can be changed, expanded, reduced, or
-          delegated by management to meet the business needs of the company.
-        </p>
+                {selectedJob?.jobDetails?.details}
+              </p>
       </div>
 
       {/* Benifits */}
@@ -186,6 +151,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         <button
           className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
           onClick={() => navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}
+          disabled={!user}
         >
           <BsFlagFill /> <span className="font-semibold">Report Job</span>
         </button>

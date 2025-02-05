@@ -9,9 +9,10 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import GreatHireLogo from "../../assets/Great.png";
+import GreatHireLogo from "../../../assets/Great.png";
 import { updateCandidateCredits } from "@/redux/companySlice";
 import { useNavigate } from "react-router-dom";
+import { REVENUE_API_END_POINT } from "../../../utils/ApiEndPoint";
 
 function CandidatePlans() {
   const plans = [
@@ -141,6 +142,20 @@ function CandidatePlans() {
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
             dispatch(updateCandidateCredits(plan.creditBoost));
+            // Call revenue API to store details
+            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+              itemDetails: {
+                itemType: "Candidate Data Plan",
+                itemName: plan.name,
+                price: plan.price,
+              },
+              companyName: company?.companyName,
+              userDetails: {
+                userName: user?.fullname,
+                email: user.emailId.email,
+                phoneNumber: user.phoneNumber.number,
+              },
+            });
             navigate("/recruiter/dashboard/candidate-list");
           } else {
             toast.error("Payment Verification Failed!");

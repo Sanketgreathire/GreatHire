@@ -23,13 +23,13 @@ export const validateJobApplication = [
   body("coverLetter")
     .optional()
     .isString()
-    .isLength({ max: 500 })
+    .isLength({ max: 750 })
     .withMessage("Cover letter must be under 500 characters"),
 
   body("experience")
     .optional()
     .isString()
-    .isLength({ max: 500 })
+    .isLength({ max: 750 })
     .withMessage("Experience details must be under 500 characters"),
 
   body("jobTitle").optional().isString().withMessage("Job title is string"),

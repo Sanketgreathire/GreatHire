@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { FaUsers, FaBriefcase, FaClipboardList, FaChevronUp, FaChevronDown } from "react-icons/fa"; // Importing icons
+import {
+  FaUsers,
+  FaBriefcase,
+  FaClipboardList,
+  FaChevronUp,
+  FaChevronDown,
+} from "react-icons/fa"; // Importing icons
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
@@ -36,57 +42,82 @@ const RecruiterHome = () => {
     }
   }, [user]);
 
-
-  const getArrowIcon = (current, previous) => {
-    if (current > previous) {
-      return <FaChevronUp className="text-green-500" />;
-    } else if (current < previous) {
-      return <FaChevronDown className="text-red-500" />;
-    }
-    return null;
-  };
-
   const cards = [
     {
       title: "Recruiters",
       count: recruiters.length,
-      icon: <FaUsers className="text-4xl text-blue-600" />,
+      icon: (
+        <FaUsers
+          className="text-4xl text-blue-600 bg-blue-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Recruiters in you company.",
     },
     {
       title: "Posted Jobs",
       count: jobsStatistics?.totalJobs,
-      icon: <FaBriefcase className="text-4xl text-green-600" />,
+      icon: (
+        <FaBriefcase
+          className="text-4xl text-green-600 bg-green-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Jobs that you have posted.",
     },
     {
       title: "Max Post Jobs",
       count: company?.maxPostJobs,
-      icon: <FaClipboardList className="text-4xl text-pink-600" />,
+      icon: (
+        <FaClipboardList
+          className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Number of jobs you can post.",
     },
     {
       title: "Active Jobs",
       count: jobsStatistics?.activeJobs,
-      icon: <FaBriefcase className="text-4xl text-purple-600" />,
+      icon: (
+        <FaBriefcase
+          className="text-4xl text-purple-600 bg-purple-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Jobs that are currently active and open.",
     },
     {
       title: "Expired Jobs",
       count: jobsStatistics?.inactiveJobs,
-      icon: <FaBriefcase className="text-4xl text-orange-600" />,
+      icon: (
+        <FaBriefcase
+          className="text-4xl text-orange-600 bg-orange-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Jobs that have expired and are no longer active.",
     },
     {
       title: "Applicants",
       count: jobsStatistics?.totalApplicants,
-      icon: <FaUsers className="text-4xl text-red-600" />,
+      icon: (
+        <FaUsers
+          className="text-4xl text-red-600 bg-red-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Total number of applicants for your jobs.",
     },
     {
       title: "Shortlisted Candidates",
       count: jobsStatistics?.selectedCandidates,
-      icon: <FaUsers className="text-4xl text-teal-600" />,
+      icon: (
+        <FaUsers
+          className="text-4xl text-teal-600 bg-teal-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
       description: "Candidates who have been selected.",
     },
   ];
@@ -101,7 +132,8 @@ const RecruiterHome = () => {
               Welcome, {company?.companyName || "Recruiter"}
             </h1>
             <p className="text-gray-600 mt-2">
-              Empower your hiring process with key insights and metrics at a glance.
+              Empower your hiring process with key insights and metrics at a
+              glance.
             </p>
           </header>
 
@@ -110,18 +142,22 @@ const RecruiterHome = () => {
             {cards.map((card, index) => (
               <div
                 key={index}
-                className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between border-l-4 border-gray-300 hover:border-blue-700 transition-all duration-300 ease-in-out"
+                className="bg-white shadow-lg rounded-lg p-6 flex  items-center justify-evenly border-l-4 border-gray-300 hover:border-blue-700 transition-all duration-300 ease-in-out"
               >
                 <div className="flex items-center space-x-4 mb-4">
                   {card.icon}
-                  <h2 className="text-xl font-semibold text-gray-700">{card.title}</h2>
                 </div>
-                <h3 className="text-3xl font-bold text-gray-800">{card.count}</h3>
-                <div className="mt-4">
-                  <p className="text-gray-600 text-sm text-center">{card.description}</p>
+                <div className="flex flex-col gap-2 justify-center items-center">
+                  <h2 className="text-xl font-semibold text-gray-700">
+                    {card.title}
+                  </h2>
+                  <h3 className="text-3xl font-bold text-gray-800">
+                    {card.count}
+                  </h3>
+                  <p className="w-48 text-gray-600 text-sm text-center">
+                    {card.description}
+                  </p>
                 </div>
-
-                
               </div>
             ))}
           </div>

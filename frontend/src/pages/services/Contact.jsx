@@ -12,7 +12,7 @@ const ContactSection = () => {
   const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     fullname: user ? user.fullname : "",
-    email: user ? user.email : "",
+    email: user ? user?.emailId?.email : "",
     phoneNumber: user ? user.phoneNumber : "",
     message: "",
   });
@@ -149,7 +149,7 @@ const ContactSection = () => {
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
-                  value={formData.email}
+                  value={formData.email} 
                   onChange={handleChange}
                   required
                 />
@@ -167,7 +167,7 @@ const ContactSection = () => {
                   id="phoneNumber"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Phone Number"
-                  value={formData.phoneNumber}
+                  value={formData.phoneNumber.number}
                   onChange={handleChange}
                   required
                 />

@@ -383,6 +383,17 @@ export const updateProfile = async (req, res) => {
     if (country) user.address.country = country;
 
     if (email && user.emailId.email !== email) {
+      // Check if the email already exists in the database
+      const existingUser = await User.findOne({ "emailId.email": email });
+
+      if (existingUser) {
+        return res.status(401).json({
+          message: "Email already exist!",
+          success: false,
+        });
+      }
+
+      // If the email does not exist, update it
       user.emailId.email = email;
       user.emailId.isVerified = false;
     }
