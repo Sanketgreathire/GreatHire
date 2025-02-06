@@ -5,7 +5,6 @@ import {
   getJobById,
   deleteJobById,
   updateJob,
-  hideJob,
   bookmarkJob,
   getJobByRecruiterId,
   toggleActive,
@@ -20,7 +19,6 @@ const router = express.Router();
 router.route("/post-job").post(isAuthenticated, postJob);
 
 router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
-router.route("/hide-job/:id").get(isAuthenticated, hideJob);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);
 
 router.route("/get").get(getAllJobs);
