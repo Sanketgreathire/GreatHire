@@ -93,7 +93,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       <div className="mt-4 flex justify-center space-x-4">
         <button
           onClick={handleSearch}
-          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
+          className="bg-blue-700 text-white px-3 py-1 rounded-md hover:bg-blue-600"
         >
           Find Jobs
         </button>

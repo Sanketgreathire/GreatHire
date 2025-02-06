@@ -138,7 +138,8 @@ function RecruiterPlans() {
               razorpay_signature: response.razorpay_signature,
               jobBoost: plan.jobBoost,
               companyId: company?._id,
-            }
+            },
+            { withCredentials: true }
           );
 
           if (verificationResponse.data.success) {
