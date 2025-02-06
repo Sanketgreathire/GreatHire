@@ -12,15 +12,10 @@ const Job = ({ job }) => {
   const { user } = useSelector((state) => state.auth);
 
   const calculateActiveDays = (createdAt) => {
-    const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
-    const currentDate = new Date(); // Get the current date
-
-    // Calculate the difference in time (in milliseconds)
+    const jobCreatedDate = new Date(createdAt);
+    const currentDate = new Date();
     const timeDifference = currentDate - jobCreatedDate;
-
-    // Convert time difference from milliseconds to days
-    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Divide by the number of milliseconds in a day
-
+    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     return activeDays;
   };
 
@@ -38,9 +33,11 @@ const Job = ({ job }) => {
           </p>
         )}
         <div className="flex items-center justify-between">
-          <Button variant="outline" className="rounded-full" size="icon">
-            <Bookmark />
-          </Button>
+          {user && (
+            <Button variant="outline" className="rounded-full" size="icon">
+              <Bookmark />
+            </Button>
+          )}
         </div>
       </div>
       <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
@@ -104,3 +101,4 @@ const Job = ({ job }) => {
 };
 
 export default Job;
+

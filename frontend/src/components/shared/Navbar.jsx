@@ -218,44 +218,94 @@ const Navbar = ({ showJobDetails, setShowJobDetails }) => {
                   </button>
                 </>
               ) : (
+                // <div ref={profileMenuRef} className="relative ">
+                //   <button
+                //     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                //     className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                //     aria-expanded={isProfileMenuOpen}
+                //     aria-haspopup="true"
+                //   >
+                //     <img
+                //       src={
+                //         user?.profile?.profilePhoto ||
+                //         "https://github.com/shadcn.png"
+                //       }
+                //       alt={`${user.fullname || "User"}'s avatar`}
+                //       className="h-10 w-10 rounded-full border object-cover"
+                //     />
+                //     <span className="font-medium">
+                //       {isRecruiter ? user?.fullname : user?.fullname}
+                //     </span>
+                //   </button>
+                //   {isProfileMenuOpen && (
+                //     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                //       <Link
+                //         to={isRecruiter ? "/recruiter/profile" : "/profile"}
+                //         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                //         onClick={() => setIsProfileMenuOpen(false)}
+                //       >
+                //         {isRecruiter ? "Recruiter" : "User"} Profile
+                //       </Link>
+
+                //       <button
+                //         onClick={handleLogout}
+                //         className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
+                //       >
+                //         Logout
+                //       </button>
+                //     </div>
+                //   )}
+                // </div>
+
                 <div ref={profileMenuRef} className="relative ">
-                  <button
-                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                    aria-expanded={isProfileMenuOpen}
-                    aria-haspopup="true"
-                  >
-                    <img
-                      src={
-                        user?.profile?.profilePhoto ||
-                        "https://github.com/shadcn.png"
-                      }
-                      alt={`${user.fullname || "User"}'s avatar`}
-                      className="h-10 w-10 rounded-full border object-cover"
-                    />
-                    <span className="font-medium">
-                      {isRecruiter ? user?.fullname : user?.fullname}
-                    </span>
-                  </button>
-                  {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                  aria-expanded={isProfileMenuOpen}
+                  aria-haspopup="true"
+                >
+                  <img
+                    src={
+                      user?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
+                    alt={`${user.fullname || "User"}'s avatar`}
+                    className="h-10 w-10 rounded-full border object-cover"
+                  />
+                  <span className="font-medium">
+                    {isRecruiter ? user?.fullname : user?.fullname}
+                  </span>
+                </button>
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                    <Link
+                      to={isRecruiter ? "/recruiter/profile" : "/profile"}
+                      className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      {isRecruiter ? "Recruiter" : "User"} Profile
+                    </Link>
+
+                    {!isRecruiter && (
                       <Link
-                        to={isRecruiter ? "/recruiter/profile" : "/profile"}
+                        to="/user-jobs"
                         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
-                        {isRecruiter ? "Recruiter" : "User"} Profile
+                        My Jobs
                       </Link>
+                    )}
 
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+
               )}
             </div>
           </div>
