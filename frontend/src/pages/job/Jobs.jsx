@@ -6,103 +6,120 @@
 // import { useJobDetails } from "@/context/JobDetailsContext";
 
 // const Jobs = () => {
-//   const { jobs, error } = useJobDetails(); // Access jobs and error from the context
-//   const [isLoading, setIsLoading] = useState(true); // State to track loading
-//   const [currentPage, setCurrentPage] = useState(1); // Track current page
-//   const jobsPerPage = 24; // Number of jobs to display per page
+//   const { jobs, error } = useJobDetails();
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [filteredJobs, setFilteredJobs] = useState([]);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const jobsPerPage = 24;
 
 //   useEffect(() => {
 //     if (jobs || error) {
-//       // Set loading to false once jobs are fetched or if there's an error
 //       setIsLoading(false);
+//       setFilteredJobs(jobs || []);
 //     }
 //   }, [jobs, error]);
 
-//   // Calculate indexes for pagination
+//   const handleSearch = (filters) => {
+//     setFilteredJobs(
+//       jobs.filter((job) => {
+//         return (
+//           (!filters.Location ||
+//             (job?.jobDetails?.location || "")
+//               .toLowerCase()
+//               .includes(filters.Location.toLowerCase())) &&
+//           (!filters["Job Title"] ||
+//             (job?.jobDetails?.title || "")
+//               .toLowerCase()
+//               .includes(filters["Job Title"].toLowerCase())) &&
+//           (!filters["Job Type"] ||
+//             (job?.jobDetails?.jobType || "")
+//               .toLowerCase()
+//               .includes(filters["Job Type"].toLowerCase())) &&
+//           (!filters.Qualifications ||
+//             (job?.jobDetails?.qualifications || "")
+//               .toLowerCase()
+//               .includes(filters.Qualifications.toLowerCase())) &&
+//           (!filters.Salary ||
+//             (() => {
+//               const enteredSalary = parseInt(filters.Salary, 10);
+//               if (isNaN(enteredSalary)) return true; // Ignore if not a valid number
+  
+//               const salaryRange = job?.jobDetails?.salary?.match(/\d+/g);
+//               if (!salaryRange) return false; // No salary range found in the job
+  
+//               const minSalary = parseInt(salaryRange[0], 10);
+//               const maxSalary = salaryRange[1] ? parseInt(salaryRange[1], 10) : minSalary;
+  
+//               return enteredSalary >= minSalary && enteredSalary <= maxSalary;
+//             })())
+//         );
+//       })
+//     );
+//   };
+  
 //   const indexOfLastJob = currentPage * jobsPerPage;
 //   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-//   const currentJobs = jobs?.slice(indexOfFirstJob, indexOfLastJob);
-
-//   const totalPages = Math.ceil(jobs?.length / jobsPerPage);
-
-//   // Pagination handlers
-//   const handleNextPage = () => {
-//     if (currentPage < totalPages) {
-//       setCurrentPage((prevPage) => prevPage + 1);
-//     }
-//   };
-
-//   const handlePreviousPage = () => {
-//     if (currentPage > 1) {
-//       setCurrentPage((prevPage) => prevPage - 1);
-//     }
-//   };
+//   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+//   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
 //   return (
 //     <div>
 //       <Navbar />
 //       <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
-//         <div className="flex gap-2">
-//           {/* Filter Section */}
-//           <div className="w-1/6 px-4">
-//             <div className="sticky top-20">
-//               {" "}
-//               {/* Makes the filter section sticky */}
-//               <FilterCard />
+//         <div className="w-full px-4 py-4">
+//           <FilterCard onSearch={handleSearch} />
+//         </div>
+//         <div className="px-4 py-4">
+//           {isLoading ? (
+//             <div className="flex justify-center items-center h-40">
+//               <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
 //             </div>
-//           </div>
-
-//           {/* Jobs Section */}
-//           <div className="flex-1 pb-5 mt-5 px-2">
-//             {isLoading ? ( // Show spinner while loading
-//               <div className="flex justify-center items-center h-40">
-//                 <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+//           ) : currentJobs.length > 0 ? (
+//             <>
+//               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+//                 {currentJobs.map((job) => (
+//                   <div key={job._id}>
+//                     <Job job={job} />
+//                   </div>
+//                 ))}
 //               </div>
-//             ) : currentJobs?.length > 0 ? ( // Show jobs if available
-//               <>
-//                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//                   {currentJobs.map((job) => (
-//                     <div key={job._id}>
-//                       <Job job={job} />
-//                     </div>
-//                   ))}
-//                 </div>
-//                 {/* Pagination Controls */}
-//                 <div className="flex justify-between items-center mt-6">
-//                   <button
-//                     onClick={handlePreviousPage}
-//                     disabled={currentPage === 1}
-//                     className={`px-4 py-2 rounded ${
-//                       currentPage === 1
-//                         ? "bg-gray-300 cursor-not-allowed"
-//                         : "bg-blue-500 text-white hover:bg-blue-600"
-//                     }`}
-//                   >
-//                     Previous
-//                   </button>
-//                   <span className="text-gray-600 font-medium">
-//                     Page {currentPage} of {totalPages}
-//                   </span>
-//                   <button
-//                     onClick={handleNextPage}
-//                     disabled={currentPage === totalPages}
-//                     className={`px-4 py-2 rounded ${
-//                       currentPage === totalPages
-//                         ? "bg-gray-300 cursor-not-allowed"
-//                         : "bg-blue-500 text-white hover:bg-blue-600"
-//                     }`}
-//                   >
-//                     Next
-//                   </button>
-//                 </div>
-//               </>
-//             ) : (
-//               // Show "Job not found" if no jobs
-//               <div className="flex justify-center items-center h-40">
-//                 <span className="text-gray-500">Job not found</span>
+//               <div className="flex justify-between items-center mt-6">
+//                 <button
+//                   onClick={() =>
+//                     setCurrentPage((prev) => Math.max(prev - 1, 1))
+//                   }
+//                   disabled={currentPage === 1}
+//                   className={`px-4 py-2 rounded ${
+//                     currentPage === 1
+//                       ? "bg-gray-300 cursor-not-allowed"
+//                       : "bg-blue-500 text-white hover:bg-blue-600"
+//                   }`}
+//                 >
+//                   Previous
+//                 </button>
+//                 <span className="text-gray-600 font-medium">
+//                   Page {currentPage} of {totalPages}
+//                 </span>
+//                 <button
+//                   onClick={() =>
+//                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+//                   }
+//                   disabled={currentPage === totalPages}
+//                   className={`px-4 py-2 rounded ${
+//                     currentPage === totalPages
+//                       ? "bg-gray-300 cursor-not-allowed"
+//                       : "bg-blue-500 text-white hover:bg-blue-600"
+//                   }`}
+//                 >
+//                   Next
+//                 </button>
 //               </div>
-//             )}
-//           </div>
+//             </>
+//           ) : (
+//             <div className="flex justify-center items-center h-40">
+//               <span className="text-gray-500">Job not found</span>
+//             </div>
+//           )}
 //         </div>
 //       </div>
 //       <Footer />
@@ -122,91 +139,123 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 const Jobs = () => {
   const { jobs, error } = useJobDetails();
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 24;
-
-  const [filters, setFilters] = useState({
-    Location: "",
-    Industry: "",
-    Salary: 5000000, // Default maximum salary
-  });
 
   useEffect(() => {
     if (jobs || error) {
       setIsLoading(false);
+      setFilteredJobs(jobs || []);
     }
   }, [jobs, error]);
 
-  // Filter jobs based on selected filters
-  const filteredJobs = jobs?.filter((job) => {
-    return (
-      (filters.Location ? job.location === filters.Location : true) &&
-      (filters.Industry ? job.industry === filters.Industry : true) &&
-      (filters.Salary ? job.salary <= filters.Salary : true)
-    );
-  });
+  const handleSearch = (filters) => {
+    setFilteredJobs(
+      jobs.filter((job) => {
+        return (
+          (!filters.Location ||
+            (job?.jobDetails?.location || "")
+              .toLowerCase()
+              .includes(filters.Location.toLowerCase())) &&
+          (!filters["Job Title"] ||
+            (job?.jobDetails?.title || "")
+              .toLowerCase()
+              .includes(filters["Job Title"].toLowerCase())) &&
+          (!filters["Job Type"] ||
+            (job?.jobDetails?.jobType || "")
+              .toLowerCase()
+              .includes(filters["Job Type"].toLowerCase())) &&
+          (!filters.Qualifications ||
+            (job?.jobDetails?.qualifications || "")
+              .toLowerCase()
+              .includes(filters.Qualifications.toLowerCase())) &&
+          (!filters.Salary ||
+            (() => {
+              const enteredSalary = parseInt(filters.Salary, 10);
+              if (isNaN(enteredSalary)) return true; // Ignore if not a valid number
 
-  // Pagination
+              const salaryRange = job?.jobDetails?.salary?.match(/\d+/g);
+              if (!salaryRange) return false; // No salary range found in the job
+
+              const minSalary = parseInt(salaryRange[0], 10);
+              const maxSalary = salaryRange[1] ? parseInt(salaryRange[1], 10) : minSalary;
+
+              return enteredSalary >= minSalary && enteredSalary <= maxSalary;
+            })())
+        );
+      })
+    );
+  };
+
+  const resetFilters = () => {
+    setFilteredJobs(jobs || []); // Reset to all jobs
+  };
+
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs?.slice(indexOfFirstJob, indexOfLastJob);
-
-  const totalPages = Math.ceil(filteredJobs?.length / jobsPerPage);
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   return (
     <div>
       <Navbar />
       <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
-        <div className="flex gap-2">
-          {/* Filter Section */}
-          <div className="w-1/6 px-4">
-            <div className="sticky top-20">
-              <FilterCard filters={filters} setFilters={setFilters} />
-            </div>
-          </div>
+        <div className="w-full px-4 py-4">
+        <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
 
-          {/* Jobs Section */}
-          <div className="flex-1 pb-5 mt-5 px-2">
-            {isLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+        </div>
+        <div className="px-4 py-4">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+            </div>
+          ) : currentJobs.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {currentJobs.map((job) => (
+                  <div key={job._id}>
+                    <Job job={job} />
+                  </div>
+                ))}
               </div>
-            ) : currentJobs?.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {currentJobs.map((job) => (
-                    <div key={job._id}>
-                      <Job job={job} />
-                    </div>
-                  ))}
-                </div>
-                {/* Pagination */}
-                <div className="flex justify-between items-center mt-6">
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`}
-                  >
-                    Previous
-                  </button>
-                  <span className="text-gray-600 font-medium">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"}`}
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex justify-center items-center h-40">
-                <span className="text-gray-500">Job not found</span>
+              <div className="flex justify-between items-center mt-6">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded ${
+                    currentPage === 1
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="text-gray-600 font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded ${
+                    currentPage === totalPages
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  Next
+                </button>
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="flex justify-center items-center h-40">
+              <span className="text-gray-500">Job not found</span>
+            </div>
+          )}
         </div>
       </div>
       <Footer />
@@ -215,5 +264,4 @@ const Jobs = () => {
 };
 
 export default Jobs;
-
 

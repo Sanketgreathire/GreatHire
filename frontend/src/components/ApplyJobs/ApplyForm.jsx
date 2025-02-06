@@ -162,7 +162,6 @@ const handleCharLimitChange = (e, field) => {
         <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} filledBackground="green" />
           <div className="flex items-center mt-4">
-            <BiArrowBack className="text-gray-600 cursor-pointer text-2xl" />
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 1 of 5
             </h6>

@@ -125,16 +125,16 @@ const JobsForYou = () => {
               )}
               
             </div>
-            <h3 className="text-lg font-semibold">{job.jobDetails?.title}</h3>
+            <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
             <p className="text-sm text-gray-600">
               {job.jobDetails?.companyName}
             </p>
-            <p className="text-sm text-gray-500">{job.jobDetails?.location}</p>
+            <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
 
             <div className="p-1 flex items-center w-fit text-sm bg-blue-100 text-blue-800 rounded-md">
               <AiOutlineThunderbolt className="mr-1" />
               <span>
-                Typically Respond in {job.jobDetails?.respondTime} days
+                Typically Respond in {job?.jobDetails?.respondTime} days
               </span>
             </div>
 
@@ -152,11 +152,11 @@ const JobsForYou = () => {
                     ))}
                 </p>
                 <p className="p-1 font-semibold text-green-700 rounded-md bg-green-100 flex items-center gap-1 ">
-                  {job.jobDetails?.jobType} <FaHeart /> +1
+                  {job?.jobDetails?.jobType}
                 </p>
               </div>
               <p className="p-1 font-semibold text-gray-700 rounded-md bg-gray-200 w-fit mt-1">
-                {job.jobDetails?.duration} +1
+                {job?.jobDetails?.duration}
               </p>
             </div>
 

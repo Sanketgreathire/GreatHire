@@ -2,10 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { IoIosStar } from "react-icons/io";
 import { AiOutlineThunderbolt } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
-import { IoMdSend } from "react-icons/io";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
 
@@ -70,13 +67,13 @@ const Job = ({ job }) => {
           </div>
           <div className="flex w-1/2">
             <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
-              {job.jobDetails?.jobType} <FaHeart /> +1
+              {job.jobDetails?.jobType}
             </p>
           </div>
         </div>
         <div className="w-full">
           <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200">
-            {job.jobDetails?.duration} +1
+            {job.jobDetails?.duration}
           </p>
         </div>
       </div>
