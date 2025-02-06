@@ -53,9 +53,9 @@ const JobDetail = () => {
     try {
       dsetLoading(true);
       const response = await axios.delete(
-        `
-        ${JOB_API_END_POINT}/delete/${jobId}`,
+        `${JOB_API_END_POINT}/delete/${jobId}`,
         {
+          data: { companyId: company._id }, // Send companyId in request body
           withCredentials: true,
         }
       );
@@ -86,7 +86,7 @@ const JobDetail = () => {
       setSaveLoading(true);
       const response = await axios.put(
         `${JOB_API_END_POINT}/update/${id}`,
-        editedJob,
+        { editedJob, companyId: company?._id },
         { withCredentials: true }
       );
       if (response.data.success) {

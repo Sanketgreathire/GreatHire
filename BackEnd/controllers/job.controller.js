@@ -281,6 +281,16 @@ export const getJobByCompanyId = async (req, res) => {
 export const deleteJobById = async (req, res) => {
   try {
     const jobId = req.params.id;
+    const { companyId } = req.body;
+    const { userId } = req.id;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
     // Check if the job exists
     const job = await Job.findById(jobId);
     if (!job) {
@@ -343,26 +353,12 @@ export const bookmarkJob = async (req, res) => {
   }
 };
 
-
 export const toggleActive = async (req, res) => {
   try {
     const { jobId, isActive, companyId } = req.body;
     const userId = req.id;
 
-    // Find the company by ID
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({
-        message: "Company not found.",
-        success: false,
-      });
-    }
-
-    // Check if the user is associated with the company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-    if (!isUserAssociated) {
+    if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
@@ -401,10 +397,20 @@ export const updateJob = async (req, res) => {
   try {
     const { jobId } = req.params;
     const jobData = req.body;
+    const userId = req.id;
+    const companyId = jobData.companyId;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
     // Normalize skills input: If it's a string, split it into an array; otherwise, use it as is
-    const skillsArray = Array.isArray(jobData.skills)
-      ? jobData.skills
-      : jobData.skills.split(",").map((skill) => skill.trim());
+    const skillsArray = Array.isArray(jobData.editedJob.skills)
+      ? jobData.editedJob.skills
+      : jobData.editedJob.skills.split(",").map((skill) => skill.trim());
 
     // Remove empty values from arrays (benefits, qualifications, responsibilities)
     const cleanArray = (arr) =>
@@ -415,18 +421,22 @@ export const updateJob = async (req, res) => {
       jobId,
       {
         $set: {
-          "jobDetails.details": jobData.details,
+          "jobDetails.details": jobData.editedJob.details,
           "jobDetails.skills": skillsArray, // Convert to an array
-          "jobDetails.qualifications": cleanArray(jobData.qualifications),
-          "jobDetails.benefits": cleanArray(jobData.benefits), // Remove empty values
-          "jobDetails.responsibilities": cleanArray(jobData.responsibilities),
-          "jobDetails.experience": jobData.experience,
-          "jobDetails.salary": jobData.salary,
-          "jobDetails.jobType": jobData.jobType,
-          "jobDetails.location": jobData.location,
-          "jobDetails.numberOfOpening": jobData.numberOfOpening,
-          "jobDetails.respondTime": jobData.respondTime,
-          "jobDetails.duration": jobData.duration,
+          "jobDetails.qualifications": cleanArray(
+            jobData.editedJob.qualifications
+          ),
+          "jobDetails.benefits": cleanArray(jobData.editedJob.benefits), // Remove empty values
+          "jobDetails.responsibilities": cleanArray(
+            jobData.editedJob.responsibilities
+          ),
+          "jobDetails.experience": jobData.editedJob.experience,
+          "jobDetails.salary": jobData.editedJob.salary,
+          "jobDetails.jobType": jobData.editedJob.jobType,
+          "jobDetails.location": jobData.editedJob.location,
+          "jobDetails.numberOfOpening": jobData.editedJob.numberOfOpening,
+          "jobDetails.respondTime": jobData.editedJob.respondTime,
+          "jobDetails.duration": jobData.editedJob.duration,
         },
       },
       { new: true }
