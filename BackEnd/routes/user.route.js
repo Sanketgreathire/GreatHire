@@ -21,9 +21,19 @@ router.route("/register").post(validateUser, register);
 router.route("/login").post(login);
 router.route("/googleLogin").post(googleLogin);
 
-router
-  .route("/profile/update")
-  .put(isAuthenticated, singleUpload, validateProfileUpdate, updateProfile);
+router.route("/profile/update").put(
+  isAuthenticated,
+  (req, res, next) => {
+    singleUpload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message }); // Handle multer errors
+      }
+      next();
+    });
+  },
+  validateProfileUpdate,
+  updateProfile
+);
 
 router.route("/sendMessage").post(sendMessage);
 router.route("/forgot-password").post(forgotPassword);

@@ -11,9 +11,9 @@ import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
+import { validationResult } from "express-validator";
 // otpService.js
 import twilio from "twilio";
-import { read } from "fs";
 // Setup nodemailer
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -213,7 +213,12 @@ export const sendVerificationStatus = async (req, res) => {
 };
 
 export const requestOTPForEmail = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const { email } = req.body;
+
   try {
     // Generate OTP
     const otp = randomstring.generate({
@@ -269,6 +274,10 @@ export const requestOTPForEmail = async (req, res) => {
 };
 
 export const requestOTPForNumber = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const { number } = req.body;
   const client = twilio(accountSid, authToken);
   try {
@@ -503,7 +512,8 @@ export const verifyPaymentForCandidatePlans = async (req, res) => {
       if (creditBoost === null) {
         company.creditedForCandidates = null; // this one set unlimited
       } else {
-        company.creditedForCandidates = company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
+        company.creditedForCandidates =
+          company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
       }
 
       await company.save();
@@ -596,7 +606,6 @@ export const updateNumberVerification = async (req, res) => {
   }
 };
 
-
 export const sendEmailToApplicant = async (req, res) => {
   try {
     const jobId = req.params.id; // Job ID from the URL
@@ -613,12 +622,14 @@ export const sendEmailToApplicant = async (req, res) => {
     const companyName = company?.companyName || "Our Company"; // Fallback in case the company name is missing
 
     // Create email content
-    const subject = status === "Shortlisted" 
-      ? "Congratulations! You've been Shortlisted" 
-      : "Application Status Update: Rejected";
+    const subject =
+      status === "Shortlisted"
+        ? "Congratulations! You've been Shortlisted"
+        : "Application Status Update: Rejected";
 
-    const message = status === "Shortlisted"
-      ? `
+    const message =
+      status === "Shortlisted"
+        ? `
         <p>Dear Applicant,</p>
         <p>We are pleased to inform you that you have been shortlisted for the position of <strong>${jobDetails.title}</strong> at <strong>${companyName}</strong>.</p>
         <p>Here are the key details of the job:</p>
@@ -633,7 +644,7 @@ export const sendEmailToApplicant = async (req, res) => {
         <p>Warm Regards,</p>
         <p>The ${companyName} Team</p>
       `
-      : `
+        : `
         <p>Dear Applicant,</p>
         <p>Thank you for applying for the position of <strong>${jobDetails.title}</strong> at <strong>${companyName}</strong>.</p>
         <p>After careful consideration, we regret to inform you that you have not been shortlisted for this role. Please don't be discouraged, as there will be other opportunities in the future.</p>
@@ -651,10 +662,13 @@ export const sendEmailToApplicant = async (req, res) => {
       html: message,
     });
 
-    return res.status(200).json({ success: true, message: "Email sent successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Email sent successfully" });
   } catch (err) {
     console.error("Error sending email:", err);
-    return res.status(500).json({ success: false, message: "Server error", error: err.message });
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 };
-
