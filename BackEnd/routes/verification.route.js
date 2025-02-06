@@ -43,16 +43,45 @@ router.post(
   isAuthenticated,
   requestOTPForNumber
 );
-router.post("/verify-otp", verifyOTP);
+router.post("/verify-otp", isAuthenticated, verifyOTP);
 router.post("/verify-payment-for-service", verifyPaymentForService);
-router.post("/verify-payment-for-jobplan", verifyPaymentForJobPlans);
+router.post(
+  "/verify-payment-for-jobplan",
+  isAuthenticated,
+  verifyPaymentForJobPlans
+);
 router.post(
   "/verify-payment-for-candidateplan",
+  isAuthenticated,
   verifyPaymentForCandidatePlans
 );
 
-router.post("/update-email-verification", updateEmailVerification);
-router.post("/update-number-verification", updateNumberVerification);
+router.post(
+  "/update-email-verification",
+  [
+    body("email")
+      .exists()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Invalid email format")
+      .normalizeEmail(),
+  ],
+  isAuthenticated,
+  updateEmailVerification
+);
+router.post(
+  "/update-number-verification",
+  [
+    body("email")
+      .exists()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Invalid email format")
+      .normalizeEmail(),
+  ],
+  isAuthenticated,
+  updateNumberVerification
+);
 router.post(
   "/send-email-applicants/:id",
   isAuthenticated,

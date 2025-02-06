@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { updateNumberVerification } from "@/redux/authSlice";
 
-const VerifyNumber = ({setOpenNumberOTPModal}) => {
+const VerifyNumber = ({ setOpenNumberOTPModal }) => {
   const { user } = useSelector((state) => state.auth);
   const [token, setToken] = useState(null);
   const [otp, setOTP] = useState("");
@@ -81,7 +81,8 @@ const VerifyNumber = ({setOpenNumberOTPModal}) => {
             {
               decodedOTP: decoded?.otp,
               otp,
-            }
+            },
+            { withCredentials: true }
           );
 
           if (response?.data?.success) {
@@ -92,7 +93,8 @@ const VerifyNumber = ({setOpenNumberOTPModal}) => {
               `${VERIFICATION_API_END_POINT}/update-number-verification`,
               {
                 email: user.emailId.email,
-              }
+              },
+              { withCredentials: true }
             );
 
             if (response?.data?.success) {

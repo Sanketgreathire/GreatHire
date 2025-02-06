@@ -213,13 +213,12 @@ export const sendVerificationStatus = async (req, res) => {
 };
 
 export const requestOTPForEmail = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  const { email } = req.body;
-
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { email } = req.body;
     // Generate OTP
     const otp = randomstring.generate({
       length: 6,
@@ -274,13 +273,13 @@ export const requestOTPForEmail = async (req, res) => {
 };
 
 export const requestOTPForNumber = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  const { number } = req.body;
-  const client = twilio(accountSid, authToken);
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { number } = req.body;
+    const client = twilio(accountSid, authToken);
     // Generate a JWT token with the OTP and 30-second expiration
     const otp = randomstring.generate({
       length: 6,
@@ -537,6 +536,10 @@ export const verifyPaymentForCandidatePlans = async (req, res) => {
 // update user email verification
 export const updateEmailVerification = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const { email } = req.body;
 
     let user =
@@ -573,6 +576,10 @@ export const updateEmailVerification = async (req, res) => {
 // update user phone number verification
 export const updateNumberVerification = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const { email } = req.body;
 
     let user =
