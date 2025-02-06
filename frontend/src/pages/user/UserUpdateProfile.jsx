@@ -60,6 +60,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("Resume size should be less than 10 MB.");
+        return;
+      }
+
       const fileUrl = URL.createObjectURL(file);
       setInput((prevData) => ({
         ...prevData,
@@ -77,9 +83,16 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("Image size should be less than 10 MB.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
+
       setInput((prev) => ({ ...prev, profilePhoto: file }));
     }
   };
