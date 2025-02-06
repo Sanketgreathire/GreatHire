@@ -8,6 +8,7 @@ export const useJobDetails = () => useContext(JobDetailsContext);
 export const JobDetailsProvider = ({ children }) => {
   const [jobsList, setJobsList] = useState([]);
   const [originalJobsList, setOriginalJobsList] = useState([]);
+  const [saveJobsList, setSaveJobsList] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [error, setError] = useState(null);
 
@@ -46,7 +47,7 @@ export const JobDetailsProvider = ({ children }) => {
         return job;
       })
     );
-  
+
     setOriginalJobsList((prevJobs) =>
       prevJobs.map((job) => {
         if (job._id === jobId) {
@@ -61,10 +62,10 @@ export const JobDetailsProvider = ({ children }) => {
         return job;
       })
     );
-  
+
     setSelectedJob((prevJob) => {
       if (!prevJob || prevJob._id !== jobId) return prevJob;
-  
+
       const isBookmarked = prevJob.saveJob?.includes(userId);
       return {
         ...prevJob,
@@ -73,8 +74,19 @@ export const JobDetailsProvider = ({ children }) => {
           : [...(prevJob.saveJob || []), userId],
       };
     });
-  };  
+  };
 
+  // Function to get saved jobs based on userId
+  const getSaveJobs = (userId) => {
+    if (!userId) return;
+
+    const savedJobs = originalJobsList.filter((job) => {
+      return job.saveJob && job.saveJob.includes(userId); // Check if job is saved by the user
+    });
+
+    // Update the saveJobsList state with the saved jobs for the user
+    setSaveJobsList(savedJobs);
+  };
 
   const filterJobs = (titleKeyword, location) => {
     const filteredJobs = originalJobsList.filter((job) => {
@@ -161,6 +173,8 @@ export const JobDetailsProvider = ({ children }) => {
         resetFilter,
         toggleBookmarkStatus,
         addApplicationToJob,
+        getSaveJobs,
+        saveJobsList,
         error,
       }}
     >
