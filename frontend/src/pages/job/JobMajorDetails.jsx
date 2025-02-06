@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,  } from "react";
 import { BsPersonWorkspace } from "react-icons/bs";
 import { HiLightBulb } from "react-icons/hi";
 import { PiMoneyWavyFill } from "react-icons/pi";
@@ -11,7 +11,7 @@ const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   return (
-    <div>
+    <div >
       {/* profile insight */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 ">
         <div>
@@ -99,9 +99,7 @@ const JobMajorDetails = ({ selectedJob }) => {
       {/* Full Job Description */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Full Job Description</h1>
-        <p className="font-semibold">
-                {selectedJob?.jobDetails?.details}
-              </p>
+        <p className="font-semibold">{selectedJob?.jobDetails?.details}</p>
       </div>
 
       {/* Benifits */}

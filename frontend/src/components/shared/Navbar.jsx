@@ -12,7 +12,7 @@ import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import { IoMdArrowBack } from "react-icons/io";
 
 // Accept showJobDetails and setShowJobDetails props
-const Navbar = ({ showJobDetails, setShowJobDetails }) => {
+const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const isRecruiter = user?.role?.includes("recruiter");
   const dispatch = useDispatch();
