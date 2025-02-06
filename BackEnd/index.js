@@ -2,8 +2,14 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { createServer } from "http"; // Import HTTP server
-import { Server } from "socket.io"; // Import Socket.IO
+import { createServer } from "http";
+import { Server } from "socket.io";
+import cron from "node-cron";
+import rateLimit from "express-rate-limit"; // Import Rate Limiter
+import mongoose from "mongoose";
+import connectDB from "./utils/db.js";
+
+// Import Routes
 import applicationRoute from "./routes/application.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -12,33 +18,38 @@ import recruiterRoute from "./routes/recruiter.route.js";
 import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
-import connectDB from "./utils/db.js";
-import cron from "node-cron";
+
+// Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
-dotenv.config({});
-
+dotenv.config();
 const app = express();
-const server = createServer(app); // Create an HTTP server
+const server = createServer(app);
+const PORT = process.env.PORT || 3000;
+
+// WebSocket Server with CORS
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Allow frontend access
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   },
 });
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
 
-const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true,
-};
-app.use(cors(corsOptions));
-
-const PORT = process.env.PORT || 3000;
+// 📌 Rate Limiting (Limits API requests per IP)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Max 100 requests per IP per window
+  message: "Too many requests, please try again later.",
+  headers: true,
+});
+app.use("/api", apiLimiter); // Apply rate limiting to all API routes
 
 // API Routes
 app.use("/api/v1/user", userRoute);
@@ -50,19 +61,24 @@ app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
 
-// Start Server with WebSockets
-server.listen(PORT, () => {
-  connectDB();
-  console.log(`Server running at port ${PORT}`);
+// Start Server & Connect to Database
+server.listen(PORT, async () => {
+  await connectDB();
+  console.log(`🚀 Server running at port ${PORT}`);
 });
 
-// Socket.IO Handling
+// WebSocket Handling
 io.on("connection", (socket) => {
-  
+  console.log(`New client connected: ${socket.id}`);
+
+  socket.on("disconnect", () => {
+    console.log(`Client disconnected: ${socket.id}`);
+  });
 });
 
-// Cron Job to Check for Expired Plans
+// Cron Job to Check for Expired Plans (Runs every hour)
 cron.schedule("0 * * * *", async () => {
+  console.log("Running cron job: Checking expired plans...");
   try {
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
@@ -71,24 +87,21 @@ cron.schedule("0 * * * *", async () => {
 
     await Promise.all([
       ...jobSubscriptions.map(async (subscription) => {
-        const expired = await subscription.checkValidity();
-        if (expired) {
+        if (await subscription.checkValidity()) {
           io.emit("planExpired", {
             companyId: subscription.company,
-            type: "job", // Job plan expired
+            type: "job",
             message: "Job plan expired, please renew.",
           });
         }
       }),
       ...candidateSubscriptions.map(async (subscription) => {
-        const expired = await subscription.checkValidity();
-        if (expired) {
+        if (await subscription.checkValidity()) {
           io.emit("planExpired", {
             companyId: subscription.company,
-            type: "candidate", // Candidate plan expired
+            type: "candidate",
             message: "Candidate data plan expired, please renew.",
           });
-
         }
       }),
     ]);
@@ -97,4 +110,10 @@ cron.schedule("0 * * * *", async () => {
   }
 });
 
-
+// Graceful Shutdown for MongoDB & Server
+process.on("SIGINT", async () => {
+  console.log("Shutting down server...");
+  await mongoose.connection.close();
+  console.log("MongoDB Disconnected.");
+  process.exit(0);
+});

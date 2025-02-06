@@ -18,7 +18,7 @@ const AdminLayout = () => {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 ml-16 md:ml-52 bg-gray-100 min-h-screen p-6">
+      <div className="flex-1 ml-16 md:ml-52 bg-gray-100 min-h-screen">
         <Routes>
           <Route path="/" element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />

@@ -61,8 +61,8 @@ const JobDetail = () => {
       );
 
       if (response.data.success) {
-        navigate(-1);
         toast.success(response.data.message);
+        navigate(-1);
       } else {
         toast.error(response.data.message);
       }

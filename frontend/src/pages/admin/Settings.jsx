@@ -1,9 +1,12 @@
-import React from 'react'
-
+import React from "react";
+import Navbar from "@/components/admin/Navbar";
 const Settings = () => {
   return (
-    <div>Settings</div>
-  )
-}
+    <>
+      <Navbar linkName={"Settings"} />
+      <div className="p-4">Settings</div>
+    </>
+  );
+};
 
-export default Settings
+export default Settings;

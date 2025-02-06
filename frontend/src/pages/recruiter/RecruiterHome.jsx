@@ -138,7 +138,7 @@ const RecruiterHome = () => {
           </header>
 
           {/* Cards Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8">
             {cards.map((card, index) => (
               <div
                 key={index}
@@ -147,8 +147,8 @@ const RecruiterHome = () => {
                 <div className="flex items-center space-x-4 mb-4">
                   {card.icon}
                 </div>
-                <div className="flex flex-col gap-2 justify-center items-center">
-                  <h2 className="text-xl font-semibold text-gray-700">
+                <div className="flex flex-col gap-2 justify-center items-center w-full">
+                  <h2 className="text-xl font-semibold text-gray-700 text-center">
                     {card.title}
                   </h2>
                   <h3 className="text-3xl font-bold text-gray-800">

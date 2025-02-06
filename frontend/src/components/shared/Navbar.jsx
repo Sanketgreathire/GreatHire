@@ -9,8 +9,12 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
+import { IoMdArrowBack } from "react-icons/io";
 
-const Navbar = () => {
+
+// Accept showJobDetails and setShowJobDetails props
+const Navbar = ({ showJobDetails, setShowJobDetails }) => { 
+
   const { user } = useSelector((state) => state.auth);
   const isRecruiter = user?.role?.includes("recruiter");
   const dispatch = useDispatch();
@@ -122,33 +126,23 @@ const Navbar = () => {
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
-          {/* Logo */}
-          <div
-            to={
-              user
-                ? user.role === "student"
-                  ? "/"
-                  : "/recruiter/dashboard/home"
-                : "/"
-            }
-            className="flex items-center w-full justify-center 
-             lg:block lg:w-auto lg:justify-normal lg:items-start 
-              text-2xl font-bold relative "
-          >
-            <span
-              onClick={() => {
-                {
-                  user
-                    ? user?.role === "student"
-                      ? navigate("/")
-                      : navigate("/recruiter/dashboard/home")
-                    : navigate("/");
-                }
-              }}
-            >
-              Great<span className="text-blue-700">Hire</span>
-            </span>
-          </div>
+
+          {/* Logo replacing with back button for jobsforyou small screen job details page */}
+          <Link to="/" className="text-2xl font-bold relative z-30">
+            {showJobDetails ? (  // <-- New condition to show back button
+              <button
+                onClick={() => setShowJobDetails(false)}  // <-- Back button functionality
+                className="text-blue-700 flex items-center gap-2"
+              >
+                <IoMdArrowBack size={24} />
+                <span>Back</span>
+              </button>
+            ) : (
+              <span className="text-2xl font-bold relative z-30">
+                Great<span className="text-blue-700">Hire</span>
+              </span>
+            )}
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:items-center lg:gap-12">
