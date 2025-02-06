@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import { IoMdArrowBack } from "react-icons/io";
+import React, { useState, useRef } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
+import { FaBookmark } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
 import { IoMdLink } from "react-icons/io";
 import JobMajorDetails from "./JobMajorDetails";
@@ -11,16 +11,13 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector} from "react-redux";
 import Navbar from "@/components/shared/Navbar";
 //import { selectIsJobApplied } from "@/redux/appliedJobSlice";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const JobsForYou = () => {
-  const {
-    jobs,
-    selectedJob,
-    setSelectedJob,
-    changeBookmarkStatus,
-    changeBlockStatus,
-  } = useJobDetails(); // Access functions from context
-
+  const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
+    useJobDetails(); // Access functions from context
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -42,27 +39,29 @@ const JobsForYou = () => {
         )
     );
 
+  const isJobBookmarked = (userId) => selectedJob.saveJob.includes(userId);
+
   // for bookmark job for particular user
-  const handleBookmark = () => {};
+  const handleBookmark = async (jobId) => {
+    try {
+      const response = await axios.get(
+        `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
+        {
+          withCredentials: true,
+        }
+      );
 
-  // for hide job for particular user
-  const handleHiddenJob = () => {};
-
-  useEffect(() => {
-    // Set the initial selected job if it's not already set
-    if (!selectedJob) {
-      const defaultJob = jobs.find(
-        (job) => job._id === "678233e5103cc54b0fd68b2d"
-      ); // Find the job with a specific ID
-      setSelectedJob(defaultJob); // Set default selected job
+      if (response.data.success) {
+        toggleBookmarkStatus(jobId, user?._id);
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      console.error(
+        "Error bookmarking job:",
+        error.response?.data?.message || error.message
+      );
     }
-  }, [jobs]);
-
-  useEffect(() => {
-    if (jobDetailsRef.current) {
-      jobDetailsRef.current.scrollTop = 0; // For reset the scroll position to the top whenever the selectedJob changes
-    }
-  }, [selectedJob]);
+  };
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
@@ -77,9 +76,6 @@ const JobsForYou = () => {
     return activeDays;
   };
 
-  const checkIfJobApplied = (jobId) => {
-    return false;
-  };
 
   // Function for handling the job card clicks
    const handleJobClick = (job) => {
@@ -244,23 +240,20 @@ const JobsForYou = () => {
                   </button>
                 )}
               </div>
-              <div
-                className={`p-2 ${
-                  selectedJob?.isBookmark ? "bg-green-200 " : "bg-gray-300 "
-                } rounded-lg text-gray-800 cursor-pointer`}
-              >
-                <CiBookmark size={25} onClick={() => changeBookmarkStatus()} />
-              </div>
-              <div
-                className={`p-2 ${
-                  selectedJob?.isBlock ? "bg-red-200 " : "bg-gray-300 "
-                } rounded-lg text-gray-800 cursor-pointer `}
-              >
-                <MdBlock size={25} onClick={() => changeBlockStatus()} />
-              </div>
-              <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer">
-                <IoMdLink size={25} />
-              </div>
+              {user &&
+                (isJobBookmarked(user?._id) ? (
+                  <FaBookmark
+                    size={25}
+                    onClick={() => handleBookmark(selectedJob._id)}
+                    className="text-green-700 cursor-pointer"
+                  />
+                ) : (
+                  <CiBookmark
+                    size={25}
+                    onClick={() => handleBookmark(selectedJob._id)}
+                    className="cursor-pointer"
+                  />
+                ))}
             </div>
           </div>
 

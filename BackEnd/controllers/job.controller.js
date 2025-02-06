@@ -339,44 +339,33 @@ export const deleteJobById = async (req, res) => {
 // bookmark the job
 export const bookmarkJob = async (req, res) => {
   try {
-    const jobId = req.params.id;
-    const userId = req.id; // Assuming req.id is the user ID
+    const { jobId } = req.params;
+    const userId = req.id; // Assuming req.id is the authenticated user's ID
 
-    // Find the job by ID and update the saveJob field
-    const job = await Job.findByIdAndUpdate(
-      jobId,
-      { $addToSet: { saveJob: userId } }, // Using $addToSet to avoid duplicates
-      { new: true }
-    );
-
+    // Find the job by ID
+    const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    res.status(200).json({ message: "Job bookmarked successfully", job });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
+    // Check if user already bookmarked the job
+    const isBookmarked = job.saveJob.includes(userId);
 
-// remove bookmark the job
-export const unBookmarkJob = async (req, res) => {
-  try {
-    const jobId = req.params.id;
-    const userId = req.id; // Assuming req.id is the user ID
-
-    // Find the job by ID and update the saveJob field
-    const job = await Job.findByIdAndUpdate(
-      jobId,
-      { $pull: { saveJob: userId } }, // Using $addToSet to avoid duplicates
-      { new: true }
-    );
-
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
+    // Update saveJob field (add or remove user ID)
+    if (isBookmarked) {
+      job.saveJob = job.saveJob.filter((id) => id.toString() !== userId);
+    } else {
+      job.saveJob.push(userId);
     }
 
-    res.status(200).json({ message: "Job unbookmarked successfully", job });
+    await job.save();
+
+    res.status(200).json({
+      message: isBookmarked
+        ? "Save successfully"
+        : "Unsave successfully",
+      success:true
+    });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

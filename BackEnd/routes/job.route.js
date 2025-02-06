@@ -7,7 +7,6 @@ import {
   updateJob,
   hideJob,
   bookmarkJob,
-  unBookmarkJob,
   getJobByRecruiterId,
   toggleActive,
   getJobByCompanyId,
@@ -20,8 +19,7 @@ const router = express.Router();
 
 router.route("/post-job").post(isAuthenticated, postJob);
 
-router.route("/bookmark-job/:id").get(isAuthenticated, bookmarkJob);
-router.route("/unbookmark-job/:id").get(isAuthenticated, unBookmarkJob);
+router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
 router.route("/hide-job/:id").get(isAuthenticated, hideJob);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);
 
