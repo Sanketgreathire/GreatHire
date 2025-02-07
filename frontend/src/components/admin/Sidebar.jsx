@@ -27,7 +27,7 @@ const Sidebar = () => {
     <>
       {/* Sidebar Container */}
       <div
-        className={`fixed z-40 h-screen bg-white flex flex-col transition-all duration-300 ${
+        className={`fixed z-30 h-screen overflow-y-scroll bg-white flex flex-col transition-all duration-300 ${
           isOpen ? "w-52" : "w-16"
         } md:w-52`}
       >

@@ -19,50 +19,67 @@ import {
   Legend,
 } from "recharts";
 import { DollarSign, Users, Briefcase, CheckCircle } from "lucide-react";
-
-const dataRevenue = [
-  { month: "Jan", revenue: 30000 },
-  { month: "Feb", revenue: 35000 },
-  { month: "Mar", revenue: 45000 },
-  { month: "Apr", revenue: 40000 },
-  { month: "May", revenue: 50000 },
-  { month: "Jun", revenue: 46000 },
-  { month: "July", revenue: 40000 },
-  { month: "Aug", revenue: 35000 },
-  { month: "Sep", revenue: 40000 },
-  { month: "Oct", revenue: 10000 },
-  { month: "Jun", revenue: 13000 },
-  { month: "Jun", revenue: 70000 },
-];
-
-const dataUsers = [
-  { month: "Jan", users: 400 },
-  { month: "Feb", users: 800 },
-  { month: "Mar", users: 1200 },
-  { month: "Apr", users: 1000 },
-  { month: "May", users: 1500 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-  { month: "Jun", users: 1300 },
-];
-
-const applicationStats = [
-  { name: "Accepted", value: 50, color: "#4CAF50" },
-  { name: "Pending", value: 30, color: "#FFC107" },
-  { name: "Rejected", value: 20, color: "#F44336" },
-];
+import { useSelector } from "react-redux";
 
 const Reports = () => {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [selectedRange, setSelectedRange] = useState("last7");
+  const { statsData } = useSelector((state) => state.stats);
+
+  const applicationSuccessRate = Number(((statsData.shortlistedApplications * 100) / statsData.totalApplications).toFixed(2));
+
 
   // Handling Year and Range change
   const handleYearChange = (event) => setSelectedYear(event.target.value);
   const handleRangeChange = (event) => setSelectedRange(event.target.value);
+
+  const dataRevenue = [
+    { month: "Jan", revenue: 30000 },
+    { month: "Feb", revenue: 35000 },
+    { month: "Mar", revenue: 45000 },
+    { month: "Apr", revenue: 40000 },
+    { month: "May", revenue: 50000 },
+    { month: "Jun", revenue: 46000 },
+    { month: "July", revenue: 40000 },
+    { month: "Aug", revenue: 35000 },
+    { month: "Sep", revenue: 40000 },
+    { month: "Oct", revenue: 10000 },
+    { month: "Jun", revenue: 13000 },
+    { month: "Jun", revenue: 70000 },
+  ];
+
+  const dataUsers = [
+    { month: "Jan", users: 400 },
+    { month: "Feb", users: 800 },
+    { month: "Mar", users: 1200 },
+    { month: "Apr", users: 1000 },
+    { month: "May", users: 1500 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+    { month: "Jun", users: 1300 },
+  ];
+
+  const applicationStats = [
+    {
+      name: "Shortlisted",
+      value: statsData.shortlistedApplications || 0,
+      color: "#4CAF50",
+    },
+    {
+      name: "Pending",
+      value: statsData.pendingApplications || 0,
+      color: "#FFC107",
+    },
+    {
+      name: "Rejected",
+      value: statsData.rejectedApplications || 0,
+      color: "#F44336",
+    },
+  ];
 
   return (
     <>
@@ -112,7 +129,7 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Total Revenue</p>
-              <h3 className="text-2xl font-bold">$45,678</h3>
+              <h3 className="text-2xl font-bold text-center">₹45,678</h3>
               {/* <p className="text-green-500 text-sm">+12.5% from last period</p> */}
             </div>
             <DollarSign
@@ -123,7 +140,7 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">New Users</p>
-              <h3 className="text-2xl font-bold">1,234</h3>
+              <h3 className="text-2xl font-bold text-center">1,234</h3>
               {/* <p className="text-green-500 text-sm">+8.2% from last period</p> */}
             </div>
             <Users
@@ -133,8 +150,8 @@ const Reports = () => {
           </Card>
           <Card className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-500">Job Success Rate</p>
-              <h3 className="text-2xl font-bold">76%</h3>
+              <p className="text-sm text-gray-500">Application Success Rate</p>
+              <h3 className="text-2xl font-bold text-center">{applicationSuccessRate}%</h3>
               {/* <p className="text-green-500 text-sm">+5.3% from last period</p> */}
             </div>
             <CheckCircle
@@ -145,7 +162,7 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Active Jobs</p>
-              <h3 className="text-2xl font-bold">892</h3>
+              <h3 className="text-2xl font-bold text-center">{statsData.activeJobs}</h3>
               {/* <p className="text-green-500 text-sm">+15.7% from last period</p> */}
             </div>
             <Briefcase

@@ -15,6 +15,7 @@ import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
+import { useSelector } from "react-redux";
 
 const dummyUsers = [
   {
@@ -41,10 +42,12 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
 
+  const { statsData } = useSelector((state) => state.stats);
+
   const stats = [
     {
       title: "Total Users",
-      count: 24563,
+      count: statsData.totalUsers,
       change: "+12.5%",
       icon: <FaRegUser size={30} />,
       color: "text-blue-500",
@@ -52,7 +55,7 @@ const Users = () => {
     },
     {
       title: "Active Jobs",
-      count: 1234,
+      count: statsData.activeJobs,
       change: "+5.2%",
       icon: <Briefcase size={30} />,
       color: "text-green-500",
@@ -60,7 +63,7 @@ const Users = () => {
     },
     {
       title: "Applications",
-      count: 45789,
+      count: statsData.totalApplications,
       change: "+15.3%",
       icon: <FileText size={30} />,
       color: "text-yellow-500",
@@ -92,8 +95,8 @@ const Users = () => {
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold">
-                {stat.count.toLocaleString()}
+              <p className="text-2xl font-bold text-center">
+                {stat.count}
               </p>
               {/* <span className="text-sm text-gray-500">
                 {stat.change} from last month

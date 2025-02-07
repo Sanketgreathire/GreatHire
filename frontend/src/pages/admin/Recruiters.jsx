@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Select, MenuItem } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
+import { useSelector } from "react-redux";
 
 const dummyRecruiters = [
   {
@@ -42,11 +43,12 @@ const Recruiters = () => {
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const { statsData } = useSelector((state) => state.stats);
 
   const stats = [
     {
       title: "Total Recruiters",
-      count: 245,
+      count: statsData.totalRecruiters,
       change: "+10%",
       icon: <FaRegUser size={30} />, 
       color: "text-blue-500",
@@ -54,7 +56,7 @@ const Recruiters = () => {
     },
     {
       title: "Posted Jobs",
-      count: 1234,
+      count: statsData.totalJobs,
       change: "+5.2%",
       icon: <Briefcase size={30} />, 
       color: "text-green-500",
@@ -62,7 +64,7 @@ const Recruiters = () => {
     },
     {
       title: "Verified Recruiters",
-      count: 180,
+      count: statsData.verifiedRecruiters,
       change: "+8%",
       icon: <UserCheck size={30} />, 
       color: "text-yellow-500",
@@ -91,7 +93,7 @@ const Recruiters = () => {
           <Card key={index} className="p-4 flex items-center justify-between bg-white shadow rounded-xl">
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold">{stat.count.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-center">{stat.count}</p>
               {/* <span className="text-sm text-gray-500">{stat.change} from last month</span> */}
             </div>
             <div className={`p-2 rounded-full ${stat.bg} ${stat.color}`}>{stat.icon}</div>
