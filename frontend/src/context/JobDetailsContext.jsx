@@ -74,10 +74,11 @@ export const JobDetailsProvider = ({ children }) => {
           : [...(prevJob.saveJob || []), userId],
       };
     });
-   };
+  };
 
   // Function to get saved jobs based on userId
   const getSaveJobs = (userId) => {
+    
     if (!userId) return;
 
     const savedJobs = originalJobsList.filter((job) => {
@@ -86,6 +87,15 @@ export const JobDetailsProvider = ({ children }) => {
 
     // Update the saveJobsList state with the saved jobs for the user
     setSaveJobsList(savedJobs);
+  };
+
+  const updateSaveJobs = (userId, jobId) => {
+    if (!userId || !jobId) return;
+  
+    // Remove the job with the provided jobId from the saved jobs list.
+    setSaveJobsList((prevJobs) =>
+      prevJobs.filter((job) => job._id !== jobId)
+    );
   };
 
   const filterJobs = (titleKeyword, location) => {
@@ -175,6 +185,7 @@ export const JobDetailsProvider = ({ children }) => {
         addApplicationToJob,
         getSaveJobs,
         saveJobsList,
+        updateSaveJobs,
         error,
       }}
     >
