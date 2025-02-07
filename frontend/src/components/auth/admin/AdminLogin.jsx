@@ -129,8 +129,8 @@ const AdminLogin = () => {
             </button>
             <p className="text-center text-sm text-gray-500">
               New Admin?{" "}
-              <a href="/admin" className="text-blue-500 hover:underline">
-                Sign Up here
+              <a href="/admin/signup" className="text-blue-500 hover:underline">
+                Sign Up
               </a>
             </p>
           </form>
