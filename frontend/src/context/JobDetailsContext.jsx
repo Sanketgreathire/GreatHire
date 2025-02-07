@@ -74,7 +74,7 @@ export const JobDetailsProvider = ({ children }) => {
           : [...(prevJob.saveJob || []), userId],
       };
     });
-  };
+   };
 
   // Function to get saved jobs based on userId
   const getSaveJobs = (userId) => {

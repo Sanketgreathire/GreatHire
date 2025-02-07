@@ -55,6 +55,7 @@ import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 import { Worker } from "@react-pdf-viewer/core";
+import SavedJobs from "./pages/job/SavedJob";
 
 const appRouter = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/description",
     element: <JobDescription />,
+  },
+  {
+    path: "/saved-jobs",
+    element: <SavedJobs />,
   },
   {
     path: "/apply/:jobId",

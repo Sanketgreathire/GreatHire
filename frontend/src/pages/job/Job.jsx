@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineThunderbolt } from "react-icons/ai";
-import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
+import { CiBookmark } from "react-icons/ci";
+import { FaBookmark } from "react-icons/fa";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import toast from "react-hot-toast";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  const { setSelectedJob } = useJobDetails();
+  const { toggleBookmarkStatus, getSaveJobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
+  const [isBookmarked, setIsBookmarked] = useState(
+    job?.saveJob?.includes(user?._id) || false
+  );
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt);
@@ -24,9 +31,31 @@ const Job = ({ job }) => {
       (application) => application.applicant === user?._id
     ) || false;
 
+    const handleBookmark = async (jobId) => {
+      try {
+        const response = await axios.get(
+          `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
+          {
+            withCredentials: true,
+          }
+        );
+  
+        if (response.data.success) {
+          toggleBookmarkStatus(jobId, user?._id);
+          getSaveJobs();
+          toast.success(response.data.message);
+        }
+      } catch (error) {
+        console.error(
+          "Error bookmarking job:",
+          error.response?.data?.message || error.message
+        );
+      }
+    };
+
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
-      <div className="flex justify-between items-center mb-2 ">
+      <div className="flex justify-between items-center mb-2">
         {job?.jobDetails?.urgentHiring && (
           <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
             Urgent Hiring
@@ -34,17 +63,19 @@ const Job = ({ job }) => {
         )}
         <div className="flex items-center justify-between">
           {user && (
-            <Button variant="outline" className="rounded-full" size="icon">
-              <Bookmark />
-            </Button>
+            <div onClick={() => handleBookmark(job._id)} className="cursor-pointer">
+              {isBookmarked ? (
+                <FaBookmark size={25} className="text-green-700" />
+              ) : (
+                <CiBookmark size={25} />
+              )}
+            </div>
           )}
         </div>
       </div>
       <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
-        <div>
-          {job?.jobDetails?.companyName} 
-        </div>
+        <div>{job?.jobDetails?.companyName}</div>
         <div>
           <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
         </div>
@@ -58,12 +89,12 @@ const Job = ({ job }) => {
       <div className="text-sm flex flex-col space-y-2">
         <div className="flex gap-2 justify-between items-center">
           <div className="flex w-1/2">
-            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
+            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200">
               {job?.jobDetails?.salary}
             </p>
           </div>
           <div className="flex w-1/2">
-            <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
+            <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1">
               {job.jobDetails?.jobType}
             </p>
           </div>
@@ -84,10 +115,9 @@ const Job = ({ job }) => {
           {isApplied && <span className="text-green-600">Applied</span>}
         </div>
       </div>
-      <div className="flex w-full items-center justify-between gap-4 ">
+      <div className="flex w-full items-center justify-between gap-4">
         <Button
           onClick={() => {
-            setSelectedJob(job);
             navigate(`/description`);
           }}
           variant="outline"
@@ -101,4 +131,3 @@ const Job = ({ job }) => {
 };
 
 export default Job;
-
