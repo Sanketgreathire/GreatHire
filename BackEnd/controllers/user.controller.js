@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
-import { Admin } from "../models/admin.model.js";
+import { Admin } from "../models/admin/admin.model.js";
 import { Contact } from "../models/contact.model.js";
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 

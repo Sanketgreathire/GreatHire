@@ -18,6 +18,7 @@ import recruiterRoute from "./routes/recruiter.route.js";
 import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
+import adminStatRoute from './routes/admin/statistic.route.js';
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
@@ -60,6 +61,7 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
+app.use("/api/v1/admin/stat", adminStatRoute);
 
 // Start Server & Connect to Database
 server.listen(PORT, async () => {

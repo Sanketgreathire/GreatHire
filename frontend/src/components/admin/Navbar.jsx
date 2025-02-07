@@ -3,7 +3,7 @@ import { Bell } from "lucide-react";
 
 const Navbar = ({ linkName }) => {
   return (
-    <nav className="flex items-center justify-between bg-white p-3">
+    <nav className=" flex justify-between items-center fixed top-0 left-0 right-0 ml-16 lg:ml-52 bg-white p-3 z-30 ">
       {/* Left - Link Name */}
       <div className="text-2xl font-light">{linkName}</div>
 
