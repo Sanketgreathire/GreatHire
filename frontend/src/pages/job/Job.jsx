@@ -12,11 +12,9 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  const { toggleBookmarkStatus, getSaveJobs } = useJobDetails();
+  const { toggleBookmarkStatus, updateSaveJobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
-  const [isBookmarked, setIsBookmarked] = useState(
-    job?.saveJob?.includes(user?._id) || false
-  );
+  const isBookmarked = job?.saveJob?.includes(user?._id) || false;
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt);
@@ -31,27 +29,26 @@ const Job = ({ job }) => {
       (application) => application.applicant === user?._id
     ) || false;
 
-    const handleBookmark = async (jobId) => {
-      try {
-        const response = await axios.get(
-          `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
-          {
-            withCredentials: true,
-          }
-        );
-  
-        if (response.data.success) {
-          toggleBookmarkStatus(jobId, user?._id);
-          getSaveJobs();
-          toast.success(response.data.message);
+  const handleBookmark = async (jobId) => {
+    try {
+      const response = await axios.get(
+        `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
+        {
+          withCredentials: true,
         }
-      } catch (error) {
-        console.error(
-          "Error bookmarking job:",
-          error.response?.data?.message || error.message
-        );
+      );
+
+      if (response.data.success) {
+        toggleBookmarkStatus(jobId, user?._id);
+        toast.success(response.data.message);
       }
-    };
+    } catch (error) {
+      console.error(
+        "Error bookmarking job:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
@@ -63,7 +60,10 @@ const Job = ({ job }) => {
         )}
         <div className="flex items-center justify-between">
           {user && (
-            <div onClick={() => handleBookmark(job._id)} className="cursor-pointer">
+            <div
+              onClick={() => handleBookmark(job._id)}
+              className="cursor-pointer"
+            >
               {isBookmarked ? (
                 <FaBookmark size={25} className="text-green-700" />
               ) : (
@@ -90,7 +90,15 @@ const Job = ({ job }) => {
         <div className="flex gap-2 justify-between items-center">
           <div className="flex w-1/2">
             <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200">
-              {job?.jobDetails?.salary}
+              {job?.jobDetails?.salary
+                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                .split("-")
+                .map((part, index) => (
+                  <span key={index}>
+                    ₹{part.trim()}
+                    {index === 0 ? " - " : ""}
+                  </span>
+                ))}
             </p>
           </div>
           <div className="flex w-1/2">

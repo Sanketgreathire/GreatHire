@@ -17,6 +17,7 @@ import axios from "axios";
 const JobsForYou = () => {
   const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
     useJobDetails(); // Access functions from context
+    
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -33,7 +34,6 @@ const JobsForYou = () => {
 
   const handleScroll = () => {
     // Track the scroll position
-    console.log(jobContainerRef.current.scrollTop);
     if (jobContainerRef.current) {
       setScrollPosition(jobContainerRef.current.scrollTop);
     }
