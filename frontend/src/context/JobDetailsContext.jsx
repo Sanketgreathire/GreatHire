@@ -185,7 +185,6 @@ export const JobDetailsProvider = ({ children }) => {
         addApplicationToJob,
         getSaveJobs,
         saveJobsList,
-        updateSaveJobs,
         error,
       }}
     >

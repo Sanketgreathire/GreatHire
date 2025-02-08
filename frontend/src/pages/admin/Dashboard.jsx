@@ -18,7 +18,7 @@ import { useSelector } from "react-redux";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
-import axios from 'axios';
+import axios from "axios";
 
 const Dashboard = () => {
   const { statsData } = useSelector((state) => state.stats);
@@ -124,7 +124,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [selectedYear]); 
+  }, [selectedYear]);
 
   // Sample job postings data
   const jobPostings = [
@@ -259,16 +259,35 @@ const Dashboard = () => {
             <h3 className="text-lg font-semibold">Recent Activity</h3>
             <ul className="mt-4 space-y-2">
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-pink-500 text-white flex items-center justify-center rounded-full">
+                <span className="h-8 w-8 bg-purple-500 text-white flex items-center justify-center rounded-full">
                   U
                 </span>
                 <p>
-                  New User registration{" "}
+                  New User Registered{" "}
                   <span className="text-gray-400 text-sm">2 minutes ago</span>
                 </p>
               </li>
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
+                <span className="h-8 w-8 bg-cyan-500 text-white flex items-center justify-center rounded-full">
+                  C
+                </span>
+                <p>
+                  New Company Registered{" "}
+                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                </p>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="h-8 w-8 bg-red-500 text-white flex items-center justify-center rounded-full">
+                  R
+                </span>
+                <p>
+                  New Recruiter Registered{" "}
+                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                </p>
+              </li>
+
+              <li className="flex items-center gap-3">
+                <span className="h-8 w-8 bg-indigo-500 text-white flex items-center justify-center rounded-full">
                   J
                 </span>
                 <p>
@@ -277,20 +296,11 @@ const Dashboard = () => {
                 </p>
               </li>
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
-                  J
-                </span>
-                <p>
-                  New job posted{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
-                </p>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-green-500 text-white flex items-center justify-center rounded-full">
+                <span className="h-8 w-8 bg-amber-500 text-white flex items-center justify-center rounded-full">
                   A
                 </span>
                 <p>
-                  Application submitted{" "}
+                  New Application submitted{" "}
                   <span className="text-gray-400 text-sm">1 hour ago</span>
                 </p>
               </li>

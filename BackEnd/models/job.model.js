@@ -77,7 +77,7 @@ const jobSchema = new mongoose.Schema(
         type: Boolean, // Assuming this is a number but stored as string
         default:true,
       },
-    },
+    }, 
     saveJob: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     hiddenJob: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     application: [

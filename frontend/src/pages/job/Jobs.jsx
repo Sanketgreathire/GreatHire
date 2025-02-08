@@ -12,6 +12,10 @@ const Jobs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 24;
 
+  useEffect(()=>{
+    
+  }, [])
+
   useEffect(() => {
     if (jobs || error) {
       setIsLoading(false);

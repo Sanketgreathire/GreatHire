@@ -112,3 +112,4 @@ export const getApplicationsDataByYear = async (req, res) => {
     });
   }
 };
+
