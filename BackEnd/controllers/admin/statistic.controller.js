@@ -180,21 +180,37 @@ export const getRecentActivity = async (req, res) => {
 
 export const getRecentJobPostings = async (req, res) => {
   try {
+    // Get current timestamp
+    const now = new Date();
+
     // Fetch recent jobs (latest postings, limited to 5 for pagination)
     const recentJobs = await Job.find()
       .sort({ createdAt: -1 }) // Sort by newest first
       .limit(15) // Adjust limit as per requirement
       .populate("company", "companyName") // Populate company details
       .populate("application"); // Fetch related applications
+    // Function to format time difference
+    const formatTimeDifference = (createdAt) => {
+      if (!createdAt) return null;
+      const diffMs = now - new Date(createdAt); // Difference in milliseconds
+      const diffMins = Math.floor(diffMs / 60000); // Convert to minutes
+      const diffHours = Math.floor(diffMins / 60); // Convert to hours
+      const diffDays = Math.floor(diffHours / 24); // Convert to days
+      if (diffMins < 60) return `${diffMins} minutes ago`; // Show minutes if < 60
+      if (diffHours < 24) return `${diffHours} hours ago`; // Show hours if < 24
+      return `${diffDays} days ago`; // Show days otherwise
+    };
 
-    // Format job postings
-    const jobPostings = recentJobs.map((job) => ({
-      jobTitle: job.jobDetails.title,
-      company: job.company.companyName, // Extracting company name
-      posted: job.createdAt,
-      applications: job.application.length, // Counting applications
-      status: job.jobDetails.isActive ? "Active" : "Closed", // Determine job status
-    }));
+    // Format job postings and filter out jobs with zero applications
+    const jobPostings = recentJobs
+      .map(job => ({
+        jobTitle: job.jobDetails.title,
+        company: job.company.companyName, // Extracting company name
+        posted: formatTimeDifference(job.createdAt),
+        applications: job.application.length, // Counting applications
+        status: job.jobDetails.isActive ? "Active" : "Closed", // Determine job status
+      }));
+    
 
     return res.status(200).json({
       success: true,
