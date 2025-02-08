@@ -2,6 +2,7 @@ import { Job } from "../../models/job.model.js";
 import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import { Application } from "../../models/application.model.js";
+import { formatDistanceToNow } from "date-fns";
 
 export const getStatisticForAdmin = async (req, res) => {
   try {
@@ -113,3 +114,87 @@ export const getApplicationsDataByYear = async (req, res) => {
   }
 };
 
+export const getRecentActivity = async (req, res) => {
+  try {
+    // Fetch latest users (new registrations)
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
+
+    // Fetch latest jobs (new job postings)
+    const recentJobs = await Job.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt jobDetails.title");
+
+    // Fetch latest applications (submissions)
+    const recentApplications = await Application.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
+
+    // Format data as plain text for frontend
+    let activityFeed = [];
+
+    // Add user registrations
+    recentUsers.forEach(user => {
+      activityFeed.push(`New User registration ${formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}`);
+    });
+
+    // Add job postings
+    recentJobs.forEach(job => {
+      activityFeed.push(`New job posted ${formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}`);
+    });
+
+    // Add application submissions
+    recentApplications.forEach(application => {
+      activityFeed.push(`Application submitted ${formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}`);
+    });
+
+    // Sort activities by latest time
+    activityFeed.sort((a, b) => new Date(b.timeAgo) - new Date(a.timeAgo));
+
+    return res.status(200).json({
+      success: true,
+      data: activityFeed, // Returns an array of formatted strings
+    });
+  } catch (error) {
+    console.error("Error fetching recent activity:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export const getRecentJobPostings = async (req, res) => {
+  try {
+    // Fetch recent jobs (latest postings, limited to 5 for pagination)
+    const recentJobs = await Job.find()
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .limit(15) // Adjust limit as per requirement
+      .populate("company", "companyName") // Populate company details
+      .populate("application"); // Fetch related applications
+
+    // Format job postings
+    const jobPostings = recentJobs.map((job) => ({
+      jobTitle: job.jobDetails.title,
+      company: job.company.companyName, // Extracting company name
+      posted: job.createdAt,
+      applications: job.application.length, // Counting applications
+      status: job.jobDetails.isActive ? "Active" : "Closed", // Determine job status
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: jobPostings,
+    });
+  } catch (error) {
+    console.error("Error fetching recent job postings:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};

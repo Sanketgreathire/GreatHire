@@ -62,6 +62,23 @@ app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "../frontend/dist"))); // Go up one level
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+
 
 // Start Server & Connect to Database
 server.listen(PORT, async () => {
