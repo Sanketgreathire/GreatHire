@@ -6,14 +6,14 @@ import Job from "./Job";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Jobs = () => {
-  const { jobs, error } = useJobDetails();
+  const { jobs, resetFilter, error } = useJobDetails();
   const [isLoading, setIsLoading] = useState(true);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 24;
 
   useEffect(()=>{
-    
+    resetFilter();
   }, [])
 
   useEffect(() => {

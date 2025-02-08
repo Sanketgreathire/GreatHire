@@ -89,15 +89,6 @@ export const JobDetailsProvider = ({ children }) => {
     setSaveJobsList(savedJobs);
   };
 
-  const updateSaveJobs = (userId, jobId) => {
-    if (!userId || !jobId) return;
-  
-    // Remove the job with the provided jobId from the saved jobs list.
-    setSaveJobsList((prevJobs) =>
-      prevJobs.filter((job) => job._id !== jobId)
-    );
-  };
-
   const filterJobs = (titleKeyword, location) => {
     const filteredJobs = originalJobsList.filter((job) => {
       const { jobDetails } = job;
