@@ -57,7 +57,6 @@ app.use("/api", apiLimiter); // Apply rate limiting to all API routes
 
 // API Routes
 app.use("/api/v1/user", userRoute);
-app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/recruiter", recruiterRoute);
 app.use("/api/v1/verification", verificationRoute);
 app.use("/api/v1/company", companyRoute);
@@ -65,6 +64,7 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
+app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);

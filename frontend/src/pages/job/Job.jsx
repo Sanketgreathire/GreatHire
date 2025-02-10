@@ -12,7 +12,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  const { toggleBookmarkStatus, updateSaveJobs } = useJobDetails();
+  const { toggleBookmarkStatus, updateSaveJobs, setSelectedJob } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const isBookmarked = job?.saveJob?.includes(user?._id) || false;
 
@@ -126,6 +126,7 @@ const Job = ({ job }) => {
       <div className="flex w-full items-center justify-between gap-4">
         <Button
           onClick={() => {
+            setSelectedJob(job);
             navigate(`/description`);
           }}
           variant="outline"

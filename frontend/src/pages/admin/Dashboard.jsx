@@ -228,6 +228,24 @@ const Dashboard = () => {
     currentPage * jobsPerPage
   );
 
+  // fetching recent activity
+  const fetchRecentActivity = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/recent-activity`
+      );
+      if (response.data.success) {
+        console.log(response.data.activityFeed);
+      }
+    } catch (err) {
+      console.log(`Error in fetch recent activity ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
   return (
     <>
       <Navbar linkName={"Dashboard"} />

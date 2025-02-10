@@ -10,8 +10,6 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 
 const JobDescription = () => {
   const { selectedJob } = useJobDetails();
-
-  console.log(selectedJob);
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 

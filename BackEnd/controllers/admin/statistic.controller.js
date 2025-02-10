@@ -3,6 +3,7 @@ import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import { Application } from "../../models/application.model.js";
 import { Company } from "../../models/company.model.js";
+import { formatDistanceToNow } from 'date-fns';
 
 export const getStatisticForAdmin = async (req, res) => {
   try {
@@ -116,6 +117,7 @@ export const getApplicationsDataByYear = async (req, res) => {
 
 export const getRecentActivity = async (req, res) => {
   try {
+
     // Fetch latest users (new registrations)
     const recentUsers = await User.find()
       .sort({ createdAt: -1 })
@@ -157,7 +159,7 @@ export const getRecentActivity = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: activityFeed, // Returns an array of formatted strings
+      activityFeed, // Returns an array of formatted strings
     });
   } catch (error) {
     console.error("Error fetching recent activity:", error);
@@ -176,7 +178,6 @@ export const getRecentJobPostings = async (req, res) => {
     // Fetch recent jobs (latest postings, limited to 5 for pagination)
     const recentJobs = await Job.find()
       .sort({ createdAt: -1 }) // Sort by newest first
-      .limit(15) // Adjust limit as per requirement
       .populate("company", "companyName") // Populate company details
       .populate("application"); // Fetch related applications
     // Function to format time difference
@@ -204,7 +205,7 @@ export const getRecentJobPostings = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: jobPostings,
+      jobPostings,
     });
   } catch (error) {
     console.error("Error fetching recent job postings:", error);
