@@ -8,28 +8,28 @@ import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 
 const RecruiterProfile = () => {
-  const [subscriptionStatus, setSubscriptionStatus] = useState("No");
+  //const [subscriptionStatus, setSubscriptionStatus] = useState("No");
   const [postedJobs, setPostedJobs] = useState(0);
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
-  const toggleSubscriptionStatus = () =>
-    setSubscriptionStatus((prevStatus) => (prevStatus === "No" ? "Yes" : "No"));
+  // const toggleSubscriptionStatus = () =>
+  //   setSubscriptionStatus((prevStatus) => (prevStatus === "No" ? "Yes" : "No"));
 
-  const incrementPostedJobs = () =>
-    setPostedJobs((prevJobs) => prevJobs + 1);
+  // const incrementPostedJobs = () =>
+  //   setPostedJobs((prevJobs) => prevJobs + 1);
 
-  const decrementPostedJobs = () =>
-    setPostedJobs((prevJobs) => (prevJobs > 0 ? prevJobs - 1 : 0));
+  // const decrementPostedJobs = () =>
+  //   setPostedJobs((prevJobs) => (prevJobs > 0 ? prevJobs - 1 : 0));
 
-  const handleDeleteAccount = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this account?"
-    );
-    if (confirmDelete) {
-      console.log("Account deletion logic goes here.");
-    }
-  };
+  // const handleDeleteAccount = () => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this account?"
+  //   );
+  //   if (confirmDelete) {
+  //     console.log("Account deletion logic goes here.");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -38,7 +38,7 @@ const RecruiterProfile = () => {
 
       {/* Main Content */}
       <div className="flex-grow flex justify-center items-center py-10">
-        <div className="w-full max-w-6xl bg-white shadow-lg rounded-lg p-10">
+        <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-10">
           {/* Header Section */}
           <div className="flex flex-col items-center border-b pb-6">
             <Avatar className="h-28 w-28 shadow-lg">
@@ -85,7 +85,7 @@ const RecruiterProfile = () => {
           </div>
 
           {/* Subscription Status */}
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Subscription Status
             </h2>
@@ -104,10 +104,10 @@ const RecruiterProfile = () => {
                 {subscriptionStatus}
               </Button>
             </div>
-          </div>
+          </div> */}
 
           {/* Posted Jobs */}
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
               Posted Jobs
             </h2>
@@ -133,18 +133,18 @@ const RecruiterProfile = () => {
                 </Button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Delete Account */}
-          <div className="mt-10 text-center">
+          {/* <div className="mt-10 flex justify-center">
             <Button
               onClick={handleDeleteAccount}
-              className="bg-red-600 text-white px-6 py-3 hover:bg-red-700 rounded-md flex items-center gap-2"
+              className="bg-red-600 text-white px-6 py-3 hover:bg-red-700 rounded-md flex gap-2"
             >
               <Trash2 className="h-5 w-5" />
               Delete Account
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 
