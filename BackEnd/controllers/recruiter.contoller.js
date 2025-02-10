@@ -524,7 +524,7 @@ export const deleteAccount = async (req, res) => {
         .status(200)
         .cookie("token", "", {
           maxAge: 0,
-          httpOnly: true,
+          httpsOnly: true,
           sameSite: "strict",
         })
         .json({
