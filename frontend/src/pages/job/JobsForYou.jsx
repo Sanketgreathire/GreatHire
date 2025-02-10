@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
@@ -14,6 +14,7 @@ import Navbar from "@/components/shared/Navbar";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { IoMdClose } from "react-icons/io";
 
 const JobsForYou = () => {
   const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
@@ -23,6 +24,17 @@ const JobsForYou = () => {
 
   const [showJobDetails, setShowJobDetails] = useState(false); // Added for small screen job details
   const jobDetailsRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setShowJobDetails(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
 
   const isApplied =
@@ -87,10 +99,6 @@ const JobsForYou = () => {
 
   return (
 
-    <>
-      {/* Passing this state to navbar to hide "GREATHIRE" logo for small screen job details */}
-      <Navbar showJobDetails={showJobDetails} setShowJobDetails={setShowJobDetails} />
-
     <div className="flex justify-center mt-4 gap-4 h-screen sticky top-10 md:px-6">
       {/* Job List */}
       <div
@@ -106,15 +114,6 @@ const JobsForYou = () => {
             }`}
 
             onClick={() => handleJobClick(job)} // Clicking on job card will show the details
-
-            // onClick={() => {
-            //   setSelectedJob(job);
-
-            //   // Navigate to JobView for small screens
-            //   if (window.innerWidth < 768) {
-            //     navigate("/jobview");
-            //   }
-            // }}
 
           >
             <div className="flex justify-between items-center">
@@ -264,22 +263,20 @@ const JobsForYou = () => {
         </div>
       )}
 
-      {/* Job details section for small screens */}
+      {/* SMALL SCREEN JOB DETAILS SECTION */}
       {showJobDetails && selectedJob && (
           <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out">
-            {/* Modified in navbar - Back button replacing the "GREATHIRE" logo */}
-            <div className="p-4 flex items-center justify-between border-b shadow-sm bg-white sticky top-0 z-10">
-              <button
-                className="text-blue-700 flex items-center gap-2"
-                onClick={() => setShowJobDetails(false)}
-              >
-                <IoMdArrowBack size={24} />
-                <span>Back</span>
-              </button>
-            </div>
 
-      {/* Job title and info's for small screen */}
-    <div className="p-6 pt-6">
+            {/* Button for closing small screen job details */}
+            <button
+            className="fixed top-[80px] right-4 bg-gray-200 p-2 rounded-md text-gray-700 hover:bg-gray-300 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
+            onClick={() => setShowJobDetails(false)}
+            >
+              <IoMdClose size={22} />
+            </button>
+            
+      {/* Job title and other info's for small screen */}
+    <div className="p-6 pt-20">
       <h3 className="text-xl font-semibold text-gray-900">{selectedJob?.jobDetails?.title}</h3>
       <p className="text-sm text-gray-600">{selectedJob?.jobDetails?.companyName}</p>
       <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.location}</p>
@@ -293,12 +290,12 @@ const JobsForYou = () => {
     </div>
   </div>
 
-    <div className="p-2 flex items-center gap-4 border-b ml-4">
+    <div className="p-2 flex items-center gap-8 border-b ml-4">
         <div
-          className={`p-2 ${selectedJob?.isBookmark ? "bg-green-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
-          onClick={() => changeBookmarkStatus()}
+          className={`p-2 ${isJobBookmarked(user?._id) ? "bg-green-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
+          onClick={() => handleBookmark(selectedJob._id)}
         >
-          <CiBookmark size={25} />
+          {isJobBookmarked(user?._id) ? <FaBookmark size={25} /> : <CiBookmark size={25} />}
         </div>
 
         <div
@@ -322,13 +319,13 @@ const JobsForYou = () => {
         <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.duration}</p>
       </div>
 
-      {/* Job major details for small screen*/}
+      {/* Job major details for small screen job details*/}
       <div className="mt-4">
         <JobMajorDetails selectedJob={selectedJob} />
       </div>
     </div>
 
-      {/*Apply button for small screen*/}
+      {/*Apply button for small screen job details*/}
       <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center">
        <button
         className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2"
@@ -340,7 +337,6 @@ const JobsForYou = () => {
   </div>
   )}
   </div>
-  </>
   );
 };
 export default JobsForYou;
