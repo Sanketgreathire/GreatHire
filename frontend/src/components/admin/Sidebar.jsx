@@ -23,7 +23,7 @@ const navItems = [
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
+  return ( 
     <>
       {/* Sidebar Container */}
       <div
