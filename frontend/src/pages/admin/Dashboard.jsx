@@ -22,6 +22,8 @@ import axios from "axios";
 
 const Dashboard = () => {
   const { statsData } = useSelector((state) => state.stats);
+  const [recentActivity, setRecentActivity] = useState(null);
+  const [jobPostings, setJobPostedJob] = useState([]);
 
   const stats = [
     {
@@ -126,97 +128,6 @@ const Dashboard = () => {
     fetchData();
   }, [selectedYear]);
 
-  // Sample job postings data
-  const jobPostings = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp Inc.",
-      posted: "2 days ago",
-      applications: 45,
-      status: "Active",
-    },
-    {
-      id: 2,
-      title: "Backend Engineer",
-      company: "InnovateX",
-      posted: "4 days ago",
-      applications: 30,
-      status: "Closed",
-    },
-    {
-      id: 3,
-      title: "UI/UX Designer",
-      company: "Creative Labs",
-      posted: "1 week ago",
-      applications: 25,
-      status: "Active",
-    },
-    {
-      id: 4,
-      title: "DevOps Engineer",
-      company: "CloudNet",
-      posted: "5 days ago",
-      applications: 18,
-      status: "Active",
-    },
-    {
-      id: 5,
-      title: "Data Scientist",
-      company: "BigData Solutions",
-      posted: "3 days ago",
-      applications: 50,
-      status: "Closed",
-    },
-    {
-      id: 6,
-      title: "Mobile Developer",
-      company: "AppMasters",
-      posted: "6 days ago",
-      applications: 20,
-      status: "Active",
-    },
-    {
-      id: 7,
-      title: "Product Manager",
-      company: "VisionaryTech",
-      posted: "1 week ago",
-      applications: 15,
-      status: "Active",
-    },
-    {
-      id: 8,
-      title: "QA Engineer",
-      company: "TestifyQA",
-      posted: "2 weeks ago",
-      applications: 10,
-      status: "Closed",
-    },
-    {
-      id: 9,
-      title: "Full Stack Developer",
-      company: "CodeCrafters",
-      posted: "3 days ago",
-      applications: 40,
-      status: "Active",
-    },
-    {
-      id: 10,
-      title: "Marketing Manager",
-      company: "AdWorld",
-      posted: "5 days ago",
-      applications: 35,
-      status: "Active",
-    },
-    {
-      id: 11,
-      title: "Cybersecurity Analyst",
-      company: "SecureNet",
-      posted: "1 week ago",
-      applications: 22,
-      status: "Active",
-    },
-  ];
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -235,7 +146,21 @@ const Dashboard = () => {
         `${ADMIN_STAT_API_END_POINT}/recent-activity`
       );
       if (response.data.success) {
-        console.log(response.data.activityFeed);
+        setRecentActivity(response.data.data);
+      }
+    } catch (err) {
+      console.log(`Error in fetch recent activity ${err}`);
+    }
+  };
+
+  // fetching recent posted job
+  const fetchRecentPostedJob = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/recent-job-postings`
+      );
+      if (response.data.success) {
+        setJobPostedJob(response.data.jobPostings)
       }
     } catch (err) {
       console.log(`Error in fetch recent activity ${err}`);
@@ -244,6 +169,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchRecentActivity();
+    fetchRecentPostedJob();
   }, []);
 
   return (
@@ -282,7 +208,9 @@ const Dashboard = () => {
                 </span>
                 <p>
                   New User Registered{" "}
-                  <span className="text-gray-400 text-sm">2 minutes ago</span>
+                  <span className="text-gray-400 text-sm">
+                    {recentActivity?.[0]}
+                  </span>
                 </p>
               </li>
               <li className="flex items-center gap-3">
@@ -291,7 +219,9 @@ const Dashboard = () => {
                 </span>
                 <p>
                   New Company Registered{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                  <span className="text-gray-400 text-sm">
+                    {recentActivity?.[1]}
+                  </span>
                 </p>
               </li>
               <li className="flex items-center gap-3">
@@ -300,7 +230,9 @@ const Dashboard = () => {
                 </span>
                 <p>
                   New Recruiter Registered{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                  <span className="text-gray-400 text-sm">
+                    {recentActivity?.[2]}
+                  </span>
                 </p>
               </li>
 
@@ -310,7 +242,9 @@ const Dashboard = () => {
                 </span>
                 <p>
                   New job posted{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                  <span className="text-gray-400 text-sm">
+                    {recentActivity?.[3]}
+                  </span>
                 </p>
               </li>
               <li className="flex items-center gap-3">
@@ -319,7 +253,9 @@ const Dashboard = () => {
                 </span>
                 <p>
                   New Application submitted{" "}
-                  <span className="text-gray-400 text-sm">1 hour ago</span>
+                  <span className="text-gray-400 text-sm">
+                    {recentActivity?.[4]}
+                  </span>
                 </p>
               </li>
             </ul>
@@ -349,11 +285,14 @@ const Dashboard = () => {
 
         {/* Recent Job Postings - Table with Pagination */}
         <Card className="p-4 mt-6">
+          <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold mb-4">Recent Job Postings</h3>
-          <Table>
+          <h3 className="text-lg font-semibold">Total Job: <span className="text-gray-500">{jobPostings.length}</span></h3>
+          </div>
+          <Table >
             <TableHeader>
               <TableRow>
-                <TableHead>Job Title</TableHead>
+                <TableHead >Job Title</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Posted</TableHead>
                 <TableHead>Applications</TableHead>
@@ -363,7 +302,7 @@ const Dashboard = () => {
             <TableBody>
               {displayedJobs.map((job) => (
                 <TableRow key={job.id}>
-                  <TableCell>{job.title}</TableCell>
+                  <TableCell>{job.jobTitle}</TableCell>
                   <TableCell>{job.company}</TableCell>
                   <TableCell>{job.posted}</TableCell>
                   <TableCell>{job.applications}</TableCell>
@@ -382,7 +321,7 @@ const Dashboard = () => {
           </Table>
 
           {/* Pagination Controls */}
-          <div className="flex justify-end mt-4">
+          <div className="flex items-center justify-end mt-4">
             <Button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
