@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,34 +13,61 @@ import { Trash, Eye } from "lucide-react";
 import { Briefcase, FileText, UserCheck } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
-import { Select, MenuItem } from "@mui/material";
+import axios from "axios";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
-
-const dummyUsers = [
-  {
-    id: 1,
-    name: "John Smith",
-    email: "john.smith@example.com",
-    joinDate: "Jan 15, 2024",
-    contact: "8279206988",
-    applications: 12,
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah.j@example.com",
-    joinDate: "Feb 1, 2024",
-    contact: "8955891038",
-    applications: 8,
-  },
-];
+import {
+  ADMIN_USER_DATA_API_END_POINT,
+  USER_API_END_POINT,
+} from "@/utils/ApiEndPoint";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Users = () => {
   const [search, setSearch] = useState("");
-  const [contact, setcontact] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const [usersList, setUsersList] = useState([]);
+  const navigate = useNavigate();
+  const [dloading, dsetLoading] = useState({});
+
+  // fetch user list
+  const fetchUserList = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_USER_DATA_API_END_POINT}/user-stats`
+      );
+      if (response.data.success) {
+        setUsersList(response.data.data);
+      }
+    } catch (err) {
+      console.log(`Error in fetch user list ${err}`);
+    }
+  };
+
+  const handleDeleteAccount = async (email) => {
+    try {
+      dsetLoading((prevLoading) => ({ ...prevLoading, [email]: true }));
+      const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
+        data: { email },
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        navigate("/");
+        dispatch(logOut());
+      }
+      toast.success(response.data.message);
+    } catch (err) {
+      console.error("Error deleting account: ", err.message);
+      toast.error("Error in deleting account");
+    } finally {
+      dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
+    }
+  };
+
+  useEffect(() => {
+    fetchUserList();
+  }, []);
 
   const { statsData } = useSelector((state) => state.stats);
 
@@ -71,13 +98,14 @@ const Users = () => {
     },
   ];
 
-  const filteredUsers = dummyUsers.filter(
+  const filteredUsers = usersList?.filter(
     (user) =>
-      (user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase()) || user.contact.toLowerCase().includes(search.toLowerCase())) 
+      user.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase()) ||
+      user.phoneNumber.toLowerCase().includes(search.toLowerCase())
   );
 
-  const paginatedUsers = filteredUsers.slice(
+  const paginatedUsers = filteredUsers?.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
@@ -94,9 +122,7 @@ const Users = () => {
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">
-                {stat.count}
-              </p>
+              <p className="text-2xl font-bold text-center">{stat.count}</p>
               {/* <span className="text-sm text-gray-500">
                 {stat.change} from last month
               </span> */}
@@ -115,12 +141,11 @@ const Users = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
           />
-         
         </div>
         <Table className="text-center">
-          <TableHeader >
-            <TableRow >
-              <TableHead className="text-center">User</TableHead>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Name</TableHead>
               <TableHead className="text-center">Email</TableHead>
               <TableHead className="text-center">Contact</TableHead>
               <TableHead className="text-center">Join Date</TableHead>
@@ -129,17 +154,29 @@ const Users = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedUsers.map((user) => (
+            {paginatedUsers?.map((user) => (
               <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.fullname}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.contact}</TableCell>
-                <TableCell>{user.joinDate}</TableCell>
-                
-                <TableCell >{user.applications}</TableCell>
+                <TableCell>{user.phoneNumber}</TableCell>
+                <TableCell>{user.joined}</TableCell>
+
+                <TableCell>{user.applicationCount}</TableCell>
                 <TableCell className="flex gap-4 justify-center">
-                  <Eye className="text-blue-500 cursor-pointer" size={16} />
-                  <Trash className="text-red-500 cursor-pointer" size={16} />
+                  <Eye
+                    className="text-blue-500 cursor-pointer"
+                    size={16}
+                    onClick={() => navigate(`/admin/users/details/${user._id}`)}
+                  />
+                  {dloading[user?.email] ? (
+                    "deleting..."
+                  ) : (
+                    <Trash
+                      className="text-red-500 cursor-pointer"
+                      size={16}
+                      onClick={() => handleDeleteAccount(user.email)}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}

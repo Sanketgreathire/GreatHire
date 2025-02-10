@@ -243,7 +243,7 @@ const RecruiterJob = ({ recruiterId }) => {
                       </td>
                       <td className="py-3 px-6 text-center">
                         {dloading[job._id] ? (
-                          "loading..."
+                          "deleting..."
                         ) : (
                           <button
                             onClick={(event) => deleteJob(event, job._id)}

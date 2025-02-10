@@ -622,12 +622,22 @@ export const resetPassword = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
+  const { userId } = req.id; // Logged-in user ID
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   try {
-    // Validate that the email is provided
+    // Validate input
     if (!email) {
       return res.status(400).json({
         message: "Email is required to delete an account.",
+        success: false,
+      });
+    }
+
+    // check is email valid
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid Email.",
         success: false,
       });
     }
@@ -642,27 +652,46 @@ export const deleteAccount = async (req, res) => {
       });
     }
 
+    // Check if the logged-in user is either an Admin or the user themselves
+    const admin = await Admin.findById(userId);
+    const isSelf = user._id.toString() === userId;
+
+    if (!admin && !isSelf) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this account.",
+        success: false,
+      });
+    }
+
     // Remove all applications associated with the user
     await Application.deleteMany({ applicant: user._id });
 
     // Delete the user
     await User.findOneAndDelete({ "emailId.email": email });
 
-    return res
-      .status(200)
-      .cookie("token", "", {
-        maxAge: 0,
-        httpsOnly: true,
-        sameSite: "strict",
-      })
-      .json({
-        message: "Account deleted successfully.",
-        success: true,
-      });
+    // If the user is deleting their own account, remove their token
+    if (isSelf) {
+      return res
+        .status(200)
+        .cookie("token", "", {
+          maxAge: 0,
+          httpOnly: true,
+          sameSite: "strict",
+        })
+        .json({
+          message: "Your account has been deleted successfully.",
+          success: true,
+        });
+    }
+
+    // If an admin deletes another user's account, just send a success response
+    return res.status(200).json({
+      message: "User account deleted successfully.",
+      success: true,
+    });
   } catch (err) {
     console.error("Error in deleteAccount:", err);
 
-    // Handle server errors
     return res.status(500).json({
       message: "An error occurred while deleting the account.",
       error: err.message,

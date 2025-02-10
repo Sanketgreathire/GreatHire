@@ -251,7 +251,7 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
-              {user?.emailId.email === company?.adminEmail && (
+              {user?.emailId?.email === company?.adminEmail && (
                 <NavLink
                   to="/recruiter/dashboard/delete-account"
                   className={navLinkClass}

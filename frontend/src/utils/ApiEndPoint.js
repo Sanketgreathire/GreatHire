@@ -2,6 +2,7 @@ export const USER_API_END_POINT = "http://localhost:8000/api/v1/user";
 export const RECRUITER_API_END_POINT = "http://localhost:8000/api/v1/recruiter";
 export const ADMIN_API_END_POINT = "http://localhost:8000/api/v1/admin";
 export const ADMIN_STAT_API_END_POINT = "http://localhost:8000/api/v1/admin/stat";
+export const ADMIN_USER_DATA_API_END_POINT = "http://localhost:8000/api/v1/admin/user/data";
 export const COMPANY_API_END_POINT = "http://localhost:8000/api/v1/company";
 export const VERIFICATION_API_END_POINT = "http://localhost:8000/api/v1/verification";
 export const JOB_API_END_POINT = "http://localhost:8000/api/v1/job";

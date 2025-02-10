@@ -369,6 +369,7 @@ export const getCurrentPlan = async (req, res) => {
   }
 };
 
+// This controller will help to get candiadate data 
 export const getCandidateData = async (req, res) => {
   try {
     const { jobTitle, experience, salaryBudget, companyId } = req.query;

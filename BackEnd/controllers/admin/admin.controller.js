@@ -93,7 +93,7 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const userWithoutPassword = await Admin.findById(newUser._id).select(
+    const userWithoutPassword = await Admin.findById(user._id).select(
       "-password"
     );
 

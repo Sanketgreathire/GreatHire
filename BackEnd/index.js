@@ -22,6 +22,7 @@ import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
 import adminStatRoute from './routes/admin/statistic.route.js';
 import adminRoute from './routes/admin/admin.route.js'
+import adminUserDataRoute from './routes/admin/userStats.route.js'
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
@@ -66,6 +67,7 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
+app.use("/api/v1/admin/user/data", adminUserDataRoute);
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();

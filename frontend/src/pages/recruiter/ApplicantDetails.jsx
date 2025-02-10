@@ -95,7 +95,7 @@ const applicantDetails = ({
               </p>
               <p className="text-gray-600 flex items-center space-x-2">
                 <span className="font-semibold">Email:</span>
-                <span>{app.applicant?.emailId?.email}</span>
+                <span>{app?.applicant?.emailId?.email}</span>
                 {app.applicant?.emailId?.isVerified && (
                   <MdOutlineVerified size={20} color="green" title="Verified" />
                 )}
