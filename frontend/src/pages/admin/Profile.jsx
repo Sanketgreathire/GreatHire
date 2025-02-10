@@ -1,8 +1,13 @@
 import React from 'react'
+import Navbar from '@/components/admin/Navbar'
 
 const Profile = () => {
   return (
-    <div>Profile</div>
+    <>
+      <Navbar linkName={"Profile"} />
+     <div className='p-4'>Profile</div>
+    </>
+   
   )
 }
 

@@ -27,7 +27,6 @@ const AllApplicantsList = () => {
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
-  const [applicantStatus, setApplicantStatus] = useState(null);
   const [jobId, setJobId] = useState(null);
   const navigate = useNavigate();
 
@@ -94,7 +93,7 @@ const AllApplicantsList = () => {
         <div className="min-h-screen  p-4 sm:p-8">
           <div className="bg-white shadow-md rounded-lg p-6">
             <h1 className="text-2xl font-bold text-gray-700 mb-6 flex items-center gap-2">
-              <FiUsers className="text-blue-500 text-3xl" /> All Applicants
+              <FiUsers className="text-blue-700 text-3xl" /> All Applicants
             </h1>
 
             {/* Search & Filter Bar */}
@@ -174,9 +173,8 @@ const AllApplicantsList = () => {
                           <Button
                             className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-1 text-sm rounded-lg"
                             onClick={() => {
-                              setApplicant(app?.applicant);
+                              setApplicant(app);
                               setApplicantId(app?._id);
-                              setApplicantStatus(app?.status);
                               setApplicantDetailsModal(true);
                               setJobId(app?.job);
                             }}
@@ -218,12 +216,10 @@ const AllApplicantsList = () => {
         </div>
       ) : (
         <ApplicantDetails
-          applicant={applicant}
+          app={applicant}
           setApplicantDetailsModal={setApplicantDetailsModal}
           applicantId={applicantId}
           jobId={jobId}
-          applicantStatus={applicantStatus}
-          setApplicantStatus={setApplicantStatus}
         />
       )}
     </>

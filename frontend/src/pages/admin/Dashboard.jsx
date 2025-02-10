@@ -228,6 +228,24 @@ const Dashboard = () => {
     currentPage * jobsPerPage
   );
 
+  // fetching recent activity
+  const fetchRecentActivity = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/recent-activity`
+      );
+      if (response.data.success) {
+        console.log(response.data.activityFeed);
+      }
+    } catch (err) {
+      console.log(`Error in fetch recent activity ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
   return (
     <>
       <Navbar linkName={"Dashboard"} />
@@ -256,7 +274,7 @@ const Dashboard = () => {
         {/* Recent Activity & Applications Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <Card className="p-4">
-            <h3 className="text-lg font-semibold">Recent Activity</h3>
+            <h3 className="text-lg font-semibold">Recent Activities</h3>
             <ul className="mt-4 space-y-2">
               <li className="flex items-center gap-3">
                 <span className="h-8 w-8 bg-purple-500 text-white flex items-center justify-center rounded-full">

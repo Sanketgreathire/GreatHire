@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
-import { Recruiter } from "../models/recruiter.model.js";
-import { Admin } from "../models/admin.model.js";
+import { User } from "../../models/user.model.js";
+import { Recruiter } from "../../models/recruiter.model.js";
+import { Admin } from "../../models/admin/admin.model.js";
+import { validationResult } from "express-validator";
 
 export const register = async (req, res) => {
   try {
@@ -15,19 +16,10 @@ export const register = async (req, res) => {
       });
     }
 
-    // Validate fullname length
-    if (fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
-    }
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
+    // check validation of email and password by express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     // Check if user already exists
@@ -54,31 +46,11 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Remove sensitive information before sending the response
-    const userWithoutPassword = await Admin.findById(newUser._id).select(
-      "-password"
-    );
-
-    const tokenData = {
-      userId: userWithoutPassword._id,
-    };
-    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
-      expiresIn: "1d",
-    });
-
     // cookies strict used...
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
-        sameSite: "strict",
-      })
-      .json({
-        message: "Account created successfully.",
-        success: true,
-        user: userWithoutPassword,
-      });
+    return res.status(200).json({
+      message: "Account created successfully.",
+      success: true,
+    });
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
@@ -98,10 +70,7 @@ export const login = async (req, res) => {
       });
     }
     //check mail is correct or not...
-    let user =
-      (await User.findOne({ email })) ||
-      (await Recruiter.findOne({ email })) ||
-      (await Admin.findOne({ email }));
+    let user = await Admin.findOne({ email });
 
     if (!user) {
       return res.status(200).json({

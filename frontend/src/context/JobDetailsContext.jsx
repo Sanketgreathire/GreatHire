@@ -78,7 +78,6 @@ export const JobDetailsProvider = ({ children }) => {
 
   // Function to get saved jobs based on userId
   const getSaveJobs = (userId) => {
-    
     if (!userId) return;
 
     const savedJobs = originalJobsList.filter((job) => {

@@ -13,12 +13,13 @@ import {
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
 import { validateUser } from "../middlewares/userValidator.js";
+import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 
 const router = express.Router();
 
 router.route("/register").post(validateUser, register);
-router.route("/login").post(login);
+router.route("/login").post(validateLogin, login);
 router.route("/googleLogin").post(googleLogin);
 
 router.route("/profile/update").put(
