@@ -168,11 +168,7 @@ export const getRecentActivity = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-<<<<<<< HEAD
-      activityFeed, // Returns an array of formatted strings
-=======
       data: activityFeed.filter(activity => activity !== null), // Remove null values
->>>>>>> 566b28d610c1e78baf20114b84e5dab9cddbba68
     });
   } catch (error) {
     console.error("Error fetching recent activity:", error);
