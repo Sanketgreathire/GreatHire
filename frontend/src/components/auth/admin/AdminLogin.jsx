@@ -20,8 +20,9 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "admin") navigate("/admin/dashboard");
-      else navigate("/");
+      if (user.role === "admin" || user.role === "Owner")
+        navigate("/admin/dashboard");
+      else navigate("/admin/login");
     }
   }, [user]);
   // Update state when input fields change

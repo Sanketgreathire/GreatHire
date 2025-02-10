@@ -105,6 +105,11 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+    // check validation of email and password by express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     //check mail is correct or not...
     let user =
       (await User.findOne({ "emailId.email": email })) ||

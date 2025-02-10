@@ -83,7 +83,11 @@ const Sidebar = () => {
         </nav>
 
         {/* Profile Link at the bottom */}
-        <div className={`${isOpen ? "p-4 w-52" : "w-16"} border-t border-gray-300 fixed bottom-0 md:w-52 `}>
+        <div
+          className={`${
+            isOpen ? "p-4 w-52" : "w-16"
+          } border-t border-gray-300 fixed bottom-0 md:w-52 `}
+        >
           <NavLink
             to="/admin/profile"
             className={({ isActive }) =>

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import img from "../../../assets/img9.png";
-import { MdOutlineVerified } from "react-icons/md";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
@@ -10,7 +8,6 @@ import { setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 
 const AdminSignup = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -55,9 +52,8 @@ const AdminSignup = () => {
         });
         dispatch(setUser(response.data.user)); // Set user in redux store
         // Redirect to login page
-        navigate("/recruiter/dashboard/home");
+        toast.success(response.data.message);
       }
-      toast.success(response.data.message);
     } catch (err) {
       console.log(err);
       // Show error message

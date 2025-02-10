@@ -282,9 +282,7 @@ const Navbar = () => {
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
-                    <span className="font-medium">
-                      {isRecruiter ? user?.fullname : user?.fullname}
-                    </span>
+                    <span className="font-medium">{user?.fullname}</span>
                   </button>
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">

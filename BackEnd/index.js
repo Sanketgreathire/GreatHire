@@ -8,6 +8,8 @@ import cron from "node-cron";
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
 import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -19,6 +21,7 @@ import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
 import adminStatRoute from './routes/admin/statistic.route.js';
+import adminRoute from './routes/admin/admin.route.js'
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
@@ -54,6 +57,7 @@ app.use("/api", apiLimiter); // Apply rate limiting to all API routes
 
 // API Routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/recruiter", recruiterRoute);
 app.use("/api/v1/verification", verificationRoute);
 app.use("/api/v1/company", companyRoute);
@@ -67,8 +71,7 @@ app.use((req, res, next) => {
   next();
 });
 
-import path from "path";
-import { fileURLToPath } from "url";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

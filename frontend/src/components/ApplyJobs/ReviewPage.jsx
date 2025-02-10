@@ -125,7 +125,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
         </div>
         <div>
           <p className="text-sm font-small">
-            How many years of total work experience do you have?
+             Experience Details
           </p>
           <h3 className="text-sm text-gray-500">{input?.experience}</h3>
         </div>

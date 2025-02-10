@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash } from "lucide-react";
+import { Trash, Eye } from "lucide-react";
 import { Briefcase, FileText, UserCheck } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,7 @@ const dummyUsers = [
     name: "John Smith",
     email: "john.smith@example.com",
     joinDate: "Jan 15, 2024",
-    status: "Active",
+    contact: "8279206988",
     applications: 12,
   },
   {
@@ -31,14 +31,14 @@ const dummyUsers = [
     name: "Sarah Johnson",
     email: "sarah.j@example.com",
     joinDate: "Feb 1, 2024",
-    status: "Pending",
+    contact: "8955891038",
     applications: 8,
   },
 ];
 
 const Users = () => {
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All");
+  const [contact, setcontact] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -74,8 +74,7 @@ const Users = () => {
   const filteredUsers = dummyUsers.filter(
     (user) =>
       (user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase())) &&
-      (status === "All" || user.status === status)
+        user.email.toLowerCase().includes(search.toLowerCase()) || user.contact.toLowerCase().includes(search.toLowerCase())) 
   );
 
   const paginatedUsers = filteredUsers.slice(
@@ -111,30 +110,22 @@ const Users = () => {
       <div className=" m-4 p-4 bg-white shadow rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <Input
-            placeholder="Search users by name, email"
+            placeholder="Search users by name, email, contact"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
           />
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-1/6 h-10"
-          >
-            <MenuItem value="All">All Status</MenuItem>
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
-          </Select>
+         
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Join Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Applications</TableHead>
-              <TableHead>Actions</TableHead>
+        <Table className="text-center">
+          <TableHeader >
+            <TableRow >
+              <TableHead className="text-center">User</TableHead>
+              <TableHead className="text-center">Email</TableHead>
+              <TableHead className="text-center">Contact</TableHead>
+              <TableHead className="text-center">Join Date</TableHead>
+              <TableHead className="text-center"> Applications</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -142,20 +133,12 @@ const Users = () => {
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>{user.contact}</TableCell>
                 <TableCell>{user.joinDate}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium  ${
-                      user.status === "Active"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </TableCell>
-                <TableCell>{user.applications}</TableCell>
-                <TableCell className="flex ">
+                
+                <TableCell >{user.applications}</TableCell>
+                <TableCell className="flex gap-4 justify-center">
+                  <Eye className="text-blue-500 cursor-pointer" size={16} />
                   <Trash className="text-red-500 cursor-pointer" size={16} />
                 </TableCell>
               </TableRow>

@@ -2,7 +2,6 @@ import { Job } from "../../models/job.model.js";
 import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import { Application } from "../../models/application.model.js";
-import { formatDistanceToNow } from "date-fns";
 
 export const getStatisticForAdmin = async (req, res) => {
   try {
@@ -115,57 +114,57 @@ export const getApplicationsDataByYear = async (req, res) => {
 };
 
 export const getRecentActivity = async (req, res) => {
-  try {
-    // Fetch latest users (new registrations)
-    const recentUsers = await User.find()
-      .sort({ createdAt: -1 })
-      .limit(1)
-      .select("createdAt");
+  // try {
+  //   // Fetch latest users (new registrations)
+  //   const recentUsers = await User.find()
+  //     .sort({ createdAt: -1 })
+  //     .limit(1)
+  //     .select("createdAt");
 
-    // Fetch latest jobs (new job postings)
-    const recentJobs = await Job.find()
-      .sort({ createdAt: -1 })
-      .limit(1)
-      .select("createdAt jobDetails.title");
+  //   // Fetch latest jobs (new job postings)
+  //   const recentJobs = await Job.find()
+  //     .sort({ createdAt: -1 })
+  //     .limit(1)
+  //     .select("createdAt jobDetails.title");
 
-    // Fetch latest applications (submissions)
-    const recentApplications = await Application.find()
-      .sort({ createdAt: -1 })
-      .limit(1)
-      .select("createdAt");
+  //   // Fetch latest applications (submissions)
+  //   const recentApplications = await Application.find()
+  //     .sort({ createdAt: -1 })
+  //     .limit(1)
+  //     .select("createdAt");
 
-    // Format data as plain text for frontend
-    let activityFeed = [];
+  //   // Format data as plain text for frontend
+  //   let activityFeed = [];
 
-    // Add user registrations
-    recentUsers.forEach(user => {
-      activityFeed.push(`New User registration ${formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}`);
-    });
+  //   // Add user registrations
+  //   recentUsers.forEach(user => {
+  //     activityFeed.push(`New User registration ${formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}`);
+  //   });
 
-    // Add job postings
-    recentJobs.forEach(job => {
-      activityFeed.push(`New job posted ${formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}`);
-    });
+  //   // Add job postings
+  //   recentJobs.forEach(job => {
+  //     activityFeed.push(`New job posted ${formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}`);
+  //   });
 
-    // Add application submissions
-    recentApplications.forEach(application => {
-      activityFeed.push(`Application submitted ${formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}`);
-    });
+  //   // Add application submissions
+  //   recentApplications.forEach(application => {
+  //     activityFeed.push(`Application submitted ${formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}`);
+  //   });
 
-    // Sort activities by latest time
-    activityFeed.sort((a, b) => new Date(b.timeAgo) - new Date(a.timeAgo));
+  //   // Sort activities by latest time
+  //   activityFeed.sort((a, b) => new Date(b.timeAgo) - new Date(a.timeAgo));
 
-    return res.status(200).json({
-      success: true,
-      data: activityFeed, // Returns an array of formatted strings
-    });
-  } catch (error) {
-    console.error("Error fetching recent activity:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
+  //   return res.status(200).json({
+  //     success: true,
+  //     data: activityFeed, // Returns an array of formatted strings
+  //   });
+  // } catch (error) {
+  //   console.error("Error fetching recent activity:", error);
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: "Server error",
+  //   });
+  // }
 };
 
 export const getRecentJobPostings = async (req, res) => {

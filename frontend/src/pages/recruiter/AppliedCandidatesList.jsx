@@ -29,7 +29,6 @@ const AppliedCandidatesList = () => {
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
-  const [applicantStatus, setApplicantStatus] = useState(null);
 
   const fetchApplicants = async (jobId) => {
     try {
@@ -114,7 +113,6 @@ const AppliedCandidatesList = () => {
                     onClick={() => {
                       setApplicant(data.applicant);
                       setApplicantId(data._id);
-                      setApplicantStatus(data.status)
                       setApplicantDetailsModal(true);
                     }}
                   >
@@ -165,8 +163,6 @@ const AppliedCandidatesList = () => {
           applicantId={applicantId}
           jobId={jobId}
           setApplicantDetailsModal={setApplicantDetailsModal}
-          applicantStatus={applicantStatus}
-          setApplicantStatus={setApplicantStatus}
         />
       )}
     </div>

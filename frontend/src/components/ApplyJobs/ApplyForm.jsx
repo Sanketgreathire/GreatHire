@@ -53,6 +53,10 @@ const ApplyForm = ({ setRight }) => {
 
   // Function to handle character limit restriction
   const handleCharLimitChange = (e, field) => {
+    console.log(e.key)
+    if (e.key === "Backspace") {
+      return;
+    }
     const text = e.target.value; // Get the input text
     const charCount = text.length; // Count characters
 
