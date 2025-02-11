@@ -363,7 +363,10 @@ export const toggleActive = async (req, res) => {
     const { jobId, isActive, companyId } = req.body;
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    const admin = await Admin.findById(userId); // Check if user is an admin
+
+    // If the user is neither an admin nor a valid recruiter, deny access
+    if (!admin && !isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,

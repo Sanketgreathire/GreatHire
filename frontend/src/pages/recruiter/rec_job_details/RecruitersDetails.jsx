@@ -6,6 +6,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { MdOutlineVerified } from "react-icons/md";
 import { MdOutlineVerifiedUser } from "react-icons/md";
 import RecruiterJobs from "./RecruiterJobs";
+import Navbar from "@/components/admin/Navbar";
+import { Button } from "@/components/ui/button";
 
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ const RecruitersDetails = () => {
   };
 
   useEffect(() => {
-    if (!user || user?.role !== "recruiter") {
+    if (!user || user?.role === "student") {
       navigate("/login");
     } else {
       fetchRecruiterDetails();
@@ -37,103 +39,120 @@ const RecruitersDetails = () => {
   }, [user]);
 
   return (
-    <div className=" flex flex-col md:flex-row gap-2 p-6">
-      {loading ? (
-        <div className="text-xl font-semibold">Loading...</div>
-      ) : recruiterDetails ? (
-        <>
-          <div className=" bg-white p-8 w-full md:w-1/3 rounded-lg shadow-lg flex flex-col space-y-2 h-fit">
-            <div>
-              <img
-                src={
-                  recruiterDetails?.profile.profilePhoto ||
-                  "https://github.com/shadcn.png"
-                }
-                alt={`${recruiterDetails.fullname}'s profile`}
-                className="w-32 h-32 rounded-full mx-auto"
-              />
-            </div>
-            <h2 className="text-3xl text-center font-bold">
-              {recruiterDetails?.fullname}
-            </h2>
-            <p className="text-gray-700 flex items-center gap-2 ">
-              <span>
-                <strong>Email:</strong> {recruiterDetails?.emailId.email}
-              </span>
-              <span className="text-green-600">
-                {recruiterDetails?.emailId.isVerified ? (
-                  <MdOutlineVerified size={25} />
-                ) : (
-                  "No"
-                )}
-              </span>
-            </p>
-            <p className="text-gray-700 flex items-center gap-2 ">
-              <span>
-                <strong>Phone Number:</strong>{" "}
-                {recruiterDetails?.phoneNumber.number || "N/A"}
-              </span>
-              {recruiterDetails?.phoneNumber.number && (
-                <span
-                  className={`${
-                    recruiterDetails?.phoneNumber.isVerified
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {recruiterDetails?.phoneNumber.isVerified ? (
+    <>
+      {user?.role !== "recruiter" && <Navbar linkName={"Recruiter Details"} />}
+      <div className=" flex flex-col md:flex-row gap-2 p-6">
+        {loading ? (
+          <div className="text-xl font-semibold">Loading...</div>
+        ) : recruiterDetails ? (
+          <>
+            <div className=" bg-white p-8 w-full md:w-1/3 rounded-lg shadow-lg flex flex-col space-y-2 h-fit">
+              <div>
+                <img
+                  src={
+                    recruiterDetails?.profile.profilePhoto ||
+                    "https://github.com/shadcn.png"
+                  }
+                  alt={`${recruiterDetails.fullname}'s profile`}
+                  className="w-32 h-32 rounded-full mx-auto"
+                />
+              </div>
+              <h2 className="text-3xl text-center font-bold">
+                {recruiterDetails?.fullname}
+              </h2>
+              <p className="text-gray-700 flex items-center gap-2 ">
+                <span>
+                  <strong>Email:</strong> {recruiterDetails?.emailId?.email}
+                </span>
+                <span className="text-green-600">
+                  {recruiterDetails?.emailId?.isVerified ? (
                     <MdOutlineVerified size={25} />
                   ) : (
                     "No"
                   )}
                 </span>
-              )}
-            </p>
-
-            <p className="text-gray-700 ">
-              <strong>Position:</strong>{" "}
-              {recruiterDetails?.position || "Not specified"}
-            </p>
-            <p className="text-gray-700">
-              <strong>Company Created:</strong>{" "}
-              {recruiterDetails?.isCompanyCreated ? "Yes" : "No"}
-            </p>
-            <p className="text-gray-700 ">
-              <strong>Account Status:</strong>{" "}
-              <span
-                className={`${
-                  recruiterDetails?.isActive ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {recruiterDetails?.isActive ? "Active" : "Inactive"}
-              </span>
-            </p>
-            <p className="text-gray-700 flex items-center gap-2 ">
-              <strong>Verification Status:</strong>{" "}
-              <span
-                className={`${
-                  recruiterDetails?.isVerify ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {recruiterDetails?.isVerify ? (
-                  <MdOutlineVerifiedUser size={25} />
-                ) : (
-                  "Not Verified"
+              </p>
+              <p className="text-gray-700 flex items-center gap-2 ">
+                <span>
+                  <strong>Phone Number:</strong>{" "}
+                  {recruiterDetails?.phoneNumber?.number || "N/A"}
+                </span>
+                {recruiterDetails?.phoneNumber?.number && (
+                  <span
+                    className={`${
+                      recruiterDetails?.phoneNumber?.isVerified
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {recruiterDetails?.phoneNumber.isVerified ? (
+                      <MdOutlineVerified size={25} />
+                    ) : (
+                      "No"
+                    )}
+                  </span>
                 )}
-              </span>
-            </p>
-            <p className="text-gray-700 ">
-              <strong>Role:</strong> {recruiterDetails?.role}
-            </p>
-          </div>
-          <div className="w-2/3">
-            <RecruiterJobs recruiterId={recruiterId} />
-          </div>
-        </>
-      ) : (
-        <div className="text-xl font-semibold">No details found</div>
-      )}
-    </div>
+              </p>
+
+              <p className="text-gray-700 ">
+                <strong>Position:</strong>{" "}
+                {recruiterDetails?.position || "Not specified"}
+              </p>
+              <p className="text-gray-700">
+                <strong>Company Created:</strong>{" "}
+                {recruiterDetails?.isCompanyCreated ? "Yes" : "No"}
+              </p>
+              <p className="text-gray-700 ">
+                <strong>Account Status:</strong>{" "}
+                <span
+                  className={`${
+                    recruiterDetails?.isActive
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {recruiterDetails?.isActive ? "Active" : "Inactive"}
+                </span>
+              </p>
+              <p className="text-gray-700 flex items-center gap-2 ">
+                <strong>Verification Status:</strong>{" "}
+                <span
+                  className={`${
+                    recruiterDetails?.isVerify
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {recruiterDetails?.isVerify ? (
+                    <MdOutlineVerifiedUser size={25} />
+                  ) : (
+                    "Not Verified"
+                  )}
+                </span>
+              </p>
+              <p className="text-gray-700 ">
+                <strong>Role:</strong> {recruiterDetails?.role}
+              </p>
+              {user?.role !== "recruiter" && (
+                <div className="flex justify-end">
+                  <Button
+                    className="bg-blue-700 hover:bg-blue-800"
+                    onClick={() => navigate(`/admin/for-admin/company-details/${recruiterDetails?._id}`)} 
+                  >
+                    Company Details
+                  </Button>
+                </div>
+              )}
+            </div>
+            <div className="w-2/3">
+              <RecruiterJobs recruiterId={recruiterId} />
+            </div>
+          </>
+        ) : (
+          <div className="text-xl font-semibold">No details found</div>
+        )}
+      </div>
+    </>
   );
 };
 

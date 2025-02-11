@@ -15,6 +15,7 @@ import UserDetails from "@/pages/admin/users/UserDetails";
 import AppliedCandidatesList from "@/pages/recruiter/AppliedCandidatesList";
 import { fetchStats } from "@/redux/admin/statsSlice";
 import RecruitersDetails from "@/pages/recruiter/rec_job_details/RecruitersDetails";
+import CompanyDetails from "@/pages/admin/recruiters/CompanyDetails";
 
 const AdminLayout = () => {
   const dispatch = useDispatch();
@@ -37,11 +38,18 @@ const AdminLayout = () => {
           <Route path="users/details/:userId" element={<UserDetails />} />
 
           <Route path="recruiters" element={<Recruiters />} />
-          <Route path="recruiter/details/:recruiterId" element={<RecruitersDetails />} />
+          <Route
+            path="recruiter/details/:recruiterId"
+            element={<RecruitersDetails />}
+          />
+          <Route path="for-admin/company-details/:recruiterId" element={<CompanyDetails />} />
 
           <Route path="jobs" element={<Jobs />} />
           <Route path="job/details/:id" element={<JobDetail />} />
-          <Route path="applicants-details/:id" element={<AppliedCandidatesList />} />
+          <Route
+            path="applicants-details/:id"
+            element={<AppliedCandidatesList />}
+          />
 
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />

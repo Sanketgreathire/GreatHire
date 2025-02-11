@@ -26,8 +26,7 @@ const AdminLogin = () => {
     }
   }, [user]);
 
-  console.log(user);
-  
+
   // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,8 +44,9 @@ const AdminLogin = () => {
       const response = await axios.post(
         `${ADMIN_API_END_POINT}/login`,
         {
-          data: formData,
+          ...formData,
         },
+        { withCredentials: true }
       );
       if (response.data.success) {
         dispatch(setUser(response.data.user));
