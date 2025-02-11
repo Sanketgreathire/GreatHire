@@ -116,9 +116,6 @@ export const login = async (req, res) => {
       (await Recruiter.findOne({
         "emailId.email": email,
         isActive: true,
-      })) ||
-      (await Admin.findOne({
-        "emailId.email": email,
       }));
 
     if (!user) {
@@ -350,6 +347,7 @@ export const updateProfile = async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(errors);
       return res.status(400).json({ errors: errors.array() });
     }
 
@@ -622,7 +620,7 @@ export const resetPassword = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
-  const { userId } = req.id; // Logged-in user ID
+  const userId = req.id; // Logged-in user ID
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   try {
@@ -654,7 +652,7 @@ export const deleteAccount = async (req, res) => {
 
     // Check if the logged-in user is either an Admin or the user themselves
     const admin = await Admin.findById(userId);
-    const isSelf = user._id.toString() === userId;
+    const isSelf = user._id === userId;
 
     if (!admin && !isSelf) {
       return res.status(403).json({

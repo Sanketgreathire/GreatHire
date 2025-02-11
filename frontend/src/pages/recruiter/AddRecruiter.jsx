@@ -130,7 +130,7 @@ const AddRecruiter = () => {
           </div>
           <button
             type="submit"
-            className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
               loading ? "cursor-not-allowed" : ""
             }`}
             disabled={loading}

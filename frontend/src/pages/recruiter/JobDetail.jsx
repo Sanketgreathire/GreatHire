@@ -132,7 +132,7 @@ const JobDetail = () => {
           >
             ←
           </button>
-          {user.role === "recruiter" && (
+          {user?.role === "recruiter" && (
             <button onClick={handleEdit} className="absolute right-4">
               <Pencil className="h-5 w-5 text-black cursor-pointer" />
             </button>
