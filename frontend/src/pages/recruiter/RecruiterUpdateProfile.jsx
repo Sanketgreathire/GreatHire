@@ -126,6 +126,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
                     name="email"
                     value={input.email}
                     onChange={changeEventHandler}
+                    readOnly
                   />
                 </div>
               </div>
