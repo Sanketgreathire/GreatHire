@@ -29,11 +29,12 @@ const RecruitersDetails = () => {
   };
 
   useEffect(() => {
-    if (!user || user?.role !== "recruiter") {
-      navigate("/login");
-    } else {
-      fetchRecruiterDetails();
-    }
+    // if (!user || user?.role === "student") {
+    //   navigate("/login");
+    // } else {
+    //   fetchRecruiterDetails();
+    // }
+    fetchRecruiterDetails();
   }, [user]);
 
   return (

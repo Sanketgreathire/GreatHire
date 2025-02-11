@@ -20,7 +20,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || user?.role !== "recruiter") navigate("/login");
+    // if (!user || user?.role === "student" ) navigate("/login");
   }, [user]);
 
   const getJobsByRecruiter = async (recruiterId, page = 1) => {

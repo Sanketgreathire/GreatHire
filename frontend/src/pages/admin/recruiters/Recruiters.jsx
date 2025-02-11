@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,28 +12,41 @@ import {
 import { Trash, Eye } from "lucide-react";
 import { Briefcase, FileText, UserCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Select, MenuItem } from "@mui/material";
+import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { ADMIN_RECRUITER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const dummyRecruiters = [
   {
     id: 1,
-    company: "TechCorp Solutions",
     fullname: "Michael Brown",
     email: "hr@techcorp.com",
-    postedJobs: 15,
-    status: "Verified",
+    phoneNumber: "8955891038",
+    position: "HR Mangaer",
+    postedJobs: 2,
+    status: 1,
   },
   {
     id: 2,
-    company: "Global Hire Inc",
     fullname: "Sarah Wilson",
     email: "sarah@globalhire.com",
-    postedJobs: 8,
-    status: "Pending",
+    phoneNumber: "8279206988",
+    position: "HR Recruiter",
+    postedJobs: 4,
+    status: -1,
+  },
+  {
+    id: 3,
+    fullname: "Sarah Wilson",
+    email: "sarah@globalhire.com",
+    phoneNumber: "8279206988",
+    position: "HR Recruiter",
+    postedJobs: 6,
+    status: 0,
   },
 ];
 
@@ -43,6 +56,8 @@ const Recruiters = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
   const { statsData } = useSelector((state) => state.stats);
+  const navigate = useNavigate();
+  const [recruiterList, setRecruiterList] = useState([]);
 
   const stats = [
     {
@@ -71,12 +86,34 @@ const Recruiters = () => {
     },
   ];
 
-  const filteredRecruiters = dummyRecruiters.filter(
-    (recruiter) =>
-      (recruiter.company.toLowerCase().includes(search.toLowerCase()) ||
-        recruiter.contactPerson.toLowerCase().includes(search.toLowerCase())) &&
-      (status === "All" || recruiter.status === status)
-  );
+  const fetchRecruiterList = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats`
+      );
+      if (response.data.success) {
+        setRecruiterList(response.data.recruiters);
+      }
+    } catch (err) {
+      console.log(`error in recruiter fetching ${err}`);
+    }
+  };
+
+  useEffect(()=>{
+    fetchRecruiterList();
+  },[])
+
+  const filteredRecruiters = recruiterList?.filter((recruiter) => {
+    const matchesSearch =
+      recruiter.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.phoneNumber.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus =
+      status === "All" || recruiter.status === Number(status);
+
+    return matchesSearch && matchesStatus;
+  });
 
   const paginatedRecruiters = filteredRecruiters.slice(
     (page - 1) * itemsPerPage,
@@ -112,22 +149,30 @@ const Recruiters = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
           />
+          {/* Status select */}
           <Select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) => {
+              // If the selected value is "All", keep it as a string;
+              // Otherwise, convert to a number.
+              const value = e.target.value;
+              setStatus(value === "All" ? "All" : Number(value));
+            }}
             className="w-1/6 h-10"
           >
             <MenuItem value="All">All Status</MenuItem>
-            <MenuItem value="Verified">Verified</MenuItem>
-            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value={1}>Verified</MenuItem>
+            <MenuItem value={0}>Pending</MenuItem>
+            <MenuItem value={-1}>Rejected</MenuItem>
           </Select>
         </div>
+
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Company</TableHead>
               <TableHead>Recruiter Name</TableHead>
-              <TableHead>Recruiter Email</TableHead>
+              <TableHead>Recruiter Contact</TableHead>
+              <TableHead>Recruiter Position</TableHead>
               <TableHead>Posted Jobs</TableHead>
               <TableHead>Recruiter Status</TableHead>
               <TableHead>Actions</TableHead>
@@ -135,37 +180,58 @@ const Recruiters = () => {
           </TableHeader>
           <TableBody>
             {paginatedRecruiters.map((recruiter) => (
-              <TableRow key={recruiter.id}>
-                <TableCell>{recruiter.company}</TableCell>
+              <TableRow key={recruiter._id}>
                 <TableCell>
-                  {recruiter.fullname}  
+                  {recruiter.fullname} <br />
+                  {recruiter.email}
                 </TableCell>
-                <TableCell>{recruiter.email}</TableCell>
+                <TableCell>{recruiter.phoneNumber}</TableCell>
+                <TableCell>{recruiter.position}</TableCell>
                 <TableCell>{recruiter.postedJobs}</TableCell>
-                
                 <TableCell>
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
-                      recruiter.status === "Verified"
+                      recruiter.isVerify === 1
                         ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
+                        : recruiter.isVerify === 0
+                        ? "bg-yellow-200 text-yellow-800"
+                        : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {recruiter.status}
+                    {recruiter.isVerify === 1
+                      ? "Verified"
+                      : recruiter.isVerify === 0
+                      ? "Pending"
+                      : "Rejected"}
                   </span>
                 </TableCell>
+
                 <TableCell className="flex items-center gap-2">
-                <Eye
+                  <Eye
                     className="text-blue-500 cursor-pointer"
                     size={16}
-                    onClick={() => navigate(`/admin/recruiter/details/${user._id}`)}
+                    onClick={() =>
+                      navigate(`/admin/recruiter/details/${recruiter._id}`)
+                    }
                   />
                   <Trash className="text-red-500 cursor-pointer" size={16} />
+                  {/* Toggle for recruiter activeness */}
+                  <Switch
+                    checked={recruiter.isActive}
+                    onChange={(e) =>
+                      handleToggleActive(recruiter._id, e.target.checked)
+                    }
+                    color="primary"
+                    inputProps={{
+                      "aria-label": "Toggle Recruiter Active Status",
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
         <div className="flex justify-between items-center mt-4">
           <span>
             Showing{" "}
