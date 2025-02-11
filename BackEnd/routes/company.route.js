@@ -16,7 +16,18 @@ import { singleUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
-router.route("/register").post(isAuthenticated, singleUpload, registerCompany);
+router.route("/register").post(
+  isAuthenticated,
+  (req, res, next) => {
+    singleUpload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message }); // Handle multer errors
+      }
+      next();
+    });
+  },
+  registerCompany
+);
 router.route("/company-by-id").post(getCompanyById);
 router.route("/company-by-userid").post(isAuthenticated, companyByUserId);
 router.route("/change-admin").put(isAuthenticated, changeAdmin);

@@ -6,27 +6,15 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    emailId: {
-      email: {
-        type: String,
-        required: true,
-        unique: true,
-        match: [/.+@.+\..+/, "Please enter a valid email address"],
-      },
-      isVerified: {
-        type: Boolean,
-        default: false,
-      },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
     phoneNumber: {
-      number: {
-        type: String,
-        required: true,
-      },
-      isVerified: {
-        type: Boolean,
-        required: true,
-      },
+      type: String,
+      required: true,
     },
     password: {
       type: String,

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
-import { Admin } from "../models/admin.model.js";
+import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
@@ -524,7 +524,7 @@ export const deleteAccount = async (req, res) => {
         .status(200)
         .cookie("token", "", {
           maxAge: 0,
-          httpOnly: true,
+          httpsOnly: true,
           sameSite: "strict",
         })
         .json({

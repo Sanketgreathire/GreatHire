@@ -60,6 +60,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("Resume size should be less than 10 MB.");
+        return;
+      }
+
       const fileUrl = URL.createObjectURL(file);
       setInput((prevData) => ({
         ...prevData,
@@ -77,9 +83,16 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("Image size should be less than 10 MB.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
+
       setInput((prev) => ({ ...prev, profilePhoto: file }));
     }
   };
@@ -138,9 +151,18 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg"
+        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Close"
+        >
+          ✖
+        </button>
+
         <h2 className="text-lg text-center font-semibold mb-4">
           Update Profile
         </h2>
@@ -149,10 +171,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           <div className="grid grid-cols-3 gap-2 items-center">
             {/* Profile Image */}
             <div className="relative flex flex-col items-center">
-              <label htmlFor="profilePhoto" className="font-semibold mb-2">
-                Profile Image
-              </label>
-
               {/* Profile Image with Pencil Icon */}
               <div className="relative w-24 h-24">
                 {previewImage ? (

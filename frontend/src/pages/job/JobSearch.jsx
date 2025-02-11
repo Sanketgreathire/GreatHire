@@ -44,7 +44,7 @@ const JobSearch = ({ searchInfo }) => {
         {/* Desktop Search Button */}
         <div className="hidden md:block">
           <button
-            className="bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-500 transition"
+            className="bg-blue-700 text-white py-3 px-4 rounded-md hover:bg-blue-600 transition"
             onClick={handleSearchClick}
           >
             Find Jobs
@@ -55,7 +55,7 @@ const JobSearch = ({ searchInfo }) => {
       {/* Mobile Search Button */}
       <div className="mt-4 w-full md:hidden">
         <button
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500 transition"
+          className="w-full bg-blue-700 text-white py-2 rounded-md hover:bg-blue-600 transition"
           onClick={handleSearchClick}
         >
           Find Jobs

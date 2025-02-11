@@ -65,6 +65,13 @@ const CreateCompany = () => {
         toast.error("Only allow jpg or png file");
         return;
       }
+
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("File size exceeds 10MB. Please choose a smaller file.");
+        return;
+      }
+
       setFormData({ ...formData, businessFile: file });
       setFileUploaded(false);
       setUploadProgress(0);
@@ -112,7 +119,7 @@ const CreateCompany = () => {
         toast.success("Created successfully! Link sent to company email");
         dispatch(setRecruiterIsCompanyCreated(true));
         navigate("/recruiter/dashboard/home");
-      }else{
+      } else {
         toast.error("Error creating company");
       }
     } catch (err) {
@@ -285,7 +292,7 @@ const CreateCompany = () => {
                 </h2>
                 <div className="mt-4">
                   <label className="block text-gray-600">
-                  Corporate Identification Number.
+                    Corporate Identification Number.
                   </label>
                   <input
                     type="text"

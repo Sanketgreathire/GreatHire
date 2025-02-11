@@ -1,29 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
 import { CiBookmark } from "react-icons/ci";
-import { FaBookmark } from "react-icons/fa";
+import { FaBookmark, FaHeart } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
-import { IoMdLink } from "react-icons/io";
+import { IoMdLink, IoMdClose } from "react-icons/io";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Navbar from "@/components/shared/Navbar";
 //import { selectIsJobApplied } from "@/redux/appliedJobSlice";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { IoMdClose } from "react-icons/io";
 
 const JobsForYou = () => {
   const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
     useJobDetails(); // Access functions from context
+    
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [showJobDetails, setShowJobDetails] = useState(false); // Added for small screen job details
-  const jobDetailsRef = useRef(null);
+  const jobContainerRef = useRef(null); // Ref to track the scrollable container
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,12 +35,28 @@ const JobsForYou = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [scrollPosition, setScrollPosition] = useState(0);
+  useEffect(() => {
+    // Reset scroll position when selected job changes
+    if (jobContainerRef.current) {
+      jobContainerRef.current.scrollTop = 0; // Reset scroll to the top
+    }
+  }, [selectedJob]); // Triggered whenever selectedJob changes
 
+  const handleScroll = () => {
+    // Track the scroll position
+    if (jobContainerRef.current) {
+      setScrollPosition(jobContainerRef.current.scrollTop);
+    }
+  };
+
+  // check for current selected job
   const isApplied =
     selectedJob?.application?.some(
       (application) => application.applicant === user?._id
     ) || false;
 
+  // check is job applied or not in job list
   const hasAppliedToJob = (jobId) =>
     jobs.some(
       (job) =>
@@ -88,9 +103,8 @@ const JobsForYou = () => {
     return activeDays;
   };
 
-
   // Function for handling the job card clicks
-   const handleJobClick = (job) => {
+  const handleJobClick = (job) => {
     setSelectedJob(job);
     if (window.innerWidth < 768) {
       setShowJobDetails(true); // For showing job details on small screens
@@ -188,7 +202,7 @@ const JobsForYou = () => {
       {/* Job Details */}
       {selectedJob && (
         <div className="md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden">
-          <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-4 flex flex-col space-y-2 w-full">
+          <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-2 flex flex-col space-y-1 w-full">
             <h3 className="text-2xl font-semibold">
               {selectedJob?.jobDetails?.title}
             </h3>
@@ -256,7 +270,8 @@ const JobsForYou = () => {
             </div>
           </div>
 
-          <div ref={jobDetailsRef}
+          <div ref={jobContainerRef}
+          onScroll={handleScroll}
            className="overflow-y-auto scrollbar-hide max-h-[calc(100vh-200px)] px-4 py-4">
             <JobMajorDetails selectedJob={selectedJob} />
           </div>
@@ -281,7 +296,15 @@ const JobsForYou = () => {
       <p className="text-sm text-gray-600">{selectedJob?.jobDetails?.companyName}</p>
       <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.location}</p>
       <p className="mt-2 px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200">
-     {selectedJob?.jobDetails?.salary}
+      {selectedJob?.jobDetails?.salary
+                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                .split("-")
+                .map((part, index) => (
+                  <span key={index}>
+                    ₹{part.trim()}
+                    {index === 0 ? " - " : ""}
+                  </span>
+                ))}
     </p>
 
     <div className="mt-2 flex items-center text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded-md w-fit">
@@ -291,32 +314,37 @@ const JobsForYou = () => {
   </div>
 
     <div className="p-2 flex items-center gap-8 border-b ml-4">
-        <div
-          className={`p-2 ${isJobBookmarked(user?._id) ? "bg-green-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
-          onClick={() => handleBookmark(selectedJob._id)}
-        >
-          {isJobBookmarked(user?._id) ? <FaBookmark size={25} /> : <CiBookmark size={25} />}
-        </div>
-
-        <div
+    {user &&
+    (isJobBookmarked(user?._id) ? (
+      <FaBookmark
+      size={25}
+      onClick={() => handleBookmark(selectedJob._id)}
+      className="text-green-700 cursor-pointer"
+      />
+    ) : (
+      <CiBookmark
+      size={25}
+      onClick={() => handleBookmark(selectedJob._id)}
+      className="cursor-pointer"
+      />
+    ))}
+        {/* <div
           className={`p-2 ${selectedJob?.isBlock ? "bg-red-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
           onClick={() => changeBlockStatus()}
         >
           <MdBlock size={25} />
-        </div>
+        </div> */}
 
-        <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer -mt-6">
+        {/* <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer -mt-6">
           <IoMdLink size={25} />
-        </div>
+        </div> */}
       </div>
 
     {/* Job details for small screen*/}
         <div className="p-6 overflow-y-auto h-[calc(100vh-300px)] pb-20">
-        <div className="mt-4">
-        <p className="font-semibold text-gray-700">Job Type:</p>
-        <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.jobType}</p>
-        <p className="font-semibold text-gray-700">Duration:</p>
-        <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.duration}</p>
+        <div className="mt-4 space-y-1">
+        <p className="font-semibold text-gray-700">Job Type : <span className="text-sm text-gray-500">{selectedJob?.jobDetails?.jobType}</span></p>
+        <p className="font-semibold text-gray-700">Duration : <span className="text-sm text-gray-500">{selectedJob?.jobDetails?.duration}</span></p>
       </div>
 
       {/* Job major details for small screen job details*/}

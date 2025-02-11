@@ -23,11 +23,11 @@ const navItems = [
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
+  return ( 
     <>
       {/* Sidebar Container */}
       <div
-        className={`fixed z-40 h-screen bg-white flex flex-col transition-all duration-300 ${
+        className={`fixed z-30 h-screen overflow-y-scroll bg-white flex flex-col transition-all duration-300 ${
           isOpen ? "w-52" : "w-16"
         } md:w-52`}
       >
@@ -83,7 +83,11 @@ const Sidebar = () => {
         </nav>
 
         {/* Profile Link at the bottom */}
-        <div className={`${isOpen ? "p-4 w-52" : "w-16"} border-t border-gray-300 fixed bottom-0 md:w-52 `}>
+        <div
+          className={`${
+            isOpen ? "p-4 w-52" : "w-16"
+          } border-t border-gray-300 fixed bottom-0 md:w-52 `}
+        >
           <NavLink
             to="/admin/profile"
             className={({ isActive }) =>

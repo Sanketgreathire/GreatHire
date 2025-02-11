@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { updateEmailVerification } from "@/redux/authSlice";
 
-const VerifyEmail = ({setOpenEmailOTPModal}) => {
+const VerifyEmail = ({ setOpenEmailOTPModal }) => {
   const { user } = useSelector((state) => state.auth);
   const [token, setToken] = useState(null);
   const [otp, setOTP] = useState("");
@@ -81,7 +81,8 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
             {
               decodedOTP: decoded?.otp,
               otp,
-            }
+            },
+            { withCredentials: true }
           );
 
           if (response?.data?.success) {
@@ -92,14 +93,15 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
               `${VERIFICATION_API_END_POINT}/update-email-verification`,
               {
                 email: user?.emailId?.email,
-              }
+              },
+              { withCredentials: true }
             );
 
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
               dispatch(updateEmailVerification(true));
-              setOpenEmailOTPModal(false)
+              setOpenEmailOTPModal(false);
             } else {
               toast.error(response.data.message);
             }

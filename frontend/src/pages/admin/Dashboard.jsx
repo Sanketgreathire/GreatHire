@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
 import {
@@ -14,12 +14,19 @@ import { Briefcase, FileText, UserCheck } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
+import { useSelector } from "react-redux";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
+import axios from "axios";
 
 const Dashboard = () => {
+  const { statsData } = useSelector((state) => state.stats);
+
   const stats = [
     {
       title: "Total Users",
-      count: 24563,
+      count: statsData?.totalUsers ?? 0, // Use fetched total users
       change: "+12.5%",
       icon: <FaRegUser size={30} />,
       color: "text-blue-500",
@@ -27,7 +34,7 @@ const Dashboard = () => {
     },
     {
       title: "Active Jobs",
-      count: 1234,
+      count: statsData?.activeJobs ?? 0, // Use fetched active jobs
       change: "+5.2%",
       icon: <Briefcase size={30} />,
       color: "text-green-500",
@@ -35,7 +42,7 @@ const Dashboard = () => {
     },
     {
       title: "Total Recruiters",
-      count: 892,
+      count: statsData?.totalRecruiters ?? 0, // Use fetched recruiters count
       change: "+8.1%",
       icon: <UserCheck size={30} />,
       color: "text-purple-500",
@@ -43,7 +50,7 @@ const Dashboard = () => {
     },
     {
       title: "Applications",
-      count: 45789,
+      count: statsData?.totalApplications ?? 0, // Use fetched applications count
       change: "+15.3%",
       icon: <FileText size={30} />,
       color: "text-yellow-500",
@@ -51,18 +58,73 @@ const Dashboard = () => {
     },
   ];
 
-  const applicationsData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  // Define available years (current year and previous 5 years, adjust as needed)
+  const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
+  // Default the selected year to the current year
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
+  // Define month labels for all 12 months
+  const monthLabels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Initial chart data (using dummy values for 12 months)
+  const [applicationsData, setApplicationsData] = useState({
+    labels: monthLabels,
     datasets: [
       {
         label: "Applications",
-        data: [1000, 1800, 2900, 2700, 3300, 4000],
+        data: Array(12).fill(0), // An array of 12 zeros as placeholder
         borderColor: "purple",
         backgroundColor: "rgba(128, 0, 128, 0.1)",
         fill: true,
       },
     ],
-  };
+  });
+
+  // Fetch data for the selected year
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Replace with your actual API endpoint
+        const response = await axios.get(
+          `${ADMIN_STAT_API_END_POINT}/applications?year=${selectedYear}`
+        );
+        //  API response returns an array of 12 numbers representing monthly application counts:
+        // e.g., { data: [120, 150, 200, ..., 300] }
+        setApplicationsData({
+          labels: monthLabels,
+          datasets: [
+            {
+              label: "Applications",
+              data: response.data.data, // Should be an array of 12 numbers
+              borderColor: "purple",
+              backgroundColor: "rgba(128, 0, 128, 0.1)",
+              fill: true,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching applications data:", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedYear]);
 
   // Sample job postings data
   const jobPostings = [
@@ -158,7 +220,7 @@ const Dashboard = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10;
+  const jobsPerPage = 5;
   const totalPages = Math.ceil(jobPostings.length / jobsPerPage);
 
   const displayedJobs = jobPostings.slice(
@@ -166,22 +228,38 @@ const Dashboard = () => {
     currentPage * jobsPerPage
   );
 
+  // fetching recent activity
+  const fetchRecentActivity = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/recent-activity`
+      );
+      if (response.data.success) {
+        console.log(response.data.activityFeed);
+      }
+    } catch (err) {
+      console.log(`Error in fetch recent activity ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentActivity();
+  }, []);
+
   return (
     <>
       <Navbar linkName={"Dashboard"} />
       <div className="p-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
             <Card
               key={index}
               className="p-4 flex items-center justify-between bg-white shadow rounded-xl"
             >
               <div>
-                <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-                <p className="text-2xl font-bold">
-                  {stat.count.toLocaleString()}
-                </p>
+                <h3 className="text-lg  font-semibold mt-2">{stat.title}</h3>
+                <p className="text-2xl font-bold text-center">{stat.count}</p>
                 {/* <span className="text-sm text-gray-500">
                   {stat.change} from last month
                 </span> */}
@@ -196,19 +274,38 @@ const Dashboard = () => {
         {/* Recent Activity & Applications Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <Card className="p-4">
-            <h3 className="text-lg font-semibold">Recent Activity</h3>
+            <h3 className="text-lg font-semibold">Recent Activities</h3>
             <ul className="mt-4 space-y-2">
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-pink-500 text-white flex items-center justify-center rounded-full">
-                  R
+                <span className="h-8 w-8 bg-purple-500 text-white flex items-center justify-center rounded-full">
+                  U
                 </span>
                 <p>
-                  New recruiter registration{" "}
+                  New User Registered{" "}
                   <span className="text-gray-400 text-sm">2 minutes ago</span>
                 </p>
               </li>
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
+                <span className="h-8 w-8 bg-cyan-500 text-white flex items-center justify-center rounded-full">
+                  C
+                </span>
+                <p>
+                  New Company Registered{" "}
+                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                </p>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="h-8 w-8 bg-red-500 text-white flex items-center justify-center rounded-full">
+                  R
+                </span>
+                <p>
+                  New Recruiter Registered{" "}
+                  <span className="text-gray-400 text-sm">15 minutes ago</span>
+                </p>
+              </li>
+
+              <li className="flex items-center gap-3">
+                <span className="h-8 w-8 bg-indigo-500 text-white flex items-center justify-center rounded-full">
                   J
                 </span>
                 <p>
@@ -217,11 +314,11 @@ const Dashboard = () => {
                 </p>
               </li>
               <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-green-500 text-white flex items-center justify-center rounded-full">
+                <span className="h-8 w-8 bg-amber-500 text-white flex items-center justify-center rounded-full">
                   A
                 </span>
                 <p>
-                  Application submitted{" "}
+                  New Application submitted{" "}
                   <span className="text-gray-400 text-sm">1 hour ago</span>
                 </p>
               </li>
@@ -229,7 +326,23 @@ const Dashboard = () => {
           </Card>
 
           <Card className="p-4">
-            <h3 className="text-lg font-semibold">Applications Overview</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Applications Overview</h3>
+              {/* Year Filter */}
+              <Select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                variant="outlined"
+                size="small"
+                style={{ minWidth: 120 }}
+              >
+                {availableYears.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             <Line data={applicationsData} />
           </Card>
         </div>

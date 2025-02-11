@@ -10,9 +10,8 @@ import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 
-
-const Navbar = () => { 
-
+// Accept showJobDetails and setShowJobDetails props
+const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const isRecruiter = user?.role?.includes("recruiter");
   const dispatch = useDispatch();
@@ -123,8 +122,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
-
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
           {/* Logo */}
           <div
             to={
@@ -134,9 +132,11 @@ const Navbar = () => {
                   : "/recruiter/dashboard/home"
                 : "/"
             }
-            className="flex items-center w-full justify-center 
+            className={`flex items-center w-full ${
+              user && user.role === "recruiter" && "justify-center"
+            } 
              lg:block lg:w-auto lg:justify-normal lg:items-start 
-              text-2xl font-bold relative "
+              text-2xl font-bold relative`}
           >
             <span
               onClick={() => {
@@ -227,6 +227,45 @@ const Navbar = () => {
                   </button>
                 </>
               ) : (
+                // <div ref={profileMenuRef} className="relative ">
+                //   <button
+                //     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                //     className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                //     aria-expanded={isProfileMenuOpen}
+                //     aria-haspopup="true"
+                //   >
+                //     <img
+                //       src={
+                //         user?.profile?.profilePhoto ||
+                //         "https://github.com/shadcn.png"
+                //       }
+                //       alt={`${user.fullname || "User"}'s avatar`}
+                //       className="h-10 w-10 rounded-full border object-cover"
+                //     />
+                //     <span className="font-medium">
+                //       {isRecruiter ? user?.fullname : user?.fullname}
+                //     </span>
+                //   </button>
+                //   {isProfileMenuOpen && (
+                //     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                //       <Link
+                //         to={isRecruiter ? "/recruiter/profile" : "/profile"}
+                //         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                //         onClick={() => setIsProfileMenuOpen(false)}
+                //       >
+                //         {isRecruiter ? "Recruiter" : "User"} Profile
+                //       </Link>
+
+                //       <button
+                //         onClick={handleLogout}
+                //         className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
+                //       >
+                //         Logout
+                //       </button>
+                //     </div>
+                //   )}
+                // </div>
+
                 <div ref={profileMenuRef} className="relative ">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -242,9 +281,7 @@ const Navbar = () => {
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
-                    <span className="font-medium">
-                      {isRecruiter ? user?.fullname : user?.fullname}
-                    </span>
+                    <span className="font-medium">{user?.fullname}</span>
                   </button>
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
@@ -255,6 +292,16 @@ const Navbar = () => {
                       >
                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
+
+                      {!isRecruiter && (
+                        <Link
+                          to="/saved-jobs"
+                          className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          My Jobs
+                        </Link>
+                      )}
 
                       <button
                         onClick={handleLogout}
@@ -277,13 +324,18 @@ const Navbar = () => {
             aria-label="Toggle navigation menu"
           >
             {!isMenuOpen ? (
-              user?<img
-              src={
-                user?.profile?.profilePhoto || "https://github.com/shadcn.png"
-              }
-              alt={`${user?.fullname || "User"}'s avatar`}
-              className=" h-10 w-10 rounded-full border object-cover"
-            />:<CiMenuBurger size={25}/>
+              user ? (
+                <img
+                  src={
+                    user?.profile?.profilePhoto ||
+                    "https://github.com/shadcn.png"
+                  }
+                  alt={`${user?.fullname || "User"}'s avatar`}
+                  className=" h-10 w-10 rounded-full border object-cover"
+                />
+              ) : (
+                <CiMenuBurger size={25} />
+              )
             ) : (
               "X"
             )}
@@ -380,13 +432,30 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="mt-4 border-t p-4">
+                  {/* Dynamic profile link based on user role */}
                   <Link
-                    to="/profile"
+                    to={
+                      user.role === "student"
+                        ? "/profile"
+                        : "/recruiter/profile"
+                    }
                     className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     View Profile
                   </Link>
+
+                  {/* Show "My Jobs" only if user role is "student" */}
+                  {user.role === "student" && (
+                    <Link
+                      to="/saved-jobs"
+                      className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      My Jobs
+                    </Link>
+                  )}
+
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"

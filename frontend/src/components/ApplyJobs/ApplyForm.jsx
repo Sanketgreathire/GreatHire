@@ -51,25 +51,33 @@ const ApplyForm = ({ setRight }) => {
 
   const maxChars = 750;
 
-// Function to handle character limit restriction
-const handleCharLimitChange = (e, field) => {
-  const text = e.target.value; // Get the input text
-  const charCount = text.length; // Count characters
-
-  if (charCount <= maxChars) {
-    setInput((prev) => ({
-      ...prev,
-      [field]: text, // Update state dynamically based on the field name
-    }));
-
-    if (field === "coverLetter") {
-      setShowCoverLetterError(text.trim() === "");
+  // Function to handle character limit restriction
+  const handleCharLimitChange = (e, field) => {
+    console.log(e.key)
+    if (e.key === "Backspace") {
+      return;
     }
-  } else {
-    // Show toast message if the character limit is exceeded
-    toast.error(`${field === 'experience' ? 'Experience' : 'Cover letter'} cannot exceed ${maxChars} characters!`);
-  }
-};
+    const text = e.target.value; // Get the input text
+    const charCount = text.length; // Count characters
+
+    if (charCount <= maxChars) {
+      setInput((prev) => ({
+        ...prev,
+        [field]: text, // Update state dynamically based on the field name
+      }));
+
+      if (field === "coverLetter") {
+        setShowCoverLetterError(text.trim() === "");
+      }
+    } else {
+      // Show toast message if the character limit is exceeded
+      toast.error(
+        `${
+          field === "experience" ? "Experience" : "Cover letter"
+        } cannot exceed ${maxChars} characters!`
+      );
+    }
+  };
 
   const handleChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -121,6 +129,12 @@ const handleCharLimitChange = (e, field) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // Get the uploaded file
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        alert("File size exceeds 10MB. Please choose a smaller file.");
+        return;
+      }
+
       const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
       setInput((prevData) => ({
         ...prevData,
@@ -162,7 +176,6 @@ const handleCharLimitChange = (e, field) => {
         <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} filledBackground="green" />
           <div className="flex items-center mt-4">
-            <BiArrowBack className="text-gray-600 cursor-pointer text-2xl" />
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 1 of 5
             </h6>
@@ -453,7 +466,8 @@ const handleCharLimitChange = (e, field) => {
           ></textarea>
 
           <p className="text-sm text-gray-600 mt-2">
-            {input.experience ? input.experience.trim().length : 0} / {maxChars} characters
+            {input.experience ? input.experience.trim().length : 0} / {maxChars}{" "}
+            characters
           </p>
 
           <div className="flex justify-between items-center mt-6">
@@ -549,7 +563,8 @@ const handleCharLimitChange = (e, field) => {
                 onChange={(e) => handleCharLimitChange(e, "coverLetter")}
               />
               <p className="text-sm text-gray-600 mt-2">
-              {input.coverLetter ? input.coverLetter.trim().length : 0} / {maxChars} characters
+                {input.coverLetter ? input.coverLetter.trim().length : 0} /{" "}
+                {maxChars} characters
               </p>
             </>
           )}

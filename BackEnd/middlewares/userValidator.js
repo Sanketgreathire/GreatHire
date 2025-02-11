@@ -8,10 +8,7 @@ export const validateUser = [
     .withMessage("Full name must be at least 3 characters long"),
 
   // Email Validation
-  body("email")
-    .isEmail()
-    .withMessage("Invalid email address")
-    .normalizeEmail(),
+  body("email").isEmail().withMessage("Invalid email address").normalizeEmail(),
 
   // Mobile Number Validation (India: 10 digits, US: 10 digits)
   body("phoneNumber")
@@ -20,6 +17,7 @@ export const validateUser = [
 
   // Password (Minimum length: 8)
   body("password")
+    .isString()
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters long"),
 ];

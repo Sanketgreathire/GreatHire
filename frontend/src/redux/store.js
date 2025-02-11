@@ -16,6 +16,7 @@ import authSlice from "./authSlice";
 import companySlice from "./companySlice";
 import recruiterSlice from "./recruiterSlice.js";
 import jobPlanSlice from "./jobPlanSlice.js";
+import statsSlice from "./admin/statsSlice.js";
 
 // Configure persist settings
 const persistConfig = {
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   company: companySlice,
   recruiters: recruiterSlice,
   jobPlan: jobPlanSlice,
+  stats: statsSlice,
 });
 
 // Wrap the root reducer with persistReducer

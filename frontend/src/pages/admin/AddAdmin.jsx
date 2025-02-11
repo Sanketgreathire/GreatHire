@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import axios from "axios";
-import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+// import axios from "axios";
+// import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector, useDispatch } from "react-redux";
-import { addRecruiter } from "@/redux/recruiterSlice";
 
-const AddRecruiter = () => {
+const AddAdmin = () => {
   const dispatch = useDispatch();
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
@@ -26,42 +25,42 @@ const AddRecruiter = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        `${RECRUITER_API_END_POINT}/add-recruiter`,
-        {
-          ...formData,
-          companyId: company?._id,
-        },
-        { withCredentials: true }
-      );
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     try {
+//       const response = await axios.post(
+//         `${RECRUITER_API_END_POINT}/add-recruiter`,
+//         {
+//           ...formData,
+//           companyId: company?._id,
+//         },
+//         { withCredentials: true }
+//       );
 
-      if (response.data.success) {
-        dispatch(addRecruiter(response.data.recruiter));
-        toast.success(response.data.message);
+//       if (response.data.success) {
+//         dispatch(addRecruiter(response.data.recruiter));
+//         toast.success(response.data.message);
 
-        setFormData({
-          fullName: "",
-          email: "",
-          phoneNumber: "",
-          position: "",
-          password: "",
-        });
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (err) {
-      console.error(err);
-      const errorMessage =
-        err.response?.data?.message || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+//         setFormData({
+//           fullName: "",
+//           email: "",
+//           phoneNumber: "",
+//           position: "",
+//           password: "",
+//         });
+//       } else {
+//         toast.error(response.data.message);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       const errorMessage =
+//         err.response?.data?.message || "Something went wrong";
+//       toast.error(errorMessage);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
   return (
     <>
@@ -71,10 +70,7 @@ const AddRecruiter = () => {
             {company?.companyName}
           </h1>
           <h1 className="text-3xl font-bold text-center">
-            Give Recruiter Details
-          </h1>
-          <h1 className="text-md font-semibold text-gray-500 text-center">
-            Build your smart and powerful recruiter team
+            Provide Admin Details
           </h1>
           <div className="flex flex-col space-y-2">
             <label className="font-bold">Full Name</label>
@@ -135,7 +131,7 @@ const AddRecruiter = () => {
             }`}
             disabled={loading}
           >
-            {loading ? "Adding..." : "Add Recruiter"}
+            {loading ? "Adding..." : "Add Admin"}
           </button>
         </form>
       </div>
@@ -143,4 +139,4 @@ const AddRecruiter = () => {
   );
 };
 
-export default AddRecruiter;
+export default AddAdmin;

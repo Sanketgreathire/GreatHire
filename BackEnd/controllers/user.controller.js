@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
-import { Admin } from "../models/admin.model.js";
+import { Admin } from "../models/admin/admin.model.js";
 import { Contact } from "../models/contact.model.js";
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
@@ -104,6 +104,11 @@ export const login = async (req, res) => {
         message: "Something is missing",
         success: false,
       });
+    }
+    // check validation of email and password by express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
     //check mail is correct or not...
     let user =
@@ -300,7 +305,7 @@ export const logout = async (req, res) => {
       .status(200)
       .cookie("token", "", {
         maxAge: 0,
-        httpOnly: true,
+        httpsOnly: true,
         sameSite: "strict",
       })
       .json({
@@ -647,7 +652,7 @@ export const deleteAccount = async (req, res) => {
       .status(200)
       .cookie("token", "", {
         maxAge: 0,
-        httpOnly: true,
+        httpsOnly: true,
         sameSite: "strict",
       })
       .json({

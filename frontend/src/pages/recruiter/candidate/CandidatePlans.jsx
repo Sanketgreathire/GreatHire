@@ -136,7 +136,8 @@ function CandidatePlans() {
               razorpay_signature: response.razorpay_signature,
               creditBoost: plan.creditBoost,
               companyId: company?._id,
-            }
+            },
+            { withCredentials: true }
           );
 
           if (verificationResponse.data.success) {

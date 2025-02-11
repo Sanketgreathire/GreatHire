@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { useSelector } from "react-redux";
@@ -10,10 +8,9 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 
 const JobDescription = () => {
   const { selectedJob } = useJobDetails();
-
-  console.log(selectedJob);
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  
 
   const isApplied =
     selectedJob?.application?.some(
