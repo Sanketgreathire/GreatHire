@@ -22,6 +22,9 @@ import axios from "axios";
 
 const Dashboard = () => {
   const { statsData } = useSelector((state) => state.stats);
+  const [loading, setLoading] = useState(false);
+  const [recentActivity, setRecentActivity] = useState(null);
+  const [jobPostings, setJobPostedJob] = useState([]);
 
   const stats = [
     {
@@ -126,98 +129,6 @@ const Dashboard = () => {
     fetchData();
   }, [selectedYear]);
 
-  // Sample job postings data
-  const jobPostings = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp Inc.",
-      posted: "2 days ago",
-      applications: 45,
-      status: "Active",
-    },
-    {
-      id: 2,
-      title: "Backend Engineer",
-      company: "InnovateX",
-      posted: "4 days ago",
-      applications: 30,
-      status: "Closed",
-    },
-    {
-      id: 3,
-      title: "UI/UX Designer",
-      company: "Creative Labs",
-      posted: "1 week ago",
-      applications: 25,
-      status: "Active",
-    },
-    {
-      id: 4,
-      title: "DevOps Engineer",
-      company: "CloudNet",
-      posted: "5 days ago",
-      applications: 18,
-      status: "Active",
-    },
-    {
-      id: 5,
-      title: "Data Scientist",
-      company: "BigData Solutions",
-      posted: "3 days ago",
-      applications: 50,
-      status: "Closed",
-    },
-    {
-      id: 6,
-      title: "Mobile Developer",
-      company: "AppMasters",
-      posted: "6 days ago",
-      applications: 20,
-      status: "Active",
-    },
-    {
-      id: 7,
-      title: "Product Manager",
-      company: "VisionaryTech",
-      posted: "1 week ago",
-      applications: 15,
-      status: "Active",
-    },
-    {
-      id: 8,
-      title: "QA Engineer",
-      company: "TestifyQA",
-      posted: "2 weeks ago",
-      applications: 10,
-      status: "Closed",
-    },
-    {
-      id: 9,
-      title: "Full Stack Developer",
-      company: "CodeCrafters",
-      posted: "3 days ago",
-      applications: 40,
-      status: "Active",
-    },
-    {
-      id: 10,
-      title: "Marketing Manager",
-      company: "AdWorld",
-      posted: "5 days ago",
-      applications: 35,
-      status: "Active",
-    },
-    {
-      id: 11,
-      title: "Cybersecurity Analyst",
-      company: "SecureNet",
-      posted: "1 week ago",
-      applications: 22,
-      status: "Active",
-    },
-  ];
-
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
@@ -235,7 +146,21 @@ const Dashboard = () => {
         `${ADMIN_STAT_API_END_POINT}/recent-activity`
       );
       if (response.data.success) {
-        console.log(response.data.activityFeed);
+        setRecentActivity(response.data.data);
+      }
+    } catch (err) {
+      console.log(`Error in fetch recent activity ${err}`);
+    }
+  };
+
+  // fetching recent posted job
+  const fetchRecentPostedJob = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/recent-job-postings`
+      );
+      if (response.data.success) {
+        setJobPostedJob(response.data.jobPostings);
       }
     } catch (err) {
       console.log(`Error in fetch recent activity ${err}`);
@@ -243,7 +168,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchRecentActivity();
+    fetchRecentPostedJob();
+    setLoading(false);
   }, []);
 
   return (
@@ -271,135 +199,161 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Recent Activity & Applications Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold">Recent Activities</h3>
-            <ul className="mt-4 space-y-2">
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-purple-500 text-white flex items-center justify-center rounded-full">
-                  U
-                </span>
-                <p>
-                  New User Registered{" "}
-                  <span className="text-gray-400 text-sm">2 minutes ago</span>
-                </p>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-cyan-500 text-white flex items-center justify-center rounded-full">
-                  C
-                </span>
-                <p>
-                  New Company Registered{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
-                </p>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-red-500 text-white flex items-center justify-center rounded-full">
-                  R
-                </span>
-                <p>
-                  New Recruiter Registered{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
-                </p>
-              </li>
+        {loading ? (
+          <p className="text-2xl text-blue-700">Loading...</p>
+        ) : (
+          <>
+            {/* Recent Activity & Applications Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold">Recent Activities</h3>
+                <ul className="mt-4 space-y-2">
+                  <li className="flex items-center gap-3">
+                    <span className="h-8 w-8 bg-purple-500 text-white flex items-center justify-center rounded-full">
+                      U
+                    </span>
+                    <p>
+                      New User Registered{" "}
+                      <span className="text-gray-400 text-sm">
+                        {recentActivity?.[0]}
+                      </span>
+                    </p>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span className="h-8 w-8 bg-cyan-500 text-white flex items-center justify-center rounded-full">
+                      C
+                    </span>
+                    <p>
+                      New Company Registered{" "}
+                      <span className="text-gray-400 text-sm">
+                        {recentActivity?.[1]}
+                      </span>
+                    </p>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span className="h-8 w-8 bg-red-500 text-white flex items-center justify-center rounded-full">
+                      R
+                    </span>
+                    <p>
+                      New Recruiter Registered{" "}
+                      <span className="text-gray-400 text-sm">
+                        {recentActivity?.[2]}
+                      </span>
+                    </p>
+                  </li>
 
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-indigo-500 text-white flex items-center justify-center rounded-full">
-                  J
-                </span>
-                <p>
-                  New job posted{" "}
-                  <span className="text-gray-400 text-sm">15 minutes ago</span>
-                </p>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-8 w-8 bg-amber-500 text-white flex items-center justify-center rounded-full">
-                  A
-                </span>
-                <p>
-                  New Application submitted{" "}
-                  <span className="text-gray-400 text-sm">1 hour ago</span>
-                </p>
-              </li>
-            </ul>
-          </Card>
+                  <li className="flex items-center gap-3">
+                    <span className="h-8 w-8 bg-indigo-500 text-white flex items-center justify-center rounded-full">
+                      J
+                    </span>
+                    <p>
+                      New job posted{" "}
+                      <span className="text-gray-400 text-sm">
+                        {recentActivity?.[3]}
+                      </span>
+                    </p>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span className="h-8 w-8 bg-amber-500 text-white flex items-center justify-center rounded-full">
+                      A
+                    </span>
+                    <p>
+                      New Application submitted{" "}
+                      <span className="text-gray-400 text-sm">
+                        {recentActivity?.[4]}
+                      </span>
+                    </p>
+                  </li>
+                </ul>
+              </Card>
 
-          <Card className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Applications Overview</h3>
-              {/* Year Filter */}
-              <Select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                variant="outlined"
-                size="small"
-                style={{ minWidth: 120 }}
-              >
-                {availableYears.map((year) => (
-                  <MenuItem key={year} value={year}>
-                    {year}
-                  </MenuItem>
-                ))}
-              </Select>
-            </div>
-            <Line data={applicationsData} />
-          </Card>
-        </div>
-
-        {/* Recent Job Postings - Table with Pagination */}
-        <Card className="p-4 mt-6">
-          <h3 className="text-lg font-semibold mb-4">Recent Job Postings</h3>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Job Title</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Posted</TableHead>
-                <TableHead>Applications</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {displayedJobs.map((job) => (
-                <TableRow key={job.id}>
-                  <TableCell>{job.title}</TableCell>
-                  <TableCell>{job.company}</TableCell>
-                  <TableCell>{job.posted}</TableCell>
-                  <TableCell>{job.applications}</TableCell>
-                  <TableCell
-                    className={
-                      job.status === "Active"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    }
+              <Card className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">
+                    Applications Overview
+                  </h3>
+                  {/* Year Filter */}
+                  <Select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                    variant="outlined"
+                    size="small"
+                    style={{ minWidth: 120 }}
                   >
-                    {job.status}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    {availableYears.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </div>
+                <Line data={applicationsData} />
+              </Card>
+            </div>
 
-          {/* Pagination Controls */}
-          <div className="flex justify-end mt-4">
-            <Button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              Previous
-            </Button>
-            <span className="mx-4">
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </Card>
+            {/* Recent Job Postings - Table with Pagination */}
+            <Card className="p-4 mt-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold mb-4">
+                  Recent Job Postings
+                </h3>
+                <h3 className="text-lg font-semibold">
+                  Total Job:{" "}
+                  <span className="text-gray-500">{jobPostings.length}</span>
+                </h3>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Job Title</TableHead>
+                    <TableHead>Company</TableHead>
+                    <TableHead>Posted</TableHead>
+                    <TableHead>Applications</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayedJobs.map((job) => (
+                    <TableRow key={job.id}>
+                      <TableCell>{job.jobTitle}</TableCell>
+                      <TableCell>{job.company}</TableCell>
+                      <TableCell>{job.posted}</TableCell>
+                      <TableCell>{job.applications}</TableCell>
+                      <TableCell
+                        className={
+                          job.status === "Active"
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {job.status}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-end mt-4">
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  Previous
+                </Button>
+                <span className="mx-4">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </Card>
+          </>
+        )}
       </div>
     </>
   );

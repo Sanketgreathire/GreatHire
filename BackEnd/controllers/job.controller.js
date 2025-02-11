@@ -3,6 +3,7 @@ import { Application } from "../models/application.model.js";
 import { Company } from "../models/company.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
+import { Admin } from "../models/admin/admin.model.js";
 
 export const postJob = async (req, res) => {
   try {
@@ -278,13 +279,17 @@ export const getJobByCompanyId = async (req, res) => {
   }
 };
 
+// job can be deleted either by recruiter or admin
 export const deleteJobById = async (req, res) => {
   try {
     const jobId = req.params.id;
     const { companyId } = req.body;
     const { userId } = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    const admin = await Admin.findById(userId); // Check if user is an admin
+
+    // If the user is neither an admin nor a valid recruiter, deny access
+    if (!admin && !isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,

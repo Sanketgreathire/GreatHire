@@ -46,13 +46,12 @@ const Login = () => {
       const response = await axios.post(
         `${USER_API_END_POINT}/login`,
         {
-          data: formData,
+          ...formData,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (response.data.success) {
+        console.log(response);
         dispatch(setUser(response.data.user));
         toast.success(response.data.message);
         setFormData({

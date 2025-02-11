@@ -1,10 +1,10 @@
 import express from 'express';
-import { getUserStats, getAllApplication } from '../../controllers/admin/userStats.controller';
+import { getUsersList, getUser, getAllApplication } from '../../controllers/admin/userStats.controller.js';
 
 const router = express.Router();
 // Define routes
-router.get('/user-stats', getUserStats);
+router.get('/user-stats', getUsersList);
+router.get('/getUser/:userId', getUser);
 router.get('/user-all-application/:userId', getAllApplication);
 
-// Export the router as the default export
-module.exports = router;
+export default router;

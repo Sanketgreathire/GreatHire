@@ -211,6 +211,13 @@ export const getAllRecruiters = async (req, res) => {
     const { companyId } = req.body;
 
     const company = await Company.findById(companyId);
+    if (!company) {
+      res.status(400).json({
+        success: false,
+        message: "Company Not found!",
+      });
+    }
+    
     const recruiterIds = company?.userId.map((userObj) => userObj.user._id);
     const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
 
