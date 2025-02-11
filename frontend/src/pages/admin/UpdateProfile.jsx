@@ -3,21 +3,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Pencil } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { setUser } from "@/redux/authSlice";
-import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
 
-const RecruiterUpdateProfile = ({ open, setOpen }) => {
+const UpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
-    email: user?.emailId.email || "",
-    phoneNumber: user?.phoneNumber.number || "",
-    position: user?.position || "",
+    email: user?.email || "",
+    phoneNumber: user?.phoneNumber || "",
+    position: user?.role || "",
     profilePhoto: user?.profile?.profilePhoto || "",
   });
 
@@ -25,7 +21,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     user?.profile?.profilePhoto || ""
   );
 
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -42,40 +38,6 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
       setInput((prev) => ({ ...prev, profilePhoto: file }));
-    }
-  };
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("fullname", input.fullname);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("position", input.position);
-
-    if (input.profilePhoto) {
-      formData.append("profilePhoto", input.profilePhoto);
-    }
-
-    try {
-      setLoading(true);
-      const res = await axios.put(
-        `${RECRUITER_API_END_POINT}/profile/update`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
-
-      if (res.data.success) {
-        dispatch(setUser(res.data.user));
-        setOpen(false);
-      }
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -100,7 +62,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
         </button>
         <h2 className="text-lg text-center font-semibold">Update Profile</h2>
 
-        <form onSubmit={submitHandler} className="space-y-4 mt-4">
+        <form className="space-y-4 mt-4">
           <div className="grid gap-2 py-2">
             {/* Name and Profile Image Grid */}
             <div className="grid grid-cols-3 gap-4 items-center">
@@ -218,4 +180,4 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
   );
 };
 
-export default RecruiterUpdateProfile;
+export default UpdateProfile;

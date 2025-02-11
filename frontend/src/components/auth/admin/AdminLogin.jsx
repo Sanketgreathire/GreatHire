@@ -25,6 +25,9 @@ const AdminLogin = () => {
       else navigate("/admin/login");
     }
   }, [user]);
+
+  console.log(user);
+  
   // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,9 +47,6 @@ const AdminLogin = () => {
         {
           data: formData,
         },
-        {
-          withCredentials: true,
-        }
       );
       if (response.data.success) {
         dispatch(setUser(response.data.user));
