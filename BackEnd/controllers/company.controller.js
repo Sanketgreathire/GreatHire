@@ -14,21 +14,34 @@ import JobReport from "../models/jobReport.model.js";
 
 export const isUserAssociated = async (companyId, userId) => {
   try {
-    // Check if company exists
+    // Find the company by its ID
     const company = await Company.findById(companyId);
     if (!company) {
-      return res
-        .status(404)
-        .json({ message: "Company not found.", success: false });
+      // If company is not found, you can either throw an error or return false.
+      throw new Error("Company not found.");
     }
 
-    // Check if user is associated with company
-    const isUserAssociated = company.userId.some(
+    // Check if the user is associated with the company.
+    // company.userId is expected to be an array of objects where each object has a `user` field.
+    const isAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
-    return isUserAssociated;
+    if (!isAssociated) {
+      // The user is not associated with the company.
+      return false;
+    }
+
+    // Now, check if the recruiter (user) is active.
+    const recruiter = await Recruiter.findById(userId);
+    if (!recruiter) {
+      throw new Error("Recruiter not found.");
+    }
+
+    // Return true only if the recruiter is active.
+    return recruiter.isActive;
   } catch (err) {
-    console.log("error in recruiter validation");
+    console.error("Error in recruiter validation:", err);
+    return false;
   }
 };
 
@@ -369,7 +382,7 @@ export const getCurrentPlan = async (req, res) => {
   }
 };
 
-// This controller will help to get candiadate data 
+// This controller will help to get candiadate data
 export const getCandidateData = async (req, res) => {
   try {
     const { jobTitle, experience, salaryBudget, companyId } = req.query;
@@ -466,7 +479,7 @@ export const reportJob = async (req, res) => {
   try {
     const { jobId, reportTitle, description } = req.body;
     const userId = req.id;
-    console.log(req.body, req.id)
+    console.log(req.body, req.id);
 
     if (!jobId || !userId || !reportTitle) {
       return res

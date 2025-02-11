@@ -37,7 +37,7 @@ const CompanyDetails = () => {
       dSetLoading(true);
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: {
-          userEmail: user?.emailId.email,
+          userEmail: user?.emailId?.email,
           companyId: company?._id,
         },
         withCredentials: true,

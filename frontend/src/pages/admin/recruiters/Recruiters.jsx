@@ -9,49 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {  Eye } from "lucide-react";
+import { Trash, Eye } from "lucide-react";
 import { Briefcase, UserCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Select, MenuItem } from "@mui/material";
+import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
-import { ADMIN_RECRUITER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
+import {
+  ADMIN_RECRUITER_DATA_API_END_POINT,
+  RECRUITER_API_END_POINT,
+} from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const dummyRecruiters = [
-  {
-    id: 1,
-    fullname: "Michael Brown",
-    email: "hr@techcorp.com",
-    phoneNumber: "8955891038",
-    position: "HR Mangaer",
-    postedJobs: 2,
-    status: 1,
-  },
-  {
-    id: 2,
-    fullname: "Sarah Wilson",
-    email: "sarah@globalhire.com",
-    phoneNumber: "8279206988",
-    position: "HR Recruiter",
-    postedJobs: 4,
-    status: -1,
-  },
-  {
-    id: 3,
-    fullname: "Sarah Wilson",
-    email: "sarah@globalhire.com",
-    phoneNumber: "8279206988",
-    position: "HR Recruiter",
-    postedJobs: 6,
-    status: 0,
-  },
-];
+import { toast } from "react-hot-toast";
 
 const Recruiters = () => {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState({});
+  const [dloading, dsetLoading] = useState({});
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
@@ -86,12 +62,75 @@ const Recruiters = () => {
     },
   ];
 
+  const toggleActive = async (recruiterId, isActive) => {
+    try {
+      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
+      const response = await axios.put(
+        `${RECRUITER_API_END_POINT}/toggle-active`,
+        {
+          recruiterId,
+          isActive,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        // Update the recruiterList state to reflect the new isActive value
+        setRecruiterList((prevList) =>
+          prevList.map((recruiter) =>
+            recruiter._id === recruiterId
+              ? { ...recruiter, isActive }
+              : recruiter
+          )
+        );
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error toggling recruiter:", error);
+      toast.error(
+        "There was an error toggling the recruiter. Please try again later."
+      );
+    } finally {
+      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+    }
+  };
+
+  const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
+    try {
+      dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
+      const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
+        data: { userEmail, companyId },
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        // Update the recruiterList state by removing the deleted recruiter
+        setRecruiterList((prevList) =>
+          prevList.filter((recruiter) => recruiter._id !== recruiterId)
+        );
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting recruiter:", error);
+      toast.error(
+        "There was an error deleting the recruiter. Please try again later."
+      );
+    } finally {
+      dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+    }
+  };
+
   const fetchRecruiterList = async () => {
     try {
       const response = await axios.get(
         `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats`
       );
       if (response.data.success) {
+        console.log(response.data.recruiters);
         setRecruiterList(response.data.recruiters);
       }
     } catch (err) {
@@ -99,9 +138,9 @@ const Recruiters = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchRecruiterList();
-  },[])
+  }, []);
 
   const filteredRecruiters = recruiterList?.filter((recruiter) => {
     const matchesSearch =
@@ -206,15 +245,46 @@ const Recruiters = () => {
                   </span>
                 </TableCell>
 
-                <TableCell className="flex items-center gap-2">
+                <TableCell className="flex items-center gap-3">
                   <Eye
                     className="text-blue-500 cursor-pointer"
-                    size={25}
+                    size={20}
                     onClick={() =>
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
                   />
-                  
+                  {dloading[recruiter._id] ? (
+                    "loading..."
+                  ) : (
+                    <Trash
+                      className="text-red-500 cursor-pointer"
+                      size={20}
+                      onClick={() =>
+                        deleteRecruiter(
+                          recruiter._id,
+                          recruiter.email,
+                          recruiter.companyId
+                        )
+                      }
+                    />
+                  )}
+
+                  {/* Toggle for recruiter activeness */}
+                  {loading[recruiter._id] ? (
+                    "loading..."
+                  ) : (
+                    <Switch
+                      checked={recruiter.isActive}
+                      onChange={(e) =>
+                        toggleActive(recruiter._id, !recruiter.isActive)
+                      }
+                      color="primary"
+                      size="20"
+                      inputProps={{
+                        "aria-label": "Toggle Recruiter Active Status",
+                      }}
+                    />
+                  )}
                 </TableCell>
               </TableRow>
             ))}
