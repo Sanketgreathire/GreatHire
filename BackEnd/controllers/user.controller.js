@@ -98,7 +98,7 @@ export const register = async (req, res) => {
 //login section...
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body.data;
+    const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({
         message: "Something is missing",
