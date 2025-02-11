@@ -20,7 +20,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || user?.role !== "recruiter") navigate("/login");
+    if (!user || user?.role === "student") navigate("/login");
   }, [user]);
 
   const getJobsByRecruiter = async (recruiterId, page = 1) => {
@@ -141,7 +141,9 @@ const RecruiterJob = ({ recruiterId }) => {
   });
 
   const handleJobDetailsClick = (jobId) => {
-    navigate(`/recruiter/dashboard/job-details/${jobId}`);
+    if (user?.role === "recruiter")
+      navigate(`/recruiter/dashboard/job-details/${jobId}`);
+    else navigate(`/admin/job/details/${jobId}`);
   };
 
   return (
@@ -184,7 +186,9 @@ const RecruiterJob = ({ recruiterId }) => {
                 Job Type
               </th>
               {(recruiterId === user?._id ||
-                user?.emailId.email === company?.adminEmail) && (
+                user?.emailId.email === company?.adminEmail ||
+                user?.role === "admin" ||
+                user?.role === "Owner") && (
                 <>
                   <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                     Status
@@ -210,7 +214,9 @@ const RecruiterJob = ({ recruiterId }) => {
                   <td className="py-3 px-6">{job.jobDetails.location}</td>
                   <td className="py-3 px-6">{job.jobDetails.jobType}</td>
                   {(recruiterId === user?._id ||
-                    user?.emailId.email === company?.adminEmail) && (
+                    user?.emailId.email === company?.adminEmail ||
+                    user?.role === "admin" ||
+                    user?.role === "Owner") && (
                     <>
                       <td className="py-3 px-6 place-items-center">
                         {loading[job._id] ? (
@@ -243,7 +249,7 @@ const RecruiterJob = ({ recruiterId }) => {
                       </td>
                       <td className="py-3 px-6 text-center">
                         {dloading[job._id] ? (
-                          "loading..."
+                          "deleting..."
                         ) : (
                           <button
                             onClick={(event) => deleteJob(event, job._id)}

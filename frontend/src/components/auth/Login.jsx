@@ -46,11 +46,9 @@ const Login = () => {
       const response = await axios.post(
         `${USER_API_END_POINT}/login`,
         {
-          data: formData,
+          ...formData,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (response.data.success) {
         dispatch(setUser(response.data.user));

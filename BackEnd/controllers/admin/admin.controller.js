@@ -41,8 +41,14 @@ export const register = async (req, res) => {
     // Create new user
     let newUser = await Admin.create({
       fullname,
-      email,
-      phoneNumber,
+      emailId: {
+        email, // Setting the email
+        isVerified: false, // Default to false unless you have a value to set
+      },
+      phoneNumber: {
+        number: phoneNumber, // Setting the phone number
+        isVerified: false, // Default to false unless you have a value to set
+      },
       password: hashedPassword,
     });
 
@@ -62,7 +68,7 @@ export const register = async (req, res) => {
 //login section...
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body.data;
+    const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({
         message: "Something is missing",
@@ -70,7 +76,7 @@ export const login = async (req, res) => {
       });
     }
     //check mail is correct or not...
-    let user = await Admin.findOne({ email });
+    let user = await Admin.findOne({ "emailId.email": email });
 
     if (!user) {
       return res.status(200).json({
@@ -93,7 +99,7 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const userWithoutPassword = await Admin.findById(newUser._id).select(
+    const userWithoutPassword = await Admin.findById(user._id).select(
       "-password"
     );
 
