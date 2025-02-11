@@ -93,14 +93,14 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const userWithoutPassword = await Admin.findById(newUser._id).select(
+    const userWithoutPassword = await Admin.findById(user._id).select(
       "-password"
     );
 
     // cookies strict used...
     return res
       .status(200)
-      .cookie("token", token, {
+      .cookie("token", {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpsOnly: true,
         sameSite: "strict",
