@@ -382,7 +382,7 @@ const JobDetail = () => {
                 Applicants Details
               </Button>
               {(user?._id === jobOwner ||
-                user?.emailId?.email === company?.adminEmail) && (
+                user?.emailId?.email === company?.adminEmail || user?.role === "admin" || user?.role === "Owner") && (
                 <Button
                   className={`bg-red-600 hover:bg-red-700 ${
                     dloading ? "cursor-not-allowed" : ""

@@ -217,7 +217,7 @@ export const getAllRecruiters = async (req, res) => {
         message: "Company Not found!",
       });
     }
-    
+
     const recruiterIds = company?.userId.map((userObj) => userObj.user._id);
     const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
 
@@ -484,9 +484,12 @@ export const deleteAccount = async (req, res) => {
 
   try {
     const user = await Recruiter.findOne({ "emailId.email": userEmail });
-    const userId = user?._id;
+    let userId;
+    if (user) userId = user._id;
+    else userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    const admin = await Admin.findById(userId); // Check if user is an admin
+    if (!admin && !isUserAssociated(companyId, userId)) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
@@ -497,7 +500,7 @@ export const deleteAccount = async (req, res) => {
       return res.status(404).json({ message: "Company not found" });
     }
 
-    if (userEmail === company.adminEmail) {
+    if (userEmail === company.adminEmail || admin) {
       // Fetch jobs before deleting
       const jobs = await Job.find({ company: companyId });
 

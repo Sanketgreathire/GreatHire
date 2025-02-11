@@ -51,7 +51,6 @@ const Login = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        console.log(response);
         dispatch(setUser(response.data.user));
         toast.success(response.data.message);
         setFormData({

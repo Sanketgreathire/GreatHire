@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye } from "lucide-react";
-import { Briefcase, FileText, UserCheck } from "lucide-react";
+import {  Eye } from "lucide-react";
+import { Briefcase, UserCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Select, MenuItem, Switch } from "@mui/material";
+import { Select, MenuItem } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
@@ -175,7 +175,7 @@ const Recruiters = () => {
               <TableHead>Recruiter Position</TableHead>
               <TableHead>Posted Jobs</TableHead>
               <TableHead>Recruiter Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Details</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -209,23 +209,12 @@ const Recruiters = () => {
                 <TableCell className="flex items-center gap-2">
                   <Eye
                     className="text-blue-500 cursor-pointer"
-                    size={16}
+                    size={25}
                     onClick={() =>
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
                   />
-                  <Trash className="text-red-500 cursor-pointer" size={16} />
-                  {/* Toggle for recruiter activeness */}
-                  <Switch
-                    checked={recruiter.isActive}
-                    onChange={(e) =>
-                      handleToggleActive(recruiter._id, e.target.checked)
-                    }
-                    color="primary"
-                    inputProps={{
-                      "aria-label": "Toggle Recruiter Active Status",
-                    }}
-                  />
+                  
                 </TableCell>
               </TableRow>
             ))}
