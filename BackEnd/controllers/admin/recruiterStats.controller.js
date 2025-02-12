@@ -6,7 +6,7 @@ export const getRecruitersList = async (req, res) => {
       {
         // Lookup jobs created by the recruiter
         $lookup: {
-          from: "jobs", // collection name (ensure it matches your Job model collection)
+          from: "jobs", // ensure this matches your Job model's collection name
           localField: "_id",
           foreignField: "created_by",
           as: "jobs",
@@ -24,7 +24,40 @@ export const getRecruitersList = async (req, res) => {
         },
       },
       {
-        // Project only the fields needed
+        // Lookup the company that the recruiter is connected to.
+        // We assume a connection exists if the recruiter’s _id is found in any
+        // company's userId array (in the nested `user` field).
+        $lookup: {
+          from: "companies", // Ensure this matches your Company model's collection name
+          let: { recruiterId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  // Use $map to extract the user IDs from the userId array,
+                  // then check if the recruiterId is in that array.
+                  $in: [
+                    "$$recruiterId",
+                    { $map: { input: "$userId", as: "u", in: "$$u.user" } },
+                  ],
+                },
+              },
+            },
+            {
+              $project: { _id: 1 },
+            },
+          ],
+          as: "companyInfo",
+        },
+      },
+      {
+        // Add a field companyId based on the lookup result.
+        $addFields: {
+          companyId: { $arrayElemAt: ["$companyInfo._id", 0] },
+        },
+      },
+      {
+        // Project only the fields needed:
         $project: {
           fullname: 1,
           email: 1,
@@ -33,8 +66,7 @@ export const getRecruitersList = async (req, res) => {
           postedJobs: 1,
           isVerify: 1,
           isActive: 1,
-          // Note: _id is not included per your instruction.
-          // If you need _id, add: _id: 1
+          companyId: 1,
         },
       },
       {

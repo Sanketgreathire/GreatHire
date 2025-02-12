@@ -53,10 +53,11 @@ const Users = () => {
         withCredentials: true,
       });
       if (response.data.success) {
-        navigate("/");
-        dispatch(logOut());
+        setUsersList((prevList) =>
+          prevList.filter((user) => user.email !== email)
+        );
+        toast.success(response.data.message);
       }
-      toast.success(response.data.message);
     } catch (err) {
       console.error("Error deleting account: ", err.message);
       toast.error("Error in deleting account");
