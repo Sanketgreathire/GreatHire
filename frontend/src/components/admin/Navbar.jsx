@@ -1,22 +1,39 @@
 import React, { useState, useRef } from "react";
 import { Bell } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { logOut } from "@/redux/authSlice";
+
 
 const Navbar = ({ linkName }) => {
   const { user } = useSelector((state) => state.auth);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Handle logout function
   const handleLogout = async () => {
     try {
-      // Add actual logout logic (e.g., API call, Redux state update)
-      console.log("User logged out");
+      const response = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        dispatch(logOut());
+        setIsProfileMenuOpen(false);
+        toast.success(response.data.message);
+        navigate("/admin");
+      } else {
+        toast.error("error in logout");
+      }
     } catch (err) {
-      console.error("Logout failed", err);
+      toast.error(`error in logout ${err}`);
     }
   };
+
 
   return (
     <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 lg:ml-52 bg-white px-3 py-2 z-30">
