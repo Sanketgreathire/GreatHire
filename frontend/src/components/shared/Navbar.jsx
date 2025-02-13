@@ -9,7 +9,6 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
-import { IoMdArrowBack } from "react-icons/io";
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {

@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 
+import { useSelector } from "react-redux";
 
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
@@ -23,8 +24,9 @@ const navItems = [
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useSelector((state) => state.auth);
 
-  return ( 
+  return (
     <>
       {/* Sidebar Container */}
       <div
@@ -33,10 +35,10 @@ const Sidebar = () => {
         } md:w-52`}
       >
         {/* Logo / Title */}
-        {/* Hamburger Button - visible only on mobile */}
         <div>
+          {/* Hamburger Button - visible only on mobile */}
           <button
-            className=" p-4 md:hidden text-blue-700 text-2xl z-50"
+            className="p-4 md:hidden text-blue-700 text-2xl z-50"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <FaTimes /> : <FaBars />}
@@ -83,30 +85,44 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        {/* Profile Link at the bottom */}
+        {/* Profile Section */}
         <div
           className={`${
             isOpen ? "p-4 w-52" : "w-16"
           } border-t border-gray-300 fixed bottom-0 md:w-52 `}
         >
           <NavLink
-            to="/admin/profile"
+            to={user ? "/admin/profile" : "/admin/login"}
             className={({ isActive }) =>
               `flex items-center gap-3 py-2 px-4 rounded ${
                 isActive ? "bg-blue-700 text-white" : "hover:bg-gray-100"
               }`
             }
           >
-            {({ isActive }) => (
+            {user ? (
+              // Show Profile when Logged In
+              <>
+                <img
+                  src={
+                    user.profile?.profilePhoto || "https://github.com/shadcn.png"
+                  }
+                  alt={`${user.fullname || "User"}'s avatar`}
+                  className="h-10 w-10 rounded-full border object-cover"
+                />
+                <div>
+                  <p className="font-bold">{user.fullname}</p>
+                  <p className="font-medium text-gray-400">{user.role}</p>
+                </div>
+              </>
+            ) : (
+              // Show FaUser Icon when NOT Logged In
               <>
                 <FaUser
-                  className={`text-lg bg-blue-100 p-2 rounded-full ${
-                    isActive ? "text-white" : "text-blue-700"
-                  }`}
+                  className="text-lg bg-blue-100 p-2 rounded-full text-blue-700"
                   size={40}
                 />
                 <span className={`${isOpen ? "block" : "hidden"} md:block`}>
-                  Profile
+                  Login
                 </span>
               </>
             )}
@@ -118,3 +134,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
