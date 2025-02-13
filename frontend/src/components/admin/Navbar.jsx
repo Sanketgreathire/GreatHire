@@ -7,7 +7,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
 
-
 const Navbar = ({ linkName }) => {
   const { user } = useSelector((state) => state.auth);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -25,7 +24,7 @@ const Navbar = ({ linkName }) => {
         dispatch(logOut());
         setIsProfileMenuOpen(false);
         toast.success(response.data.message);
-        navigate("/admin");
+        navigate("/admin/login");
       } else {
         toast.error("error in logout");
       }
@@ -33,7 +32,6 @@ const Navbar = ({ linkName }) => {
       toast.error(`error in logout ${err}`);
     }
   };
-
 
   return (
     <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 lg:ml-52 bg-white px-3 py-2 z-30">
@@ -60,13 +58,18 @@ const Navbar = ({ linkName }) => {
                 aria-haspopup="true"
               >
                 <img
-                  src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                  src={
+                    user?.profile?.profilePhoto ||
+                    "https://github.com/shadcn.png"
+                  }
                   alt={`${user?.fullname || "User"}'s avatar`}
                   className="h-10 w-10 rounded-full border object-cover"
                 />
                 <div>
                   <p className="font-bold">{user?.fullname}</p>
-                  <p className="font-medium text-gray-400">{user?.role || "User"}</p>
+                  <p className="font-medium text-gray-400">
+                    {user?.role || "User"}
+                  </p>
                 </div>
               </button>
 
@@ -84,11 +87,11 @@ const Navbar = ({ linkName }) => {
             </>
           ) : (
             <div className="flex gap-3">
-              <a href="/admin/login" className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+              <a
+                href="/admin/login"
+                className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
                 Login
-              </a>
-              <a href="/admin/signup" className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
-                Signup
               </a>
             </div>
           )}

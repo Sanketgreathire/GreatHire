@@ -52,6 +52,7 @@ export const verifyToken = async (req, res) => {
   }
 };
 
+// this controller help to active and deactive a company
 export const sendVerificationStatus = async (req, res) => {
   try {
     // Extract data from the request body

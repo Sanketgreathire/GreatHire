@@ -13,9 +13,11 @@ export const getRecrutierStats = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      stats:{totalRecruiters,
-      totalActiveRecruiters,
-      totalDeactiveRecruiters},
+      stats: {
+        totalRecruiters,
+        totalActiveRecruiters,
+        totalDeactiveRecruiters,
+      },
     });
   } catch (err) {
     console.error("Error fetching recruiter stats:", err);
@@ -78,22 +80,32 @@ export const getRecruitersList = async (req, res) => {
       },
     ]);
 
-    // Compute summary information from the retrieved recruiters
-    const totalRecruiters = recruitersAggregation.length;
-    const activeRecruiters = recruitersAggregation.filter(
+    // Map each recruiter to include an "isAdmin" flag based on comparison with company's adminEmail.
+    const recruitersWithAdmin = recruitersAggregation.map((recruiter) => ({
+      ...recruiter,
+      isAdmin: recruiter.email === company.adminEmail,
+    }));
+
+    // Compute summary information from the updated recruiters
+    const totalRecruiters = recruitersWithAdmin.length;
+    const activeRecruiters = recruitersWithAdmin.filter(
       (r) => r.isActive
     ).length;
-    const totalJobPosts = recruitersAggregation.reduce(
+    const deactiveRecruiters = recruitersWithAdmin.filter(
+      (r) => !r.isActive
+    ).length;
+    const totalJobPosts = recruitersWithAdmin.reduce(
       (sum, r) => sum + (r.postedJobs || 0),
       0
     );
 
     return res.status(200).json({
       success: true,
-      recruiters: recruitersAggregation,
+      recruiters: recruitersWithAdmin,
       summary: {
         totalRecruiters,
         activeRecruiters,
+        deactiveRecruiters,
         totalJobPosts,
       },
     });
@@ -105,6 +117,91 @@ export const getRecruitersList = async (req, res) => {
     });
   }
 };
+
+export const getAllRecruitersList = async (req, res) => {
+  try {
+    const recruitersAggregation = await Recruiter.aggregate([
+      // Lookup the company details where this recruiter is referenced in the company's userId array
+      {
+        $lookup: {
+          from: "companies",
+          let: { recruiterId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$$recruiterId", "$userId.user"],
+                },
+              },
+            },
+            // Project the fields you need from the company, including adminEmail
+            {
+              $project: {
+                companyName: 1,
+                adminEmail: 1,
+              },
+            },
+          ],
+          as: "companyDetails",
+        },
+      },
+      // Unwind the companyDetails array (if a recruiter belongs to one company)
+      {
+        $unwind: {
+          path: "$companyDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      // Lookup jobs created by each recruiter
+      {
+        $lookup: {
+          from: "jobs", // Ensure this matches the actual collection name for jobs
+          localField: "_id",
+          foreignField: "created_by",
+          as: "jobs",
+        },
+      },
+      // Add a field counting the number of posted jobs
+      {
+        $addFields: {
+          postedJobs: { $size: "$jobs" },
+        },
+      },
+      // Project the desired fields for output and include adminEmail from companyDetails
+      {
+        $project: {
+          fullname: 1,
+          email: "$emailId.email", // flatten the nested email field
+          phone: "$phoneNumber.number", // flatten the nested phone number
+          position: 1,
+          postedJobs: 1,
+          isActive: 1,
+          companyName: "$companyDetails.companyName",
+          companyId: "$companyDetails._id",
+          adminEmail: "$companyDetails.adminEmail",
+        },
+      },
+    ]);
+
+    // Map each recruiter to add an "isAdmin" flag based on comparison with company's adminEmail
+    const recruitersWithAdmin = recruitersAggregation.map((recruiter) => ({
+      ...recruiter,
+      isAdmin: recruiter.email === recruiter.adminEmail,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      recruiters: recruitersWithAdmin,
+    });
+  } catch (error) {
+    console.error("Error fetching all recruiters list:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 
 export const getRecruiter = async (req, res) => {
   try {

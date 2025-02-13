@@ -9,7 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye, Briefcase, UserCheck, CheckCircle, XCircle } from "lucide-react";
+import {
+  Trash,
+  Eye,
+  Briefcase,
+  UserCheck,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
@@ -24,6 +31,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 const Recruiters = () => {
+  // this file show the recruiter of particular company
   const { companyId } = useParams();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState({});
@@ -44,7 +52,7 @@ const Recruiters = () => {
       color: "text-blue-500",
       bg: "bg-blue-100",
     },
-    
+
     {
       title: "Active Recruiters",
       count: recruiterSummary?.activeRecruiters || 0,
@@ -55,7 +63,7 @@ const Recruiters = () => {
     },
     {
       title: "Deactive Recruiter",
-      count: recruiterSummary?.totalJobPosts || 0,
+      count: recruiterSummary?.deactiveRecruiters || 0,
       change: "+5.2%",
       icon: <XCircle size={30} />,
       color: "text-red-500",
@@ -71,27 +79,43 @@ const Recruiters = () => {
     },
   ];
 
-  const toggleActive = async (recruiterId, isActive) => {
+  const toggleActive = async (recruiterId, isActive, isAdmin) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.put(
         `${RECRUITER_API_END_POINT}/toggle-active`,
         {
           recruiterId,
+          companyId,
           isActive,
         },
         { withCredentials: true }
       );
 
       if (response.data.success) {
-        // Update the recruiterList state to reflect the new isActive value
-        setRecruiterList((prevList) =>
-          prevList.map((recruiter) =>
-            recruiter._id === recruiterId
-              ? { ...recruiter, isActive }
-              : recruiter
-          )
-        );
+        if (isAdmin) {
+          fetchRecruiterList();
+        } else {
+          // For a single recruiter toggle: update the specific recruiter in the list
+          setRecruiterList((prevList) =>
+            prevList.map((recruiter) =>
+              recruiter._id === recruiterId
+                ? { ...recruiter, isActive }
+                : recruiter
+            )
+          );
+          // Adjust the summary: decrease active by one, increase deactive by one
+          setRecruiterSummary((prevSummary) => ({
+            ...prevSummary,
+            activeRecruiters: isActive
+              ? prevSummary.activeRecruiters + 1
+              : prevSummary.activeRecruiters - 1,
+            deactiveRecruiters: isActive
+              ? prevSummary.deactiveRecruiters - 1
+              : prevSummary.deactiveRecruiters + 1,
+          }));
+        }
+
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -106,7 +130,7 @@ const Recruiters = () => {
     }
   };
 
-  const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
+  const deleteRecruiter = async (recruiterId, userEmail) => {
     try {
       dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
@@ -115,10 +139,7 @@ const Recruiters = () => {
       });
 
       if (response.data.success) {
-        // Update the recruiterList state by removing the deleted recruiter
-        setRecruiterList((prevList) =>
-          prevList.filter((recruiter) => recruiter._id !== recruiterId)
-        );
+        fetchRecruiterList();
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -155,7 +176,7 @@ const Recruiters = () => {
     const matchesSearch =
       recruiter.fullname.toLowerCase().includes(search.toLowerCase()) ||
       recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.phoneNumber.toLowerCase().includes(search.toLowerCase());
+      recruiter.phone.toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus = status === "All" || recruiter.isActive === status;
 
@@ -191,7 +212,7 @@ const Recruiters = () => {
       <div className="m-4 p-4 bg-white shadow rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <Input
-            placeholder="Search recruiters by company, contact person"
+            placeholder="Search by name, email, contact "
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
@@ -226,7 +247,11 @@ const Recruiters = () => {
             {paginatedRecruiters.map((recruiter) => (
               <TableRow key={recruiter._id}>
                 <TableCell>
-                  {recruiter.fullname} <br />
+                  {recruiter.fullname + " "}{" "}
+                  {recruiter.isAdmin && (
+                    <span className="text-green-600 font-bold">Admin</span>
+                  )}
+                  <br />
                   {recruiter.email}
                 </TableCell>
                 <TableCell>{recruiter.phone}</TableCell>
@@ -252,21 +277,6 @@ const Recruiters = () => {
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
                   />
-                  {dloading[recruiter._id] ? (
-                    "loading..."
-                  ) : (
-                    <Trash
-                      className="text-red-500 cursor-pointer"
-                      size={20}
-                      onClick={() =>
-                        deleteRecruiter(
-                          recruiter._id,
-                          recruiter.email,
-                          recruiter.companyId
-                        )
-                      }
-                    />
-                  )}
 
                   {/* Toggle for recruiter activeness */}
                   {loading[recruiter._id] ? (
@@ -275,13 +285,29 @@ const Recruiters = () => {
                     <Switch
                       checked={recruiter.isActive}
                       onChange={(e) =>
-                        toggleActive(recruiter._id, !recruiter.isActive)
+                        toggleActive(
+                          recruiter._id,
+                          !recruiter.isActive,
+                          recruiter.isAdmin
+                        )
                       }
                       color="primary"
                       size="20"
                       inputProps={{
                         "aria-label": "Toggle Recruiter Active Status",
                       }}
+                    />
+                  )}
+
+                  {dloading[recruiter._id] ? (
+                    "loading..."
+                  ) : (
+                    <Trash
+                      className="text-red-500 cursor-pointer"
+                      size={20}
+                      onClick={() =>
+                        deleteRecruiter(recruiter._id, recruiter.email)
+                      }
                     />
                   )}
                 </TableCell>

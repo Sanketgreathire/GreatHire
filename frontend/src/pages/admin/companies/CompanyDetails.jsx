@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar";
+import {
+  fetchCompanyStats,
+  fetchRecruiterStats,
+  fetchJobStats,
+  fetchApplicationStats,
+} from "@/redux/admin/statsSlice";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
   const { companyId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [dloading, dSetLoading] = useState(false);
   const [company, setCompany] = useState(null);
 
@@ -45,6 +52,10 @@ const CompanyDetails = () => {
         withCredentials: true,
       });
       if (response.data.success) {
+        dispatch(fetchCompanyStats());
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
+        dispatch(fetchApplicationStats());
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -164,7 +175,7 @@ const CompanyDetails = () => {
 
           <div className="flex justify-end space-x-6 mt-8">
             <button
-              onClick={()=>navigate(`/admin/recruiters/${companyId}`)}
+              onClick={() => navigate(`/admin/recruiters/${companyId}`)}
               className={`px-6 py-3 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition`}
             >
               Recruiters List

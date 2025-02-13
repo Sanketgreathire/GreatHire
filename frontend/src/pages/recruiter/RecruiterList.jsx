@@ -31,6 +31,7 @@ const RecruiterList = () => {
         `${RECRUITER_API_END_POINT}/toggle-active`,
         {
           recruiterId,
+          companyId: company?._id,
           isActive,
         },
         { withCredentials: true }

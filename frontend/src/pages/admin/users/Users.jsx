@@ -15,13 +15,17 @@ import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import axios from "axios";
 import Navbar from "@/components/admin/Navbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ADMIN_USER_DATA_API_END_POINT,
   USER_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import {
+  fetchUserStats,
+  fetchApplicationStats,
+} from "@/redux/admin/statsSlice";
 
 const Users = () => {
   const [search, setSearch] = useState("");
@@ -29,7 +33,13 @@ const Users = () => {
   const itemsPerPage = 10;
   const [usersList, setUsersList] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [dloading, dsetLoading] = useState({});
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const applicationStats = useSelector(
+    (state) => state.stats.applicationStatsData
+  );
+  const userStats = useSelector((state) => state.stats.userStatsData);
 
   // fetch user list
   const fetchUserList = async () => {
@@ -56,6 +66,8 @@ const Users = () => {
         setUsersList((prevList) =>
           prevList.filter((user) => user.email !== email)
         );
+        dispatch(fetchUserStats());
+        dispatch(fetchApplicationStats());
         toast.success(response.data.message);
       }
     } catch (err) {
@@ -69,12 +81,6 @@ const Users = () => {
   useEffect(() => {
     fetchUserList();
   }, []);
-
-  const jobStats = useSelector((state) => state.stats.jobStatsData);
-  const applicationStats = useSelector(
-    (state) => state.stats.applicationStatsData
-  );
-  const userStats = useSelector((state) => state.stats.userStatsData);
 
   const stats = [
     {
