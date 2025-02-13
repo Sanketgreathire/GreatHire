@@ -3,13 +3,13 @@ import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import { Application } from "../../models/application.model.js";
 import { Company } from "../../models/company.model.js";
-import { formatDistanceToNow } from 'date-fns';
 
 export const getStatisticForAdmin = async (req, res) => {
   try {
     // Run all queries concurrently
     const [
       totalUsers,
+      totalCompanies,
       totalRecruiters,
       verifiedRecruiters,
       totalJobs,
@@ -22,6 +22,8 @@ export const getStatisticForAdmin = async (req, res) => {
     ] = await Promise.all([
       // Total users in the system
       User.countDocuments(),
+      // Total companies in the system
+      Company.countDocuments(),
       // Total recruiters in the system
       Recruiter.countDocuments(),
       // A recruiter is verified if isVerify equals 1
@@ -44,6 +46,7 @@ export const getStatisticForAdmin = async (req, res) => {
       success: true,
       stats: {
         totalUsers,
+        totalCompanies,
         totalRecruiters,
         verifiedRecruiters,
         totalJobs,
@@ -121,19 +124,34 @@ export const getRecentActivity = async (req, res) => {
     const now = new Date();
 
     // Fetch latest users (new user registrations)
-    const recentUsers = await User.find().sort({ createdAt: -1 }).limit(1).select("createdAt");
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
 
     // Fetch latest company registrations
-    const recentCompanies = await Company.find().sort({ createdAt: -1 }).limit(1).select("createdAt");
+    const recentCompanies = await Company.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
 
     // Fetch latest recruiter registrations
-    const recentRecruiters = await Recruiter.find().sort({ createdAt: -1 }).limit(1).select("createdAt");
+    const recentRecruiters = await Recruiter.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
 
     // Fetch latest jobs (new job postings)
-    const recentJobs = await Job.find().sort({ createdAt: -1 }).limit(1).select("createdAt jobDetails.title");
+    const recentJobs = await Job.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt jobDetails.title");
 
     // Fetch latest applications (submissions)
-    const recentApplications = await Application.find().sort({ createdAt: -1 }).limit(1).select("createdAt");
+    const recentApplications = await Application.find()
+      .sort({ createdAt: -1 })
+      .limit(1)
+      .select("createdAt");
 
     // Function to format time difference
     const formatTimeDifference = (createdAt) => {
@@ -152,23 +170,33 @@ export const getRecentActivity = async (req, res) => {
     let activityFeed = [];
 
     // Add user registration time
-    recentUsers.forEach(user => activityFeed.push(`${formatTimeDifference(user.createdAt)}`));
+    recentUsers.forEach((user) =>
+      activityFeed.push(`${formatTimeDifference(user.createdAt)}`)
+    );
 
     // Add company registration time
-    recentCompanies.forEach(company => activityFeed.push(`${formatTimeDifference(company.createdAt)}`));
+    recentCompanies.forEach((company) =>
+      activityFeed.push(`${formatTimeDifference(company.createdAt)}`)
+    );
 
     // Add recruiter registration time
-    recentRecruiters.forEach(recruiter => activityFeed.push(`${formatTimeDifference(recruiter.createdAt)}`));
+    recentRecruiters.forEach((recruiter) =>
+      activityFeed.push(`${formatTimeDifference(recruiter.createdAt)}`)
+    );
 
     // Add job posting time
-    recentJobs.forEach(job => activityFeed.push(`${formatTimeDifference(job.createdAt)}`));
+    recentJobs.forEach((job) =>
+      activityFeed.push(`${formatTimeDifference(job.createdAt)}`)
+    );
 
     // Add application submission time
-    recentApplications.forEach(application => activityFeed.push(`${formatTimeDifference(application.createdAt)}`));
+    recentApplications.forEach((application) =>
+      activityFeed.push(`${formatTimeDifference(application.createdAt)}`)
+    );
 
     return res.status(200).json({
       success: true,
-      data: activityFeed.filter(activity => activity !== null), // Remove null values
+      data: activityFeed.filter((activity) => activity !== null), // Remove null values
     });
   } catch (error) {
     console.error("Error fetching recent activity:", error);
@@ -202,15 +230,13 @@ export const getRecentJobPostings = async (req, res) => {
     };
 
     // Format job postings and filter out jobs with zero applications
-    const jobPostings = recentJobs
-      .map(job => ({
-        jobTitle: job.jobDetails.title,
-        company: job.company.companyName, // Extracting company name
-        posted: formatTimeDifference(job.createdAt),
-        applications: job.application.length, // Counting applications
-        status: job.jobDetails.isActive ? "Active" : "Closed", // Determine job status
-      }));
-    
+    const jobPostings = recentJobs.map((job) => ({
+      jobTitle: job.jobDetails.title,
+      company: job.company.companyName, // Extracting company name
+      posted: formatTimeDifference(job.createdAt),
+      applications: job.application.length, // Counting applications
+      status: job.jobDetails.isActive ? "Active" : "Closed", // Determine job status
+    }));
 
     return res.status(200).json({
       success: true,

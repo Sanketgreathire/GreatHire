@@ -49,27 +49,30 @@ const Jobs = () => {
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
-  const { statsData } = useSelector((state) => state.stats);
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const applicationStats = useSelector(
+    (state) => state.stats.applicationStatsData
+  );
 
   const stats = [
     {
       title: "Total Jobs",
-      count: statsData.totalJobs || 0,
+      count: jobStats.totalJobs || 0,
       icon: <CheckCircle size={30} className="text-green-500" />,
     },
     {
       title: "Active Jobs",
-      count: statsData.activeJobs || 0,
+      count: jobStats.totalActiveJobs || 0,
       icon: <FileText size={30} className="text-yellow-500" />,
     },
     {
-      title: "Expired Jobs",
-      count: statsData.expiredJobs || 0,
+      title: "Deactive Jobs",
+      count: jobStats.totalDeactiveJobs || 0,
       icon: <XCircle size={30} className="text-red-500" />,
     },
     {
       title: "Total Applications",
-      count: statsData.totalApplications || 0,
+      count: applicationStats.totalApplications || 0,
       icon: <Briefcase size={30} className="text-blue-500" />,
     },
   ];

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Trash, Eye } from "lucide-react";
-import { Briefcase, FileText, UserCheck } from "lucide-react";
+import { Briefcase, FileText, CheckCircle } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
 import axios from "axios";
@@ -70,28 +70,40 @@ const Users = () => {
     fetchUserList();
   }, []);
 
-  const { statsData } = useSelector((state) => state.stats);
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const applicationStats = useSelector(
+    (state) => state.stats.applicationStatsData
+  );
+  const userStats = useSelector((state) => state.stats.userStatsData);
 
   const stats = [
     {
       title: "Total Users",
-      count: statsData.totalUsers,
+      count: userStats?.totalUsers || 0,
       change: "+12.5%",
       icon: <FaRegUser size={30} />,
       color: "text-blue-500",
       bg: "bg-blue-100",
     },
     {
-      title: "Active Jobs",
-      count: statsData.activeJobs,
+      title: "Total Jobs",
+      count: jobStats?.totalJobs || 0,
       change: "+5.2%",
       icon: <Briefcase size={30} />,
+      color: "text-orange-500",
+      bg: "bg-orange-100",
+    },
+    {
+      title: "Active Jobs",
+      count: jobStats?.totalActiveJobs || 0,
+      change: "+5.2%",
+      icon: <CheckCircle size={30} />,
       color: "text-green-500",
       bg: "bg-green-100",
     },
     {
       title: "Applications",
-      count: statsData.totalApplications,
+      count: applicationStats?.totalApplications || 0,
       change: "+15.3%",
       icon: <FileText size={30} />,
       color: "text-yellow-500",
@@ -115,7 +127,7 @@ const Users = () => {
     <>
       <Navbar linkName={"Users"} />
       {/* Stats Cards */}
-      <div className=" p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className=" p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card
             key={index}
@@ -156,7 +168,7 @@ const Users = () => {
           </TableHeader>
           <TableBody>
             {paginatedUsers?.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user._id}>
                 <TableCell>{user.fullname}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.phoneNumber}</TableCell>

@@ -7,6 +7,8 @@ import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
+import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { validationResult } from "express-validator";
 
@@ -257,38 +259,21 @@ export const getRecruiterById = async (req, res) => {
 };
 
 export const addRecruiterToCompany = async (req, res) => {
-  const { fullName, email, phoneNumber, password, position, companyId } =
+  const { fullname, email, phoneNumber, password, position, companyId } =
     req.body;
   const userId = req.id;
 
-  if (!isUserAssociated(companyId, userId)) {
-    return res
-      .status(403)
-      .json({ message: "You are not authorized", success: false });
-  }
-
   try {
     // Validate required fields
-    if (!fullName || !email || !companyId || !password) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (!isUserAssociated(companyId, userId)) {
       return res
-        .status(400)
-        .json({ success: false, message: "All fields are required." });
-    }
-
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
-    }
-
-    // Validate fullName length
-    if (password.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
     }
 
     // Check if recruiter email already exists
@@ -309,7 +294,7 @@ export const addRecruiterToCompany = async (req, res) => {
 
     // Create new recruiter
     const recruiter = await Recruiter.create({
-      fullname: fullName,
+      fullname,
       emailId: {
         email,
         isVerified: true,
@@ -529,18 +514,28 @@ export const deleteAccount = async (req, res) => {
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
+      // delete subscription of company
+      await CandidateSubscription.findOneAndDelete({ company: companyId });
+      await JobSubscription.findOneAndDelete({ company: companyId });
 
-      return res
-        .status(200)
-        .cookie("token", "", {
-          maxAge: 0,
-          httpsOnly: true,
-          sameSite: "strict",
-        })
-        .json({
+      if (!admin) {
+        return res
+          .status(200)
+          .cookie("token", "", {
+            maxAge: 0,
+            httpsOnly: true,
+            sameSite: "strict",
+          })
+          .json({
+            success: true,
+            message: "Company deleted successfully",
+          });
+      } else {
+        return res.status(200).json({
           success: true,
           message: "Company deleted successfully",
         });
+      }
     } else {
       // Remove the user from the userId array in the Company model
       await Company.findByIdAndUpdate(

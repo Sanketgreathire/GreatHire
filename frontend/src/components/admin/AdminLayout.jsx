@@ -14,15 +14,26 @@ import Settings from "../../pages/admin/Settings";
 import Profile from "../../pages/admin/Profile";
 import UserDetails from "@/pages/admin/users/UserDetails";
 import AppliedCandidatesList from "@/pages/recruiter/AppliedCandidatesList";
-import { fetchStats } from "@/redux/admin/statsSlice";
+import {
+  fetchCompanyStats,
+  fetchRecruiterStats,
+  fetchJobStats,
+  fetchApplicationStats,
+  fetchUserStats,
+} from "@/redux/admin/statsSlice";
 import RecruitersDetails from "@/pages/recruiter/rec_job_details/RecruitersDetails";
 import CompanyDetails from "@/pages/admin/recruiters/CompanyDetails";
+import CompanyList from "@/pages/admin/companies/CompanyList";
 
 const AdminLayout = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchStats());
+    dispatch(fetchCompanyStats());
+    dispatch(fetchRecruiterStats());
+    dispatch(fetchJobStats());
+    dispatch(fetchApplicationStats());
+    dispatch(fetchUserStats());
   }, []);
 
   return (
@@ -38,17 +49,21 @@ const AdminLayout = () => {
           <Route path="users" element={<Users />} />
           <Route path="users/details/:userId" element={<UserDetails />} />
 
-          <Route path="recruiters" element={<Recruiters />} />
+          <Route path="companies" element={<CompanyList />} />
+          <Route path="recruiters/:companyId" element={<Recruiters />} />
           <Route
             path="recruiter/details/:recruiterId"
             element={<RecruitersDetails />}
           />
-          <Route path="for-admin/company-details/:recruiterId" element={<CompanyDetails />} />
+          <Route
+            path="for-admin/company-details/:companyId"
+            element={<CompanyDetails />}
+          />
 
           <Route path="jobs" element={<Jobs />} />
           <Route path="job/details/:id" element={<JobDetail />} />
           <Route
-            path="applicants-details/:id"
+            path="applicants-list/:id"
             element={<AppliedCandidatesList />}
           />
 

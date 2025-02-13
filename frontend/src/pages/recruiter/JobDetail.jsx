@@ -376,10 +376,10 @@ const JobDetail = () => {
                 onClick={() => {
                   if (user.role === "recruiter")
                     navigate(`/recruiter/dashboard/applicants-details/${id}`);
-                  else navigate(`/admin/applicants-details/${id}`);
+                  else navigate(`/admin/applicants-list/${id}`);
                 }}
               >
-                Applicants Details
+                Applicants List
               </Button>
               {(user?._id === jobOwner ||
                 user?.emailId?.email === company?.adminEmail || user?.role === "admin" || user?.role === "Owner") && (

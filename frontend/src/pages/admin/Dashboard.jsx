@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Briefcase, FileText, UserCheck } from "lucide-react";
+import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
@@ -21,43 +22,47 @@ import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 
 const Dashboard = () => {
-  const { statsData } = useSelector((state) => state.stats);
+  const companyStats = useSelector((state) => state.stats.companyStatsData);
+  const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const userStats = useSelector((state) => state.stats.userStatsData);
+
   const [loading, setLoading] = useState(false);
   const [recentActivity, setRecentActivity] = useState(null);
   const [jobPostings, setJobPostedJob] = useState([]);
 
   const stats = [
     {
-      title: "Total Users",
-      count: statsData?.totalUsers ?? 0, // Use fetched total users
-      change: "+12.5%",
-      icon: <FaRegUser size={30} />,
-      color: "text-blue-500",
-      bg: "bg-blue-100",
-    },
-    {
-      title: "Active Jobs",
-      count: statsData?.activeJobs ?? 0, // Use fetched active jobs
-      change: "+5.2%",
-      icon: <Briefcase size={30} />,
-      color: "text-green-500",
-      bg: "bg-green-100",
+      title: "Total Companies",
+      count: companyStats?.totalCompanies || 0,
+      change: "+10%",
+      icon: <HiOutlineBuildingOffice2 size={30} />,
+      color: "text-indigo-500",
+      bg: "bg-indigo-100",
     },
     {
       title: "Total Recruiters",
-      count: statsData?.totalRecruiters ?? 0, // Use fetched recruiters count
+      count: recruiterStats.totalRecruiters || 0, // Use fetched recruiters count
       change: "+8.1%",
       icon: <UserCheck size={30} />,
       color: "text-purple-500",
       bg: "bg-purple-100",
     },
     {
-      title: "Applications",
-      count: statsData?.totalApplications ?? 0, // Use fetched applications count
-      change: "+15.3%",
-      icon: <FileText size={30} />,
-      color: "text-yellow-500",
-      bg: "bg-yellow-100",
+      title: "Total Users",
+      count: userStats?.totalUsers || 0, // Use fetched total users
+      change: "+12.5%",
+      icon: <FaRegUser size={30} />,
+      color: "text-blue-500",
+      bg: "bg-blue-100",
+    },
+    {
+      title: "Total Jobs",
+      count: jobStats?.totalJobs || 0, // Use fetched active jobs
+      change: "+5.2%",
+      icon: <Briefcase size={30} />,
+      color: "text-green-500",
+      bg: "bg-green-100",
     },
   ];
 
@@ -314,7 +319,7 @@ const Dashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {displayedJobs.map((job) => (
-                    <TableRow key={job.id}>
+                    <TableRow key={job._id}>
                       <TableCell>{job.jobTitle}</TableCell>
                       <TableCell>{job.company}</TableCell>
                       <TableCell>{job.posted}</TableCell>

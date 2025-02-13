@@ -3,18 +3,19 @@ import { NavLink } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
 import {
   FaUsers,
-  FaUserTie,
   FaBriefcase,
   FaChartBar,
   FaUser,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { PiBuildingOfficeDuotone } from "react-icons/pi";
+
 
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
   { name: "Users", path: "/admin/users", icon: FaUsers },
-  { name: "Recruiters", path: "/admin/recruiters", icon: FaUserTie },
+  { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
   { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
   { name: "Reports", path: "/admin/reports", icon: FaChartBar },
   { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },

@@ -96,7 +96,7 @@ const RecruiterList = () => {
 
   return (
     <>
-      {company && user?.isVerify ? (
+      {company && user?.isActive ? (
         <div className="container mx-auto p-4 min-h-screen">
           <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
           <div className="mb-4 flex justify-between px-2">
@@ -244,7 +244,7 @@ const RecruiterList = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by GreatHire
           </span>
         </p>
       )}

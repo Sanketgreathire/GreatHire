@@ -54,158 +54,149 @@ export const verifyToken = async (req, res) => {
 
 export const sendVerificationStatus = async (req, res) => {
   try {
-    const { companyData, recruiterData, status } = req.body;
+    // Extract data from the request body
+    const { email, adminEmail, companyId, isActive } = req.body;
+    // userId is available as req.id if needed for audit purposes
+    const userId = req.id;
 
-    // Validate input
-    if (!companyData || !recruiterData || status === undefined) {
-      return res.status(400).json({
-        message: "Missing required data.",
-        success: false,
-      });
+    // Find the company by its ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found" });
     }
 
-    // Construct the message based on status
-    let message;
-    if (status === -1) {
-      message = `${recruiterData.fullname} with email ${recruiterData.emailId.email} has been marked as not verified.`;
-    } else if (status === 1) {
-      message = `${recruiterData.fullname} with email ${recruiterData.emailId.email} has been verified successfully.`;
-    } else {
-      return res.status(400).json({
-        message: "Invalid status provided.",
-        success: false,
-      });
+    const admin = await Admin.findById(userId);
+    if (!admin) {
+      return res
+        .status(404)
+        .json({ success: false, message: "You are not authorized" });
     }
 
-    // Email to Great Hire
-    const mailOptionsForGreatHire = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
-      subject: `Recruiter Verification Status by ${companyData.companyName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #1e90ff;">GreatHire</h2>
-            <p style="color: #555;">Recruiter Verification Status</p>
-          </div>
-          <p><strong style="color: #333;">Company Name:</strong> ${
-            companyData.companyName
-          }</p>
-          <p><strong style="color: #333;">Recruiter Name:</strong> ${
-            recruiterData.fullname
-          }</p>
-          <p><strong style="color: #333;">Recruiter Email:</strong> ${
-            recruiterData?.emailId?.email
-          }</p>
-          <p><strong style="color: #333;">Status:</strong> ${
-            status === 1 ? "Verified" : "Not Verified"
-          }</p>
-          <p style="color: #555;">${message}</p>
-          <br />
-          <p style="text-align: center;">Thanks, <br /> GreatHire Support</p>
-        </div>
-      `,
-    };
+    // Update the company's isActive status
+    company.isActive = isActive;
+    await company.save();
 
-    // Email to Recruiter
-    const mailOptionsForRecrutier = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: recruiterData?.emailId?.email,
-      subject: `Recruiter Verification Status by ${companyData.companyName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #1e90ff;">GreatHire</h2>
-            <p style="color: #555;">Recruiter Verification Status</p>
-          </div>
-          <p><strong style="color: #333;">Company Name:</strong> ${
-            companyData.companyName
-          }</p>
-          <p><strong style="color: #333;">Recruiter Name:</strong> ${
-            recruiterData.fullname
-          }</p>
-          <p><strong style="color: #333;">Recruiter Email:</strong> ${
-            recruiterData?.emailId?.email
-          }</p>
-          <p><strong style="color: #333;">Status:</strong> ${
-            status === 1 ? "Verified" : "Not Verified"
-          }</p>
-          <p style="color: #555;">${message}</p>
-          <p style="font-weight: bold; color: #333;">Now you ${
-            status === 1 ? "can" : "can't"
-          } post jobs and add users to the company.</p>
-          <br />
-          <p style="text-align: center;">Thanks, <br /> GreatHire Team</p>
-        </div>
-      `,
-    };
+    // Extract recruiter IDs from the company's userId array
+    // (Assuming the company model stores recruiter IDs in the format: [{ user: ObjectId }, ...])
+    const recruiterIds = company.userId.map((u) => u.user);
 
-    // Email to Company
-    const mailOptionsForCompany = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: companyData.email,
-      subject: `Verification Response`,
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #1e90ff;">GreatHire</h2>
-            <p style="color: #555;">Recruiter Verification Status</p>
-          </div>
-          <p><strong style="color: #333;">Your verification response for recruiter:</strong> <strong>${recruiterData.fullname}</strong> Recorded.</p>
-          <p style="color: #555;">We will update the recruiter’s status shortly.</p>
-          <br />
-          <p style="text-align: center;">Thanks, <br /> GreatHire Team</p>
-        </div>
-      `,
-    };
+    // Update all recruiters associated with this company
+    await Recruiter.updateMany(
+      { _id: { $in: recruiterIds } },
+      { isActive: isActive }
+    );
 
-    if (status === -1) {
-      // Delete the company based on the provided email
-      await Company.deleteOne({ email: companyData.email });
+    // Update all jobs for this company.
+    // In the Job model, the active status is stored in the nested jobDetails.isActive field.
+    await Job.updateMany(
+      { company: companyId },
+      { "jobDetails.isActive": isActive }
+    );
 
-      // Update the recruiter's isVerify and isCompanyCreated fields
-      await Recruiter.updateOne(
-        { "emailId.email": recruiterData.emailId.email }, // Using dot notation to access nested email field
-        {
-          $set: {
-            isVerify: status,
-            isCompanyCreated: false,
-          },
+    // Prepare the email notification content
+    const subject = `Company Status Update: ${
+      isActive ? "Active" : "Inactive"
+    }`;
+    const message = `
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Company Verification Status</title>
+    <style>
+      /* Inline CSS styles for the email */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      .logo .great {
+        color: #000000;
+      }
+      .logo .hire {
+        color: #1D4ED8;
+      }
+      .message {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333333;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #777777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <span class="great">Great</span><span class="hire">Hire</span>
+      </div>
+      <div class="message">
+        <p>Dear ${company.companyName},</p>
+        <p>Greetings from <strong><span class="great">Great</span><span class="hire">Hire</span></strong>!</p>
+        <p>
+          We hope you are doing well. We are writing to inform you that the verification status of your company has been updated to: 
+          <strong>${isActive ? "Active" : "Inactive"}</strong>.
+        </p>
+        ${
+          isActive
+            ? `<p>Great news! With your account now active, all your recruiters and job postings have been successfully activated. Your company is now fully visible on our platform, allowing you to enjoy our comprehensive recruitment services.</p>`
+            : `<p>Please note that since your company status has been set to Inactive, all associated recruiters and job postings have been temporarily deactivated. If you have any questions or need further assistance, our support team is here to help.</p>`
         }
-      );
-    } else {
-      // Update only the isVerify field for the recruiter
-      await Recruiter.updateOne(
-        { "emailId.email": recruiterData.emailId.email }, // Matching the email
-        {
-          $set: {
-            "emailId.isVerified": true, // Set email isVerified to true
-            ...(recruiterData.phoneNumber?.number && {
-              "phoneNumber.isVerified": true, // Conditionally set phone isVerified to true if phone number exists
-            }),
-            isVerify: status,
-          },
-        }
-      );
-    }
+        <p>Thank you for choosing <strong><span class="great">Great</span><span class="hire">Hire</span></strong>. We look forward to continuing to support your hiring success.</p>
+      </div>
+      <div class="footer">
+        <p>Warm regards,</p>
+        <p>The <span class="great">Great</span><span class="hire">Hire</span> Team</p>
+      </div>
+    </div>
+  </body>
+</html>
+`;
 
-    // Send emails concurrently
-    await Promise.all([
-      transporter.sendMail(mailOptionsForCompany),
-      transporter.sendMail(mailOptionsForGreatHire),
-      transporter.sendMail(mailOptionsForRecrutier),
-    ]);
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: `${email}, ${adminEmail}`,
+      subject: subject,
+      html: message,
+    };
 
-    // Return success response
+    // Send the email notification
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        // Optionally handle email errors, but the DB update succeeded.
+      } else {
+        //console.log("Email sent:", info.response);
+      }
+    });
+
     return res.status(200).json({
-      message: "Verification emails sent successfully.",
-
       success: true,
+      message:
+        "Verification status updated successfully and email notifications sent.",
     });
   } catch (err) {
     console.error("Error in sending verification status:", err);
     return res.status(500).json({
-      message: "Failed to send verification emails.",
+      message: "Failed to update verification status.",
       success: false,
       error: err.message,
     });

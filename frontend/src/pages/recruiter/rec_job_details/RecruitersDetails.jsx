@@ -114,35 +114,10 @@ const RecruitersDetails = () => {
                   {recruiterDetails?.isActive ? "Active" : "Inactive"}
                 </span>
               </p>
-              <p className="text-gray-700 flex items-center gap-2 ">
-                <strong>Verification Status:</strong>{" "}
-                <span
-                  className={`${
-                    recruiterDetails?.isVerify
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {recruiterDetails?.isVerify ? (
-                    <MdOutlineVerifiedUser size={25} />
-                  ) : (
-                    "Not Verified"
-                  )}
-                </span>
-              </p>
+              
               <p className="text-gray-700 ">
                 <strong>Role:</strong> {recruiterDetails?.role}
               </p>
-              {user?.role !== "recruiter" && (
-                <div className="flex justify-end">
-                  <Button
-                    className="bg-blue-700 hover:bg-blue-800"
-                    onClick={() => navigate(`/admin/for-admin/company-details/${recruiterDetails?._id}`)} 
-                  >
-                    Company Details
-                  </Button>
-                </div>
-              )}
             </div>
             <div className="w-2/3">
               <RecruiterJobs recruiterId={recruiterId} />

@@ -35,10 +35,6 @@ const recruiterSchema = new mongoose.Schema(
       default: "",
     },
 
-    isVerify: {
-      type: Number,
-      default: 0,
-    },
     isCompanyCreated: {
       type: Boolean,
       default: false,
@@ -51,7 +47,7 @@ const recruiterSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
 

@@ -1,6 +1,24 @@
 import { User } from "../../models/user.model.js";
 import { Application } from "../../models/application.model.js";
 
+export const getUserStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+
+    return res.status(200).json({
+      success: true,
+      stats: { totalUsers },
+    });
+  } catch (err) {
+    console.error("Error fetching user stats:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
+
 export const getUsersList = async (req, res) => {
   try {
     const users = await User.aggregate([

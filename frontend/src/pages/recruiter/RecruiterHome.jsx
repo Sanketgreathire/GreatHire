@@ -67,7 +67,7 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company?.maxPostJobs,
+      count: company.maxJobPosts || 0,
       icon: (
         <FaClipboardList
           className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"
@@ -124,7 +124,7 @@ const RecruiterHome = () => {
 
   return (
     <>
-      {company && user?.isVerify ? (
+      {company && user?.isActive ? (
         <div className="min-h-screen p-8">
           {/* Header Section */}
           <header className="text-center mb-8">
@@ -169,7 +169,7 @@ const RecruiterHome = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by GreatHire
           </span>
         </p>
       )}
