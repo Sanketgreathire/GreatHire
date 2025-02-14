@@ -344,7 +344,7 @@ export const getCandidateData = async (req, res) => {
     // Safe escape function (Prevents .replace() on non-strings)
     const escapeRegex = (str) => {
       if (typeof str !== "string") return "";
-      return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      return str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&");
     };
 
     const sanitizedJobTitle = escapeRegex(jobTitle.trim());
