@@ -23,12 +23,6 @@ export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
-    // Validate required fields
-    if (!fullname || !email || !phoneNumber || !password) {
-      return res.status(200).json({
-        message: "Something is missing",
-      });
-    }
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -334,7 +328,7 @@ export const addRecruiterToCompany = async (req, res) => {
                 <p style="color: #555;">Building Smart and Powerful Recruiter Teams</p>
               </div>
         
-              <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullName}!</h3>
+              <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullname}!</h3>
               <p style="color: #555;">
                 We are excited to inform you that you have been added as a recruiter by your company admin. Below are your account details:
               </p>
@@ -342,7 +336,7 @@ export const addRecruiterToCompany = async (req, res) => {
               <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                 <tr>
                   <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Full Name:</td>
-                  <td style="padding: 10px; border: 1px solid #ddd;">${fullName}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${fullname}</td>
                 </tr>
                 <tr>
                   <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
