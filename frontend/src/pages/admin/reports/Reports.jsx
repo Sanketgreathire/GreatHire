@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Select, MenuItem, FormControl } from "@mui/material";
 import {
   LineChart,
   Line,
@@ -16,67 +16,70 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
 import { DollarSign, Users, Briefcase, CheckCircle } from "lucide-react";
-import { useSelector } from "react-redux";
+import axios from "axios";
+import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Reports = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [selectedRange, setSelectedRange] = useState("last7");
-  const { statsData } = useSelector((state) => state.stats);
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+  // Define available years (current year and previous 5 years)
+  const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
-  const applicationSuccessRate = Number(((statsData.shortlistedApplications * 100) / statsData.totalApplications).toFixed(2));
+  // Default the selected year to the current year and range to 7 (days)
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedRange, setSelectedRange] = useState(7);
+  const [statsData, setStatsData] = useState(null);
+  console.log(statsData);
+  const applicationSuccessRate = statsData?.totalApplications
+    ? Number(
+        (
+          (statsData?.shortlistedApplications * 100) /
+          statsData?.totalApplications
+        ).toFixed(2)
+      )
+    : 0;
 
+  const handleRangeChange = (event) =>
+    setSelectedRange(Number(event.target.value));
 
-  // Handling Year and Range change
-  const handleYearChange = (event) => setSelectedYear(event.target.value);
-  const handleRangeChange = (event) => setSelectedRange(event.target.value);
+  // Function to call the API to get filtered statistics
+  const fetchStatistics = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_STAT_API_END_POINT}/getState-in-range`,
+        {
+          params: { year: selectedYear, range: selectedRange },
+        }
+      );
+      if (response.data.success) {
+        setStatsData(response.data.stats);
+      }
+    } catch (error) {
+      console.error("Error fetching statistics:", error);
+    }
+  };
 
-  const dataRevenue = [
-    { month: "Jan", revenue: 30000 },
-    { month: "Feb", revenue: 35000 },
-    { month: "Mar", revenue: 45000 },
-    { month: "Apr", revenue: 40000 },
-    { month: "May", revenue: 50000 },
-    { month: "Jun", revenue: 46000 },
-    { month: "July", revenue: 40000 },
-    { month: "Aug", revenue: 35000 },
-    { month: "Sep", revenue: 40000 },
-    { month: "Oct", revenue: 10000 },
-    { month: "Jun", revenue: 13000 },
-    { month: "Jun", revenue: 70000 },
-  ];
+  useEffect(() => {
+    fetchStatistics();
+  }, []);
 
-  const dataUsers = [
-    { month: "Jan", users: 400 },
-    { month: "Feb", users: 800 },
-    { month: "Mar", users: 1200 },
-    { month: "Apr", users: 1000 },
-    { month: "May", users: 1500 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-    { month: "Jun", users: 1300 },
-  ];
-
+  // Application stats for the pie chart
   const applicationStats = [
     {
       name: "Shortlisted",
-      value: statsData.shortlistedApplications || 0,
+      value: statsData?.shortlistedApplications || 0,
       color: "#4CAF50",
     },
     {
       name: "Pending",
-      value: statsData.pendingApplications || 0,
+      value: statsData?.pendingApplications || 0,
       color: "#FFC107",
     },
     {
       name: "Rejected",
-      value: statsData.rejectedApplications || 0,
+      value: statsData?.rejectedApplications || 0,
       color: "#F44336",
     },
   ];
@@ -90,14 +93,19 @@ const Reports = () => {
         {/* Filters Section */}
         <div className="bg-white p-4 flex items-center justify-evenly gap-2">
           <FormControl fullWidth>
+            {/* Year Filter */}
             <Select
               value={selectedYear}
-              onChange={handleYearChange}
-              className="h-12"
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              variant="outlined"
+              size="small"
+              style={{ minWidth: 120 }}
             >
-              <MenuItem value="2024">2024</MenuItem>
-              <MenuItem value="2023">2023</MenuItem>
-              <MenuItem value="2022">2022</MenuItem>
+              {availableYears.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
@@ -107,19 +115,18 @@ const Reports = () => {
               onChange={handleRangeChange}
               className="h-12"
             >
-              <MenuItem value="last7">Last 7 Days</MenuItem>
-              <MenuItem value="last30">Last 30 Days</MenuItem>
-              <MenuItem value="lastMonth">Last Month</MenuItem>
-              <MenuItem value="last3">Last 3 Months</MenuItem>
-              <MenuItem value="last6">Last 6 Months</MenuItem>
+              <MenuItem value={7}>Last 7 Days</MenuItem>
+              <MenuItem value={30}>Last 30 Days</MenuItem>
+              <MenuItem value={1}>Current Month</MenuItem>
+              <MenuItem value={3}>Last 3 Months</MenuItem>
+              <MenuItem value={6}>Last 6 Months</MenuItem>
+              <MenuItem value={12}>12 Months</MenuItem>
             </Select>
           </FormControl>
 
           <Button
             className="w-60 h-12 bg-blue-700 hover:bg-blue-600 font-bold"
-            onClick={() => {
-              /* You can handle the action when button is clicked */
-            }}
+            onClick={fetchStatistics}
           >
             Filter Reports
           </Button>
@@ -129,8 +136,9 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Total Revenue</p>
-              <h3 className="text-2xl font-bold text-center">₹45,678</h3>
-              {/* <p className="text-green-500 text-sm">+12.5% from last period</p> */}
+              <h3 className="text-2xl font-bold text-center">
+                ₹{statsData?.totalRevenue || 0}
+              </h3>
             </div>
             <DollarSign
               className="text-green-500 bg-green-100 p-2 rounded-lg"
@@ -140,8 +148,9 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">New Users</p>
-              <h3 className="text-2xl font-bold text-center">1,234</h3>
-              {/* <p className="text-green-500 text-sm">+8.2% from last period</p> */}
+              <h3 className="text-2xl font-bold text-center">
+                {statsData?.newUsers || 0}
+              </h3>
             </div>
             <Users
               className="text-blue-500 bg-blue-100 p-2 rounded-lg"
@@ -151,8 +160,9 @@ const Reports = () => {
           <Card className="p-4 flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Application Success Rate</p>
-              <h3 className="text-2xl font-bold text-center">{applicationSuccessRate}%</h3>
-              {/* <p className="text-green-500 text-sm">+5.3% from last period</p> */}
+              <h3 className="text-2xl font-bold text-center">
+                {applicationSuccessRate}%
+              </h3>
             </div>
             <CheckCircle
               className="text-purple-500 bg-purple-100 p-2 rounded-lg"
@@ -161,9 +171,10 @@ const Reports = () => {
           </Card>
           <Card className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-500">Active Jobs</p>
-              <h3 className="text-2xl font-bold text-center">{statsData.activeJobs}</h3>
-              {/* <p className="text-green-500 text-sm">+15.7% from last period</p> */}
+              <p className="text-sm text-gray-500">Posted Jobs</p>
+              <h3 className="text-2xl font-bold text-center">
+                {statsData?.totalJobs || 0}
+              </h3>
             </div>
             <Briefcase
               className="text-yellow-600 bg-yellow-100 p-2 rounded-lg"
@@ -173,34 +184,42 @@ const Reports = () => {
         </div>
 
         {/* Revenue and User Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <Card className="p-4">
             <h3 className="text-lg font-semibold">Revenue Trend</h3>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={dataRevenue}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="revenue" stroke="#6A0DAD" />
-              </LineChart>
+              {statsData?.revenueTrend.length === 0 ? (
+                <p className="flex justify-center text-2xl text-gray-400">No Revenue</p>
+              ) : (
+                <LineChart data={statsData?.revenueTrend}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="revenue" stroke="#6A0DAD" />
+                </LineChart>
+              )}
             </ResponsiveContainer>
           </Card>
 
           <Card className="p-4">
             <h3 className="text-lg font-semibold">User Growth</h3>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={dataUsers}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="users" fill="#6A0DAD" />
-              </BarChart>
+              {statsData?.revenueTrend.length === 0 ? (
+                <p className="flex justify-center text-2xl text-gray-400">No New User</p>
+              ) : (
+                <BarChart data={statsData?.newUsersTrend}>
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="users" fill="#6A0DAD" />
+                </BarChart>
+              )}
             </ResponsiveContainer>
           </Card>
         </div>
 
-        {/* Application */}
+        {/* Application Stats */}
         <div className="grid grid-cols-1 gap-6 mt-6">
           <Card className="p-4">
             <h3 className="text-lg font-semibold">Application Stats</h3>
@@ -224,9 +243,9 @@ const Reports = () => {
               </ResponsiveContainer>
 
               {/* Legend */}
-              <div className="flex flex-col gap-4 ">
+              <div className="flex flex-col gap-4">
                 {applicationStats.map((entry, index) => (
-                  <div key={index} className="flex items-center mb-2">
+                  <div key={index} className="flex items-center">
                     <div
                       className="w-4 h-4"
                       style={{ backgroundColor: entry.color }}

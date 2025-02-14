@@ -10,7 +10,7 @@ import Users from "../../pages/admin/users/Users";
 import RecruitersList from "@/pages/admin/recruiters/RecruitersList";
 import Recruiters from "../../pages/admin/recruiters/Recruiters";
 import Jobs from "../../pages/admin/jobs/Jobs";
-import Reports from "../../pages/admin/Reports";
+import Reports from "../../pages/admin/reports/Reports";
 import Settings from "../../pages/admin/Settings";
 import Profile from "../../pages/admin/Profile";
 import UserDetails from "@/pages/admin/users/UserDetails";

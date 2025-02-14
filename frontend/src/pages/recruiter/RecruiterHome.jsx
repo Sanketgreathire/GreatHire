@@ -67,7 +67,7 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company.maxJobPosts || 0,
+      count: company?.maxJobPosts || 0,
       icon: (
         <FaClipboardList
           className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"
