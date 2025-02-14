@@ -71,9 +71,9 @@ const Jobs = () => {
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
+      <div className="flex-grow w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
         <div className="w-full px-4 py-4">
         <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
 

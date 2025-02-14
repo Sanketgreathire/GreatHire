@@ -20,13 +20,6 @@ export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
-    // Validate required fields
-    if (!fullname || !email || !phoneNumber || !password) {
-      return res.status(200).json({
-        message: "Something is missing",
-      });
-    }
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });

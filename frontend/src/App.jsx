@@ -42,11 +42,10 @@ import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 
 // Admin Routes
-import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AddAdmin from "./pages/admin/AddAdmin";
-import AdminList  from "./pages/admin/AdminList"
+import AdminList from "./pages/admin/AdminList";
 import ReportedJobList from "./pages/admin/ReportedJobList";
 
 import { useEffect } from "react";
@@ -189,10 +188,6 @@ const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/admin/signup",
-    element: <AdminSignup />,
-  },
-  {
     path: "/admin/login",
     element: <AdminLogin />,
   },
@@ -206,7 +201,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/admin/reported-job-list",
-    element: <ReportedJobList />, 
+    element: <ReportedJobList />,
   },
   {
     path: "/admin/*",
@@ -216,7 +211,6 @@ const appRouter = createBrowserRouter([
     path: "*",
     element: <PageNotFound />,
   },
-
 ]);
 
 function App() {

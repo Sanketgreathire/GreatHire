@@ -4,18 +4,11 @@ import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import { Admin } from "../../models/admin/admin.model.js";
 import { validationResult } from "express-validator";
+import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
-
-    // Validate required fields
-    if (!fullname || !email || !phoneNumber || !password) {
-      return res.status(200).json({
-        message: "Something is missing",
-      });
-    }
-
     // check validation of email and password by express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -24,9 +17,9 @@ export const register = async (req, res) => {
 
     // Check if user already exists
     let userExists =
-      (await User.findOne({ email })) ||
-      (await Recruiter.findOne({ email })) ||
-      (await Admin.findOne({ email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -39,7 +32,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    let newUser = await Admin.create({
+    await Admin.create({
       fullname,
       emailId: {
         email, // Setting the email
@@ -52,6 +45,75 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "Gmail", // or your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+
+    const mailOptions = {
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your Admin Account Has Been Created",
+      html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                  <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+                    <p style="color: #555;">Building Smart and Powerful Admin Teams</p>
+                  </div>
+            
+                  <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullname}!</h3>
+                  <p style="color: #555;">
+                    We are excited to inform you that you have been added as a admin GreatHire. Below are your account details:
+                  </p>
+                  
+                  <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                    <tr>
+                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Full Name:</td>
+                      <td style="padding: 10px; border: 1px solid #ddd;">${fullname}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+                      <td style="padding: 10px; border: 1px solid #ddd;">${email}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Phone Number:</td>
+                      <td style="padding: 10px; border: 1px solid #ddd;">${phoneNumber}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Position:</td>
+                      <td style="padding: 10px; border: 1px solid #ddd;">Admin</td>
+                    </tr>
+                  </table>
+            
+                  <h4 style="color: #1e90ff;">Your Login Credentials:</h4>
+                  <p style="font-weight: bold; color: #333;">Email: ${email}</p>
+                  <p style="font-weight: bold; color: #333;">Password: ${password}</p>
+                  
+                  <p style="color: #555;">
+                    Please log in to your account using the credentials above at the following link:
+                    <a href="${
+                      process.env.FRONTEND_URL
+                    }admin/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
+                  </p>
+            
+                  <p style="color: #555;">
+                    Make sure to update your password after logging in for the first time for security purposes.
+                  </p>
+            
+                  <div style="margin-top: 20px; text-align: center;">
+                    <p style="font-size: 14px; color: #aaa;">This is an automated email, please do not reply.</p>
+                    <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+                  </div>
+                </div>
+              `,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
     // cookies strict used...
     return res.status(200).json({
       message: "Account created successfully.",
