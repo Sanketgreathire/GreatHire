@@ -46,6 +46,9 @@ import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
+import AddAdmin from "./pages/admin/AddAdmin";
+import AdminList  from "./pages/admin/AdminList"
+import ReportedJobList from "./pages/admin/ReportedJobList";
 
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
@@ -197,6 +200,18 @@ const appRouter = createBrowserRouter([
   {
     path: "/admin/login",
     element: <AdminLogin />,
+  },
+  {
+    path: "/admin/add-admin",
+    element: <AddAdmin />,
+  },
+  {
+    path: "/admin/admin-list",
+    element: <AdminList />,
+  },
+  {
+    path: "/admin/reported-job-list",
+    element: <ReportedJobList />, 
   },
   {
     path: "/admin/*",

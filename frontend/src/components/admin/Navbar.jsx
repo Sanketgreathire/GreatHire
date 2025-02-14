@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
-
 
 const Navbar = ({ linkName }) => {
   const { user } = useSelector((state) => state.auth);
@@ -27,13 +26,12 @@ const Navbar = ({ linkName }) => {
         toast.success(response.data.message);
         navigate("/admin");
       } else {
-        toast.error("error in logout");
+        toast.error("Error in logout");
       }
     } catch (err) {
-      toast.error(`error in logout ${err}`);
+      toast.error(`Error in logout ${err}`);
     }
   };
-
 
   return (
     <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 lg:ml-52 bg-white px-3 py-2 z-30">
@@ -46,10 +44,27 @@ const Navbar = ({ linkName }) => {
         <span className="text-blue-700">Hire</span>
       </div>
 
-      {/* Right - Bell Icon & Profile */}
-      <div className="flex items-center gap-4">
-        <Bell className="w-6 h-6 cursor-pointer" />
+      {/* Right - Bell Icon, Profile, and Extra Links for Settings Page */}
+      <div className="flex items-center gap-8">
+        {/* Show these links only when on the "Settings" page */}
+        {linkName === "Settings" && (
+          <div className="flex gap-4">
+            <Link to="/admin/add-admin" className="hover:text-blue-700">
+              ➕ Add Admin
+            </Link>
+            <Link to="/admin/admin-list" className="hover:text-blue-700">
+              📋 Admin List
+            </Link>
+            <Link to="/admin/reported-job-list" className="hover:text-blue-700">
+              🚨 Reported Jobs
+            </Link>
+          </div>
+        )}
 
+        {/* Notification Icon */}
+        <Bell className="w-8 h-8 cursor-pointer" />
+
+        {/* Profile Section */}
         <div ref={profileMenuRef} className="relative">
           {user ? (
             <>
@@ -60,13 +75,18 @@ const Navbar = ({ linkName }) => {
                 aria-haspopup="true"
               >
                 <img
-                  src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                  src={
+                    user?.profile?.profilePhoto ||
+                    "https://github.com/shadcn.png"
+                  }
                   alt={`${user?.fullname || "User"}'s avatar`}
                   className="h-10 w-10 rounded-full border object-cover"
                 />
                 <div>
                   <p className="font-bold">{user?.fullname}</p>
-                  <p className="font-medium text-gray-400">{user?.role || "User"}</p>
+                  <p className="font-medium text-gray-400">
+                    {user?.role || "User"}
+                  </p>
                 </div>
               </button>
 
@@ -84,10 +104,16 @@ const Navbar = ({ linkName }) => {
             </>
           ) : (
             <div className="flex gap-3">
-              <a href="/admin/login" className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+              <a
+                href="/admin/login"
+                className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
                 Login
               </a>
-              <a href="/admin/signup" className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+              <a
+                href="/admin/signup"
+                className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
                 Signup
               </a>
             </div>
