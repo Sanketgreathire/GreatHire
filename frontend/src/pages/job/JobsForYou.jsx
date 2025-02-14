@@ -17,7 +17,7 @@ import axios from "axios";
 const JobsForYou = () => {
   const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
     useJobDetails(); // Access functions from context
-    
+
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -112,7 +112,6 @@ const JobsForYou = () => {
   };
 
   return (
-
     <div className="flex justify-center mt-4 gap-4 h-screen sticky top-10 md:px-6">
       {/* Job List */}
       <div
@@ -126,9 +125,7 @@ const JobsForYou = () => {
                 ? "border-blue-600"
                 : "border-gray-400"
             }`}
-
             onClick={() => handleJobClick(job)} // Clicking on job card will show the details
-
           >
             <div className="flex justify-between items-center">
               {job?.jobDetails?.urgentHiring && (
@@ -136,7 +133,6 @@ const JobsForYou = () => {
                   Urgent Hiring
                 </p>
               )}
-              
             </div>
             <h3 className="text-lg font-semibold">{job.jobDetails?.title}</h3>
             <p className="text-sm text-gray-600">
@@ -173,7 +169,7 @@ const JobsForYou = () => {
               </p>
             </div>
 
-            { /*Removed easy apply option and its icon from job list's card*/}
+            {/*Removed easy apply option and its icon from job list's card*/}
             <div className="flex items-center text-sm text-blue-700">
               {hasAppliedToJob(job._id) && (
                 <span className="text-green-600">Applied</span>
@@ -241,7 +237,7 @@ const JobsForYou = () => {
                 }`}
               >
                 {isApplied ? (
-                  <div className="flex items-center gap-1 ">Applied</div>
+                  <div className="flex items-center gap-1">Applied</div>
                 ) : (
                   <button
                     className="flex items-center gap-1"
@@ -253,7 +249,10 @@ const JobsForYou = () => {
                   </button>
                 )}
               </div>
-              {user &&
+
+              {/* Hide bookmark button if the user has applied */}
+              {!isApplied &&
+                user &&
                 (isJobBookmarked(user?._id) ? (
                   <FaBookmark
                     size={25}
@@ -270,9 +269,11 @@ const JobsForYou = () => {
             </div>
           </div>
 
-          <div ref={jobContainerRef}
-          onScroll={handleScroll}
-           className="overflow-y-auto scrollbar-hide max-h-[calc(100vh-200px)] px-4 py-4">
+          <div
+            ref={jobContainerRef}
+            onScroll={handleScroll}
+            className="overflow-y-auto scrollbar-hide max-h-[calc(100vh-200px)] px-4 py-4"
+          >
             <JobMajorDetails selectedJob={selectedJob} />
           </div>
         </div>
@@ -280,23 +281,28 @@ const JobsForYou = () => {
 
       {/* SMALL SCREEN JOB DETAILS SECTION */}
       {showJobDetails && selectedJob && (
-          <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out">
-
-            {/* Button for closing small screen job details */}
-            <button
+        <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out">
+          {/* Button for closing small screen job details */}
+          <button
             className="fixed top-[80px] right-4 bg-gray-200 p-2 rounded-md text-gray-700 hover:bg-gray-300 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
             onClick={() => setShowJobDetails(false)}
-            >
-              <IoMdClose size={22} />
-            </button>
-            
-      {/* Job title and other info's for small screen */}
-    <div className="p-6 pt-20">
-      <h3 className="text-xl font-semibold text-gray-900">{selectedJob?.jobDetails?.title}</h3>
-      <p className="text-sm text-gray-600">{selectedJob?.jobDetails?.companyName}</p>
-      <p className="text-sm text-gray-500">{selectedJob?.jobDetails?.location}</p>
-      <p className="mt-2 px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200">
-      {selectedJob?.jobDetails?.salary
+          >
+            <IoMdClose size={22} />
+          </button>
+
+          {/* Job title and other info's for small screen */}
+          <div className="p-6 pt-20">
+            <h3 className="text-xl font-semibold text-gray-900">
+              {selectedJob?.jobDetails?.title}
+            </h3>
+            <p className="text-sm text-gray-600">
+              {selectedJob?.jobDetails?.companyName}
+            </p>
+            <p className="text-sm text-gray-500">
+              {selectedJob?.jobDetails?.location}
+            </p>
+            <p className="mt-2 px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200">
+              {selectedJob?.jobDetails?.salary
                 .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                 .split("-")
                 .map((part, index) => (
@@ -305,66 +311,76 @@ const JobsForYou = () => {
                     {index === 0 ? " - " : ""}
                   </span>
                 ))}
-    </p>
+            </p>
 
-    <div className="mt-2 flex items-center text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded-md w-fit">
-      <AiOutlineThunderbolt className="mr-1" />
-       Typically Responds in {selectedJob?.jobDetails?.respondTime} days
-    </div>
-  </div>
+            <div className="mt-2 flex items-center text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded-md w-fit">
+              <AiOutlineThunderbolt className="mr-1" />
+              Typically Responds in {selectedJob?.jobDetails?.respondTime} days
+            </div>
+          </div>
 
-    <div className="p-2 flex items-center gap-8 border-b ml-4">
-    {user &&
-    (isJobBookmarked(user?._id) ? (
-      <FaBookmark
-      size={25}
-      onClick={() => handleBookmark(selectedJob._id)}
-      className="text-green-700 cursor-pointer"
-      />
-    ) : (
-      <CiBookmark
-      size={25}
-      onClick={() => handleBookmark(selectedJob._id)}
-      className="cursor-pointer"
-      />
-    ))}
-        {/* <div
+          <div className="p-2 flex items-center gap-8 border-b ml-4">
+            {user &&
+              (isJobBookmarked(user?._id) ? (
+                <FaBookmark
+                  size={25}
+                  onClick={() => handleBookmark(selectedJob._id)}
+                  className="text-green-700 cursor-pointer"
+                />
+              ) : (
+                <CiBookmark
+                  size={25}
+                  onClick={() => handleBookmark(selectedJob._id)}
+                  className="cursor-pointer"
+                />
+              ))}
+            {/* <div
           className={`p-2 ${selectedJob?.isBlock ? "bg-red-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
           onClick={() => changeBlockStatus()}
         >
           <MdBlock size={25} />
         </div> */}
 
-        {/* <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer -mt-6">
+            {/* <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer -mt-6">
           <IoMdLink size={25} />
         </div> */}
-      </div>
+          </div>
 
-    {/* Job details for small screen*/}
-        <div className="p-6 overflow-y-auto h-[calc(100vh-300px)] pb-20">
-        <div className="mt-4 space-y-1">
-        <p className="font-semibold text-gray-700">Job Type : <span className="text-sm text-gray-500">{selectedJob?.jobDetails?.jobType}</span></p>
-        <p className="font-semibold text-gray-700">Duration : <span className="text-sm text-gray-500">{selectedJob?.jobDetails?.duration}</span></p>
-      </div>
+          {/* Job details for small screen*/}
+          <div className="p-6 overflow-y-auto h-[calc(100vh-300px)] pb-20">
+            <div className="mt-4 space-y-1">
+              <p className="font-semibold text-gray-700">
+                Job Type :{" "}
+                <span className="text-sm text-gray-500">
+                  {selectedJob?.jobDetails?.jobType}
+                </span>
+              </p>
+              <p className="font-semibold text-gray-700">
+                Duration :{" "}
+                <span className="text-sm text-gray-500">
+                  {selectedJob?.jobDetails?.duration}
+                </span>
+              </p>
+            </div>
 
-      {/* Job major details for small screen job details*/}
-      <div className="mt-4">
-        <JobMajorDetails selectedJob={selectedJob} />
-      </div>
+            {/* Job major details for small screen job details*/}
+            <div className="mt-4">
+              <JobMajorDetails selectedJob={selectedJob} />
+            </div>
+          </div>
+
+          {/*Apply button for small screen job details*/}
+          <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center">
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2"
+              onClick={() => navigate(`/apply/${selectedJob?._id}`)}
+            >
+              Apply Now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-
-      {/*Apply button for small screen job details*/}
-      <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center">
-       <button
-        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2"
-        onClick={() => navigate(`/apply/${selectedJob?._id}`)}
-       >
-         Apply Now
-       </button>
-      </div>
-  </div>
-  )}
-  </div>
   );
 };
 export default JobsForYou;
