@@ -17,7 +17,11 @@ import { body } from "express-validator";
 
 const router = express.Router();
 router.post("/verify-token", verifyToken);
-router.post("/send-verification-status", sendVerificationStatus);
+router.put(
+  "/send-verification-status",
+  isAuthenticated,
+  sendVerificationStatus
+);
 router.post(
   "/request-otp-email",
   [

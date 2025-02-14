@@ -50,7 +50,7 @@ const companySlice = createSlice({
       }
     },
     decreaseMaxPostJobs: (state, action) => {
-      state.company.maxPostJobs = state.company.maxPostJobs - action.payload;
+      state.company.maxJobPosts = state.company.maxJobPosts - action.payload;
     },
     decreaseCandidateCredits: (state, action) => {
       state.company.creditedForCandidates =

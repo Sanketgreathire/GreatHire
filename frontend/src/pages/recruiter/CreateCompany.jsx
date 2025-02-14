@@ -116,8 +116,9 @@ const CreateCompany = () => {
         }
       );
       if (res.data.success) {
-        toast.success("Created successfully! Link sent to company email");
+        toast.success("Created successfully!");
         dispatch(setRecruiterIsCompanyCreated(true));
+        toast.success("GreatHire will active company soon!");
         navigate("/recruiter/dashboard/home");
       } else {
         toast.error("Error creating company");

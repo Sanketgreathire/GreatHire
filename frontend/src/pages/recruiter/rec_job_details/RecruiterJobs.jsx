@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { Trash, Eye } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
+
+// this will use when user is admin
+import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
 const RecruiterJob = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
@@ -18,6 +22,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const [filterStatus, setFilterStatus] = useState("all");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user || user?.role === "student") navigate("/login");
@@ -77,6 +82,10 @@ const RecruiterJob = ({ recruiterId }) => {
           )
         );
 
+        // this one call when user admin
+        if (user?.role !== "recruiter") {
+          dispatch(fetchJobStats());
+        }
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -105,6 +114,12 @@ const RecruiterJob = ({ recruiterId }) => {
 
       if (response.data.success) {
         setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+
+        // this one call when user admin
+        if (user?.role !== "recruiter") {
+          dispatch(fetchJobStats());
+          dispatch(fetchApplicationStats());
+        }
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -204,11 +219,7 @@ const RecruiterJob = ({ recruiterId }) => {
           <tbody>
             {filteredJobs.length > 0 ? (
               filteredJobs.map((job) => (
-                <tr
-                  key={job._id}
-                  className="border-b cursor-pointer"
-                  onClick={() => handleJobDetailsClick(job?._id)}
-                >
+                <tr key={job._id} className="border-b">
                   <td className="py-3 px-6">{job.jobDetails.title}</td>
                   <td className="py-3 px-6">{job.jobDetails.companyName}</td>
                   <td className="py-3 px-6">{job.jobDetails.location}</td>
@@ -247,16 +258,20 @@ const RecruiterJob = ({ recruiterId }) => {
                           />
                         )}
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-6 flex gap-4 items-center justify-center">
+                        <Eye
+                          className="text-blue-500 cursor-pointer"
+                          size={20}
+                          onClick={() => handleJobDetailsClick(job?._id)}
+                        />
                         {dloading[job._id] ? (
                           "deleting..."
                         ) : (
-                          <button
+                          <Trash
+                            size={20}
                             onClick={(event) => deleteJob(event, job._id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <FaTrash size={20} />
-                          </button>
+                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                          />
                         )}
                       </td>
                     </>

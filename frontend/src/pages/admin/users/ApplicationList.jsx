@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ApplicationList = ({ applications }) => {
-  console.log(applications);
-  console.log(Array.isArray(applications));
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   // statusFilter is an empty string when no status filter is applied (i.e., "All" is active)

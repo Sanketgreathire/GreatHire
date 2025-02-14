@@ -40,6 +40,8 @@ export const postJob = async (req, res) => {
       });
     }
 
+    const company = await Company.findById(companyId);
+
     // Expire plan if maxPostJobs is 0
     if (company.maxJobPosts === 0) {
       return res.status(400).json({

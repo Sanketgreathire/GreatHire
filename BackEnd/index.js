@@ -20,10 +20,13 @@ import recruiterRoute from "./routes/recruiter.route.js";
 import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
-import adminStatRoute from './routes/admin/statistic.route.js';
-import adminRoute from './routes/admin/admin.route.js'
-import adminUserDataRoute from './routes/admin/userStats.route.js'
-import adminRecruiterDataRoute from './routes/admin/recruiterStats.route.js'
+import adminStatRoute from "./routes/admin/statistic.route.js";
+import adminRoute from "./routes/admin/admin.route.js";
+import adminUserDataRoute from "./routes/admin/userStats.route.js";
+import adminCompanyDataRoute from "./routes/admin/companyStats.route.js";
+import adminRecruiterDataRoute from "./routes/admin/recruiterStats.route.js";
+import adminJobDataRoute from "./routes/admin/jobStats.route.js";
+import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
@@ -46,7 +49,12 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // 📌 Rate Limiting (Limits API requests per IP)
 const apiLimiter = rateLimit({
@@ -66,16 +74,20 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
+
+// Admin routes
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
 app.use("/api/v1/admin/user/data", adminUserDataRoute);
+app.use("/api/v1/admin/company/data", adminCompanyDataRoute);
 app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
+app.use("/api/v1/admin/job/data", adminJobDataRoute);
+app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
+
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -85,7 +97,6 @@ app.use(express.static(path.join(__dirname, "../frontend/dist"))); // Go up one 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
-
 
 // Start Server & Connect to Database
 server.listen(PORT, async () => {

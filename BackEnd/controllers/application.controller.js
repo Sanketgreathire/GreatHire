@@ -39,6 +39,11 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
+    // Check if the job is active
+    if (!job.jobDetails.isActive) {
+      return res.status(400).json({ message: "This job is not active" });
+    }
+
     // Update user details if necessary
     if (fullname && fullname !== user.fullname) user.fullname = fullname;
     if (email && email !== user.emailId.email) {

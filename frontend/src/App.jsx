@@ -22,7 +22,6 @@ import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
 
 // Recruiter Routes
-import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
@@ -182,10 +181,6 @@ const appRouter = createBrowserRouter([
   {
     path: "/recruiter/add-user",
     element: <AddRecruiter />,
-  },
-  {
-    path: "/verify-recruiter/:token",
-    element: <VerifyRecruiter />,
   },
 
   {

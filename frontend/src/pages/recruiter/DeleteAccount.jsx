@@ -82,7 +82,7 @@ const DeleteAccount = () => {
 
   return (
     <>
-      {company && user?.isVerify ? (
+      {company && user?.isActive ? (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
           <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md mx-4 sm:mx-0">
             <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
@@ -163,7 +163,7 @@ const DeleteAccount = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by GreatHire
           </span>
         </p>
       )}

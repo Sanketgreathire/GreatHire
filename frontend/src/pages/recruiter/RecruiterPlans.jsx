@@ -190,7 +190,7 @@ function RecruiterPlans() {
 
   return (
     <>
-      {company && user?.isVerify ? (
+      {company && user?.isActive ? (
         <div className="min-h-screen  py-8 px-4 flex items-center justify-center">
           <div className="w-full max-w-6xl">
             <div className="text-center mb-8">
@@ -279,7 +279,7 @@ function RecruiterPlans() {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by GreatHire
           </span>
         </p>
       )}

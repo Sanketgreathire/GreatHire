@@ -7,6 +7,8 @@ import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
+import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { validationResult } from "express-validator";
 
@@ -257,38 +259,21 @@ export const getRecruiterById = async (req, res) => {
 };
 
 export const addRecruiterToCompany = async (req, res) => {
-  const { fullName, email, phoneNumber, password, position, companyId } =
+  const { fullname, email, phoneNumber, password, position, companyId } =
     req.body;
   const userId = req.id;
 
-  if (!isUserAssociated(companyId, userId)) {
-    return res
-      .status(403)
-      .json({ message: "You are not authorized", success: false });
-  }
-
   try {
     // Validate required fields
-    if (!fullName || !email || !companyId || !password) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (!isUserAssociated(companyId, userId)) {
       return res
-        .status(400)
-        .json({ success: false, message: "All fields are required." });
-    }
-
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
-    }
-
-    // Validate fullName length
-    if (password.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
     }
 
     // Check if recruiter email already exists
@@ -309,7 +294,7 @@ export const addRecruiterToCompany = async (req, res) => {
 
     // Create new recruiter
     const recruiter = await Recruiter.create({
-      fullname: fullName,
+      fullname,
       emailId: {
         email,
         isVerified: true,
@@ -529,18 +514,28 @@ export const deleteAccount = async (req, res) => {
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
+      // delete subscription of company
+      await CandidateSubscription.findOneAndDelete({ company: companyId });
+      await JobSubscription.findOneAndDelete({ company: companyId });
 
-      return res
-        .status(200)
-        .cookie("token", "", {
-          maxAge: 0,
-          httpsOnly: true,
-          sameSite: "strict",
-        })
-        .json({
+      if (!admin) {
+        return res
+          .status(200)
+          .cookie("token", "", {
+            maxAge: 0,
+            httpsOnly: true,
+            sameSite: "strict",
+          })
+          .json({
+            success: true,
+            message: "Company deleted successfully",
+          });
+      } else {
+        return res.status(200).json({
           success: true,
           message: "Company deleted successfully",
         });
+      }
     } else {
       // Remove the user from the userId array in the Company model
       await Company.findByIdAndUpdate(
@@ -578,28 +573,67 @@ export const deleteAccount = async (req, res) => {
 };
 
 export const toggleActive = async (req, res) => {
-  const { recruiterId, isActive } = req.body;
+  const { recruiterId, companyId, isActive } = req.body;
+  const userId = req.id;
 
   try {
-    // Find the recruiter by ID and update the isActive field
-    const updatedRecruiter = await Recruiter.findByIdAndUpdate(
-      recruiterId,
-      { isActive },
-      { new: true } // Return the updated document
-    );
+    // Find the admin making the request (if any)
+    const admin = await Admin.findById(userId);
 
-    if (!updatedRecruiter) {
-      return res.status(404).json({ message: "Recruiter not found" });
+    // Check authorization: Either the user is an admin, or they are associated with the company.
+    if (!admin && !isUserAssociated(companyId, userId)) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Fetch the targeted recruiter
+    const recruiter = await Recruiter.findById(recruiterId);
+    if (!recruiter) {
+      return res
+        .status(404)
+        .json({ message: "Recruiter not found", success: false });
+    }
+
+    // Fetch the company details
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res
+        .status(404)
+        .json({ message: "Company not found", success: false });
+    }
+
+    // If the toggled recruiter's email matches the company's adminEmail,
+    // update the isActive status for all recruiters and all jobs of that company.
+    if (recruiter.emailId.email === company.adminEmail) {
+      // Extract recruiter IDs associated with the company.
+      const recruiterIds = company.userId.map((u) => u.user);
+
+      // Update all recruiters belonging to the company.
+      await Recruiter.updateMany({ _id: { $in: recruiterIds } }, { isActive });
+      // Toggle all jobs for these recruiters.
+      await Job.updateMany({ created_by: { $in: recruiterIds } }, { isActive });
+      // Optionally, fetch the updated recruiters.
+      await Recruiter.find({ _id: { $in: recruiterIds } });
+    } else {
+      // Otherwise, update only the specific recruiter.
+      await Recruiter.findByIdAndUpdate(
+        recruiterId,
+        { isActive },
+        { new: true }
+      );
     }
 
     res.status(200).json({
       message: "Recruiter status updated successfully",
-      recruiter: updatedRecruiter,
       success: true,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
 };

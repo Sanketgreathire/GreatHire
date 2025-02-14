@@ -70,7 +70,7 @@ const PostJob = () => {
           }
         );
         if (response.data.success) {
-          if (company?.maxPostJobs !== null) dispatch(decreaseMaxPostJobs(1));
+          if (company?.maxJobPosts !== null) dispatch(decreaseMaxPostJobs(1));
           toast.success("Job post successfully");
           // Redirect to the dashboard after 2 seconds
           setTimeout(() => {

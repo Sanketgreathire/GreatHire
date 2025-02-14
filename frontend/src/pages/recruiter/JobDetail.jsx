@@ -3,10 +3,13 @@ import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Pencil } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/admin/Navbar";
+
+// this will use when user is admin
+import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -22,6 +25,7 @@ const JobDetail = () => {
   const [dloading, dsetLoading] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -62,6 +66,11 @@ const JobDetail = () => {
       );
 
       if (response.data.success) {
+        // this one call when user admin
+        if (user?.role !== "recruiter") {
+          dispatch(fetchJobStats());
+          dispatch(fetchApplicationStats());
+        }
         toast.success(response.data.message);
         navigate(-1);
       } else {
@@ -121,10 +130,20 @@ const JobDetail = () => {
 
   return (
     <>
-    {user?.role !== "recruiter" && <Navbar linkName={"Job Details"}/>}
-      <div className={`flex flex-col space-y-4 p-6 md:p-10 min-h-screen ${user?.role !== "recruiter" && "bg-white m-4"}`}>
+      {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />}
+      <div
+        className={`flex flex-col space-y-4 p-6 md:p-10 min-h-screen ${
+          user?.role !== "recruiter" && "bg-white m-4"
+        }`}
+      >
         {/* Job Header */}
-        <div className={`${user?.role !== "recruiter" ? "bg-blue-700 text-white":"bg-blue-200"} p-6 rounded-lg shadow-md relative`}>
+        <div
+          className={`${
+            user?.role !== "recruiter"
+              ? "bg-blue-700 text-white"
+              : "bg-blue-200"
+          } p-6 rounded-lg shadow-md relative`}
+        >
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
@@ -376,13 +395,15 @@ const JobDetail = () => {
                 onClick={() => {
                   if (user.role === "recruiter")
                     navigate(`/recruiter/dashboard/applicants-details/${id}`);
-                  else navigate(`/admin/applicants-details/${id}`);
+                  else navigate(`/admin/applicants-list/${id}`);
                 }}
               >
-                Applicants Details
+                Applicants List
               </Button>
               {(user?._id === jobOwner ||
-                user?.emailId?.email === company?.adminEmail || user?.role === "admin" || user?.role === "Owner") && (
+                user?.emailId?.email === company?.adminEmail ||
+                user?.role === "admin" ||
+                user?.role === "Owner") && (
                 <Button
                   className={`bg-red-600 hover:bg-red-700 ${
                     dloading ? "cursor-not-allowed" : ""

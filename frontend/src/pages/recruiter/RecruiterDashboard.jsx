@@ -61,7 +61,7 @@ const RecruiterDashboard = () => {
   useEffect(() => {
     if (company) {
       if (
-        user?.isVerify &&
+        user?.isActive &&
         user?.isCompanyCreated &&
         recruiters?.length === 0
       ) {

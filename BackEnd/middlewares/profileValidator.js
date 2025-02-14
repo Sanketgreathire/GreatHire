@@ -33,7 +33,7 @@ export const validateProfileUpdate = [
   // Experience (If provided, must be a number)
   body("experience")
     .optional()
-    .isNumeric()
+    .isString()
     .withMessage("Experience must be a number"),
 
   // City, State, Country (If provided, should be strings)
