@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar";
+import {
+  fetchCompanyStats,
+  fetchRecruiterStats,
+  fetchJobStats,
+  fetchApplicationStats,
+} from "@/redux/admin/statsSlice";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
-  const { recruiterId } = useParams();
+  const { companyId } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [dloading, dSetLoading] = useState(false);
   const [company, setCompany] = useState(null);
 
   const fetchCompanyDetails = async () => {
     try {
       const response = await axios.post(
-        `${COMPANY_API_END_POINT}/company-by-userid`,
-        { userId: recruiterId },
+        `${COMPANY_API_END_POINT}/company-by-id`,
+        { companyId },
         {
           withCredentials: true,
         }
@@ -32,17 +40,22 @@ const CompanyDetails = () => {
   useEffect(() => {
     fetchCompanyDetails();
   }, []);
+
   const handleDeleteCompany = async () => {
     try {
       dSetLoading(true);
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: {
           userEmail: user?.emailId?.email,
-          companyId: company?._id,
+          companyId,
         },
         withCredentials: true,
       });
       if (response.data.success) {
+        dispatch(fetchCompanyStats());
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
+        dispatch(fetchApplicationStats());
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -59,7 +72,7 @@ const CompanyDetails = () => {
 
   return (
     <>
-    <Navbar linkName={"Company Details"}/>
+      <Navbar linkName={"Company Details"} />
       <div className="max-w-6xl mx-auto p-8  m-4  bg-white rounded-lg">
         <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
           Company Details
@@ -161,6 +174,12 @@ const CompanyDetails = () => {
           </div>
 
           <div className="flex justify-end space-x-6 mt-8">
+            <button
+              onClick={() => navigate(`/admin/recruiters/${companyId}`)}
+              className={`px-6 py-3 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition`}
+            >
+              Recruiters List
+            </button>
             <button
               onClick={handleDeleteCompany}
               className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${

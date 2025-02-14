@@ -62,7 +62,7 @@ export const registerCompany = async (req, res) => {
       recruiterPosition,
       userEmail,
     } = req.body;
-
+    const adminEmail = userEmail;
     // CIN validation function
     const isValidCIN = (cin) => {
       const cinRegex = /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
@@ -82,14 +82,14 @@ export const registerCompany = async (req, res) => {
     });
 
     if (isBlacklisted) {
-      return res.status(200).json({
-        message: "Company Already has been Used",
+      return res.status(400).json({
+        message: "Company Blacklisted",
         success: false,
       });
     }
 
     // Check if a company already exists with this email and CIN
-    let company = await Company.findOne({ email, CIN });
+    let company = await Company.findOne({ email, adminEmail, CIN });
     if (company) {
       return res.status(200).json({
         message: "Company already exists.",
@@ -140,68 +140,10 @@ export const registerCompany = async (req, res) => {
       bussinessFileName: businessFile ? businessFile.originalname : undefined,
     });
 
-    // Generate a verification token
-    const verificationToken = jwt.sign(
-      { recruiterId: recruiter._id, companyId: company._id },
-      process.env.SECRET_KEY,
-      { expiresIn: "24h" } // Token expires in 24 hours
-    );
-
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      service: "Gmail", // or your email service provider
-      auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // Your email password
-      },
-    });
-
-    // Email options
-    const mailOptions = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Verify Your Recruiter/Employer Account",
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #1e90ff;">GreatHire</h2>
-            <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
-          </div>
-          <h3 style="color: #333;">Hi there,</h3>
-          <p style="color: #555;">Thank you for signing up with GreatHire! We’re excited to have you onboard.</p>
-          <p style="color: #555;">To complete your Company registration, verify your recruiter/employer details, click the link below:</p>
-    
-          <div style="text-align: center; margin: 20px 0;">
-            <a href="${
-              process.env.FRONTEND_URL
-            }/verify-recruiter/${verificationToken}" style="background-color: #1e90ff; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
-              Verify Recruiter
-            </a>
-          </div>
-    
-          <p style="color: #555;">
-            Please note: This link will expire in 24 hours.
-          </p>
-    
-          <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
-            <p style="font-size: 14px; color: #888;">If you didn’t request this verification, please disregard this email.</p>
-            <p style="font-size: 14px; color: #888;">For any questions or support, feel free to reach out to us.</p>
-          </div>
-    
-          <div style="text-align: center; margin-top: 20px;">
-            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
-          </div>
-        </div>
-      `,
-    };
-
-    // Send email
-    let mailResponse = await transporter.sendMail(mailOptions);
-
     return res.status(201).json({
       message: "Company registered successfully.",
-      company,
-      recruiter,
+      // company,
+      // recruiter,
       success: true,
     });
   } catch (error) {

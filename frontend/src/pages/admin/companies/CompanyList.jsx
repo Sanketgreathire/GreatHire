@@ -9,83 +9,88 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Trash,
-  Eye,
-  Briefcase,
-  UserCheck,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { Trash, Eye } from "lucide-react";
+import { Briefcase, UserCheck, CheckCircle, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
+import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
+
 import Navbar from "@/components/admin/Navbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  ADMIN_RECRUITER_DATA_API_END_POINT,
+  ADMIN_COMPANY_DATA_API_END_POINT,
   RECRUITER_API_END_POINT,
+  VERIFICATION_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-const Recruiters = () => {
-  // this file show the recruiter of particular company
-  const { companyId } = useParams();
+import {
+  fetchCompanyStats,
+  fetchRecruiterStats,
+  fetchJobStats,
+  fetchApplicationStats,
+} from "@/redux/admin/statsSlice";
+
+const CompanyList = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const companyStats = useSelector((state) => state.stats.companyStatsData);
+  const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
   const navigate = useNavigate();
-  const [recruiterList, setRecruiterList] = useState([]);
-  const [recruiterSummary, setRecruiterSummary] = useState(null);
+  const dispatch = useDispatch();
+  const [companyList, setCompanyList] = useState([]);
+  const { user } = useSelector((state) => state.auth);
 
   const stats = [
     {
-      title: "Total Recruiters",
-      count: recruiterSummary?.totalRecruiters || 0,
+      title: "Total Companies",
+      count: companyStats?.totalCompanies || 0,
       change: "+10%",
-      icon: <FaRegUser size={30} />,
+      icon: <HiOutlineBuildingOffice2 size={30} />,
+      color: "text-indigo-500",
+      bg: "bg-indigo-100",
+    },
+    {
+      title: "Active Company",
+      count: companyStats?.totalActiveCompanies || 0,
+      change: "+10%",
+      icon: <CheckCircle size={30} />,
       color: "text-blue-500",
       bg: "bg-blue-100",
     },
-
     {
-      title: "Active Recruiters",
-      count: recruiterSummary?.activeRecruiters || 0,
+      title: "Deactive Company",
+      count: companyStats?.totalDeactiveCompanies || 0,
+      change: "+5.2%",
+      icon: <XCircle size={30} />,
+      color: "text-green-500",
+      bg: "bg-green-100",
+    },
+    {
+      title: "Total Recruiters",
+      count: recruiterStats?.totalRecruiters || 0,
       change: "+8%",
       icon: <UserCheck size={30} />,
       color: "text-yellow-500",
       bg: "bg-yellow-100",
     },
-    {
-      title: "Deactive Recruiter",
-      count: recruiterSummary?.deactiveRecruiters || 0,
-      change: "+5.2%",
-      icon: <XCircle size={30} />,
-      color: "text-red-500",
-      bg: "bg-red-100",
-    },
-    {
-      title: "Posted Jobs",
-      count: recruiterSummary?.totalJobPosts || 0,
-      change: "+5.2%",
-      icon: <Briefcase size={30} />,
-      color: "text-green-500",
-      bg: "bg-green-100",
-    },
   ];
 
-  const toggleActive = async (recruiterId, isActive, isAdmin) => {
+  const toggleActive = async (email, adminEmail, companyId, isActive) => {
     try {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
+      setLoading((prevLoading) => ({ ...prevLoading, [companyId]: true }));
       const response = await axios.put(
-        `${RECRUITER_API_END_POINT}/toggle-active`,
+        `${VERIFICATION_API_END_POINT}/send-verification-status`,
         {
-          recruiterId,
+          email,
+          adminEmail,
           companyId,
           isActive,
         },
@@ -93,28 +98,15 @@ const Recruiters = () => {
       );
 
       if (response.data.success) {
-        if (isAdmin) {
-          fetchRecruiterList();
-        } else {
-          // For a single recruiter toggle: update the specific recruiter in the list
-          setRecruiterList((prevList) =>
-            prevList.map((recruiter) =>
-              recruiter._id === recruiterId
-                ? { ...recruiter, isActive }
-                : recruiter
-            )
-          );
-          // Adjust the summary: decrease active by one, increase deactive by one
-          setRecruiterSummary((prevSummary) => ({
-            ...prevSummary,
-            activeRecruiters: isActive
-              ? prevSummary.activeRecruiters + 1
-              : prevSummary.activeRecruiters - 1,
-            deactiveRecruiters: isActive
-              ? prevSummary.deactiveRecruiters - 1
-              : prevSummary.deactiveRecruiters + 1,
-          }));
-        }
+        // Update the recruiterList state to reflect the new isActive value
+        setCompanyList((prevList) =>
+          prevList.map((company) =>
+            company._id === companyId ? { ...company, isActive } : company
+          )
+        );
+        dispatch(fetchCompanyStats());
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
 
         toast.success(response.data.message);
       } else {
@@ -126,20 +118,27 @@ const Recruiters = () => {
         "There was an error toggling the recruiter. Please try again later."
       );
     } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+      setLoading((prevLoading) => ({ ...prevLoading, [companyId]: false }));
     }
   };
 
-  const deleteRecruiter = async (recruiterId, userEmail) => {
+  const deleteCompany = async (userEmail, companyId) => {
     try {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
+      dsetLoading((prevLoading) => ({ ...prevLoading, [companyId]: true }));
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: { userEmail, companyId },
         withCredentials: true,
       });
 
       if (response.data.success) {
-        fetchRecruiterList();
+        // Update the recruiterList state by removing the deleted recruiter
+        setCompanyList((prevList) =>
+          prevList.filter((company) => company._id !== companyId)
+        );
+        dispatch(fetchCompanyStats());
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
+        dispatch(fetchApplicationStats());
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -150,18 +149,17 @@ const Recruiters = () => {
         "There was an error deleting the recruiter. Please try again later."
       );
     } finally {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+      dsetLoading((prevLoading) => ({ ...prevLoading, [companyId]: false }));
     }
   };
 
-  const fetchRecruiterList = async () => {
+  const fetchCompanyList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats/${companyId}`
+        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`
       );
       if (response.data.success) {
-        setRecruiterList(response.data.recruiters);
-        setRecruiterSummary(response.data.summary);
+        setCompanyList(response.data.companies);
       }
     } catch (err) {
       console.log(`error in recruiter fetching ${err}`);
@@ -169,28 +167,28 @@ const Recruiters = () => {
   };
 
   useEffect(() => {
-    fetchRecruiterList();
+    fetchCompanyList();
   }, []);
 
-  const filteredRecruiters = recruiterList?.filter((recruiter) => {
+  const filteredCompanies = companyList?.filter((company) => {
     const matchesSearch =
-      recruiter.fullname.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.phone.toLowerCase().includes(search.toLowerCase());
+      company.companyName.toLowerCase().includes(search.toLowerCase()) ||
+      company.email.toLowerCase().includes(search.toLowerCase()) ||
+      company.phone.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = status === "All" || recruiter.isActive === status;
+    const matchesStatus = status === "All" || company.isActive === status;
 
     return matchesSearch && matchesStatus;
   });
 
-  const paginatedRecruiters = filteredRecruiters.slice(
+  const paginatedCompanies = filteredCompanies.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
 
   return (
     <>
-      <Navbar linkName={"Recruiters"} />
+      <Navbar linkName={"Companies"} />
       {/* Stats Cards */}
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
@@ -212,7 +210,7 @@ const Recruiters = () => {
       <div className="m-4 p-4 bg-white shadow rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <Input
-            placeholder="Search by name, email, contact "
+            placeholder="Search company by name, email, contact"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
@@ -235,37 +233,30 @@ const Recruiters = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Recruiter Name</TableHead>
-              <TableHead>Recruiter Contact</TableHead>
-              <TableHead>Recruiter Position</TableHead>
-              <TableHead>Posted Jobs</TableHead>
-              <TableHead>Recruiter Status</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead>Company Name</TableHead>
+              <TableHead>Company Email</TableHead>
+              <TableHead>Company Contact</TableHead>
+              <TableHead>Admin Email</TableHead>
+              <TableHead>Company Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedRecruiters.map((recruiter) => (
-              <TableRow key={recruiter._id}>
-                <TableCell>
-                  {recruiter.fullname + " "}{" "}
-                  {recruiter.isAdmin && (
-                    <span className="text-green-600 font-bold">Admin</span>
-                  )}
-                  <br />
-                  {recruiter.email}
-                </TableCell>
-                <TableCell>{recruiter.phone}</TableCell>
-                <TableCell>{recruiter.position}</TableCell>
-                <TableCell>{recruiter.postedJobs}</TableCell>
+            {paginatedCompanies.map((company) => (
+              <TableRow key={company._id}>
+                <TableCell>{company.companyName}</TableCell>
+                <TableCell>{company.email}</TableCell>
+                <TableCell>{company.phone}</TableCell>
+                <TableCell>{company.adminEmail}</TableCell>
                 <TableCell>
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
-                      recruiter.isActive
+                      company.isActive
                         ? "bg-green-200 text-green-800"
                         : "bg-red-200 text-red-800"
                     }`}
                   >
-                    {recruiter.isActive ? "Active" : "Deactive"}
+                    {company.isActive ? "Active" : "Deactive"}
                   </span>
                 </TableCell>
 
@@ -274,21 +265,23 @@ const Recruiters = () => {
                     className="text-blue-500 cursor-pointer"
                     size={20}
                     onClick={() =>
-                      navigate(`/admin/recruiter/details/${recruiter._id}`)
+                      navigate(
+                        `/admin/for-admin/company-details/${company._id}`
+                      )
                     }
                   />
-
                   {/* Toggle for recruiter activeness */}
-                  {loading[recruiter._id] ? (
+                  {loading[company._id] ? (
                     "loading..."
                   ) : (
                     <Switch
-                      checked={recruiter.isActive}
+                      checked={company.isActive}
                       onChange={(e) =>
                         toggleActive(
-                          recruiter._id,
-                          !recruiter.isActive,
-                          recruiter.isAdmin
+                          company.email,
+                          company.adminEmail,
+                          company._id,
+                          !company.isActive
                         )
                       }
                       color="primary"
@@ -298,15 +291,14 @@ const Recruiters = () => {
                       }}
                     />
                   )}
-
-                  {dloading[recruiter._id] ? (
+                  {dloading[company._id] ? (
                     "loading..."
                   ) : (
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={20}
                       onClick={() =>
-                        deleteRecruiter(recruiter._id, recruiter.email)
+                        deleteCompany(user?.emailId.email, company._id)
                       }
                     />
                   )}
@@ -319,28 +311,28 @@ const Recruiters = () => {
         <div className="flex justify-between items-center mt-4">
           <span>
             Showing{" "}
-            {Math.min((page - 1) * itemsPerPage + 1, filteredRecruiters.length)}{" "}
-            to {Math.min(page * itemsPerPage, filteredRecruiters.length)} of{" "}
-            {filteredRecruiters.length} results
+            {Math.min((page - 1) * itemsPerPage + 1, filteredCompanies.length)}{" "}
+            to {Math.min(page * itemsPerPage, filteredCompanies.length)} of{" "}
+            {filteredCompanies.length} results
           </span>
           <div className="flex gap-2">
             <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
               Previous
             </Button>
-            {[
-              ...Array(Math.ceil(filteredRecruiters.length / itemsPerPage)),
-            ].map((_, i) => (
-              <Button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={page === i + 1 ? "bg-blue-700 text-white" : ""}
-              >
-                {i + 1}
-              </Button>
-            ))}
+            {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map(
+              (_, i) => (
+                <Button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={page === i + 1 ? "bg-blue-700 text-white" : ""}
+                >
+                  {i + 1}
+                </Button>
+              )
+            )}
             <Button
               disabled={
-                page === Math.ceil(filteredRecruiters.length / itemsPerPage)
+                page === Math.ceil(filteredCompanies.length / itemsPerPage)
               }
               onClick={() => setPage(page + 1)}
             >
@@ -353,4 +345,4 @@ const Recruiters = () => {
   );
 };
 
-export default Recruiters;
+export default CompanyList;

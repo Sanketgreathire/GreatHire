@@ -22,7 +22,6 @@ import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
 
 // Recruiter Routes
-import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
@@ -43,9 +42,11 @@ import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 
 // Admin Routes
-import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
+import AddAdmin from "./pages/admin/AddAdmin";
+import AdminList from "./pages/admin/AdminList";
+import ReportedJobList from "./pages/admin/ReportedJobList";
 
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
@@ -180,10 +181,6 @@ const appRouter = createBrowserRouter([
     path: "/recruiter/add-user",
     element: <AddRecruiter />,
   },
-  {
-    path: "/verify-recruiter/:token",
-    element: <VerifyRecruiter />,
-  },
 
   {
     path: "/recruiter/success",
@@ -191,12 +188,20 @@ const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/admin/signup",
-    element: <AdminSignup />,
-  },
-  {
     path: "/admin/login",
     element: <AdminLogin />,
+  },
+  {
+    path: "/admin/add-admin",
+    element: <AddAdmin />,
+  },
+  {
+    path: "/admin/admin-list",
+    element: <AdminList />,
+  },
+  {
+    path: "/admin/reported-job-list",
+    element: <ReportedJobList />,
   },
   {
     path: "/admin/*",
@@ -206,7 +211,6 @@ const appRouter = createBrowserRouter([
     path: "*",
     element: <PageNotFound />,
   },
-
 ]);
 
 function App() {

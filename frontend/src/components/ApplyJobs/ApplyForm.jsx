@@ -171,7 +171,7 @@ const ApplyForm = ({ setRight }) => {
   };
 
   return (
-    <div className="w-full">
+    <div>
       {step1 && (
         <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} filledBackground="green" />

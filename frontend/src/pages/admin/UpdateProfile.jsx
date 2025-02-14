@@ -11,8 +11,8 @@ const UpdateProfile = ({ open, setOpen }) => {
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
-    email: user?.email || "",
-    phoneNumber: user?.phoneNumber || "",
+    email: user?.emailId?.email || "",
+    phoneNumber: user?.phoneNumber?.number || "",
     position: user?.role || "",
     profilePhoto: user?.profile?.profilePhoto || "",
   });

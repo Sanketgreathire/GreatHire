@@ -116,7 +116,7 @@ const DashboardNavigations = () => {
                     </NavLink>
                   )}
 
-                  {user?.isVerify === 1 &&
+                  {user?.isActive &&
                     user?.isCompanyCreated &&
                     user?.emailId?.email === company?.adminEmail && (
                       <NavLink
@@ -138,28 +138,26 @@ const DashboardNavigations = () => {
                         )}
                       </NavLink>
                     )}
-                  {user?.isVerify === 1 &&
-                    user?.isCompanyCreated &&
-                    user?.isActive && (
-                      <NavLink
-                        to="/recruiter/dashboard/post-job"
-                        className={navLinkClass}
-                        onClick={() => {
-                          setSidebarOpen(false);
-                          setDropdownOpen(false);
-                        }}
-                      >
-                        {({ isActive }) => (
-                          <>
-                            <MdPostAdd
-                              size={25}
-                              className={iconClass(isActive)}
-                            />
-                            <span>Post Job</span>
-                          </>
-                        )}
-                      </NavLink>
-                    )}
+                  {user?.isActive && user?.isCompanyCreated && (
+                    <NavLink
+                      to="/recruiter/dashboard/post-job"
+                      className={navLinkClass}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          <MdPostAdd
+                            size={25}
+                            className={iconClass(isActive)}
+                          />
+                          <span>Post Job</span>
+                        </>
+                      )}
+                    </NavLink>
+                  )}
                 </ul>
               </li>
               <NavLink

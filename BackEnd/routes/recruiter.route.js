@@ -22,7 +22,9 @@ router
 
 router.route("/recruiters").post(isAuthenticated, getAllRecruiters);
 router.route("/recruiter-by-id/:id").get(getRecruiterById);
-router.route("/add-recruiter").post(isAuthenticated, addRecruiterToCompany);
+router
+  .route("/add-recruiter")
+  .post(isAuthenticated, validateUser, addRecruiterToCompany);
 
 router.route("/delete").delete(isAuthenticated, deleteAccount);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);

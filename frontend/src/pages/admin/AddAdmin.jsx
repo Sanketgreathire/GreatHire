@@ -1,139 +1,150 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import { FiUser, FiMail, FiPhone, FiLock } from "react-icons/fi";
+import Navbar from "@/components/admin/Navbar";
+import { RiAdminLine } from "react-icons/ri";
 import { toast } from "react-hot-toast";
-// import axios from "axios";
-// import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useNavigate } from "react-router-dom";
 
 const AddAdmin = () => {
-  const dispatch = useDispatch();
-  const { company } = useSelector((state) => state.company);
+  const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullName: "", // Changed from fullname to fullName
+    fullname: "",
     email: "",
     phoneNumber: "",
-    position: "",
     password: "",
   });
 
+  useEffect(() => {
+    if (user?.role !== "Owner") {
+      navigate("/admin");
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     try {
-//       const response = await axios.post(
-//         `${RECRUITER_API_END_POINT}/add-recruiter`,
-//         {
-//           ...formData,
-//           companyId: company?._id,
-//         },
-//         { withCredentials: true }
-//       );
-
-//       if (response.data.success) {
-//         dispatch(addRecruiter(response.data.recruiter));
-//         toast.success(response.data.message);
-
-//         setFormData({
-//           fullName: "",
-//           email: "",
-//           phoneNumber: "",
-//           position: "",
-//           password: "",
-//         });
-//       } else {
-//         toast.error(response.data.message);
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       const errorMessage =
-//         err.response?.data?.message || "Something went wrong";
-//       toast.error(errorMessage);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${ADMIN_API_END_POINT}/register`,
+        {
+          ...formData,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
+      }
+    } catch (err) {
+      console.log(`Error in add admin ${err}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-      <div className="flex items-center justify-center ">
-        <form className="w-full p-4 md:w-1/2 space-y-4" onSubmit={handleSubmit}>
-          <h1 className="text-3xl font-bold text-center text-blue-700">
-            {company?.companyName}
-          </h1>
-          <h1 className="text-3xl font-bold text-center">
-            Provide Admin Details
-          </h1>
-          <div className="flex flex-col space-y-2">
-            <label className="font-bold">Full Name</label>
-            <input
-              type="text"
-              name="fullName" // Updated name
-              placeholder="Full Name"
-              value={formData.fullName} // Updated value
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <label className="font-bold">Work Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="mail@domain.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <label className="font-bold">Mobile Number</label>
-            <input
-              type="text"
-              name="phoneNumber" // Updated name
-              placeholder="Contact number"
-              value={formData.phoneNumber} // Updated value
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <label className="font-bold">Position In Company</label>
-            <input
-              type="text"
-              name="position"
-              placeholder="Hiring manager, consultant ..."
-              value={formData.position}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <label className="font-bold">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="min 8 characters"
-              value={formData.password}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-              loading ? "cursor-not-allowed" : ""
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Adding..." : "Add Admin"}
-          </button>
-        </form>
+      <Navbar linkName="Add Admin" />
+
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl p-8 w-full max-w-md relative overflow-hidden"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="absolute inset-0 bg-white opacity-10 rounded-xl"
+          />
+
+          <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 mb-6">
+            <RiAdminLine size={45} className="text-blue-700" />
+            <span>Add New Admin</span>
+          </h2>
+          <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
+            {[
+              {
+                label: "Full Name",
+                name: "fullname",
+                type: "text",
+                placeholder: "Enter full name",
+                icon: <FiUser size={25} />,
+              },
+              {
+                label: "Work Email",
+                name: "email",
+                type: "email",
+                placeholder: "mail@domain.com",
+                icon: <FiMail size={25} />,
+              },
+              {
+                label: "Mobile Number",
+                name: "phoneNumber",
+                type: "text",
+                placeholder: "Contact number",
+                icon: <FiPhone size={25} />,
+              },
+              {
+                label: "Password",
+                name: "password",
+                type: "password",
+                placeholder: "Min 8 characters",
+                icon: <FiLock size={25} />,
+              },
+            ].map(({ label, name, type, placeholder, icon }) => (
+              <div key={name} className="relative">
+                <label className="block text-gray-600 font-semibold text-sm mb-1">
+                  {label}
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-lg shadow-sm bg-white px-3 py-1 focus-within:ring-2 focus-within:ring-blue-400">
+                  <span className="text-gray-500 text-lg mr-2">{icon}</span>
+                  <input
+                    type={type}
+                    name={name}
+                    placeholder={placeholder}
+                    value={formData[name]}
+                    onChange={handleChange}
+                    className="w-full focus:outline-none text-lg bg-transparent py-1"
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+              type="submit"
+              className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm font-semibold transition-all ${
+                loading ? "cursor-not-allowed opacity-75" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Adding..." : "Add Admin"}
+            </motion.button>
+          </form>
+        </motion.div>
       </div>
     </>
   );

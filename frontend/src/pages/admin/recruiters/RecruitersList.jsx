@@ -21,18 +21,17 @@ import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ADMIN_RECRUITER_DATA_API_END_POINT,
   RECRUITER_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
 
-const Recruiters = () => {
-  // this file show the recruiter of particular company
-  const { companyId } = useParams();
+const RecruitersList = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
@@ -40,13 +39,15 @@ const Recruiters = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [recruiterList, setRecruiterList] = useState([]);
-  const [recruiterSummary, setRecruiterSummary] = useState(null);
+  const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
 
   const stats = [
     {
       title: "Total Recruiters",
-      count: recruiterSummary?.totalRecruiters || 0,
+      count: recruiterStats?.totalRecruiters || 0,
       change: "+10%",
       icon: <FaRegUser size={30} />,
       color: "text-blue-500",
@@ -55,7 +56,7 @@ const Recruiters = () => {
 
     {
       title: "Active Recruiters",
-      count: recruiterSummary?.activeRecruiters || 0,
+      count: recruiterStats?.totalActiveRecruiters || 0,
       change: "+8%",
       icon: <UserCheck size={30} />,
       color: "text-yellow-500",
@@ -63,7 +64,7 @@ const Recruiters = () => {
     },
     {
       title: "Deactive Recruiter",
-      count: recruiterSummary?.deactiveRecruiters || 0,
+      count: recruiterStats?.totalDeactiveRecruiters || 0,
       change: "+5.2%",
       icon: <XCircle size={30} />,
       color: "text-red-500",
@@ -71,7 +72,7 @@ const Recruiters = () => {
     },
     {
       title: "Posted Jobs",
-      count: recruiterSummary?.totalJobPosts || 0,
+      count: jobStats?.totalJobs || 0,
       change: "+5.2%",
       icon: <Briefcase size={30} />,
       color: "text-green-500",
@@ -79,7 +80,7 @@ const Recruiters = () => {
     },
   ];
 
-  const toggleActive = async (recruiterId, isActive, isAdmin) => {
+  const toggleActive = async (companyId, recruiterId, isActive, isAdmin) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.put(
@@ -94,9 +95,16 @@ const Recruiters = () => {
 
       if (response.data.success) {
         if (isAdmin) {
-          fetchRecruiterList();
+          // If toggled by admin, update all recruiters in the list with matching companyId.
+          setRecruiterList((prevList) =>
+            prevList.map((recruiter) =>
+              recruiter.companyId === companyId
+                ? { ...recruiter, isActive }
+                : recruiter
+            )
+          );
         } else {
-          // For a single recruiter toggle: update the specific recruiter in the list
+          // For a non-admin toggle, update only the specific recruiter.
           setRecruiterList((prevList) =>
             prevList.map((recruiter) =>
               recruiter._id === recruiterId
@@ -104,18 +112,9 @@ const Recruiters = () => {
                 : recruiter
             )
           );
-          // Adjust the summary: decrease active by one, increase deactive by one
-          setRecruiterSummary((prevSummary) => ({
-            ...prevSummary,
-            activeRecruiters: isActive
-              ? prevSummary.activeRecruiters + 1
-              : prevSummary.activeRecruiters - 1,
-            deactiveRecruiters: isActive
-              ? prevSummary.deactiveRecruiters - 1
-              : prevSummary.deactiveRecruiters + 1,
-          }));
         }
-
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -130,7 +129,12 @@ const Recruiters = () => {
     }
   };
 
-  const deleteRecruiter = async (recruiterId, userEmail) => {
+  const deleteRecruiter = async (
+    recruiterId,
+    userEmail,
+    companyId,
+    isAdmin
+  ) => {
     try {
       dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
@@ -139,7 +143,19 @@ const Recruiters = () => {
       });
 
       if (response.data.success) {
-        fetchRecruiterList();
+        if (isAdmin) {
+          // if deleted recruiter is admin of company then remove all recruiter of that company
+          setRecruiterList((prevList) =>
+            prevList.filter((recruiter) => recruiter.companyId !== companyId)
+          );
+        } else {
+          // Update the recruiterList state by removing the deleted recruiter
+          setRecruiterList((prevList) =>
+            prevList.filter((recruiter) => recruiter._id !== recruiterId)
+          );
+        }
+        dispatch(fetchRecruiterStats());
+        dispatch(fetchJobStats());
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -157,11 +173,10 @@ const Recruiters = () => {
   const fetchRecruiterList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats/${companyId}`
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/getAllRecruiter-stats`
       );
       if (response.data.success) {
         setRecruiterList(response.data.recruiters);
-        setRecruiterSummary(response.data.summary);
       }
     } catch (err) {
       console.log(`error in recruiter fetching ${err}`);
@@ -175,6 +190,7 @@ const Recruiters = () => {
   const filteredRecruiters = recruiterList?.filter((recruiter) => {
     const matchesSearch =
       recruiter.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      recruiter.companyName.toLowerCase().includes(search.toLowerCase()) ||
       recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
       recruiter.phone.toLowerCase().includes(search.toLowerCase());
 
@@ -190,7 +206,7 @@ const Recruiters = () => {
 
   return (
     <>
-      <Navbar linkName={"Recruiters"} />
+      <Navbar linkName={"Recruiters List"} />
       {/* Stats Cards */}
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
@@ -212,7 +228,7 @@ const Recruiters = () => {
       <div className="m-4 p-4 bg-white shadow rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <Input
-            placeholder="Search by name, email, contact "
+            placeholder="Search by name, email, contact, company "
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-1/3"
@@ -236,6 +252,7 @@ const Recruiters = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Recruiter Name</TableHead>
+              <TableHead>Company Name</TableHead>
               <TableHead>Recruiter Contact</TableHead>
               <TableHead>Recruiter Position</TableHead>
               <TableHead>Posted Jobs</TableHead>
@@ -254,6 +271,7 @@ const Recruiters = () => {
                   <br />
                   {recruiter.email}
                 </TableCell>
+                <TableCell>{recruiter.companyName}</TableCell>
                 <TableCell>{recruiter.phone}</TableCell>
                 <TableCell>{recruiter.position}</TableCell>
                 <TableCell>{recruiter.postedJobs}</TableCell>
@@ -277,7 +295,6 @@ const Recruiters = () => {
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
                   />
-
                   {/* Toggle for recruiter activeness */}
                   {loading[recruiter._id] ? (
                     "loading..."
@@ -286,6 +303,7 @@ const Recruiters = () => {
                       checked={recruiter.isActive}
                       onChange={(e) =>
                         toggleActive(
+                          recruiter.companyId,
                           recruiter._id,
                           !recruiter.isActive,
                           recruiter.isAdmin
@@ -298,7 +316,6 @@ const Recruiters = () => {
                       }}
                     />
                   )}
-
                   {dloading[recruiter._id] ? (
                     "loading..."
                   ) : (
@@ -306,7 +323,12 @@ const Recruiters = () => {
                       className="text-red-500 cursor-pointer"
                       size={20}
                       onClick={() =>
-                        deleteRecruiter(recruiter._id, recruiter.email)
+                        deleteRecruiter(
+                          recruiter._id,
+                          recruiter.email,
+                          recruiter.companyId,
+                          recruiter.isAdmin
+                        )
                       }
                     />
                   )}
@@ -353,4 +375,4 @@ const Recruiters = () => {
   );
 };
 
-export default Recruiters;
+export default RecruitersList;

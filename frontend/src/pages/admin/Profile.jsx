@@ -8,15 +8,12 @@ import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  // const [loading, setLoading] = useState(false);
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
-      <Navbar />
+      <Navbar linkName={"Profile"}/>
 
       {/* Main Content */}
       <div className="flex-grow flex justify-center items-center py-10">
@@ -54,14 +51,12 @@ const Profile = () => {
               <div className="flex items-center gap-4">
                 <Mail className="text-blue-500" />
                 <span className="text-gray-700 text-lg">
-                  {user?.email || "No Email"}
+                  {user?.emailId?.email || "No Email"}
                 </span>
               </div>
               <div className="flex items-center gap-4">
                 <Contact className="text-green-500" />
-                <span className="text-gray-700 text-lg">
-                  {user?.phoneNumber || "No Phone Number"}
-                </span>
+                <span className="text-gray-700 text-lg">{user?.phoneNumber?.number}</span>
               </div>
             </div>
           </div>

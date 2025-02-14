@@ -107,7 +107,7 @@ const CompanyDetails = () => {
 
   return (
     <>
-      {company && user?.isVerify ? (
+      {company && user?.isActive ? (
         <div className="max-w-6xl mx-auto p-8  mt-10 min-h-screen">
           <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
             Company Details
@@ -393,7 +393,7 @@ const CompanyDetails = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by GreatHire
           </span>
         </p>
       )}

@@ -54,7 +54,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
           <div key={index} className="relative">
             <input
               type="text"
-              placeholder={`Search ${data.filterType}...`}
+              placeholder={`${data.filterType}...`}
               className="w-full px-2 py-1 border rounded-md mt-2"
               value={search[data.filterType]}
               onFocus={() => setShowDropdown({ ...showDropdown, [data.filterType]: true })}
@@ -81,7 +81,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
         <div>
           <input
             type="text"
-            placeholder="Salary range (Monthly)..."
+            placeholder="Salary(Monthly)..."
             className="w-full px-2 py-1 border rounded-md mt-2"
             value={search.Salary}
             onChange={(e) => setSearch({ ...search, Salary: e.target.value })}

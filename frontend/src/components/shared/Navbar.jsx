@@ -92,7 +92,7 @@ const Navbar = () => {
     }
   };
 
-  const handleSignupOption = (type) => {
+    const handleSignupOption = (type) => {
     navigate(
       type === "job" ? navigate("/signup") : navigate("/recruiter/signup")
     );

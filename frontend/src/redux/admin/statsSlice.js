@@ -1,38 +1,144 @@
-// src/store/statsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
+import {
+  ADMIN_COMPANY_DATA_API_END_POINT,
+  ADMIN_RECRUITER_DATA_API_END_POINT,
+  ADMIN_JOB_DATA_API_END_POINT,
+  ADMIN_APPLICATION_DATA_API_END_POINT,
+  ADMIN_USER_DATA_API_END_POINT,
+} from "@/utils/ApiEndPoint";
 
-// Async thunk to fetch stats
-export const fetchStats = createAsyncThunk("stats/fetchStats", async () => {
-  const response = await axios.get(`${ADMIN_STAT_API_END_POINT}/get-stats`);
-  // Assuming your API returns an object with a success property and a stats property:
-  if (response.data.success) {
-    return response.data.stats;
-  } else {
-    throw new Error("Failed to fetch stats");
+// 🟢 Async thunk for fetching company stats
+export const fetchCompanyStats = createAsyncThunk(
+  "stats/fetchCompanyStats",
+  async () => {
+    const response = await axios.get(
+      `${ADMIN_COMPANY_DATA_API_END_POINT}/get-stats`
+    );
+    return response.data.stats; // Return only relevant data
   }
-});
+);
+
+// 🟢 Async thunk for fetching recruiter stats
+export const fetchRecruiterStats = createAsyncThunk(
+  "stats/fetchRecruiterStats",
+  async () => {
+    const response = await axios.get(
+      `${ADMIN_RECRUITER_DATA_API_END_POINT}/get-stats`
+    );
+    return response.data.stats;
+  }
+);
+
+// 🟢 Async thunk for fetching job stats
+export const fetchJobStats = createAsyncThunk(
+  "stats/fetchJobStats",
+  async () => {
+    const response = await axios.get(
+      `${ADMIN_JOB_DATA_API_END_POINT}/get-stats`
+    );
+    return response.data.stats;
+  }
+);
+
+// 🟢 Async thunk for fetching job stats
+export const fetchApplicationStats = createAsyncThunk(
+  "stats/fetchApplicationStats",
+  async () => {
+    const response = await axios.get(
+      `${ADMIN_APPLICATION_DATA_API_END_POINT}/get-stats`
+    );
+    return response.data.stats;
+  }
+);
+
+// 🟢 Async thunk for fetching user stats
+export const fetchUserStats = createAsyncThunk(
+  "stats/fetchUserStats",
+  async () => {
+    const response = await axios.get(
+      `${ADMIN_USER_DATA_API_END_POINT}/get-stats`
+    );
+    return response.data.stats;
+  }
+);
 
 const statsSlice = createSlice({
   name: "stats",
   initialState: {
-    statsData: {},
+    companyStatsData: {},
+    recruiterStatsData: {},
+    jobStatsData: {},
+    applicationStatsData: {},
+    userStatsData: {},
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {}, // No synchronous reducers needed here
+
   extraReducers: (builder) => {
     builder
-      .addCase(fetchStats.pending, (state) => {
+      // 🔵 Handling Company Stats
+      .addCase(fetchCompanyStats.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchStats.fulfilled, (state, action) => {
-        state.statsData = action.payload;
+      .addCase(fetchCompanyStats.fulfilled, (state, action) => {
+        state.companyStatsData = action.payload;
         state.loading = false;
       })
-      .addCase(fetchStats.rejected, (state, action) => {
+      .addCase(fetchCompanyStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // 🔵 Handling Recruiter Stats
+      .addCase(fetchRecruiterStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchRecruiterStats.fulfilled, (state, action) => {
+        state.recruiterStatsData = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchRecruiterStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // 🔵 Handling Job Stats
+      .addCase(fetchJobStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchJobStats.fulfilled, (state, action) => {
+        state.jobStatsData = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchJobStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // 🔵 Handling Application Stats
+      .addCase(fetchApplicationStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchApplicationStats.fulfilled, (state, action) => {
+        state.applicationStatsData = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchApplicationStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // 🔵 Handling User Stats
+      .addCase(fetchUserStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserStats.fulfilled, (state, action) => {
+        state.userStatsData = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUserStats.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

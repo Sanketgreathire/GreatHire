@@ -64,6 +64,7 @@ const AppliedCandidatesList = () => {
     return matchesSearch && matchesStatus;
   });
 
+
   return (
     <>
       {user?.role !== "recruiter" && <Navbar linkName={"Applicants List"} />}
@@ -117,10 +118,10 @@ const AppliedCandidatesList = () => {
                 {filteredApplicants.length > 0 ? (
                   filteredApplicants.map((data, index) => (
                     <TableRow
-                      key={data.applicant.id}
+                      key={data._id}
                       className="hover:bg-gray-50 transition duration-150 cursor-pointer"
                       onClick={() => {
-                        setApplicant(data.applicant);
+                        setApplicant(data);
                         setApplicantId(data._id);
                         setApplicantDetailsModal(true);
                       }}
@@ -168,10 +169,11 @@ const AppliedCandidatesList = () => {
           </>
         ) : (
           <ApplicantDetails
-            applicant={applicant}
+            app={applicant}
             applicantId={applicantId}
             jobId={jobId}
             setApplicantDetailsModal={setApplicantDetailsModal}
+            user = {user}
           />
         )}
       </div>

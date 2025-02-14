@@ -14,8 +14,11 @@ import { number } from "yup";
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
+  const [prevResumeName, setPrevResumeName] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
+
+  console.log(user);
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
@@ -25,13 +28,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
-    profilePhoto: user?.profile?.profilePhoto || "",
     currentCTC: user?.profile?.currentCTC || "",
     expectedCTC: user?.profile?.expectedCTC || "",
     jobProfile: user?.profile?.experience?.jobProfile || "",
     city: user?.address?.city || "",
     state: user?.address?.state || "",
     country: user?.address?.country || "",
+    profilePhoto: user?.profile?.profilePhoto || "",
+    resumeOriginalName: user?.profile?.resumeOriginalName || "",
   });
 
   const [previewImage, setPreviewImage] = useState(
@@ -62,38 +66,41 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
         toast.error("Resume size should be less than 10 MB.");
         return;
       }
 
-      const fileUrl = URL.createObjectURL(file);
       setInput((prevData) => ({
         ...prevData,
         resume: file,
+        resumeOriginalName: file.name,
       }));
       setResumeUrl(file.name);
+      setPrevResumeName(file.name); // Store last uploaded resume name
     }
+    e.target.value = ""; // Reset input value to allow re-upload of the same file
   };
 
   const removeResume = () => {
-    setInput({ resume: null });
+    setInput((prev) => ({
+      ...prev,
+      resume: "",
+      resumeOriginalName: "",
+    }));
     setResumeUrl("");
+    setPrevResumeName(input.resumeOriginalName);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
         toast.error("Image size should be less than 10 MB.");
         return;
       }
-
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
-
       setInput((prev) => ({ ...prev, profilePhoto: file }));
     }
   };
@@ -113,12 +120,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("expectedCTC", input.expectedCTC);
     formData.append("bio", input.bio) || "";
     formData.append("skills", input.skills || "");
+
     if (input.resume instanceof File) {
       formData.append("resume", input.resume);
     }
 
-    console.log(formData);
-    console.log(input);
+    if (input.profilePhoto) {
+      formData.append("profilePhoto", input.profilePhoto);
+    }
 
     try {
       setLoading(true);
@@ -382,14 +391,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 id="resume"
                 name="resume"
                 type="text"
-                value={resumeUrl}
+                value={input.resumeOriginalName}
                 placeholder="Upload your resume"
                 readOnly
                 className="pr-10"
               />
               <input
                 type="file"
-                id="resume-upload"
+                id="resumeInput"
                 accept=".pdf"
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"

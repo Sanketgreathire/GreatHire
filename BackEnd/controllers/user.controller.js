@@ -20,13 +20,6 @@ export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
-    // Validate required fields
-    if (!fullname || !email || !phoneNumber || !password) {
-      return res.status(200).json({
-        message: "Something is missing",
-      });
-    }
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -115,7 +108,6 @@ export const login = async (req, res) => {
       (await User.findOne({ "emailId.email": email })) ||
       (await Recruiter.findOne({
         "emailId.email": email,
-        isActive: true,
       }));
 
     if (!user) {
@@ -140,7 +132,6 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    const isVerify = user.isVerify || 0;
     const isCompanyCreated = user.isCompanyCreated || false;
     const position = user.position || "";
     const isActive = user.isActive || null;
@@ -153,7 +144,6 @@ export const login = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
-      isVerify,
       address: user.address,
       isCompanyCreated,
       position,
