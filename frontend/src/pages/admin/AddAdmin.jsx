@@ -21,11 +21,11 @@ const AddAdmin = () => {
 
   return (
     <>
-      <Navbar linkName="Settings" />
+      <Navbar linkName="Add Admin" />
       
       {/* Main Layout Wrapper */}
       <div className="flex">
-        <Sidebar />
+       
 
         {/* Content Section (After Navbar) */}
         <div className="flex-grow min-h-screen bg-gray-100 pt-16 flex justify-center items-center">

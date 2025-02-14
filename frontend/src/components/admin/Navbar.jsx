@@ -24,7 +24,7 @@ const Navbar = ({ linkName }) => {
         dispatch(logOut());
         setIsProfileMenuOpen(false);
         toast.success(response.data.message);
-        navigate("/admin");
+        navigate("/admin/login");
       } else {
         toast.error("Error in logout");
       }
@@ -49,7 +49,10 @@ const Navbar = ({ linkName }) => {
         {/* Show these links only when on the "Settings" page */}
         {linkName === "Settings" && (
           <div className="flex gap-4">
-            <Link to="/admin/add-admin" className="hover:text-blue-700">
+            <Link
+              to="/admin/settings/add-admin"
+              className="hover:text-blue-700"
+            >
               ➕ Add Admin
             </Link>
             <Link to="/admin/admin-list" className="hover:text-blue-700">
@@ -109,12 +112,6 @@ const Navbar = ({ linkName }) => {
                 className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
               >
                 Login
-              </a>
-              <a
-                href="/admin/signup"
-                className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-              >
-                Signup
               </a>
             </div>
           )}

@@ -18,10 +18,9 @@ import AppliedCandidatesList from "@/pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "@/pages/recruiter/rec_job_details/RecruitersDetails";
 import CompanyDetails from "@/pages/admin/companies/CompanyDetails";
 import CompanyList from "@/pages/admin/companies/CompanyList";
+import AddAdmin from "@/pages/admin/AddAdmin";
 
 const AdminLayout = () => {
-  
-
   return (
     <AdminProtectWrapper>
       <div className="flex">
@@ -57,6 +56,7 @@ const AdminLayout = () => {
 
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="settings/add-admin" element={<AddAdmin />} />
             <Route path="profile" element={<Profile />} />
           </Routes>
         </div>

@@ -42,7 +42,7 @@ const Dashboard = () => {
     },
     {
       title: "Total Recruiters",
-      count: recruiterStats.totalRecruiters || 0, // Use fetched recruiters count
+      count: recruiterStats?.totalRecruiters || 0, // Use fetched recruiters count
       change: "+8.1%",
       icon: <UserCheck size={30} />,
       color: "text-purple-500",
