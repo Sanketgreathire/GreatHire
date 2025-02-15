@@ -20,6 +20,7 @@ import CompanyDetails from "@/pages/admin/companies/CompanyDetails";
 import CompanyList from "@/pages/admin/companies/CompanyList";
 import AddAdmin from "@/pages/admin/AddAdmin";
 import AdminList from "@/pages/admin/AdminList";
+import ReportedJobList from "@/pages/admin/ReportedJobList";
 
 const AdminLayout = () => {
   return (
@@ -59,6 +60,7 @@ const AdminLayout = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="settings/add-admin" element={<AddAdmin />} />
             <Route path="settings/admin-list" element={<AdminList />} />
+            <Route path="settings/reported-job-list" element={<ReportedJobList />} />
             <Route path="profile" element={<Profile />} />
           </Routes>
         </div>

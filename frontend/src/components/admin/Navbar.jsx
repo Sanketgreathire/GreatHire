@@ -46,24 +46,6 @@ const Navbar = ({ linkName }) => {
 
       {/* Right - Bell Icon, Profile, and Extra Links for Settings Page */}
       <div className="flex items-center gap-8">
-        {/* Show these links only when on the "Settings" page */}
-        {linkName === "Settings" && (
-          <div className="flex gap-4">
-            <Link
-              to="/admin/settings/add-admin"
-              className="hover:text-blue-700"
-            >
-              ➕ Add Admin
-            </Link>
-            <Link to="/admin/admin-list" className="hover:text-blue-700">
-              📋 Admin List
-            </Link>
-            <Link to="/admin/reported-job-list" className="hover:text-blue-700">
-              🚨 Reported Jobs
-            </Link>
-          </div>
-        )}
-
         {/* Notification Icon */}
         <Bell className="w-8 h-8 cursor-pointer" />
 
