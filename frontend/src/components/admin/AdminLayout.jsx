@@ -19,6 +19,7 @@ import RecruitersDetails from "@/pages/recruiter/rec_job_details/RecruitersDetai
 import CompanyDetails from "@/pages/admin/companies/CompanyDetails";
 import CompanyList from "@/pages/admin/companies/CompanyList";
 import AddAdmin from "@/pages/admin/AddAdmin";
+import AdminList from "@/pages/admin/AdminList";
 
 const AdminLayout = () => {
   return (
@@ -57,6 +58,7 @@ const AdminLayout = () => {
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
             <Route path="settings/add-admin" element={<AddAdmin />} />
+            <Route path="settings/admin-list" element={<AdminList />} />
             <Route path="profile" element={<Profile />} />
           </Routes>
         </div>

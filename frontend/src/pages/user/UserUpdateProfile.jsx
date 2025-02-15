@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { number } from "yup";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -160,7 +161,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       onClick={() => setOpen(false)}
     >
       <div
-        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg"
+        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg h-screen sm:h-auto overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -172,12 +173,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           ✖
         </button>
 
-        <h2 className="text-lg text-center font-semibold mb-4">
+        <h2 className="text-xl text-center font-semibold mb-4">
           Update Profile
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Profile Image and Name-Email Grid */}
-          <div className="grid grid-cols-3 gap-2 items-center">
+          <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4 items-center">
             {/* Profile Image */}
             <div className="relative flex flex-col items-center">
               {/* Profile Image with Pencil Icon */}
@@ -214,9 +215,9 @@ const UserUpdateProfile = ({ open, setOpen }) => {
             </div>
 
             {/* Name and Email Fields */}
-            <div className="col-span-2 grid gap-2">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="fullname" className="w-20">
+            <div className="w-full sm:col-span-2 flex flex-col gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="fullname" className="sm:w-20 w-full font-semibold">
                   Name
                 </Label>
                 <Input
@@ -226,8 +227,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Label htmlFor="email" className="w-20">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="email" className="sm:w-20 w-full font-semibold">
                   Email
                 </Label>
                 <Input
@@ -241,9 +242,9 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           </div>
 
           {/* Remaining Fields in Grid Layout */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="phoneNumber" className="w-32">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="phoneNumber" className="sm:w-20 w-full font-semibold">
                 Phone
               </Label>
               <Input
@@ -254,8 +255,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <Label htmlFor="jobProfile" className="w-32">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="jobProfile" className="sm:w-20 w-full font-semibold">
                 Job Profile
               </Label>
               <Input
@@ -266,8 +267,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <Label htmlFor="experience" className="w-32">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="experience" className="sm:w-20 w-full font-semibold">
                 Experience
               </Label>
               <Input
@@ -279,8 +280,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
             </div>
 
             {/* Skills */}
-            <div className="flex items-center gap-2">
-              <Label htmlFor="skills" className="w-32">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="skills" className="sm:w-20 w-full font-semibold">
                 Skills
               </Label>
               <Input
@@ -292,8 +293,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <Label htmlFor="currentCTC" className="w-32">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="currentCTC" className="sm:w-20 w-full font-semibold">
                 Current CTC
               </Label>
               <Input
@@ -305,8 +306,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <Label htmlFor="expectedCTC" className="w-32">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="expectedCTC" className="sm:w-20 w-full font-semibold">
                 Expected CTC
               </Label>
               <Input
@@ -320,8 +321,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           </div>
 
           {/* Bio */}
-          <div className="col-span-2 flex items-start gap-2 w-full">
-            <Label htmlFor="bio" className="w-32 pt-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+            <Label htmlFor="bio" className="sm:w-20 w-full font-semibold pt-2">
               Profile Summary
             </Label>
             <textarea
@@ -333,14 +334,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               rows="2"
               placeholder="Enter your bio..."
             />
-            <p className="text-sm text-gray-600 mt-1 text-right">
+            <p className="text-sm text-gray-600 mt-1 self-end text-right">
               {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 w-full">
-            <div className="flex items-center gap-2 w-full">
-              <Label htmlFor="city" className="w-24">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
                 City
               </Label>
               <Input
@@ -352,8 +353,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2 w-full">
-              <Label htmlFor="state" className="w-24">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
                 State
               </Label>
               <Input
@@ -365,8 +366,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2 w-full">
-              <Label htmlFor="country" className="w-24">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <Label htmlFor="country" className="sm:w-20 w-full font-semibold">
                 Country
               </Label>
               <Input
@@ -379,8 +380,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
             </div>
           </div>
 
-          <div className="col-span-2 flex items-center gap-2 relative">
-            <Label htmlFor="resume" className="w-32">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+            <Label htmlFor="resume" className="sm:w-20 w-full font-semibold">
               Resume
             </Label>
 
