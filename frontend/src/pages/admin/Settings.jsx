@@ -1,9 +1,6 @@
 import React from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar";
-import AddAdmin from "./AddAdmin";
-import AdminList from "./AdminList";
-import ReportedJobList from "./ReportedJobList";
 
 
 const Settings = () => {
@@ -41,14 +38,6 @@ const Settings = () => {
           </Link>
         </div>
 
-        {/* Routing Section */}
-        <div className="mt-6">
-          <Routes>
-            <Route path="add-admin" element={<AddAdmin />} />
-            <Route path="admin-list" element={<AdminList />} />
-            <Route path="reported-jobs" element={<ReportedJobList />} />
-          </Routes>
-        </div>
       </div>
     </>
   );
