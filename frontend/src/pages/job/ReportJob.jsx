@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import axios from "axios";

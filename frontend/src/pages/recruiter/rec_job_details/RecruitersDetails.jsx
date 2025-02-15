@@ -2,19 +2,17 @@ import React, { useEffect, useState } from "react";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { MdOutlineVerified } from "react-icons/md";
-import { MdOutlineVerifiedUser } from "react-icons/md";
 import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
-import { Button } from "@/components/ui/button";
+
 
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
   const [recruiterDetails, setRecruiterDetails] = useState(null);
   const { recruiterId } = useParams();
   const { user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
 
   const fetchRecruiterDetails = async () => {
     setLoading(true);
@@ -31,11 +29,7 @@ const RecruitersDetails = () => {
   };
 
   useEffect(() => {
-    if (!user || user?.role === "student") {
-      navigate("/login");
-    } else {
-      fetchRecruiterDetails();
-    }
+    fetchRecruiterDetails();
   }, [user]);
 
   return (
@@ -114,7 +108,7 @@ const RecruitersDetails = () => {
                   {recruiterDetails?.isActive ? "Active" : "Inactive"}
                 </span>
               </p>
-              
+
               <p className="text-gray-700 ">
                 <strong>Role:</strong> {recruiterDetails?.role}
               </p>

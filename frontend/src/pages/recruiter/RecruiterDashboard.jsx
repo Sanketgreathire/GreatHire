@@ -12,7 +12,6 @@ import {
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
 import { fetchCurrentPlan, removeJobPlan } from "@/redux/jobPlanSlice";
-import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { BACKEND_URL } from "@/utils/ApiEndPoint";
 
@@ -25,14 +24,8 @@ const RecruiterDashboard = () => {
   const { jobPlan } = useSelector((state) => state.jobPlan);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {

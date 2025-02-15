@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -8,6 +7,7 @@ import { addRecruiter } from "@/redux/recruiterSlice";
 
 const AddRecruiter = () => {
   const dispatch = useDispatch();
+
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);

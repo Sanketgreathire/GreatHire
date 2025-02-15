@@ -3,7 +3,7 @@ import { VERIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 import { updateEmailVerification } from "@/redux/authSlice";
 
 const VerifyEmail = ({ setOpenEmailOTPModal }) => {
@@ -13,6 +13,7 @@ const VerifyEmail = ({ setOpenEmailOTPModal }) => {
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(0); // Timer starts at 30 seconds
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Timer Logic
   useEffect(() => {
@@ -30,6 +31,8 @@ const VerifyEmail = ({ setOpenEmailOTPModal }) => {
     if (user && !token) {
       requestOTP();
       setTimer(30);
+    }else{
+      navigate("/login");
     }
   }, [user]); // Dependency on user ensures this runs once when user data is available
 

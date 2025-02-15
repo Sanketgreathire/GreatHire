@@ -351,3 +351,56 @@ export const getRecentJobPostings = async (req, res) => {
     });
   }
 };
+
+export const getReportedJobList = async (req, res) => {
+  try {
+    // Find all job reports and populate user and job details.
+    // For the user, we select 'fullname' and 'emailId'.
+    // For the job, we select 'title' and 'jobDetails'.
+    const reports = await JobReport.find({})
+      .populate("userId", "fullname emailId")
+      .populate("jobId", "title jobDetails");
+
+    // Format each report
+    const formattedReports = reports.map((report) => {
+      // Extract user details
+      const userFullname = report.userId?.fullname;
+      // Assuming user.emailId is an object that holds an 'email' property.
+      const userEmail = report.userId?.emailId?.email || "";
+
+      // Extract job details
+      const jobTitle = report.jobId?.title;
+      // Assuming job.jobDetails is an object containing companyName.
+      const jobCompanyName = report.jobId?.jobDetails?.companyName || "";
+
+      // Format createdAt date to "Feb, 15, 2025"
+      const createdDate = new Date(report.createdAt);
+      const month = createdDate.toLocaleString("en-US", { month: "short" });
+      const day = createdDate.getDate();
+      const year = createdDate.getFullYear();
+      const formattedDate = `${month}, ${day}, ${year}`;
+
+      return {
+        reportId: report._id,
+        reportTitle: report.reportTitle,
+        description: report.description,
+        user: {
+          id: report.userId?._id,
+          fullname: userFullname,
+          email: userEmail,
+        },
+        job: {
+          id: report.jobId?._id,
+          title: jobTitle,
+          companyName: jobCompanyName,
+        },
+        createdAt: formattedDate,
+      };
+    });
+
+    return res.status(200).json({ success: true, data: formattedReports });
+  } catch (error) {
+    console.error("Error fetching reported job list:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

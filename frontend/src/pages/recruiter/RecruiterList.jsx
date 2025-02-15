@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,9 +19,6 @@ const RecruiterList = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const { company } = useSelector((state) => state.company);
 
-  useEffect(() => {
-    if (!user || user?.role !== "recruiter") navigate("/login");
-  }, [user]);
 
   const toggleActive = async (event, recruiterId, isActive) => {
     event.stopPropagation();

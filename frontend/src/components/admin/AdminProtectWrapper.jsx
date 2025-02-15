@@ -9,7 +9,11 @@ const AdminProtectWrapper = ({ children }) => {
 
   useEffect(() => {
     if (!user) navigate("/admin/login");
-  }, []);
+    else {
+      if (user?.role !== "Owner" && user?.role !== "admin")
+        navigate("/page/not/found");
+    }
+  }, [user]);
 
   return <>{children}</>;
 };
