@@ -182,3 +182,58 @@ export const login = async (req, res) => {
     console.log(error);
   }
 };
+
+export const getAdminList = async (req, res) => {
+  try {
+    // Fetch all admin documents from the Admin collection
+    const admins = await Admin.find({ role: "admin" });
+
+    // Return a success response with the list of admins
+    return res.status(200).json({ success: true, admins });
+  } catch (error) {
+    console.error("Error retrieving admin list:", error);
+
+    // Return an error response if something goes wrong
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const removeAccount = async (req, res) => {
+  try {
+    // ID of the admin performing the deletion (assumed to be set in req.id)
+    const adminId = req.id;
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required." });
+    }
+
+    // Fetch the current admin from the database
+    const currentAdmin = await Admin.findById(adminId);
+    if (!currentAdmin && currentAdmin.role !== "Owner") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized: Admin." });
+    }
+
+    // Find and delete the user (admin) by their ID
+    const deletedUser = await Admin.findByIdAndDelete(userId);
+
+    // If no user is found, return a 404 error
+    if (!deletedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    // Return a success response
+    return res
+      .status(200)
+      .json({ success: true, message: "Removed successfully." });
+  } catch (error) {
+    console.error("Error removing user account:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

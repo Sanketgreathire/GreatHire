@@ -5,12 +5,13 @@ import {
   getUser,
   getAllApplication,
 } from "../../controllers/admin/userStats.controller.js";
+import isAuthenticated from "../../middlewares/isAuthenticated.js";
 
 const router = express.Router();
 // Define routes
-router.get("/get-stats", getUserStats);
-router.get("/user-stats", getUsersList);
-router.get("/getUser/:userId", getUser);
-router.get("/user-all-application/:userId", getAllApplication);
+router.get("/get-stats", isAuthenticated, getUserStats);
+router.get("/user-stats", isAuthenticated, getUsersList);
+router.get("/getUser/:userId", isAuthenticated, getUser);
+router.get("/user-all-application/:userId", isAuthenticated, getAllApplication);
 
 export default router;

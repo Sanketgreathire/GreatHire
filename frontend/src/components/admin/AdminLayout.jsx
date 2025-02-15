@@ -11,16 +11,16 @@ import RecruitersList from "@/pages/admin/recruiters/RecruitersList";
 import Recruiters from "../../pages/admin/recruiters/Recruiters";
 import Jobs from "../../pages/admin/jobs/Jobs";
 import Reports from "../../pages/admin/reports/Reports";
-import Settings from "../../pages/admin/Settings";
+import Settings from "../../pages/admin/settings/Settings";
 import Profile from "../../pages/admin/Profile";
 import UserDetails from "@/pages/admin/users/UserDetails";
 import AppliedCandidatesList from "@/pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "@/pages/recruiter/rec_job_details/RecruitersDetails";
 import CompanyDetails from "@/pages/admin/companies/CompanyDetails";
 import CompanyList from "@/pages/admin/companies/CompanyList";
-import AddAdmin from "@/pages/admin/AddAdmin";
-import AdminList from "@/pages/admin/AdminList";
-import ReportedJobList from "@/pages/admin/ReportedJobList";
+import AddAdmin from "@/pages/admin/settings/AddAdmin";
+import AdminList from "@/pages/admin/settings/AdminList";
+import ReportedJobList from "@/pages/admin/settings/ReportedJobList";
 
 const AdminLayout = () => {
   return (
