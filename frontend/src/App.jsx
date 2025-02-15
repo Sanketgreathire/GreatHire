@@ -1,20 +1,22 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { JobDetailsProvider } from "./context/JobDetailsContext";
+
+import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
-import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
-import Contact from "./pages/services/Contact";
 import Home from "./pages/Home";
+import UserProfile from "./pages/user/UserProfile";
 import JobDescription from "./pages/job/JobDescription";
 import Jobs from "./pages/job/Jobs";
+import MainApply from "./components/ApplyJobs/MainApply";
+import ReportJob from "./pages/job/ReportJob";
+
+import Contact from "./pages/services/Contact";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import UserProfile from "./pages/user/UserProfile";
 import OurService from "./pages/services/OurService";
-import { JobDetailsProvider } from "./context/JobDetailsContext";
 
-import MainApply from "./components/ApplyJobs/MainApply";
-import ReportJob from "./pages/job/ReportJob";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
@@ -22,6 +24,8 @@ import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
 
 // Recruiter Routes
+import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
+import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
@@ -44,9 +48,6 @@ import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 // Admin Routes
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
-import AddAdmin from "./pages/admin/AddAdmin";
-import AdminList from "./pages/admin/AdminList";
-import ReportedJobList from "./pages/admin/ReportedJobList";
 
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
@@ -72,6 +73,7 @@ const appRouter = createBrowserRouter([
     element: <Signup />,
   },
 
+  // verify number and verify email
   {
     path: "/verify-email",
     element: <VerifyEmail />,
@@ -81,34 +83,65 @@ const appRouter = createBrowserRouter([
     element: <VerifyNumber />,
   },
 
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/reset-password/:token",
-    element: <ResetPassword />,
-  },
+  // User Routes
   {
     path: "/jobs",
-    element: <Jobs />,
+    element: (
+      <ProtectedUserRoute>
+        <Jobs />
+      </ProtectedUserRoute>
+    ),
   },
   {
     path: "/description",
-    element: <JobDescription />,
+    element: (
+      <ProtectedUserRoute>
+        <JobDescription />
+      </ProtectedUserRoute>
+    ),
   },
   {
     path: "/saved-jobs",
-    element: <SavedJobs />,
+    element: (
+      <ProtectedUserRoute>
+        <SavedJobs />
+      </ProtectedUserRoute>
+    ),
   },
   {
     path: "/apply/:jobId",
-    element: <MainApply />,
+    element: (
+      <ProtectedUserRoute>
+        <MainApply />
+      </ProtectedUserRoute>
+    ),
   },
   {
     path: "/profile",
-    element: <UserProfile />,
+    element: (
+      <ProtectedUserRoute>
+        <UserProfile />
+      </ProtectedUserRoute>
+    ),
   },
+  {
+    path: "/report-job/:id",
+    element: (
+      <ProtectedUserRoute>
+        <ReportJob />
+      </ProtectedUserRoute>
+    ),
+  },
+  {
+    path: "/success",
+    element: (
+      <ProtectedUserRoute>
+        <Success />
+      </ProtectedUserRoute>
+    ),
+  },
+
+  // Common Routes for all user role
   {
     path: "/policy/privacy-policy",
     element: <PrivacyPolicy />,
@@ -126,14 +159,6 @@ const appRouter = createBrowserRouter([
     element: <Contact />,
   },
   {
-    path: "/report-job/:id",
-    element: <ReportJob />,
-  },
-  {
-    path: "/success",
-    element: <Success />,
-  },
-  {
     path: "/great-hire/services",
     element: <OurService />,
   },
@@ -142,14 +167,26 @@ const appRouter = createBrowserRouter([
     element: <JobServicePlans />,
   },
   {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
+  },
+
+  // Recruiter Routes
+  {
     path: "/recruiter/signup",
     element: <RecruiterSignup />,
   },
-
-  // Recruiter dashboard navlink
   {
     path: "/recruiter/dashboard",
-    element: <RecruiterDashboard />,
+    element: (
+      <ProtectedRecruiterRoute>
+        <RecruiterDashboard />
+      </ProtectedRecruiterRoute>
+    ),
     children: [
       { path: "home", element: <RecruiterHome /> },
       { path: "create-company", element: <CreateCompany /> },
@@ -175,33 +212,33 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/recruiter/profile",
-    element: <RecruiterProfile />,
+    element: (
+      <ProtectedRecruiterRoute>
+        <RecruiterProfile />
+      </ProtectedRecruiterRoute>
+    ),
   },
   {
     path: "/recruiter/add-user",
-    element: <AddRecruiter />,
+    element: (
+      <ProtectedRecruiterRoute>
+        <AddRecruiter />
+      </ProtectedRecruiterRoute>
+    ),
   },
-
   {
     path: "/recruiter/success",
-    element: <RecruiterSuccess />,
+    element: (
+      <ProtectedRecruiterRoute>
+        <RecruiterSuccess />
+      </ProtectedRecruiterRoute>
+    ),
   },
 
+  // Admin Routes
   {
     path: "/admin/login",
     element: <AdminLogin />,
-  },
-  {
-    path: "/admin/add-admin",
-    element: <AddAdmin />,
-  },
-  {
-    path: "/admin/admin-list",
-    element: <AdminList />,
-  },
-  {
-    path: "/admin/reported-job-list",
-    element: <ReportedJobList />,
   },
   {
     path: "/admin/*",

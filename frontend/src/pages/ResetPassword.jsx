@@ -38,6 +38,7 @@ const ResetPassword = () => {
       }
     };
     if (token) verifyToken();
+    else navigate("/");
   }, [token]);
 
   const handleSubmit = async (e) => {
