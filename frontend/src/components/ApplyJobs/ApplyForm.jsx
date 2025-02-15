@@ -53,7 +53,7 @@ const ApplyForm = ({ setRight }) => {
 
   // Function to handle character limit restriction
   const handleCharLimitChange = (e, field) => {
-    console.log(e.key)
+    console.log(e.key);
     if (e.key === "Backspace") {
       return;
     }
@@ -304,7 +304,7 @@ const ApplyForm = ({ setRight }) => {
 
       {/* Step 2 */}
       {step2 && (
-        <div className="w-full p-6 bg-white shadow-md rounded-md">
+        <div className=" bg-white p-6  shadow-md rounded-md flex flex-col">
           <ProgressBar percent={40} filledBackground="green" />
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -319,9 +319,9 @@ const ApplyForm = ({ setRight }) => {
             </h6>
           </div>
 
-          <div className="mt-4 h-96 w-full flex flex-col items-center justify-center">
+          <div className="mt-4 ">
             {fileURL || input.resume ? (
-              <div className="w-full h-full">
+              <div className="h-96">
                 <Viewer fileUrl={fileURL || input.resume} />
                 <button
                   onClick={() =>
@@ -378,23 +378,19 @@ const ApplyForm = ({ setRight }) => {
               </div>
             )}
           </div>
-          <div className="flex items-center justify-between mt-6">
-            <div className="flex-1 flex justify-center">
-              <Link
-                to="/"
-                className="text-blue-600 hover:underline text-sm font-medium"
-              >
-                Return to job search
-              </Link>
-            </div>
-            <div className="flex justify-end">
-              <button
-                onClick={handleContinue2}
-                className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Continue
-              </button>
-            </div>
+          <div className="flex items-center justify-between mt-16">
+            <Link
+              to="/"
+              className="text-blue-600 hover:underline text-sm font-medium"
+            >
+              Return to job search
+            </Link>
+            <button
+              onClick={handleContinue2}
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Continue
+            </button>
           </div>
 
           <p className="text-sm text-center text-gray-600 mt-4">

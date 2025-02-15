@@ -20,16 +20,14 @@ export const Success = () => {
           <div className="flex items-center gap-2 mb-4">
             <FcCheckmark className="text-2xl" />
             <p className="text-gray-700">
-              You will get an email confirmation at{" "}
-              <strong>abc123@gmail.com</strong>
+              Job Applied Successfully.
             </p>
           </div>
 
           <div className="flex items-center gap-2 mb-6">
             <FcCheckmark className="text-2xl" />
             <p className="text-gray-700">
-              <strong>Google</strong> typically responds to applications within
-              10 days.
+              <strong>Great Hre</strong> responds to you as soon as possible.
             </p>
           </div>
 

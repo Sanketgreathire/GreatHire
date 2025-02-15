@@ -336,9 +336,22 @@ export const getCandidateData = async (req, res) => {
         .json({ message: "You are not authorized", success: false });
     }
 
+    // Securely Validate jobTitle
+    if (typeof jobTitle !== "string" || jobTitle.trim().length === 0 || jobTitle.length > 50) {
+      return res.status(400).json({ message: "Invalid job title", success: false });
+    }
+
+    // Safe escape function (Prevents .replace() on non-strings)
+    const escapeRegex = (str) => {
+      if (typeof str !== "string") return "";
+      return str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&");
+    };
+
+    const sanitizedJobTitle = escapeRegex(jobTitle.trim());
+
     const candidates = await User.find({
       "profile.experience.jobProfile": {
-        $regex: new RegExp(`^${jobTitle}$`, "i"),
+        $regex: new RegExp(`^${sanitizedJobTitle}$`, "i"),
       }, // Case-insensitive match
       "profile.experience.duration": experience,
       "profile.expectedCTC": salaryBudget,

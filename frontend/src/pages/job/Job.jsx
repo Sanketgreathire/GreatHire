@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,8 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  const { toggleBookmarkStatus, updateSaveJobs, setSelectedJob } = useJobDetails();
+  const { toggleBookmarkStatus, setSelectedJob } =
+    useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const isBookmarked = job?.saveJob?.includes(user?._id) || false;
 
@@ -59,18 +60,19 @@ const Job = ({ job }) => {
           </p>
         )}
         <div className="flex items-center justify-between">
-          {user && (
-            <div
-              onClick={() => handleBookmark(job._id)}
-              className="cursor-pointer"
-            >
-              {isBookmarked ? (
-                <FaBookmark size={25} className="text-green-700" />
-              ) : (
-                <CiBookmark size={25} />
-              )}
-            </div>
-          )}
+          {user &&
+            !isApplied && ( // Hides the bookmark button if the user has applied
+              <div
+                onClick={() => handleBookmark(job._id)}
+                className="cursor-pointer"
+              >
+                {isBookmarked ? (
+                  <FaBookmark size={25} className="text-green-700" />
+                ) : (
+                  <CiBookmark size={25} />
+                )}
+              </div>
+            )}
         </div>
       </div>
       <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
