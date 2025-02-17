@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { FiUser, FiMail, FiPhone, FiLock } from "react-icons/fi";
+import { FiUser, FiMail, FiPhone, FiLock, FiArrowLeft } from "react-icons/fi";
 import Navbar from "@/components/admin/Navbar";
 import { RiAdminLine } from "react-icons/ri";
 import { toast } from "react-hot-toast";
@@ -62,8 +62,7 @@ const AddAdmin = () => {
   return (
     <>
       <Navbar linkName="Add Admin" />
-
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100 relative">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,7 +75,13 @@ const AddAdmin = () => {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="absolute inset-0 bg-white opacity-10 rounded-xl"
           />
-
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-900 text-lg"
+          >
+            <FiArrowLeft size={30} className="mr-2" />
+          </button>
           <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 mb-6">
             <RiAdminLine size={45} className="text-blue-700" />
             <span>Add New Admin</span>
