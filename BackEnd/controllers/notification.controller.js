@@ -48,6 +48,7 @@ export const getMessages = async (req, res) => {
         phone: report.userId?.phoneNumber?.number,
       },
       job: {
+        jobId: report.jobId?._id,
         title: report.jobId?.jobDetails?.title,
         companyName: report.jobId?.jobDetails?.companyName,
       },
@@ -124,12 +125,10 @@ export const deleteContact = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting contact message:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error while deleting contact message.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting contact message.",
+    });
   }
 };
 
@@ -137,7 +136,7 @@ export const deleteContact = async (req, res) => {
 export const deleteJobReport = async (req, res) => {
   try {
     const { msgId } = req.params;
-    console.log(msgId)
+    console.log(msgId);
     if (!msgId) {
       return res
         .status(400)
@@ -158,12 +157,10 @@ export const deleteJobReport = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting job report:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error while deleting job report.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting job report.",
+    });
   }
 };
 
@@ -178,11 +175,9 @@ export const deleteAllMessages = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting all messages:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Server error while deleting all messages.",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting all messages.",
+    });
   }
 };

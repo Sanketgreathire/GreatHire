@@ -2,13 +2,15 @@ import React from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import useMessage from "@/hooks/useMessage";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 import Navbar from "@/components/admin/Navbar";
 import { NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useNavigate } from "react-router-dom";
 
 const MessageList = () => {
   // Assuming useMessage returns messages and setMessages
   const { messages, setMessages } = useMessage();
+  const navigate = useNavigate();
 
   // Delete a single message according to its type
   const handleDeleteMessage = async (msgId, type) => {
@@ -96,12 +98,24 @@ const MessageList = () => {
                       {new Date(msg.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  {/* Delete Button */}
-                  <Trash2
-                    onClick={() => handleDeleteMessage(msg.id, msg.type)}
-                    className=" cursor-pointer text-red-600 "
-                    size={25}
-                  />
+
+                  <div className="flex gap-4">
+                    {msg.type !== "contact" && (
+                      <Eye
+                        size={25}
+                        onClick={() =>
+                          navigate(`/admin/job/details/${msg.job.jobId}`)
+                        }
+                        className=" cursor-pointer text-blue-700 "
+                      />
+                    )}
+                    {/* Delete Button */}
+                    <Trash2
+                      onClick={() => handleDeleteMessage(msg.id, msg.type)}
+                      className=" cursor-pointer text-red-600 "
+                      size={25}
+                    />
+                  </div>
                 </div>
 
                 {/* Content Section */}
@@ -118,12 +132,17 @@ const MessageList = () => {
                       <h3 className="font-semibold mb-1">Message:</h3>
                       {Array.isArray(msg.message) ? (
                         msg.message.map((m, index) => (
-                          <p key={index} className="text-gray-700">
+                          <p
+                            key={index}
+                            className="text-gray-700 h-12 overflow-y-scroll"
+                          >
                             {m}
                           </p>
                         ))
                       ) : (
-                        <p className="text-gray-700">{msg.message}</p>
+                        <p className="text-gray-700 h-12 overflow-y-scroll">
+                          {msg.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -132,7 +151,7 @@ const MessageList = () => {
                     <h2 className="text-xl font-semibold mb-2">
                       {msg.reportTitle}
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 h-12 overflow-y-scroll">
                       <strong>Description:</strong> {msg.description}
                     </p>
                     <div className="flex gap-60">
