@@ -5,6 +5,7 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/great_hire_db", {
       maxPoolSize: 500, // Limits concurrent connections
       minPoolSize: 10, // Keeps at least 10 connections alive
+      socketTimeoutMS: 45000
     });
     console.log(`MongoDB Connected 🔥`);
   } catch (error) {

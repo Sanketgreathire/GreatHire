@@ -1,27 +1,25 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { BACKEND_URL, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-const useNotification = () => {
+const useMessage = () => {
   const [messages, setMessages] = useState([]);
-  console.log(messages);
   const { user } = useSelector((state) => state.auth);
-
 
   // fetch unseen notification
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const { data } = await axios.get(
-          `${NOTIFICATION_API_END_POINT}/unseen`,
+          `${NOTIFICATION_API_END_POINT}/getAll-messages`,
           {
             withCredentials: true,
           }
         );
         if (data.success) {
-            setMessages(data.notifications);
+          setMessages(data.messages);
         }
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -30,7 +28,7 @@ const useNotification = () => {
     if (user) fetchMessages();
   }, [user]);
 
-  return { messages };
+  return { messages, setMessages };
 };
 
-export default useNotification;
+export default useMessage;

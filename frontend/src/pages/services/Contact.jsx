@@ -27,7 +27,7 @@ const ContactSection = () => {
     setLoading(true);
     try {
       const { data } = await axios.post(`${USER_API_END_POINT}/sendMessage`, {
-        formData,
+        ...formData,
       });
       // use data.message
       if (data.success) {
