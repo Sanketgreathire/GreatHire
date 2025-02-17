@@ -2,7 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { createServer } from "https"; // Use https module
+import { createServer } from "http";
 import { Server } from "socket.io";
 import cron from "node-cron";
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
@@ -11,7 +11,6 @@ import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import csurf from "csurf"; // Import CSRF protection middleware
-import fs from "fs"; // Import fs module to read SSL certificate and key
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -39,15 +38,8 @@ import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
 dotenv.config();
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 3000;
-
-// Read SSL certificate and key
-const sslOptions = {
-  key: fs.readFileSync(path.resolve(__dirname, "path/to/your/ssl/key.pem")),
-  cert: fs.readFileSync(path.resolve(__dirname, "path/to/your/ssl/cert.pem")),
-};
-
-const server = createServer(sslOptions, app); // Create HTTPS server
 
 // WebSocket Server with CORS
 const io = new Server(server, {
