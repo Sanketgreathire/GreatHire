@@ -113,35 +113,56 @@ server.listen(PORT, async () => {
       const unseenJobReportsCount = await JobReport.countDocuments({
         status: "unseen",
       });
-
       const unseenContactsCount = await Contact.countDocuments({
         status: "unseen",
       });
-
       const totalUnseenNotifications =
         unseenJobReportsCount + unseenContactsCount;
-
       io.emit("newNotificationCount", { totalUnseenNotifications });
     } catch (error) {
       console.error("Error emitting unseen notification count:", error);
     }
   };
 
-  // Watch for new JobReport documents
-  const jobReportChangeStream = JobReport.watch();
-  jobReportChangeStream.on("change", async (change) => {
-    if (change.operationType === "insert") {
-      await emitUnseenNotificationCount();
-    }
-  });
+  // Function to create and manage the JobReport change stream
+  const createJobReportChangeStream = () => {
+    const jobReportChangeStream = JobReport.watch();
 
-  // Watch for new Contact documents
-  const contactChangeStream = Contact.watch();
-  contactChangeStream.on("change", async (change) => {
-    if (change.operationType === "insert") {
-      await emitUnseenNotificationCount();
-    }
-  });
+    jobReportChangeStream.on("change", async (change) => {
+      if (change.operationType === "insert") {
+        await emitUnseenNotificationCount();
+      }
+    });
+
+    jobReportChangeStream.on("error", (error) => {
+      console.error("JobReport ChangeStream error:", error);
+      jobReportChangeStream.close();
+      // Reinitialize after 5 seconds
+      setTimeout(createJobReportChangeStream, 5000);
+    });
+  };
+
+  // Function to create and manage the Contact change stream
+  const createContactChangeStream = () => {
+    const contactChangeStream = Contact.watch();
+
+    contactChangeStream.on("change", async (change) => {
+      if (change.operationType === "insert") {
+        await emitUnseenNotificationCount();
+      }
+    });
+
+    contactChangeStream.on("error", (error) => {
+      console.error("Contact ChangeStream error:", error);
+      contactChangeStream.close();
+      // Reinitialize after 5 seconds
+      setTimeout(createContactChangeStream, 5000);
+    });
+  };
+
+  // Initialize the change streams with error handling
+  createJobReportChangeStream();
+  createContactChangeStream();
 });
 
 // WebSocket Handling
