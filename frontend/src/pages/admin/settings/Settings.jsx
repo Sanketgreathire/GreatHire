@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar";
 
-
 const Settings = () => {
   return (
     <>
@@ -37,7 +36,6 @@ const Settings = () => {
             <h2 className="text-lg font-semibold mt-2">Reported Jobs</h2>
           </Link>
         </div>
-
       </div>
     </>
   );

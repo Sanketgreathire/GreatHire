@@ -34,7 +34,7 @@ const Navbar = ({ linkName }) => {
   };
 
   return (
-    <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 lg:ml-52 bg-white px-3 py-2 z-30">
+    <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 md:ml-52 bg-white px-3 py-2 z-30">
       {/* Left - Link Name */}
       <div className="text-2xl font-light">{linkName}</div>
 

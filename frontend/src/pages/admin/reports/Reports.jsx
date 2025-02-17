@@ -117,7 +117,7 @@ const Reports = () => {
             >
               <MenuItem value={7}>Last 7 Days</MenuItem>
               <MenuItem value={30}>Last 30 Days</MenuItem>
-              <MenuItem value={1}>Current Month</MenuItem>
+              <MenuItem value={1}>Last Month</MenuItem>
               <MenuItem value={3}>Last 3 Months</MenuItem>
               <MenuItem value={6}>Last 6 Months</MenuItem>
               <MenuItem value={12}>12 Months</MenuItem>
@@ -189,7 +189,9 @@ const Reports = () => {
             <h3 className="text-lg font-semibold">Revenue Trend</h3>
             <ResponsiveContainer width="100%" height={250}>
               {statsData?.revenueTrend.length === 0 ? (
-                <p className="flex justify-center text-2xl text-gray-400">No Revenue</p>
+                <p className="flex justify-center text-2xl text-gray-400">
+                  No Revenue
+                </p>
               ) : (
                 <LineChart data={statsData?.revenueTrend}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -206,7 +208,9 @@ const Reports = () => {
             <h3 className="text-lg font-semibold">User Growth</h3>
             <ResponsiveContainer width="100%" height={250}>
               {statsData?.revenueTrend.length === 0 ? (
-                <p className="flex justify-center text-2xl text-gray-400">No New User</p>
+                <p className="flex justify-center text-2xl text-gray-400">
+                  No New User
+                </p>
               ) : (
                 <BarChart data={statsData?.newUsersTrend}>
                   <XAxis dataKey="date" />
