@@ -69,6 +69,7 @@ const CompanyDetails = () => {
       dSetLoading(false);
     }
   };
+  
 
   return (
     <>

@@ -50,6 +50,7 @@ const UserDetails = () => {
     fetchUser();
     fetchApplications();
   }, []);
+  
 
   return (
     <>
