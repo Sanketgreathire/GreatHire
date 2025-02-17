@@ -7,7 +7,7 @@ import axios from "axios";
 const useMessage = () => {
   const [messages, setMessages] = useState([]);
   const { user } = useSelector((state) => state.auth);
-  
+
   // fetch unseen notification
   useEffect(() => {
     const fetchMessages = async () => {
@@ -28,7 +28,7 @@ const useMessage = () => {
     if (user) fetchMessages();
   }, [user]);
 
-  return { messages };
+  return { messages, setMessages };
 };
 
 export default useMessage;

@@ -44,7 +44,7 @@ const MessageList = () => {
   const handleDeleteAllMessages = async () => {
     try {
       const response = await axios.delete(
-        `${NOTIFICATION_API_END_POINT}/delete-all`,
+        `${NOTIFICATION_API_END_POINT}/deleteMessages`,
         {
           withCredentials: true,
         }
