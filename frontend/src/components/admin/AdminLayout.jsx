@@ -20,6 +20,7 @@ import CompanyDetails from "@/pages/admin/companies/CompanyDetails";
 import CompanyList from "@/pages/admin/companies/CompanyList";
 import AddAdmin from "@/pages/admin/settings/AddAdmin";
 import AdminList from "@/pages/admin/settings/AdminList";
+import MessageList from "@/pages/admin/MessageList";
 import ReportedJobList from "@/pages/admin/settings/ReportedJobList";
 
 const AdminLayout = () => {
@@ -58,9 +59,13 @@ const AdminLayout = () => {
 
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="messages" element={<MessageList />} />
             <Route path="settings/add-admin" element={<AddAdmin />} />
             <Route path="settings/admin-list" element={<AdminList />} />
-            <Route path="settings/reported-job-list" element={<ReportedJobList />} />
+            <Route
+              path="settings/reported-job-list"
+              element={<ReportedJobList />}
+            />
             <Route path="profile" element={<Profile />} />
           </Routes>
         </div>

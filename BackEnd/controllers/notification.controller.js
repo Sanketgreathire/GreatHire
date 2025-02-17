@@ -78,3 +78,111 @@ export const getMessages = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+export const markAsSeen = async (req, res) => {
+  try {
+    // Update all unseen job reports to "seen"
+    await JobReport.updateMany({ status: "unseen" }, { status: "seen" });
+
+    // Update all unseen contact messages to "seen"
+    await Contact.updateMany({ status: "unseen" }, { status: "seen" });
+
+    return res.status(200).json({
+      success: true,
+      message: "All unseen notifications have been marked as seen.",
+    });
+  } catch (error) {
+    console.error("Error marking notifications as seen:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error: Unable to update notifications.",
+    });
+  }
+};
+
+// Controller to delete a single contact message by msgId
+export const deleteContact = async (req, res) => {
+  try {
+    const { msgId } = req.params;
+    if (!msgId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Message ID is required." });
+    }
+
+    const deletedContact = await Contact.findByIdAndDelete(msgId);
+
+    if (!deletedContact) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Contact message not found." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Contact message deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting contact message:", error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while deleting contact message.",
+      });
+  }
+};
+
+// Controller to delete a single job report by msgId
+export const deleteJobReport = async (req, res) => {
+  try {
+    const { msgId } = req.params;
+    console.log(msgId)
+    if (!msgId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Message ID is required." });
+    }
+
+    const deletedJobReport = await JobReport.findByIdAndDelete(msgId);
+
+    if (!deletedJobReport) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Job report not found." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Job report deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting job report:", error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while deleting job report.",
+      });
+  }
+};
+
+// Controller to delete all messages from both Contact and JobReport models
+export const deleteAllMessages = async (req, res) => {
+  try {
+    await Promise.all([Contact.deleteMany({}), JobReport.deleteMany({})]);
+
+    return res.status(200).json({
+      success: true,
+      message: "All messages deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting all messages:", error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while deleting all messages.",
+      });
+  }
+};

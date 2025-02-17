@@ -11,7 +11,6 @@ const isAuthenticated = async (req, res, next) => {
     if (isBlacklisted) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
     if (!token) {
       return res.status(401).json({
         message: "User not authenticated",
