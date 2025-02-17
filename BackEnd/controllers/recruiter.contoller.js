@@ -404,9 +404,9 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullname && fullname.length < 3) {
+    if (fullname && (typeof fullname !== 'string' || fullname.length < 3)) {
       return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
+        message: "Fullname must be a string and at least 3 characters long.",
         success: false,
       });
     }

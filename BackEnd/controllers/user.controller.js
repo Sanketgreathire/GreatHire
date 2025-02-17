@@ -581,13 +581,14 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Validate password length
-    if (newPassword.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
+    // Validate password type and length
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+      return res.status(400).json({
+        message: "Password must be a string and at least 8 characters long.",
         success: false,
       });
     }
+
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
