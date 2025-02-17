@@ -115,7 +115,8 @@ const Jobs = () => {
   const fetchJobList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_JOB_DATA_API_END_POINT}/getAllJobs-stats`
+        `${ADMIN_JOB_DATA_API_END_POINT}/getAllJobs-stats`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setJobList(response.data.jobs);
@@ -126,8 +127,8 @@ const Jobs = () => {
   };
 
   useEffect(() => {
-    fetchJobList();
-  }, []);
+    if (user) fetchJobList();
+  }, [user]);
 
   const stats = [
     {

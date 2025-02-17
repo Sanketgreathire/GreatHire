@@ -43,6 +43,7 @@ const RecruitersList = () => {
   const [recruiterList, setRecruiterList] = useState([]);
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
   const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const { user } = useSelector((state) => state.auth);
 
   const stats = [
     {
@@ -173,7 +174,8 @@ const RecruitersList = () => {
   const fetchRecruiterList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_RECRUITER_DATA_API_END_POINT}/getAllRecruiter-stats`
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/getAllRecruiter-stats`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setRecruiterList(response.data.recruiters);
@@ -184,8 +186,8 @@ const RecruitersList = () => {
   };
 
   useEffect(() => {
-    fetchRecruiterList();
-  }, []);
+    if (user) fetchRecruiterList();
+  }, [user]);
 
   const filteredRecruiters = recruiterList?.filter((recruiter) => {
     const matchesSearch =

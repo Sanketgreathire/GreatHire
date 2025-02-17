@@ -13,7 +13,8 @@ export const fetchCompanyStats = createAsyncThunk(
   "stats/fetchCompanyStats",
   async () => {
     const response = await axios.get(
-      `${ADMIN_COMPANY_DATA_API_END_POINT}/get-stats`
+      `${ADMIN_COMPANY_DATA_API_END_POINT}/get-stats`,
+      { withCredentials: true }
     );
     return response.data.stats; // Return only relevant data
   }
@@ -24,7 +25,10 @@ export const fetchRecruiterStats = createAsyncThunk(
   "stats/fetchRecruiterStats",
   async () => {
     const response = await axios.get(
-      `${ADMIN_RECRUITER_DATA_API_END_POINT}/get-stats`
+      `${ADMIN_RECRUITER_DATA_API_END_POINT}/get-stats`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.stats;
   }
@@ -35,7 +39,8 @@ export const fetchJobStats = createAsyncThunk(
   "stats/fetchJobStats",
   async () => {
     const response = await axios.get(
-      `${ADMIN_JOB_DATA_API_END_POINT}/get-stats`
+      `${ADMIN_JOB_DATA_API_END_POINT}/get-stats`,
+      { withCredentials: true }
     );
     return response.data.stats;
   }
@@ -46,7 +51,8 @@ export const fetchApplicationStats = createAsyncThunk(
   "stats/fetchApplicationStats",
   async () => {
     const response = await axios.get(
-      `${ADMIN_APPLICATION_DATA_API_END_POINT}/get-stats`
+      `${ADMIN_APPLICATION_DATA_API_END_POINT}/get-stats`,
+      { withCredentials: true }
     );
     return response.data.stats;
   }
@@ -57,7 +63,8 @@ export const fetchUserStats = createAsyncThunk(
   "stats/fetchUserStats",
   async () => {
     const response = await axios.get(
-      `${ADMIN_USER_DATA_API_END_POINT}/get-stats`
+      `${ADMIN_USER_DATA_API_END_POINT}/get-stats`,
+      { withCredentials: true }
     );
     return response.data.stats;
   }

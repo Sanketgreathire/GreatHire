@@ -24,7 +24,11 @@ import {
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
   { name: "Users", path: "/admin/users", icon: FaUsers },
-  { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
+  {
+    name: "Companies",
+    path: "/admin/companies",
+    icon: PiBuildingOfficeDuotone,
+  },
   { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
   { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
   { name: "Reports", path: "/admin/reports", icon: FaChartBar },
@@ -47,7 +51,7 @@ const Sidebar = () => {
       dispatch(fetchUserStats());
       setSidebarNavClicked(false); // Reset after calling functions
     }
-  }, [location.pathname]); // Runs only when location changes
+  }, [location.pathname, user]); // Runs only when location changes
 
   return (
     <div
@@ -103,7 +107,11 @@ const Sidebar = () => {
       </nav>
 
       {/* Profile Section */}
-      <div className={`${isOpen ? "p-4 w-52" : "w-16"} border-t border-gray-300 fixed bottom-0 md:w-52`}>
+      <div
+        className={`${
+          isOpen ? "p-4 w-52" : "w-16"
+        } border-t border-gray-300 fixed bottom-0 md:w-52`}
+      >
         <NavLink
           to={user ? "/admin/profile" : "/admin/login"}
           className={({ isActive }) =>
@@ -115,7 +123,9 @@ const Sidebar = () => {
           {user ? (
             <>
               <img
-                src={user.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                src={
+                  user.profile?.profilePhoto || "https://github.com/shadcn.png"
+                }
                 alt={`${user.fullname || "User"}'s avatar`}
                 className="h-10 w-10 rounded-full border object-cover"
               />
@@ -126,8 +136,13 @@ const Sidebar = () => {
             </>
           ) : (
             <>
-              <FaUser className="text-lg bg-blue-100 p-2 rounded-full text-blue-700" size={40} />
-              <span className={`${isOpen ? "block" : "hidden"} md:block`}>Login</span>
+              <FaUser
+                className="text-lg bg-blue-100 p-2 rounded-full text-blue-700"
+                size={40}
+              />
+              <span className={`${isOpen ? "block" : "hidden"} md:block`}>
+                Login
+              </span>
             </>
           )}
         </NavLink>

@@ -16,7 +16,8 @@ const UserDetails = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`
+        `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setUser(response.data.data);
@@ -32,10 +33,10 @@ const UserDetails = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`
+        `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`,
+        { withCredentials: true }
       );
       if (response.data.success) {
-        
         setApplications(response.data.data);
       }
     } catch (err) {
@@ -90,7 +91,9 @@ const UserDetails = () => {
               {user?.profile?.coverLetter && (
                 <div className="mt-2">
                   <h4 className="text-lg font-semibold">Cover Letter</h4>
-                  <p className="text-gray-700 h-24 overflow-y-scroll p-2">{user?.profile?.coverLetter}</p>
+                  <p className="text-gray-700 h-24 overflow-y-scroll p-2">
+                    {user?.profile?.coverLetter}
+                  </p>
                 </div>
               )}
               {user?.profile?.experience && (
@@ -110,7 +113,6 @@ const UserDetails = () => {
                   </p>
                   <span className="font-bold">Details:</span>{" "}
                   <p className="h-28 overflow-y-scroll">
-                    
                     {user?.profile?.experience.experienceDetails}
                   </p>
                 </div>

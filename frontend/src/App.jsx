@@ -125,7 +125,7 @@ const appRouter = createBrowserRouter([
     ),
   },
   {
-    path: "/report-job/:id",
+    path: "/report-job",
     element: (
       <ProtectedUserRoute>
         <ReportJob />

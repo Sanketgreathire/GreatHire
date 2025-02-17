@@ -434,7 +434,6 @@ export const reportJob = async (req, res) => {
   try {
     const { jobId, reportTitle, description } = req.body;
     const userId = req.id;
-    console.log(req.body, req.id);
 
     if (!jobId || !userId || !reportTitle) {
       return res

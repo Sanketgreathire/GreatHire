@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import axios from "axios";
 import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Reports = () => {
+  const { user } = useSelector((state) => state.auth);
   // Get the current year
   const currentYear = new Date().getFullYear();
   // Define available years (current year and previous 5 years)
@@ -51,7 +53,8 @@ const Reports = () => {
         `${ADMIN_STAT_API_END_POINT}/getState-in-range`,
         {
           params: { year: selectedYear, range: selectedRange },
-        }
+        },
+        { withCredentials: true }
       );
       if (response.data.success) {
         setStatsData(response.data.stats);
@@ -62,8 +65,8 @@ const Reports = () => {
   };
 
   useEffect(() => {
-    fetchStatistics();
-  }, []);
+    if (user) fetchStatistics();
+  }, [user]);
 
   // Application stats for the pie chart
   const applicationStats = [

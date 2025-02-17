@@ -60,7 +60,7 @@ const AdminList = () => {
 
   useEffect(() => {
     fetchAdminList();
-  }, []);
+  }, [user]);
 
   // Filter admins based on searchTerm (by name, email, or phone)
   const filteredAdmins = admins.filter((admin) => {

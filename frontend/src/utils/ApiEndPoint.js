@@ -21,4 +21,6 @@ export const ORDER_API_END_POINT = "http://localhost:8000/api/v1/order";
 export const APPLICATION_API_END_POINT =
   "http://localhost:8000/api/v1/application";
 export const REVENUE_API_END_POINT = "http://localhost:8000/api/v1/revenue";
+export const NOTIFICATION_API_END_POINT =
+  "http://localhost:8000/api/v1/notifications";
 export const BACKEND_URL = "http://localhost:8000";

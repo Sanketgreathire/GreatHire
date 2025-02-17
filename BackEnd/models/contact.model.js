@@ -19,6 +19,11 @@ const contactSchema = new mongoose.Schema(
       type: [String],
       required: true, // Message content
     },
+    status: {
+      type: String,
+      enum: ["seen", "unseen"],
+      default: "unseen",
+    },
   },
   { timestamps: true } // Adds createdAt and updatedAt fields
 );

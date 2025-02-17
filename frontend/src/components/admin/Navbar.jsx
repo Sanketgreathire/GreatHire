@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
+import useNotification from "@/hooks/useNotification";
 
 const Navbar = ({ linkName }) => {
   const { user } = useSelector((state) => state.auth);
@@ -13,6 +14,9 @@ const Navbar = ({ linkName }) => {
   const profileMenuRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Retrieve notifications from your custom hook
+  const { notifications } = useNotification();
 
   // Handle logout function
   const handleLogout = async () => {
@@ -44,10 +48,17 @@ const Navbar = ({ linkName }) => {
         <span className="text-blue-700">Hire</span>
       </div>
 
-      {/* Right - Bell Icon, Profile, and Extra Links for Settings Page */}
+      {/* Right - Notification Bell, Profile, and Extra Links */}
       <div className="flex items-center gap-8">
-        {/* Notification Icon */}
-        <Bell className="w-8 h-8 cursor-pointer" />
+        {/* Notification Icon with Badge */}
+        <div className="relative">
+          <Bell className="w-8 h-8 cursor-pointer" />
+          {notifications && notifications > 0 && (
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full">
+              {notifications}
+            </span>
+          )}
+        </div>
 
         {/* Profile Section */}
         <div ref={profileMenuRef} className="relative">

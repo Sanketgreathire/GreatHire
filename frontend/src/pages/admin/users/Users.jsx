@@ -35,6 +35,7 @@ const Users = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dloading, dsetLoading] = useState({});
+  const { user } = useSelector((state) => state.auth);
   const jobStats = useSelector((state) => state.stats.jobStatsData);
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
@@ -45,7 +46,8 @@ const Users = () => {
   const fetchUserList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_USER_DATA_API_END_POINT}/user-stats`
+        `${ADMIN_USER_DATA_API_END_POINT}/user-stats`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setUsersList(response.data.data);
@@ -79,8 +81,8 @@ const Users = () => {
   };
 
   useEffect(() => {
-    fetchUserList();
-  }, []);
+    if (user) fetchUserList();
+  }, [user]);
 
   const stats = [
     {

@@ -37,7 +37,7 @@ const ReportJob = () => {
         {
           jobId: selectedJob?._id,
           reportTitle: selectedProblem,
-          description: selectedProblem === "Other" ? description : "",
+          description,
         },
         { withCredentials: true }
       );

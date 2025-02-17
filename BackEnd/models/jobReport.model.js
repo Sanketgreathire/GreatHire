@@ -1,15 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const jobReportSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     jobId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Job',
+      ref: "Job",
       required: true,
     },
     reportTitle: {
@@ -21,11 +21,16 @@ const jobReportSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ["seen", "unseen"],
+      default: "unseen",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const JobReport = mongoose.model('JobReport', jobReportSchema);
+const JobReport = mongoose.model("JobReport", jobReportSchema);
 export default JobReport;

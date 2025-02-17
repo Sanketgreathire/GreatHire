@@ -27,9 +27,12 @@ import adminCompanyDataRoute from "./routes/admin/companyStats.route.js";
 import adminRecruiterDataRoute from "./routes/admin/recruiterStats.route.js";
 import adminJobDataRoute from "./routes/admin/jobStats.route.js";
 import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
+import notificationRoute from "./routes/notification.route.js";
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
+import JobReport from "./models/jobReport.model.js";
+import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
 dotenv.config();
@@ -83,6 +86,7 @@ app.use("/api/v1/admin/company/data", adminCompanyDataRoute);
 app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
+app.use("/api/v1/notifications", notificationRoute);
 
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
@@ -102,11 +106,47 @@ app.get("*", (req, res) => {
 server.listen(PORT, async () => {
   await connectDB();
   console.log(`🚀 Server running at port ${PORT}`);
+
+  // Function to emit the updated unseen notification count
+  const emitUnseenNotificationCount = async () => {
+    try {
+      const unseenJobReportsCount = await JobReport.countDocuments({
+        status: "unseen",
+      });
+
+      const unseenContactsCount = await Contact.countDocuments({
+        status: "unseen",
+      });
+
+      const totalUnseenNotifications =
+        unseenJobReportsCount + unseenContactsCount;
+
+      io.emit("newNotificationCount", { totalUnseenNotifications });
+    } catch (error) {
+      console.error("Error emitting unseen notification count:", error);
+    }
+  };
+
+  // Watch for new JobReport documents
+  const jobReportChangeStream = JobReport.watch();
+  jobReportChangeStream.on("change", async (change) => {
+    if (change.operationType === "insert") {
+      await emitUnseenNotificationCount();
+    }
+  });
+
+  // Watch for new Contact documents
+  const contactChangeStream = Contact.watch();
+  contactChangeStream.on("change", async (change) => {
+    if (change.operationType === "insert") {
+      await emitUnseenNotificationCount();
+    }
+  });
 });
 
 // WebSocket Handling
 io.on("connection", (socket) => {
-  //console.log(`New client connected: ${socket.id}`);
+  console.log(`New client connected: ${socket.id}`);
 
   socket.on("disconnect", () => {
     console.log(`Client disconnected: ${socket.id}`);

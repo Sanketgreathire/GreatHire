@@ -148,7 +148,7 @@ const JobMajorDetails = ({ selectedJob }) => {
       <div className="p-4">
         <button
           className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
-          onClick={() => navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}
+          onClick={() => navigate(`/report-job`)}
           disabled={!user}
         >
           <BsFlagFill /> <span className="font-semibold">Report Job</span>

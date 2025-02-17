@@ -23,6 +23,7 @@ import axios from "axios";
 
 const Dashboard = () => {
   const companyStats = useSelector((state) => state.stats.companyStatsData);
+  const { user } = useSelector((state) => state.auth);
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
   const jobStats = useSelector((state) => state.stats.jobStatsData);
   const userStats = useSelector((state) => state.stats.userStatsData);
@@ -110,7 +111,8 @@ const Dashboard = () => {
       try {
         // Replace with your actual API endpoint
         const response = await axios.get(
-          `${ADMIN_STAT_API_END_POINT}/applications?year=${selectedYear}`
+          `${ADMIN_STAT_API_END_POINT}/applications?year=${selectedYear}`,
+          { withCredentials: true }
         );
         //  API response returns an array of 12 numbers representing monthly application counts:
         // e.g., { data: [120, 150, 200, ..., 300] }
@@ -148,7 +150,10 @@ const Dashboard = () => {
   const fetchRecentActivity = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_STAT_API_END_POINT}/recent-activity`
+        `${ADMIN_STAT_API_END_POINT}/recent-activity`,
+        {
+          withCredentials: true,
+        }
       );
       if (response.data.success) {
         setRecentActivity(response.data.data);
@@ -162,7 +167,10 @@ const Dashboard = () => {
   const fetchRecentPostedJob = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_STAT_API_END_POINT}/recent-job-postings`
+        `${ADMIN_STAT_API_END_POINT}/recent-job-postings`,
+        {
+          withCredentials: true,
+        }
       );
       if (response.data.success) {
         setJobPostedJob(response.data.jobPostings);
@@ -173,11 +181,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    fetchRecentActivity();
-    fetchRecentPostedJob();
-    setLoading(false);
-  }, []);
+    if (user) {
+      setLoading(true);
+      fetchRecentActivity();
+      fetchRecentPostedJob();
+      setLoading(false);
+    }
+  }, [user]);
 
   return (
     <>

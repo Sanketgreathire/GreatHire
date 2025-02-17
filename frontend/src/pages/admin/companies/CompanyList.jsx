@@ -156,7 +156,8 @@ const CompanyList = () => {
   const fetchCompanyList = async () => {
     try {
       const response = await axios.get(
-        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`
+        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setCompanyList(response.data.companies);
@@ -167,8 +168,8 @@ const CompanyList = () => {
   };
 
   useEffect(() => {
-    fetchCompanyList();
-  }, []);
+    if (user) fetchCompanyList();
+  }, [user]);
 
   const filteredCompanies = companyList?.filter((company) => {
     const matchesSearch =
