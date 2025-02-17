@@ -12,8 +12,9 @@ const useNotification = () => {
   useEffect(() => {
     const socket = io(BACKEND_URL);
 
-    socket.on("newNotificationCount", (notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+    socket.on("newNotificationCount", ({ totalUnseenNotifications }) => {
+      console.log(totalUnseenNotifications);
+      setNotifications(totalUnseenNotifications);
     });
 
     return () => {
@@ -32,6 +33,7 @@ const useNotification = () => {
           }
         );
         if (data.success) {
+          console.log(data.totalUnseenNotifications);
           setNotifications(data.totalUnseenNotifications);
         }
       } catch (error) {

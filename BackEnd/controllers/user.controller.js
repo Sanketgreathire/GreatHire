@@ -433,6 +433,12 @@ export const sendMessage = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, message } = req.body.formData;
 
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -453,27 +459,16 @@ export const sendMessage = async (req, res) => {
     // Send the email
     await transporter.sendMail(mailOptions);
 
-    // Check if a contact with this email already exists
-    let contact = await Contact.findOne({ email });
-
-    if (contact) {
-      // Email exists, push the new message to the message array
-      contact.message.push(message);
-      await contact.save();
-    } else {
-      // Email doesn't exist, create a new contact
-      contact = await Contact.create({
-        name: fullname,
-        email,
-        phoneNumber,
-        message: [message], // Store message as an array
-      });
-    }
+    await Contact.create({
+      name: fullname,
+      email,
+      phoneNumber,
+      message: [message], // Store message as an array
+    });
 
     return res.status(200).json({
       success: true,
       message: "our team will be in touch with you soon!",
-      contact,
     });
   } catch (err) {
     console.error("Error sending message:", err);
@@ -582,7 +577,7 @@ export const resetPassword = async (req, res) => {
     }
 
     // Validate password type and length
-    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+    if (typeof newPassword !== "string" || newPassword.length < 8) {
       return res.status(400).json({
         message: "Password must be a string and at least 8 characters long.",
         success: false,
