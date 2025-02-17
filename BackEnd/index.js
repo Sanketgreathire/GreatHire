@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import csurf from "csurf"; // Import CSRF protection middleware
+// import csurf from "csurf"; // Import CSRF protection middleware
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -60,9 +60,9 @@ app.use(
   })
 );
 
-// 📌 CSRF Protection
-const csrfProtection = csurf({ cookie: true });
-app.use(csrfProtection);
+// // 📌 CSRF Protection
+// const csrfProtection = csurf({ cookie: true });
+// app.use(csrfProtection);
 
 // 📌 Rate Limiting (Limits API requests per IP)
 const apiLimiter = rateLimit({
