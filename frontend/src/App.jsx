@@ -86,11 +86,7 @@ const appRouter = createBrowserRouter([
   // User Routes
   {
     path: "/jobs",
-    element: (
-      <ProtectedUserRoute>
-        <Jobs />
-      </ProtectedUserRoute>
-    ),
+    element: <Jobs />,
   },
   {
     path: "/description",
