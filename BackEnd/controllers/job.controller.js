@@ -69,15 +69,23 @@ export const postJob = async (req, res) => {
       });
     }
 
-    // Split skills, qualifications, benefits, responsibilities by new line or comma
-    const splitSkills = skills.split(",").map((skill) => skill.trim());
-    const splitQualifications = qualifications
-      .split("\n")
-      .map((qualification) => qualification.trim());
-    const splitBenefits = benefits.split("\n").map((benefit) => benefit.trim());
-    const splitResponsibilities = responsibilities
-      .split("\n")
-      .map((responsibility) => responsibility.trim());
+    // Ensure that the variables are strings before splitting them
+    const splitSkills =
+      typeof skills === "string"
+        ? skills.split(/\n|,/).map((skill) => skill.trim())
+        : [];
+    const splitQualifications =
+      typeof qualifications === "string"
+        ? qualifications.split("\n").map((q) => q.trim())
+        : [];
+    const splitBenefits =
+      typeof benefits === "string"
+        ? benefits.split("\n").map((b) => b.trim())
+        : [];
+    const splitResponsibilities =
+      typeof responsibilities === "string"
+        ? responsibilities.split("\n").map((r) => r.trim())
+        : [];
 
     // Create new job instance
     const newJob = new Job({

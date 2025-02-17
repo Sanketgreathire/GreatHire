@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Bell } from "lucide-react";
+import { Bell, MessageSquareText } from "lucide-react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
@@ -7,6 +8,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
 import useNotification from "@/hooks/useNotification";
+import { NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Navbar = ({ linkName }) => {
   const { user } = useSelector((state) => state.auth);
@@ -18,6 +20,21 @@ const Navbar = ({ linkName }) => {
   // Retrieve notifications from your custom hook
   const { notifications } = useNotification();
 
+  const handleShowNotification = async () => {
+    try {
+      const { data } = await axios.put(
+        `${NOTIFICATION_API_END_POINT}/mark-seen`,
+        null, // No request body
+        { withCredentials: true } // This is the config object
+      );
+
+      if (data.success) {
+        navigate("/admin/messages");
+      }
+    } catch (err) {
+      console.error("Error in mark seen notifications:", err);
+    }
+  };
   // Handle logout function
   const handleLogout = async () => {
     try {
@@ -52,11 +69,21 @@ const Navbar = ({ linkName }) => {
       <div className="flex items-center gap-8">
         {/* Notification Icon with Badge */}
         <div className="relative">
-          <Bell className="w-8 h-8 cursor-pointer" />
-          {notifications && notifications > 0 && (
-            <span className="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full">
-              {notifications}
-            </span>
+          {notifications && notifications > 0 ? (
+            <>
+              <Bell
+                className="w-8 h-8 cursor-pointer"
+                onClick={handleShowNotification}
+              />
+              <span className="absolute top-[-5px] right-0 inline-flex items-center justify-center w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full">
+                {notifications}
+              </span>
+            </>
+          ) : (
+            <MessageSquareText
+              className="w-8 h-8 cursor-pointer text-blue-700"
+              onClick={() => navigate("/admin/messages")}
+            />
           )}
         </div>
 
