@@ -13,6 +13,6 @@ router.get("/getState-in-range", isAuthenticated, getStatisticInRange);
 router.get("/applications", isAuthenticated, getApplicationsDataByYear);
 router.get("/recent-activity", isAuthenticated, getRecentActivity);
 router.get("/recent-job-postings", isAuthenticated, getRecentJobPostings);
-router.get("/reported-jobList", isAuthenticated, getReportedJobList);
+router.get("/reported-job-list", isAuthenticated, getReportedJobList);
 
 export default router;
