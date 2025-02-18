@@ -355,53 +355,36 @@ export const getRecentJobPostings = async (req, res) => {
 
 export const getReportedJobList = async (req, res) => {
   try {
-    // Find all job reports and populate user and job details.
-    // For the user, we select 'fullname' and 'emailId'.
-    // For the job, we select 'title' and 'jobDetails'.
-    const reports = await JobReport.find({})
-      .populate("userId", "fullname emailId")
-      .populate("jobId", "title jobDetails");
+    // job reports and populate user and job details
+    const jobReports = await JobReport.find({})
+      .populate("userId", "fullname emailId phoneNumber")
+      .populate("jobId", "jobDetails")
+      .lean();
 
-    console.log(reports);
 
-    // Format each report
-    const formattedReports = reports.map((report) => {
-      // Extract user details
-      const userFullname = report.userId?.fullname;
-      // Assuming user.emailId is an object that holds an 'email' property.
-      const userEmail = report.userId?.emailId?.email || "";
+    // Map job report messages with required fields:
+    // - User: fullname, emailId.email, phoneNumber.number
+    // - Job: jobDetails.title, jobDetails.companyName
+    // - Also include reportTitle and description
+    const jobReportMessages = jobReports.map((report) => ({
+      id: report._id,
+      type: "job_report",
+      user: {
+        fullname: report.userId?.fullname,
+        email: report.userId?.emailId?.email,
+        phone: report.userId?.phoneNumber?.number,
+      },
+      job: {
+        jobId: report.jobId?._id,
+        title: report.jobId?.jobDetails?.title,
+        companyName: report.jobId?.jobDetails?.companyName,
+      },
+      reportTitle: report.reportTitle,
+      description: report.description,
+      createdAt: report.createdAt,
+    }));
 
-      // Extract job details
-      const jobTitle = report.jobId?.title;
-      // Assuming job.jobDetails is an object containing companyName.
-      const jobCompanyName = report.jobId?.jobDetails?.companyName || "";
-
-      // Format createdAt date to "Feb, 15, 2025"
-      const createdDate = new Date(report.createdAt);
-      const month = createdDate.toLocaleString("en-US", { month: "short" });
-      const day = createdDate.getDate();
-      const year = createdDate.getFullYear();
-      const formattedDate = `${month}, ${day}, ${year}`;
-
-      return {
-        reportId: report._id,
-        reportTitle: report.reportTitle,
-        description: report.description,
-        user: {
-          id: report.userId?._id,
-          fullname: userFullname,
-          email: userEmail,
-        },
-        job: {
-          id: report.jobId?._id,
-          title: jobTitle,
-          companyName: jobCompanyName,
-        },
-        createdAt: formattedDate,
-      };
-    });
-
-    return res.status(200).json({ success: true, data: formattedReports });
+    return res.status(200).json({ success: true, data: jobReportMessages });
   } catch (error) {
     console.error("Error fetching reported job list:", error);
     return res.status(500).json({ success: false, message: "Server Error" });
