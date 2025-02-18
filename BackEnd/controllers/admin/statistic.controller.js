@@ -4,8 +4,7 @@ import { Recruiter } from "../../models/recruiter.model.js";
 import { Application } from "../../models/application.model.js";
 import { Company } from "../../models/company.model.js";
 import Revenue from "../../models/revenue.model.js";
-import JobReport from '../../models/jobReport.model.js';
-
+import JobReport from "../../models/jobReport.model.js";
 
 export const getStatisticInRange = async (req, res) => {
   try {
@@ -362,6 +361,8 @@ export const getReportedJobList = async (req, res) => {
     const reports = await JobReport.find({})
       .populate("userId", "fullname emailId")
       .populate("jobId", "title jobDetails");
+
+    console.log(reports);
 
     // Format each report
     const formattedReports = reports.map((report) => {

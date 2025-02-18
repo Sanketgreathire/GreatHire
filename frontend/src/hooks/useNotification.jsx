@@ -25,6 +25,7 @@ const useNotification = () => {
       setNotifications((prevCount) => {
         if (totalUnseenNotifications > prevCount) {
           // Play the notification sound
+          if(user)
           audioRef.current.play().catch((err) => {
             console.error("Failed to play audio:", err);
           });
