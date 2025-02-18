@@ -59,11 +59,12 @@ const companySchema = new mongoose.Schema(
 
     creditedForCandidates: {
       type: Number,
+      default: 35,
       validate: {
         validator: function (v) {
           return v === null || v >= 0; // Allow null for unlimited
         },
-        message: "maxJobPosts must be null or a non-negative number",
+        message: "Credited For Candidates must be null or a non-negative number",
       },
     },
     userId: [

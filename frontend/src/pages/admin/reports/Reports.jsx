@@ -33,7 +33,7 @@ const Reports = () => {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedRange, setSelectedRange] = useState(7);
   const [statsData, setStatsData] = useState(null);
-  console.log(statsData);
+  
   const applicationSuccessRate = statsData?.totalApplications
     ? Number(
         (
@@ -53,8 +53,8 @@ const Reports = () => {
         `${ADMIN_STAT_API_END_POINT}/getState-in-range`,
         {
           params: { year: selectedYear, range: selectedRange },
-        },
-        { withCredentials: true }
+          withCredentials: true,
+        }
       );
       if (response.data.success) {
         setStatsData(response.data.stats);

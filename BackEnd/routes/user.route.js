@@ -15,6 +15,7 @@ import { singleUpload } from "../middlewares/multer.js";
 import { validateUser } from "../middlewares/userValidator.js";
 import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
+import { validateContactUsForm } from "../middlewares/contactValidator.js";
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ router.route("/profile/update").put(
   updateProfile
 );
 
-router.route("/sendMessage").post(sendMessage);
+router.route("/sendMessage").post(validateContactUsForm, sendMessage);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 

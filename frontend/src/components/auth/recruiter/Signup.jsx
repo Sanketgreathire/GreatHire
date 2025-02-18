@@ -111,7 +111,7 @@ const Signup = () => {
         </div>
 
         {/* Updated Right Section - Form */}
-        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100 py-10 md:py-0 flex-grow min-h-screen">
+        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100  flex-grow min-h-screen">
           <form className="w-4/5 max-w-lg space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>

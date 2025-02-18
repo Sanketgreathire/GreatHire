@@ -174,6 +174,7 @@ const AppliedCandidatesList = () => {
             jobId={jobId}
             setApplicantDetailsModal={setApplicantDetailsModal}
             user = {user}
+            setApplicants={setApplicants}
           />
         )}
       </div>
