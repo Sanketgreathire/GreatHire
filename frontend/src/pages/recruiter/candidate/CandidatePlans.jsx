@@ -276,7 +276,7 @@ function CandidatePlans() {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}
