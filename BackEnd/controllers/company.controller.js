@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
+import { isFloat32Array } from "util/types";
 
 export const isUserAssociated = async (companyId, userId) => {
   try {
@@ -337,8 +338,14 @@ export const getCandidateData = async (req, res) => {
     }
 
     // Securely Validate jobTitle
-    if (typeof jobTitle !== "string" || jobTitle.trim().length === 0 || jobTitle.length > 50) {
-      return res.status(400).json({ message: "Invalid job title", success: false });
+    if (
+      typeof jobTitle !== "string" ||
+      jobTitle.trim().length === 0 ||
+      jobTitle.length > 50
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Invalid job title", success: false });
     }
 
     // Safe escape function (Prevents .replace() on non-strings)
@@ -439,6 +446,15 @@ export const reportJob = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Job ID, User ID, and Report Title are required." });
+    }
+
+    if (
+      reportTitle === "Other" &&
+      (typeof description !== "string" || description.length > 300)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Descripton should be in 300 character." });
     }
 
     const newReport = new JobReport({
