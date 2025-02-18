@@ -318,7 +318,7 @@ const CandidateList = () => {
                         onError={(e) => (e.target.src = "/default-avatar.png")}
                       />
                     </Avatar>
-                    <div className="text-center md:text-left">
+                    <div className="text-center md:w-60">
                       <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
                         {candidate?.fullname || "User Name"}
                       </h1>
@@ -417,7 +417,7 @@ const CandidateList = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by your company
+            You are not verified by Great Hire
           </span>
         </p>
       )}

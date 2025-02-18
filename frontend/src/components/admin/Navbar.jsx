@@ -19,7 +19,6 @@ const Navbar = ({ linkName }) => {
 
   // Retrieve notifications from your custom hook
   const { notifications } = useNotification();
-  console.log(notifications)
 
   const handleShowNotification = async () => {
     try {

@@ -15,6 +15,7 @@ const applicantDetails = ({
   applicantId,
   jobId,
   user,
+  setApplicants,
 }) => {
   const [loading, setLoading] = useState(0);
 
@@ -37,7 +38,12 @@ const applicantDetails = ({
           { withCredentials: true }
         );
         if (emailResponse.data.success) {
-          app.status = statusString;
+          setApplicants((prevApp) =>
+            prevApp.map((appl) =>
+              appl._id === app._id ? { ...appl, status: statusString } : appl
+            )
+          );
+
           toast.success("Status Updated");
         }
       } else {
@@ -52,7 +58,7 @@ const applicantDetails = ({
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center my-4">
       <div className="w-11/12 max-w-4xl bg-white shadow-lg rounded-2xl p-6">
         {/* Header */}
         <div className="flex items-center justify-between border-b pb-4 mb-6">
@@ -220,7 +226,7 @@ const applicantDetails = ({
         </div>
 
         {/* Action Buttons */}
-        {user?.role === "recruiter" && app?.status === "Pending" ? (
+        {user?.role === "recruiter" && app.status === "Pending" ? (
           <div className="mt-6 flex justify-end gap-4">
             <button
               className={`px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 ${
@@ -244,10 +250,10 @@ const applicantDetails = ({
         ) : (
           <p
             className={`flex justify-end ${
-              app?.status === "Shortlisted" ? "text-green-600" : "text-red-600"
+              app.status === "Shortlisted" ? "text-green-600" : "text-red-600"
             }`}
           >
-            {app?.status}
+            {app.status}
           </p>
         )}
       </div>

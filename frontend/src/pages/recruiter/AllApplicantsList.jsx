@@ -229,6 +229,8 @@ const AllApplicantsList = () => {
             setApplicantDetailsModal={setApplicantDetailsModal}
             applicantId={applicantId}
             jobId={jobId}
+            user={user}
+            setApplicants={setApplicants}
           />
         )
       ) : !company ? (
