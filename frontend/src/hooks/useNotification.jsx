@@ -25,10 +25,11 @@ const useNotification = () => {
       setNotifications((prevCount) => {
         if (totalUnseenNotifications > prevCount) {
           // Play the notification sound
-          if(user)
-          audioRef.current.play().catch((err) => {
-            console.error("Failed to play audio:", err);
-          });
+          if (user?.role === "Owner" || user?.role === "admin") {
+            audioRef.current.play().catch((err) => {
+              console.error("Failed to play audio:", err);
+            });
+          }
         }
         return totalUnseenNotifications;
       });
