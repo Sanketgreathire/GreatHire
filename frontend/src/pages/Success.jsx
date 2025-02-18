@@ -10,12 +10,6 @@ export const Success = () => {
 
       {/* Success Message */}
       <div className="flex flex-col items-center justify-center p-6">
-        {/* <img
-          src="/Your-application.png"
-          alt="Application Submitted"
-          className="w-40 h-40 mb-6"
-        /> */}
-
         <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md text-center">
           <div className="flex items-center gap-2 mb-4">
             <FcCheckmark className="text-2xl" />
@@ -27,7 +21,7 @@ export const Success = () => {
           <div className="flex items-center gap-2 mb-6">
             <FcCheckmark className="text-2xl" />
             <p className="text-gray-700">
-              <strong>Great Hre</strong> responds to you as soon as possible.
+              <strong>Great Hire</strong> responds to you as soon as possible.
             </p>
           </div>
 
