@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { FiArrowLeft } from "react-icons/fi";
 import Navbar from "@/components/admin/Navbar";
 import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 // MUI Components
 import {
@@ -26,6 +28,7 @@ const AdminList = () => {
   const [admins, setAdminList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
   const adminsPerPage = 10;
 
   const removeAdmin = async (userId) => {
@@ -96,7 +99,14 @@ const AdminList = () => {
   return (
     <>
       <Navbar linkName="Admin List" />
-      <Box p={3} className="bg-white m-4 p-4">
+      <Box p={3} className="bg-white m-4 p-4 relative">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 flex items-center text-gray-600 hover:text-gray-800 text-lg z-10"
+        >
+          <FiArrowLeft size={30} className="mr-2" />
+        </button>
         <Typography variant="h4" align="center" gutterBottom>
           Admin List
         </Typography>

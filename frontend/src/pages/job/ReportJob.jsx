@@ -12,6 +12,13 @@ const ReportJob = () => {
 
   const [selectedProblem, setSelectedProblem] = useState("");
   const [description, setDescription] = useState("");
+  const maxChars = 300;
+
+  const handleDescriptionChange = (e) => {
+    if (e.target.value.length <= maxChars) {
+      setDescription(e.target.value);
+    }
+  };
 
   const problems = [
     "It's offensive or harassing",
@@ -111,11 +118,14 @@ const ReportJob = () => {
           </label>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            maxLength={300}
+            onChange={handleDescriptionChange}
+            maxLength={maxChars}
             rows={4}
             className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
+          <p className="text-right text-sm text-gray-500">
+            {description.length}/{maxChars} characters
+          </p>
         </div>
 
         <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
@@ -137,3 +147,4 @@ const ReportJob = () => {
 };
 
 export default ReportJob;
+
