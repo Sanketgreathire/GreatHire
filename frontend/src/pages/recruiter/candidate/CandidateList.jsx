@@ -155,7 +155,7 @@ const CandidateList = () => {
 
             <input
               type="text"
-              placeholder="Max CTC (₹) eg.. 0, 50000"
+              placeholder="Expected CTC (₹) eg.. 0, 50000"
               className="p-2 border rounded-md w-full md:w-60"
               value={filters.salaryBudget}
               onChange={(e) =>

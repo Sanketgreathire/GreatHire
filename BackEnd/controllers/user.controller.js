@@ -317,6 +317,8 @@ export const updateProfile = async (req, res) => {
       bio,
       skills,
       experience,
+      companyName,
+      experienceDetails,
       city,
       state,
       country,
