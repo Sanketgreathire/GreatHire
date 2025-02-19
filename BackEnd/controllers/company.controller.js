@@ -219,6 +219,7 @@ export const updateCompany = async (req, res) => {
         .json({ message: "You are not authorized", success: false });
     }
 
+    const company = await Company.findById(companyId);
     // Update only provided fields
     if (companyWebsite !== undefined) company.companyWebsite = companyWebsite;
     if (address !== undefined) company.address = address;

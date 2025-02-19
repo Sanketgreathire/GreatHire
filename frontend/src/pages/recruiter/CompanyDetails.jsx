@@ -63,7 +63,6 @@ const CompanyDetails = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        console.log(response.data.company, "hi");
         dispatch(addCompany(response.data.company));
         toast.success("Company details updated successfully!");
         setIsEditing(false);
