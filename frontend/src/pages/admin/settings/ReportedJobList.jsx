@@ -147,4 +147,3 @@ const ReportedJobList = () => {
 };
 
 export default ReportedJobList;
-
