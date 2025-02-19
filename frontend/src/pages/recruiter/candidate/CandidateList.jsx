@@ -16,138 +16,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { jobTitles } from "@/utils/constant";
 
 const ITEMS_PER_PAGE = 10;
-const jobTitles = [
-  // Software & IT
-  "Software Engineer",
-  "React Developer",
-  "Java Developer",
-  "Frontend Developer",
-  "Backend Developer",
-  "Full Stack Developer",
-  "Data Scientist",
-  "Machine Learning Engineer",
-  "AI Engineer",
-  "Cybersecurity Analyst",
-  "DevOps Engineer",
-  "Cloud Engineer",
-  "Database Administrator",
-  "Blockchain Developer",
-  "Game Developer",
-  "Embedded Systems Engineer",
-  "Mobile App Developer",
-
-  // Product & Management
-  "Product Manager",
-  "Project Manager",
-  "Business Analyst",
-  "Scrum Master",
-  "Operations Manager",
-  "Risk Manager",
-  "Supply Chain Manager",
-
-  // Sales & Marketing
-  "Marketing Manager",
-  "Sales Executive",
-  "Digital Marketing Specialist",
-  "SEO Analyst",
-  "Social Media Manager",
-  "Brand Manager",
-  "Public Relations Specialist",
-
-  // HR & Administration
-  "Human Resources Manager",
-  "Recruiter",
-  "Training and Development Manager",
-  "Administrative Officer",
-
-  // Finance & Banking
-  "Financial Analyst",
-  "Investment Banker",
-  "Accountant",
-  "Auditor",
-  "Tax Consultant",
-  "Actuary",
-  "Loan Officer",
-
-  // Engineering
-  "Civil Engineer",
-  "Mechanical Engineer",
-  "Electrical Engineer",
-  "Automobile Engineer",
-  "Aerospace Engineer",
-  "Chemical Engineer",
-  "Biomedical Engineer",
-  "Structural Engineer",
-
-  // Healthcare & Medicine
-  "Doctor",
-  "Nurse",
-  "Pharmacist",
-  "Dentist",
-  "Physiotherapist",
-  "Radiologist",
-  "Veterinarian",
-  "Surgeon",
-
-  // Legal & Law
-  "Lawyer",
-  "Judge",
-  "Paralegal",
-  "Legal Advisor",
-
-  // Education & Research
-  "Teacher",
-  "Professor",
-  "Research Scientist",
-  "Librarian",
-  "Academic Counselor",
-
-  // Creative & Media
-  "Graphic Designer",
-  "UI/UX Designer",
-  "Content Writer",
-  "Journalist",
-  "Video Editor",
-  "Animator",
-  "Art Director",
-  "Photographer",
-  "Filmmaker",
-  "Fashion Designer",
-  "Interior Designer",
-  "Music Producer",
-
-  // Hospitality & Tourism
-  "Hotel Manager",
-  "Event Planner",
-  "Chef",
-  "Tour Guide",
-  "Travel Agent",
-  "Flight Attendant",
-
-  // Sports & Fitness
-  "Athlete",
-  "Fitness Trainer",
-  "Sports Coach",
-  "Physiotherapist",
-
-  // Government & Public Sector
-  "Police Officer",
-  "Firefighter",
-  "Military Officer",
-  "Social Worker",
-  "Diplomat",
-
-  // Miscellaneous
-  "Entrepreneur",
-  "Freelancer",
-  "Data Entry Operator",
-  "Customer Support Representative",
-];
 
 const CandidateList = () => {
   const [candidates, setCandidates] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({
@@ -155,14 +30,14 @@ const CandidateList = () => {
     experience: "",
     salaryBudget: "",
   });
-
   const [currentPage, setCurrentPage] = useState(1);
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
-  const [message, setMessage] = useState("Find great talent for you team");
+  const [message, setMessage] = useState("Find great talent for your team");
 
   const fetchCandidates = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `${COMPANY_API_END_POINT}/candidate-list`,
         {
@@ -172,12 +47,14 @@ const CandidateList = () => {
       );
       if (response.data.success) {
         if (response.data.candidates.length === 0)
-          setMessage("No Candidate founds");
+          setMessage("No Candidate found");
         setCandidates(response.data.candidates);
         setCurrentPage(1);
       }
     } catch (error) {
       console.error("Error fetching candidates:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -253,7 +130,7 @@ const CandidateList = () => {
                 <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
                   <FaAngleDown />
                 </ComboboxButton>
-                <ComboboxOptions className="absolute  bg-white border rounded-md mt-1 shadow-lg h-40 overflow-y-scroll  w-full">
+                <ComboboxOptions className="absolute bg-white border rounded-md mt-1 shadow-lg h-40 overflow-y-scroll w-full">
                   {jobTitles.map((title) => (
                     <ComboboxOption
                       key={title}
@@ -289,14 +166,41 @@ const CandidateList = () => {
             <Button
               onClick={fetchCandidates}
               className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 w-full md:w-40"
+              disabled={isLoading}
             >
-              Find Candidates
+              {isLoading ? "Loading..." : "Find Candidates"}
             </Button>
           </div>
 
           {/* Candidates List */}
           <div className="flex flex-col gap-4">
-            {currentCandidates.length === 0 ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-10">
+                <div className="flex items-center space-x-2">
+                  <svg
+                    className="animate-spin h-8 w-8 text-blue-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    ></path>
+                  </svg>
+                  <span className="text-xl text-blue-600">Loading...</span>
+                </div>
+              </div>
+            ) : currentCandidates.length === 0 ? (
               <div className="flex items-center justify-center py-10">
                 <p className="text-4xl text-gray-400">{message}</p>
               </div>
@@ -386,7 +290,7 @@ const CandidateList = () => {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {totalPages > 1 && !isLoading && (
             <div className="flex flex-col sm:flex-row justify-center items-center mt-6 gap-2">
               <Button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -417,7 +321,7 @@ const CandidateList = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-            You are not verified by Great Hire
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}
