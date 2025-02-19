@@ -16,7 +16,7 @@ const contactSchema = new mongoose.Schema(
       required: true, // phoneNumber of the person contacting
     },
     message: {
-      type: [String],
+      type: String,
       required: true, // Message content
     },
     status: {
