@@ -431,7 +431,7 @@ export const updateProfile = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, message } = req.body.formData;
+    const { fullname, email, phoneNumber, message } = req.body;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -463,7 +463,7 @@ export const sendMessage = async (req, res) => {
       name: fullname,
       email,
       phoneNumber,
-      message: [message], // Store message as an array
+      message,
     });
 
     return res.status(200).json({
