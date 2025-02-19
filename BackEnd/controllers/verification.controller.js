@@ -57,7 +57,7 @@ export const sendVerificationStatus = async (req, res) => {
   try {
     // Extract data from the request body
     const { email, adminEmail, companyId, isActive } = req.body;
-    // userId is available as req.id if needed for audit purposes
+    // userId is available as req.id for audit purposes (if needed)
     const userId = req.id;
 
     // Find the company by its ID
@@ -68,29 +68,38 @@ export const sendVerificationStatus = async (req, res) => {
         .json({ success: false, message: "Company not found" });
     }
 
-    const admin = await Admin.findById(userId);
-    if (!admin) {
-      return res
-        .status(404)
-        .json({ success: false, message: "You are not authorized" });
-    }
-
     // Update the company's isActive status
     company.isActive = isActive;
     await company.save();
 
-    // Extract recruiter IDs from the company's userId array
-    // (Assuming the company model stores recruiter IDs in the format: [{ user: ObjectId }, ...])
+    // Update the admin recruiter (company admin) based on company.adminEmail.
+    // This assumes the admin of the company is stored as a recruiter.
+    const adminRecruiter = await Recruiter.findOne({
+      "emailId.email": company.adminEmail,
+    });
+    if (adminRecruiter) {
+      adminRecruiter.emailId.isVerified = isActive;
+      if (adminRecruiter.phoneNumber) {
+        adminRecruiter.phoneNumber.isVerified = isActive;
+      }
+      await adminRecruiter.save();
+    }
+
+    // Extract recruiter IDs from the company's userId array.
+    // (Assuming company.userId is an array of objects with a "user" field)
     const recruiterIds = company.userId.map((u) => u.user);
 
-    // Update all recruiters associated with this company
+    // Update all recruiters associated with this company:
+    // Set their isActive status
     await Recruiter.updateMany(
       { _id: { $in: recruiterIds } },
-      { isActive: isActive }
+      {
+        isActive: isActive,
+      }
     );
 
     // Update all jobs for this company.
-    // In the Job model, the active status is stored in the nested jobDetails.isActive field.
+    // The active status is stored in the nested "jobDetails.isActive" field.
     await Job.updateMany(
       { company: companyId },
       { "jobDetails.isActive": isActive }
@@ -179,13 +188,10 @@ export const sendVerificationStatus = async (req, res) => {
       html: message,
     };
 
-    // Send the email notification
+    // Send the email notification (even if email fails, DB updates have been committed)
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error("Error sending email:", error);
-        // Optionally handle email errors, but the DB update succeeded.
-      } else {
-        //console.log("Email sent:", info.response);
       }
     });
 

@@ -7,7 +7,6 @@ import { MdOutlineVerified } from "react-icons/md";
 import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
 
-
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
   const [recruiterDetails, setRecruiterDetails] = useState(null);
@@ -58,11 +57,17 @@ const RecruitersDetails = () => {
                 <span>
                   <strong>Email:</strong> {recruiterDetails?.emailId?.email}
                 </span>
-                <span className="text-green-600">
+                <span
+                  className={`${
+                    recruiterDetails?.emailId?.isVerified
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {recruiterDetails?.emailId?.isVerified ? (
                     <MdOutlineVerified size={25} />
                   ) : (
-                    "No"
+                    "Not verified"
                   )}
                 </span>
               </p>
@@ -82,7 +87,7 @@ const RecruitersDetails = () => {
                     {recruiterDetails?.phoneNumber.isVerified ? (
                       <MdOutlineVerified size={25} />
                     ) : (
-                      "No"
+                      "Not verified"
                     )}
                   </span>
                 )}
