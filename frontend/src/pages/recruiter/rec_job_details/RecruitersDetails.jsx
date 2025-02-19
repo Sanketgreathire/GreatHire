@@ -7,7 +7,6 @@ import { MdOutlineVerified } from "react-icons/md";
 import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
 
-
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
   const [recruiterDetails, setRecruiterDetails] = useState(null);
@@ -32,6 +31,18 @@ const RecruitersDetails = () => {
     fetchRecruiterDetails();
   }, [user]);
 
+  // Function to validate and sanitize image URL
+  const getSafeImageUrl = (url) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:"
+        ? url
+        : "https://github.com/shadcn.png";
+    } catch (error) {
+      return "https://github.com/shadcn.png";
+    }
+  };
+
   return (
     <>
       {user?.role !== "recruiter" && <Navbar linkName={"Recruiter Details"} />}
@@ -43,10 +54,10 @@ const RecruitersDetails = () => {
             <div className=" bg-white p-8 w-full md:w-1/3 rounded-lg shadow-lg flex flex-col space-y-2 h-fit">
               <div>
                 <img
-                  src={
-                    recruiterDetails?.profile.profilePhoto ||
-                    "https://github.com/shadcn.png"
-                  }
+                  src={getSafeImageUrl(
+                    recruiterDetails?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                  )}
                   alt={`${recruiterDetails.fullname}'s profile`}
                   className="w-32 h-32 rounded-full mx-auto"
                 />
@@ -58,11 +69,17 @@ const RecruitersDetails = () => {
                 <span>
                   <strong>Email:</strong> {recruiterDetails?.emailId?.email}
                 </span>
-                <span className="text-green-600">
+                <span
+                  className={`${
+                    recruiterDetails?.emailId?.isVerified
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {recruiterDetails?.emailId?.isVerified ? (
                     <MdOutlineVerified size={25} />
                   ) : (
-                    "No"
+                    "Not verified"
                   )}
                 </span>
               </p>
@@ -82,7 +99,7 @@ const RecruitersDetails = () => {
                     {recruiterDetails?.phoneNumber.isVerified ? (
                       <MdOutlineVerified size={25} />
                     ) : (
-                      "No"
+                      "Not verified"
                     )}
                   </span>
                 )}

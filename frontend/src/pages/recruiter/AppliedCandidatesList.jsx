@@ -15,6 +15,7 @@ import ApplicantDetails from "./ApplicantDetails";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
 
+
 const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
 
 const statusStyles = {
@@ -32,6 +33,15 @@ const AppliedCandidatesList = () => {
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
+
+  const isValidHttpUrl = (string) => {
+    try {
+      let url = new URL(string);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (_) {
+      return false;
+    }
+  };
 
   const fetchApplicants = async (jobId) => {
     try {
@@ -63,7 +73,6 @@ const AppliedCandidatesList = () => {
       statusFilter === "All" || data.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
 
   return (
     <>
@@ -131,16 +140,20 @@ const AppliedCandidatesList = () => {
                       <TableCell>{data.applicant.emailId.email}</TableCell>
                       <TableCell>
                         <div className="flex justify-center space-x-2">
-                          <a
-                            href={data.applicant.profile.resume}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline"
-                            title="View Resume"
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            <FiEye size={20} />
-                          </a>
+                          {isValidHttpUrl(data.applicant.profile.resume) ? (
+                            <a
+                              href={data.applicant.profile.resume}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline"
+                              title="View Resume"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <FiEye size={20} />
+                            </a>
+                          ) : (
+                            <span className="text-red-500">Invalid URL</span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -173,7 +186,7 @@ const AppliedCandidatesList = () => {
             applicantId={applicantId}
             jobId={jobId}
             setApplicantDetailsModal={setApplicantDetailsModal}
-            user = {user}
+            user={user}
             setApplicants={setApplicants}
           />
         )}

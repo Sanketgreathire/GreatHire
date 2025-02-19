@@ -105,6 +105,7 @@ export const markAsSeen = async (req, res) => {
 export const deleteContact = async (req, res) => {
   try {
     const { msgId } = req.params;
+
     if (!msgId) {
       return res
         .status(400)

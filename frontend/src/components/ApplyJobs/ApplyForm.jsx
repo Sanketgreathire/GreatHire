@@ -28,12 +28,13 @@ const ApplyForm = ({ setRight }) => {
   useEffect(() => {
     if (!user) {
       navigate("/login");
+    } else {
+      if (isApplied) {
+        toast("You have already applied this job.");
+        navigate("/");
+      }
     }
-    if (isApplied) {
-      toast("You have already applied this job.");
-      navigate("/jobs");
-    }
-  }, [user]);
+  }, []);
 
   const [step1, setStep1] = useState(true);
   const [step2, setStep2] = useState(false);
