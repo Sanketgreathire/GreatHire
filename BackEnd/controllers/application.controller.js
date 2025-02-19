@@ -16,7 +16,7 @@ export const applyJob = async (req, res) => {
       state,
       country,
       coverLetter,
-      experience,
+      experience, // this is deatils of previous experience
       jobTitle,
       company,
       jobId,
@@ -41,7 +41,9 @@ export const applyJob = async (req, res) => {
 
     // Check if the job is active
     if (!job.jobDetails.isActive) {
-      return res.status(400).json({ message: "This job is not active" });
+      return res
+        .status(400)
+        .json({ success: false, message: "This job is not active" });
     }
 
     // Update user details if necessary
@@ -59,10 +61,10 @@ export const applyJob = async (req, res) => {
     if (country && country !== user.address.country)
       user.address.country = country;
 
-    if (coverLetter) user.profile.coverLetter = coverLetter;
-    if (experience) user.profile.experience.experienceDetails = experience;
-    if (jobTitle) user.profile.experience.jobProfile = jobTitle;
-    if (company) user.profile.experience.companyName = company;
+    user.profile.coverLetter = coverLetter;
+    user.profile.experience.experienceDetails = experience;
+    user.profile.experience.jobProfile = jobTitle;
+    user.profile.experience.companyName = company;
 
     // Update resume if provided
     if (resume && resume.length > 0) {
