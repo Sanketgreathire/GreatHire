@@ -31,6 +31,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     currentCTC: user?.profile?.currentCTC || "",
     expectedCTC: user?.profile?.expectedCTC || "",
     jobProfile: user?.profile?.experience?.jobProfile || "",
+    companyName: user?.profile?.companyName || "",
+    experienceDetails: user?.profile?.experienceDetails || "",
     city: user?.address?.city || "",
     state: user?.address?.state || "",
     country: user?.address?.country || "",
@@ -43,18 +45,18 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   );
 
   const maxBioChars = 500;
+  const maxExperienceChars = 750;
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "bio") {
-      // Count the number of characters in the bio field
-      const charCount = value.length;
+    if (name === "bio" || name === "experienceDetails") {
+      const charLimit = name === "bio" ? maxBioChars : maxExperienceChars;
 
-      if (charCount <= maxBioChars) {
+      if (value.length <= charLimit) {
         setInput((prev) => ({ ...prev, [name]: value }));
       } else {
         // Optionally, show an error message or prevent further input
-        toast.error("Bio cannot exceed 500 characters");
+        toast.error(`${name === "bio" ? "Bio" : "Experience details"} cannot exceed ${charLimit} characters`);
       }
     } else {
       // Handle other fields as normal
@@ -116,8 +118,10 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("country", input.country);
     formData.append("experience", input.experience || "");
     formData.append("jobProfile", input.jobProfile || "");
+    formData.append("companyName", input.companyName || "");
     formData.append("currentCTC", input.currentCTC || "");
     formData.append("expectedCTC", input.expectedCTC);
+    formData.append("experienceDetails", input.experienceDetails);
     formData.append("bio", input.bio) || "";
     formData.append("skills", input.skills || "");
 
@@ -161,7 +165,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       onClick={() => setOpen(false)}
     >
       <div
-        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg h-screen sm:h-auto overflow-y-auto"
+        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -173,16 +177,17 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           ✖
         </button>
 
-        <h2 className="text-xl text-center font-semibold mb-4">
+        <h2 className="text-2xl text-center font-semibold mb-4">
           Update Profile
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Profile Image and Name-Email Grid */}
-          <div className="flex flex-col sm:grid sm:grid-cols-3 gap-4 items-center">
-            {/* Profile Image */}
-            <div className="relative flex flex-col items-center">
+          {/* Personal Details Section */}
+          <div className="border-b pb-4">
+          <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
+          <div className="grid sm:grid-cols-2 gap-4 items-start">
+          <div className="flex items-start gap-6">
               {/* Profile Image with Pencil Icon */}
-              <div className="relative w-24 h-24">
+              <div className="relative w-32 h-32 mx-auto">
                 {previewImage ? (
                   <img
                     src={previewImage}
@@ -214,8 +219,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            {/* Name and Email Fields */}
-            <div className="w-full sm:col-span-2 flex flex-col gap-2">
+            {/* Name, Email and Phone Fields */}
+            <div className="flex-1 grid gap-3 w-full">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                 <Label htmlFor="fullname" className="sm:w-20 w-full font-semibold">
                   Name
@@ -227,6 +232,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   onChange={handleChange}
                 />
               </div>
+
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                 <Label htmlFor="email" className="sm:w-20 w-full font-semibold">
                   Email
@@ -238,12 +244,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   onChange={handleChange}
                 />
               </div>
-            </div>
-          </div>
 
-          {/* Remaining Fields in Grid Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
               <Label htmlFor="phoneNumber" className="sm:w-20 w-full font-semibold">
                 Phone
               </Label>
@@ -254,93 +256,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 onChange={handleChange}
               />
             </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="jobProfile" className="sm:w-20 w-full font-semibold">
-                Job Profile
-              </Label>
-              <Input
-                id="jobProfile"
-                name="jobProfile"
-                value={input.jobProfile}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="experience" className="sm:w-20 w-full font-semibold">
-                Experience
-              </Label>
-              <Input
-                id="experience"
-                name="experience"
-                value={input.experience}
-                onChange={handleChange}
-              />
-            </div>
-
-            {/* Skills */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="skills" className="sm:w-20 w-full font-semibold">
-                Skills
-              </Label>
-              <Input
-                id="skills"
-                name="skills"
-                value={input.skills}
-                onChange={handleChange}
-                placeholder="Enter skills (comma separated)"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="currentCTC" className="sm:w-20 w-full font-semibold">
-                Current CTC
-              </Label>
-              <Input
-                id="currentCTC"
-                name="currentCTC"
-                value={input.currentCTC}
-                onChange={handleChange}
-                placeholder="Enter Current CTC (In LPA)"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="expectedCTC" className="sm:w-20 w-full font-semibold">
-                Expected CTC
-              </Label>
-              <Input
-                id="expectedCTC"
-                name="expectedCTC"
-                value={input.expectedCTC}
-                onChange={handleChange}
-                placeholder="Enter Expected CTC (In LPA)"
-              />
-            </div>
+          </div>
           </div>
 
-          {/* Bio */}
+          <div className="grid sm:grid-cols-3 gap-4 mt-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-            <Label htmlFor="bio" className="sm:w-20 w-full font-semibold pt-2">
-              Profile Summary
-            </Label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={input.bio}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="2"
-              placeholder="Enter your bio..."
-            />
-            <p className="text-sm text-gray-600 mt-1 self-end text-right">
-              {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
               <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
                 City
               </Label>
@@ -378,10 +298,132 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 className="w-full"
               />
             </div>
+            </div>
+            </div>
+
+          {/* Professional Details Section */}
+          <div>
+          <h3 className="text-lg font-semibold mb-3">Professional Details</h3>
+          <div className="space-y-4">
+            <div className="w-full">
+              <Label htmlFor="jobProfile" className="block mb-2 font-semibold">
+                Job Profile
+              </Label>
+              <Input
+                id="jobProfile"
+                name="jobProfile"
+                value={input.jobProfile}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="w-full">
+              <Label htmlFor="companyName" className="block mb-2 font-semibold">
+                Company Name
+              </Label>
+              <Input
+                id="companyName"
+                name="companyName"
+                value={input.companyName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="w-full">
+              <Label htmlFor="experience" className="block mb-2 font-semibold">
+                Experience
+              </Label>
+              <Input
+                id="experience"
+                name="experience"
+                value={input.experience}
+                onChange={handleChange}
+              />
+            </div>
+            </div>
+
+            <div className="w-full">
+              <Label htmlFor="skills" className="block mb-2 font-semibold">
+                Skills
+              </Label>
+              <Input
+                id="skills"
+                name="skills"
+                value={input.skills}
+                onChange={handleChange}
+                placeholder="Enter skills (comma separated)"
+              />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="w-full">
+              <Label htmlFor="currentCTC" className="block mb-2 font-semibold">
+                Current CTC
+              </Label>
+              <Input
+                id="currentCTC"
+                name="currentCTC"
+                value={input.currentCTC}
+                onChange={handleChange}
+                placeholder="Enter Current CTC (In LPA)"
+              />
+            </div>
+
+            <div className="w-full">
+              <Label htmlFor="expectedCTC" className="block mb-2 font-semibold">
+                Expected CTC
+              </Label>
+              <Input
+                id="expectedCTC"
+                name="expectedCTC"
+                value={input.expectedCTC}
+                onChange={handleChange}
+                placeholder="Enter Expected CTC (In LPA)"
+              />
+            </div>
+            </div>
+          </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-            <Label htmlFor="resume" className="sm:w-20 w-full font-semibold">
+          <div className="w-full">
+            <Label htmlFor="experienceDetails" className="block mb-2 font-semibold pt-2">
+              Experience Details
+            </Label>
+            <textarea
+              id="experienceDetails"
+              name="experienceDetails"
+              value={input.experienceDetails}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="3"
+              placeholder="Describe your work experience in detail..."
+            />
+            <p className="text-sm text-gray-600 mt-1 self-end text-right">
+              {input.experienceDetails.trim() ? input.experienceDetails.trim().length : 0}/{maxExperienceChars}
+            </p>
+         </div>
+
+          <div className="w-full">
+            <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
+              Bio
+            </Label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={input.bio}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="2"
+              placeholder="Enter your bio..."
+            />
+            <p className="text-sm text-gray-600 mt-1 self-end text-right">
+              {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
+            </p>
+          </div>
+
+          <div className="w-full">
+            <Label htmlFor="resume" className="block mb-2 font-semibold">
               Resume
             </Label>
 
