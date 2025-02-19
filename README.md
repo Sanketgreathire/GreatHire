@@ -1,1 +1,0 @@
-# About Great Hire Project
