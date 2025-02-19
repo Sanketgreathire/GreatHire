@@ -310,7 +310,9 @@ export const getCurrentPlan = async (req, res) => {
     // Find the active subscription for the company
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
-    }).select("jobBoost expiryDate planName price status purchaseDate"); // Select only required fields
+      status: { $ne: "Hold" }, // Exclude plans with status "Hold"
+    }).select("jobBoost expiryDate planName price status purchaseDate");
+    // Select only required fields
 
     res.status(200).json({
       success: true,
@@ -391,7 +393,7 @@ export const decreaseCandidateCredits = async (req, res) => {
         .status(403)
         .json({ message: "You are not authorized", success: false });
     }
-
+    const company = await Company.findById(companyId);
     // If creditedForCandidates is null, no need to decrease
     if (company.creditedForCandidates !== null) {
       if (company.creditedForCandidates > 0) {
