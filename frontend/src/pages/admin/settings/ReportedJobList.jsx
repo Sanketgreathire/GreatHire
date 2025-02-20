@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/admin/Navbar";
-import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
+import { ADMIN_STAT_API_END_POINT, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { Eye, Trash } from "lucide-react";
+import { toast} from "react-hot-toast"
 
 const ReportedJobList = () => {
   const [search, setSearch] = useState("");
@@ -35,6 +37,27 @@ const ReportedJobList = () => {
     fetchReportedJobs();
   }, []);
 
+
+  const handleDeleteJob = async (msgId) => {
+    if (!msgId) return;
+    try {
+      const response = await axios.delete(`${NOTIFICATION_API_END_POINT}/jobReports/${msgId}`, {
+        withCredentials: true,
+      });
+  
+      if (response?.data?.success) {
+        setReportedJobs((prevJobs) => prevJobs.filter((job) => job.id !== msgId));
+        toast("Reported job deleted successfully!");
+      } else {
+        toast("Failed to delete reported job.");
+      }
+    } catch (error) {
+      console.error("Error deleting reported job:", error);
+      toast("Error deleting reported job. Please try again.");
+    }
+  };
+
+  
   const filteredJobs = reportedJobs?.filter(
     (job) =>
       job.job &&
@@ -135,7 +158,7 @@ const ReportedJobList = () => {
                     <Trash
                       className="text-red-500 cursor-pointer absolute bottom-4 right-4"
                       size={25}
-                      onClick={() => console.log("Delete job", job.id)}
+                      onClick={() => handleDeleteJob(job.id)}
                     />
                   </div>
                 ))}
