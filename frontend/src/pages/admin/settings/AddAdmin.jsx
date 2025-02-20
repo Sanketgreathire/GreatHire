@@ -62,12 +62,12 @@ const AddAdmin = () => {
   return (
     <>
       <Navbar linkName="Add Admin" />
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100 relative">
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100 relative px-4 sm:px-0">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl p-8 w-full max-w-md relative overflow-hidden"
+          className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl p-8 w-full max-w-md relative overflow-hidden mt-0 md:mt-[-50px]"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -78,7 +78,7 @@ const AddAdmin = () => {
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-900 text-lg"
+            className="absolute top-2 left-4 md:top-5 md:left-6 flex items-center text-gray-600 hover:text-gray-900 text-lg z-20"
           >
             <FiArrowLeft size={30} className="mr-2" />
           </button>

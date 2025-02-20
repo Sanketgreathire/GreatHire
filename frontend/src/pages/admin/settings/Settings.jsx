@@ -44,7 +44,7 @@ const Settings = () => {
           {/* Reported Jobs Card */}
           <Link
             to="/admin/settings/reported-job-list"
-            className="group relative bg-white rounded-2xl shadow-xl p-10 flex flex-col items-center justify-center transition transform hover:-translate-y-2 hover:shadow-2xl"
+            className="group relative bg-white rounded-2xl shadow-xl p-10 flex flex-col items-center justify-center text-center transition transform hover:-translate-y-2 hover:shadow-2xl"
           >
             <div className="text-red-500 group-hover:animate-bounce transition duration-300">
               <AlertTriangle size={48} />

@@ -79,7 +79,7 @@ const Signup = () => {
       <Navbar />
       <div className="flex flex-col md:flex-row flex-grow">
         {/* Updated Left Section - Background Image and Content */}
-        <div className="relative w-full md:w-2/3 hidden xl:flex">
+        <div className="relative h-screen w-2/3 hidden xl:flex">
           <img
             src={img3}
             alt="Image 1"

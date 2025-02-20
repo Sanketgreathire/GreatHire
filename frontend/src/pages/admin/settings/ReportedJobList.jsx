@@ -56,18 +56,17 @@ const ReportedJobList = () => {
   return (
     <>
       <Navbar linkName="Reported Job List" />
-      <div className="min-h-screen bg-gray-100 p-6">
-        <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-8 relative">
+      <div className="min-h-screen bg-gray-100 p-6 max-w-7xl mx-auto rounded-lg shadow-lg relative">
+ 
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-800 text-xl transition-colors duration-200"
+            className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-800 text-xl transition-colors duration-200 mt-2"
           >
             <FiArrowLeft size={28} className="mr-2" />
-            Back
           </button>
 
-          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 mt-10">
             Reported Job List
           </h2>
 
@@ -162,7 +161,7 @@ const ReportedJobList = () => {
               )}
             </>
           )}
-        </div>
+        
       </div>
     </>
   );
