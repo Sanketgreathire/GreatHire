@@ -97,27 +97,6 @@ const UserProfile = () => {
               </Button>
             </div>
 
-            {/* Experience Details Section */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-                Experience Details
-              </h2>
-              <div className="flex items-center mt-2 pb-2">
-                <h2 className="text-sm font-semibold text-gray-800">
-                  Company Name:{" "}
-                  <span className="text-sm text-gray-600">
-                    {user?.profile?.experience?.companyName || "N/A"}
-                  </span>
-                </h2>
-              </div>
-              <div>
-                <p className="text-gray-600">
-                  {user?.profile?.experience?.experienceDetails ||
-                    "No experience details available"}
-                </p>
-              </div>
-            </div>
-
             {/* Profile Summary Section */}
             <div className="mt-8">
               <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
@@ -178,6 +157,27 @@ const UserProfile = () => {
                     {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`}
                   </span>
                 </div>
+              </div>
+            </div>
+
+                      {/* Experience Details Section */}
+                      <div className="mt-8">
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Experience Details
+              </h2>
+              <div className="flex items-center mt-2 pb-2">
+                <h2 className="text-sm font-semibold text-gray-800">
+                  Company Name:{" "}
+                  <span className="text-sm text-gray-600">
+                    {user?.profile?.experience?.companyName || "N/A"}
+                  </span>
+                </h2>
+              </div>
+              <div>
+                <p className="text-gray-600">
+                  {user?.profile?.experience?.experienceDetails ||
+                    "No experience details available"}
+                </p>
               </div>
             </div>
 

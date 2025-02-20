@@ -5,7 +5,7 @@ import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-import { Eye } from "lucide-react";
+import { Eye, Trash } from "lucide-react";
 
 const ReportedJobList = () => {
   const [search, setSearch] = useState("");
@@ -14,7 +14,7 @@ const ReportedJobList = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
-  const itemsPerPage = 6; // Increased items per page for a balanced grid layout
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchReportedJobs = async () => {
@@ -26,7 +26,6 @@ const ReportedJobList = () => {
         if (response?.data?.success) {
           setReportedJobs(response.data.data);
         }
-        console.log(response.data.data);
       } catch (err) {
         setError("Error fetching reported jobs.");
       } finally {
@@ -58,13 +57,11 @@ const ReportedJobList = () => {
       <Navbar linkName="Reported Job List" />
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-8 relative">
-          {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
             className="absolute top-6 left-6 flex items-center text-gray-600 hover:text-gray-800 text-xl transition-colors duration-200"
           >
             <FiArrowLeft size={28} className="mr-2" />
-            Back
           </button>
 
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
@@ -77,7 +74,7 @@ const ReportedJobList = () => {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                setCurrentPage(0); // Reset page on new search
+                setCurrentPage(0);
               }}
               className="w-full md:w-1/3 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
@@ -100,7 +97,7 @@ const ReportedJobList = () => {
                 {currentItems.map((job) => (
                   <div
                     key={job.id}
-                    className="bg-white border border-gray-200 rounded-lg shadow-md p-6 transition transform hover:-translate-y-1 hover:shadow-xl"
+                    className="bg-white border border-gray-200 rounded-lg shadow-md p-6 transition transform hover:-translate-y-1 hover:shadow-xl relative"
                   >
                     <div className="flex justify-between items-center">
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -111,7 +108,7 @@ const ReportedJobList = () => {
                         onClick={() =>
                           navigate(`/admin/job/details/${job.job.jobId}`)
                         }
-                        className=" cursor-pointer text-blue-700 "
+                        className="cursor-pointer text-blue-700"
                       />
                     </div>
                     <p className="text-sm text-gray-500 mb-4">
@@ -135,31 +132,14 @@ const ReportedJobList = () => {
                         {job.user?.phone || "N/A"}
                       </p>
                     </div>
+                    <Trash
+                      className="text-red-500 cursor-pointer absolute bottom-4 right-4"
+                      size={25}
+                      onClick={() => console.log("Delete job", job.id)}
+                    />
                   </div>
                 ))}
               </div>
-              {/* Pagination Controls */}
-              {filteredJobs.length > itemsPerPage && (
-                <div className="flex justify-center items-center mt-8 space-x-4">
-                  <button
-                    className="px-4 py-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 disabled:opacity-50 transition-colors"
-                    onClick={() => setCurrentPage((prev) => prev - 1)}
-                    disabled={currentPage === 0}
-                  >
-                    Previous
-                  </button>
-                  <span className="font-semibold text-gray-700">
-                    Page {currentPage + 1} of {totalPages}
-                  </span>
-                  <button
-                    className="px-4 py-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 disabled:opacity-50 transition-colors"
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                    disabled={currentPage === totalPages - 1}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
             </>
           )}
         </div>
