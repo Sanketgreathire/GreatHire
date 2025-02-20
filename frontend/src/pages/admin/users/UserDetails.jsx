@@ -6,15 +6,6 @@ import { useParams } from "react-router-dom";
 import { ADMIN_USER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 
-const isValidURL = (url) => {
-  try {
-    const parsedUrl = new URL(url);
-    return ["http:", "https:"].includes(parsedUrl.protocol);
-  } catch (error) {
-    return false;
-  }
-};
-
 const UserDetails = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
@@ -59,25 +50,23 @@ const UserDetails = () => {
     fetchUser();
     fetchApplications();
   }, []);
+  
 
   return (
     <>
       <Navbar linkName="User Details" />
       <div className="flex shadow-md rounded-lg flex-col md:flex-row bg-white m-4 p-4">
+        {/* Left Side: User Details */}
         {loading ? (
           <p className="text-2xl text-blue-700">Loading...</p>
         ) : (
           <div className="md:w-1/3 border-r-2 border-gray-300 md:pr-6">
             <div className="flex flex-col items-center">
-              {isValidURL(user?.profile?.profilePhoto) ? (
-                <img
-                  src={user.profile.profilePhoto}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover"
-                />
-              ) : (
-                <p className="text-red-500">Invalid profile photo URL</p>
-              )}
+              <img
+                src={user?.profile?.profilePhoto}
+                alt="Profile"
+                className="w-32 h-32 rounded-full object-cover"
+              />
               <h2 className="mt-4 text-2xl font-bold">{user?.fullname}</h2>
               <p className="text-gray-600">{user?.emailId?.email}</p>
             </div>
@@ -97,6 +86,7 @@ const UserDetails = () => {
               <h3 className="text-xl font-semibold">About Me</h3>
               <p className="text-gray-700">{user?.profile?.bio}</p>
             </div>
+            {/* Additional Professional Details */}
             <div className="mt-6">
               <h3 className="text-xl font-semibold">Professional Details</h3>
               {user?.profile?.coverLetter && (
@@ -128,6 +118,7 @@ const UserDetails = () => {
                   </p>
                 </div>
               )}
+              {/* Skills Section */}
               <div className="mt-8">
                 <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
                   Skills
@@ -147,7 +138,7 @@ const UserDetails = () => {
                   )}
                 </div>
               </div>
-              {user?.profile?.resume && isValidURL(user.profile.resume) ? (
+              {user?.profile?.resume && (
                 <div className="mt-2">
                   <h4 className="text-lg font-semibold">Resume</h4>
                   <a
@@ -159,12 +150,11 @@ const UserDetails = () => {
                     {user.profile.resumeOriginalName || "View Resume"}
                   </a>
                 </div>
-              ) : (
-                <p className="text-red-500">Invalid resume URL</p>
               )}
             </div>
           </div>
         )}
+        {/* Right Side: Application List */}
         <div className="md:w-2/3 mt-6 md:mt-0 md:pl-6">
           {loading ? (
             <p className="text-2xl text-blue-700">Loading..</p>
@@ -178,5 +168,3 @@ const UserDetails = () => {
 };
 
 export default UserDetails;
-
-

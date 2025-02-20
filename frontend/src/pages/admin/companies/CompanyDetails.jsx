@@ -37,7 +37,6 @@ const CompanyDetails = () => {
       console.log(`error in company fetching ${err}`);
     }
   };
-
   useEffect(() => {
     fetchCompanyDetails();
   }, []);
@@ -70,20 +69,7 @@ const CompanyDetails = () => {
       dSetLoading(false);
     }
   };
-
-  // Function to validate and sanitize URL
-  const getSafeUrl = (url) => {
-    if (!url) return "#"; // Default to prevent invalid URLs
-
-    try {
-      const safeUrl = new URL(url, window.location.origin);
-      if (["http:", "https:"].includes(safeUrl.protocol)) {
-        return safeUrl.href;
-      }
-    } catch (error) {
-      return "#"; // Return safe default if URL parsing fails
-    }
-  };
+  
 
   return (
     <>
@@ -135,7 +121,7 @@ const CompanyDetails = () => {
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Website</p>
               <a
-                href={getSafeUrl(company?.companyWebsite)}
+                href={company?.companyWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline text-xl font-semibold"
@@ -178,7 +164,7 @@ const CompanyDetails = () => {
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Business File</p>
               <a
-                href={getSafeUrl(company?.businessFile)}
+                href={company?.businessFile}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-500 hover:underline text-xl font-semibold"
@@ -212,4 +198,5 @@ const CompanyDetails = () => {
 };
 
 export default CompanyDetails;
+
 

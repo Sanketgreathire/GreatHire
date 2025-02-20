@@ -93,6 +93,26 @@ const UserProfile = () => {
               </p>
             </div>
           </div>
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Experience Details
+            </h2>
+            <div className="flex items-center">
+              <h2 className="text-sm font-semibold text-gray-800 mt-2 pb-2">
+                Company Name :{" "}
+                <span className="text-sm text-gray-600">
+                  {" "}
+                  {user?.profile?.experience?.companyName || "N/A"}{" "}
+                </span>
+              </h2>
+            </div>
+            <div>
+              <p className="text-gray-600">
+                {user?.profile?.experience?.experienceDetails ||
+                  "No experience details available"}
+              </p>
+            </div>
+          </div>
 
           {/* Contact Information Section */}
           <div className="mt-8">
@@ -140,7 +160,7 @@ const UserProfile = () => {
               <div className="flex items-center gap-4">
                 <LuMapPin size={25} className="text-blue-500" />
                 <span className="text-gray-700">
-                {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`}
+                  {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`}
                 </span>
               </div>
             </div>
@@ -173,8 +193,12 @@ const UserProfile = () => {
               Salary
             </h2>
             <div className="flex mt-2">
-              <h2 className="w-1/2 text-gray-700">Current CTC: {user?.profile?.currentCTC || ""} </h2>
-              <h2 className="text-gray-700 text-right">Expected CTC: {user?.profile?.expectedCTC || ""} </h2>
+              <h2 className="w-1/2 text-gray-700">
+                Current CTC: {user?.profile?.currentCTC || ""}{" "}
+              </h2>
+              <h2 className="text-gray-700 text-right">
+                Expected CTC: {user?.profile?.expectedCTC || ""}{" "}
+              </h2>
             </div>
           </div>
 
@@ -219,29 +243,28 @@ const UserProfile = () => {
           </div>
         </div>
 
-         {/* Applied Jobs Section */}
-         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-           <h2 className="text-lg text-center font-semibold text-gray-800 border-b pb-2">
-             Applied Jobs
-           </h2>
-           <div className="mt-4">
-             <AppliedJobTable />
-           </div>
-         </div>
+        {/* Applied Jobs Section */}
+        <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
+          <h2 className="text-lg text-center font-semibold text-gray-800 border-b pb-2">
+            Applied Jobs
+          </h2>
+          <div className="mt-4">
+            <AppliedJobTable />
+          </div>
+        </div>
       </div>
-     
+
       <UserUpdateProfile open={open} setOpen={setOpen} />
       <Footer className="mt-auto" />
 
       {/* OTP Modals */}
-     {openEmailOTPModal && (
+      {openEmailOTPModal && (
         <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />
       )}
       {openNumberOTPModal && (
         <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />
       )}
     </div>
-    
   );
 };
 
