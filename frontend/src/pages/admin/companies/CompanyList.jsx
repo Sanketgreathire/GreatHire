@@ -33,6 +33,7 @@ import {
   fetchJobStats,
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const CompanyList = () => {
   const [search, setSearch] = useState("");
@@ -47,6 +48,8 @@ const CompanyList = () => {
   const dispatch = useDispatch();
   const [companyList, setCompanyList] = useState([]);
   const { user } = useSelector((state) => state.auth);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
 
   const stats = [
     {
@@ -151,6 +154,15 @@ const CompanyList = () => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [companyId]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteCompany(user?.emailId?.email, companyId);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const fetchCompanyList = async () => {
@@ -298,9 +310,10 @@ const CompanyList = () => {
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={20}
-                      onClick={() =>
-                        deleteCompany(user?.emailId.email, company._id)
-                      }
+                      onClick={() => {
+                        setCompanyId(company._id);
+                        setShowDeleteModal(true);
+                      }}
                     />
                   )}
                 </TableCell>
@@ -342,6 +355,14 @@ const CompanyList = () => {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

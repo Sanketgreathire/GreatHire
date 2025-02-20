@@ -8,6 +8,7 @@ import { addCompany } from "@/redux/companySlice";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import { removeCompany } from "@/redux/companySlice";
 import { logOut } from "@/redux/authSlice";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
@@ -15,6 +16,7 @@ const CompanyDetails = () => {
   const [loading, setLoading] = useState(false);
   const [dloading, dSetLoading] = useState(false);
   const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -102,6 +104,15 @@ const CompanyDetails = () => {
     } finally {
       dSetLoading(false);
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    handleDeleteCompany();
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   return (
@@ -230,7 +241,7 @@ const CompanyDetails = () => {
                   </button>
 
                   <button
-                    onClick={handleDeleteCompany}
+                    onClick={() => setShowDeleteModal(true)}
                     className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${
                       dloading && "cursor-not-allowed"
                     }`}
@@ -392,9 +403,16 @@ const CompanyDetails = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
+      )}
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
       )}
     </>
   );

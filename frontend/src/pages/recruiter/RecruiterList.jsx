@@ -8,6 +8,7 @@ import { removeUserFromCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const RecruiterList = () => {
   const { recruiters } = useSelector((state) => state.recruiters);
@@ -18,7 +19,8 @@ const RecruiterList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const { company } = useSelector((state) => state.company);
-
+  const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const toggleActive = async (event, recruiterId, isActive) => {
     event.stopPropagation();
@@ -50,8 +52,7 @@ const RecruiterList = () => {
     }
   };
 
-  const deleteRecruiter = async (event, recruiterId, userEmail, companyId) => {
-    event.stopPropagation();
+  const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
@@ -74,6 +75,19 @@ const RecruiterList = () => {
     } finally {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteRecruiter(
+      selectedRecruiter._id,
+      selectedRecruiter.emailId.email,
+      company._id
+    );
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const filteredRecruiters = recruiters.filter((recruiter) => {
@@ -205,14 +219,12 @@ const RecruiterList = () => {
                                 "loading..."
                               ) : (
                                 <button
-                                  onClick={(event) =>
-                                    deleteRecruiter(
-                                      event,
-                                      recruiter._id,
-                                      recruiter.emailId.email,
-                                      company._id
-                                    )
-                                  }
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setSelectedRecruiter(recruiter);
+                                    setShowDeleteModal(true);
+                                    
+                                  }}
                                   className="text-red-500 hover:text-red-700"
                                 >
                                   <FaTrash size={20} />
@@ -242,9 +254,17 @@ const RecruiterList = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
+      )}
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
       )}
     </>
   );

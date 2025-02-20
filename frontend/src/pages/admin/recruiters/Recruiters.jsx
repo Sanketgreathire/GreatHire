@@ -21,7 +21,6 @@ import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
-import { useSelector } from "react-redux";
 import {
   ADMIN_RECRUITER_DATA_API_END_POINT,
   RECRUITER_API_END_POINT,
@@ -29,6 +28,7 @@ import {
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Recruiters = () => {
   // this file show the recruiter of particular company
@@ -38,10 +38,12 @@ const Recruiters = () => {
   const [dloading, dsetLoading] = useState({});
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const [recruiterList, setRecruiterList] = useState([]);
   const [recruiterSummary, setRecruiterSummary] = useState(null);
+  const [selectedRecruiter, setSelectedRecruiter] = useState(null);
 
   const stats = [
     {
@@ -152,6 +154,15 @@ const Recruiters = () => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteRecruiter(selectedRecruiter?._id, selectedRecruiter?.email);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const fetchRecruiterList = async () => {
@@ -305,9 +316,10 @@ const Recruiters = () => {
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={20}
-                      onClick={() =>
-                        deleteRecruiter(recruiter._id, recruiter.email)
-                      }
+                      onClick={() => {
+                        setSelectedRecruiter(recruiter);
+                        setShowDeleteModal(true);
+                      }}
                     />
                   )}
                 </TableCell>
@@ -349,6 +361,14 @@ const Recruiters = () => {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };
