@@ -1,38 +1,31 @@
 import React from "react";
-import { FcCheckmark } from "react-icons/fc";
-import Navbar from "../components/shared/Navbar";
 import { Link } from "react-router-dom";
+import Navbar from "../components/shared/Navbar";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
-export const Success = () => {
+const Success = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-
-      {/* Success Message */}
-      <div className="flex flex-col items-center justify-center p-6">
-        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md text-center">
-          <div className="flex items-center gap-2 mb-4">
-            <FcCheckmark className="text-2xl" />
-            <p className="text-gray-700">
-              Job Applied Successfully.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 mb-6">
-            <FcCheckmark className="text-2xl" />
-            <p className="text-gray-700">
-              <strong>Great Hire</strong> responds to you as soon as possible.
-            </p>
-          </div>
-
-          <div>
-            <Link
-              to="/"
-              className="text-blue-600 hover:underline text-sm font-medium"
-            >
-              Return to job search
-            </Link>
-          </div>
+      <div className="flex-grow flex items-center justify-center bg-gray-100 p-4">
+        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform transition duration-700 ease-in-out animate-fadeIn">
+          <DotLottieReact
+            src="https://lottie.host/bf8c1194-fd41-420e-86bf-daf6d286d278/DBE1qCSi50.lottie"
+            loop
+            autoplay
+          />
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Job Applied Successfully!
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Great Hire responds to you as soon as possible.
+          </p>
+          <Link
+            to="/"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300"
+          >
+            Return to Job Search
+          </Link>
         </div>
       </div>
     </div>
