@@ -22,7 +22,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 const AdminList = () => {
   const { user } = useSelector((state) => state.auth);
   const [admins, setAdminList] = useState([]);
@@ -30,6 +30,8 @@ const AdminList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const adminsPerPage = 10;
+  const [adminId, setAdminId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const removeAdmin = async (userId) => {
     try {
@@ -45,6 +47,15 @@ const AdminList = () => {
     } catch (err) {
       console.error("Error fetching admin list:", err);
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    removeAdmin(adminId);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const fetchAdminList = async () => {
@@ -150,7 +161,10 @@ const AdminList = () => {
                       <Button variant="text" color="error">
                         <FaTrash
                           size={16}
-                          onClick={() => removeAdmin(admin?._id)}
+                          onClick={() => {
+                            setAdminId(admin?._id);
+                            setShowDeleteModal(true);
+                          }}
                         />
                       </Button>
                     ) : (
@@ -189,6 +203,13 @@ const AdminList = () => {
           </Button>
         </Box>
       </Box>
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

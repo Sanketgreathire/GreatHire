@@ -30,6 +30,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const RecruitersList = () => {
   const [search, setSearch] = useState("");
@@ -40,10 +41,12 @@ const RecruitersList = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [recruiterList, setRecruiterList] = useState([]);
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
   const jobStats = useSelector((state) => state.stats.jobStatsData);
   const { user } = useSelector((state) => state.auth);
+  const [selectedRecruiter, setSelectedRecruiter] = useState(null);
 
   const stats = [
     {
@@ -169,6 +172,20 @@ const RecruitersList = () => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteRecruiter(
+      selectedRecruiter?._id,
+      selectedRecruiter?.email,
+      selectedRecruiter?.companyId,
+      selectedRecruiter?.isAdmin
+    );
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const fetchRecruiterList = async () => {
@@ -324,14 +341,10 @@ const RecruitersList = () => {
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={20}
-                      onClick={() =>
-                        deleteRecruiter(
-                          recruiter._id,
-                          recruiter.email,
-                          recruiter.companyId,
-                          recruiter.isAdmin
-                        )
-                      }
+                      onClick={() => {
+                        setSelectedRecruiter(recruiter);
+                        setShowDeleteModal(true);
+                      }}
                     />
                   )}
                 </TableCell>
@@ -373,6 +386,14 @@ const RecruitersList = () => {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

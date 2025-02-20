@@ -26,6 +26,7 @@ import {
   fetchUserStats,
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Users = () => {
   const [search, setSearch] = useState("");
@@ -41,6 +42,8 @@ const Users = () => {
     (state) => state.stats.applicationStatsData
   );
   const userStats = useSelector((state) => state.stats.userStatsData);
+  const [userEmail, setUserEmail] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // fetch user list
   const fetchUserList = async () => {
@@ -78,6 +81,15 @@ const Users = () => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    handleDeleteAccount(userEmail);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   useEffect(() => {
@@ -195,7 +207,10 @@ const Users = () => {
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={16}
-                      onClick={() => handleDeleteAccount(user.email)}
+                      onClick={() => {
+                        setUserEmail(user.email);
+                        setShowDeleteModal(true);
+                      }}
                     />
                   )}
                 </TableCell>
@@ -234,6 +249,13 @@ const Users = () => {
           </div>
         </div>
       </div>
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

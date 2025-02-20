@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { COMPANY_API_END_POINT, RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+import {
+  COMPANY_API_END_POINT,
+  RECRUITER_API_END_POINT,
+} from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar";
@@ -11,7 +14,7 @@ import {
   fetchJobStats,
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
-
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
@@ -20,6 +23,7 @@ const CompanyDetails = () => {
   const dispatch = useDispatch();
   const [dloading, dSetLoading] = useState(false);
   const [company, setCompany] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchCompanyDetails = async () => {
     try {
@@ -61,10 +65,21 @@ const CompanyDetails = () => {
       }
     } catch (err) {
       console.error("Error deleting company:", err);
-      toast.error("There was an error deleting the company. Please try again later.");
+      toast.error(
+        "There was an error deleting the company. Please try again later."
+      );
     } finally {
       dSetLoading(false);
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    handleDeleteCompany();
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   // Function to validate and sanitize URL
@@ -92,24 +107,39 @@ const CompanyDetails = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Company Name</p>
-              <p className="text-xl text-gray-800 font-semibold">{company?.companyName}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.companyName}
+              </p>
             </div>
             <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Company Address</p>
-              <p className="text-xl text-gray-500 font-semibold">
-                Street Address: <span className="text-gray-800">{company?.address.streetAddress}</span>
+              <p className="text-sm text-gray-500 font-medium">
+                Company Address
               </p>
               <p className="text-xl text-gray-500 font-semibold">
-                City: <span className="text-gray-800">{company?.address.city}</span>
+                Street Address:{" "}
+                <span className="text-gray-800">
+                  {company?.address.streetAddress}
+                </span>
               </p>
               <p className="text-xl text-gray-500 font-semibold">
-                Postal Code: <span className="text-gray-800">{company?.address.postalCode}</span>
+                City:{" "}
+                <span className="text-gray-800">{company?.address.city}</span>
               </p>
               <p className="text-xl text-gray-500 font-semibold">
-                State: <span className="text-gray-800">{company?.address.state}</span>
+                Postal Code:{" "}
+                <span className="text-gray-800">
+                  {company?.address.postalCode}
+                </span>
               </p>
               <p className="text-xl text-gray-500 font-semibold">
-                Country: <span className="text-gray-800">{company?.address.country}</span>
+                State:{" "}
+                <span className="text-gray-800">{company?.address.state}</span>
+              </p>
+              <p className="text-xl text-gray-500 font-semibold">
+                Country:{" "}
+                <span className="text-gray-800">
+                  {company?.address.country}
+                </span>
               </p>
             </div>
             <div className="info-card">
@@ -147,8 +177,10 @@ const CompanyDetails = () => {
               Recruiters List
             </button>
             <button
-              onClick={handleDeleteCompany}
-              className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${dloading && "cursor-not-allowed"}`}
+              onClick={onConfirmDelete}
+              className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${
+                dloading && "cursor-not-allowed"
+              }`}
               disabled={dloading}
             >
               {dloading ? "Deleting..." : "Delete Company"}
@@ -156,6 +188,14 @@ const CompanyDetails = () => {
           </div>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };
