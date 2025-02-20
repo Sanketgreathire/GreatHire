@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const statusStyles = {
@@ -23,6 +22,7 @@ const AppliedJobTable = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalJobs, setTotalJobs] = useState(0); // Ensure default value is 0
   const jobsPerPage = 10;
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const AppliedJobTable = () => {
         );
         if (response.data.success) {
           setAppliedJobs(response.data.application);
-          console.log(response.data.application);
+          setTotalJobs(response.data.totalJobs ?? 0); // Ensure totalJobs is never undefined
         }
       } catch (error) {
         console.error("Error fetching applied jobs:", error);
@@ -51,7 +51,7 @@ const AppliedJobTable = () => {
     return <p className="text-center text-gray-600">Loading applied jobs...</p>;
   }
 
-  const totalPages = Math.ceil(appliedJobs.length / jobsPerPage);
+  const totalPages = Math.max(1, Math.ceil((totalJobs ?? 0) / jobsPerPage)); // Ensures valid number
 
   // Function to handle row click and navigate to JobDescription
   const handleRowClick = (job) => {
@@ -113,26 +113,37 @@ const AppliedJobTable = () => {
 
       {/* Pagination Controls */}
       <div className="flex justify-between mt-4">
-        <Button
-          className="px-4 py-2 rounded-lg"
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
+          className={`px-4 py-2 rounded ${
+            currentPage === 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
         >
           Previous
-        </Button>
+        </button>
         <span className="text-gray-700">
-          Page {totalPages > 0 ? currentPage : 0} of {totalPages}
+          Page {currentPage} of {totalPages}
         </span>
-        <Button
-          className="px-4 py-2 rounded-lg"
-          disabled={appliedJobs.length < jobsPerPage}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded ${
+            currentPage === totalPages
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
         >
           Next
-        </Button>
+        </button>
       </div>
     </div>
   );
 };
 
 export default AppliedJobTable;
+
