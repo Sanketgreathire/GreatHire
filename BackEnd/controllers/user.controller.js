@@ -622,6 +622,7 @@ export const deleteAccount = async (req, res) => {
 
     // check is email valid
     if (!emailRegex.test(email)) {
+      console.log("gud");
       return res.status(400).json({
         message: "Invalid Email.",
         success: false,
@@ -640,7 +641,7 @@ export const deleteAccount = async (req, res) => {
 
     // Check if the logged-in user is either an Admin or the user themselves
     const admin = await Admin.findById(userId);
-    const isSelf = user._id === userId;
+    const isSelf = user._id.toString() === userId;
 
     if (!admin && !isSelf) {
       return res.status(403).json({

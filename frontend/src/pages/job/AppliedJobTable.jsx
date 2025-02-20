@@ -36,7 +36,6 @@ const AppliedJobTable = () => {
         );
         if (response.data.success) {
           setAppliedJobs(response.data.application);
-          console.log(response.data.application);
           
         }
       } catch (error) {

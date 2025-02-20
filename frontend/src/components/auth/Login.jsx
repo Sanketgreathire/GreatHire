@@ -75,9 +75,9 @@ const Login = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex flex-col-reverse md:flex-row h-screen">
+      <div className="flex flex-col-reverse md:flex-row h-screen relative top-[-10px]">
         {/* Left Section - Form */}
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-l from-white to-blue-100 ">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
