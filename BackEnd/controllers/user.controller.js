@@ -314,17 +314,17 @@ export const updateProfile = async (req, res) => {
       fullname,
       email,
       phoneNumber,
-      bio,
-      skills,
-      experience,
-      companyName,
-      experienceDetails,
       city,
       state,
       country,
+      experience,
       jobProfile,
+      companyName,
       currentCTC,
       expectedCTC,
+      experienceDetails,
+      bio,
+      skills,
     } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
@@ -409,6 +409,20 @@ export const updateProfile = async (req, res) => {
         jobProfile,
       };
     }
+    if (companyName) {
+      user.profile.experience = {
+        ...user.profile.experience,
+        companyName,
+      };
+    }
+
+    if (experienceDetails) {
+      user.profile.experience = {
+        ...user.profile.experience,
+        experienceDetails,
+      };
+    }
+
     if (currentCTC) user.profile.currentCTC = currentCTC;
     if (expectedCTC) user.profile.expectedCTC = expectedCTC;
     if (skillsArray.length) user.profile.skills = skillsArray;
@@ -622,6 +636,7 @@ export const deleteAccount = async (req, res) => {
 
     // check is email valid
     if (!emailRegex.test(email)) {
+      console.log("gud");
       return res.status(400).json({
         message: "Invalid Email.",
         success: false,
@@ -640,7 +655,7 @@ export const deleteAccount = async (req, res) => {
 
     // Check if the logged-in user is either an Admin or the user themselves
     const admin = await Admin.findById(userId);
-    const isSelf = user._id === userId;
+    const isSelf = user._id.toString() === userId;
 
     if (!admin && !isSelf) {
       return res.status(403).json({

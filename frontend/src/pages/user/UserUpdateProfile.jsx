@@ -17,8 +17,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
 
-  console.log(user);
-
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
