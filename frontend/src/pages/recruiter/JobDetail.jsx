@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Pencil } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/admin/Navbar";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 // this will use when user is admin
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
@@ -23,6 +24,7 @@ const JobDetail = () => {
   const [editedJob, setEditedJob] = useState({});
   const [jobOwner, setJobOwner] = useState(null);
   const [dloading, dsetLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -84,6 +86,15 @@ const JobDetail = () => {
     } finally {
       dsetLoading(false);
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteJob(id);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const handleInputChange = (e) => {
@@ -408,7 +419,9 @@ const JobDetail = () => {
                   className={`bg-red-600 hover:bg-red-700 ${
                     dloading ? "cursor-not-allowed" : ""
                   }`}
-                  onClick={() => deleteJob(id)}
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                  }}
                   disabled={dloading}
                 >
                   {dloading ? "Deleting..." : "Delete"}
@@ -438,6 +451,14 @@ const JobDetail = () => {
           )}
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

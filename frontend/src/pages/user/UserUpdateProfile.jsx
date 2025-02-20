@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { number } from "yup";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -17,8 +16,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [prevResumeName, setPrevResumeName] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
-
-  console.log(user);
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
@@ -31,8 +28,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     currentCTC: user?.profile?.currentCTC || "",
     expectedCTC: user?.profile?.expectedCTC || "",
     jobProfile: user?.profile?.experience?.jobProfile || "",
-    companyName: user?.profile?.companyName || "",
-    experienceDetails: user?.profile?.experienceDetails || "",
+    companyName: user?.profile?.experience?.companyName || "",
+    experienceDetails: user?.profile?.experience?.experienceDetails || "",
     city: user?.address?.city || "",
     state: user?.address?.state || "",
     country: user?.address?.country || "",
@@ -414,7 +411,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               value={input.bio}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="2"
+              rows="3"
               placeholder="Enter your bio..."
             />
             <p className="text-sm text-gray-600 mt-1 self-end text-right">

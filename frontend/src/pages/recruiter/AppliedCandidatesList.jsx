@@ -142,15 +142,20 @@ const AppliedCandidatesList = () => {
                         <div className="flex justify-center space-x-2">
                           {isValidHttpUrl(data.applicant.profile.resume) ? (
                             <a
-                              href={data.applicant.profile.resume}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 underline"
-                              title="View Resume"
-                              onClick={(event) => event.stopPropagation()}
-                            >
-                              <FiEye size={20} />
-                            </a>
+                            href={isValidHttpUrl(data.applicant.profile.resume) ? encodeURI(data.applicant.profile.resume) : "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline"
+                            title="View Resume"
+                            onClick={(event) => {
+                              if (!isValidHttpUrl(data.applicant.profile.resume)) {
+                                event.preventDefault();
+                              }
+                            }}
+                          >
+                            <FiEye size={20} />
+                          </a>
+                          
                           ) : (
                             <span className="text-red-500">Invalid URL</span>
                           )}

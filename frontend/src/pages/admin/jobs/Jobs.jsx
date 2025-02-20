@@ -23,6 +23,7 @@ import axios from "axios";
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Jobs = () => {
   const [search, setSearch] = useState("");
@@ -39,6 +40,8 @@ const Jobs = () => {
     (state) => state.stats.applicationStatsData
   );
   const { user } = useSelector((state) => state.auth);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   const toggleActive = async (jobId, isActive, companyId) => {
     try {
@@ -110,6 +113,15 @@ const Jobs = () => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
     }
+  };
+
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteJob(selectedJob._id, selectedJob.companyId);
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   const fetchJobList = async () => {
@@ -277,7 +289,10 @@ const Jobs = () => {
                     <Trash
                       className="text-red-500 cursor-pointer"
                       size={20}
-                      onClick={() => deleteJob(job._id, job.companyId)}
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setShowDeleteModal(true);
+                      }}
                     />
                   )}
                 </TableCell>
@@ -302,6 +317,14 @@ const Jobs = () => {
           </Button>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
     </>
   );
 };

@@ -40,7 +40,6 @@ import RecruiterList from "./pages/recruiter/RecruiterList";
 import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
-import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
@@ -219,14 +218,6 @@ const appRouter = createBrowserRouter([
     element: (
       <ProtectedRecruiterRoute>
         <AddRecruiter />
-      </ProtectedRecruiterRoute>
-    ),
-  },
-  {
-    path: "/recruiter/success",
-    element: (
-      <ProtectedRecruiterRoute>
-        <RecruiterSuccess />
       </ProtectedRecruiterRoute>
     ),
   },

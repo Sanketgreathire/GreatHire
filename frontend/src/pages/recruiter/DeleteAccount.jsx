@@ -9,10 +9,12 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import { removeCompany } from "@/redux/companySlice";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const DeleteAccount = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { recruiters } = useSelector((state) => state.recruiters);
   const { company } = useSelector((state) => state.company);
   const [deleteTooltip, setDeleteTooltip] = useState(false);
@@ -80,6 +82,15 @@ const DeleteAccount = () => {
     }
   };
 
+  const onConfirmDelete = () => {
+    setShowDeleteModal(false);
+    deleteAccount();
+  };
+
+  const onCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
     <>
       {company && user?.isActive ? (
@@ -142,7 +153,7 @@ const DeleteAccount = () => {
               <button
                 onMouseEnter={() => setDeleteTooltip(true)}
                 onMouseLeave={() => setDeleteTooltip(false)}
-                onClick={deleteAccount}
+                onClick={() => setShowDeleteModal(true)}
                 className={`w-full bg-red-600 text-white py-3 px-6 rounded-lg text-sm font-semibold hover:bg-red-500 transition-all ease-in-out ${
                   dloading && "cursor-not-allowed"
                 }`}
@@ -166,6 +177,13 @@ const DeleteAccount = () => {
             You are not verified by GreatHire
           </span>
         </p>
+      )}
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
       )}
     </>
   );
