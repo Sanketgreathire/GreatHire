@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -36,7 +35,6 @@ const AppliedJobTable = () => {
         );
         if (response.data.success) {
           setAppliedJobs(response.data.application);
-          
         }
       } catch (error) {
         console.error("Error fetching applied jobs:", error);
@@ -122,7 +120,7 @@ const AppliedJobTable = () => {
           Previous
         </Button>
         <span className="text-gray-700">
-          Page {currentPage} of {totalPages}
+          Page {totalPages > 0 ? currentPage : 0} of {totalPages}
         </span>
         <Button
           className="px-4 py-2 rounded-lg"
@@ -137,4 +135,3 @@ const AppliedJobTable = () => {
 };
 
 export default AppliedJobTable;
-

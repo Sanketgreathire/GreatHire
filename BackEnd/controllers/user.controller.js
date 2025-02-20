@@ -314,17 +314,17 @@ export const updateProfile = async (req, res) => {
       fullname,
       email,
       phoneNumber,
-      bio,
-      skills,
-      experience,
-      companyName,
-      experienceDetails,
       city,
       state,
       country,
+      experience,
       jobProfile,
+      companyName,
       currentCTC,
       expectedCTC,
+      experienceDetails,
+      bio,
+      skills,
     } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
@@ -409,6 +409,20 @@ export const updateProfile = async (req, res) => {
         jobProfile,
       };
     }
+    if (companyName) {
+      user.profile.experience = {
+        ...user.profile.experience,
+        companyName,
+      };
+    }
+
+    if (experienceDetails) {
+      user.profile.experience = {
+        ...user.profile.experience,
+        experienceDetails,
+      };
+    }
+
     if (currentCTC) user.profile.currentCTC = currentCTC;
     if (expectedCTC) user.profile.expectedCTC = expectedCTC;
     if (skillsArray.length) user.profile.skills = skillsArray;

@@ -21,14 +21,19 @@ export const validateProfileUpdate = [
     .matches(/^[6789]\d{9}$|^\d{10}$/)
     .withMessage("Invalid mobile number. It should be 10 digits"),
 
-  // Bio (If provided, max length: 300)
+  // Bio (If provided, max length: 500)
   body("bio")
     .optional()
+    .isString()
     .isLength({ max: 500 })
-    .withMessage("Bio cannot exceed 300 characters"),
+    .withMessage("Bio cannot exceed 500 characters"),
 
-  // // Skills (If provided, should be an array)
-  // body("skills").optional().isArray().withMessage("Skills should be an array"),
+  // Bio (If provided, max length: 500)
+  body("experienceDetails")
+    .optional()
+    .isString()
+    .isLength({ max: 750 })
+    .withMessage("Experience Details cannot exceed 750 characters"),
 
   // Experience (If provided, must be a number)
   body("experience")
@@ -40,6 +45,12 @@ export const validateProfileUpdate = [
   body("city").optional().isString().withMessage("City must be a string"),
   body("state").optional().isString().withMessage("State must be a string"),
   body("country").optional().isString().withMessage("Country must be a string"),
+
+  // Job Profile (If provided, should be a string)
+  body("companyName")
+    .optional()
+    .isString()
+    .withMessage("Company Name must be a string"),
 
   // Job Profile (If provided, should be a string)
   body("jobProfile")

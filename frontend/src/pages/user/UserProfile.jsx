@@ -26,7 +26,6 @@ const UserProfile = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
 
@@ -51,13 +50,11 @@ const UserProfile = () => {
     }
   };
 
-  // Called when the user confirms deletion in the modal
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteAccount();
   };
 
-  // Called when the user cancels deletion
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
@@ -67,6 +64,7 @@ const UserProfile = () => {
       <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-200">
         <Navbar />
         <div className="flex-grow">
+          {/* Profile Details Section */}
           <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
             {/* User Info Section */}
             <div className="flex flex-col items-center text-center border-b pb-8">
@@ -84,7 +82,7 @@ const UserProfile = () => {
                 {user?.fullname || "User Name"}
               </h1>
               <h1 className="mt-1 text-gray-600">
-                {user?.profile?.experience?.jobProfile || "job title"}
+                {user?.profile?.experience?.jobProfile || "Job Title"}
               </h1>
               <p className="text-gray-500 mt-1">
                 {`Experience: ${user?.profile?.experience?.duration} Year`}
@@ -99,6 +97,28 @@ const UserProfile = () => {
               </Button>
             </div>
 
+            {/* Experience Details Section */}
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                Experience Details
+              </h2>
+              <div className="flex items-center mt-2 pb-2">
+                <h2 className="text-sm font-semibold text-gray-800">
+                  Company Name:{" "}
+                  <span className="text-sm text-gray-600">
+                    {user?.profile?.experience?.companyName || "N/A"}
+                  </span>
+                </h2>
+              </div>
+              <div>
+                <p className="text-gray-600">
+                  {user?.profile?.experience?.experienceDetails ||
+                    "No experience details available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Profile Summary Section */}
             <div className="mt-8">
               <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
                 Profile Summary
@@ -152,7 +172,6 @@ const UserProfile = () => {
                     </span>
                   )}
                 </div>
-
                 <div className="flex items-center gap-4">
                   <LuMapPin size={25} className="text-blue-500" />
                   <span className="text-gray-700">
@@ -180,21 +199,6 @@ const UserProfile = () => {
                 ) : (
                   <span className="text-gray-600">No skills listed</span>
                 )}
-              </div>
-            </div>
-
-            {/* salary Section */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-                Salary
-              </h2>
-              <div className="flex mt-2">
-                <h2 className="w-1/2 text-gray-700">
-                  Current CTC: {user?.profile?.currentCTC || ""}{" "}
-                </h2>
-                <h2 className="text-gray-700 text-right">
-                  Expected CTC: {user?.profile?.expectedCTC || ""}{" "}
-                </h2>
               </div>
             </div>
 
@@ -230,7 +234,7 @@ const UserProfile = () => {
                 onClick={() => setShowDeleteModal(true)}
                 variant="destructive"
                 className={`bg-red-500 text-white hover:bg-red-700 ${
-                  loading && "cursor-not-allowed bg-red-400"
+                  loading ? "cursor-not-allowed bg-red-400" : ""
                 }`}
                 disabled={loading}
               >
