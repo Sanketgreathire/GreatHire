@@ -53,7 +53,7 @@ const Job = ({ job }) => {
 
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-2 min-h-[28px]">
         {job?.jobDetails?.urgentHiring === "Yes" && (
           <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
             Urgent Hiring
