@@ -7,7 +7,6 @@ import axios from "axios";
 import { BsSearch } from "react-icons/bs";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { FiUsers } from "react-icons/fi";
-import { Pagination } from "@/components/ui/pagination";
 import ApplicantDetails from "./ApplicantDetails";
 import { useNavigate } from "react-router-dom";
 
@@ -66,12 +65,8 @@ const AllApplicantsList = () => {
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (app) =>
-          app.applicant.fullname
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          app.applicant.emailId.email
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
+          app.applicant.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.applicant.emailId.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
           app.applicant.phoneNumber.number.includes(searchTerm)
       );
     }
@@ -81,12 +76,33 @@ const AllApplicantsList = () => {
   }, [selectedStatus, searchTerm, applicants]);
 
   // Pagination Logic
+  const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentApplicants = filteredApplicants.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentApplicants = filteredApplicants.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Inline Pagination Component
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    return (
+      <div className="flex justify-center mt-4 space-x-2">
+        {pages.map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 border rounded ${
+              currentPage === page
+                ? "bg-blue-700 text-white"
+                : "bg-white text-blue-700 hover:bg-blue-100"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -154,12 +170,8 @@ const AllApplicantsList = () => {
                           className="border-b hover:bg-gray-100 transition"
                         >
                           <td className="p-3">{app?.applicant?.fullname}</td>
-                          <td className="p-3">
-                            {app?.applicant?.emailId?.email}
-                          </td>
-                          <td className="p-3">
-                            {app?.applicant?.phoneNumber?.number}
-                          </td>
+                          <td className="p-3">{app?.applicant?.emailId?.email}</td>
+                          <td className="p-3">{app?.applicant?.phoneNumber?.number}</td>
                           <td className="p-3 text-center">
                             <span
                               className={`px-3 py-1 rounded-lg text-sm font-medium ${
@@ -188,9 +200,7 @@ const AllApplicantsList = () => {
                             <Button
                               className="bg-green-600 text-white hover:bg-green-700 px-3 py-1 text-sm rounded-lg"
                               onClick={() =>
-                                navigate(
-                                  `/recruiter/dashboard/job-details/${app?.job}`
-                                )
+                                navigate(`/recruiter/dashboard/job-details/${app?.job}`)
                               }
                             >
                               Job Details
@@ -200,10 +210,7 @@ const AllApplicantsList = () => {
                       ))
                     ) : (
                       <tr>
-                        <td
-                          colSpan={5}
-                          className="text-center p-4 text-gray-500"
-                        >
+                        <td colSpan={5} className="text-center p-4 text-gray-500">
                           No applicants found.
                         </td>
                       </tr>
@@ -212,15 +219,8 @@ const AllApplicantsList = () => {
                 </table>
               </div>
 
-              {/* Pagination */}
-              {filteredApplicants.length > itemsPerPage && (
-                <Pagination
-                  totalItems={filteredApplicants.length}
-                  itemsPerPage={itemsPerPage}
-                  currentPage={currentPage}
-                  onPageChange={setCurrentPage}
-                />
-              )}
+              {/* Inline Pagination */}
+              {renderPagination()}
             </div>
           </div>
         ) : (
