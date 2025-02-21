@@ -23,7 +23,7 @@ const AppliedJobTable = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalJobs, setTotalJobs] = useState(0); // Ensure default value is 0
-  const jobsPerPage = 10;
+  const jobsPerPage = 2;
   const navigate = useNavigate();
 
   useEffect(() => {
