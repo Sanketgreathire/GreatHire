@@ -3,9 +3,9 @@ import { io } from "socket.io-client";
 import { BACKEND_URL, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector } from "react-redux";
 import axios from "axios";
-
 const useNotification = () => {
   const [notifications, setNotifications] = useState([]);
+  const [messages, setMessages] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
   // Create a ref to hold the audio instance (make sure you have /notification.mp3 in your public folder)
@@ -20,7 +20,7 @@ const useNotification = () => {
   useEffect(() => {
     const socket = io(BACKEND_URL);
 
-    socket.on("newNotificationCount", ({ totalUnseenNotifications }) => {
+    socket.on("newNotificationCount", async ({ totalUnseenNotifications }) => {
       // Update notifications and play sound only if the new count is greater than the previous one
       setNotifications((prevCount) => {
         if (totalUnseenNotifications > prevCount) {
@@ -33,6 +33,21 @@ const useNotification = () => {
         }
         return totalUnseenNotifications;
       });
+      // Call API to fetch unseen messages from JobReport and Contact models
+      try {
+        const response = await axios.get(
+          `${NOTIFICATION_API_END_POINT}/unseen/messages`,
+          { withCredentials: true }
+        );
+        if (response.data.success) {
+          setMessages((prevMessages) => [
+            ...response.data.messages,
+            ...prevMessages,
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching unseen messages:", error);
+      }
     });
 
     return () => {
@@ -40,27 +55,47 @@ const useNotification = () => {
     };
   }, []);
 
+  // fetch all message
+  const fetchMessages = async () => {
+    try {
+      const { data } = await axios.get(
+        `${NOTIFICATION_API_END_POINT}/getAll-messages`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        setMessages(data.messages);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  // fetch all notification
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await axios.get(`${NOTIFICATION_API_END_POINT}/unseen`, {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setNotifications(data.totalUnseenNotifications);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
   // fetch unseen notification
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const { data } = await axios.get(
-          `${NOTIFICATION_API_END_POINT}/unseen`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (data.success) {
-          setNotifications(data.totalUnseenNotifications);
-        }
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
-    if (user) fetchNotifications();
+    if (user) {
+      // this function help to fetch notification and message after user login
+      fetchMessages();
+      fetchNotifications();
+    }
   }, [user]);
 
-  return { notifications };
+  return { notifications, messages, setMessages };
 };
 
 export default useNotification;

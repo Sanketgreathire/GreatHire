@@ -1,6 +1,7 @@
 import express from "express";
 import {
-  getUnseenNotifications,
+  getUnseenNotificationsCount,
+  getUnseenMessages,
   getMessages,
   markAsSeen,
   deleteContact,
@@ -11,7 +12,8 @@ import isAuthenticated from "../middlewares/isAuthenticated.js";
 const router = express.Router();
 
 // Define your routes here
-router.get("/unseen", isAuthenticated, getUnseenNotifications);
+router.get("/unseen", isAuthenticated, getUnseenNotificationsCount);
+router.get("/unseen/messages", isAuthenticated, getUnseenMessages);
 router.get("/getAll-messages", isAuthenticated, getMessages);
 router.put("/mark-seen", isAuthenticated, markAsSeen);
 
