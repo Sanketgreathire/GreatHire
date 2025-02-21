@@ -263,7 +263,7 @@ const PostedJobList = () => {
                               }}
                               className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
                             >
-                              Applicants Details
+                              Applicants List
                             </button>
                           </TableCell>
                         </TableRow>
