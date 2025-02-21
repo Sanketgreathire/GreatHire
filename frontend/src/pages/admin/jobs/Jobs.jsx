@@ -175,7 +175,7 @@ const Jobs = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredJobs.length / itemsPerPage));
   const paginatedJobs = filteredJobs.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage

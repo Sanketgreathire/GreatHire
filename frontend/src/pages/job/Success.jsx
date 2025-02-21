@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/shared/Navbar";
+import Navbar from "@/components/shared/Navbar";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const Success = () => {

@@ -19,7 +19,7 @@ import OurService from "./pages/services/OurService";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Success from "./pages/Success";
+import Success from "./pages/job/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
 
