@@ -55,7 +55,7 @@ export const createOrderForService = async (req, res) => {
 };
 
 export const createOrderForJobPlan = async (req, res) => {
-  try {
+  try { 
     const { planName, companyId, amount, jobBoost } = req.body;
 
     const userId = req.id;

@@ -7,7 +7,6 @@ import {
   ORDER_API_END_POINT,
   REVENUE_API_END_POINT,
 } from "@/utils/ApiEndPoint";
-import GreatHireLogo from "../../assets/Great.png";
 
 const CollectUserDetails = ({ selectedPlan }) => {
   const [formData, setFormData] = useState({
@@ -82,7 +81,6 @@ const CollectUserDetails = ({ selectedPlan }) => {
         currency,
         name: "GreatHire",
         description: selectedPlan?.headline,
-        image: { GreatHireLogo },
         order_id: orderId,
         handler: async (response) => {
           const verificationResponse = await axios.post(

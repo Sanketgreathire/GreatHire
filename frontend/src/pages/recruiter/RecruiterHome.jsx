@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useSelector, useDispatch } from "react-redux";
+import { JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import {
   FaUsers,
@@ -9,9 +9,11 @@ import {
   FaChevronUp,
   FaChevronDown,
 } from "react-icons/fa"; // Importing icons
+import { addCompany } from "@/redux/companySlice";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [loading, setLoading] = useState(false);
@@ -36,9 +38,28 @@ const RecruiterHome = () => {
     }
   };
 
+  const fetchCompanyByUserId = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${COMPANY_API_END_POINT}/company-by-userid`,
+        { userId: user?._id },
+        { withCredentials: true }
+      );
+      if (response?.data.success) {
+        dispatch(addCompany(response?.data.company));
+      }
+    } catch (err) {
+      console.error(`Error fetching company by user: ${err}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (user && company && !jobsStatistics) {
+    if (user && company) {
       fetchJobsStatistics();
+      fetchCompanyByUserId();
     }
   }, [user]);
 
@@ -169,7 +190,7 @@ const RecruiterHome = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}

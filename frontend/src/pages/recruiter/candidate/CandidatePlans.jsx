@@ -9,7 +9,6 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import GreatHireLogo from "../../../assets/Great.png";
 import { updateCandidateCredits } from "@/redux/companySlice";
 import { useNavigate } from "react-router-dom";
 import { REVENUE_API_END_POINT } from "../../../utils/ApiEndPoint";
@@ -125,7 +124,7 @@ function CandidatePlans() {
         currency,
         name: "GreatHire",
         description: plan?.name,
-        image: { GreatHireLogo },
+        
         order_id: orderId,
         handler: async (response) => {
           const verificationResponse = await axios.post(

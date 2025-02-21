@@ -9,7 +9,6 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import GreatHireLogo from "../../assets/Great.png";
 import { updateMaxPostJobs } from "@/redux/companySlice";
 import { addJobPlan } from "@/redux/jobPlanSlice";
 import { REVENUE_API_END_POINT } from "../../utils/ApiEndPoint";
@@ -120,14 +119,13 @@ function RecruiterPlans() {
       );
 
       const { orderId, amount, currency } = response.data;
-      
+
       const options = {
         key: razorpay_key_id,
         amount,
         currency,
         name: "GreatHire",
         description: plan?.name,
-        image: { GreatHireLogo },
         order_id: orderId,
         handler: async (response) => {
           const verificationResponse = await axios.post(
@@ -141,7 +139,7 @@ function RecruiterPlans() {
             },
             { withCredentials: true }
           );
-
+          
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
             dispatch(updateMaxPostJobs(plan.jobBoost));
@@ -172,6 +170,11 @@ function RecruiterPlans() {
         },
         theme: { color: "#528FF0" },
       };
+
+      if (typeof window.Razorpay === "undefined") {
+        toast.error("Razorpay SDK not loaded. Please try again.");
+        return;
+      }
 
       const rzp1 = new window.Razorpay(options);
       rzp1.open();

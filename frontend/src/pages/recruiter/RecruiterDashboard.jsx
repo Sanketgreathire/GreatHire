@@ -26,7 +26,6 @@ const RecruiterDashboard = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
       try {
@@ -46,10 +45,8 @@ const RecruiterDashboard = () => {
       }
     };
 
-    if (!company) {
-      fetchCompanyByUserId();
-    }
-  }, [user, dispatch, company]);
+    fetchCompanyByUserId();
+  }, [user]);
 
   useEffect(() => {
     if (company) {
