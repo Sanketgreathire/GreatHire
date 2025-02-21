@@ -134,7 +134,7 @@ const CreateCompany = () => {
   return (
     <>
       <Navbar />
-      {user && !user?.isCompanyCreated && user?.isActive ? (
+      {user && !user?.isCompanyCreated ? (
         <div className="flex m-2 min-h-screen">
           <div className="w-full md:w-1/2 flex flex-col space-y-2 p-4">
             <h1 className="text-2xl font-bold mb-6 text-center text-blue-600">

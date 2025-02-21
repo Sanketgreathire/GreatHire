@@ -179,7 +179,7 @@ const PostedJobList = () => {
 
               {/* Table Container with overflow for responsiveness */}
               <div className="overflow-x-auto w-full">
-                <Table className="w-full  border border-gray-300">
+                <Table className="w-full  border border-gray-300 bg-white">
                   <TableHeader className="bg-gray-300">
                     <TableRow>
                       <TableHead className="text-center">Sr No.</TableHead>
