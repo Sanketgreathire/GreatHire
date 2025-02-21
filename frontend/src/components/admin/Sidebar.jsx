@@ -55,7 +55,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed z-30 h-screen overflow-y-scroll bg-white flex flex-col transition-all duration-300 ${
+      className={`fixed inset-y-0 z-30 overflow-y-scroll bg-white flex flex-col transition-all duration-300 ${
         isOpen ? "w-52" : "w-16"
       } md:w-52`}
     >
@@ -74,7 +74,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className={`flex-1 ${isOpen ? "p-4" : "p-2"}`}>
+      <nav className={`flex-1 ${isOpen ? "p-4 pt-8" : "p-2 pt-8"}`}>
         <ul className="space-y-2 text-gray-600">
           {navItems.map((item) => (
             <li key={item.path}>
@@ -108,9 +108,9 @@ const Sidebar = () => {
 
       {/* Profile Section */}
       <div
-        className={`${
+        className={`border-t border-gray-300 fixed bottom-0 w-16 md:w-52 ${
           isOpen ? "p-4 w-52" : "w-16"
-        } border-t border-gray-300 fixed bottom-0 md:w-52`}
+        }`}
       >
         <NavLink
           to={user ? "/admin/profile" : "/admin/login"}
@@ -129,7 +129,7 @@ const Sidebar = () => {
                 alt={`${user.fullname || "User"}'s avatar`}
                 className="h-10 w-10 rounded-full border object-cover"
               />
-              <div>
+              <div className={`md:block ${isOpen ? "block" : "hidden"}`}>
                 <p className="font-bold">{user.fullname}</p>
                 <p className="font-medium text-gray-400">{user.role}</p>
               </div>

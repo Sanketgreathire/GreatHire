@@ -60,42 +60,11 @@ const UpdateProfile = ({ open, setOpen }) => {
         >
           ✖
         </button>
-        <h2 className="text-lg text-center font-semibold">Update Profile</h2>
+        <h2 className="text-xl text-center font-semibold">Update Profile</h2>
 
-        <form className="space-y-4 mt-4">
-          <div className="grid gap-2 py-2">
-            {/* Name and Profile Image Grid */}
-            <div className="grid grid-cols-3 gap-4 items-center">
-              {/* Name and Email Fields on the Left */}
-              <div className="col-span-2 grid gap-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="fullname" className="w-20">
-                    Name
-                  </Label>
-                  <Input
-                    id="fullname"
-                    name="fullname"
-                    value={input.fullname}
-                    onChange={changeEventHandler}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="email" className="w-20">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    value={input.email}
-                    onChange={changeEventHandler}
-                    readOnly
-                  />
-                </div>
-              </div>
-
-              {/* Profile Image on the Right */}
-              <div className="relative flex flex-col items-center">
-                <div className="relative w-24 h-24">
+        {/* Profile Image on the top centre */}
+        <div className="relative flex flex-col items-center">
+                <div className="relative w-24 h-24 mt-8">
                   {previewImage ? (
                     <img
                       src={previewImage}
@@ -126,13 +95,35 @@ const UpdateProfile = ({ open, setOpen }) => {
                   onChange={handleImageChange}
                 />
               </div>
-            </div>
 
-            {/* Phone and Position Fields in a Single Row */}
-            <div className="grid grid-cols-1 gap-4 items-center">
-              {/* Phone Field */}
-              <div className="flex items-center gap-6">
-                <Label htmlFor="phoneNumber" className="whitespace-nowrap">
+        <form className="space-y-4">
+              <div className="flx flex-col">
+                  <Label htmlFor="fullname" className="font-semibold">
+                    Name
+                  </Label>
+                  <Input
+                    id="fullname"
+                    name="fullname"
+                    value={input.fullname}
+                    onChange={changeEventHandler}
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <Label htmlFor="email" className="font-semibold">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    value={input.email}
+                    onChange={changeEventHandler}
+                    readOnly
+                  />
+                </div>
+
+              <div className="flex flex-col">
+                <Label htmlFor="phoneNumber" className="font-semibold">
                   Phone
                 </Label>
                 <Input
@@ -145,9 +136,8 @@ const UpdateProfile = ({ open, setOpen }) => {
                 />
               </div>
 
-              {/* Position Field */}
-              <div className="flex items-center gap-4">
-                <Label htmlFor="position" className="whitespace-nowrap">
+              <div className="flex flex-col">
+                <Label htmlFor="position" className="font-semibold">
                   Position
                 </Label>
                 <Input
@@ -159,8 +149,6 @@ const UpdateProfile = ({ open, setOpen }) => {
                   placeholder="Enter Your Position"
                 />
               </div>
-            </div>
-          </div>
 
           {/* Submit Button */}
           <div>
@@ -175,7 +163,7 @@ const UpdateProfile = ({ open, setOpen }) => {
             )}
           </div>
         </form>
-      </div>
+    </div>
     </div>
   );
 };

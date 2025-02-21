@@ -105,7 +105,7 @@ const Navbar = ({ linkName }) => {
                   alt={`${user?.fullname || "User"}'s avatar`}
                   className="h-10 w-10 rounded-full border object-cover"
                 />
-                <div>
+                <div className="hidden md:block">
                   <p className="font-bold">{user?.fullname}</p>
                   <p className="font-medium text-gray-400">
                     {user?.role || "User"}
