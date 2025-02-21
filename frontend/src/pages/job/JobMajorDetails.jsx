@@ -1,4 +1,4 @@
-import React, { useEffect, useState,  } from "react";
+import React, { useEffect, useState } from "react";
 import { BsPersonWorkspace } from "react-icons/bs";
 import { HiLightBulb } from "react-icons/hi";
 import { PiMoneyWavyFill } from "react-icons/pi";
@@ -11,7 +11,7 @@ const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   return (
-    <div >
+    <div>
       {/* profile insight */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 ">
         <div>
@@ -72,7 +72,10 @@ const JobMajorDetails = ({ selectedJob }) => {
           <div className="flex flex-wrap gap-2 mt-2">
             <div className="flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
               <span className="font-bold">
-                {selectedJob?.jobDetails?.experience} Years
+                {selectedJob?.jobDetails?.experience}{" "}
+                {selectedJob?.jobDetails?.experience !== "Fresher" &&
+                  selectedJob?.jobDetails?.experience !== "fresher" &&
+                  "Years"}
               </span>
             </div>
           </div>

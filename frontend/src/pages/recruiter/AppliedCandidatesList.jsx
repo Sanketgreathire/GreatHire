@@ -15,7 +15,6 @@ import ApplicantDetails from "./ApplicantDetails";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
 
-
 const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
 
 const statusStyles = {
@@ -66,9 +65,11 @@ const AppliedCandidatesList = () => {
   }, [jobId]);
 
   const filteredApplicants = applicants?.filter((data) => {
-    const matchesSearch = data?.applicant?.fullname
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    const matchesSearch =
+      data?.applicant?.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      data?.applicant?.applicant?.emailId?.email
+        .toLowerCase()
+        .includes(search.toLowerCase());
     const matchesStatus =
       statusFilter === "All" || data.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -93,7 +94,7 @@ const AppliedCandidatesList = () => {
                 <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
                 <input
                   type="text"
-                  placeholder="Search by name"
+                  placeholder="Search by name, email"
                   className="pl-10 p-2 border border-gray-300 rounded-md w-full"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -113,7 +114,7 @@ const AppliedCandidatesList = () => {
               </select>
             </div>
 
-            <Table className="w-full border-collapse border border-gray-300">
+            <Table className="w-full border-collapse border border-gray-300 bg-white">
               <TableHeader className="bg-gray-300 text-center">
                 <TableRow>
                   <TableHead className="text-center">Sr No.</TableHead>
@@ -142,20 +143,25 @@ const AppliedCandidatesList = () => {
                         <div className="flex justify-center space-x-2">
                           {isValidHttpUrl(data.applicant.profile.resume) ? (
                             <a
-                            href={isValidHttpUrl(data.applicant.profile.resume) ? encodeURI(data.applicant.profile.resume) : "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline"
-                            title="View Resume"
-                            onClick={(event) => {
-                              if (!isValidHttpUrl(data.applicant.profile.resume)) {
-                                event.preventDefault();
+                              href={
+                                isValidHttpUrl(data.applicant.profile.resume)
+                                  ? encodeURI(data.applicant.profile.resume)
+                                  : "#"
                               }
-                            }}
-                          >
-                            <FiEye size={20} />
-                          </a>
-                          
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline"
+                              title="View Resume"
+                              onClick={(event) => {
+                                if (
+                                  !isValidHttpUrl(data.applicant.profile.resume)
+                                ) {
+                                  event.preventDefault();
+                                }
+                              }}
+                            >
+                              <FiEye size={20} />
+                            </a>
                           ) : (
                             <span className="text-red-500">Invalid URL</span>
                           )}

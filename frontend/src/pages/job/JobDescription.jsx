@@ -10,7 +10,6 @@ const JobDescription = () => {
   const { selectedJob } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  
 
   const isApplied =
     selectedJob?.application?.some(
@@ -163,7 +162,10 @@ const JobDescription = () => {
                   Experience:
                 </h4>
                 <p className="text-gray-600 text-base">
-                  {selectedJob?.jobDetails.experience || "Not specified"} years
+                  {selectedJob?.jobDetails.experience || "Not specified"}{" "}
+                  {selectedJob?.jobDetails?.experience !== "Fresher" &&
+                    selectedJob?.jobDetails?.experience !== "fresher" &&
+                    "Years"}
                 </p>
               </div>
               <div>

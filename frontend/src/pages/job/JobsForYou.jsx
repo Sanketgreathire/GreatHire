@@ -128,7 +128,7 @@ const JobsForYou = () => {
             onClick={() => handleJobClick(job)} // Clicking on job card will show the details
           >
             <div className="flex justify-between items-center">
-              {job?.jobDetails?.urgentHiring && (
+              {job?.jobDetails?.urgentHiring === "Yes" && (
                 <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
                   Urgent Hiring
                 </p>
