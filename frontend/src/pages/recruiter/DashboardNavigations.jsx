@@ -42,7 +42,7 @@ const DashboardNavigations = () => {
       {/* 🔹 Sidebar */}
       <div
         className={`
-          fixed top-0 lg:top-16 border-t-2 border-gray-300 left-0 z-30 bg-gradient-to-b from-white via-blue-100 to-white shadow-lg transition-transform duration-300 ease-in-out
+          fixed top-0 lg:top-16 border-t-2 border-gray-300 left-0 z-30 bg-gradient-to-b bg-white transition-transform duration-300 ease-in-out
           w-64 h-screen transform ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }

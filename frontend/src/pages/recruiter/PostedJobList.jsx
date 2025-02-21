@@ -179,7 +179,7 @@ const PostedJobList = () => {
 
               {/* Table Container with overflow for responsiveness */}
               <div className="overflow-x-auto w-full">
-                <Table className="w-full  border border-gray-300">
+                <Table className="w-full  border border-gray-300 bg-white">
                   <TableHeader className="bg-gray-300">
                     <TableRow>
                       <TableHead className="text-center">Sr No.</TableHead>
@@ -263,7 +263,7 @@ const PostedJobList = () => {
                               }}
                               className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
                             >
-                              Applicants Details
+                              Applicants List
                             </button>
                           </TableCell>
                         </TableRow>

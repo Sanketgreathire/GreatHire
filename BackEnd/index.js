@@ -67,7 +67,7 @@ app.use(
 // 📌 Rate Limiting (Limits API requests per IP)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Max 100 requests per IP per window
+  max: 200, // Max 200 requests per IP per window
   message: "Too many requests, please try again later.",
   headers: true,
 });

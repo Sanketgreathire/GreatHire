@@ -120,7 +120,7 @@ function RecruiterPlans() {
       );
 
       const { orderId, amount, currency } = response.data;
-
+      
       const options = {
         key: razorpay_key_id,
         amount,
@@ -279,7 +279,7 @@ function RecruiterPlans() {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}
