@@ -22,20 +22,19 @@ const AppliedJobTable = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalJobs, setTotalJobs] = useState(0); // Ensure default value is 0
   const jobsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppliedJobs = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get(
-          `${APPLICATION_API_END_POINT}/get?page=${currentPage}&limit=${jobsPerPage}`,
-          { withCredentials: true }
-        );
+        // If your API always returns all jobs, remove the query params.
+        const response = await axios.get(`${APPLICATION_API_END_POINT}/get`, {
+          withCredentials: true,
+        });
         if (response.data.success) {
           setAppliedJobs(response.data.application);
-          setTotalJobs(response.data.totalJobs ?? 0); // Ensure totalJobs is never undefined
         }
       } catch (error) {
         console.error("Error fetching applied jobs:", error);
@@ -45,15 +44,24 @@ const AppliedJobTable = () => {
     };
 
     fetchAppliedJobs();
-  }, [currentPage]);
+  }, []);
 
   if (loading) {
-    return <p className="text-center text-gray-600">Loading applied jobs...</p>;
+    return (
+      <p className="text-center text-gray-600">
+        Loading applied jobs...
+      </p>
+    );
   }
 
-  const totalPages = Math.max(1, Math.ceil((totalJobs ?? 0) / jobsPerPage)); // Ensures valid number
+  // Use client-side pagination by slicing the array
+  const totalJobs = appliedJobs.length;
+  const totalPages = Math.ceil(totalJobs / jobsPerPage) || 1;
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = appliedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  // Function to handle row click and navigate to JobDescription
+  // Function to handle row click and navigate to Job Description
   const handleRowClick = (job) => {
     if (job.job?._id) {
       navigate(`/description/${job.job._id}`);
@@ -74,8 +82,8 @@ const AppliedJobTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {appliedJobs.length > 0 ? (
-            appliedJobs.map((job, index) => (
+          {currentJobs.length > 0 ? (
+            currentJobs.map((job, index) => (
               <TableRow
                 key={index}
                 className="hover:bg-gray-50 transition duration-150 cursor-pointer"
@@ -135,7 +143,7 @@ const AppliedJobTable = () => {
           className={`px-4 py-2 rounded ${
             currentPage === totalPages
               ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-blue-700 text-white hover:bg-blue-800"
           }`}
         >
           Next
@@ -146,4 +154,3 @@ const AppliedJobTable = () => {
 };
 
 export default AppliedJobTable;
-
