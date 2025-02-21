@@ -329,7 +329,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
             <div className="w-full">
               <Label htmlFor="experience" className="block mb-2 font-semibold">
-                Experience
+                Experience in Years
               </Label>
               <Input
                 id="experience"
