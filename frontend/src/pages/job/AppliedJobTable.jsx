@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useJobDetails } from "@/context/JobDetailsContext";
+import JobDescription from "./JobDescription";
 
 const statusStyles = {
   Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
@@ -20,10 +22,13 @@ const statusStyles = {
 
 const AppliedJobTable = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
+  console.log(appliedJobs);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 10;
   const navigate = useNavigate();
+
+  const { selectedJob, setSelectedJob } = useJobDetails();
 
   useEffect(() => {
     const fetchAppliedJobs = async () => {
@@ -47,11 +52,7 @@ const AppliedJobTable = () => {
   }, []);
 
   if (loading) {
-    return (
-      <p className="text-center text-gray-600">
-        Loading applied jobs...
-      </p>
-    );
+    return <p className="text-center text-gray-600">Loading applied jobs...</p>;
   }
 
   // Use client-side pagination by slicing the array
@@ -62,9 +63,11 @@ const AppliedJobTable = () => {
   const currentJobs = appliedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
   // Function to handle row click and navigate to Job Description
-  const handleRowClick = (job) => {
-    if (job.job?._id) {
-      navigate(`/description/${job.job?._id}`);
+  const handleRowClick = (applicant, job) => {
+    if (job) {
+      // Merge the applicant into the job object under a new key
+      setSelectedJob({ ...job, applicant });
+      navigate(`/description`);
     } else {
       console.error("Job ID not found for this application.");
     }
@@ -87,7 +90,7 @@ const AppliedJobTable = () => {
               <TableRow
                 key={index}
                 className="hover:bg-gray-50 transition duration-150 cursor-pointer"
-                onClick={() => handleRowClick(job)}
+                onClick={() => handleRowClick(job.applicant, job.job)}
               >
                 <TableCell className="text-gray-700">
                   {new Date(job.createdAt).toLocaleDateString()}

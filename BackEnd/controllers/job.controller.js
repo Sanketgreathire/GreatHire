@@ -311,7 +311,7 @@ export const deleteJobById = async (req, res) => {
     const admin = await Admin.findById(userId); // Check if user is an admin
 
     // If the user is neither an admin nor a valid recruiter, deny access
-    if (!admin && !isUserAssociated(companyId, userId)) {
+    if (!admin && companyId && !isUserAssociated(companyId, userId)) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
