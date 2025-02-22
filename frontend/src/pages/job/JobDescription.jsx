@@ -10,11 +10,18 @@ const JobDescription = () => {
   const { selectedJob } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [isApplied, setApplied] = useState(false);
 
-  const isApplied =
-    selectedJob?.application?.some(
-      (application) => application.applicant === user?._id
-    ) || false;
+  useEffect(() => {
+    let isApply =
+      selectedJob?.application?.some(
+        (application) => application.applicant === user?._id
+      ) ||
+      selectedJob?.applicant === user?._id ||
+      false;
+
+    if (isApply) setApplied(isApply);
+  }, []);
 
   return (
     <div>

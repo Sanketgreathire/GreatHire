@@ -62,7 +62,7 @@ const JobDetail = () => {
       const response = await axios.delete(
         `${JOB_API_END_POINT}/delete/${jobId}`,
         {
-          data: { companyId: company._id }, // Send companyId in request body
+          data: { companyId: company?._id || null }, // Send companyId in request body
           withCredentials: true,
         }
       );
