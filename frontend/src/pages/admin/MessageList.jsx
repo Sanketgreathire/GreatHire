@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import useNotification from "@/hooks/useNotification";
@@ -61,6 +61,7 @@ const MessageList = () => {
       toast.error("Error deleting all messages");
     }
   };
+
 
   return (
     <>

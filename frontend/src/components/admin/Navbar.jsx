@@ -18,7 +18,7 @@ const Navbar = ({ linkName }) => {
   const dispatch = useDispatch();
 
   // Retrieve notifications from your custom hook
-  const { notifications } = useNotification();
+  const { notifications, setNotifications } = useNotification();
 
   const handleShowNotification = async () => {
     try {
@@ -29,6 +29,7 @@ const Navbar = ({ linkName }) => {
       );
 
       if (data.success) {
+        setNotifications(0);
         navigate("/admin/messages");
       }
     } catch (err) {
