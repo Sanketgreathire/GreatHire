@@ -210,7 +210,7 @@ const Reports = () => {
           <Card className="p-4">
             <h3 className="text-lg font-semibold">User Growth</h3>
             <ResponsiveContainer width="100%" height={250}>
-              {statsData?.revenueTrend.length === 0 ? (
+              {statsData?.newUsersTrend.length === 0 ? (
                 <p className="flex justify-center text-2xl text-gray-400">
                   No New User
                 </p>

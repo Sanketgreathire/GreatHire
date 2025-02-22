@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import useMessage from "@/hooks/useMessage";
+import useNotification from "@/hooks/useNotification";
 import { Trash2, Eye } from "lucide-react";
 import Navbar from "@/components/admin/Navbar";
 import { NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 const MessageList = () => {
   // Assuming useMessage returns messages and setMessages
-  const { messages, setMessages } = useMessage();
+  const { messages, setMessages } = useNotification();
   const navigate = useNavigate();
 
   // Delete a single message according to its type
