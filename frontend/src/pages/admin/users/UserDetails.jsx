@@ -53,6 +53,18 @@ const UserDetails = () => {
     fetchApplications();
   }, []);
 
+  const isValidImageURL = (url) => {
+    try {
+      const parsed = new URL(url);
+      return (
+        ["https:", "http:"].includes(parsed.protocol) &&
+        /\.(jpeg|jpg|png|gif|webp|svg)$/i.test(parsed.pathname)
+      );
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <>
       <Navbar linkName="User Details" />
@@ -64,7 +76,7 @@ const UserDetails = () => {
           <div className="md:w-1/3 border-r-2 border-gray-300 md:pr-6">
             <div className="flex flex-col items-center">
               <img
-                src={user?.profile?.profilePhoto}
+                src={isValidImageURL(user?.profile?.profilePhoto) ? encodeURI(user.profile.profilePhoto) : "/default-profile.png"}
                 alt="Profile"
                 className="w-32 h-32 rounded-full object-cover"
               />
@@ -143,7 +155,7 @@ const UserDetails = () => {
                 <div className="mt-2">
                   <h4 className="text-lg font-semibold">Resume</h4>
                   <a
-                    href={user.profile.resume}
+                    href={user.profile.resume && encodeURI(user.profile.resume)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 underline"
