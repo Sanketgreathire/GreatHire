@@ -64,7 +64,7 @@ const AppliedJobTable = () => {
   // Function to handle row click and navigate to Job Description
   const handleRowClick = (job) => {
     if (job.job?._id) {
-      navigate(`/description/${job.job._id}`);
+      navigate(`/description/${job.job?._id}`);
     } else {
       console.error("Job ID not found for this application.");
     }

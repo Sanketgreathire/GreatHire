@@ -28,7 +28,7 @@ const PostedJobList = () => {
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 5;
+  const jobsPerPage = 10;
 
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");

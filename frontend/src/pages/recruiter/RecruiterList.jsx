@@ -3,7 +3,6 @@ import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { removeRecruiter, toggleActiveStatus } from "@/redux/recruiterSlice.js";
-
 import { removeUserFromCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -110,7 +109,7 @@ const RecruiterList = () => {
     <>
       {company && user?.isActive ? (
         <div className="container mx-auto p-4 min-h-screen">
-          <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
+          <h2 className="text-2xl text-center underline font-semibold mb-4">Recruiter List</h2>
           <div className="mb-4 flex justify-between px-2">
             <input
               type="text"

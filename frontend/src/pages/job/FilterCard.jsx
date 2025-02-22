@@ -17,7 +17,7 @@ const filterData = [
   {
     filterType: "Job Title",
     array: [
-      "Frontend Developer", "Backend Developer", "FullStack Developer",
+      "Frontend Developer", "Backend Developer", "Full Stack Developer",
       "Website Designer", "Java Developer", "Data Science",
       "Graphic Designer", "Data Entry Operator", "Dotnet Developer"
     ]
