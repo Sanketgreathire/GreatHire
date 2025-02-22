@@ -4,7 +4,7 @@ import { BACKEND_URL, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector } from "react-redux";
 import axios from "axios";
 const useNotification = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState();
   const [messages, setMessages] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
@@ -95,7 +95,7 @@ const useNotification = () => {
     }
   }, [user]);
 
-  return { notifications, messages, setMessages };
+  return { notifications, setNotifications, messages, setMessages };
 };
 
 export default useNotification;
