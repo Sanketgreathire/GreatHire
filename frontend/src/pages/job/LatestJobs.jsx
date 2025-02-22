@@ -1,7 +1,7 @@
 import JobsForYou from "./JobsForYou.jsx";
 import { useEffect, useState } from "react";
 import { useJobDetails } from "@/context/JobDetailsContext.jsx";
-
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const LatestJobs = () => {
   const { jobs } = useJobDetails();
@@ -22,7 +22,12 @@ const LatestJobs = () => {
       </h1>
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+          <DotLottieReact
+            src="https://lottie.host/09b5a31e-9d2e-474f-b6a6-a041c2bba007/uz23eyZvbM.lottie"
+            loop
+            autoplay
+            style={{ width: "300px", height: "300px" }}
+          />
         </div>
       ) : jobs.length === 0 ? (
         <div className="text-center text-gray-500 mt-24 mb-20">
