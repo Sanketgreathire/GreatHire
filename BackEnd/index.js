@@ -2,7 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { createServer } from "https";
+import { createServer } from "http";
 import { Server } from "socket.io";
 import cron from "node-cron";
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
@@ -37,15 +37,10 @@ import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
-// Load SSL Certificates
-const options = {
-  key: fs.readFileSync("./key.pem"),
-  cert: fs.readFileSync("./cert.pem"),
-};
 
 dotenv.config();
 const app = express();
-const server = createServer(options,app);
+const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 // WebSocket Server with CORS
