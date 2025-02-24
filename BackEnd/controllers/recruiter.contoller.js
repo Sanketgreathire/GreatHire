@@ -10,7 +10,7 @@ import { Application } from "../models/application.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-import { validationResult } from "express-validator";
+import { check , validationResult } from "express-validator";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -18,7 +18,6 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
-import { check, validationResult } from "express-validator";
 
 export const register = [
   // Input validation
