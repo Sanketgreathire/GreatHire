@@ -5,6 +5,14 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
@@ -16,7 +24,7 @@ export const applyJob = async (req, res) => {
       state,
       country,
       coverLetter,
-      experience, // this is deatils of previous experience
+      experience, // this is details of previous experience
       jobTitle,
       company,
       jobId,
@@ -41,9 +49,7 @@ export const applyJob = async (req, res) => {
 
     // Check if the job is active
     if (!job.jobDetails.isActive) {
-      return res
-        .status(400)
-        .json({ success: false, message: "This job is not active" });
+      return res.status(400).json({ success: false, message: "This job is not active" });
     }
 
     // Update user details if necessary
@@ -58,8 +64,7 @@ export const applyJob = async (req, res) => {
     }
     if (city && city !== user.address.city) user.address.city = city;
     if (state && state !== user.address.state) user.address.state = state;
-    if (country && country !== user.address.country)
-      user.address.country = country;
+    if (country && country !== user.address.country) user.address.country = country;
 
     user.profile.coverLetter = coverLetter;
     user.profile.experience.experienceDetails = experience;
@@ -121,7 +126,7 @@ export const applyJob = async (req, res) => {
   }
 };
 
-//applied job....
+// Applied job
 export const getAppliedJobs = async (req, res) => {
   try {
     const userId = req.id;
@@ -146,10 +151,15 @@ export const getAppliedJobs = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
-//admin section to see user applied...
+
+// Admin section to see user applied
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
@@ -173,20 +183,21 @@ export const getApplicants = async (req, res) => {
   }
 };
 
-//update status
+// Update status
 export const updateStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const applicaionId = req.params.id;
+    const applicationId = req.params.id;
 
     if (!status) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Status is required.",
         success: false,
       });
     }
-    //find the applicationn by applicant id....
-    const application = await Application.findOne({ _id: applicaionId });
+
+    // Find the application by applicant id
+    const application = await Application.findOne({ _id: applicationId });
     if (!application) {
       return res.status(404).json({
         message: "Application not found.",
@@ -194,7 +205,7 @@ export const updateStatus = async (req, res) => {
       });
     }
 
-    //update status...
+    // Update status
     application.status = status;
     await application.save();
 
@@ -203,6 +214,13 @@ export const updateStatus = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
+
+// Use the middleware in your routes
+//app.post('/apply-job', isAuthenticated, applyJob);
