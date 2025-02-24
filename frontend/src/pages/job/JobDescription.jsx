@@ -111,7 +111,7 @@ const JobDescription = () => {
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Responsibilities:
               </h3>
-              <ul className="list-disc list-inside text-gray-600 text-base space-y-1">
+              <ul className="list-disc list-outside pl-5 text-gray-600 text-base space-y-1">
                 {selectedJob?.jobDetails.responsibilities?.length > 0 ? (
                   selectedJob?.jobDetails.responsibilities.map(
                     (responsibility, index) => (

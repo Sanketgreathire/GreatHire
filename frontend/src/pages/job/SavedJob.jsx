@@ -26,7 +26,7 @@ const SavedJobs = () => {
       <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 min-h-screen">
         <div className="px-4 py-4">
           <h1 className="text-2xl text-center underline font-semibold mb-6">
-            My Jobs
+            Saved Jobs
           </h1>
 
           {saveJobsList.length > 0 ? (

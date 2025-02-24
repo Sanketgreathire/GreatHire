@@ -162,25 +162,25 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       onClick={() => setOpen(false)}
     >
       <div
-        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-white w-full sm:max-w-[850px] sm:max-h-[90vh] sm:rounded-lg sm:shadow-lg sm:p-6 p-4 h-full sm:h-auto overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
           aria-label="Close"
         >
           ✖
         </button>
 
-        <h2 className="text-2xl text-center font-semibold mb-4">
+        <h2 className="text-3xl text-center font-semibold mb-4 text-gray-900">
           Update Profile
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Personal Details Section */}
           <div className="border-b pb-4">
-          <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
+          <h3 className="text-xl font-semibold mb-3 text-gray-700">Personal Details</h3>
           <div className="grid sm:grid-cols-2 gap-4 items-start">
           <div className="flex items-start gap-6">
               {/* Profile Image with Pencil Icon */}
@@ -300,7 +300,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
           {/* Professional Details Section */}
           <div>
-          <h3 className="text-lg font-semibold mb-3">Professional Details</h3>
+          <h3 className="text-xl font-semibold mb-6 text-gray-700">Professional Details</h3>
           <div className="space-y-4">
             <div className="w-full">
               <Label htmlFor="jobProfile" className="block mb-2 font-semibold">
