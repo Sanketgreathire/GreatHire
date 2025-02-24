@@ -276,50 +276,61 @@ export const getJobByCompanyId = async (req, res) => {
 };
 
 // job can be deleted either by recruiter or admin
-export const deleteJobById = async (req, res) => {
-  try {
-    const jobId = req.params.id;
-    const { companyId } = req.body;
-    const { userId } = req.id;
+export const deleteJobById = [
+  // Input validation
+  check("id").isMongoId().withMessage("Invalid job ID"),
+  check("companyId").isMongoId().withMessage("Invalid company ID"),
 
-    const admin = await Admin.findById(userId); // Check if user is an admin
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-    // If the user is neither an admin nor a valid recruiter, deny access
-    if (!admin && companyId && !isUserAssociated(companyId, userId)) {
-      return res.status(403).json({
-        message: "You are not authorized",
+      const jobId = req.params.id;
+      const { companyId } = req.body;
+      const userId = req.id;
+
+      const admin = await Admin.findById(userId); // Check if user is an admin
+
+      // If the user is neither an admin nor a valid recruiter, deny access
+      if (!admin && companyId && !await isUserAssociated(companyId, userId)) {
+        return res.status(403).json({
+          message: "You are not authorized",
+          success: false,
+        });
+      }
+
+      // Check if the job exists
+      const job = await Job.findById(jobId);
+      if (!job) {
+        return res.status(404).json({
+          success: false,
+          message: "Job not found.",
+        });
+      }
+
+      // Delete the job
+      await Job.findByIdAndDelete(jobId);
+
+      // Delete all applications related to this job
+      await Application.deleteMany({ job: jobId });
+
+      // Respond with success message
+      return res.status(200).json({
+        success: true,
+        message: "Job and related applications deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      return res.status(500).json({
         success: false,
+        message: "Internal server error.",
       });
     }
-
-    // Check if the job exists
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({
-        success: false,
-        message: "Job not found.",
-      });
-    }
-
-    // Delete the job
-    await Job.findByIdAndDelete(jobId);
-
-    // Delete all applications related to this job
-    await Application.deleteMany({ job: jobId });
-
-    // Respond with success message
-    return res.status(200).json({
-      success: true,
-      message: "Job and related applications deleted successfully.",
-    });
-  } catch (error) {
-    console.error("Error deleting job:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error.",
-    });
   }
-};
+];
 
 // bookmark the job
 export const bookmarkJob = async (req, res) => {
