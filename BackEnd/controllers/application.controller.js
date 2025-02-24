@@ -5,6 +5,14 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
@@ -206,3 +214,6 @@ export const updateStatus = async (req, res) => {
     console.log(error);
   }
 };
+
+// Use the middleware in your routes
+app.post('/apply-job', isAuthenticated, applyJob);
