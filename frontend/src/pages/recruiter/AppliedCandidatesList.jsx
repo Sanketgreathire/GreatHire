@@ -14,6 +14,8 @@ import axios from "axios";
 import ApplicantDetails from "./ApplicantDetails";
 import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
 const statusStyles = {
@@ -31,6 +33,7 @@ const AppliedCandidatesList = () => {
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
+  const navigate = useNavigate();
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -95,6 +98,14 @@ const AppliedCandidatesList = () => {
       >
         {!applicantDetailsModal ? (
           <>
+            {/* Back Button */}
+            <div>
+              <IoIosArrowRoundBack
+                size={35}
+                className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+                onClick={() => navigate(-1)}
+              />
+            </div>
             <h1 className="text-2xl font-bold mb-4 text-center underline">
               Applied Candidates List
             </h1>

@@ -59,12 +59,11 @@ const Job = ({ job }) => {
             Urgent Hiring
           </p>
         )}
-        <div className="flex items-center justify-between">
           {user &&
             !isApplied && ( // Hides the bookmark button if the user has applied
               <div
                 onClick={() => handleBookmark(job._id)}
-                className="cursor-pointer"
+                className="cursor-pointer ml-auto"
               >
                 {isBookmarked ? (
                   <FaBookmark size={25} className="text-green-700" />
@@ -73,9 +72,8 @@ const Job = ({ job }) => {
                 )}
               </div>
             )}
-        </div>
       </div>
-      <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
+      <h3 className="text-lg font-semibold line-clamp-2 h-[48px]">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
         <div>{job?.jobDetails?.companyName}</div>
         <div>
