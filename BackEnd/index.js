@@ -11,7 +11,7 @@ import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import csurf from "csurf"; // Import CSRF protection middleware
+// import csurf from "csurf"; // Import CSRF protection middleware
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -37,6 +37,7 @@ import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
+
 dotenv.config();
 const app = express();
 const server = createServer(app);
@@ -61,9 +62,9 @@ app.use(
   })
 );
 
-// 📌 CSRF Protection
-const csrfProtection = csurf({ cookie: true });
-app.use(csrfProtection);
+// // 📌 CSRF Protection
+// const csrfProtection = csurf({ cookie: true });
+// app.use(csrfProtection);
 
 // 📌 Rate Limiting (Limits API requests per IP)
 const apiLimiter = rateLimit({
