@@ -222,5 +222,4 @@ export const updateStatus = async (req, res) => {
   }
 };
 
-// Use the middleware in your routes
-app.post('/apply-job', isAuthenticated, applyJob);
+
