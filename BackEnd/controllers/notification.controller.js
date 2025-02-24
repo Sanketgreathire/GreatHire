@@ -1,5 +1,6 @@
 import JobReport from "../models/jobReport.model.js";
 import { Contact } from "../models/contact.model.js";
+import { check, validationResult } from "express-validator";
 
 export const getUnseenNotificationsCount = async (req, res) => {
   try {
@@ -158,36 +159,40 @@ export const markAsSeen = async (req, res) => {
 };
 
 // Controller to delete a single contact message by msgId
-export const deleteContact = async (req, res) => {
-  try {
-    const { msgId } = req.params;
+export const deleteContact = [
+  // Input validation
+  check("msgId").isMongoId().withMessage("Invalid message ID"),
 
-    if (!msgId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Message ID is required." });
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { msgId } = req.params;
+
+      const deletedContact = await Contact.findByIdAndDelete(msgId);
+
+      if (!deletedContact) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Contact message not found." });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Contact message deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting contact message:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Server error while deleting contact message.",
+      });
     }
-
-    const deletedContact = await Contact.findByIdAndDelete(msgId);
-
-    if (!deletedContact) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Contact message not found." });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Contact message deleted successfully.",
-    });
-  } catch (error) {
-    console.error("Error deleting contact message:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error while deleting contact message.",
-    });
   }
-};
+];
 
 // Controller to delete a single job report by msgId
 export const deleteJobReport = async (req, res) => {
