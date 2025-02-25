@@ -1,6 +1,9 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+// Import UI components
 import {
   Table,
   TableBody,
@@ -10,10 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+
+// Import API endpoint and context
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import JobDescription from "./JobDescription";
 
+// Define status styles for different job application statuses
 const statusStyles = {
   Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
   Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
@@ -21,23 +26,34 @@ const statusStyles = {
 };
 
 const AppliedJobTable = () => {
+  // State to store applied jobs
   const [appliedJobs, setAppliedJobs] = useState([]);
   console.log(appliedJobs);
+
+  // State to handle loading state
   const [loading, setLoading] = useState(true);
+
+  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 10;
+  
+  // Navigation hook
   const navigate = useNavigate();
 
+  // Access job details context
   const { selectedJob, setSelectedJob } = useJobDetails();
 
+  // Fetch applied jobs from API when the component mounts
   useEffect(() => {
     const fetchAppliedJobs = async () => {
       setLoading(true);
       try {
-        // If your API always returns all jobs, remove the query params.
+        // Fetch job applications with authentication
         const response = await axios.get(`${APPLICATION_API_END_POINT}/get`, {
           withCredentials: true,
         });
+
+        // Check if API call was successful
         if (response.data.success) {
           setAppliedJobs(response.data.application);
         }
@@ -51,21 +67,22 @@ const AppliedJobTable = () => {
     fetchAppliedJobs();
   }, []);
 
+  // Display loading message while data is being fetched
   if (loading) {
     return <p className="text-center text-gray-600">Loading applied jobs...</p>;
   }
 
-  // Use client-side pagination by slicing the array
+  // Pagination logic
   const totalJobs = appliedJobs.length;
   const totalPages = Math.ceil(totalJobs / jobsPerPage) || 1;
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = appliedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  // Function to handle row click and navigate to Job Description
+  // Handle table row click to navigate to job description
   const handleRowClick = (applicant, job) => {
     if (job) {
-      // Merge the applicant into the job object under a new key
+      // Store selected job details in context
       setSelectedJob({ ...job, applicant });
       navigate(`/description`);
     } else {
@@ -75,7 +92,9 @@ const AppliedJobTable = () => {
 
   return (
     <div className="p-5 bg-gray-50 shadow-md rounded-lg">
+      {/* Job Applications Table */}
       <Table className="w-full border-collapse border border-gray-200">
+        {/* Table Header */}
         <TableHeader className="bg-gray-100">
           <TableRow>
             <TableHead>Date</TableHead>
@@ -84,6 +103,8 @@ const AppliedJobTable = () => {
             <TableHead className="text-right">Status</TableHead>
           </TableRow>
         </TableHeader>
+
+        {/* Table Body */}
         <TableBody>
           {currentJobs.length > 0 ? (
             currentJobs.map((job, index) => (

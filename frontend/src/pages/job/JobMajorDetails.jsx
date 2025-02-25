@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// Import necessary modules and dependencies
+import React from "react";
 import { BsPersonWorkspace } from "react-icons/bs";
 import { HiLightBulb } from "react-icons/hi";
 import { PiMoneyWavyFill } from "react-icons/pi";

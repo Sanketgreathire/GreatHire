@@ -319,19 +319,20 @@ const ApplyForm = ({ setRight }) => {
               Application step 2 of 5
             </h6>
           </div>
-
-          <div className="mt-4 ">
+          <div className="mt-4">
             {fileURL || input.resume ? (
-              <div className="h-96">
+              <div className="h-96 flex flex-col items-center">
                 <Viewer fileUrl={fileURL || input.resume} />
-                <button
-                  onClick={() =>
-                    document.getElementById("resume-upload").click()
-                  }
-                  className="mt-4 bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                >
-                  Update Resume
-                </button>
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={() =>
+                      document.getElementById("resume-upload").click()
+                    }
+                    className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                  >
+                    Update Resume
+                  </button>
+                </div>
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx,.txt"
@@ -382,7 +383,7 @@ const ApplyForm = ({ setRight }) => {
           <div className="flex items-center justify-between mt-16">
             <Link
               to="/"
-              className="text-blue-600 hover:underline text-sm font-medium"
+              className="text-blue-600 hover:underline text-sm justify-center font-medium"
             >
               Return to job search
             </Link>
