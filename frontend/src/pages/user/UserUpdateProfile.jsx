@@ -1,22 +1,41 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { setUser } from "@/redux/authSlice";
+// Import React and useState hook for component state management
+import React, { useState } from "react";  
+
+// Import Redux hooks for dispatching actions and accessing state
+import { useDispatch, useSelector } from "react-redux";  
+
+// Import Axios for making API requests
+import axios from "axios";  
+
+// Import toast notifications for displaying success/error messages
+import { toast } from "react-hot-toast";  
+
+// Import Redux action to update the user state
+import { setUser } from "@/redux/authSlice";   
+
+// Import UI components for form elements and buttons
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
-import { Pencil } from "lucide-react";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+
+// Import icons for UI enhancement
+import { Loader2, Pencil } from "lucide-react";  
+
+// Import API endpoint for user-related requests
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
+
+
 
 const UserUpdateProfile = ({ open, setOpen }) => {
+
+  // State for managing loading state, resume URL, and previous resume name
   const [loading, setLoading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
   const [prevResumeName, setPrevResumeName] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
 
+  // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
@@ -37,12 +56,16 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     resumeOriginalName: user?.profile?.resumeOriginalName || "",
   });
 
+  // State for profile image preview
   const [previewImage, setPreviewImage] = useState(
     user?.profile?.profilePhoto || ""
   );
 
+// Character limits for bio and experience details
   const maxBioChars = 500;
   const maxExperienceChars = 750;
+
+  // Handles input changes, ensuring character limits for specific fields
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -61,6 +84,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+   // Handles file input change for resume upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -80,6 +104,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     e.target.value = ""; // Reset input value to allow re-upload of the same file
   };
 
+   // Removes the currently uploaded resume
   const removeResume = () => {
     setInput((prev) => ({
       ...prev,
@@ -90,6 +115,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     setPrevResumeName(input.resumeOriginalName);
   };
 
+  // Handles profile photo upload and preview
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -104,6 +130,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+  // Handles form submission to update user profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -132,6 +159,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
     try {
       setLoading(true);
+
+        // API call to update the user profile
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
         formData,
@@ -154,6 +183,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+  // If the modal is closed, return null to prevent rendering
   if (!open) return null;
 
   return (
@@ -165,6 +195,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+
+         {/* Close Button */}
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -174,6 +206,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           ✖
         </button>
 
+          {/* Modal Heading */}
         <h2 className="text-2xl text-center font-semibold mb-4">
           Update Profile
         </h2>
