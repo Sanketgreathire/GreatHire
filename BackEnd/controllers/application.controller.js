@@ -221,8 +221,3 @@ export const updateStatus = async (req, res) => {
     });
   }
 };
-<<<<<<< HEAD
-
-
-=======
->>>>>>> a47b86f1b8a852792b118247d80400e29e5e678c
