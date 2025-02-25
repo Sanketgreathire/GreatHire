@@ -363,41 +363,6 @@ const matchSignature = (
   return generatedSignature === razorpay_signature;
 };
 
-// Verify Payment Controller
-export const verifyPaymentForService = async (req, res) => {
-  try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      req.body;
-
-    if (
-      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
-    ) {
-      // Update the order status in the database
-      await serviceOrder.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        {
-          status: "paid",
-          paymentDetails: {
-            paymentId: razorpay_payment_id,
-            signature: razorpay_signature,
-          },
-        }
-      );
-
-      res
-        .status(200)
-        .json({ success: true, message: "Payment verified successfully" });
-    } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Payment verification failed" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
 export const verifyPaymentForJobPlans = async (req, res) => {
   try {
     const {
@@ -439,12 +404,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           .json({ success: false, message: "Company not found" });
       }
 
-      // If the plan is unlimited, set maxPostJobs accordingly
-      if (jobBoost === null) {
-        company.maxPostJobs = null; // this one set unlimited
-      } else {
-        company.maxPostJobs = company.maxPostJobs + jobBoost; // Add the jobBoost to existing maxPostJobs
-      }
+      company.maxJobPosts = company.maxJobPosts + jobBoost; // Add the jobBoost to existing maxPostJobs
 
       await company.save();
 
@@ -505,13 +465,8 @@ export const verifyPaymentForCandidatePlans = async (req, res) => {
           .json({ success: false, message: "Company not found" });
       }
 
-      // If the plan is unlimited, set maxPostJobs accordingly
-      if (creditBoost === null) {
-        company.creditedForCandidates = null; // this one set unlimited
-      } else {
-        company.creditedForCandidates =
-          company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
-      }
+      company.creditedForCandidates =
+        company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
 
       await company.save();
 

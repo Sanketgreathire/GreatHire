@@ -1,5 +1,4 @@
 import Razorpay from "razorpay";
-import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
@@ -8,51 +7,6 @@ const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-
-export const createOrderForService = async (req, res) => {
-  try {
-    const { userDetails, planDetails } = req.body;
-
-    // Check for an existing order
-    const existingOrder = await serviceOrder.findOne({
-      "userDetails.email": userDetails.email,
-      "planDetails.planId": planDetails.planId,
-      status: "created",
-    });
-
-    if (existingOrder) {
-      await serviceOrder.deleteOne({ _id: existingOrder._id });
-    }
-
-    // Create a new Razorpay order
-    const options = {
-      amount: planDetails.amount * 100, // Convert to paise
-      currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-    };
-
-    const razorpayOrder = await razorpayInstance.orders.create(options);
-
-    // Save new order to the database
-    const newOrder = new serviceOrder({
-      userDetails,
-      planDetails,
-      razorpayOrderId: razorpayOrder.id,
-      status: "created",
-    });
-    await newOrder.save();
-
-    res.status(200).json({
-      success: true,
-      orderId: razorpayOrder.id,
-      amount: razorpayOrder.amount / 100, // Convert back to original amount
-      currency: razorpayOrder.currency,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Failed to create order" });
-  }
-};
 
 export const createOrderForJobPlan = async (req, res) => {
   try { 

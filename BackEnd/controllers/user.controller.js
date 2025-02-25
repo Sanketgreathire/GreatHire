@@ -171,7 +171,7 @@ export const login = async (req, res) => {
 // login by google
 export const googleLogin = async (req, res) => {
   try {
-    const { code, role } = req.body;
+    let { code, role } = req.body;
 
     if (!code) {
       return res

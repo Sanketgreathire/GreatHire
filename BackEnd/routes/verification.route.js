@@ -5,7 +5,6 @@ import {
   requestOTPForEmail,
   requestOTPForNumber,
   verifyOTP,
-  verifyPaymentForService,
   verifyPaymentForJobPlans,
   verifyPaymentForCandidatePlans,
   updateEmailVerification,
@@ -48,7 +47,6 @@ router.post(
   requestOTPForNumber
 );
 router.post("/verify-otp", isAuthenticated, verifyOTP);
-router.post("/verify-payment-for-service", verifyPaymentForService);
 router.post(
   "/verify-payment-for-jobplan",
   isAuthenticated,

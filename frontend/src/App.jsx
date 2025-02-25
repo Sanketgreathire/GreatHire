@@ -21,7 +21,6 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/job/Success";
 import PageNotFound from "./pages/PageNotFound";
-import JobServicePlans from "./pages/services/JobServicePlans";
 
 // Recruiter Routes
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
@@ -153,10 +152,7 @@ const appRouter = createBrowserRouter([
     path: "/great-hire/services",
     element: <OurService />,
   },
-  {
-    path: "/job-service/plans",
-    element: <JobServicePlans />,
-  },
+  
   {
     path: "/forgot-password",
     element: <ForgotPassword />,

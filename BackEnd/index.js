@@ -182,7 +182,7 @@ io.on("connection", (socket) => {
 });
 
 // Cron Job to Check for Expired Plans (Runs every hour)
-cron.schedule("0 * * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Running cron job: Checking expired plans...");
   try {
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
