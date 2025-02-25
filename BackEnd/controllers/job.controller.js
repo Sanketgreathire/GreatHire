@@ -138,7 +138,7 @@ export const postJob = [
 
 //get all jobs.....
 export const getAllJobs = async (req, res) => {
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache");
 
   try {
