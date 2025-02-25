@@ -12,12 +12,6 @@ const jobSubscriptionSchema = new mongoose.Schema(
     },
     jobBoost: {
       type: Number,
-      validate: {
-        validator: function (v) {
-          return v === null || v >= 0; // Allow null for unlimited
-        },
-        message: "maxJobPosts must be null or a non-negative number",
-      },
       required: true,
     },
     purchaseDate: {
@@ -30,7 +24,8 @@ const jobSubscriptionSchema = new mongoose.Schema(
       required: true,
       default: function () {
         // Automatically set to one month after purchase
-        return new Date(new Date().setMonth(new Date().getMonth() + 1));
+        return new Date(Date.now() + 5 * 60 * 1000);
+        // return new Date(new Date().setMonth(new Date().getMonth() + 1));
       },
     },
     price: {
@@ -68,6 +63,7 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
   const now = new Date();
   if (this.expiryDate < now ) {
     // Expire the subscription
+    console.log()
     this.status = "Expired";
     await this.save();
 

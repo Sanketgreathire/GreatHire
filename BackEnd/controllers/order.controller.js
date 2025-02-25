@@ -1,5 +1,4 @@
 import Razorpay from "razorpay";
-import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
@@ -10,6 +9,18 @@ const razorpayInstance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+<<<<<<< HEAD
+export const createOrderForJobPlan = async (req, res) => {
+  try { 
+    const { planName, companyId, amount, jobBoost } = req.body;
+
+    const userId = req.id;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+=======
 export const createOrderForService = [
   // Input validation
   check("userDetails.email").isEmail().withMessage("Invalid email address"),
@@ -94,6 +105,7 @@ export const createOrderForJobPlan = [
       const existingSubscription = await JobSubscription.findOne({
         company: companyId,
         status: { $in: ["Hold", "Expired"] },
+>>>>>>> a47b86f1b8a852792b118247d80400e29e5e678c
       });
 
       if (existingSubscription) {

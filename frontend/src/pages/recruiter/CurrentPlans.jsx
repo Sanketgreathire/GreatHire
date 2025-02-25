@@ -79,18 +79,19 @@ const CurrentPlans = () => {
               )}
 
               {/* Upgrade Button (if no active plan) */}
-              {user?.emailId?.email === company?.adminEmail && !jobPlan && (
-                <div className="text-center mt-4">
-                  <Button
-                    onClick={() =>
-                      navigate("/recruiter/dashboard/upgrade-plans")
-                    }
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-lg"
-                  >
-                    Upgrade Plan
-                  </Button>
-                </div>
-              )}
+              {user?.emailId?.email === company?.adminEmail &&
+                company?.maxJobPosts === 0 && (
+                  <div className="text-center mt-4">
+                    <Button
+                      onClick={() =>
+                        navigate("/recruiter/dashboard/upgrade-plans")
+                      }
+                      className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-lg"
+                    >
+                      Upgrade Plan
+                    </Button>
+                  </div>
+                )}
             </div>
           </div>
         </div>
@@ -101,7 +102,7 @@ const CurrentPlans = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}

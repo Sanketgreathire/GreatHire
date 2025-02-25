@@ -7,67 +7,67 @@ const OurService = () => {
   const navigate = useNavigate();
   const services = [
     {
-      title: "Job Finder Services",
+      title: "Job Posting & Candidate Database Services",
       description:
-        "Discover the perfect job opportunities tailored to your skills and goals.",
+        "Publish job for your organization or find best candidate that fits with you goal .",
       icon: "🔍",
-      url: "/job-service/plans",
+      url: "/recruiter/signup",
     },
     {
       title: "Accounts and Payroll",
       description:
         "Streamline your financial operations and payroll management with precision.",
       icon: "💼",
-      url: "",
+      url: "/contact",
     },
     {
       title: "Digital Marketing",
       description:
         "Enhance your online presence and connect with your audience effectively.",
       icon: "📈",
-      url: "",
+      url: "/contact",
     },
     {
       title: "Staffing",
       description:
         "Find the right talent for your organization with our expert staffing solutions.",
       icon: "🤝",
-      url: "",
+      url: "/contact",
     },
     {
       title: "Web & Mobile App Development",
       description:
         "Develop and maintain high-quality web and mobile applications tailored to your needs.",
       icon: "📱",
-      url: "",
+      url: "/contact",
     },
     {
       title: "BPO",
       description:
         "Optimize business processes and reduce operational costs with our BPO services.",
       icon: "📞",
-      url: "",
+      url: "/contact",
     },
     {
       title: "Cybersecurity Services",
       description:
         "Protect your business with advanced cybersecurity solutions.",
       icon: "🔒",
-      url: "",
+      url: "/contact",
     },
     {
       title: "Cloud Computing Services",
       description:
         "Leverage cloud technologies to improve scalability and flexibility.",
       icon: "☁️",
-      url: "",
+      url: "/contact",
     },
     {
       title: "AI & Machine Learning",
       description:
         "Integrate AI and ML to automate processes and drive innovation.",
       icon: "🤖",
-      url: "",
+      url: "/contact",
     },
   ];
 

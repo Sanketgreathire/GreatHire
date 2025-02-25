@@ -19,7 +19,7 @@ function RecruiterPlans() {
     {
       name: "Basic",
       icon: AiFillSafetyCertificate,
-      price: "1",
+      price: "499",
       color: "blue",
       jobBoost: 10,
       features: [
@@ -35,7 +35,7 @@ function RecruiterPlans() {
     {
       name: "Standard",
       icon: FaRocket,
-      price: "0",
+      price: "699",
       jobBoost: 25,
       color: "indigo",
       features: [
@@ -50,11 +50,11 @@ function RecruiterPlans() {
     {
       name: "Premium",
       icon: FaGem,
-      price: "0",
-      jobBoost: null,
+      price: "1399",
+      jobBoost: 50,
       color: "purple",
       features: [
-        "Unlimited job posts",
+        "Boost 50 active job posts",
         "Dedicated success manager",
         "Custom API integration",
       ],

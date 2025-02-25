@@ -48,24 +48,12 @@ const companySchema = new mongoose.Schema(
     },
     maxJobPosts: {
       type: Number,
-      default: 10, // Default for Free plan
-      validate: {
-        validator: function (v) {
-          return v === null || v >= 0; // Allow null for unlimited
-        },
-        message: "maxJobPosts must be null or a non-negative number",
-      },
+      default: 5, // Default for Free plan
     },
 
     creditedForCandidates: {
       type: Number,
-      default: 35,
-      validate: {
-        validator: function (v) {
-          return v === null || v >= 0; // Allow null for unlimited
-        },
-        message: "Credited For Candidates must be null or a non-negative number",
-      },
+      default: 35, // Default for Free plan
     },
     userId: [
       {
