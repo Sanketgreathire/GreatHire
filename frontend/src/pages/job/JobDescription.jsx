@@ -1,27 +1,42 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
-import { useSelector } from "react-redux";
-import { useJobDetails } from "@/context/JobDetailsContext";
-import { IoIosArrowRoundBack } from "react-icons/io";
+
+// Hook for navigation
+import { useNavigate } from "react-router-dom"; 
+
+// Importing the Navbar component
+import Navbar from "@/components/shared/Navbar"; 
+
+// Importing the Footer component
+import Footer from "@/components/shared/Footer"; 
+
+// Hook for accessing Redux state
+import { useSelector } from "react-redux"; 
+
+// Context to access selected job details
+import { useJobDetails } from "@/context/JobDetailsContext"; 
+
+// Importing back arrow icon
+import { IoIosArrowRoundBack } from "react-icons/io"; 
 
 const JobDescription = () => {
-  const { selectedJob } = useJobDetails();
-  const { user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
-  const [isApplied, setApplied] = useState(false);
+  const { selectedJob } = useJobDetails(); // Getting selected job details from context
+  const { user } = useSelector((state) => state.auth); // Fetching the authenticated user from Redux store
+  const navigate = useNavigate(); // Hook to handle navigation
+  const [isApplied, setApplied] = useState(false); // State to track if the user has applied for the job
 
   useEffect(() => {
+    // Check if the user has applied for the job
     let isApply =
       selectedJob?.application?.some(
         (application) => application.applicant === user?._id
-      ) ||
-      selectedJob?.applicant === user?._id ||
+      ) || // Check if the user is in the job's application list
+      selectedJob?.applicant === user?._id || // Check if the user is the applicant
       false;
 
-    if (isApply) setApplied(isApply);
-  }, []);
+    if (isApply) setApplied(isApply); // Update the state if the user has applied
+  }, []); // Runs only once when the component mounts
+
 
   return (
     <div>
@@ -32,7 +47,7 @@ const JobDescription = () => {
           <div className="mb-6">
             <IoIosArrowRoundBack
               size={35}
-              className="text-blue-700 hover:text-blue-800 transition-colors cursor-pointer"
+              className="text-gray-700 hover:text-gray-800 transition-colors cursor-pointer"
               onClick={() => navigate(-1)}
             />
           </div>
@@ -143,7 +158,14 @@ const JobDescription = () => {
                 </p>
                 <p>
                   <strong>Posted Date:</strong>{" "}
-                  {selectedJob?.jobDetails.postedDate || "Not specified"}
+                  {selectedJob?.createdAt
+                    ? (() => {
+                        const date = new Date(selectedJob.createdAt);
+                        return `${date.getDate()}-${
+                          date.getMonth() + 1
+                        }-${date.getFullYear()}`;
+                      })()
+                    : "Not specified"}
                 </p>
               </div>
             </div>

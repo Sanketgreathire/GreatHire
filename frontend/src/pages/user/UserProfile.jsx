@@ -1,63 +1,109 @@
-import React, { useState } from "react";
-import Navbar from "../../components/shared/Navbar";
-import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Mail, Pen } from "lucide-react";
-import { LuPhoneIncoming, LuMapPin } from "react-icons/lu";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import AppliedJobTable from "../job/AppliedJobTable";
-import UserUpdateProfile from "./UserUpdateProfile";
-import { useSelector, useDispatch } from "react-redux";
-import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { logOut } from "@/redux/authSlice";
-import { toast } from "react-hot-toast";
-import { MdOutlineVerified } from "react-icons/md";
-import VerifyEmail from "@/components/VerifyEmail";
-import VerifyNumber from "@/components/VerifyNumber";
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+
+// Import React and useState hook for component state management
+import React, { useState } from "react";  
+
+// Import navigation bar component for consistent site-wide navigation
+import Navbar from "../../components/shared/Navbar";  
+
+// Import user avatar UI components for displaying profile images
+import { Avatar, AvatarImage } from "../../components/ui/avatar";  
+
+// Import icons for email and edit actions
+import { Mail, Pen } from "lucide-react";  
+
+// Import phone and location icons for displaying contact details
+import { LuPhoneIncoming, LuMapPin } from "react-icons/lu";  
+
+// Import badge UI component for labeling user status or achievements
+import { Badge } from "../../components/ui/badge";  
+
+// Import button UI component for interactive elements
+import { Button } from "../../components/ui/button";  
+
+// Import table component for displaying applied jobs
+import AppliedJobTable from "../job/AppliedJobTable";  
+
+// Import modal component for updating user profile information
+import UserUpdateProfile from "./UserUpdateProfile";  
+
+// Import Redux hooks for managing global state and dispatching actions
+import { useSelector, useDispatch } from "react-redux";  
+
+// Import footer component for consistent site-wide footer
+import Footer from "@/components/shared/Footer";  
+
+// Import API endpoint for user-related operations
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
+
+// Import Axios for making HTTP requests to the server
+import axios from "axios";  
+
+// Import navigation hook for programmatic routing
+import { useNavigate } from "react-router-dom";  
+
+// Import Redux action for logging out the user
+import { logOut } from "@/redux/authSlice";  
+
+// Import toast notifications for displaying alerts and messages
+import { toast } from "react-hot-toast";  
+
+// Import verified icon for indicating verified users or data
+import { MdOutlineVerified } from "react-icons/md";  
+
+// Import email verification modal component
+import VerifyEmail from "@/components/VerifyEmail";  
+
+// Import phone number verification modal component
+import VerifyNumber from "@/components/VerifyNumber";  
+
+// Import delete confirmation modal for user account or data deletion
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";  
+
 
 const UserProfile = () => {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
-  const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
+  // State variables for managing modals and UI state
+  const [open, setOpen] = useState(false); // Controls profile update modal
+  const [loading, setLoading] = useState(false); // Controls loading state during account deletion
+  const navigate = useNavigate(); // Navigation hook
+  const dispatch = useDispatch(); // Redux dispatch function
+  const { user } = useSelector((state) => state.auth); // Retrieve user data from Redux store
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Controls delete confirmation modal
+  const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false); // Controls email verification modal
+  const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false); // Controls phone number verification modal
 
+  // Function to handle account deletion
   const handleDeleteAccount = async () => {
     try {
       setLoading(true);
       const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
-        data: { email: user?.emailId?.email },
-        withCredentials: true,
+        data: { email: user?.emailId?.email }, // Sending user email for account deletion
+        withCredentials: true, // Ensures authentication is included
       });
 
       if (response.data.success) {
-        navigate("/");
-        dispatch(logOut());
+        navigate("/"); // Redirect to home page after deletion
+        dispatch(logOut()); // Logout user after account deletion
       }
-      toast.success(response.data.message);
+      toast.success(response.data.message); // Show success message
     } catch (err) {
       console.error("Error deleting account: ", err.message);
-      toast.error("Error in deleting account");
+      toast.error("Error in deleting account"); // Show error message
     } finally {
       setLoading(false);
     }
   };
 
+  // Handles delete confirmation
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteAccount();
   };
 
+  // Handles delete cancellation
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
+
 
   return (
     <>
@@ -140,7 +186,7 @@ const UserProfile = () => {
                   </span>
                   {!user?.phoneNumber?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm cursor-pointer hover:underline"
+                      className="text-blue-600 text-sm hidden cursor-pointer hover:underline"
                       onClick={() => setOpenNumberOTPModal(true)}
                     >
                       Verify
@@ -245,7 +291,7 @@ const UserProfile = () => {
 
           {/* Applied Jobs Section */}
           <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-            <h2 className="text-lg text-center font-semibold text-gray-800 border-b pb-2">
+            <h2 className="text-lg text-center underline font-semibold text-gray-800 border-b pb-2">
               Applied Jobs
             </h2>
             <div className="mt-4">

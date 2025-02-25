@@ -20,24 +20,14 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const { addApplicationToJob } = useJobDetails();
 
   const handleSubmit = async () => {
-    setLoading(true); // Show loading indicator
+    setLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append("fullname", input.fullname);
-      formData.append("email", input.email);
-      formData.append("number", input.number);
-      formData.append("city", input.city); // Flattened structure for compatibility
-      formData.append("state", input.state);
-      formData.append("country", input.country);
-      formData.append("coverLetter", input.coverLetter || "");
-      formData.append("experience", input.experience || "");
-      formData.append("jobTitle", input.jobTitle || "");
-      formData.append("company", input.company || "");
-      formData.append("jobId", jobId); // Add jobId to the request body
-      if (input.resume instanceof File) {
-        formData.append("resume", input.resume);
-      }
+      Object.entries(input).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      formData.append("jobId", jobId);
 
       const response = await axios.post(
         `${APPLICATION_API_END_POINT}/apply`,
@@ -54,7 +44,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
         addApplicationToJob(jobId, response.data.newApplication);
-        navigate("/success"); // Navigate to success page or any other page
+        navigate("/success");
       }
     } catch (error) {
       toast.error(
@@ -62,13 +52,20 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       );
       console.error("Error submitting application:", error);
     } finally {
-      setLoading(false); // Hide loading indicator
+      setLoading(false);
     }
   };
 
+  const InfoSection = ({ title, value }) => (
+    <div>
+      <p className="text-sm font-small">{title}</p>
+      <h3 className="text-base text-gray-500">{value}</h3>
+    </div>
+  );
+
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
-      <ProgressBar percent={100} filledBackground="green"/>
+      <ProgressBar percent={100} filledBackground="green" />
       <div className="flex items-center mt-4 mb-4">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
@@ -82,30 +79,19 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 
       <h4 className="text-lg font-medium mb-4">Contact Information</h4>
       <div className="space-y-4 mb-6">
-        <div>
-          <p className="text-sm font-small">Full Name</p>
-          <h3 className="text-base text-gray-500">{`${input.fullname}`}</h3>
-        </div>
-        <div>
-          <p className="text-sm font-small">Email Address</p>
-          <h3 className="text-base text-gray-500">{input.email}</h3>
-          <small className="text-xs text-gray-500 block mt-2">
-            To mitigate fraud, Great Hire may mask your email address. If
-            masked, the employer will see an address like{" "}
-            <strong> Hr@greathire.in</strong>. Some employers, however, may
-            still be able to unmask and see your actual email address.
-          </small>
-        </div>
-        <div>
-          <p className="text-sm font-small">Address</p>
-          <h3 className="text-base text-gray-500">
-            {`${input.city}, ${input.state}, ${input.country}`}
-          </h3>
-        </div>
-        <div>
-          <p className="text-sm font-small">Phone Number</p>
-          <h3 className="text-base text-gray-500">{input.number}</h3>
-        </div>
+        <InfoSection title="Full Name" value={input.fullname} />
+        <InfoSection title="Email Address" value={input.email} />
+        <small className="text-xs text-gray-500 block mt-2">
+          To mitigate fraud, Great Hire may mask your email address. If masked,
+          the employer will see an address like{" "}
+          <strong> Hr@greathire.in</strong>. Some employers, however, may still
+          be able to unmask and see your actual email address.
+        </small>
+        <InfoSection
+          title="Address"
+          value={`${input.city}, ${input.state}, ${input.country}`}
+        />
+        <InfoSection title="Phone Number" value={input.number} />
       </div>
 
       <p className="text-gray-500 text-2xl mb-5">Resume</p>
@@ -115,27 +101,10 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 
       <h4 className="text-lg font-medium mt-5 mb-5">Employee Questions</h4>
       <div className="space-y-4 mb-6">
-        <div>
-          <p className="text-sm font-small">Job Profile</p>
-          <h3 className="text-base text-gray-500">{input?.jobTitle}</h3>
-        </div>
-        <div>
-          <p className="text-sm font-small">Company Name</p>
-          <h3 className="text-base text-gray-500">{input?.company}</h3>
-        </div>
-        <div>
-          <p className="text-sm font-small">
-             Experience Details
-          </p>
-          <h3 className="text-sm text-gray-500">{input?.experience}</h3>
-        </div>
-
-        <div>
-          <p className="text-sm font-small">Cover Letter</p>
-          <h3 className="text-sm text-gray-500">
-            {input.coverLetter}
-          </h3>
-        </div>
+        <InfoSection title="Job Profile" value={input.jobTitle} />
+        <InfoSection title="Company Name" value={input.company} />
+        <InfoSection title="Experience Details" value={input.experience} />
+        <InfoSection title="Cover Letter" value={input.coverLetter} />
       </div>
 
       <div className="text-center mb-6">
