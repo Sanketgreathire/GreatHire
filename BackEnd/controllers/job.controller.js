@@ -63,21 +63,17 @@ export const postJob = [
         });
       }
 
-      const splitSkills = skills
+      const splitSkills = (typeof skills === 'string')
         ? skills.split(",").map((skill) => skill && skill.trim())
         : [];
-      const splitQualifications = qualifications
-        ? qualifications
-            .split("\n")
-            .map((qualification) => qualification && qualification.trim())
+      const splitQualifications = (typeof qualifications === 'string')
+        ? qualifications.split("\n").map((qualification) => qualification && qualification.trim())
         : [];
-      const splitBenefits = benefits
+      const splitBenefits = (typeof benefits === 'string')
         ? benefits.split("\n").map((benefit) => benefit && benefit.trim())
         : [];
-      const splitResponsibilities = responsibilities
-        ? responsibilities
-            .split("\n")
-            .map((responsibility) => responsibility && responsibility.trim())
+      const splitResponsibilities = (typeof responsibilities === 'string')
+        ? responsibilities.split("\n").map((responsibility) => responsibility && responsibility.trim())
         : [];
 
       const newJob = new Job({
