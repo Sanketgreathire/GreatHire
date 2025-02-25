@@ -887,6 +887,7 @@ export const allLocations = {
 "Yelal",
 "Yalal",
     ],
+    
     Tripura: ["Agartala, Tripura", "Udaipur, Tripura", "Kailashahar, Tripura"],
     "Uttar Pradesh": [
       "Noida, Uttar Pradesh",
