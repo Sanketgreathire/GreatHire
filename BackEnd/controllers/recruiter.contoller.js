@@ -10,7 +10,7 @@ import { Application } from "../models/application.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-import { validationResult } from "express-validator";
+import { check , validationResult } from "express-validator";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -19,79 +19,86 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
 
-export const register = async (req, res) => {
-  try {
-    const { fullname, email, phoneNumber, password } = req.body;
+export const register = [
+  // Input validation
+  check("fullname").isString().isLength({ min: 3 }).withMessage("Fullname must be at least 3 characters long"),
+  check("email").isEmail().withMessage("Invalid email address"),
+  check("phoneNumber").isMobilePhone().withMessage("Invalid phone number"),
+  check("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
 
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+      const { fullname, email, phoneNumber, password } = req.body;
 
-    // Check if user already exists
-    let userExists =
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      // Check if user already exists
+      let userExists =
+        (await Recruiter.findOne({ "emailId.email": email })) ||
+        (await User.findOne({ "emailId.email": email })) ||
+        (await Admin.findOne({ "emailId.email": email }));
 
-    if (userExists) {
-      return res.status(200).json({
-        message: "Account already exists.",
-        success: false,
+      if (userExists) {
+        return res.status(200).json({
+          message: "Account already exists.",
+          success: false,
+        });
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create new user
+      let newUser = await Recruiter.create({
+        fullname,
+        emailId: {
+          email,
+          isVerified: false,
+        },
+        phoneNumber: {
+          number: phoneNumber,
+          isVerified: false,
+        },
+        password: hashedPassword,
+      });
+
+      // Remove sensitive information before sending the response
+      const userWithoutPassword = await Recruiter.findById(newUser._id).select(
+        "-password"
+      );
+
+      const tokenData = {
+        userId: userWithoutPassword._id,
+      };
+
+      const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+        expiresIn: "1d",
+      });
+
+      // cookies strict used...
+      return res
+        .status(200)
+        .cookie("token", token, {
+          maxAge: 1 * 24 * 60 * 60 * 1000,
+          httpsOnly: true,
+          sameSite: "strict",
+        })
+        .json({
+          message: "Account created successfully.",
+          success: true,
+          user: userWithoutPassword,
+        });
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return res.status(500).json({
+        message: "Internal Server Error",
       });
     }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
-    let newUser = await Recruiter.create({
-      fullname,
-      emailId: {
-        email,
-        isVerified: false,
-      },
-      phoneNumber: {
-        number: phoneNumber,
-        isVerified: false,
-      },
-      password: hashedPassword,
-    });
-
-    // Remove sensitive information before sending the response
-    const userWithoutPassword = await Recruiter.findById(newUser._id).select(
-      "-password"
-    );
-
-    const tokenData = {
-      userId: userWithoutPassword._id,
-    };
-
-    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
-      expiresIn: "1d",
-    });
-
-    // cookies strict used...
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
-        sameSite: "strict",
-      })
-      .json({
-        message: "Account created successfully.",
-        success: true,
-        user: userWithoutPassword,
-      });
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
   }
-};
+];
 
 // login by google
 export const googleLogin = async (req, res) => {

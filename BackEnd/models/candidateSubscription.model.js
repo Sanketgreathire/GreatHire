@@ -12,12 +12,6 @@ const candidateSubscriptionSchema = new mongoose.Schema(
     },
     creditBoost: {
       type: Number,
-      validate: {
-        validator: function (v) {
-          return v === null || v >= 0; // Allow null for unlimited
-        },
-        message: "max credit must be null or a non-negative number",
-      },
       required: true,
     },
     purchaseDate: {
@@ -29,7 +23,7 @@ const candidateSubscriptionSchema = new mongoose.Schema(
       type: Date,
       required: true,
       default: function () {
-        return new Date(Date.now() + 5 * 60 * 1000); // Current time + 10 minutes
+        return new Date(Date.now() + 5 * 60 * 1000); // Current time + 5 minutes
       },
     },
 

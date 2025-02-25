@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
-import { isFloat32Array } from "util/types";
+import { validationResult } from "express-validator";
 
 export const isUserAssociated = async (companyId, userId) => {
   try {
@@ -138,7 +138,7 @@ export const registerCompany = async (req, res) => {
         postalCode,
       },
       businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
-      bussinessFileName: businessFile ? businessFile.originalname : undefined,
+      businessFileName: businessFile ? businessFile[0].originalname : undefined,
     });
 
     return res.status(201).json({
@@ -457,7 +457,7 @@ export const reportJob = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ message: "Descripton should be in 300 character." });
+        .json({ message: "Description should be within 300 characters." });
     }
 
     const newReport = new JobReport({
@@ -473,8 +473,7 @@ export const reportJob = async (req, res) => {
       message: "Report submitted successfully.",
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: err.message });
+    console.error("Error reporting job:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };

@@ -156,6 +156,38 @@ const CompanyDetails = () => {
               )}
             </div>
             <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Industry</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.industry}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">
+                Business Email
+              </p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.email}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Admin Email</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.adminEmail}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Phone</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.phone}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">CIN Number</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company?.CIN}
+              </p>
+            </div>
+            <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Business File</p>
               {company?.businessFile && (
                 <a

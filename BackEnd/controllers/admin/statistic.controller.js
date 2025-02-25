@@ -115,6 +115,14 @@ export const getStatisticInRange = async (req, res) => {
     const totalRevenue =
       totalRevenueAgg.length > 0 ? totalRevenueAgg[0].total : 0;
 
+    // Format the revenue number using Intl.NumberFormat.
+    // this is built in Internationalize api of js to format the number according to locale like 10K,100K, 1M
+    const formattedRevenue = new Intl.NumberFormat("en", {
+      notation: "compact",
+      compactDisplay: "short",
+      maximumFractionDigits: 1, // Ensures we show one decimal place
+    }).format(totalRevenue);
+
     // Count of new users.
     const newUsers = await User.countDocuments({
       createdAt: { $gte: startDate, $lte: endDate },
@@ -146,7 +154,7 @@ export const getStatisticInRange = async (req, res) => {
     res.status(200).json({
       success: true,
       stats: {
-        totalRevenue,
+        totalRevenue: formattedRevenue,
         newUsers,
         totalApplications,
         pendingApplications,
@@ -360,7 +368,6 @@ export const getReportedJobList = async (req, res) => {
       .populate("userId", "fullname emailId phoneNumber")
       .populate("jobId", "jobDetails")
       .lean();
-
 
     // Map job report messages with required fields:
     // - User: fullname, emailId.email, phoneNumber.number

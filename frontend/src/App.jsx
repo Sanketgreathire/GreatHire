@@ -1,32 +1,26 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
-// Authentication Components
+import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-
-// User Routes
-import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import Home from "./pages/Home";
 import UserProfile from "./pages/user/UserProfile";
-import Jobs from "./pages/job/Jobs";
 import JobDescription from "./pages/job/JobDescription";
+import Jobs from "./pages/job/Jobs";
 import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/job/ReportJob";
-import Success from "./pages/job/Success";
-import SavedJobs from "./pages/job/SavedJob";
 
-// Service Pages
 import Contact from "./pages/services/Contact";
-import OurService from "./pages/services/OurService";
-import JobServicePlans from "./pages/services/JobServicePlans";
-
-// Policy Pages
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
+import OurService from "./pages/services/OurService";
+
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Success from "./pages/job/Success";
+import PageNotFound from "./pages/PageNotFound";
 
 // Recruiter Routes
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
@@ -48,22 +42,20 @@ import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
-import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
 // Admin Routes
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 
-// Utility Components
-import VerifyEmail from "./components/VerifyEmail";
-import VerifyNumber from "./components/VerifyNumber";
-import PageNotFound from "./pages/PageNotFound";
-
-// Redux & Other Imports
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
+
+import VerifyEmail from "./components/VerifyEmail";
+import VerifyNumber from "./components/VerifyNumber";
+import DeleteAccount from "./pages/recruiter/DeleteAccount";
 import { Worker } from "@react-pdf-viewer/core";
+import SavedJobs from "./pages/job/SavedJob";
 
 const appRouter = createBrowserRouter([
   {
@@ -160,10 +152,7 @@ const appRouter = createBrowserRouter([
     path: "/great-hire/services",
     element: <OurService />,
   },
-  {
-    path: "/job-service/plans",
-    element: <JobServicePlans />,
-  },
+  
   {
     path: "/forgot-password",
     element: <ForgotPassword />,

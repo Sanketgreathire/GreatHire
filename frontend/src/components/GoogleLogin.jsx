@@ -15,49 +15,52 @@ const GoogleLogin = ({ text, role, route }) => {
   const responseGoogle = async (authResult) => {
     try {
       if (authResult.code) {
-        // Send the authorization code to your backend
         const response = await axios.post(
           `http://localhost:8000/api/v1/${route}/googleLogin`,
-          {
-            code: authResult.code,
-            role: role,
-          },
-          {
-            withCredentials: true,
-          }
+          { code: authResult.code, role },
+          { withCredentials: true }
         );
 
         if (response.data.success) {
-          // Display message using the Toaster
-          toast.success(response.data.message);
-
-          // Navigate based on user role
-          const userRole = response.data.user.role;
-          dispatch(setUser(response.data.user));
-          if (userRole.includes("student")) navigate("/");
-          else if (userRole.includes("recruiter"))
-            navigate("/recruiter/dashboard/home");
-          else if (userRole.includes("admin")) navigate("/admin/dashboard");
+          handleSuccess(response.data);
         } else {
           toast.success(response.data.message);
         }
       }
     } catch (err) {
-      console.error(`Error while Google authentication: ${err}`);
-      // Display error message using the Toaster
-      toast.error("Google Login failed. Please try again.");
+      handleError(err);
     }
+  };
+
+  // Handle successful login
+  const handleSuccess = (data) => {
+    toast.success(data.message);
+    const { role: userRole, user } = data.user;
+    dispatch(setUser(user));
+    navigateBasedOnRole(userRole);
+  };
+
+  // Navigate based on user role
+  const navigateBasedOnRole = (userRole) => {
+    if (userRole.includes("student")) navigate("/");
+    else if (userRole.includes("recruiter")) navigate("/recruiter/dashboard/home");
+    else if (userRole.includes("admin")) navigate("/admin/dashboard");
+  };
+
+  // Handle login error
+  const handleError = (err) => {
+    console.error(`Error while Google authentication: ${err}`);
+    toast.error("Google Login failed. Please try again.");
   };
 
   // Google Login configuration
   const googleLogin = useGoogleLogin({
-    onSuccess: responseGoogle, // Pass the response handler
+    onSuccess: responseGoogle,
     onError: (error) => {
       console.error("Google Login Error:", error);
-      // Display error message using the Toaster
       toast("Error occurred during Google Login.", { type: "error" });
     },
-    flow: "auth-code", // Use the correct flow for getting an auth code
+    flow: "auth-code",
   });
 
   return (

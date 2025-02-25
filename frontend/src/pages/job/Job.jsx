@@ -1,4 +1,3 @@
-// Import necessary modules and dependencies
 import React from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
@@ -11,14 +10,13 @@ import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
-// Job component to display job details and allow user interactions
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  const { toggleBookmarkStatus, setSelectedJob } = useJobDetails();
+  const { toggleBookmarkStatus, setSelectedJob } =
+    useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const isBookmarked = job?.saveJob?.includes(user?._id) || false;
 
-  // Function to calculate the number of days since the job was created
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt);
     const currentDate = new Date();
@@ -27,13 +25,11 @@ const Job = ({ job }) => {
     return activeDays;
   };
 
-  // Check if the user has already applied for the job
   const isApplied =
     job?.application?.some(
       (application) => application.applicant === user?._id
     ) || false;
 
-  // Function to handle bookmarking a job
   const handleBookmark = async (jobId) => {
     try {
       const response = await axios.get(
@@ -58,19 +54,16 @@ const Job = ({ job }) => {
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
       <div className="flex justify-between items-center mb-2 min-h-[28px]">
-        {/* Display "Urgent Hiring" label if applicable */}
         {job?.jobDetails?.urgentHiring === "Yes" && (
           <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
             Urgent Hiring
           </p>
         )}
-        <div className="flex items-center justify-between">
-          {/* Show bookmark button if user is logged in and hasn't applied yet */}
           {user &&
-            !isApplied && (
+            !isApplied && ( // Hides the bookmark button if the user has applied
               <div
                 onClick={() => handleBookmark(job._id)}
-                className="cursor-pointer"
+                className="cursor-pointer ml-auto"
               >
                 {isBookmarked ? (
                   <FaBookmark size={25} className="text-green-700" />
@@ -79,25 +72,20 @@ const Job = ({ job }) => {
                 )}
               </div>
             )}
-        </div>
       </div>
-      {/* Job title */}
-      <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
-      {/* Company name and location */}
+      <h3 className="text-lg font-semibold line-clamp-2 h-[48px]">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
         <div>{job?.jobDetails?.companyName}</div>
         <div>
           <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
         </div>
       </div>
-      {/* Response time information */}
       <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md">
         <div className="flex items-center gap-1">
           <AiOutlineThunderbolt />
           <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
         </div>
       </div>
-      {/* Salary and Job Type */}
       <div className="text-sm flex flex-col space-y-2">
         <div className="flex gap-2 justify-between items-center">
           <div className="flex w-1/2">
@@ -125,7 +113,6 @@ const Job = ({ job }) => {
           </p>
         </div>
       </div>
-      {/* Job active days and application status */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500">
@@ -136,7 +123,6 @@ const Job = ({ job }) => {
           {isApplied && <span className="text-green-600">Applied</span>}
         </div>
       </div>
-      {/* Details button to navigate to job description page */}
       <div className="flex w-full items-center justify-between gap-4">
         <Button
           onClick={() => {

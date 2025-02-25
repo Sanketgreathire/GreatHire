@@ -76,7 +76,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         setInput((prev) => ({ ...prev, [name]: value }));
       } else {
         // Optionally, show an error message or prevent further input
-        toast.error(`${name === "bio" ? "Bio" : "Experience details"} cannot exceed ${charLimit} characters`);
+        toast.error(
+          `${
+            name === "bio" ? "Bio" : "Experience details"
+          } cannot exceed ${charLimit} characters`
+        );
       }
     } else {
       // Handle other fields as normal
@@ -136,7 +140,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
-    formData.append("number", input.number);
+    formData.append("phoneNumber", input.phoneNumber);
     formData.append("city", input.city);
     formData.append("state", input.state);
     formData.append("country", input.country);
@@ -213,211 +217,243 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Personal Details Section */}
           <div className="border-b pb-4">
-          <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
-          <div className="grid sm:grid-cols-2 gap-4 items-start">
-          <div className="flex items-start gap-6">
-              {/* Profile Image with Pencil Icon */}
-              <div className="relative w-32 h-32 mx-auto">
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Profile Preview"
-                    className="w-full h-full rounded-full object-cover border"
+            <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
+            <div className="grid sm:grid-cols-2 gap-4 items-start">
+              <div className="flex items-start gap-6">
+                {/* Profile Image with Pencil Icon */}
+                <div className="relative w-32 h-32 mx-auto">
+                  {previewImage ? (
+                    <img
+                      src={previewImage}
+                      alt="Profile Preview"
+                      className="w-full h-full rounded-full object-cover border"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
+                      <p>No Image</p>
+                    </div>
+                  )}
+
+                  {/* Pencil Icon */}
+                  <label
+                    htmlFor="profilePhoto"
+                    className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-lg cursor-pointer"
+                  >
+                    <Pencil className="w-5 h-5 text-gray-700" />
+                  </label>
+                </div>
+
+                {/* Hidden file input for image upload */}
+                <input
+                  type="file"
+                  id="profilePhoto"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange} // Handle image selection
+                />
+              </div>
+
+              {/* Name, Email and Phone Fields */}
+              <div className="flex-1 grid gap-3 w-full">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label
+                    htmlFor="fullname"
+                    className="sm:w-20 w-full font-semibold"
+                  >
+                    Name
+                  </Label>
+                  <Input
+                    id="fullname"
+                    name="fullname"
+                    value={input.fullname}
+                    onChange={handleChange}
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
-                    <p>No Image</p>
-                  </div>
-                )}
+                </div>
 
-                {/* Pencil Icon */}
-                <label
-                  htmlFor="profilePhoto"
-                  className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-lg cursor-pointer"
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label
+                    htmlFor="email"
+                    className="sm:w-20 w-full font-semibold"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    value={input.email}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label
+                    htmlFor="phoneNumber"
+                    className="sm:w-20 w-full font-semibold"
+                  >
+                    Phone
+                  </Label>
+                  <Input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={input.phoneNumber}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4 mt-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
+                  City
+                </Label>
+                <Input
+                  id="city"
+                  name="city"
+                  value={input.city}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
+                  State
+                </Label>
+                <Input
+                  id="state"
+                  name="state"
+                  value={input.state}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label
+                  htmlFor="country"
+                  className="sm:w-20 w-full font-semibold"
                 >
-                  <Pencil className="w-5 h-5 text-gray-700" />
-                </label>
-              </div>
-
-              {/* Hidden file input for image upload */}
-              <input
-                type="file"
-                id="profilePhoto"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange} // Handle image selection
-              />
-            </div>
-
-            {/* Name, Email and Phone Fields */}
-            <div className="flex-1 grid gap-3 w-full">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="fullname" className="sm:w-20 w-full font-semibold">
-                  Name
+                  Country
                 </Label>
                 <Input
-                  id="fullname"
-                  name="fullname"
-                  value={input.fullname}
+                  id="country"
+                  name="country"
+                  value={input.country}
                   onChange={handleChange}
+                  className="w-full"
                 />
               </div>
-
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="email" className="sm:w-20 w-full font-semibold">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  value={input.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="phoneNumber" className="sm:w-20 w-full font-semibold">
-                Phone
-              </Label>
-              <Input
-                id="phoneNumber"
-                name="phoneNumber"
-                value={input.phoneNumber}
-                onChange={handleChange}
-              />
             </div>
           </div>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-4 mt-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
-                City
-              </Label>
-              <Input
-                id="city"
-                name="city"
-                value={input.city}
-                onChange={handleChange}
-                className="w-full"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
-                State
-              </Label>
-              <Input
-                id="state"
-                name="state"
-                value={input.state}
-                onChange={handleChange}
-                className="w-full"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Label htmlFor="country" className="sm:w-20 w-full font-semibold">
-                Country
-              </Label>
-              <Input
-                id="country"
-                name="country"
-                value={input.country}
-                onChange={handleChange}
-                className="w-full"
-              />
-            </div>
-            </div>
-            </div>
 
           {/* Professional Details Section */}
           <div>
-          <h3 className="text-lg font-semibold mb-3">Professional Details</h3>
-          <div className="space-y-4">
-            <div className="w-full">
-              <Label htmlFor="jobProfile" className="block mb-2 font-semibold">
-                Job Profile
-              </Label>
-              <Input
-                id="jobProfile"
-                name="jobProfile"
-                value={input.jobProfile}
-                onChange={handleChange}
-              />
-            </div>
+            <h3 className="text-lg font-semibold mb-3">
+              Professional / Experience Details
+            </h3>
+            <div className="space-y-4">
+              <div className="w-full">
+                <Label
+                  htmlFor="jobProfile"
+                  className="block mb-2 font-semibold"
+                >
+                  Job Profile
+                </Label>
+                <Input
+                  id="jobProfile"
+                  name="jobProfile"
+                  value={input.jobProfile}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-            <div className="w-full">
-              <Label htmlFor="companyName" className="block mb-2 font-semibold">
-                Company Name
-              </Label>
-              <Input
-                id="companyName"
-                name="companyName"
-                value={input.companyName}
-                onChange={handleChange}
-              />
-            </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="w-full">
+                  <Label
+                    htmlFor="companyName"
+                    className="block mb-2 font-semibold"
+                  >
+                    Company Name
+                  </Label>
+                  <Input
+                    id="companyName"
+                    name="companyName"
+                    value={input.companyName}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="w-full">
-              <Label htmlFor="experience" className="block mb-2 font-semibold">
-                Experience in Years
-              </Label>
-              <Input
-                id="experience"
-                name="experience"
-                value={input.experience}
-                onChange={handleChange}
-              />
-            </div>
-            </div>
+                <div className="w-full">
+                  <Label
+                    htmlFor="experience"
+                    className="block mb-2 font-semibold"
+                  >
+                    Experience in Years
+                  </Label>
+                  <Input
+                    id="experience"
+                    name="experience"
+                    value={input.experience}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
 
-            <div className="w-full">
-              <Label htmlFor="skills" className="block mb-2 font-semibold">
-                Skills
-              </Label>
-              <Input
-                id="skills"
-                name="skills"
-                value={input.skills}
-                onChange={handleChange}
-                placeholder="Enter skills (comma separated)"
-              />
-            </div>
+              <div className="w-full">
+                <Label htmlFor="skills" className="block mb-2 font-semibold">
+                  Skills
+                </Label>
+                <Input
+                  id="skills"
+                  name="skills"
+                  value={input.skills}
+                  onChange={handleChange}
+                  placeholder="Enter skills (comma separated)"
+                />
+              </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-            <div className="w-full">
-              <Label htmlFor="currentCTC" className="block mb-2 font-semibold">
-                Current CTC
-              </Label>
-              <Input
-                id="currentCTC"
-                name="currentCTC"
-                value={input.currentCTC}
-                onChange={handleChange}
-                placeholder="Enter Current CTC (In LPA)"
-              />
-            </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="w-full">
+                  <Label
+                    htmlFor="currentCTC"
+                    className="block mb-2 font-semibold"
+                  >
+                    Current CTC
+                  </Label>
+                  <Input
+                    id="currentCTC"
+                    name="currentCTC"
+                    value={input.currentCTC}
+                    onChange={handleChange}
+                    placeholder="Enter Current CTC (In LPA)"
+                  />
+                </div>
 
-            <div className="w-full">
-              <Label htmlFor="expectedCTC" className="block mb-2 font-semibold">
-                Expected CTC
-              </Label>
-              <Input
-                id="expectedCTC"
-                name="expectedCTC"
-                value={input.expectedCTC}
-                onChange={handleChange}
-                placeholder="Enter Expected CTC (In LPA)"
-              />
+                <div className="w-full">
+                  <Label
+                    htmlFor="expectedCTC"
+                    className="block mb-2 font-semibold"
+                  >
+                    Expected CTC
+                  </Label>
+                  <Input
+                    id="expectedCTC"
+                    name="expectedCTC"
+                    value={input.expectedCTC}
+                    onChange={handleChange}
+                    placeholder="Enter Expected CTC (In LPA)"
+                  />
+                </div>
+              </div>
             </div>
-            </div>
-          </div>
           </div>
 
           <div className="w-full">
-            <Label htmlFor="experienceDetails" className="block mb-2 font-semibold pt-2">
+            <Label
+              htmlFor="experienceDetails"
+              className="block mb-2 font-semibold pt-2"
+            >
               Experience Details
             </Label>
             <textarea
@@ -430,9 +466,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               placeholder="Describe your work experience in detail..."
             />
             <p className="text-sm text-gray-600 mt-1 self-end text-right">
-              {input.experienceDetails.trim() ? input.experienceDetails.trim().length : 0}/{maxExperienceChars}
+              {input.experienceDetails.trim()
+                ? input.experienceDetails.trim().length
+                : 0}
+              /{maxExperienceChars}
             </p>
-         </div>
+          </div>
 
           <div className="w-full">
             <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">

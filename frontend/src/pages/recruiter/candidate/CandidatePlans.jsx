@@ -18,13 +18,13 @@ function CandidatePlans() {
     {
       name: "Basic",
       icon: AiFillSafetyCertificate,
-      price: "1",
+      price: "1000",
       color: "blue",
-      creditBoost: 35,
+      creditBoost: 2000,
       features: [
-        "Boost 35 more Credits",
+        "Boost 2000 more Credits",
         "Priority 24/7 support",
-        "Get 35 more candidate resume",
+        "Get 2000 more candidate resume",
       ],
       popular: false,
       borderColor: "border-blue-300",
@@ -33,13 +33,13 @@ function CandidatePlans() {
     {
       name: "Standard",
       icon: FaRocket,
-      price: "1",
-      creditBoost: 50,
+      price: "4000",
+      creditBoost: 10000,
       color: "indigo",
       features: [
-        "Boost 50 more Credits",
+        "Boost 10000 more Credits",
         "Priority 24/7 support",
-        "Get 50 more candidate resume",
+        "Get 10000 more candidate resume",
       ],
       popular: true,
       borderColor: "ring-indigo-300",
@@ -48,13 +48,13 @@ function CandidatePlans() {
     {
       name: "Premium",
       icon: FaGem,
-      price: "1",
-      creditBoost: null,
+      price: "8000",
+      creditBoost: 25000,
       color: "purple",
       features: [
-        "Boost Unlimited Credit",
+        "Boost 25000 Credit",
         "Priority 24/7 support",
-        "Get unlimited candidate resume",
+        "Get 25000 candidate resume",
       ],
       popular: false,
       borderColor: "border-purple-300",
@@ -124,7 +124,7 @@ function CandidatePlans() {
         currency,
         name: "GreatHire",
         description: plan?.name,
-        
+
         order_id: orderId,
         handler: async (response) => {
           const verificationResponse = await axios.post(

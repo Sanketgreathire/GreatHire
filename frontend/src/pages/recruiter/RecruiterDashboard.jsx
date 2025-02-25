@@ -11,7 +11,7 @@ import {
 } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
-import { fetchCurrentPlan, removeJobPlan } from "@/redux/jobPlanSlice";
+import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
 import { io } from "socket.io-client";
 import { BACKEND_URL } from "@/utils/ApiEndPoint";
 
@@ -69,7 +69,6 @@ const RecruiterDashboard = () => {
       if (company && companyId === company?._id) {
         if (type === "job") {
           dispatch(updateMaxPostJobs(0));
-          dispatch(removeJobPlan());
         } else if (type === "candidate") {
           dispatch(updateCandidateCredits(0));
         }

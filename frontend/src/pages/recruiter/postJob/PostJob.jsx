@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Stepper from "react-stepper-horizontal";
@@ -17,6 +17,11 @@ const PostJob = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (company && company?.maxJobPosts === 0)
+      navigate("/recruiter/dashboard/your-plans");
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -76,7 +81,7 @@ const PostJob = () => {
           // Redirect to the dashboard after 2 seconds
           setTimeout(() => {
             navigate("/recruiter/dashboard/home");
-          }, 2000);
+          }, 1000);
         } else {
           toast.error("Job post failed");
         }
