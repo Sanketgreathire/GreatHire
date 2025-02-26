@@ -1,25 +1,32 @@
+// this package help to encrypt the password
 import bcrypt from "bcryptjs";
+// this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { Contact } from "../models/contact.model.js";
+// this model help to blacklist recent logout token
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+// help in google login
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
+// this one give us validationResult when req object will validate by express-validator
 import { validationResult } from "express-validator";
-
+// help in send email
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
 
+// this controller help in user registration
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
+    // checking validatoin result of req object
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -38,7 +45,7 @@ export const register = async (req, res) => {
       });
     }
 
-    // Hash the password
+    // Hash/encrypt the password by performing hashing 10 times on a password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
@@ -60,6 +67,7 @@ export const register = async (req, res) => {
       "-password"
     );
 
+    // 
     const tokenData = {
       userId: userWithoutPassword._id,
     };

@@ -2,11 +2,15 @@
 import cookieParser from "cookie-parser";
 // this help to cross origin resource sharing enable secure communication between a server and a client application running on a different origin (domain, protocol, or port). 
 import cors from "cors";
+// this package help to read environment variables
 import dotenv from "dotenv";
 import express from "express";
+// fetching server by https
 import { createServer } from "https";
 import { Server } from "socket.io";
+// this one is cron scheduler to check in each 5 min is plan is expired of any company
 import cron from "node-cron";
+// this package help to restrict a window for a number of reqeust to server in a particular time. 
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
 import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
@@ -132,6 +136,7 @@ server.listen(PORT, async () => {
       });
       const totalUnseenNotifications =
         unseenJobReportsCount + unseenContactsCount;
+        // here server emit a custom event newNotificationCount with totalUnseenNotifications
       io.emit("newNotificationCount", { totalUnseenNotifications });
     } catch (error) {
       console.error("Error emitting unseen notification count:", error);
@@ -140,8 +145,10 @@ server.listen(PORT, async () => {
 
   // Function to create and manage the JobReport change stream
   const createJobReportChangeStream = () => {
+    // this watch() method used to create change stream that help to watch real time change in JobReport Collection.
     const jobReportChangeStream = JobReport.watch();
 
+    // if any change in happened in with operation type insert then emit a event from the server
     jobReportChangeStream.on("change", async (change) => {
       if (change.operationType === "insert") {
         await emitUnseenNotificationCount();
@@ -158,8 +165,10 @@ server.listen(PORT, async () => {
 
   // Function to create and manage the Contact change stream
   const createContactChangeStream = () => {
+    // this watch() method used to create change stream that help to watch real time change in Contact Collection.
     const contactChangeStream = Contact.watch();
 
+    // if any change in happened in with operation type insert then emit a event from the server
     contactChangeStream.on("change", async (change) => {
       if (change.operationType === "insert") {
         await emitUnseenNotificationCount();
@@ -192,11 +201,13 @@ io.on("connection", (socket) => {
 cron.schedule("* * * * *", async () => {
   console.log("Running cron job: Checking expired plans...");
   try {
+    // here first we fetching all active jobSubscriptions and candidateSubscriptions plans
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
       CandidateSubscription.find({ status: "Active" }),
     ]);
 
+    // here we check validity of all active job subscription and emit event to client plan expired
     await Promise.all([
       ...jobSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
@@ -207,6 +218,7 @@ cron.schedule("* * * * *", async () => {
           });
         }
       }),
+       // here we check validity of all active candidate subscription and emit event to client plan expired
       ...candidateSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
           io.emit("planExpired", {
