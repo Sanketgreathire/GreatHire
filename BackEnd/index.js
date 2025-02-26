@@ -1,4 +1,6 @@
+// cookie-parser package help to handle cookie in coming from frontend HTTP Request
 import cookieParser from "cookie-parser";
+// this help to cross origin resource sharing enable secure communication between a server and a client application running on a different origin (domain, protocol, or port). 
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
