@@ -79,7 +79,7 @@ const LocationSearch = ({ onSelectLocation }) => {
         <FaLocationDot size={25} className="text-gray-500 ml-3" />
         <input
           type="text"
-          placeholder="Enter a location (e.g., Noida, Lucknow)"
+          placeholder="Enter a location (e.g., Noida, Hyderabad)"
           className="py-3 px-4 outline-none flex-1 text-sm sm:text-base text-gray-700 bg-transparent"
           value={inputValue}
           onFocus={handleFocus}
