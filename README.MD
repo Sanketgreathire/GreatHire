@@ -14,7 +14,7 @@ Make sure you have the following installed on your machine:
 
 1. Navigate to the frontend directory:
     ```sh
-    cd /Users/virendersingh/Desktop/GreatHire/frontend
+    cd /GreatHire/frontend
     ```
 
 2. Install the dependencies:
@@ -46,7 +46,7 @@ Make sure you have the following installed on your machine:
 
 1. Navigate to the backend directory:
     ```sh
-    cd /Users/virendersingh/Desktop/GreatHire/BackEnd
+    cd /GreatHire/BackEnd
     ```
 
 2. Install the dependencies:
