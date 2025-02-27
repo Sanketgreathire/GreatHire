@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Bell, MessageSquareText } from "lucide-react";
-
+import { resetStats } from "@/redux/admin/statsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
@@ -44,6 +44,8 @@ const Navbar = ({ linkName }) => {
       });
       if (response.data.success) {
         dispatch(logOut());
+        // reset all stats that fetch for admin
+        dispatch(resetStats());
         setIsProfileMenuOpen(false);
         toast.success(response.data.message);
         navigate("/admin/login");

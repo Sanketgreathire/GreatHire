@@ -17,7 +17,7 @@ export const fetchCompanyStats = createAsyncThunk(
       `${ADMIN_COMPANY_DATA_API_END_POINT}/get-stats`,
       { withCredentials: true }
     );
-    return response.data.stats; // Return only relevant data
+    return response.data.stats;
   }
 );
 
@@ -27,9 +27,7 @@ export const fetchRecruiterStats = createAsyncThunk(
   async () => {
     const response = await axios.get(
       `${ADMIN_RECRUITER_DATA_API_END_POINT}/get-stats`,
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
     return response.data.stats;
   }
@@ -47,7 +45,7 @@ export const fetchJobStats = createAsyncThunk(
   }
 );
 
-// 🟢 Async thunk for fetching job stats
+// 🟢 Async thunk for fetching application stats
 export const fetchApplicationStats = createAsyncThunk(
   "stats/fetchApplicationStats",
   async () => {
@@ -71,22 +69,24 @@ export const fetchUserStats = createAsyncThunk(
   }
 );
 
+const initialState = {
+  companyStatsData: {},
+  recruiterStatsData: {},
+  jobStatsData: {},
+  applicationStatsData: {},
+  userStatsData: {},
+  loading: false,
+  error: null,
+};
+
 const statsSlice = createSlice({
   name: "stats",
-  initialState: {
-    companyStatsData: {},
-    recruiterStatsData: {},
-    jobStatsData: {},
-    applicationStatsData: {},
-    userStatsData: {},
-    loading: false,
-    error: null,
+  initialState,
+  reducers: {
+    resetStats: () => initialState, // Reset all state to initial values
   },
-  reducers: {}, // No synchronous reducers needed here
-
   extraReducers: (builder) => {
     builder
-      // 🔵 Handling Company Stats
       .addCase(fetchCompanyStats.pending, (state) => {
         state.loading = true;
       })
@@ -98,8 +98,6 @@ const statsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
-      // 🔵 Handling Recruiter Stats
       .addCase(fetchRecruiterStats.pending, (state) => {
         state.loading = true;
       })
@@ -111,8 +109,6 @@ const statsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
-      // 🔵 Handling Job Stats
       .addCase(fetchJobStats.pending, (state) => {
         state.loading = true;
       })
@@ -124,8 +120,6 @@ const statsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
-      // 🔵 Handling Application Stats
       .addCase(fetchApplicationStats.pending, (state) => {
         state.loading = true;
       })
@@ -137,8 +131,6 @@ const statsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-
-      // 🔵 Handling User Stats
       .addCase(fetchUserStats.pending, (state) => {
         state.loading = true;
       })
@@ -153,4 +145,5 @@ const statsSlice = createSlice({
   },
 });
 
+export const { resetStats } = statsSlice.actions;
 export default statsSlice.reducer;

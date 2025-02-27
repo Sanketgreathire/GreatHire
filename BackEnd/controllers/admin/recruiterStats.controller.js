@@ -1,12 +1,16 @@
 import { Company } from "../../models/company.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 
+// returning total number of recruiter, total active recruiters, total deactive recruiters
 export const getRecrutierStats = async (req, res) => {
   try {
+    // Total Recruiters
     const totalRecruiters = await Recruiter.countDocuments();
+    // Total Active Recruiters
     const totalActiveRecruiters = await Recruiter.countDocuments({
       isActive: true,
     });
+    // Total Deactive Recruiters
     const totalDeactiveRecruiters = await Recruiter.countDocuments({
       isActive: false,
     });
@@ -29,6 +33,7 @@ export const getRecrutierStats = async (req, res) => {
   }
 };
 
+// returning recruiter list of a particular company.
 export const getRecruitersList = async (req, res) => {
   try {
     // Get companyId from the route parameters
@@ -118,19 +123,21 @@ export const getRecruitersList = async (req, res) => {
   }
 };
 
+// returning all recruiter list of all company
 export const getAllRecruitersList = async (req, res) => {
   try {
     const recruitersAggregation = await Recruiter.aggregate([
       // Lookup the company details where this recruiter is referenced in the company's userId array
       {
         $lookup: {
-          from: "companies",
-          let: { recruiterId: "$_id" },
+          from: "companies", //  Specifies the collection to join (companies).
+          let: { recruiterId: "$_id" }, // Defines a local variable (recruiterId) for use in the pipeline.
+          // pipeline is series of stages and in one stage perform operation upon document of collection and send result of one stage to another stage
           pipeline: [
             {
               $match: {
                 $expr: {
-                  $in: ["$$recruiterId", "$userId.user"],
+                  $in: ["$$recruiterId", "$userId.user"],//  Finds companies where the recruiterId exists in the userId.user array.
                 },
               },
             },
@@ -142,14 +149,15 @@ export const getAllRecruitersList = async (req, res) => {
               },
             },
           ],
-          as: "companyDetails",
+          as: "companyDetails", // Stores the result in the companyDetails array.
         },
       },
       // Unwind the companyDetails array (if a recruiter belongs to one company)
       {
+        // Converts the companyDetails array to an object.
         $unwind: {
           path: "$companyDetails",
-          preserveNullAndEmptyArrays: true,
+          preserveNullAndEmptyArrays: true, // it keeps companyDetails as null instead of dropping the document.
         },
       },
       // Lookup jobs created by each recruiter
@@ -202,10 +210,10 @@ export const getAllRecruitersList = async (req, res) => {
   }
 };
 
-
+// fetch recruiter details by recruiter id
 export const getRecruiter = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // recruiter id
 
     // Validate ObjectId format to prevent errors
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
