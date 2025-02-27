@@ -24,8 +24,7 @@ const jobSubscriptionSchema = new mongoose.Schema(
       required: true,
       default: function () {
         // Automatically set to one month after purchase
-        return new Date(Date.now() + 5 * 60 * 1000);
-        // return new Date(new Date().setMonth(new Date().getMonth() + 1));
+        return new Date(new Date().setMonth(new Date().getMonth() + 1));
       },
     },
     price: {

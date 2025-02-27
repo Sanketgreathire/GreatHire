@@ -17,7 +17,7 @@ import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-// import csurf from "csurf"; // Import CSRF protection middleware
+// helmet help to secure Express apps by setting HTTP response headers.
 import helmet from "helmet";
 
 // Import Routes

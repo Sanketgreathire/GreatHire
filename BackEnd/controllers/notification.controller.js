@@ -2,6 +2,7 @@ import JobReport from "../models/jobReport.model.js";
 import { Contact } from "../models/contact.model.js";
 import { check, validationResult } from "express-validator";
 
+// this will return all unseen notification count to admin
 export const getUnseenNotificationsCount = async (req, res) => {
   try {
     // Count unseen job reports
@@ -25,6 +26,7 @@ export const getUnseenNotificationsCount = async (req, res) => {
   }
 };
 
+// this will return all unseen Messages admin
 export const getUnseenMessages = async (req, res) => {
   try {
     // job reports and populate user and job details
@@ -81,6 +83,7 @@ export const getUnseenMessages = async (req, res) => {
   }
 };
 
+// return all message list which have been seen by admin
 export const getMessages = async (req, res) => {
   try {
     // job reports and populate user and job details
@@ -137,6 +140,7 @@ export const getMessages = async (req, res) => {
   }
 };
 
+// mark all unseen message as seen in jobreport and contact
 export const markAsSeen = async (req, res) => {
   try {
     // Update all unseen job reports to "seen"
@@ -172,6 +176,7 @@ export const deleteContact = [
 
       const { msgId } = req.params;
 
+      // find Contact my msgId and delete
       const deletedContact = await Contact.findByIdAndDelete(msgId);
 
       if (!deletedContact) {
@@ -197,16 +202,17 @@ export const deleteContact = [
 // Controller to delete a single job report by msgId
 export const deleteJobReport = async (req, res) => {
   try {
-    const { msgId } = req.params;
-    console.log(msgId);
+    const { msgId } = req.params; // message id
+
     if (!msgId) {
       return res
         .status(400)
         .json({ success: false, message: "Message ID is required." });
     }
 
+    // delete job report by id
     const deletedJobReport = await JobReport.findByIdAndDelete(msgId);
-
+    
     if (!deletedJobReport) {
       return res
         .status(404)

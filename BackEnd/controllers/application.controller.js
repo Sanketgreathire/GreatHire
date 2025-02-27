@@ -1,3 +1,4 @@
+// this is an applicaton controller to perform action related to application
 import { Application } from "../models/application.model.js";
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
@@ -5,14 +6,7 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 
-// Middleware to check if the user is authenticated
-const isAuthenticated = (req, res, next) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  next();
-};
-
+// this controller apply to a particular job
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
@@ -47,7 +41,7 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    // Check if the job is active
+    // Check if the job is active, user cannot applied if job is not active
     if (!job.jobDetails.isActive) {
       return res.status(400).json({ success: false, message: "This job is not active" });
     }
@@ -88,6 +82,7 @@ export const applyJob = async (req, res) => {
       applicant: userId,
     });
 
+    // if the application exist of a user related to a particular job then user cannot applied to that job
     if (existingApplication) {
       return res.status(400).json({
         message: "You have already applied for this job",
@@ -126,10 +121,11 @@ export const applyJob = async (req, res) => {
   }
 };
 
-// Applied job
+// Applied job by a single user
 export const getAppliedJobs = async (req, res) => {
   try {
     const userId = req.id;
+    // return application of a user in assecending order
     const application = await Application.find({ applicant: userId })
       .sort({ createdAt: -1 })
       .populate({
@@ -140,6 +136,7 @@ export const getAppliedJobs = async (req, res) => {
           options: { sort: { createdAt: -1 } },
         },
       });
+
     if (!application) {
       return res.status(404).json({
         message: "No Applications.",
@@ -159,12 +156,12 @@ export const getAppliedJobs = async (req, res) => {
   }
 };
 
-// Admin section to see user applied
+// Return applicatants of a job to recruiter or admin
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
 
-    // Find all applications for the given job and populate the applicant details
+    // Find all applications for the given job and populate the applicant user details
     const applicants = await Application.find({ job: jobId })
       .populate("applicant") // Populating applicant details
       .sort({ createdAt: -1 }); // Sorting by createdAt in descending order
@@ -183,7 +180,7 @@ export const getApplicants = async (req, res) => {
   }
 };
 
-// Update status
+// This recruiter update the status of application of user 
 export const updateStatus = async (req, res) => {
   try {
     const { status } = req.body;

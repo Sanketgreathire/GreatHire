@@ -6,6 +6,7 @@ import { isUserAssociated } from "./company.controller.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { check, validationResult } from "express-validator";
 
+// postjob by recruiter
 export const postJob = [
   // Input validation
   check("title").notEmpty().withMessage("Title is required"),
@@ -45,8 +46,9 @@ export const postJob = [
         companyId,
       } = req.body;
 
-      const userId = req.id;
+      const userId = req.id; // this is recruiter id
 
+      // check recruiter exists in company or not
       if (!await isUserAssociated(companyId, userId)) {
         return res.status(403).json({
           message: "You are not authorized",
@@ -56,6 +58,7 @@ export const postJob = [
 
       const company = await Company.findById(companyId);
 
+      // if company have 0 maxJobPosts recruiter can not post the job
       if (company.maxJobPosts === 0) {
         return res.status(400).json({
           success: false,
@@ -97,16 +100,17 @@ export const postJob = [
         created_by: userId,
         company: companyId,
       });
+      // save a new job to database
+      await newJob.save();
 
-      const savedJob = await newJob.save();
-
-      if (company.maxJobPosts !== null && company.maxJobPosts > 0) {
+      if (company.maxJobPosts > 0) {
         const updatedCompany = await Company.findOneAndUpdate(
           { _id: company._id },
           { $inc: { maxJobPosts: -1 } },
           { new: true }
         );
 
+        // company purchased a plan with increase job posting create to 35 or 40 and become 0 then set a purchased plan to expired
         if (updatedCompany && updatedCompany.maxJobPosts === 0) {
           const activeSubscription = await JobSubscription.findOne({
             company: company._id,
@@ -136,9 +140,12 @@ export const postJob = [
   }
 ];
 
-//get all jobs.....
+/** get all jobs for home page in stream manner like
+this controller does not return all jobs at once. Instead, it uses streaming to send jobs to the client incrementally, which is particularly useful when dealing with large datasets. */
 export const getAllJobs = async (req, res) => {
+  // this one specify returnable content type as JSON with UTF-8 encoding
   res.setHeader("Content-Type", "application/json; charset=utf-8");
+  // preventing the caching of the response 
   res.setHeader("Cache-Control", "no-cache");
 
   try {
@@ -154,14 +161,18 @@ export const getAllJobs = async (req, res) => {
 
     let isFirst = true;
     cursor.on("data", (doc) => {
+      // add comma to all json object but not be first document
       if (!isFirst) {
         res.write(",");
       } else {
         isFirst = false;
       }
-
-      res.write(JSON.stringify(doc.toObject())); // Write the job with application status
+ // convert document into plain object
+      res.write(JSON.stringify(doc.toObject())); // Write the job with application status to response stream
     });
+
+//     "end" event: Triggered when all documents are streamed.
+// Finalizes the JSON array and ends the response.
 
     cursor.on("end", () => {
       res.write("]"); // End the JSON array
@@ -194,8 +205,8 @@ export const getJobByRecruiterId = async (req, res) => {
         "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
       )
       .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+      .skip(skip) // for skipped the document
+      .limit(limit); // return only limited document
 
     // Total job count for the recruiter
     const totalJobs = await Job.countDocuments({ created_by: recruiterId });
@@ -361,6 +372,7 @@ export const bookmarkJob = async (req, res) => {
   }
 };
 
+// this controller active or de-active the job
 export const toggleActive = async (req, res) => {
   try {
     const { jobId, isActive, companyId } = req.body;
@@ -404,6 +416,7 @@ export const toggleActive = async (req, res) => {
   }
 };
 
+// update the deatils of job
 export const updateJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -468,6 +481,7 @@ export const updateJob = async (req, res) => {
   }
 };
 
+// this will return stats of job
 export const getJobsStatistics = async (req, res) => {
   try {
     const companyId = req.params.id; // Accessing companyId from the URL params
