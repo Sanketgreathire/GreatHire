@@ -1,25 +1,35 @@
-import React, { useState } from "react";
+// Importing React and useState for state management
+import React, { useState } from "react"; 
+// Importing an info icon for UI
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+// Importing useNavigate for navigation 
+import { useNavigate } from "react-router-dom"; 
+// Importing toast notifications for user feedback
 import { toast } from "react-hot-toast";
+// Importing job details context 
 import { useJobDetails } from "@/context/JobDetailsContext";
-import axios from "axios";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+// Importing axios for making API requests 
+import axios from "axios"; 
+// Importing API endpoint for job reports
+import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint"; 
 
 const ReportJob = () => {
-  const { selectedJob } = useJobDetails();
-  const navigate = useNavigate();
+  const { selectedJob } = useJobDetails(); // Getting selected job details from context
+  const navigate = useNavigate(); // Initializing navigation function
 
+  // State variables for selected problem and additional description
   const [selectedProblem, setSelectedProblem] = useState("");
   const [description, setDescription] = useState("");
-  const maxChars = 300;
+  const maxChars = 300; // Maximum allowed characters for the description field
 
+  // Function to handle changes in the description input field
   const handleDescriptionChange = (e) => {
     if (e.target.value.length <= maxChars) {
       setDescription(e.target.value);
     }
   };
 
+  // List of predefined problems users can report
   const problems = [
     "It's offensive or harassing",
     "Asking for money or seems like a fake job",
@@ -28,37 +38,41 @@ const ReportJob = () => {
     "Other",
   ];
 
+  // Function to handle form submission
   const handleSubmit = async () => {
     if (!selectedProblem) {
-      toast.error("Please select a problem before submitting.");
+      toast.error("Please select a problem before submitting."); // Show error if no problem is selected
       return;
     }
     if (selectedProblem === "Other" && !description) {
-      toast.error("Please provide a description for 'Other'.");
+      toast.error("Please provide a description for 'Other'."); // Require description for 'Other' option
       return;
     }
 
     try {
+      // Sending report details to the API
       const response = await axios.post(
         `${COMPANY_API_END_POINT}/report-job`,
         {
-          jobId: selectedJob?._id,
-          reportTitle: selectedProblem,
-          description,
+          jobId: selectedJob?._id, // Sending the selected job's ID
+          reportTitle: selectedProblem, // Report issue title
+          description, // Additional description if provided
         },
-        { withCredentials: true }
+        { withCredentials: true } // Ensuring cookies are sent for authentication
       );
 
+      // Handling the response from the server
       if (response.data.success) {
-        toast.success(response.data.message);
-        navigate(-1);
+        toast.success(response.data.message); // Show success notification
+        navigate(-1); // Navigate back to the previous page
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message); // Show error notification if submission failed
       }
     } catch (error) {
-      toast.error("Failed to submit the report. Please try again later.");
+      toast.error("Failed to submit the report. Please try again later."); // Handle API errors
     }
   };
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">

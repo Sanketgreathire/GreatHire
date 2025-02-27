@@ -1,24 +1,3 @@
-// import React, { useState } from "react";
-// import Navbar from "../../components/shared/Navbar"; // Navigation bar component
-// import { Avatar, AvatarImage } from "../../components/ui/avatar"; // User avatar UI components
-// import { Mail, Pen } from "lucide-react"; // Icons for email and edit
-// import { LuPhoneIncoming, LuMapPin } from "react-icons/lu"; // Phone and location icons
-// import { Badge } from "../../components/ui/badge"; // Badge UI component
-// import { Button } from "../../components/ui/button"; // Button UI component
-// import AppliedJobTable from "../job/AppliedJobTable"; // Table displaying applied jobs
-// import UserUpdateProfile from "./UserUpdateProfile"; // Modal for updating user profile
-// import { useSelector, useDispatch } from "react-redux"; // Redux hooks for state management
-// import Footer from "@/components/shared/Footer"; // Footer component
-// import { USER_API_END_POINT } from "@/utils/ApiEndPoint"; // API endpoint for user operations
-// import axios from "axios"; // HTTP client for API requests
-// import { useNavigate } from "react-router-dom"; // Hook for navigation
-// import { logOut } from "@/redux/authSlice"; // Redux action for logging out
-// import { toast } from "react-hot-toast"; // Toast notifications
-// import { MdOutlineVerified } from "react-icons/md"; // Verified icon
-// import VerifyEmail from "@/components/VerifyEmail"; // Email verification modal
-// import VerifyNumber from "@/components/VerifyNumber"; // Phone number verification modal
-// import DeleteConfirmation from "@/components/shared/DeleteConfirmation"; // Delete confirmation modal
-
 // Import React and useState hook for component state management
 import React, { useState } from "react";  
 

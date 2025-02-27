@@ -1,28 +1,30 @@
+// Import necessary modules and dependencies
 import React, { useState, useRef, useEffect } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { CiBookmark } from "react-icons/ci";
 import { FaBookmark, FaHeart } from "react-icons/fa";
-import { MdBlock } from "react-icons/md";
-import { IoMdLink, IoMdClose } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
-import Navbar from "@/components/shared/Navbar";
-//import { selectIsJobApplied } from "@/redux/appliedJobSlice";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
 
 const JobsForYou = () => {
+  // Access functions from context
   const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
-    useJobDetails(); // Access functions from context
+    useJobDetails();
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const [showJobDetails, setShowJobDetails] = useState(false); // Added for small screen job details
-  const jobContainerRef = useRef(null); // Ref to track the scrollable container
+  // Added for small screen job details
+  const [showJobDetails, setShowJobDetails] = useState(false);
+
+  // Ref to track the scrollable container
+  const jobContainerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -334,16 +336,6 @@ const JobsForYou = () => {
                   className="cursor-pointer"
                 />
               ))}
-            {/* <div
-          className={`p-2 ${selectedJob?.isBlock ? "bg-red-200" : "bg-gray-300"} rounded-lg text-gray-800 cursor-pointer -mt-6`}
-          onClick={() => changeBlockStatus()}
-        >
-          <MdBlock size={25} />
-        </div> */}
-
-            {/* <div className="p-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer -mt-6">
-          <IoMdLink size={25} />
-        </div> */}
           </div>
 
           {/* Job details for small screen*/}

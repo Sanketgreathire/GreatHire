@@ -1,4 +1,4 @@
-// src/redux/authSlice.js
+// Import necessary modules and dependencies
 import { createSlice } from "@reduxjs/toolkit";
 
 const authSlice = createSlice({

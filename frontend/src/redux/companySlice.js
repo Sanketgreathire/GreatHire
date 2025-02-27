@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import { createSlice } from "@reduxjs/toolkit";
 
 const companySlice = createSlice({

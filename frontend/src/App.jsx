@@ -1,25 +1,38 @@
+// Import necessary modules and dependencies
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { JobDetailsProvider } from "./context/JobDetailsContext";
 
+// Context Provider
+import { JobDetailsProvider } from "./context/JobDetailsContext"; 
+
+// User Authentication Components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
+
+// General Pages
 import Home from "./pages/Home";
 import UserProfile from "./pages/user/UserProfile";
+
+// Job-Related Pages
 import JobDescription from "./pages/job/JobDescription";
 import Jobs from "./pages/job/Jobs";
 import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/job/ReportJob";
+import Success from "./pages/job/Success";
+import SavedJobs from "./pages/job/SavedJob";
 
+// Service & Policy Pages
 import Contact from "./pages/services/Contact";
+import OurService from "./pages/services/OurService";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import OurService from "./pages/services/OurService";
 
+// Password Management
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Success from "./pages/job/Success";
+
+// Error Handling
 import PageNotFound from "./pages/PageNotFound";
 
 // Recruiter Routes
@@ -39,6 +52,8 @@ import RecruiterList from "./pages/recruiter/RecruiterList";
 import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
+
+// Candidate Management (Recruiter Side)
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
@@ -47,15 +62,21 @@ import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 
+// Redux and Effects
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
 
+// Verification Components
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
+
+// Account Management
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
+
+// External Libraries
 import { Worker } from "@react-pdf-viewer/core";
-import SavedJobs from "./pages/job/SavedJob";
+
 
 const appRouter = createBrowserRouter([
   {

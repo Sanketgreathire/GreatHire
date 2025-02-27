@@ -1,55 +1,94 @@
+// Import necessary modules and dependencies
 import React from "react";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { AiOutlineThunderbolt } from "react-icons/ai";
-import { useSelector } from "react-redux";
-import { CiBookmark } from "react-icons/ci";
-import { FaBookmark } from "react-icons/fa";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
-import toast from "react-hot-toast";
-import { useJobDetails } from "@/context/JobDetailsContext";
 
+// Axios for making API requests
+import axios from "axios"; 
+
+// Button component for UI
+import { Button } from "@/components/ui/button"; 
+
+// Hook for navigation
+import { useNavigate } from "react-router-dom";
+
+// Icon for job application
+import { AiOutlineThunderbolt } from "react-icons/ai"; 
+
+// Redux hook to access global state
+import { useSelector } from "react-redux"; 
+
+// Unbookmarked icon
+import { CiBookmark } from "react-icons/ci";
+
+// Bookmarked icon
+import { FaBookmark } from "react-icons/fa"; 
+
+// API endpoint for job-related actions
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint"; 
+
+// Toast notifications for user feedback
+import toast from "react-hot-toast"; 
+
+// Context for managing job details
+import { useJobDetails } from "@/context/JobDetailsContext"; 
+
+// Job Component - Displays job details and handles bookmarking functionality
 const Job = ({ job }) => {
-  const navigate = useNavigate();
-  const { toggleBookmarkStatus, setSelectedJob } =
-    useJobDetails();
-  const { user } = useSelector((state) => state.auth);
+
+  // Hook for programmatic navigation
+  const navigate = useNavigate(); 
+
+  // Functions to manage job bookmarks and selection
+  const { toggleBookmarkStatus, setSelectedJob } = useJobDetails(); 
+
+  // Get authenticated user details from Redux store
+  const { user } = useSelector((state) => state.auth); 
+
+  // Check if the job is bookmarked by the user
   const isBookmarked = job?.saveJob?.includes(user?._id) || false;
 
+  // Function to calculate the number of active days since job posting
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt);
     const currentDate = new Date();
-    const timeDifference = currentDate - jobCreatedDate;
-    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    // Time difference in milliseconds
+    const timeDifference = currentDate - jobCreatedDate; 
+
+    // Convert milliseconds to days
+    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); 
     return activeDays;
   };
 
+  // Check if the user has already applied for this job
   const isApplied =
     job?.application?.some(
       (application) => application.applicant === user?._id
     ) || false;
 
+  // Function to handle bookmarking a job
   const handleBookmark = async (jobId) => {
     try {
       const response = await axios.get(
         `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
         {
-          withCredentials: true,
+          withCredentials: true, // Include credentials for authentication
         }
       );
 
+      // If the request is successful, update the bookmark status and show success message
       if (response.data.success) {
-        toggleBookmarkStatus(jobId, user?._id);
-        toast.success(response.data.message);
+        toggleBookmarkStatus(jobId, user?._id); // Toggle bookmark status in context
+        toast.success(response.data.message); // Display success notification
       }
     } catch (error) {
       console.error(
         "Error bookmarking job:",
         error.response?.data?.message || error.message
       );
+      toast.error("Failed to bookmark the job. Please try again."); // Show error message
     }
   };
+
 
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">

@@ -1,30 +1,59 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+
+// Redux hooks for state management
+import { useSelector, useDispatch } from "react-redux"; 
+
+// Axios for making API requests
+import axios from "axios"; 
 import {
   COMPANY_API_END_POINT,
   RECRUITER_API_END_POINT,
-} from "@/utils/ApiEndPoint";
-import { toast } from "react-hot-toast";
-import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "@/components/admin/Navbar";
+} from "@/utils/ApiEndPoint"; // API endpoints
+
+// Toast notifications for user feedback
+import { toast } from "react-hot-toast"; 
+
+// React Router hooks for navigation and parameters
+import { useParams, useNavigate } from "react-router-dom"; 
+import Navbar from "@/components/admin/Navbar"; // Navbar component
+
+// Importing actions to fetch updated statistics
 import {
   fetchCompanyStats,
   fetchRecruiterStats,
   fetchJobStats,
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
+// Delete confirmation modal component
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation"; 
+
+// CompanyDetails Component - Displays and manages a company's details
 const CompanyDetails = () => {
-  const { user } = useSelector((state) => state.auth);
-  const { companyId } = useParams();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [dloading, dSetLoading] = useState(false);
-  const [company, setCompany] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Get authenticated user details from Redux store
+  const { user } = useSelector((state) => state.auth); 
+
+  // Get company ID from the route parameters
+  const { companyId } = useParams(); 
+
+  // Hook for programmatic navigation
+  const navigate = useNavigate(); 
+
+  // Hook to dispatch Redux actions
+  const dispatch = useDispatch(); 
+
+  // Loading state for deletion process
+  const [dloading, dSetLoading] = useState(false);
+  
+  // State to store company details
+  const [company, setCompany] = useState(null); 
+
+  // State to manage delete confirmation modal visibility
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+
+  // Function to fetch company details from the backend
   const fetchCompanyDetails = async () => {
     try {
       const response = await axios.post(
@@ -32,36 +61,46 @@ const CompanyDetails = () => {
         { companyId },
         { withCredentials: true }
       );
+
       if (response.data.success) {
-        setCompany(response.data.company);
+        // Store retrieved company details in state
+        setCompany(response.data.company); 
       }
     } catch (err) {
       console.log(`Error in fetching company details: ${err}`);
     }
   };
 
+  // Fetch company details when the component mounts
   useEffect(() => {
     fetchCompanyDetails();
   }, []);
 
+  // Function to handle company deletion
   const handleDeleteCompany = async () => {
     try {
-      dSetLoading(true);
+      // Set loading state to true while processing deletion
+      dSetLoading(true); 
+
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: {
-          userEmail: user?.emailId?.email,
-          companyId,
+          userEmail: user?.emailId?.email, // User email for authentication
+          companyId, // Company ID to be deleted
         },
         withCredentials: true,
       });
+
       if (response.data.success) {
+        // Update company, recruiter, job, and application stats in Redux store
         dispatch(fetchCompanyStats());
         dispatch(fetchRecruiterStats());
         dispatch(fetchJobStats());
         dispatch(fetchApplicationStats());
-        toast.success(response.data.message);
+
+        toast.success(response.data.message); // Show success message
+        navigate("/admin/companies"); // Redirect to company listing page after deletion
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message); // Show error message if deletion fails
       }
     } catch (err) {
       console.error("Error deleting company:", err);
@@ -69,18 +108,21 @@ const CompanyDetails = () => {
         "There was an error deleting the company. Please try again later."
       );
     } finally {
-      dSetLoading(false);
+      dSetLoading(false); // Reset loading state after process completion
     }
   };
 
+  // Function to confirm deletion after modal confirmation
   const onConfirmDelete = () => {
-    setShowDeleteModal(false);
-    handleDeleteCompany();
+    setShowDeleteModal(false); // Close delete confirmation modal
+    handleDeleteCompany(); // Proceed with deletion
   };
 
+  // Function to cancel deletion and close the modal
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
+
 
   // Function to validate and sanitize URL
   const getSafeUrl = (url) => {

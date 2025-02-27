@@ -1,51 +1,75 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ProgressBar } from "react-step-progress-bar";
-import { MdInfo } from "react-icons/md";
-import { BiArrowBack } from "react-icons/bi";
-import { Viewer } from "@react-pdf-viewer/core";
+// Importing React and necessary hooks for state management and side effects
+import React, { useState, useEffect } from "react"; 
+// Importing ProgressBar for visualizing step progress
+import { ProgressBar } from "react-step-progress-bar"; 
+// Importing Info icon for UI elements
+import { MdInfo } from "react-icons/md"; 
+// Importing Back Arrow icon for navigation
+import { BiArrowBack } from "react-icons/bi"; 
+// Importing PDF viewer for displaying documents
+import { Viewer } from "@react-pdf-viewer/core"; 
+// Importing PDF viewer styles
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { CgFileRemove } from "react-icons/cg";
-import { FaFileSignature } from "react-icons/fa";
-import { TiTick } from "react-icons/ti";
-import ReviewPage from "./ReviewPage";
-import { Link } from "react-router-dom";
-import "react-step-progress-bar/styles.css";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+// Importing File Remove icon for UI 
+import { CgFileRemove } from "react-icons/cg"; 
+// Importing File Signature icon for UI
+import { FaFileSignature } from "react-icons/fa"; 
+// Importing Tick icon for indicating success/completion
+import { TiTick } from "react-icons/ti"; 
+// Importing ReviewPage component for reviewing the application
+import ReviewPage from "./ReviewPage"; 
+// Importing Link for navigation
+import { Link } from "react-router-dom"; 
+// Importing styles for step progress bar
+import "react-step-progress-bar/styles.css"; 
+// Importing useSelector hook to access Redux store
+import { useSelector } from "react-redux"; 
+// Importing useNavigate hook for programmatic navigation
+import { useNavigate } from "react-router-dom"; 
+// Importing JobDetails context for accessing job-related data
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { toast } from "react-hot-toast";
+// Importing toast notifications for user feedback 
+import { toast } from "react-hot-toast"; 
 
 const ApplyForm = ({ setRight }) => {
+  // Accessing user details from Redux store
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  // Accessing selected job details from context
   const { selectedJob } = useJobDetails();
 
+  // Checking if the user has already applied for the job
   const isApplied =
     selectedJob?.application?.some(
       (application) => application.applicant === user?._id
     ) || false;
 
   useEffect(() => {
+    // Redirect to login page if the user is not authenticated
     if (!user) {
       navigate("/login");
     } else {
+      // Notify and redirect if the user has already applied for this job
       if (isApplied) {
-        toast("You have already applied this job.");
+        toast("You have already applied for this job.");
         navigate("/");
       }
     }
   }, []);
 
+  // Step management for multi-step form
   const [step1, setStep1] = useState(true);
   const [step2, setStep2] = useState(false);
   const [step3, setStep3] = useState(false);
   const [step4, setStep4] = useState(false);
   const [review, setReview] = useState(false);
+
+  // Cover letter state management
   const [coverLetter, setCoverLetter] = useState(true);
   const [showCoverLetterError, setShowCoverLetterError] = useState(false);
 
+  // State to store uploaded file URL
   const [fileURL, setFileURL] = useState(null);
-  const inputRef = useRef();
 
   // Validation errors
   const [errors, setErrors] = useState({});
@@ -95,37 +119,69 @@ const ApplyForm = ({ setRight }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleContinue1 = (e) => {
-    e.preventDefault();
-    if (validateStep1()) {
-      setStep1(false);
-      setStep2(true);
-    }
-  };
+  // Handles transition from Step 1 to Step 2
+const handleContinue1 = (e) => {
+  e.preventDefault();
+  if (validateStep1()) { // Validates Step 1 before proceeding
+    setStep1(false);
+    setStep2(true);
+  }
+};
 
-  const handleContinue2 = (e) => {
-    e.preventDefault();
-    if (input.resume) {
-      setStep2(false);
-      setStep3(true);
-    } else {
-      setErrors({ resume: "Resume is required to proceed." });
-    }
-  };
+// Handles transition from Step 2 to Step 3
+const handleContinue2 = (e) => {
+  e.preventDefault();
+  if (input.resume) { // Ensures a resume is uploaded before proceeding
+    setStep2(false);
+    setStep3(true);
+  } else {
+    setErrors({ resume: "Resume is required to proceed." }); // Displays error if resume is missing
+  }
+};
 
-  const [input, setInput] = useState({
-    fullname: user?.fullname,
-    number: user?.phoneNumber.number,
-    email: user?.emailId.email,
-    city: user?.address?.city || "",
-    state: user?.address?.state || "",
-    country: user?.address?.country || "",
-    resume: user?.profile?.resume,
-    coverLetter: user?.profile?.coverLetter || "",
-    jobTitle: user?.profile?.experience?.jobProfile,
-    experience: user?.profile?.experience?.experienceDetails,
-    company: user?.profile?.experience?.companyName,
-  });
+// Handles transition from Step 3 to Step 4
+const handleContinue3 = (e) => {
+  e.preventDefault();
+  setStep3(false);
+  setStep4(true);
+};
+
+// Moves to the review step after completing all steps
+const handleReview = () => {
+  setStep4(false);
+  setReview(true);
+  setRight(false); // Hides the right panel (if applicable)
+};
+
+// Returns from the review step back to Step 4
+const handleReview1 = () => {
+  setReview(false);
+  setStep4(true);
+};
+
+// Handles cover letter selection (write or upload)
+const handleCoverLetter = (option) => {
+  if (option === "write") {
+    setCoverLetter(true); // Enables writing a cover letter
+  } else {
+    setCoverLetter(false); // Disables writing and possibly enables upload
+  }
+};
+
+// Stores user input data, initializing with existing user details if available
+const [input, setInput] = useState({
+  fullname: user?.fullname, // Pre-fills full name from user profile
+  number: user?.phoneNumber.number, // Pre-fills phone number
+  email: user?.emailId.email, // Pre-fills email
+  city: user?.address?.city || "", // Defaults to empty if city is unavailable
+  state: user?.address?.state || "", // Defaults to empty if state is unavailable
+  country: user?.address?.country || "", // Defaults to empty if country is unavailable
+  resume: user?.profile?.resume, // Pre-fills resume if available
+  coverLetter: user?.profile?.coverLetter || "", // Pre-fills cover letter if available
+  jobTitle: user?.profile?.experience?.jobProfile, // Pre-fills job title from experience
+  experience: user?.profile?.experience?.experienceDetails, // Pre-fills experience details
+  company: user?.profile?.experience?.companyName, // Pre-fills company name from experience
+});
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // Get the uploaded file
@@ -146,31 +202,7 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  const handleContinue3 = (e) => {
-    e.preventDefault();
-    setStep3(false);
-    setStep4(true);
-  };
-
-  const handleReview = () => {
-    setStep4(false);
-    setReview(true);
-    setRight(false);
-  };
-
-  const handleReview1 = () => {
-    setReview(false);
-    setStep4(true);
-  };
-
-  const handleCoverLetter = (option) => {
-    if (option === "write") {
-      setCoverLetter(true);
-    } else {
-      setCoverLetter(false);
-    }
-  };
-
+  
   return (
     <div>
       {step1 && (
