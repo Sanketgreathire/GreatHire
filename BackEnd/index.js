@@ -1,17 +1,24 @@
+// cookie-parser package help to handle cookie in coming from frontend HTTP Request
 import cookieParser from "cookie-parser";
+// this help to cross origin resource sharing enable secure communication between a server and a client application running on a different origin (domain, protocol, or port). 
 import cors from "cors";
+// this package help to read environment variables
 import dotenv from "dotenv";
 import express from "express";
-import { createServer } from "http";
+// fetching server by https
+import { createServer } from "https";
 import { Server } from "socket.io";
+// this one is cron scheduler to check in each 5 min is plan is expired of any company
 import cron from "node-cron";
+// this package help to restrict a window for a number of reqeust to server in a particular time. 
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
 import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-// import csurf from "csurf"; // Import CSRF protection middleware
+// helmet help to secure Express apps by setting HTTP response headers.
+import helmet from "helmet";
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -37,11 +44,20 @@ import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
+// Load SSL Certificates
+const options = {
+  key: fs.readFileSync("./key.pem"),
+  cert: fs.readFileSync("./cert.pem"),
+};
 
 dotenv.config();
 const app = express();
-const server = createServer(app);
+const server = createServer(options,app);
 const PORT = process.env.PORT || 3000;
+
+// Security Middleware
+app.use(helmet()); // Use Helmet to set security-related HTTP headers
+app.disable("x-powered-by"); // Explicitly disable X-Powered-By header
 
 // WebSocket Server with CORS
 const io = new Server(server, {
@@ -57,7 +73,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "https://localhost:5173",
     credentials: true,
   })
 );
@@ -125,6 +141,7 @@ server.listen(PORT, async () => {
       });
       const totalUnseenNotifications =
         unseenJobReportsCount + unseenContactsCount;
+        // here server emit a custom event newNotificationCount with totalUnseenNotifications
       io.emit("newNotificationCount", { totalUnseenNotifications });
     } catch (error) {
       console.error("Error emitting unseen notification count:", error);
@@ -133,8 +150,10 @@ server.listen(PORT, async () => {
 
   // Function to create and manage the JobReport change stream
   const createJobReportChangeStream = () => {
+    // this watch() method used to create change stream that help to watch real time change in JobReport Collection.
     const jobReportChangeStream = JobReport.watch();
 
+    // if any change in happened in with operation type insert then emit a event from the server
     jobReportChangeStream.on("change", async (change) => {
       if (change.operationType === "insert") {
         await emitUnseenNotificationCount();
@@ -151,8 +170,10 @@ server.listen(PORT, async () => {
 
   // Function to create and manage the Contact change stream
   const createContactChangeStream = () => {
+    // this watch() method used to create change stream that help to watch real time change in Contact Collection.
     const contactChangeStream = Contact.watch();
 
+    // if any change in happened in with operation type insert then emit a event from the server
     contactChangeStream.on("change", async (change) => {
       if (change.operationType === "insert") {
         await emitUnseenNotificationCount();
@@ -185,11 +206,13 @@ io.on("connection", (socket) => {
 cron.schedule("* * * * *", async () => {
   console.log("Running cron job: Checking expired plans...");
   try {
+    // here first we fetching all active jobSubscriptions and candidateSubscriptions plans
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
       CandidateSubscription.find({ status: "Active" }),
     ]);
 
+    // here we check validity of all active job subscription and emit event to client plan expired
     await Promise.all([
       ...jobSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
@@ -200,6 +223,7 @@ cron.schedule("* * * * *", async () => {
           });
         }
       }),
+       // here we check validity of all active candidate subscription and emit event to client plan expired
       ...candidateSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
           io.emit("planExpired", {

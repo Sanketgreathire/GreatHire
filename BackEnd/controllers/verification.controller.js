@@ -6,7 +6,6 @@ import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import randomstring from "randomstring";
-import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { hmac } from "fast-sha256";

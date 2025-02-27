@@ -1,59 +1,82 @@
+// Import necessary modules and dependencies
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+
+// Component for filtering job listings
 import FilterCard from "./FilterCard";
+
+// Job component to display individual job listings
 import Job from "./Job";
+
+// Context for managing job details
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const Jobs = () => {
+  // Retrieve jobs, error state, and resetFilter function from context
   const { jobs, resetFilter, error } = useJobDetails();
+
+  // State to manage loading status
   const [isLoading, setIsLoading] = useState(true);
+
+  // State to hold filtered job listings
   const [filteredJobs, setFilteredJobs] = useState([]);
+
+  // State to track the current page number for pagination
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Number of jobs to display per page
   const jobsPerPage = 24;
 
-  useEffect(()=>{
+  // Reset filters when the component mounts
+  useEffect(() => {
     resetFilter();
-  }, [])
+  }, []);
 
+  // Update filtered job listings when jobs data or an error occurs
   useEffect(() => {
     if (jobs || error) {
-      setIsLoading(false);
-      setFilteredJobs(jobs || []);
+      setIsLoading(false); // Stop loading when data is available
+      setFilteredJobs(jobs || []); // Set filtered jobs to available jobs or an empty array
     }
   }, [jobs, error]);
 
+  // Function to handle job search with filters
   const handleSearch = (filters) => {
     setFilteredJobs(
       jobs.filter((job) => {
         return (
+          // Filter by location if provided
           (!filters.Location ||
             (job?.jobDetails?.location || "")
               .toLowerCase()
               .includes(filters.Location.toLowerCase())) &&
+          // Filter by job title if provided
           (!filters["Job Title"] ||
             (job?.jobDetails?.title || "")
               .toLowerCase()
               .includes(filters["Job Title"].toLowerCase())) &&
+          // Filter by job type if provided
           (!filters["Job Type"] ||
             (job?.jobDetails?.jobType || "")
               .toLowerCase()
               .includes(filters["Job Type"].toLowerCase())) &&
-          (!filters.Qualifications ||
-            (job?.jobDetails?.qualifications || "")
-              .toLowerCase()
-              .includes(filters.Qualifications.toLowerCase())) &&
+          // Filter by salary range if provided
           (!filters.Salary ||
             (() => {
               const enteredSalary = parseInt(filters.Salary, 10);
-              if (isNaN(enteredSalary)) return true; // Ignore if not a valid number
+              if (isNaN(enteredSalary)) return true; // Ignore if salary is not a valid number
 
+              // Extract numerical values from salary string
               const salaryRange = job?.jobDetails?.salary?.match(/\d+/g);
-              if (!salaryRange) return false; // No salary range found in the job
+              if (!salaryRange) return false; // Skip if no salary information is found
 
               const minSalary = parseInt(salaryRange[0], 10);
-              const maxSalary = salaryRange[1] ? parseInt(salaryRange[1], 10) : minSalary;
+              const maxSalary = salaryRange[1]
+                ? parseInt(salaryRange[1], 10)
+                : minSalary;
 
+              // Check if the entered salary falls within the job's salary range
               return enteredSalary >= minSalary && enteredSalary <= maxSalary;
             })())
         );
@@ -61,13 +84,19 @@ const Jobs = () => {
     );
   };
 
+  // Function to reset job filters and display all jobs
   const resetFilters = () => {
-    setFilteredJobs(jobs || []); // Reset to all jobs
+    setFilteredJobs(jobs || []); // Reset to all available jobs
   };
 
+  // Calculate indices for pagination
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+
+  // Slice the filtered jobs list for the current page
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+
+  // Calculate total number of pages
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   return (
@@ -75,8 +104,7 @@ const Jobs = () => {
       <Navbar />
       <div className="flex-grow w-full mx-auto bg-gray-100">
         <div className="w-full px-4 py-4">
-        <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
-
+          <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
         </div>
         <div className="px-4 py-4">
           {isLoading ? (

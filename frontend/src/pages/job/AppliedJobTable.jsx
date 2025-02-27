@@ -28,7 +28,6 @@ const statusStyles = {
 const AppliedJobTable = () => {
   // State to store applied jobs
   const [appliedJobs, setAppliedJobs] = useState([]);
-  console.log(appliedJobs);
 
   // State to handle loading state
   const [loading, setLoading] = useState(true);

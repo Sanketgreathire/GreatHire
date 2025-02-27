@@ -10,7 +10,7 @@ import { Application } from "../models/application.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-import { check , validationResult } from "express-validator";
+import { check, validationResult } from "express-validator";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -19,91 +19,86 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
 
-export const register = [
-  // Input validation
-  check("fullname").isString().isLength({ min: 3 }).withMessage("Fullname must be at least 3 characters long"),
-  check("email").isEmail().withMessage("Invalid email address"),
-  check("phoneNumber").isMobilePhone().withMessage("Invalid phone number"),
-  check("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+// recruiter registration controller
+export const register = async (req, res) => {
+  try {
+    // validation using express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
+    const { fullname, email, phoneNumber, password } = req.body;
 
-      const { fullname, email, phoneNumber, password } = req.body;
+    // Check if user already exists
+    let userExists =
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
-      // Check if user already exists
-      let userExists =
-        (await Recruiter.findOne({ "emailId.email": email })) ||
-        (await User.findOne({ "emailId.email": email })) ||
-        (await Admin.findOne({ "emailId.email": email }));
-
-      if (userExists) {
-        return res.status(200).json({
-          message: "Account already exists.",
-          success: false,
-        });
-      }
-
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Create new user
-      let newUser = await Recruiter.create({
-        fullname,
-        emailId: {
-          email,
-          isVerified: false,
-        },
-        phoneNumber: {
-          number: phoneNumber,
-          isVerified: false,
-        },
-        password: hashedPassword,
-      });
-
-      // Remove sensitive information before sending the response
-      const userWithoutPassword = await Recruiter.findById(newUser._id).select(
-        "-password"
-      );
-
-      const tokenData = {
-        userId: userWithoutPassword._id,
-      };
-
-      const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
-        expiresIn: "1d",
-      });
-
-      // cookies strict used...
-      return res
-        .status(200)
-        .cookie("token", token, {
-          maxAge: 1 * 24 * 60 * 60 * 1000,
-          httpsOnly: true,
-          sameSite: "strict",
-        })
-        .json({
-          message: "Account created successfully.",
-          success: true,
-          user: userWithoutPassword,
-        });
-    } catch (error) {
-      console.error("Error during registration:", error);
-      return res.status(500).json({
-        message: "Internal Server Error",
+    if (userExists) {
+      return res.status(200).json({
+        message: "Account already exists.",
+        success: false,
       });
     }
+
+    // Hash the password by performing 10 time hashing
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    let newUser = await Recruiter.create({
+      fullname,
+      emailId: {
+        email,
+        isVerified: false,
+      },
+      phoneNumber: {
+        number: phoneNumber,
+        isVerified: false,
+      },
+      password: hashedPassword,
+    });
+
+    // Remove sensitive information before sending the response
+    const userWithoutPassword = await Recruiter.findById(newUser._id).select(
+      "-password"
+    );
+
+    const tokenData = {
+      userId: userWithoutPassword._id,
+    };
+
+    // sign in into jwt to create token with 1 day expiration
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account created successfully.",
+        success: true,
+        user: userWithoutPassword,
+      });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
-];
+};
 
 // login by google
 export const googleLogin = async (req, res) => {
   try {
-    const { code, role } = req.body;
+    let { code, role } = req.body;
 
     if (!code) {
       return res
@@ -208,7 +203,7 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-// recruiters list
+// recruiters list by company id
 export const getAllRecruiters = async (req, res) => {
   try {
     const { companyId } = req.body;
@@ -221,7 +216,9 @@ export const getAllRecruiters = async (req, res) => {
       });
     }
 
+    // get all recruiter ids of a company
     const recruiterIds = company?.userId.map((userObj) => userObj.user._id);
+    // fetching all recruiter according to recruiter ids
     const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
 
     return res.status(200).json({
@@ -237,7 +234,7 @@ export const getAllRecruiters = async (req, res) => {
 };
 
 export const getRecruiterById = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // recruiter id
 
   try {
     // Find the recruiter by ID
@@ -259,6 +256,7 @@ export const getRecruiterById = async (req, res) => {
   }
 };
 
+// add recruiter to company by admin
 export const addRecruiterToCompany = async (req, res) => {
   const { fullname, email, phoneNumber, password, position, companyId } =
     req.body;
@@ -383,12 +381,11 @@ export const addRecruiterToCompany = async (req, res) => {
     };
 
     // Send email
-    let mailResponse = await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 
     return res.status(201).json({
       success: true,
       message: "Recruiter added. credentials send to recruiter mail. ",
-      recruiter,
     });
   } catch (err) {
     console.error("Error adding recruiter:", err);
@@ -398,6 +395,7 @@ export const addRecruiterToCompany = async (req, res) => {
   }
 };
 
+// update profile of recruiter
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, phoneNumber, position } = req.body;
@@ -411,7 +409,7 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullname && (typeof fullname !== 'string' || fullname.length < 3)) {
+    if (fullname && (typeof fullname !== "string" || fullname.length < 3)) {
       return res.status(200).json({
         message: "Fullname must be a string and at least 3 characters long.",
         success: false,
@@ -465,6 +463,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+// delete account of recruiter by admin or company admin
 export const deleteAccount = async (req, res) => {
   const { userEmail, companyId } = req.body;
 
@@ -475,6 +474,8 @@ export const deleteAccount = async (req, res) => {
     else userId = req.id;
 
     const admin = await Admin.findById(userId); // Check if user is an admin
+
+    // if user not admin or not recruiter then we will not allowed to delete recruiter
     if (!admin && !isUserAssociated(companyId, userId)) {
       return res
         .status(403)
@@ -486,6 +487,7 @@ export const deleteAccount = async (req, res) => {
       return res.status(404).json({ message: "Company not found" });
     }
 
+    // if admin delete recruiter or recruiter admin deleted the account
     if (userEmail === company.adminEmail || admin) {
       // Fetch jobs before deleting
       const jobs = await Job.find({ company: companyId });
@@ -511,6 +513,9 @@ export const deleteAccount = async (req, res) => {
         adminEmail: company.adminEmail,
         CIN: company.CIN,
       };
+
+      // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
+      // if recrutier want to create again need permission of admin
       await BlacklistedCompany.create(blacklistedData);
 
       // Remove the company
@@ -519,6 +524,7 @@ export const deleteAccount = async (req, res) => {
       await CandidateSubscription.findOneAndDelete({ company: companyId });
       await JobSubscription.findOneAndDelete({ company: companyId });
 
+      // if not admin mean recruiter admin and deleted own account
       if (!admin) {
         return res
           .status(200)
@@ -537,7 +543,8 @@ export const deleteAccount = async (req, res) => {
           message: "Company deleted successfully",
         });
       }
-    } else {
+    } else { // if simple recruiter
+
       // Remove the user from the userId array in the Company model
       await Company.findByIdAndUpdate(
         companyId,
@@ -573,6 +580,7 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
+// change the status of recruiter
 export const toggleActive = async (req, res) => {
   const { recruiterId, companyId, isActive } = req.body;
   const userId = req.id;
@@ -615,8 +623,6 @@ export const toggleActive = async (req, res) => {
       await Recruiter.updateMany({ _id: { $in: recruiterIds } }, { isActive });
       // Toggle all jobs for these recruiters.
       await Job.updateMany({ created_by: { $in: recruiterIds } }, { isActive });
-      // Optionally, fetch the updated recruiters.
-      await Recruiter.find({ _id: { $in: recruiterIds } });
     } else {
       // Otherwise, update only the specific recruiter.
       await Recruiter.findByIdAndUpdate(

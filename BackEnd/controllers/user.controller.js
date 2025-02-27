@@ -1,25 +1,32 @@
+// this package help to encrypt the password
 import bcrypt from "bcryptjs";
+// this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { Contact } from "../models/contact.model.js";
+// this model help to blacklist recent logout token
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+// help in google login
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
+// this one give us validationResult when req object will validate by express-validator
 import { validationResult } from "express-validator";
-
+// help in send email
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
 
+// this controller help in user registration
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
+    // checking validatoin result of req object
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -38,7 +45,7 @@ export const register = async (req, res) => {
       });
     }
 
-    // Hash the password
+    // Hash/encrypt the password by performing hashing 10 times on a password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
@@ -60,9 +67,11 @@ export const register = async (req, res) => {
       "-password"
     );
 
+    // creating a token data by user id and creating a token by jwt sign in by token data and secret key
     const tokenData = {
       userId: userWithoutPassword._id,
     };
+    // creating a token with expiry time 1 day
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
@@ -117,7 +126,7 @@ export const login = async (req, res) => {
       });
     }
 
-    //checking password is correct or not...
+    //checking/comparing the password is correct or not...
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(200).json({
@@ -128,6 +137,7 @@ export const login = async (req, res) => {
     const tokenData = {
       userId: user._id,
     };
+    // generate the token using JWT 
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
@@ -150,7 +160,7 @@ export const login = async (req, res) => {
       isActive,
     };
 
-    // cookies strict used...
+    // sending cookies from server to client with response
     return res
       .status(200)
       .cookie("token", token, {
@@ -171,6 +181,7 @@ export const login = async (req, res) => {
 // login by google
 export const googleLogin = async (req, res) => {
   try {
+    // this code from frontend which is given by google during google login
     let { code, role } = req.body;
 
     if (!code) {
@@ -214,11 +225,12 @@ export const googleLogin = async (req, res) => {
       const tokenData = {
         userId: user._id,
       };
+      // generating token with jwt sign with 1 day expiry time
       const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
         expiresIn: "1d",
       });
 
-      // cookies strict used...
+      // return cookies with response
       return res
         .status(200)
         .cookie("token", token, {
@@ -258,10 +270,11 @@ export const googleLogin = async (req, res) => {
     const tokenData = {
       userId: user._id,
     };
+    // generating token with jwt sign with 1 day expiry time
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
-    // cookies strict used...
+     // return cookies with response
     return res
       .status(200)
       .cookie("token", token, {
@@ -286,8 +299,10 @@ export const googleLogin = async (req, res) => {
 // Logout Section
 export const logout = async (req, res) => {
   try {
+    // fetching token from header or cookies and put into blacklist token collection after logout
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     await BlacklistToken.create({ token });
+    // delete the cookie after logout
     return res
       .status(200)
       .cookie("token", "", {
@@ -308,6 +323,7 @@ export const logout = async (req, res) => {
   }
 };
 
+//this controller  update the profile of user
 export const updateProfile = async (req, res) => {
   try {
     const {
@@ -343,8 +359,10 @@ export const updateProfile = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // finding the user by userId
     let user = await User.findById(userId);
 
+    // if not user return user not found
     if (!user) {
       return res.status(404).json({
         message: "User not found.",
@@ -354,19 +372,26 @@ export const updateProfile = async (req, res) => {
 
     // Upload profile photo if provided
     if (profilePhoto && profilePhoto.length > 0) {
+      // fetching data uri of file
       const fileUri = getDataUri(profilePhoto[0]);
+      // upload file to cloudnary
       const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      // set cloudResponse.secure_url to user profile photo
       user.profile.profilePhoto = cloudResponse.secure_url;
     }
 
     // Upload resume if provided
     if (resume && resume.length > 0) {
+      // fetching data uri of file
       const fileUri = getDataUri(resume[0]);
+       // upload file to cloudnary
       const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      // set cloudResponse.secure_url to user resume
       user.profile.resume = cloudResponse.secure_url;
       user.profile.resumeOriginalName = resume[0].originalname;
     }
 
+    // checking is skillsArray is array by Array.isArray(variable)
     const skillsArray = Array.isArray(skills)
       ? skills
       : skills?.split(",").map((skill) => skill.trim()) || [];
@@ -429,6 +454,7 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
+    // extract user without password
     const updatedUser = await User.findById(userId).select("-password");
     return res.status(200).json({
       message: "Profile updated successfully.",
@@ -445,6 +471,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+// this controller send message from contact section of website
 export const sendMessage = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, message } = req.body;
@@ -495,6 +522,7 @@ export const sendMessage = async (req, res) => {
   }
 };
 
+// this controller use when user forgot the password
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -576,6 +604,7 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
+// this controller reset the password of user
 export const resetPassword = async (req, res) => {
   try {
     const { decoded, newPassword } = req.body;
@@ -600,7 +629,7 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Hash new password
+    // Hash new password my hashing 10 times
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update user password
@@ -620,6 +649,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+// deleting account of user by self or admin
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
   const userId = req.id; // Logged-in user ID
@@ -634,9 +664,8 @@ export const deleteAccount = async (req, res) => {
       });
     }
 
-    // check is email valid
+    // test the  email is valid or not
     if (!emailRegex.test(email)) {
-      console.log("gud");
       return res.status(400).json({
         message: "Invalid Email.",
         success: false,
@@ -657,6 +686,7 @@ export const deleteAccount = async (req, res) => {
     const admin = await Admin.findById(userId);
     const isSelf = user._id.toString() === userId;
 
+    // either amdin can delete account of user or user can delete own account
     if (!admin && !isSelf) {
       return res.status(403).json({
         message: "You are not authorized to delete this account.",

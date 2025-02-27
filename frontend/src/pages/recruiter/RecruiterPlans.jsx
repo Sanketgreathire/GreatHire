@@ -139,7 +139,7 @@ function RecruiterPlans() {
             },
             { withCredentials: true }
           );
-          
+
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
             dispatch(updateMaxPostJobs(plan.jobBoost));

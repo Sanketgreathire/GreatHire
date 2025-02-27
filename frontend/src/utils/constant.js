@@ -1139,7 +1139,6 @@ export const allLocations = {
 "Zahirabad, Hyderabad",  
 "Zamistanpur, Hyderabad",
     ],
-
     Tripura: ["Agartala, Tripura", "Udaipur, Tripura", "Kailashahar, Tripura"],
     "Uttar Pradesh": [
       "Noida, Uttar Pradesh",

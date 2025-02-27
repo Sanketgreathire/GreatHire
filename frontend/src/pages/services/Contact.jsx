@@ -1,59 +1,83 @@
-import React, { useState } from "react";
-import { FaQuestionCircle, FaPhoneAlt, FaRegEnvelope } from "react-icons/fa";
-import Navbar from "@/components/shared/Navbar";
+// Import necessary modules and dependencies
+// React and useState for component state management
+import React, { useState } from "react"; 
+
+// Icons for UI
+import { FaQuestionCircle, FaPhoneAlt, FaRegEnvelope } from "react-icons/fa"; 
+import Navbar from "@/components/shared/Navbar"; 
 import Footer from "@/components/shared/Footer";
-import { useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
-import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
+// Redux hook to access global state
+import { useSelector } from "react-redux"; 
+
+// Toast notifications for user feedback
+import { toast } from "react-hot-toast"; 
+
+// Axios for making API requests
+import axios from "axios"; 
+
+// API endpoint for user-related actions
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint"; 
+
+// Contact Section Component
 const ContactSection = () => {
-  const [loading, setLoading] = useState(false);
-  const { user } = useSelector((state) => state.auth);
-  const maxChars = 500;
+  const [loading, setLoading] = useState(false); // State to manage loading status
+  const { user } = useSelector((state) => state.auth); // Get user details from Redux state
+  const maxChars = 500; // Maximum character limit for the message input
 
+  // Form state management
   const [formData, setFormData] = useState({
-    fullname: user ? user?.fullname : "",
+    fullname: user ? user?.fullname : "", // Pre-fill user details if logged in
     email: user ? user?.emailId?.email : "",
     phoneNumber: user ? user?.phoneNumber?.number : "",
     message: "",
   });
 
+  // Handle input field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Restrict message length to maxChars
     if (name === "message" && value.length > maxChars) {
       toast.error("Message cannot exceed 500 characters");
       return;
     }
+
+    // Update form state
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); // Prevent default form submission behavior
+    setLoading(true); // Set loading to true while request is in progress
+
     try {
+      // Send contact form data to backend API
       const { data } = await axios.post(`${USER_API_END_POINT}/sendMessage`, {
         ...formData,
       });
+
+      // Handle success response
       if (data.success) {
-        toast.success(data.message);
+        toast.success(data.message); // Show success message
         setFormData({
-          fullname: user ? user.fullname : "",
+          fullname: user ? user.fullname : "", // Reset form fields after submission
           email: user ? user.emailId?.email : "",
           phoneNumber: user ? user.phoneNumber?.number : "",
           message: "",
         });
       } else {
-        toast.error(data.message);
+        toast.error(data.message); // Show error message if request fails
       }
     } catch (err) {
-      console.error(`Error in sending message: ${err}`);
-      toast.error("Failed to send message. Please try again.");
+      console.error(`Error in sending message: ${err}`); // Log error
+      toast.error("Failed to send message. Please try again."); // Show error toast
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state after request completes
     }
   };
+
 
   return (
     <>

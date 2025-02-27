@@ -1,16 +1,26 @@
-import React, { useState } from "react";
-import { IoIosSearch } from "react-icons/io";
+// Import necessary modules and dependencies
+import React from "react";
+
+// Import search icon
+import { IoIosSearch } from "react-icons/io"; 
+
+// Component for location search
 import LocationSearch from "@/pages/job/LocationSearch";
-import { useJobDetails } from "@/context/JobDetailsContext";
+
+// Context for job filtering
+import { useJobDetails } from "@/context/JobDetailsContext"; 
 
 const JobSearch = ({ searchInfo }) => {
-  const { filterJobs, resetFilter } = useJobDetails(); // Access functions from context
+  // Access filter and reset functions from job context
+  const { filterJobs, resetFilter } = useJobDetails();
+
+  // Function to update the location when a user selects one
   const handleLocationSelect = (selectedLocation) => {
     searchInfo.setLocation(selectedLocation);
   };
 
+  // Function to filter jobs based on the provided title and location
   const handleSearchClick = () => {
-    // Call filter function on search button click
     filterJobs(searchInfo.titleKeyword, searchInfo.location);
   };
 

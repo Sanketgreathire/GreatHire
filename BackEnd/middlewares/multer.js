@@ -1,6 +1,8 @@
+/** Multer is a Node.js package that makes it easier to upload files. It can handle file size limits, define file filters, and organize uploaded files. Multer is an NPM package that integrates with the middleware stack of Node applications.  */
 import multer from "multer";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+// restrict image type to be allowed
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_PDF_TYPE = "application/pdf";
 

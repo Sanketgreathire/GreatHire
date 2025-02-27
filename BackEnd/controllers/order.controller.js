@@ -3,16 +3,18 @@ import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
 
+// creating razorpay object or instance
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// this one create order for job plan
 export const createOrderForJobPlan = async (req, res) => {
   try { 
     const { planName, companyId, amount, jobBoost } = req.body;
 
-    const userId = req.id;
+    const userId = req.id; // recruiter id
 
     if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
@@ -34,6 +36,7 @@ export const createOrderForJobPlan = async (req, res) => {
       status: { $in: ["Hold", "Expired"] },
     });
 
+    // if any plan existing of a company, first remove old one.
     if (existingSubscription) {
       await JobSubscription.deleteOne({ _id: existingSubscription._id });
     }
@@ -44,7 +47,8 @@ export const createOrderForJobPlan = async (req, res) => {
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
-
+ 
+    // creating razorpay order
     const razorpayOrder = await razorpayInstance.orders.create(options);
 
     // Create a new subscription in the database
@@ -74,10 +78,11 @@ export const createOrderForJobPlan = async (req, res) => {
   }
 };
 
+// this one create order for candidate plan
 export const createOrderForCandidatePlan = async (req, res) => {
   try {
     const { planName, companyId, amount, creditBoost } = req.body;
-    const userId = req.id;
+    const userId = req.id; // recruiter id
 
     if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
@@ -111,6 +116,7 @@ export const createOrderForCandidatePlan = async (req, res) => {
       receipt: `receipt_${Date.now()}`,
     };
 
+    // creating razorpay order
     const razorpayOrder = await razorpayInstance.orders.create(options);
 
     // Create a new subscription in the database
