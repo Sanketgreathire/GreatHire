@@ -1,3 +1,4 @@
+// this file help to perform operation upon company
 import { Company } from "../models/company.model.js";
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
@@ -5,14 +6,12 @@ import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
-import nodemailer from "nodemailer";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
-import { validationResult } from "express-validator";
 
+// this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const isUserAssociated = async (companyId, userId) => {
   try {
     // Find the company by its ID
@@ -46,6 +45,7 @@ export const isUserAssociated = async (companyId, userId) => {
   }
 };
 
+// this controller create the company
 export const registerCompany = async (req, res) => {
   try {
     const {
@@ -69,7 +69,7 @@ export const registerCompany = async (req, res) => {
       const cinRegex = /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
       return cinRegex.test(cin);
     };
-
+    // CIN is unique number of a any bussiness
     if (!isValidCIN(CIN)) {
       return res.status(400).json({
         message: "Invalid CIN format.",
@@ -156,10 +156,11 @@ export const registerCompany = async (req, res) => {
   }
 };
 
-//get  company by id ...
+//get  company by company id ...
 export const getCompanyById = async (req, res) => {
   try {
     const { companyId } = req.body;
+    // find company by company id
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({
@@ -176,8 +177,9 @@ export const getCompanyById = async (req, res) => {
   }
 };
 
+// this controller return the company according to recruiter id mean which recruiter belong to which recruiter
 export const companyByUserId = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.body; // recrutier id
 
   try {
     // Validate userId
@@ -206,7 +208,7 @@ export const companyByUserId = async (req, res) => {
   }
 };
 
-//update company
+//update company details
 export const updateCompany = async (req, res) => {
   try {
     const { companyWebsite, address, industry, email, phone } = req.body;
@@ -244,6 +246,7 @@ export const updateCompany = async (req, res) => {
   }
 };
 
+// this controller update the admin of a company. There is be a single admin of a company always and only admin can select a recruiter as admin from his / her company
 export const changeAdmin = async (req, res) => {
   const { email, companyId, adminEmail } = req.body;
   const userId = req.id;
@@ -296,6 +299,7 @@ export const changeAdmin = async (req, res) => {
   }
 };
 
+// return current job plan if company purchased
 export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id; // Get company ID from request parameters
@@ -328,7 +332,7 @@ export const getCurrentPlan = async (req, res) => {
   }
 };
 
-// This controller will help to get candiadate data
+// This controller will help to get candiadate data mean recruiter can find user or candidate according to their need
 export const getCandidateData = async (req, res) => {
   try {
     const { jobTitle, experience, salaryBudget, companyId } = req.query;
@@ -383,6 +387,7 @@ export const getCandidateData = async (req, res) => {
   }
 };
 
+// if recruiter finding the candidate and if they view the resume of candidate then one credit decrease 1 Resume === 1 credit
 export const decreaseCandidateCredits = async (req, res) => {
   try {
     const companyId = req.params.id;
@@ -410,9 +415,10 @@ export const decreaseCandidateCredits = async (req, res) => {
   }
 };
 
+// return all applicants of a company
 export const getCompanyApplicants = async (req, res) => {
   try {
-    const { companyId } = req.params; // Extract company const userId = req.id;
+    const { companyId } = req.params; // Extract company id 
     const userId = req.id;
 
     if (!isUserAssociated(companyId, userId)) {
@@ -424,7 +430,7 @@ export const getCompanyApplicants = async (req, res) => {
     // Find all job postings under this company
     const jobIds = await Job.find({ company: companyId }).distinct("_id");
 
-    // Find applications for these jobs
+    // Find applications for these jobs in assecending order
     const applications = await Application.find({ job: { $in: jobIds } })
       .populate("applicant") // Only populate applicant details
       .sort({ createdAt: -1 }); // Sort latest first
@@ -440,6 +446,7 @@ export const getCompanyApplicants = async (req, res) => {
   }
 };
 
+// this controller report to a particular job by a user if a job found invalid 
 export const reportJob = async (req, res) => {
   try {
     const { jobId, reportTitle, description } = req.body;

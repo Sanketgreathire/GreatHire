@@ -23,7 +23,8 @@ const candidateSubscriptionSchema = new mongoose.Schema(
       type: Date,
       required: true,
       default: function () {
-        return new Date(Date.now() + 5 * 60 * 1000); // Current time + 5 minutes
+        // return new Date(Date.now() + 5 * 60 * 1000); // Current time + 5 minutes
+        return new Date(new Date().setMonth(new Date().getMonth() + 1));
       },
     },
 

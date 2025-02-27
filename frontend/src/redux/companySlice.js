@@ -34,21 +34,13 @@ const companySlice = createSlice({
 
     // reducer function to update maxJobpost data
     updateMaxPostJobs: (state, action) => {
-      if (action.payload === null || action.payload === 0) {
-        state.company.maxPostJobs = action.payload;
-      } else {
-        state.company.maxPostJobs = state.company.maxPostJobs + action.payload;
-      }
+      state.company.maxJobPosts = state.company.maxJobPosts + action.payload;
     },
 
     // reducer function to update maxJobpost data
     updateCandidateCredits: (state, action) => {
-      if (action.payload === null || action.payload === 0) {
-        state.company.creditedForCandidates = action.payload;
-      } else {
-        state.company.creditedForCandidates =
-          state.company.creditedForCandidates + action.payload;
-      }
+      state.company.creditedForCandidates =
+        state.company.creditedForCandidates + action.payload;
     },
     decreaseMaxPostJobs: (state, action) => {
       state.company.maxJobPosts = state.company.maxJobPosts - action.payload;

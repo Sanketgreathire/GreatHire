@@ -1,5 +1,6 @@
 import Revenue from "../models/revenue.model.js";
 
+// this controller store revenue create by job posting plan or candidate database plan
 export const storeRevenue = async (req, res) => {
   try {
     const { itemDetails, companyName, userDetails } = req.body;
@@ -16,6 +17,7 @@ export const storeRevenue = async (req, res) => {
         .json({ message: "Missing required user details." });
     }
 
+    // creating new revenue data
     const newRevenue = new Revenue({
       itemDetails,
       companyName: companyName || "",

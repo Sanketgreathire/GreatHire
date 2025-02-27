@@ -45,7 +45,7 @@ const RecruiterDashboard = () => {
       }
     };
 
-    fetchCompanyByUserId();
+    if (user) fetchCompanyByUserId();
   }, [user]);
 
   useEffect(() => {
