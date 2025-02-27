@@ -78,6 +78,9 @@ app.use(
   })
 );
 
+app.use("/socket.io/", (req, res, next)=> next());
+
+
 // // 📌 CSRF Protection
 // const csrfProtection = csurf({ cookie: true });
 // app.use(csrfProtection);
