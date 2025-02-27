@@ -1,4 +1,4 @@
-# User Controller Documentation
+## User Controller Documentation
 
 This document provides an overview of the user controller and its functionalities in the GreatHire backend application.
 
