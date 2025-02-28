@@ -82,7 +82,7 @@ const CurrentPlans = () => {
 
               {/* Upgrade Button (if no active plan) */}
               {user?.emailId?.email === company?.adminEmail &&
-                company?.maxJobPosts === 0 && (
+                (company?.maxJobPosts === 0 || !jobPlan) && (
                   <div className="text-center mt-4">
                     <Button
                       onClick={() =>

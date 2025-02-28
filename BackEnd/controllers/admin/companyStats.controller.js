@@ -1,11 +1,15 @@
 import { Company } from "../../models/company.model.js";
 
+// returning total number of company, active company, deactive company
 export const companyStats = async (req, res) => {
   try {
+    // Total Companies
     const totalCompanies = await Company.countDocuments();
+    // Total Active Companies
     const totalActiveCompanies = await Company.countDocuments({
       isActive: true,
     });
+    // Total Deactive Companies
     const totalDeactiveCompanies = await Company.countDocuments({
       isActive: false,
     });
@@ -26,6 +30,7 @@ export const companyStats = async (req, res) => {
   }
 };
 
+// return all company list to admin
 export const companyList = async (req, res) => {
   try {
     // Fetch all companies with only the selected fields

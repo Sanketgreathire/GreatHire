@@ -6,6 +6,7 @@ import { Admin } from "../../models/admin/admin.model.js";
 import { validationResult } from "express-validator";
 import nodemailer from "nodemailer";
 
+// this controller for creating new admin profie
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
@@ -28,7 +29,7 @@ export const register = async (req, res) => {
       });
     }
 
-    // Hash the password
+    // Hash the password by running 10 times recursive hash algorithm
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
@@ -154,13 +155,17 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+
+    // creating token data by user id
     const tokenData = {
       userId: user._id,
     };
+    // create token by token data
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
 
+    // hiding sensitive data like password
     const userWithoutPassword = await Admin.findById(user._id).select(
       "-password"
     );
@@ -183,9 +188,10 @@ export const login = async (req, res) => {
   }
 };
 
+// this contorller give the admin list to Owner
 export const getAdminList = async (req, res) => {
   try {
-    // Fetch all admin documents from the Admin collection
+    // Fetch all admin documents from the Admin collection. we select role as admin because in admin collection one document of Owner and we skip that document
     const admins = await Admin.find({ role: "admin" });
 
     // Return a success response with the list of admins
@@ -198,11 +204,12 @@ export const getAdminList = async (req, res) => {
   }
 };
 
+// this controller remove the account of admin by owner
 export const removeAccount = async (req, res) => {
   try {
     // ID of the admin performing the deletion (assumed to be set in req.id)
     const adminId = req.id;
-    const { userId } = req.params;
+    const { userId } = req.params; // admin id
 
     if (!userId) {
       return res
@@ -212,10 +219,10 @@ export const removeAccount = async (req, res) => {
 
     // Fetch the current admin from the database
     const currentAdmin = await Admin.findById(adminId);
-    if (!currentAdmin && currentAdmin.role !== "Owner") {
+    if (!currentAdmin) {
       return res
         .status(403)
-        .json({ success: false, message: "Unauthorized: Admin." });
+        .json({ success: false, message: "Admin not found" });
     }
 
     // Find and delete the user (admin) by their ID

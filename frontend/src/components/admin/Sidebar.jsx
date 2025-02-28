@@ -43,7 +43,7 @@ const Sidebar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (sidebarNavClicked) {
+    if (sidebarNavClicked || user) {
       dispatch(fetchCompanyStats());
       dispatch(fetchRecruiterStats());
       dispatch(fetchJobStats());
