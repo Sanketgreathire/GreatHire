@@ -17,8 +17,9 @@ const applicantDetails = ({
   user,
   setApplicants,
 }) => {
-  const [loading, setLoading] = useState(0);
+  const [loading, setLoading] = useState(0); // State to track loading status when updating applicant status
 
+  // Function to update the application status (Shortlisted or Rejected)
   const updateStatus = async (status) => {
     try {
       setLoading(status);
@@ -29,6 +30,7 @@ const applicantDetails = ({
         { withCredentials: true }
       );
       if (response.data.success) {
+        // Send email notification to the applicant about the status update
         const emailResponse = await axios.post(
           `${VERIFICATION_API_END_POINT}/send-email-applicants/${jobId}`,
           {
@@ -44,13 +46,13 @@ const applicantDetails = ({
             )
           );
 
-          toast.success("Status Updated");
+          toast.success("Status Updated"); // Show success toast message
         }
       } else {
-        toast.error("Status updation failed");
+        toast.error("Status updation failed"); // Show error toast message if update fails
       }
     } catch (err) {
-      toast.error("An error occurred while updating the status");
+      toast.error("An error occurred while updating the status"); // Show error toast message
       console.error("Error updating status:", err);
     } finally {
       setLoading(0);

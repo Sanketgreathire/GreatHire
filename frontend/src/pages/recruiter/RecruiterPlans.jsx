@@ -15,6 +15,7 @@ import { REVENUE_API_END_POINT } from "../../utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 
 function RecruiterPlans() {
+  // Define available subscription plans
   const plans = [
     {
       name: "Basic",
@@ -43,7 +44,7 @@ function RecruiterPlans() {
         "Priority 24/7 support",
         "Advanced analytics suite",
       ],
-      popular: true,
+      popular: true, // Marked as most popular plan
       borderColor: "ring-indigo-300",
       selectedBorderColor: "ring-2 ring-indigo-600",
     },
@@ -66,10 +67,11 @@ function RecruiterPlans() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState(plans[1].name);
+  const [selectedPlan, setSelectedPlan] = useState(plans[1].name); // Default selected plan
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
+  // Handles plan selection by updating state
   const handleSelectPlan = (planName) => {
     setSelectedPlan(planName);
   };
@@ -103,6 +105,7 @@ function RecruiterPlans() {
     return `${baseClasses} ${colorStyles[color]}`;
   };
 
+  // Handles payment process using Razorpay API
   const initiatePayment = async (plan) => {
     try {
       const response = await axios.post(
@@ -120,6 +123,7 @@ function RecruiterPlans() {
 
       const { orderId, amount, currency } = response.data;
 
+      // Razorpay payment configuration
       const options = {
         key: razorpay_key_id,
         amount,
@@ -128,6 +132,7 @@ function RecruiterPlans() {
         description: plan?.name,
         order_id: orderId,
         handler: async (response) => {
+          // Verify payment after successful transaction
           const verificationResponse = await axios.post(
             `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
             {
@@ -144,6 +149,7 @@ function RecruiterPlans() {
             toast.success("Payment Successful!");
             dispatch(updateMaxPostJobs(plan.jobBoost));
             dispatch(addJobPlan(verificationResponse.data.plan));
+
             // Call revenue API to store details
             await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
               itemDetails: {
@@ -184,6 +190,7 @@ function RecruiterPlans() {
     }
   };
 
+  // Handles plan purchase flow
   const purchasePlan = (plan) => {
     handleSelectPlan(plan.name);
     try {

@@ -8,14 +8,22 @@ import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
 
 const RecruitersDetails = () => {
+  // State to manage loading status
   const [loading, setLoading] = useState(false);
+
+  // State to store recruiter details
   const [recruiterDetails, setRecruiterDetails] = useState(null);
+
+  // Extract recruiterId from URL parameters
   const { recruiterId } = useParams();
+  
   const { user } = useSelector((state) => state.auth);
 
+  // Function to fetch recruiter details from the API
   const fetchRecruiterDetails = async () => {
     setLoading(true);
     try {
+      // API call to get recruiter details by ID
       const response = await axios.get(
         `${RECRUITER_API_END_POINT}/recruiter-by-id/${recruiterId}`
       );
@@ -27,6 +35,7 @@ const RecruitersDetails = () => {
     }
   };
 
+  // Fetch recruiter details when the component mounts or when the user changes
   useEffect(() => {
     fetchRecruiterDetails();
   }, [user]);
@@ -38,7 +47,7 @@ const RecruitersDetails = () => {
     try {
       const parsedUrl = new URL(url);
       if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
-        return encodeURI(url);
+        return encodeURI(url); // Encode URL to prevent issues
       }
     } catch (error) {
       return "https://github.com/shadcn.png";

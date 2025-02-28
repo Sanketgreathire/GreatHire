@@ -17,8 +17,9 @@ const RecruiterHome = () => {
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [loading, setLoading] = useState(false);
-  const [jobsStatistics, setJobsStatistics] = useState(null);
+  const [jobsStatistics, setJobsStatistics] = useState(null); // State to store job statistics
 
+  // Function to fetch job statistics based on the company ID
   const fetchJobsStatistics = async (companyId) => {
     try {
       setLoading(true);
@@ -38,6 +39,7 @@ const RecruiterHome = () => {
     }
   };
 
+  // Function to fetch company details by user ID
   const fetchCompanyByUserId = async () => {
     try {
       setLoading(true);
@@ -56,6 +58,7 @@ const RecruiterHome = () => {
     }
   };
 
+  // useEffect to fetch company and job statistics when the user is available
   useEffect(() => {
     if (user && company) {
       fetchJobsStatistics();
@@ -63,10 +66,11 @@ const RecruiterHome = () => {
     }
   }, [user]);
 
+  // Data for statistics cards
   const cards = [
     {
       title: "Recruiters",
-      count: recruiters.length,
+      count: recruiters.length, // Number of recruiters
       icon: (
         <FaUsers
           className="text-4xl text-blue-600 bg-blue-100 rounded-lg p-2"
@@ -88,7 +92,7 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company?.maxJobPosts || 0,
+      count: company?.maxJobPosts || 0, // Maximum number of jobs that can be posted
       icon: (
         <FaClipboardList
           className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"
@@ -145,6 +149,7 @@ const RecruiterHome = () => {
 
   return (
     <>
+    {/* If company exists and user is active, show dashboard */}
       {company && user?.isActive ? (
         <div className="min-h-screen p-8">
           {/* Header Section */}

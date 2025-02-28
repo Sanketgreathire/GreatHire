@@ -14,6 +14,7 @@ import Loading from "@/components/Loading";
 import { setRecruiterIsCompanyCreated } from "@/redux/authSlice";
 
 const CreateCompany = () => {
+  // State for loading indicator
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const CreateCompany = () => {
     } else if (!user) navigate("/login");
   }, []);
 
+  // State for form fields
   const [formData, setFormData] = useState({
     companyName: "",
     companyWebsite: "",
@@ -43,13 +45,16 @@ const CreateCompany = () => {
     isAgree: false,
   });
 
+  // File upload progress state
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileUploaded, setFileUploaded] = useState(false);
 
+  // Handles changes in form inputs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handles checkbox toggle
   const handleCheckboxChange = (e) => {
     setFormData({
       ...formData,
@@ -57,6 +62,7 @@ const CreateCompany = () => {
     });
   };
 
+  // Handles file drop for business registration upload
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -90,8 +96,10 @@ const CreateCompany = () => {
     }
   };
 
+  // Dropzone configuration for file upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+  // Handles form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -105,6 +113,7 @@ const CreateCompany = () => {
       // this email become company admin email
       updatedFormData.append("userEmail", user?.emailId.email); // Include userEmail
 
+      // API call to register the company
       const res = await axios.post(
         `${COMPANY_API_END_POINT}/register`,
         updatedFormData,
@@ -134,6 +143,7 @@ const CreateCompany = () => {
   return (
     <>
       <Navbar />
+      {/* Show form only if user exists and hasn't created a company */}
       {user && !user?.isCompanyCreated ? (
         <div className="flex m-2 min-h-screen">
           <div className="w-full md:w-1/2 flex flex-col space-y-2 p-4">
