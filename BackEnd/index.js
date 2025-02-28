@@ -55,8 +55,10 @@ const app = express();
 const server = createServer(options,app);
 const PORT = process.env.PORT || 3000;
 
-// Security Middleware
-app.use(helmet()); // Use Helmet to set security-related HTTP headers
+app.use(helmet({
+  contentSecurityPolicy: false,
+})); // Use Helmet to set security-related HTTP headers
+
 app.disable("x-powered-by"); // Explicitly disable X-Powered-By header
 
 // WebSocket Server with CORS
