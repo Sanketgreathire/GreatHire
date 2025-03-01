@@ -10,6 +10,7 @@ import { FiUsers } from "react-icons/fi";
 import ApplicantDetails from "./ApplicantDetails";
 import { useNavigate } from "react-router-dom";
 
+// Status options for filtering applicants
 const statuses = ["All", "Pending", "Shortlisted", "Rejected"];
 
 const AllApplicantsList = () => {
@@ -20,8 +21,11 @@ const AllApplicantsList = () => {
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
+
+  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
   const [loading, setLoading] = useState(true);
 
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
@@ -53,6 +57,7 @@ const AllApplicantsList = () => {
     }
   };
 
+  // Filtering applicants based on status and search term
   useEffect(() => {
     let filtered = applicants;
 
@@ -61,7 +66,7 @@ const AllApplicantsList = () => {
       filtered = filtered.filter((app) => app.status === selectedStatus);
     }
 
-    // Filter by search
+    // Filter by search input (name, email, or phone number)
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (app) =>

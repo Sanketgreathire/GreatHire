@@ -1,11 +1,15 @@
 import { Job } from "../../models/job.model.js";
 
+// returing total jobs, total active jobs, total deactive jobs
 export const getJobStats = async (req, res) => {
   try {
+    // Total Jobs
     const totalJobs = await Job.countDocuments();
+    // Total Active Jobs
     const totalActiveJobs = await Job.countDocuments({
       "jobDetails.isActive": true,
     });
+    // total Deactive Jobs
     const totalDeactiveJobs = await Job.countDocuments({
       "jobDetails.isActive": false,
     });
@@ -28,6 +32,7 @@ export const getJobStats = async (req, res) => {
   }
 };
 
+// get all job list
 export const getAllJobList = async (req, res) => {
   try {
     const jobs = await Job.aggregate([
@@ -41,8 +46,10 @@ export const getAllJobList = async (req, res) => {
       {
         $addFields: {
           postedFormatted: {
+            //  combines the day abbreviation with the formatted date.
             $concat: [
               {
+                // $switch converts the day of the week ($dayOfWeek) from createdAt into a short string (e.g., "Sun", "Mon").
                 $switch: {
                   branches: [
                     {
@@ -79,6 +86,7 @@ export const getAllJobList = async (req, res) => {
               },
               ", ",
               {
+                // formats the date as day, year (e.g., 05, 2024).
                 $dateToString: { format: "%d, %Y", date: "$createdAt" },
               },
             ],

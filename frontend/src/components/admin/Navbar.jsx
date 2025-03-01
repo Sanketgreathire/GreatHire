@@ -2,6 +2,7 @@
 import React, { useState, useRef } from "react";
 // Import icons for notifications and messages
 import { Bell, MessageSquareText } from "lucide-react"; 
+import { resetStats } from "@/redux/admin/statsSlice";
 // Redux hooks for state management
 import { useDispatch, useSelector } from "react-redux";
 // API endpoint constants 
@@ -62,6 +63,8 @@ const Navbar = ({ linkName }) => {
       });
       if (response.data.success) {
         dispatch(logOut());
+        // reset all stats that fetch for admin
+        dispatch(resetStats());
         setIsProfileMenuOpen(false);
         toast.success(response.data.message);
         navigate("/admin/login");

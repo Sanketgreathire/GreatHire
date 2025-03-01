@@ -8,7 +8,9 @@ import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 
 const RecruiterProfile = () => {
+  // State to manage the profile update modal visibility
   const [open, setOpen] = useState(false);
+  
   const { user } = useSelector((store) => store.auth);
 
   return (

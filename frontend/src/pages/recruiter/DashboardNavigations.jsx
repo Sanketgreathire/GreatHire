@@ -19,9 +19,14 @@ import { useSelector } from "react-redux";
 const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+
+  // State for sidebar toggle
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  // State for dropdown toggle
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
+  // Function to apply styles to navigation links
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition ${
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
@@ -31,7 +36,7 @@ const DashboardNavigations = () => {
 
   return (
     <>
-      {/* 🔹 Hamburger Button (Visible on Small Screens) */}
+      {/*  Hamburger Button (Visible on Small Screens) */}
       <button
         className=" z-30 lg:hidden p-2 fixed top-4 left-4   rounded-sm"
         onClick={() => setSidebarOpen(true)}
@@ -39,7 +44,7 @@ const DashboardNavigations = () => {
         <CiMenuBurger size={24} />
       </button>
 
-      {/* 🔹 Sidebar */}
+      {/*  Sidebar */}
       <div
         className={`
           fixed top-0 lg:top-16 border-t-2 border-gray-300 left-0 z-30 bg-gradient-to-b bg-white transition-transform duration-300 ease-in-out
@@ -138,6 +143,8 @@ const DashboardNavigations = () => {
                         )}
                       </NavLink>
                     )}
+
+                    {/* Post Job (Visible if company is created) */}
                   {user?.isActive && user?.isCompanyCreated && (
                     <NavLink
                       to="/recruiter/dashboard/post-job"

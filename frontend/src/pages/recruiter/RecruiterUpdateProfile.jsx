@@ -13,6 +13,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
+  //Initialize state with user details
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
@@ -21,16 +22,19 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     profilePhoto: user?.profile?.profilePhoto || "",
   });
 
+  // Profile image preview state
   const [previewImage, setPreviewImage] = useState(
     user?.profile?.profilePhoto || ""
   );
 
   const dispatch = useDispatch();
 
+  // Handles input field changes
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  // Handles profile image selection and preview
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -45,6 +49,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+  // Handles form submission to update recruiter profile
   const submitHandler = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -69,7 +74,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        setOpen(false);
+        setOpen(false); // Close modal after successful update
       }
       toast.success(res.data.message);
     } catch (error) {
@@ -79,6 +84,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+  // Return null if modal is not open
   if (!open) return null;
 
   return (

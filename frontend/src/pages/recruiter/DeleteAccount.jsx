@@ -14,16 +14,26 @@ import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 const DeleteAccount = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // State for managing the delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { recruiters } = useSelector((state) => state.recruiters);
   const { company } = useSelector((state) => state.company);
+
+  // Tooltip state management
   const [deleteTooltip, setDeleteTooltip] = useState(false);
   const [promoteTooltip, setPromoteTooltip] = useState(false);
+
+  // State to track selected recruiter for admin promotion
   const [selectedEmail, setSelectedEmail] = useState("");
+
   const { user } = useSelector((state) => state.auth);
+
+  // Loading states for promote and delete actions
   const [ploading, pSetLoading] = useState(false);
   const [dloading, dSetLoading] = useState(false);
 
+  // Function to change the admin of the company
   const changeAdmin = async () => {
     try {
       pSetLoading(true);
@@ -53,6 +63,7 @@ const DeleteAccount = () => {
     }
   };
 
+  // Function to delete the recruiter account
   const deleteAccount = async () => {
     try {
       dSetLoading(true);
@@ -66,7 +77,7 @@ const DeleteAccount = () => {
       if (response.data.success) {
         dispatch(cleanRecruiterRedux()); // Ensure this action is defined
         dispatch(removeCompany()); // Ensure this action is defined
-        dispatch(logOut());
+        dispatch(logOut()); // Logs out the user
         toast.success(response.data.message);
         navigate("/");
       } else {
@@ -82,17 +93,20 @@ const DeleteAccount = () => {
     }
   };
 
+  // Handles confirmation of account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     deleteAccount();
   };
 
+  // Handles canceling of account deletion
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
   return (
     <>
+    {/* Check if the company exists and user is active */}
       {company && user?.isActive ? (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
           <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md mx-4 sm:mx-0">
@@ -178,6 +192,7 @@ const DeleteAccount = () => {
           </span>
         </p>
       )}
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}

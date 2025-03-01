@@ -17,7 +17,10 @@ import { useSelector } from "react-redux";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
+// Define available status options for filtering applicants
 const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
+
+// Define styles for different application statuses
 const statusStyles = {
   Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
   Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
@@ -26,19 +29,20 @@ const statusStyles = {
 
 const AppliedCandidatesList = () => {
   const [applicants, setApplicants] = useState([]);
-  const { user } = useSelector((state) => state.auth);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const jobId = useParams().id;
-  const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
-  const [applicant, setApplicant] = useState(null);
-  const [applicantId, setApplicantId] = useState(null);
+  const { user } = useSelector((state) => state.auth); // Get the logged-in user details
+  const [search, setSearch] = useState(""); // State for search input
+  const [statusFilter, setStatusFilter] = useState("All"); // State for status filter
+  const jobId = useParams().id; // Get job ID from the URL parameters
+  const [applicantDetailsModal, setApplicantDetailsModal] = useState(false); // State to show/hide applicant details modal
+  const [applicant, setApplicant] = useState(null); // Selected applicant details
+  const [applicantId, setApplicantId] = useState(null); // Selected applicant ID
   const navigate = useNavigate();
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const applicantsPerPage = 10;
 
+  // Function to check if a string is a valid URL
   const isValidHttpUrl = (string) => {
     try {
       let url = new URL(string);
@@ -48,6 +52,7 @@ const AppliedCandidatesList = () => {
     }
   };
 
+  // Function to fetch applicants for a given job ID
   const fetchApplicants = async (jobId) => {
     try {
       const response = await axios.get(
@@ -62,12 +67,14 @@ const AppliedCandidatesList = () => {
     }
   };
 
+  // Fetch applicants when jobId changes or when closing the applicant details modal
   useEffect(() => {
     if (jobId && !applicantDetailsModal) {
       fetchApplicants(jobId);
     }
   }, [jobId]);
 
+  // Filter applicants based on search query and selected status
   const filteredApplicants = applicants?.filter((data) => {
     const matchesSearch =
       data?.applicant?.fullname.toLowerCase().includes(search.toLowerCase()) ||
@@ -106,10 +113,12 @@ const AppliedCandidatesList = () => {
                 onClick={() => navigate(-1)}
               />
             </div>
+            {/* Page Title */}
             <h1 className="text-2xl font-bold mb-4 text-center underline">
               Applied Candidates List
             </h1>
 
+            {/* Search & Filter Section */}
             <div className="flex flex-wrap justify-between mb-4 gap-4">
               <div className="relative w-full md:w-1/3">
                 <FiSearch className="absolute left-3 top-2.5 text-gray-500" />

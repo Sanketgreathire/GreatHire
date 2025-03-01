@@ -1,10 +1,10 @@
-## User Controller Documentation
+# User Controller Documentation
 
 This document provides an overview of the user controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Register](#register)
     - [Login](#login)
     - [Google Login](#google-login)
@@ -220,13 +220,13 @@ Errors are caught and handled within each controller function. Appropriate statu
 
 
 
-## Recruiter Controller Documentation
+# Recruiter Controller Documentation
 
 This document provides an overview of the recruiter controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Register](#register)
     - [Google Login](#google-login)
     - [Get All Recruiters](#get-all-recruiters)
@@ -421,13 +421,13 @@ The following middleware functions are used in the recruiter routes:
 Errors are caught and handled within each controller function. Appropriate status codes and error messages are returned in the response.
 
 
-## Company Controller Documentation
+# Company Controller Documentation
 
 This document provides an overview of the company controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Register Company](#register-company)
     - [Get Company By ID](#get-company-by-id)
     - [Get Company By User ID](#get-company-by-user-id)
@@ -662,13 +662,13 @@ Errors are caught and handled within each controller function. Appropriate statu
 
 
 
-## Job Controller Documentation
+# Job Controller Documentation
 
 This document provides an overview of the job controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Post Job](#post-job)
     - [Get All Jobs](#get-all-jobs)
     - [Get Job By ID](#get-job-by-id)
@@ -897,13 +897,13 @@ The following middleware functions are used in the job routes:
 Errors are caught and handled within each controller function. Appropriate status codes and error messages are returned in the response.
 
 
-## Application Controller Documentation
+# Application Controller Documentation
 
 This document provides an overview of the application controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Apply Job](#apply-job)
     - [Get Applied Jobs](#get-applied-jobs)
     - [Get Applicants](#get-applicants)
@@ -1005,13 +1005,13 @@ The following middleware functions are used in the application routes:
 Errors are caught and handled within each controller function. Appropriate status codes and error messages are returned in the response.
 
 
-## Order Controller Documentation
+# Order Controller Documentation
 
 This document provides an overview of the order controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Create Order for Job Plan](#create-order-for-job-plan)
     - [Create Order for Candidate Plan](#create-order-for-candidate-plan)
 - [Middleware](#middleware)
@@ -1083,13 +1083,13 @@ The following middleware functions are used in the order routes:
 Errors are caught and handled within each controller function. Appropriate status codes and error messages are returned in the response.
 
 
-## Revenue Controller Documentation
+# Revenue Controller Documentation
 
 This document provides an overview of the revenue controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Store Revenue](#store-revenue)
 - [Middleware](#middleware)
 - [Error Handling](#error-handling)
@@ -1136,13 +1136,13 @@ Errors are caught and handled within the controller function. Appropriate status
 
 
 
-## Verification Controller Documentation
+# Verification Controller Documentation
 
 This document provides an overview of the verification controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Verify Token](#verify-token)
     - [Send Verification Status](#send-verification-status)
     - [Request OTP for Email](#request-otp-for-email)
@@ -1381,13 +1381,13 @@ Errors are caught and handled within each controller function. Appropriate statu
 
 
 
-## Notification Controller Documentation
+# Notification Controller Documentation
 
 This document provides an overview of the notification controller and its functionalities in the GreatHire backend application.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Endpoints](#endpoints)
+- [Introduction]
+- [Endpoints]
     - [Get Unseen Notifications Count](#get-unseen-notifications-count)
     - [Get Unseen Messages](#get-unseen-messages)
     - [Get Messages](#get-messages)

@@ -87,23 +87,23 @@ const Signup = () => {
           />
           {/* Centered Content */}
           <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4">
-            <h1 className="font-semibold text-2xl md:text-3xl text-gray-500">
+            <h1 className="font-semibold text-2xl md:text-3xl text-gray-800">
               Powerful recruiting tools to find your{" "}
               <span className="text-black"> Perfect Team!</span>
             </h1>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Post your job and source candidates.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Save time with intelligent applicant sorting.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Free built-in ATS to manage your pipeline.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Industry high 40% candidate response rate.
             </p>

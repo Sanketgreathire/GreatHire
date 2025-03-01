@@ -20,28 +20,32 @@ const statusOptions = ["All", "Active", "Expired"];
 
 const PostedJobList = () => {
   const navigate = useNavigate();
-  const [jobs, setJobs] = useState([]);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [jobs, setJobs] = useState([]); // State to store the list of jobs
+  const [search, setSearch] = useState(""); // State for search input
+  const [statusFilter, setStatusFilter] = useState("All"); // State for job status filter
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
-  const [loading, setLoading] = useState(false);
-  const [statusLoading, setStatusLoading] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10;
+  const [loading, setLoading] = useState(false); // State to track job fetching
+  const [statusLoading, setStatusLoading] = useState({}); // State to track individual job status toggling
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
+  const jobsPerPage = 10; // Number of jobs per page
 
+  // Navigate to post a new job
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");
   };
 
+  // Navigate to job details page
   const handleJobDetailsClick = (jobId) => {
     navigate(`/recruiter/dashboard/job-details/${jobId}`);
   };
 
+  // Navigate to applicants list for a specific job
   const handleApplicantsClick = (jobId) => {
     navigate(`/recruiter/dashboard/applicants-details/${jobId}`);
   };
 
+  // Fetch all jobs for the logged-in company's ID
   const fetchAllJobs = async (companyId) => {
     try {
       setLoading(true);
@@ -63,6 +67,7 @@ const PostedJobList = () => {
     }
   };
 
+  // Filtering jobs based on search and status filter
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch = job?.jobDetails?.title
       ?.toLowerCase()
@@ -74,6 +79,7 @@ const PostedJobList = () => {
     return matchesSearch && matchesStatus;
   });
 
+  // Implementing pagination
   const currentJobs = filteredJobs.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage
@@ -81,6 +87,7 @@ const PostedJobList = () => {
 
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
+  // Toggle job status (Active/Expired)
   const toggleActive = async (event, jobId, isActive) => {
     event.stopPropagation();
     try {
@@ -118,12 +125,14 @@ const PostedJobList = () => {
     }
   };
 
+  // Fetch jobs when component mounts or when user/company data changes
   useEffect(() => {
     if (user && company) {
       fetchAllJobs(company?._id);
     }
   }, [user, company]);
 
+  // Handle page change for pagination
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };

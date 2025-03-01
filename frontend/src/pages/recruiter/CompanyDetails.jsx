@@ -13,12 +13,16 @@ import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+
+  // Local states for handling loading, edit mode, and delete confirmation modal
   const [loading, setLoading] = useState(false);
   const [dloading, dSetLoading] = useState(false);
   const dispatch = useDispatch();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  // Initialize form data with company details
   const [formData, setFormData] = useState({
     companyWebsite: company?.companyWebsite,
     address: {
@@ -33,15 +37,18 @@ const CompanyDetails = () => {
     phone: company?.phone,
   });
 
+  // Toggle between edit and view mode
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
 
+  // Handle input changes for regular form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle input changes for address fields
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -53,6 +60,7 @@ const CompanyDetails = () => {
     });
   };
 
+  // Submit updated company details
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -77,6 +85,7 @@ const CompanyDetails = () => {
     }
   };
 
+  // Delete company and log out the user
   const handleDeleteCompany = async () => {
     try {
       dSetLoading(true);
@@ -106,11 +115,13 @@ const CompanyDetails = () => {
     }
   };
 
+  // Confirm and proceed with company deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteCompany();
   };
 
+  // Cancel company deletion
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
@@ -407,6 +418,8 @@ const CompanyDetails = () => {
           </span>
         </p>
       )}
+
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}

@@ -174,6 +174,7 @@ export const getStatisticInRange = async (req, res) => {
   }
 };
 
+// this controller help to return applications according to year
 export const getApplicationsDataByYear = async (req, res) => {
   try {
     // Extract and validate the "year" query parameter

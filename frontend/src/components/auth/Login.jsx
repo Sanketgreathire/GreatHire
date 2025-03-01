@@ -163,13 +163,13 @@ const Login = () => {
           <img
             src={img2}
             alt="Background"
-            className="absolute inset-0 w-full h-full object-cover lg:object-fill"
+            className="absolute inset-0 w-full h-full object-cover lg:object-fill opacity-70"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
-            <h1 className="font-bold text-3xl md:text-4xl text-gray-600">
+            <h1 className="font-bold text-3xl md:text-4xl text-gray-700">
               Find the job made for you.
             </h1>
-            <p className="font-medium text-gray-600 text-sm md:text-lg max-w-[90%] md:max-w-[70%]">
+            <p className="font-medium text-gray-800 text-sm md:text-lg max-w-[90%] md:max-w-[70%]">
               Browse over 150K jobs at top companies.
             </p>
           </div>

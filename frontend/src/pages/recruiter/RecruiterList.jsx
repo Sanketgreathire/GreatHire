@@ -21,8 +21,9 @@ const RecruiterList = () => {
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Function to toggle the active status of a recruiter
   const toggleActive = async (event, recruiterId, isActive) => {
-    event.stopPropagation();
+    event.stopPropagation(); // Prevents event bubbling
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.put(
@@ -51,6 +52,7 @@ const RecruiterList = () => {
     }
   };
 
+   // Function to delete a recruiter
   const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
@@ -76,6 +78,7 @@ const RecruiterList = () => {
     }
   };
 
+  // Confirm deletion of recruiter
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     deleteRecruiter(
@@ -85,10 +88,12 @@ const RecruiterList = () => {
     );
   };
 
+  // Cancel deletion of recruiter
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
+  // Filtering recruiters based on search term and status
   const filteredRecruiters = recruiters.filter((recruiter) => {
     const searchMatch =
       recruiter.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||

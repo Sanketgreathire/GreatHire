@@ -12,6 +12,7 @@ import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
 const RecruiterJob = ({ recruiterId }) => {
+  // State variables for managing job data, loading states, pagination, search, and filters
   const [jobs, setJobs] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState({});
@@ -27,6 +28,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+   // Function to fetch jobs created by a recruiter
   const getJobsByRecruiter = async (recruiterId, page = 1) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
@@ -51,12 +53,14 @@ const RecruiterJob = ({ recruiterId }) => {
     }
   };
 
+  // Fetch jobs when the component mounts or when recruiterId/currentPage changes
   useEffect(() => {
     if (recruiterId && jobs.length === 0) {
       getJobsByRecruiter(recruiterId, currentPage);
     }
   }, [recruiterId, currentPage]);
 
+   // Function to toggle the job's active status
   const toggleActive = async (event, jobId, isActive) => {
     event.stopPropagation();
     try {
@@ -73,6 +77,7 @@ const RecruiterJob = ({ recruiterId }) => {
       );
 
       if (response.data.success) {
+        // Update job status in the state
         setJobs((prevJobs) =>
           prevJobs.map((job) =>
             job._id === jobId
@@ -99,6 +104,7 @@ const RecruiterJob = ({ recruiterId }) => {
     }
   };
 
+  // Function to delete a job
   const deleteJob = async (jobId) => {
     try {
       dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
@@ -132,6 +138,7 @@ const RecruiterJob = ({ recruiterId }) => {
     }
   };
 
+  // Delete confirmation handlers
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     deleteJob(jobId);
@@ -141,11 +148,13 @@ const RecruiterJob = ({ recruiterId }) => {
     setShowDeleteModal(false);
   };
 
+  // Handle pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
     getJobsByRecruiter(recruiterId, page);
   };
 
+  // Filter jobs based on search term and status
   const filteredJobs = jobs.filter((job) => {
     const searchMatch =
       job.jobDetails.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -162,6 +171,7 @@ const RecruiterJob = ({ recruiterId }) => {
     return searchMatch && statusMatch;
   });
 
+   // Navigate to job details page
   const handleJobDetailsClick = (jobId) => {
     if (user?.role === "recruiter")
       navigate(`/recruiter/dashboard/job-details/${jobId}`);
