@@ -1,21 +1,39 @@
+// Import necessary modules and dependencies
 import React, { useState, useRef } from "react";
-import { Bell, MessageSquareText } from "lucide-react";
-
+// Import icons for notifications and messages
+import { Bell, MessageSquareText } from "lucide-react"; 
+// Redux hooks for state management
 import { useDispatch, useSelector } from "react-redux";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import toast from "react-hot-toast";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { logOut } from "@/redux/authSlice";
-import useNotification from "@/hooks/useNotification";
-import { NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+// API endpoint constants 
+import { USER_API_END_POINT, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+// Toast notifications for user feedback 
+import toast from "react-hot-toast"; 
+// Axios for making HTTP requests
+import axios from "axios"; 
+// Navigation hook for redirection
+import { useNavigate } from "react-router-dom"; 
+// Redux action for logging out
+import { logOut } from "@/redux/authSlice"; 
+// Custom hook for handling notifications
+import useNotification from "@/hooks/useNotification"; 
 
+// Navbar component that includes user authentication and notifications
 const Navbar = ({ linkName }) => {
+  // Get the current logged-in user from Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to manage the visibility of the profile menu dropdown
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+  // Reference for the profile menu to manage clicks outside
   const profileMenuRef = useRef(null);
+
+  // Hook for navigating between pages
   const navigate = useNavigate();
+
+  // Hook to dispatch actions to Redux store
   const dispatch = useDispatch();
+
 
   // Retrieve notifications from your custom hook
   const { notifications, setNotifications } = useNotification();

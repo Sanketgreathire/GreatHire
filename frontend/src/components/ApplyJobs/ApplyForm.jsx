@@ -202,7 +202,6 @@ const [input, setInput] = useState({
     }
   };
 
-  
   return (
     <div>
       {step1 && (

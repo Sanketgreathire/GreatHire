@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
@@ -10,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Briefcase, FileText, UserCheck } from "lucide-react";
+import { Briefcase, UserCheck } from "lucide-react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
@@ -22,15 +23,30 @@ import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 
 const Dashboard = () => {
+  // Retrieve company statistics from Redux store
   const companyStats = useSelector((state) => state.stats.companyStatsData);
+
+  // Retrieve authenticated user details from Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // Retrieve recruiter statistics from Redux store
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
+
+  // Retrieve job-related statistics from Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
+
+  // Retrieve user statistics from Redux store
   const userStats = useSelector((state) => state.stats.userStatsData);
 
+  // State to manage loading status
   const [loading, setLoading] = useState(false);
+
+  // State to store recent activity data
   const [recentActivity, setRecentActivity] = useState(null);
+
+  // State to store recently posted jobs
   const [jobPostings, setJobPostedJob] = useState([]);
+
 
   const stats = [
     {

@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,13 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye } from "lucide-react";
-import { Briefcase, UserCheck, CheckCircle, XCircle } from "lucide-react";
+import { UserCheck, CheckCircle, XCircle, Trash, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
-import { FaRegUser } from "react-icons/fa";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
-
 import Navbar from "@/components/admin/Navbar";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -36,18 +34,37 @@ import {
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const CompanyList = () => {
+  // State for search input value
   const [search, setSearch] = useState("");
+
+  // State for tracking API loading status
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
+
+  // State for filtering companies based on status
   const [status, setStatus] = useState("All");
+
+  // Pagination state
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Fetch company and recruiter statistics from Redux store
   const companyStats = useSelector((state) => state.stats.companyStatsData);
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
+
+  // React Router navigation hook
   const navigate = useNavigate();
+
+  // Redux dispatch function
   const dispatch = useDispatch();
+
+  // State to store the list of companies
   const [companyList, setCompanyList] = useState([]);
+
+  // Fetch logged-in user details from Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to manage delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [companyId, setCompanyId] = useState(null);
 

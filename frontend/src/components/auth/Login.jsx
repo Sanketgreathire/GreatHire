@@ -1,27 +1,44 @@
+// Importing React and necessary hooks for state management and side effects
 import React, { useEffect, useState } from "react";
+// Importing an image asset for the signup page
 import img2 from "../../assets/img2.png";
+// Hook for navigation
 import { useNavigate } from "react-router-dom";
+// Google OAuth provider for authentication
 import { GoogleOAuthProvider } from "@react-oauth/google";
+// Custom Google login component
 import GoogleLogin from "../GoogleLogin";
+// Google Client ID for authentication 
 import { google_client_id } from "../../utils/GoogleOAuthCredentials.js";
+// Axios for making API requests
 import axios from "axios";
+// Navbar component for navigation 
 import Navbar from "../shared/Navbar";
+// Footer Component
 import Footer from "../shared/Footer";
+// Hook for dispatching actions to Redux store
 import { useSelector, useDispatch } from "react-redux";
+// Redux action to set user data
 import { setUser } from "@/redux/authSlice";
+// Library for showing toast notifications
 import { toast } from "react-hot-toast";
 import Loading from "../Loading";
+// API endpoint for user-related actions
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
+   // Redux dispatcher to update global user state
   const dispatch = useDispatch();
+   // React Router navigation hook to redirect users after successful login
   const navigate = useNavigate();
+  // State to manage form input values
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false); // Add loading state
+   // State to manage loading status while making API requests
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     if (user) {

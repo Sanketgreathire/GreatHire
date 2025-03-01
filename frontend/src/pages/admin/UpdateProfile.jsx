@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -5,10 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
 
+// Component for updating user profile
 const UpdateProfile = ({ open, setOpen }) => {
+  // State to manage loading status
   const [loading, setLoading] = useState(false);
+
+  // Retrieve user data from Redux store
   const { user } = useSelector((store) => store.auth);
 
+  // State to manage input fields for profile update
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId?.email || "",
@@ -17,31 +23,36 @@ const UpdateProfile = ({ open, setOpen }) => {
     profilePhoto: user?.profile?.profilePhoto || "",
   });
 
+  // State to manage preview of the profile image
   const [previewImage, setPreviewImage] = useState(
     user?.profile?.profilePhoto || ""
   );
 
-  //const dispatch = useDispatch();
-
+  // Handler for updating input fields when user types
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  // Handler for updating profile image when user selects a file
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check if file size exceeds 10MB limit
       if (file.size > 10 * 1024 * 1024) {
         toast.error("Image size should be less than 10 MB.");
         return;
       }
+      // Read the file and set it as a preview
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
       setInput((prev) => ({ ...prev, profilePhoto: file }));
     }
   };
-
+  
+  // If the component is not open, return null (don't render anything)
   if (!open) return null;
+
 
   return (
     <div
