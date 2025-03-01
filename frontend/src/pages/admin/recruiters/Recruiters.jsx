@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,14 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Trash,
-  Eye,
-  Briefcase,
-  UserCheck,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { Trash, Eye, Briefcase, UserCheck, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import { FaRegUser } from "react-icons/fa";
@@ -31,18 +25,39 @@ import { toast } from "react-hot-toast";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Recruiters = () => {
-  // this file show the recruiter of particular company
+  
+  // Extracts the company ID from the URL parameters
   const { companyId } = useParams();
+
+  // State to manage the search input value
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState({});
+
+  // State to manage loading status for various operations
+  const [loading, setLoading] = useState({}); 
   const [dloading, dsetLoading] = useState({});
+
+  // State to manage the selected recruiter status (e.g., Active, Inactive, All)
   const [status, setStatus] = useState("All");
+
+  // State to manage pagination (current page number)
   const [page, setPage] = useState(1);
+
+  // State to control the visibility of the delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // Number of items displayed per page
   const itemsPerPage = 10;
+
+  // Hook for navigation within the application
   const navigate = useNavigate();
+
+  // State to store the list of recruiters
   const [recruiterList, setRecruiterList] = useState([]);
+
+  // State to store summary information about recruiters
   const [recruiterSummary, setRecruiterSummary] = useState(null);
+
+  // State to store the recruiter selected for deletion or other operations
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
 
   const stats = [

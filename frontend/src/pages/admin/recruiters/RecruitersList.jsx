@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   Eye,
   Briefcase,
   UserCheck,
-  CheckCircle,
   XCircle,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -33,19 +33,44 @@ import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const RecruitersList = () => {
+  // State to manage the search input value
   const [search, setSearch] = useState("");
+
+  // State to manage loading status for various operations
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
+
+  // State to manage the selected recruiter status (e.g., Active, Inactive, All)
   const [status, setStatus] = useState("All");
+
+  // State to manage pagination (current page number)
   const [page, setPage] = useState(1);
+
+  // Number of items displayed per page
   const itemsPerPage = 10;
+
+  // Hook for navigation within the application
   const navigate = useNavigate();
+
+  // Hook to dispatch actions to the Redux store
   const dispatch = useDispatch();
+
+  // State to control the visibility of the delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // State to store the list of recruiters
   const [recruiterList, setRecruiterList] = useState([]);
+
+  // Retrieves recruiter statistics from the Redux store
   const recruiterStats = useSelector((state) => state.stats.recruiterStatsData);
+
+  // Retrieves job statistics from the Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
+
+  // Retrieves authenticated user details from the Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to store the recruiter selected for deletion or other operations
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
 
   const stats = [

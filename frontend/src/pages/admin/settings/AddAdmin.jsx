@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -10,9 +11,16 @@ import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 
 const AddAdmin = () => {
+  // Retrieves the authenticated user details from the Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to manage loading status during form submission
   const [loading, setLoading] = useState(false);
+
+  // Hook for navigation within the application
   const navigate = useNavigate();
+
+  // State to manage form input values
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -20,22 +28,25 @@ const AddAdmin = () => {
     password: "",
   });
 
+  // Redirects non-owner users to the admin page
   useEffect(() => {
     if (user?.role !== "Owner") {
       navigate("/admin");
     }
   }, [user]);
 
+  // Handles input field changes and updates formData state
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handles form submission for adding a new admin
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     try {
       setLoading(true);
+      // Sends a POST request to register a new admin
       const response = await axios.post(
         `${ADMIN_API_END_POINT}/register`,
         {
@@ -43,6 +54,8 @@ const AddAdmin = () => {
         },
         { withCredentials: true }
       );
+
+      // Displays success message and resets form on successful registration
       if (response.data.success) {
         toast.success(response.data.message);
         setFormData({
@@ -53,8 +66,10 @@ const AddAdmin = () => {
         });
       }
     } catch (err) {
+      // Logs error in case of failure
       console.log(`Error in add admin ${err}`);
     } finally {
+      // Resets loading state after request completion
       setLoading(false);
     }
   };
