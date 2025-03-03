@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CiMenuBurger } from "react-icons/ci";

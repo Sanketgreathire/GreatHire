@@ -1,34 +1,45 @@
+// Importing React and necessary hooks for state management and side effects
 import React, { useState } from "react";
-import { BiArrowBack } from "react-icons/bi";
+// Importing back arrow icon
+import { BiArrowBack } from "react-icons/bi"; 
 import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Viewer } from "@react-pdf-viewer/core";
+// PDF viewer for previewing documents
+import { Viewer } from "@react-pdf-viewer/core"; 
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { toast } from "react-hot-toast";
-import axios from "axios";
-import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
-import { setUser } from "@/redux/authSlice";
-import { useJobDetails } from "@/context/JobDetailsContext";
-import { ProgressBar } from "react-step-progress-bar";
+// Notification library
+import { toast } from "react-hot-toast"; 
+// Axios for making HTTP requests
+import axios from "axios"; 
+// API endpoint for application submission
+import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint"; 
+// Redux action to update user state
+import { setUser } from "@/redux/authSlice"; 
+// Custom hook for job details context
+import { useJobDetails } from "@/context/JobDetailsContext"; 
+// Progress bar for form steps
+import { ProgressBar } from "react-step-progress-bar"; 
 import "react-step-progress-bar/styles.css";
 
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { jobId } = useParams();
-  const { addApplicationToJob } = useJobDetails();
+  const dispatch = useDispatch(); // Redux dispatcher to update global state
+  const [loading, setLoading] = useState(false); // State to manage loading status
+  const navigate = useNavigate(); // React Router navigation hook
+  const { jobId } = useParams(); // Extract job ID from URL parameters
+  const { addApplicationToJob } = useJobDetails(); // Context function to add application to job
 
+  // Function to handle form submission
   const handleSubmit = async () => {
     setLoading(true);
 
     try {
-      const formData = new FormData();
+      const formData = new FormData(); // Create a FormData object to handle file uploads
       Object.entries(input).forEach(([key, value]) => {
-        formData.append(key, value);
+        formData.append(key, value); // Append form inputs to FormData
       });
-      formData.append("jobId", jobId);
+      formData.append("jobId", jobId); // Append job ID to the request
 
+      // Send form data to the backend API
       const response = await axios.post(
         `${APPLICATION_API_END_POINT}/apply`,
         formData,
@@ -36,32 +47,34 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true,
+          withCredentials: true, // Include credentials for authentication
         }
       );
 
       if (response.data.success) {
-        toast.success(response.data.message);
-        dispatch(setUser(response.data.user));
-        addApplicationToJob(jobId, response.data.newApplication);
-        navigate("/success");
+        toast.success(response.data.message); // Show success notification
+        dispatch(setUser(response.data.user)); // Update Redux user state
+        addApplicationToJob(jobId, response.data.newApplication); // Add application to job context
+        navigate("/success"); // Redirect to success page
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to submit the application."
-      );
+      ); // Show error notification
       console.error("Error submitting application:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
+  // Component to display application info
   const InfoSection = ({ title, value }) => (
     <div>
       <p className="text-sm font-small">{title}</p>
       <h3 className="text-base text-gray-500">{value}</h3>
     </div>
   );
+
 
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">

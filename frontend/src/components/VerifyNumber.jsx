@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { VERIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";

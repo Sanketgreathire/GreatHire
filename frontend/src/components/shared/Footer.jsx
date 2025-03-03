@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React from 'react';
 import { FaSquareThreads } from "react-icons/fa6";
 import { FaInstagramSquare } from "react-icons/fa";

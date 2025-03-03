@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React from "react";
 import { Link } from "react-router-dom";
 import { UserPlus, List, AlertTriangle } from "lucide-react";

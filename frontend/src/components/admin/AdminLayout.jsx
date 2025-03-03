@@ -1,4 +1,5 @@
-import React, { Suspense, lazy } from "react";
+// Import necessary modules and dependencies
+import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import JobDetail from "@/pages/recruiter/JobDetail";
