@@ -79,11 +79,11 @@ const Signup = () => {
           <img
             src={img1}
             alt="Image 1"
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover opacity-90"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <h1 className="font-bold text-3xl md:text-4xl">
-              Find the job made for you.
+            <h1 className="font-bold text-2xl md:text-4xl">
+              Find the job made <br /> for you.
             </h1>
             <p className="font-medium text-gray-800 text-md md:text-lg w-4/5 md:w-3/5">
               Browse over 150K jobs at top companies.

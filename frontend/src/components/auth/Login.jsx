@@ -78,7 +78,7 @@ const Login = () => {
       <div className="flex flex-col-reverse md:flex-row h-screen relative top-[-10px]">
         {/* Left Section - Form */}
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-l from-white to-blue-100 ">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md space-y-4 p-6" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
@@ -148,7 +148,7 @@ const Login = () => {
             alt="Background"
             className="absolute inset-0 w-full h-full object-cover lg:object-fill opacity-70"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
+          <div className="absolute inset-0 mb-20 flex flex-col items-center justify-center text-center space-y-2 p-4 z-10">
             <h1 className="font-bold text-3xl md:text-4xl text-gray-700">
               Find the job made for you.
             </h1>
