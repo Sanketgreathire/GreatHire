@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Context Provider
-import { JobDetailsProvider } from "./context/JobDetailsContext"; 
+import JobDetailsProvider from "./context/JobDetailsContext";
 
 // User Authentication Components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
@@ -76,7 +76,6 @@ import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
 // External Libraries
 import { Worker } from "@react-pdf-viewer/core";
-
 
 const appRouter = createBrowserRouter([
   {
@@ -173,7 +172,7 @@ const appRouter = createBrowserRouter([
     path: "/great-hire/services",
     element: <OurService />,
   },
-  
+
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
@@ -270,12 +269,11 @@ function App() {
     }
   }, []);
 
-  if ('serviceWorker' in navigator) {
+  if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((registration) => registration.unregister());
     });
   }
-  
 
   return (
     <div>
