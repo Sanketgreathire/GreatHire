@@ -1,27 +1,44 @@
+// Importing React and necessary hooks for state management and side effects
 import React, { useEffect, useState } from "react";
+// Importing an image asset for the signup page
 import img2 from "../../assets/img2.png";
+// Hook for navigation
 import { useNavigate } from "react-router-dom";
+// Google OAuth provider for authentication
 import { GoogleOAuthProvider } from "@react-oauth/google";
+// Custom Google login component
 import GoogleLogin from "../GoogleLogin";
+// Google Client ID for authentication 
 import { google_client_id } from "../../utils/GoogleOAuthCredentials.js";
+// Axios for making API requests
 import axios from "axios";
+// Navbar component for navigation 
 import Navbar from "../shared/Navbar";
+// Footer Component
 import Footer from "../shared/Footer";
+// Hook for dispatching actions to Redux store
 import { useSelector, useDispatch } from "react-redux";
+// Redux action to set user data
 import { setUser } from "@/redux/authSlice";
+// Library for showing toast notifications
 import { toast } from "react-hot-toast";
 import Loading from "../Loading";
+// API endpoint for user-related actions
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
+   // Redux dispatcher to update global user state
   const dispatch = useDispatch();
+   // React Router navigation hook to redirect users after successful login
   const navigate = useNavigate();
+  // State to manage form input values
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false); // Add loading state
+   // State to manage loading status while making API requests
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     if (user) {
@@ -78,7 +95,7 @@ const Login = () => {
       <div className="flex flex-col-reverse md:flex-row h-screen relative top-[-10px]">
         {/* Left Section - Form */}
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-l from-white to-blue-100 ">
-          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md space-y-4 p-6" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
@@ -148,7 +165,7 @@ const Login = () => {
             alt="Background"
             className="absolute inset-0 w-full h-full object-cover lg:object-fill opacity-70"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
+          <div className="absolute inset-0 mb-20 flex flex-col items-center justify-center text-center space-y-2 p-4 z-10">
             <h1 className="font-bold text-3xl md:text-4xl text-gray-700">
               Find the job made for you.
             </h1>

@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { BACKEND_URL, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";

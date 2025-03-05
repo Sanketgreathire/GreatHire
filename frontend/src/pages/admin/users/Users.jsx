@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,23 +30,46 @@ import {
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Users = () => {
+  // State for search input
   const [search, setSearch] = useState("");
+
+  // State for pagination
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+
+  // State to store the list of users
   const [usersList, setUsersList] = useState([]);
+
+  // Hook for navigation
   const navigate = useNavigate();
+
+  // Redux dispatch function
   const dispatch = useDispatch();
+
+  // State for tracking delete request loading status
   const [dloading, dsetLoading] = useState({});
+
+  // Fetch user details from Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // Fetch job statistics from Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
+
+  // Fetch application statistics from Redux store
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
   );
+
+  // Fetch user statistics from Redux store
   const userStats = useSelector((state) => state.stats.userStatsData);
+
+  // State to store selected user's email for deletion
   const [userEmail, setUserEmail] = useState(null);
+
+  // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // fetch user list
+  // Function to fetch the user list from the API
   const fetchUserList = async () => {
     try {
       const response = await axios.get(
@@ -56,42 +80,56 @@ const Users = () => {
         setUsersList(response.data.data);
       }
     } catch (err) {
-      console.log(`Error in fetch user list ${err}`);
+      console.log(`Error in fetching user list: ${err}`);
     }
   };
 
+  // Function to handle account deletion
   const handleDeleteAccount = async (email) => {
     try {
+      // Show loading state for the specific user
       dsetLoading((prevLoading) => ({ ...prevLoading, [email]: true }));
+
+      // API request to delete user account
       const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
         data: { email },
         withCredentials: true,
       });
+
       if (response.data.success) {
+        // Remove deleted user from the user list
         setUsersList((prevList) =>
           prevList.filter((user) => user.email !== email)
         );
+
+        // Fetch updated user statistics
         dispatch(fetchUserStats());
         dispatch(fetchApplicationStats());
+
+        // Show success notification
         toast.success(response.data.message);
       }
     } catch (err) {
       console.error("Error deleting account: ", err.message);
       toast.error("Error in deleting account");
     } finally {
+      // Hide loading state
       dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
     }
   };
 
+  // Function to confirm deletion and proceed with account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteAccount(userEmail);
   };
 
+  // Function to cancel deletion
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
+  // Fetch user list on component mount or when user changes
   useEffect(() => {
     if (user) fetchUserList();
   }, [user]);

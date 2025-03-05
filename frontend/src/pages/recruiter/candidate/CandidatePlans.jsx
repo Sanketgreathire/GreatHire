@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { REVENUE_API_END_POINT } from "../../../utils/ApiEndPoint";
 
 function CandidatePlans() {
+  // Define available plans for purchasing candidate credits
   const plans = [
     {
       name: "Basic",
@@ -68,6 +69,7 @@ function CandidatePlans() {
   const { company } = useSelector((state) => state.company);
   const navigate = useNavigate();
 
+  // Function to handle plan selection
   const handleSelectPlan = (planName) => {
     setSelectedPlan(planName);
   };
@@ -101,6 +103,7 @@ function CandidatePlans() {
     return `${baseClasses} ${colorStyles[color]}`;
   };
 
+  // Function to initiate Razorpay payment process
   const initiatePayment = async (plan) => {
     try {
       const response = await axios.post(
@@ -156,7 +159,7 @@ function CandidatePlans() {
                 phoneNumber: user.phoneNumber.number,
               },
             });
-            navigate("/recruiter/dashboard/candidate-list");
+            navigate("/recruiter/dashboard/candidate-list"); // Redirect to the candidate list
           } else {
             toast.error("Payment Verification Failed!");
           }
@@ -177,6 +180,7 @@ function CandidatePlans() {
     }
   };
 
+  // Function to handle plan purchase
   const purchasePlan = (plan) => {
     handleSelectPlan(plan.name);
     try {

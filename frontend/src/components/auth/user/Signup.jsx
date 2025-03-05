@@ -1,27 +1,48 @@
+// Importing React and necessary hooks for state management and side effects
 import React, { useState } from "react";
-import img1 from "../../../assets/img1.png";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+// Importing an image asset for the signup page
+import img1 from "../../../assets/img1.png"; 
+// Google OAuth provider for authentication
+import { GoogleOAuthProvider } from "@react-oauth/google"; 
+// Custom Google login component
 import GoogleLogin from "@/components/GoogleLogin";
-import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
-import axios from "axios";
+// Google Client ID for authentication 
+import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js"; 
+// Axios for making API requests
+import axios from "axios"; 
+// Library for showing toast notifications
 import { toast } from "react-hot-toast";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/authSlice";
+// Navbar component for navigation 
+import Navbar from "@/components/shared/Navbar"; 
+// Footer component
+import Footer from "@/components/shared/Footer"; 
+// API endpoint for user-related actions
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint"; 
+// Hook for navigation
+import { useNavigate } from "react-router-dom"; 
+// Hook for dispatching actions to Redux store
+import { useDispatch } from "react-redux"; 
+// Redux action to set user data
+import { setUser } from "@/redux/authSlice"; 
 
 const Signup = () => {
+  // State to manage loading status while making API requests
   const [loading, setLoading] = useState(false);
+
+  // Redux dispatcher to update global user state
   const dispatch = useDispatch();
+
+  // React Router navigation hook to redirect users after successful signup
   const navigate = useNavigate();
+
+  // State to manage form input values
   const [formData, setFormData] = useState({
-    fullname: "",
+    fullname: "", 
     email: "",
-    phoneNumber: "",
+    phoneNumber: "", 
     password: "",
   });
+
 
   // Update state when input fields change
   const handleChange = (e) => {
@@ -79,11 +100,11 @@ const Signup = () => {
           <img
             src={img1}
             alt="Image 1"
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover opacity-90"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <h1 className="font-bold text-3xl md:text-4xl">
-              Find the job made for you.
+            <h1 className="font-bold text-2xl md:text-4xl">
+              Find the job made <br /> for you.
             </h1>
             <p className="font-medium text-gray-800 text-md md:text-lg w-4/5 md:w-3/5">
               Browse over 150K jobs at top companies.

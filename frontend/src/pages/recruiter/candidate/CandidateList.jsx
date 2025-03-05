@@ -18,30 +18,33 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { jobTitles } from "@/utils/constant";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 10; // Number of candidates displayed per page
 
 const CandidateList = () => {
-  const [candidates, setCandidates] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [candidates, setCandidates] = useState([]); // Stores fetched candidate list
+  const [isLoading, setIsLoading] = useState(false); // Loading state for API calls
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Filters state for candidate search
   const [filters, setFilters] = useState({
     jobTitle: "",
     experience: "",
     salaryBudget: "",
   });
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
-  const [message, setMessage] = useState("Find great talent for your team");
+  const [message, setMessage] = useState("Find great talent for your team"); // Default message
 
+  // Function to fetch candidates based on filters
   const fetchCandidates = async () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
         `${COMPANY_API_END_POINT}/candidate-list`,
         {
-          params: { ...filters, companyId: company?._id },
+          params: { ...filters, companyId: company?._id }, // Sending filters and company ID as parameters
           withCredentials: true,
         }
       );
@@ -58,6 +61,7 @@ const CandidateList = () => {
     }
   };
 
+  // Function to decrease credits when a recruiter views a candidate's resume
   const handleViewCandidate = async (candidate) => {
     try {
       const response = await axios.get(
@@ -75,6 +79,7 @@ const CandidateList = () => {
     }
   };
 
+  // Pagination logic
   const totalPages = Math.ceil(candidates.length / ITEMS_PER_PAGE);
   const currentCandidates = candidates.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,

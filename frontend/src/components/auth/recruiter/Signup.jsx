@@ -83,7 +83,7 @@ const Signup = () => {
           <img
             src={img3}
             alt="Image 1"
-            className="w-full h-full object-cover  opacity-70"
+            className="w-full h-full object-cover  opacity-50"
           />
           {/* Centered Content */}
           <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4">

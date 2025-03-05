@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import ApplicationList from "./ApplicationList";
 import Navbar from "@/components/admin/Navbar";
@@ -7,64 +8,79 @@ import { ADMIN_USER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 
 const UserDetails = () => {
+  // Extracting userId from URL parameters
   const { userId } = useParams();
+
+  // State to store user details
   const [user, setUser] = useState(null);
+
+  // State to manage loading status
   const [loading, setLoading] = useState(false);
+
+  // State to store user's job applications
   const [applications, setApplications] = useState([]);
 
+  // Function to fetch user details from the API
   const fetchUser = async () => {
     try {
-      setLoading(true);
+      setLoading(true); // Set loading state to true before making API call
+
       const response = await axios.get(
         `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`,
         {
-          withCredentials: true,
+          withCredentials: true, // Ensures cookies are sent with the request for authentication
         }
       );
+
       if (response.data.success) {
-        setUser(response.data.data);
+        setUser(response.data.data); // Update state with fetched user data
       }
     } catch (err) {
-      console.log(`error in fetch user data ${err}`);
+      console.log(`Error in fetching user data: ${err}`);
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading state to false after request completes
     }
   };
 
+  // Function to fetch applications submitted by the user
   const fetchApplications = async () => {
     try {
-      setLoading(true);
+      setLoading(true); // Set loading state to true before making API call
+
       const response = await axios.get(
         `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`,
         { withCredentials: true }
       );
+
       if (response.data.success) {
-        setApplications(response.data.data);
+        setApplications(response.data.data); // Update state with user's applications
       }
     } catch (err) {
-      console.log(`error in fetch user data ${err}`);
+      console.log(`Error in fetching user applications: ${err}`);
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading state to false after request completes
     }
   };
-
+  
+  // Fetch user details and applications when the component mounts
   useEffect(() => {
     fetchUser();
     fetchApplications();
   }, []);
 
+  // Function to check if a given URL is a valid image URL
   const isValidImageURL = (url) => {
     try {
-      const parsed = new URL(url);
+      const parsed = new URL(url); // Parse the URL
       return (
-        ["https:", "http:"].includes(parsed.protocol) &&
-        /\.(jpeg|jpg|png|gif|webp|svg)$/i.test(parsed.pathname)
+        ["https:", "http:"].includes(parsed.protocol) && // Ensure the protocol is HTTP or HTTPS
+        /\.(jpeg|jpg|png|gif|webp|svg)$/i.test(parsed.pathname) // Check for valid image file extensions
       );
     } catch {
-      return false;
+      return false; // Return false if the URL is invalid
     }
   };
-
+  
   return (
     <>
       <Navbar linkName="User Details" />

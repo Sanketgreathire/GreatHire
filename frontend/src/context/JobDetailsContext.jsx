@@ -1,27 +1,47 @@
+// Import necessary modules and dependencies
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
+// Creating a context to manage job details globally
 const JobDetailsContext = createContext();
 
+// Custom hook to use JobDetailsContext in other components
 export const useJobDetails = () => useContext(JobDetailsContext);
 
-export const JobDetailsProvider = ({ children }) => {
+const JobDetailsProvider = ({ children }) => {
+  // State to store the list of jobs
   const [jobsList, setJobsList] = useState([]);
+
+  // State to keep a copy of the original job list (useful for filtering or searching)
   const [originalJobsList, setOriginalJobsList] = useState([]);
+
+  // State to store saved jobs for a user
   const [saveJobsList, setSaveJobsList] = useState([]);
+
+  // State to store the currently selected job
   const [selectedJob, setSelectedJob] = useState(null);
+
+  // State to manage errors during API calls
   const [error, setError] = useState(null);
 
+  // Fetch job listings from the API when the component mounts
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         const response = await fetch(`${JOB_API_END_POINT}/get`);
+
+        // If API call fails, throw an error
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");
         }
+
         const jobs = await response.json();
+
+        // Store the fetched jobs in state
         setJobsList(jobs);
         setOriginalJobsList(jobs);
+
+        // Set the first job as the default selected job (if available)
         setSelectedJob(jobs[0] || null);
       } catch (err) {
         console.error("Error fetching jobs:", err);
@@ -32,6 +52,7 @@ export const JobDetailsProvider = ({ children }) => {
     fetchJobs();
   }, []);
 
+  // Function to toggle bookmark status of a job
   const toggleBookmarkStatus = (jobId, userId) => {
     setJobsList((prevJobs) =>
       prevJobs.map((job) => {
@@ -40,14 +61,15 @@ export const JobDetailsProvider = ({ children }) => {
           return {
             ...job,
             saveJob: isBookmarked
-              ? job.saveJob.filter((id) => id !== userId) // Remove userId if exists
-              : [...(job.saveJob || []), userId], // Add userId if not exists
+              ? job.saveJob.filter((id) => id !== userId) // Remove bookmark
+              : [...(job.saveJob || []), userId], // Add bookmark
           };
         }
         return job;
       })
     );
 
+    // Update the original job list to ensure state consistency
     setOriginalJobsList((prevJobs) =>
       prevJobs.map((job) => {
         if (job._id === jobId) {
@@ -63,6 +85,7 @@ export const JobDetailsProvider = ({ children }) => {
       })
     );
 
+    // Update the selected job if it matches the toggled job
     setSelectedJob((prevJob) => {
       if (!prevJob || prevJob._id !== jobId) return prevJob;
 
@@ -182,3 +205,5 @@ export const JobDetailsProvider = ({ children }) => {
     </JobDetailsContext.Provider>
   );
 };
+
+export default JobDetailsProvider;

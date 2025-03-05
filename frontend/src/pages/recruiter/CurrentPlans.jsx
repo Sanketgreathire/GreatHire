@@ -11,10 +11,12 @@ const CurrentPlans = () => {
   const { company } = useSelector((state) => state.company);
   const { jobPlan } = useSelector((state) => state.jobPlan);
 
+  // Show loading message if user or company data is not available
   if (!user || !company) return <p>Loading...</p>;
 
   return (
     <>
+    {/* Check if the company exists and the user is active */}
       {company && user?.isActive ? (
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">

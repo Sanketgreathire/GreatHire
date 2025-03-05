@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";

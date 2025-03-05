@@ -1,4 +1,3 @@
-// Import necessary modules
 // Import React library
 import React from 'react'; 
 

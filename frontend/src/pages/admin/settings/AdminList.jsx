@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { FiArrowLeft } from "react-icons/fi";
@@ -23,16 +24,33 @@ import {
   TextField,
 } from "@mui/material";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+
 const AdminList = () => {
+  // Retrieves the authenticated user details from the Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to store the list of admins
   const [admins, setAdminList] = useState([]);
+
+  // State to store the search term for filtering admins
   const [searchTerm, setSearchTerm] = useState("");
+
+  // State to manage the current page number for pagination
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Hook for navigation within the application
   const navigate = useNavigate();
+
+  // Number of admins displayed per page
   const adminsPerPage = 10;
+
+  // State to store the ID of the admin to be removed
   const [adminId, setAdminId] = useState(null);
+
+  // State to control the visibility of the delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Function to remove an admin by making an API call
   const removeAdmin = async (userId) => {
     try {
       const response = await axios.get(
@@ -41,23 +59,29 @@ const AdminList = () => {
           withCredentials: true,
         }
       );
+
+      // Display success message if admin removal is successful
       if (response?.data?.success) {
         toast.success(response?.data?.message);
       }
     } catch (err) {
+      // Logs error if the API call fails
       console.error("Error fetching admin list:", err);
     }
   };
 
+  // Function to confirm admin deletion and trigger the removal process
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     removeAdmin(adminId);
   };
 
+  // Function to cancel admin deletion and close the modal
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
+  // Function to admin list 
   const fetchAdminList = async () => {
     try {
       const response = await axios.get(`${ADMIN_API_END_POINT}/getAdmin-list`, {

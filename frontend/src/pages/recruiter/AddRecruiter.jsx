@@ -10,7 +10,11 @@ const AddRecruiter = () => {
 
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
+
+  // State to manage form loading state
   const [loading, setLoading] = useState(false);
+
+  // State to store form data
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -19,6 +23,7 @@ const AddRecruiter = () => {
     password: "",
   });
 
+  // Function to handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -27,22 +32,25 @@ const AddRecruiter = () => {
     });
   };
 
+  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // Sending a POST request to add a new recruiter
       const response = await axios.post(
         `${RECRUITER_API_END_POINT}/add-recruiter`,
         {
           ...formData,
-          companyId: company?._id,
+          companyId: company?._id, // Attaching company ID
         },
         { withCredentials: true }
       );
 
+      // If the request is successful
       if (response.data.success) {
         dispatch(addRecruiter(response.data.recruiter));
-        toast.success(response.data.message);
+        toast.success(response.data.message); // Showing success notification
 
         setFormData({
           fullName: "",
@@ -52,7 +60,7 @@ const AddRecruiter = () => {
           password: "",
         });
       } else {
-        toast.error(response.data.message);
+        toast.error(response.data.message); // Showing error notification
       }
     } catch (err) {
       console.error(err);

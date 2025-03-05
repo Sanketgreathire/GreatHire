@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Pencil } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/admin/Navbar";
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation"; // Importing DeleteConfirmation modal
 
 // this will use when user is admin
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
@@ -97,11 +97,13 @@ const JobDetail = () => {
     setShowDeleteModal(false);
   };
 
+  // Function to handle changes in input fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedJob({ ...editedJob, [name]: value });
   };
 
+  // Function to save edited job details
   const handleSave = async () => {
     try {
       setSaveLoading(true);
@@ -122,6 +124,7 @@ const JobDetail = () => {
     }
   };
 
+  // Function to cancel edit mode and reset state
   const handleCancel = () => {
     setEditMode(false);
   };

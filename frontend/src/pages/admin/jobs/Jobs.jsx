@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye } from "lucide-react";
-import { Briefcase, FileText, CheckCircle, XCircle } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
@@ -26,29 +26,51 @@ import { toast } from "react-hot-toast";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Jobs = () => {
+  // State for storing the search query
   const [search, setSearch] = useState("");
+
+  // State for tracking the selected status filter (e.g., "All", "Active", "Inactive")
   const [status, setStatus] = useState("All");
+
+  // State for tracking loading status when performing API operations
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
+
+  // Redux dispatch function for dispatching actions
   const dispatch = useDispatch();
+
+  // React Router navigation hook for programmatic navigation
   const navigate = useNavigate();
+
+  // State for tracking the current page in pagination
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 10; // Number of jobs displayed per page
+
+  // State for storing the list of jobs
   const [jobList, setJobList] = useState([]);
+
+  // Fetch job and application statistics from Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
   );
+
+  // Fetch logged-in user details from Redux store
   const { user } = useSelector((state) => state.auth);
+
+  // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  // Function to toggle job active status
   const toggleActive = async (jobId, isActive, companyId) => {
     try {
+      // Set loading state for the specific job being updated
       setLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
+
+      // API request to toggle job active/inactive status
       const response = await axios.put(
-        `
-        ${JOB_API_END_POINT}/toggle-active`,
+        `${JOB_API_END_POINT}/toggle-active`,
         {
           jobId,
           isActive,
@@ -57,6 +79,7 @@ const Jobs = () => {
         { withCredentials: true }
       );
 
+      // Update job list if the request was successful
       if (response.data.success) {
         setJobList((prevJobs) =>
           prevJobs.map((job) =>
@@ -64,12 +87,15 @@ const Jobs = () => {
           )
         );
 
-        // this one call when user admin
+        // If the user is an admin, fetch updated job statistics
         if (user?.role !== "recruiter") {
           dispatch(fetchJobStats());
         }
+
+        // Show success notification
         toast.success(response.data.message);
       } else {
+        // Show error notification if the request fails
         toast.error(response.data.message);
       }
     } catch (error) {
@@ -78,6 +104,7 @@ const Jobs = () => {
         "There was an error toggling the job status. Please try again later."
       );
     } finally {
+      // Remove loading state after API call completes
       setLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
     }
   };

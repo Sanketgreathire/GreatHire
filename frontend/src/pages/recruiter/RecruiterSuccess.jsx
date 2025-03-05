@@ -1,7 +1,7 @@
 import React from 'react'
-import { FcCheckmark } from "react-icons/fc";
-import Navbar from "@/components/shared/Navbar";
-import { Link } from "react-router-dom";
+import { FcCheckmark } from "react-icons/fc"; // Importing a checkmark icon for success indication
+import Navbar from "@/components/shared/Navbar"; // Importing the Navbar component
+import { Link } from "react-router-dom"; // Importing Link for navigation
 
 export const RecruiterSuccess = () => {
   return (

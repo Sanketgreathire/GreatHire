@@ -24,16 +24,17 @@ const RecruiterDashboard = () => {
   const { jobPlan } = useSelector((state) => state.jobPlan);
 
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state for API calls
 
+  // Fetch company details by user ID when component mounts or when user changes
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
       try {
         setLoading(true);
         const response = await axios.post(
           `${COMPANY_API_END_POINT}/company-by-userid`,
-          { userId: user?._id },
-          { withCredentials: true }
+          { userId: user?._id }, // Sending user ID in request body
+          { withCredentials: true } // Include credentials (cookies) in request
         );
         if (response?.data.success) {
           dispatch(addCompany(response?.data.company));
@@ -46,10 +47,12 @@ const RecruiterDashboard = () => {
     };
 
     if (user) fetchCompanyByUserId();
-  }, [user]);
+  }, [user]); 
 
+  // Fetch recruiters and job plan if company exists
   useEffect(() => {
     if (company) {
+      // Fetch recruiters if user is active, company is created, and recruiters list is empty
       if (
         user?.isActive &&
         user?.isCompanyCreated &&
@@ -57,20 +60,23 @@ const RecruiterDashboard = () => {
       ) {
         dispatch(fetchRecruiters(company?._id));
       }
+      // Fetch job plan if it's not available
       if (!jobPlan) {
         dispatch(fetchCurrentPlan(company?._id));
       }
     }
   }, [company, user, recruiters, jobPlan, dispatch]);
 
-  // 🔹 Socket.IO for Real-time Plan Expiration Updates
+  //  Socket.IO for Real-time Plan Expiration Updates
   useEffect(() => {
     socket.on("planExpired", ({ companyId, type }) => {
+
+      // Check if the expired plan belongs to the current company
       if (company && companyId === company?._id) {
         if (type === "job") {
-          dispatch(updateMaxPostJobs(0));
+          dispatch(updateMaxPostJobs(0)); // Set max job posts to zero
         } else if (type === "candidate") {
-          dispatch(updateCandidateCredits(0));
+          dispatch(updateCandidateCredits(0)); // Set candidate credits to zero
         }
       }
     });

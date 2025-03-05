@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
+import { NavLink, useLocation } from "react-router-dom"; // Navigation components
+import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai"; // Dashboard & Settings icons
 import {
   FaUsers,
   FaBriefcase,
@@ -8,10 +8,10 @@ import {
   FaUser,
   FaBars,
   FaTimes,
-} from "react-icons/fa";
-import { FaUserTie } from "react-icons/fa6";
-import { PiBuildingOfficeDuotone } from "react-icons/pi";
-import { useSelector, useDispatch } from "react-redux";
+} from "react-icons/fa"; // Various user interface icons
+import { FaUserTie } from "react-icons/fa6"; // Recruiter icon
+import { PiBuildingOfficeDuotone } from "react-icons/pi"; // Company icon
+import { useSelector, useDispatch } from "react-redux"; // Redux hooks for state management
 
 import {
   fetchCompanyStats,
@@ -19,8 +19,9 @@ import {
   fetchJobStats,
   fetchApplicationStats,
   fetchUserStats,
-} from "@/redux/admin/statsSlice";
+} from "@/redux/admin/statsSlice"; // Import Redux actions for fetching statistics
 
+// Navigation items for the sidebar menu
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
   { name: "Users", path: "/admin/users", icon: FaUsers },
@@ -35,23 +36,25 @@ const navItems = [
   { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
 ];
 
+// Sidebar component for navigation
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [sidebarNavClicked, setSidebarNavClicked] = useState(false); // Track sidebar clicks
-  const { user } = useSelector((state) => state.auth);
+  const [isOpen, setIsOpen] = useState(false); // State to track sidebar open/close state
+  const [sidebarNavClicked, setSidebarNavClicked] = useState(false); // State to track navigation clicks
+  const { user } = useSelector((state) => state.auth); // Get authenticated user from Redux store
   const dispatch = useDispatch();
-  const location = useLocation();
+  const location = useLocation(); // Get current route location
 
+  // Fetch admin statistics when the sidebar navigation is clicked
   useEffect(() => {
-    if (sidebarNavClicked || user) {
-      dispatch(fetchCompanyStats());
-      dispatch(fetchRecruiterStats());
-      dispatch(fetchJobStats());
-      dispatch(fetchApplicationStats());
-      dispatch(fetchUserStats());
-      setSidebarNavClicked(false); // Reset after calling functions
+    if (sidebarNavClicked) {
+      dispatch(fetchCompanyStats()); // Fetch company statistics
+      dispatch(fetchRecruiterStats()); // Fetch recruiter statistics
+      dispatch(fetchJobStats()); // Fetch job statistics
+      dispatch(fetchApplicationStats()); // Fetch application statistics
+      dispatch(fetchUserStats()); // Fetch user statistics
+      setSidebarNavClicked(false); // Reset the state after data fetch
     }
-  }, [location.pathname, user]); // Runs only when location changes
+  }, [location.pathname, user]); // Re-run when the location or user changes
 
   return (
     <div

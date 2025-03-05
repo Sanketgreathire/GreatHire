@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import React, { useState } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";

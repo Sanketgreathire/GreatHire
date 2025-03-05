@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+// Import necessary modules and dependencies
+import React from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import useNotification from "@/hooks/useNotification";
