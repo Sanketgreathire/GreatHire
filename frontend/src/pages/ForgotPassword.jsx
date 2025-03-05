@@ -68,7 +68,7 @@ const ForgotPassword = () => {
       <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-white to-blue-100 h-screen">
         
         {/* Left Side - Background Image */}
-        <div className="w-full md:w-2/3">
+        <div className="hidden md:block w-full md:w-2/3">
           <img
             src={img4}
             alt="Forgot Password Illustration"

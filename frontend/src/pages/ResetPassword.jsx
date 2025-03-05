@@ -2,47 +2,49 @@
 import React, { useEffect, useState } from "react";
 
 // Import hooks for handling URL parameters and navigation
-import { useParams, useNavigate } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom";
 
 // Import image for UI
-import img5 from "../assets/img5.png"; 
+import img5 from "../assets/img5.png";
 
 // Import axios for making API requests
-import axios from "axios"; 
+import axios from "axios";
 
 // Import toast for notifications
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
 
 // Import API endpoints
-import { USER_API_END_POINT, VERIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import {
+  USER_API_END_POINT,
+  VERIFICATION_API_END_POINT,
+} from "@/utils/ApiEndPoint";
 
 // Import loading component
-import Loading from "@/components/Loading"; 
+import Loading from "@/components/Loading";
 
 // Import pageNotFound component
-import PageNotFound from "./PageNotFound"; 
+import PageNotFound from "./PageNotFound";
 
 // ResetPassword Component - Allows users to reset their password using a token
 const ResetPassword = () => {
-
   // State to track page status
-  const [status, setStatus] = useState("loading"); 
+  const [status, setStatus] = useState("loading");
   const navigate = useNavigate();
 
   // Extract token from URL parameters
   const { token } = useParams();
-  
+
   // State to store decoded token data
-  const [decoded, setDecodeData] = useState(null); 
+  const [decoded, setDecodeData] = useState(null);
 
   // State for new password input
-  const [password, setPassword] = useState(""); 
+  const [password, setPassword] = useState("");
 
   // State for confirm password input
-  const [confirmPassword, setConfirmPassword] = useState(""); 
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // State for loading indicator
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   // Effect hook to verify the token on component mount
   useEffect(() => {
@@ -106,14 +108,14 @@ const ResetPassword = () => {
     <>
       {/* Show loading indicator while verifying token */}
       {status === "loading" && <Loading color="blue-600" />}
-      
+
       {/* Show 404 page if token is invalid */}
       {status === "page not found" && <PageNotFound />}
-      
+
       {/* Show reset password form if token is valid */}
       {status === "valid token" && (
         <>
-          <div className="flex flex-row md:flex-row-reverse bg-gradient-to-tl from-white to-blue-100 items-center justify-evenly">
+          <div className="flex flex-row md:flex-row-reverse bg-gradient-to-tl from-white to-blue-100 items-center justify-evenly h-screen">
             {/* Left Side - Image Section */}
             <div className="w-full md:w-1/2 h-screen p-10">
               <img
@@ -154,7 +156,7 @@ const ResetPassword = () => {
                     required
                   />
                 </div>
-                
+
                 {/* Confirm Password Input Field */}
                 <div>
                   <label
@@ -196,4 +198,3 @@ const ResetPassword = () => {
 
 // Export component for use in the application
 export default ResetPassword;
-
