@@ -70,7 +70,7 @@ const applicantDetails = ({
             size={25}
           />
           <h1 className="text-2xl font-bold text-gray-800">
-            applicant Details
+            Applicant Details
           </h1>
         </div>
 
@@ -101,9 +101,9 @@ const applicantDetails = ({
                 <span className="font-semibold">Full Name:</span>{" "}
                 {app?.applicant?.fullname}
               </p>
-              <p className="text-gray-600 flex items-center space-x-2">
+              <p className="text-gray-600 flex flex-wrap items-center gap-2 break-all">
                 <span className="font-semibold">Email:</span>
-                <span>{app?.applicant?.emailId?.email}</span>
+                <span className="break-all">{app?.applicant?.emailId?.email}</span>
                 {app?.applicant?.emailId?.isVerified && (
                   <MdOutlineVerified size={20} color="green" title="Verified" />
                 )}
