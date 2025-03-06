@@ -18,6 +18,3 @@ build/
 .idea/
 *.swp
 
-# Ignore SSL certificate files
-cert.pem
-key.pem
