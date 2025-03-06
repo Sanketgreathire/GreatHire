@@ -2,30 +2,15 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/great_hire_db", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds if unable to connect
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    const conn = await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/great_hire_db", {
       maxPoolSize: 500, // Limits concurrent connections
       minPoolSize: 10, // Keeps at least 10 connections alive
+      socketTimeoutMS: 45000
     });
-
-    console.log("✅ MongoDB Connected Successfully");
-
-    // Handling reconnections
-    mongoose.connection.on("error", (err) => {
-      console.error("❌ MongoDB Connection Error:", err);
-    });
-
-    mongoose.connection.on("disconnected", () => {
-      console.warn("⚠️ MongoDB Disconnected! Attempting to reconnect...");
-      setTimeout(connectDB, 5000); // Retry connection after 5 seconds
-    });
-
+    console.log(`MongoDB Connected 🔥`);
   } catch (error) {
-    console.error("❌ Initial MongoDB Connection Failed:", error);
-    setTimeout(connectDB, 5000); // Retry connection after 5 seconds
+    console.error("MongoDB Connection Error:", error);
+    process.exit(1); // Exit if connection fails
   }
 };
 

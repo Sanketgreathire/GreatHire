@@ -10,6 +10,7 @@ import nodemailer from "nodemailer";
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
+    console.log(req.body);
     // check validation of email and password by express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
