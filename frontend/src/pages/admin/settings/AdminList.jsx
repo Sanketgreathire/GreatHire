@@ -53,7 +53,7 @@ const AdminList = () => {
   // Function to remove an admin by making an API call
   const removeAdmin = async (userId) => {
     try {
-      const response = await axios.get(
+      const response = await axios.delete(
         `${ADMIN_API_END_POINT}/remove-admin/${userId}`,
         {
           withCredentials: true,
@@ -62,6 +62,8 @@ const AdminList = () => {
 
       // Display success message if admin removal is successful
       if (response?.data?.success) {
+        setAdminList((prevList) =>
+          prevList.filter((admin) => admin._id !== userId)
         toast.success(response?.data?.message);
       }
     } catch (err) {
