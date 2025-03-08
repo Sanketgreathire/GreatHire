@@ -63,7 +63,7 @@ const AdminList = () => {
       // Display success message if admin removal is successful
       if (response?.data?.success) {
         setAdminList((prevList) =>
-          prevList.filter((admin) => admin._id !== userId)
+          prevList.filter((admin) => admin._id !== userId) )
         toast.success(response?.data?.message);
       }
     } catch (err) {
