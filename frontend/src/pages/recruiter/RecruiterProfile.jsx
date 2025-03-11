@@ -7,12 +7,24 @@ import RecruiterUpdateProfile from "./RecruiterUpdateProfile";
 import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 
+// Import verified icon for indicating verified users or data
+import { MdOutlineVerified } from "react-icons/md";  
+
+// Import email verification modal component
+import VerifyEmail from "@/components/VerifyEmail";  
+
+// Import phone number verification modal component
+import VerifyNumber from "@/components/VerifyNumber";  
+
 const RecruiterProfile = () => {
   // State to manage the profile update modal visibility
   const [open, setOpen] = useState(false);
   
   const { user } = useSelector((store) => store.auth);
   const { company } = useSelector((state) => state.company);
+  const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false); // Controls email verification modal
+  const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false); // Controls phone number verification modal
+  
   //console.log(user);
   //console.log(company);
   return (
@@ -61,12 +73,36 @@ const RecruiterProfile = () => {
                 <span className="text-gray-700 text-lg">
                   {user?.emailId?.email || "No Email"}
                 </span>
+                {!user?.emailId?.isVerified ? (
+                  <span
+                    className="text-blue-600 text-sm cursor-pointer hover:underline"
+                    onClick={() => setOpenEmailOTPModal(true)}
+                  >
+                    Verify
+                    </span>
+                ) : (
+                  <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                      <MdOutlineVerified size={20} /> <span>Verified</span>
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-4">
                 <Contact className="text-green-500" />
                 <span className="text-gray-700 text-lg">
                   {user?.phoneNumber?.number || "No Phone Number"}
                 </span>
+                {!user?.phoneNumber?.isVerified ? (
+                  <span
+                    className="text-blue-600 text-sm cursor-pointer hover:underline"
+                    onClick={() => setOpenNumberOTPModal(true)}
+                  >
+                    Verify
+                  </span>
+                  ) : (
+                    <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                      <MdOutlineVerified size={20} /> <span>Verified</span>
+                    </span>
+                  )}
               </div>
             </div>
           </div>
@@ -77,7 +113,15 @@ const RecruiterProfile = () => {
       <RecruiterUpdateProfile open={open} setOpen={setOpen} />
 
       {/* Footer */}
-      <Footer />
+      <Footer className="mt-auto" />
+
+      {/* OTP Modals */}
+      {openEmailOTPModal && (
+        <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />
+      )}
+      {openNumberOTPModal && (
+        <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />
+      )}
     </div>
   );
 };
