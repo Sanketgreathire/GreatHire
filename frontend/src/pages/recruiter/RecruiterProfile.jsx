@@ -12,7 +12,9 @@ const RecruiterProfile = () => {
   const [open, setOpen] = useState(false);
   
   const { user } = useSelector((store) => store.auth);
-
+  const { company } = useSelector((state) => state.company);
+  //console.log(user);
+  //console.log(company);
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
@@ -34,6 +36,9 @@ const RecruiterProfile = () => {
             </h1>
             <p className="text-gray-600 text-lg">
               {user?.position || "Recruiter"}
+            </p>
+            <p className="text-gray-600 text-lg">
+              {company?.companyName || "Company"}
             </p>
             <Button
               onClick={() => setOpen(true)}

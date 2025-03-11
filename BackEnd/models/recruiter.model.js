@@ -34,7 +34,10 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
+    companyName: {
+      type: String,
+      default: "", // Added new field for company name
+    },
     isCompanyCreated: {
       type: Boolean,
       default: false,

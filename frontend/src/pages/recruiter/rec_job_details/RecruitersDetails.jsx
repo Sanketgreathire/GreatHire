@@ -18,7 +18,7 @@ const RecruitersDetails = () => {
   const { recruiterId } = useParams();
   
   const { user } = useSelector((state) => state.auth);
-
+  const { company } = useSelector((state) => state.company);
   // Function to fetch recruiter details from the API
   const fetchRecruiterDetails = async () => {
     setLoading(true);
@@ -118,6 +118,10 @@ const RecruitersDetails = () => {
               <p className="text-gray-700">
                 <strong>Position:</strong>{" "}
                 {recruiterDetails?.position || "Not specified"}
+              </p>
+              <p className="text-gray-700">
+                <strong>Company:</strong>{" "}
+                {recruiterDetails?.companyName || "Not specified"}
               </p>
               <p className="text-gray-700">
                 <strong>Company Created:</strong>{" "}
