@@ -244,6 +244,18 @@ export const getRecruiterById = async (req, res) => {
       return res.status(404).json({ message: "Recruiter not found" });
     }
 
+    
+    const email=recruiter.emailId.email;
+    // Fetch company details by admin email
+    const company = await Company.findOne({ adminEmail: email });
+
+    if (company) {
+      const companyName=company.companyName;
+      console.log(companyName);
+      recruiter.companyName=companyName;
+    }
+    
+    console.log(recruiter);
     res.status(200).json({
       message: "Recruiter fetched successfully",
       recruiter,
