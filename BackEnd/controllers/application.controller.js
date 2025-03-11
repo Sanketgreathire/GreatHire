@@ -25,6 +25,17 @@ export const applyJob = async (req, res) => {
     } = req.body;
     const { resume } = req.files;
 
+    // Validate resume file type and size
+    if (resume && resume.length > 0) {
+      const allowedTypes = ["application/pdf", "application/msword"];
+      if (!allowedTypes.includes(resume[0].mimetype)) {
+        return res.status(400).json({ message: "Invalid file type" });
+      }
+      if (resume[0].size > 4 * 1024 * 1024) { // 4MB limit
+        return res.status(400).json({ message: "File size exceeds limit" });
+      }
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -113,7 +124,7 @@ export const applyJob = async (req, res) => {
       newApplication,
     });
   } catch (err) {
-    console.error("Error applying for job:", err);
+    console.error("Error applying for job:", err.message); // Avoid logging full error
     return res.status(500).json({
       message: "Internal server error",
       error: err.message,
@@ -193,6 +204,15 @@ export const updateStatus = async (req, res) => {
       });
     }
 
+    // Validate status value
+    const allowedStatuses = ["Pending", "Accepted", "Rejected"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status value.",
+        success: false,
+      });
+    }
+
     // Find the application by applicant id
     const application = await Application.findOne({ _id: applicationId });
     if (!application) {
@@ -211,7 +231,7 @@ export const updateStatus = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error(error.message); // Avoid logging full error
     return res.status(500).json({
       message: "Internal server error",
       error: error.message,
