@@ -185,7 +185,7 @@ const UserProfile = () => {
                   </span>
                   {!user?.phoneNumber?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm hidden cursor-pointer hover:underline"
+                      className="text-blue-600 text-sm  cursor-pointer hover:underline"
                       onClick={() => setOpenNumberOTPModal(true)}
                     >
                       Verify
