@@ -20,3 +20,4 @@ build/
 
 # Ignore pem files
 *.pem
+.cert
