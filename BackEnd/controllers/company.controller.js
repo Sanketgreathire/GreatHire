@@ -63,12 +63,18 @@ export const registerCompany = async (req, res) => {
       recruiterPosition,
       userEmail,
     } = req.body;
+    
+    //console.log(req.body);   //for testing purpose
+
     const adminEmail = userEmail;
     // CIN validation function
     const isValidCIN = (cin) => {
-      const cinRegex = /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
+      const cinRegex = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
       return cinRegex.test(cin);
     };
+
+    //console.log("is valid true otherwise false :"+isValidCIN(CIN));             //for testing purpose
+
     // CIN is unique number of a any bussiness
     if (!isValidCIN(CIN)) {
       return res.status(400).json({
@@ -82,6 +88,8 @@ export const registerCompany = async (req, res) => {
       $or: [{ companyName }, { email }, { adminEmail }, { CIN }],
     });
 
+    //console.log("is blacklisted true otherwise false :"+isBlacklisted);             //for testing purpose
+
     if (isBlacklisted) {
       return res.status(400).json({
         message: "Company Blacklisted",
@@ -91,6 +99,9 @@ export const registerCompany = async (req, res) => {
 
     // Check if a company already exists with this email and CIN
     let company = await Company.findOne({ email, adminEmail, CIN });
+
+    //console.log("is company already existed true otherwise false :"+company);             //for testing purpose
+
     if (company) {
       return res.status(200).json({
         message: "Company already exists.",
@@ -100,6 +111,9 @@ export const registerCompany = async (req, res) => {
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
+
+    //console.log("is recruiter not found true otherwise false :"+recruiter);             //for testing purpose
+
     if (!recruiter) {
       return res.status(404).json({
         message: "Recruiter not found.",

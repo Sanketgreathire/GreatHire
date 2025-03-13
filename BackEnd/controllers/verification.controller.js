@@ -276,6 +276,7 @@ export const requestOTPForNumber = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { number } = req.body;
+    //console.log(number);
     const client = twilio(accountSid, authToken);
     // Generate a JWT token with the OTP and 30-second expiration
     const otp = randomstring.generate({
