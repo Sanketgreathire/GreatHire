@@ -18,4 +18,6 @@ build/
 .idea/
 *.swp
 
-
+# Ignore pem files
+*.pem
+.cert
