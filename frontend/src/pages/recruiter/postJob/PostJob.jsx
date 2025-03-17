@@ -43,6 +43,7 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
+      anyAmount:"",
     },
     validationSchema: Yup.object({
       urgentHiring: Yup.string().required("This field is required"),
@@ -60,6 +61,7 @@ const PostJob = () => {
       benefits: Yup.string().required("Benefits are required"),
       qualifications: Yup.string().required("Qualification is required"),
       responsibilities: Yup.string().required("Responsibility is required"),
+      anyAmount: Yup.string().required("Yes or no is required"),
     }),
 
     onSubmit: async (values) => {
@@ -98,7 +100,7 @@ const PostJob = () => {
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "location"], // Step 2
-      ["numberOfOpening", "respondTime", "duration"], // Step 3
+      ["numberOfOpening", "respondTime", "duration","anyAmount"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -587,6 +589,29 @@ const PostJob = () => {
                     )}
                   </div>
 
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 mb-1">
+                      Applicant can pay any amount<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <select
+                      name="anyAmount"
+                      className="w-full p-2 border border-gray-300 rounded"
+                      onChange={formik.handleChange}
+                      value={formik.values.anyAmount}
+                    >
+                      <option value="">Select</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                    {formik.touched.activeColor &&
+                      formik.errors.anyAmount && (
+                        <div className="text-red-500 text-sm">
+                          {formik.errors.anyAmount}
+                        </div>
+                      )}
+                  </div>
+
+
                   <div className="flex justify-between">
                     <button
                       type="button"
@@ -675,6 +700,10 @@ const PostJob = () => {
                     <div className="mb-2">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Applicant can pay any amount:</strong>{" "}
+                      {formik.values.anyAmount || "N/A"}
                     </div>
 
                     <p className="text-sm text-gray-500 mb-6">
