@@ -478,6 +478,7 @@ export const updateProfile = async (req, res) => {
 // delete account of recruiter by admin or company admin
 export const deleteAccount = async (req, res) => {
   const { userEmail, companyId } = req.body;
+  console.log(req.body);
 
   try {
     const user = await Recruiter.findOne({ "emailId.email": userEmail });
@@ -518,17 +519,17 @@ export const deleteAccount = async (req, res) => {
         _id: { $in: company.userId.map((u) => u.user) },
       });
 
-      // Save the unique fields into the BlacklistedCompany collection
-      const blacklistedData = {
-        companyName: company.companyName,
-        email: company.email,
-        adminEmail: company.adminEmail,
-        CIN: company.CIN,
-      };
+      // // Save the unique fields into the BlacklistedCompany collection
+      // const blacklistedData = {
+      //   companyName: company.companyName,
+      //   email: company.email,
+      //   adminEmail: company.adminEmail,
+      //   CIN: company.CIN,
+      // };
 
-      // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
-      // if recrutier want to create again need permission of admin
-      await BlacklistedCompany.create(blacklistedData);
+      // // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
+      // // if recrutier want to create again need permission of admin
+      // await BlacklistedCompany.create(blacklistedData);
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
@@ -592,9 +593,80 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
+export const toggleBlock = async (req, res) => {
+  console.log("🟢 Received toggle-block request:", req.body);
+
+  const { recruiterId, companyId, isBlocked } = req.body; // ✅ Use recruiterId instead of email
+  const userId = req.id; // Assuming authenticated user ID
+
+  try {
+    // Find the admin making the request (if any)
+    const admin = await Admin.findById(userId);
+
+    // Check authorization: Either the user is an admin, or they are associated with the company.
+    if (!admin && !isUserAssociated(companyId, userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized",
+      });
+    }
+
+    // Find the recruiter by ID
+    const recruiter = await Recruiter.findById(recruiterId);
+    if (!recruiter) {
+      return res.status(404).json({ success: false, message: "Recruiter not found" });
+    }
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company || !company.userId.some((u) => u.user.equals(recruiter._id))) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+    // Update recruiter blocked status
+    recruiter.isBlocked = isBlocked;
+    await recruiter.save();
+
+    if (isBlocked) {
+      // If recruiter is blocked, add the company to the blacklist
+      const blacklistedData = {
+        companyName: company.companyName,
+        email: company.email,
+        adminEmail: company.adminEmail,
+        CIN: company.CIN,
+      };
+
+      const existingBlacklist = await BlacklistedCompany.findOne({ CIN: company.CIN });
+      if (!existingBlacklist) {
+        await BlacklistedCompany.create(blacklistedData);
+      }
+
+      // 🔴 Deactivate all recruiters associated with this company
+      await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: false } });
+    } else {
+      // If recruiter is unblocked, remove the company from the blacklist
+      await BlacklistedCompany.deleteOne({ CIN: company.CIN });
+
+      // 🟢 Activate all recruiters associated with this company
+      await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: true } });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Recruiter ${isBlocked ? "blocked and company blacklisted" : "unblocked and company removed from blacklist"} successfully`,
+    });
+  } catch (err) {
+    console.error("❌ Error toggling recruiter block status:", err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+};
+
+
+
 // change the status of recruiter
 export const toggleActive = async (req, res) => {
   const { recruiterId, companyId, isActive } = req.body;
+  console.log("Received toggle-active request:", req.body);
   const userId = req.id;
 
   try {

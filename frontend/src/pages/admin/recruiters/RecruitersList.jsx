@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import { Ban } from "lucide-react"; // Import Block Icon
 
 const RecruitersList = () => {
   // State to manage the search input value
@@ -72,6 +73,8 @@ const RecruitersList = () => {
 
   // State to store the recruiter selected for deletion or other operations
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+
+  const [blocking, setBlocking] = useState({});  //for blocking recruiter
 
   const stats = [
     {
@@ -157,6 +160,42 @@ const RecruitersList = () => {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
     }
   };
+
+  const toggleBlock = async (recruiterId, companyId, isBlocked) => {
+    try {
+      setBlocking((prev) => ({ ...prev, [recruiterId]: true }));
+  
+      // ✅ Toggle isBlocked before sending to backend
+      const updatedBlockStatus = !isBlocked;
+      console.log(`${RECRUITER_API_END_POINT}/toggle-block`);
+      console.log("📢 Sending request to toggle block:", { recruiterId, companyId, isBlocked: updatedBlockStatus });
+      console.log(`${RECRUITER_API_END_POINT}/toggle-block`);
+      const response = await axios.put(
+        `${RECRUITER_API_END_POINT}/toggle-block`,
+        { recruiterId, companyId, isBlocked: updatedBlockStatus }, // ✅ Using recruiterId instead of email
+        { withCredentials: true }
+      );
+  
+      if (response.data.success) {
+        setRecruiterList((prevList) =>
+          prevList.map((recruiter) =>
+            recruiter._id === recruiterId
+              ? { ...recruiter, isBlocked: updatedBlockStatus, isActive: !updatedBlockStatus } // ✅ Sync frontend state
+              : recruiter
+          )
+        );
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("❌ Error toggling recruiter block status:", error);
+      toast.error("Error toggling recruiter block status. Try again later.");
+    } finally {
+      setBlocking((prev) => ({ ...prev, [recruiterId]: false }));
+    }
+  };
+  
 
   const deleteRecruiter = async (
     recruiterId,
@@ -360,6 +399,18 @@ const RecruitersList = () => {
                       }}
                     />
                   )}
+                  {blocking[recruiter._id] ? (
+                    "loading..."
+                  ) : (
+                    <Ban
+                      className={`cursor-pointer ${
+                      recruiter.isBlocked ? "text-gray-500" : "text-orange-500"
+                      }`}
+                      size={20}
+                      onClick={() => toggleBlock(recruiter._id,recruiter.companyId,recruiter.isBlocked)}
+                    />
+                  )}
+
                   {dloading[recruiter._id] ? (
                     "loading..."
                   ) : (

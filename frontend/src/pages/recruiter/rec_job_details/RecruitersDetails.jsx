@@ -121,7 +121,7 @@ const RecruitersDetails = () => {
               </p>
               <p className="text-gray-700">
                 <strong>Company:</strong>{" "}
-                {recruiterDetails?.companyName || "Not specified"}
+                {company?.companyName || recruiterDetails?.companyName}
               </p>
               <p className="text-gray-700">
                 <strong>Company Created:</strong>{" "}
