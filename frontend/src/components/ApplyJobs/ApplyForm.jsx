@@ -366,7 +366,7 @@ const [input, setInput] = useState({
                 </div>
                 <input
                   type="file"
-                  accept=".pdf,.doc,.docx,.txt"
+                  accept=".pdf,.doc,.docx,.txt,.xls,.xlsx"
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
@@ -406,6 +406,9 @@ const [input, setInput] = useState({
                   </span>
                   <span className="px-3 py-2 border border-blue-700 text-blue-700 rounded-md bg-white hover:bg-indigo-50">
                     Browse
+                  </span>
+                  <span className="text-sm leading-4 font-medium">
+                    Accepted formats: PDF, Word, Text, Excel (.pdf, .doc, .docx, .txt, .xls, .xlsx).
                   </span>
                 </label>
               </div>
