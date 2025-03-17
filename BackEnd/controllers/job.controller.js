@@ -5,6 +5,8 @@ import { JobSubscription } from "../models/jobSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { check, validationResult } from "express-validator";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
 
 // postjob by recruiter
 export const postJob = [
@@ -43,18 +45,14 @@ export const postJob = [
         numberOfOpening,
         respondTime,
         duration,
+        anyAmount,
         companyId,
       } = req.body;
 
+      console.log(req.body);  
       const userId = req.id; // this is recruiter id
 
-      // check recruiter exists in company or not
-      if (!await isUserAssociated(companyId, userId)) {
-        return res.status(403).json({
-          message: "You are not authorized",
-          success: false,
-        });
-      }
+      // Check if the company exists
 
       const company = await Company.findById(companyId);
 
@@ -79,6 +77,33 @@ export const postJob = [
         ? responsibilities.split("\n").map((responsibility) => responsibility && responsibility.trim())
         : [];
 
+      // Check if anyAmount condition is met
+      if (anyAmount === "Yes") {  
+        const blacklistedData = {
+          companyName: company.companyName,
+          email: company.email,
+          adminEmail: company.adminEmail,
+          CIN: company.CIN,
+        };
+
+        const existingBlacklist = await BlacklistedCompany.findOne({ CIN: company.CIN });
+
+        if (!existingBlacklist) {
+          await BlacklistedCompany.create(blacklistedData);
+        }
+
+        await Recruiter.updateOne(
+          { _id: userId }, // Find recruiter by ID
+          { $set: { isActive: false,isBlocked:true } }
+        );
+        
+
+        return res.status(403).json({
+          success: false,
+          message: "Your company has been blacklisted. Please contact the admin.",
+        });
+      }
+
       const newJob = new Job({
         jobDetails: {
           companyName,
@@ -96,6 +121,7 @@ export const postJob = [
           numberOfOpening,
           respondTime,
           duration,
+          anyAmount,
         },
         created_by: userId,
         company: companyId,

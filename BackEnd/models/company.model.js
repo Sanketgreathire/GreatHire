@@ -5,7 +5,7 @@ const companySchema = new mongoose.Schema(
     companyName: {
       type: String,
       required: true,
-      unique: true,
+      //unique: true,
     },
     companyWebsite: {
       type: String,
@@ -38,7 +38,7 @@ const companySchema = new mongoose.Schema(
     CIN: {
       type: String,
       required: true,
-      unique: true,
+      //unique: true,
     },
     businessFile: {
       type: String, // Store the file path or URL
