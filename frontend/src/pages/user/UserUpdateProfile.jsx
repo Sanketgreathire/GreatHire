@@ -510,10 +510,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               <input
                 type="file"
                 id="resumeInput"
-                accept=".pdf"
+                accept=".pdf, .doc, .docx"
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
+              <p><strong>Note:</strong> PDF (.pdf) or Word documents (.doc, .docx) are allowed.</p>
 
               {/* Display remove button inside input field */}
               {resumeUrl && (
