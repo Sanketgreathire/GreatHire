@@ -66,9 +66,17 @@ const CreateCompany = () => {
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/png"];
+      // Allow PDF, Word documents, and images
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf",
+        "application/msword", // .doc
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+      ];
+
       if (!allowedTypes.includes(file.type)) {
-        toast.error("Only allow jpg or png file");
+        toast.error("Only JPG, PNG, PDF, or Word documents are allowed.");
         return;
       }
 
