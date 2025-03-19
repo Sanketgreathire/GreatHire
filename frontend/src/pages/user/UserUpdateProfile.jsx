@@ -514,7 +514,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              <p><strong>Note:</strong> PDF (.pdf) or Word documents (.doc, .docx) are allowed.</p>
+              <p><strong>Note:</strong> PDF (.pdf)  are allowed.</p>
 
               {/* Display remove button inside input field */}
               {resumeUrl && (

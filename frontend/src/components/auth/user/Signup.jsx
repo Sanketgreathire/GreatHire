@@ -77,7 +77,7 @@ const Signup = () => {
         });
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
-        navigate("/");
+        navigate("/profile");
       } else {
         toast.error(response.data.message);
       }
