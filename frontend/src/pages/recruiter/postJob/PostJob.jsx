@@ -38,6 +38,7 @@ const PostJob = () => {
       experience: "",
       salary: "",
       jobType: "",
+      workPlaceFlexibility: "",
       location: "",
 
       numberOfOpening: "",
@@ -52,6 +53,7 @@ const PostJob = () => {
       salary: Yup.string().required("Salary is required"),
       experience: Yup.string().required("Experience is required"),
       jobType: Yup.string().required("Job type is required"),
+      workPlaceFlexibility: Yup.string().required("Work Place Flexibility is required"),
       location: Yup.string().required("Location is required"),
       companyName: Yup.string().required("Company name is required"),
       numberOfOpening: Yup.string().required("Number of openings is required"),
@@ -100,9 +102,7 @@ const PostJob = () => {
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType","workPlaceFlexibility","location"], // Step 2
-      ["numberOfOpening", 
-        //"respondTime",
-         "duration","anyAmount"], // Step 3
+      ["numberOfOpening", "respondTime","duration","anyAmount"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -228,7 +228,7 @@ const PostJob = () => {
                     <textarea
                       name="details"
                       placeholder="Enter job details"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-12 border border-gray-300 rounded"
                       onChange={formik.handleChange}
                       value={formik.values.details}
                     />
@@ -283,11 +283,11 @@ const PostJob = () => {
                     >
                       Skills<span className="text-red-500 ml-1">*</span>
                     </Label>
-                    <input
-                      id="skills"
+                    <textarea
+                      id = "skills"
                       name="skills"
                       placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-12 border border-gray-300 rounded"
                       onChange={formik.handleChange}
                       value={formik.values.skills}
                     />
@@ -358,7 +358,7 @@ const PostJob = () => {
                       id="responsibilities"
                       name="responsibilities"
                       placeholder="Enter responsibilities separated by new lines (eg. candidate role, or tasks perfom in job)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-12 border border-gray-300 rounded"
                       onChange={formik.handleChange}
                       value={formik.values.responsibilities}
                     />
@@ -471,6 +471,28 @@ const PostJob = () => {
                         {formik.errors.jobType}
                       </div>
                     )}
+                  </div>
+                  
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 mb-1">
+                      Work Place Flexibility <span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <select
+                      name="workPlaceFlexibility"
+                      className="w-full p-2 border border-gray-300 rounded"
+                      onChange={formik.handleChange}
+                      value={formik.values.workPlaceFlexibility}
+                    >
+                      <option value="">Select</option>
+                      <option value="Remote">Remote</option>
+                      <option value="On-site">On-site</option>
+                    </select>
+                    {formik.touched.workPlaceFlexibility &&
+                      formik.errors.workPlaceFlexibility && (
+                        <div className="text-red-500 text-sm">
+                          {formik.errors.workPlaceFlexibility}
+                        </div>
+                      )}
                   </div>
 
                   {/* Location */}
@@ -593,7 +615,7 @@ const PostJob = () => {
 
                   <div className="mb-6">
                     <Label className="block text-gray-700 mb-1">
-                      Applicant can pay any amount<span className="text-red-500 ml-1">*</span>
+                    Applicants need to  pay any charges?<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <select
                       name="anyAmount"
@@ -611,6 +633,11 @@ const PostJob = () => {
                           {formik.errors.anyAmount}
                         </div>
                       )}
+
+                      {/* Note about GreatHire policy */}
+                      <p className="text-sm text-gray-600 mt-2">
+                        <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
+                      </p>
                   </div>
 
 
@@ -681,11 +708,19 @@ const PostJob = () => {
                       {formik.values.experience || "N/A"}
                     </div>
                     <div className="mb-2">
+                      <strong>Responsibilities:</strong>{" "}
+                      {formik.values.responsibilities || "N/A"}
+                    </div>
+                    <div className="mb-2">
                       <strong>Salary:</strong> {formik.values.salary || "N/A"}
                     </div>
                     <div className="mb-2">
                       <strong>Job Type:</strong>{" "}
                       {formik.values.jobType || "N/A"}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Work Place Flexibility:</strong>{" "}
+                      {formik.values.workPlaceFlexibility || "N/A"}
                     </div>
                     <div className="mb-2">
                       <strong>Location:</strong>{" "}
@@ -699,13 +734,13 @@ const PostJob = () => {
                       <strong>Response Time:</strong>{" "}
                       {formik.values.respondTime || "N/A"}
                     </div>
-                    */}
+                    
                     <div className="mb-2">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}
                     </div>
                     <div className="mb-2">
-                      <strong>Applicant can pay any amount:</strong>{" "}
+                      <strong>Applicants need to  pay any charges?:</strong>{" "}
                       {formik.values.anyAmount || "N/A"}
                     </div>
 
