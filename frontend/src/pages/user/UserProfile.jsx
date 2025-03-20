@@ -1,5 +1,5 @@
 // Import React and useState hook for component state management
-import React, { useState } from "react";  
+import React, { useEffect,useState } from "react";  
 
 // Import navigation bar component for consistent site-wide navigation
 import Navbar from "../../components/shared/Navbar";  
@@ -70,6 +70,23 @@ const UserProfile = () => {
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false); // Controls email verification modal
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false); // Controls phone number verification modal
 
+  // Prevent back navigation if resume is missing
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    
+    const handlePopState = () => {
+      if (!user?.profile?.resume) {
+        toast.error("You must upload a resume before leaving!");
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [user]);
   // Function to handle account deletion
   const handleDeleteAccount = async () => {
     try {
@@ -185,7 +202,7 @@ const UserProfile = () => {
                   </span>
                   {!user?.phoneNumber?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm  cursor-pointer hover:underline"
+                      className="text-blue-600 text-sm hidden cursor-pointer hover:underline"
                       onClick={() => setOpenNumberOTPModal(true)}
                     >
                       Verify
