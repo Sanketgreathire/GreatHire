@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
+import ReviewsSection from "../ui/ReviewsCarousel";
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -433,32 +434,56 @@ const Navbar = () => {
 
       {/* Signup Modal */}
       {isSignupModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 animate-in fade-in duration-200">
-            <h2 className="text-xl font-semibold mb-4">Join GreatHire</h2>
-            <div className="space-y-3">
-              <button
-                onClick={() => handleSignupOption("job")}
-                className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition-colors"
-              >
-                I'm looking for a Job
-              </button>
-              <button
-                onClick={() => handleSignupOption("recruiter")}
-                className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                I'm looking for Candidates
-              </button>
-              <button
-                onClick={() => setIsSignupModalOpen(false)}
-                className="w-full py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
+  <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-start p-6 space-y-6 w-full h-screen overflow-y-auto">
+    <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
+    
+    <div className="w-full max-w-sm space-y-4">
+      <button onClick={() => handleSignupOption("job")} className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition-colors">
+        I'm looking for a Job
+      </button>
+      <button onClick={() => handleSignupOption("recruiter")} className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
+        I'm looking for Candidates
+      </button>
+      <button onClick={() => setIsSignupModalOpen(false)} className="w-full py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+        Go Back
+      </button>
+    </div>
+
+    {/* Hiring Process Section */}
+    <div className="mt-10 w-full max-w-3xl text-center">
+      <h3 className="text-3xl font-bold mb-16">How to hire in less than 48 hours</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
+            <span className="text-4xl">📢</span> {/* Job Posting */}
           </div>
+          <p className="text-lg font-medium">Post a free job in <br /> few minutes</p>
         </div>
-      )}
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
+            <span className="text-4xl">📞</span> {/* Phone Call */}
+          </div>
+          <p className="text-lg font-medium">Get direct phone calls <br /> from HR</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
+            <span className="text-4xl">👔</span> {/* Interview & Hire */}
+          </div>
+          <p className="text-lg font-medium">Interview and hire the <br /> right staff</p>
+        </div>
+      </div>
+      <p className="mt-14 text-3xl font-bold">1000+ employers found success on GreatHire 🌟</p>
+    </div>
+
+    {/* Reviews Section */}
+    <div className="w-full mt-20">
+      <ReviewsSection />
+    </div>
+  </div>
+)}
+
+
+
 
       {/* Spacer for fixed navbar */}
       <div className="h-16" />

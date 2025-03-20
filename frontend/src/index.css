@@ -63,6 +63,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .paused {
+    animation-play-state: paused !important;
+  }  
 }
 
 
