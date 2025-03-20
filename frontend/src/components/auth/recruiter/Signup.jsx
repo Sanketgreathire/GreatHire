@@ -83,31 +83,50 @@ const Signup = () => {
           <img
             src={img3}
             alt="Image 1"
-            className="w-full h-full object-cover  opacity-50"
+            className="w-full h-full object-cover  opacity-70"
           />
+          
           {/* Centered Content */}
-          <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4">
-            <h1 className="font-semibold text-2xl md:text-3xl text-gray-800">
+        <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4 pt-10">
+          <div className="mb-32 text-gray-900">
+          <h2 className="text-2xl font-bold mb-2">Follow These <span className="text-blue-600">Simple Steps :</span>
+           </h2>
+          <ul className="text-lg md:text-lg font-semibold text-gray-900 space-y-2">
+           <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">1.</span> Create Account
+           </li>
+           <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">2.</span> Create Your Company
+           </li>
+           <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">3.</span> Post Jobs
+           </li>
+        </ul>
+      </div>
+
+          <div className="relative top-[-60px] flex flex-col items-center text-center space-y-4 justify-center px-4">
+            <h1 className="font-semibold text-xl md:text-2xl text-gray-900">
               Powerful recruiting tools to find your{" "}
-              <span className="text-black"> Perfect Team!</span>
+              <span className="text-gray-800"> Perfect Team!</span>
             </h1>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
+            <p className=" flex items-center gap-2 font-semibold  text-sm md:text-lg text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Post your job and source candidates.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
+            <p className=" flex items-center gap-2 font-semibold  text-sm md:text-lg text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Save time with intelligent applicant sorting.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
+            <p className=" flex items-center gap-2 font-semibold  text-sm md:text-lg text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Free built-in ATS to manage your pipeline.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-800">
+            <p className=" flex items-center gap-2 font-semibold  text-sm md:text-lg text-gray-800">
               <MdOutlineVerified size={30} color="red" />
               Industry high 40% candidate response rate.
             </p>
           </div>
+        </div>
         </div>
 
         {/* Updated Right Section - Form */}

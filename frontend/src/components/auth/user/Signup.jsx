@@ -100,15 +100,34 @@ const Signup = () => {
           <img
             src={img1}
             alt="Image 1"
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-full object-cover opacity-100"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <h1 className="font-bold text-2xl md:text-4xl">
+          <h1 className="font-bold text-2xl md:text-2xl text-gray-800 mb-6 drop-shadow-lg">
+          Follow These <span className="text-blue-600">Simple Steps :</span>
+          </h1>
+          <ul className="text-lg md:text-lg font-semibold text-gray-900 space-y-2">
+          <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">1.</span> Create An Account
+          </li>
+          <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">2.</span> Update Your Profile
+          </li>
+          <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">3.</span> Upload Your Resume
+          </li>
+          <li className="flex items-center gap-2">
+          <span className="text-blue-600 font-semibold text-lg">4.</span> Apply For Your Dream Job
+          </li>
+          </ul>
+
+          {/* <h1 className="font-bold text-2xl md:text-4xl">
               Find the job made <br /> for you.
             </h1>
             <p className="font-medium text-gray-800 text-md md:text-lg w-4/5 md:w-3/5">
               Browse over 150K jobs at top companies.
-            </p>
+            </p> */}
+
           </div>
         </div>
 
