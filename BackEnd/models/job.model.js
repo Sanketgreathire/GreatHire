@@ -55,6 +55,10 @@ const jobSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      workPlaceFlexibility:{
+        type: String,
+        required: true,
+      },
       location: {
         type: String,
         required: true,
@@ -71,6 +75,10 @@ const jobSchema = new mongoose.Schema(
 
       duration: {
         type: String, // If it's a text field (e.g., "Monday to Friday")
+        required: true,
+      },
+      anyAmount:{
+        type: String,
         required: true,
       },
       isActive: {

@@ -57,7 +57,7 @@ const PostJob = () => {
       location: Yup.string().required("Location is required"),
       companyName: Yup.string().required("Company name is required"),
       numberOfOpening: Yup.string().required("Number of openings is required"),
-      //respondTime: Yup.string().required("Response time is required"),
+      respondTime: Yup.string().required("Response time is required"),
       duration: Yup.string().required("Duration is required"),
       skills: Yup.string().required("Skills are required"),
       benefits: Yup.string().required("Benefits are required"),
@@ -102,9 +102,7 @@ const PostJob = () => {
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType","workPlaceFlexibility","location"], // Step 2
-      ["numberOfOpening", 
-        //"respondTime",
-         "duration","anyAmount"], // Step 3
+      ["numberOfOpening", "respondTime","duration","anyAmount"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -574,7 +572,7 @@ const PostJob = () => {
                       )}
                   </div>
 
-                  {/* Response Time 
+                  {/* Response Time */}
                   <div className="mb-6">
                     <Label className="block text-gray-700  mb-1">
                       Response Time<span className="text-red-500 ml-1">*</span>
@@ -594,7 +592,7 @@ const PostJob = () => {
                         </div>
                       )}
                   </div>
-*/}
+
                   {/* Duration */}
                   <div className="mb-6">
                     <Label className="block text-gray-700 mb-1">
@@ -732,11 +730,11 @@ const PostJob = () => {
                       <strong>Number of Openings:</strong>{" "}
                       {formik.values.numberOfOpening || "N/A"}
                     </div>
-                    {/*<div className="mb-2">
+                    <div className="mb-2">
                       <strong>Response Time:</strong>{" "}
                       {formik.values.respondTime || "N/A"}
                     </div>
-                    */}
+                    
                     <div className="mb-2">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}

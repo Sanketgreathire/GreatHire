@@ -140,7 +140,8 @@ const JobsForYou = () => {
             <p className="text-sm text-gray-600">
               {job.jobDetails?.companyName}
             </p>
-            <p className="text-sm text-gray-500">{job.jobDetails?.location}</p>
+            <p className="text-sm text-gray-500">{job.jobDetails?.workPlaceFlexibility}   {job.jobDetails?.location}</p>
+       
 
             <div className="p-1 flex items-center w-fit text-sm bg-blue-100 text-blue-800 rounded-md">
               <AiOutlineThunderbolt className="mr-1" />

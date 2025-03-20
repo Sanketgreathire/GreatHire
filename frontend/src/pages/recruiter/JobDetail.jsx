@@ -386,13 +386,22 @@ const JobDetail = () => {
             <div>
               <h4 className="font-semibold text-gray-700">Skills</h4>
               {editMode ? (
-                <input
-                  type="text"
-                  name="skills"
-                  value={editedJob.skills || ""}
-                  onChange={handleInputChange}
-                  className="w-full p-2 rounded border"
-                />
+                <textarea
+                 name = "skills"
+                 value={
+                  editedJob.skills
+                    ? editedJob.skills.join("\n")
+                    : ""
+                }
+                onChange={(e) =>
+                  setEditedJob({
+                    ...editedJob,
+                    skills: e.target.value.split("\n"),
+                  })
+                }
+                className="w-full p-2 rounded border"
+                rows={3} // Adjusted for better visibility
+              />
               ) : (
                 <p className="text-gray-600">
                   {jobDetails?.skills?.join(", ") || "Not specified"}
