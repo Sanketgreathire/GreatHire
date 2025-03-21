@@ -1,5 +1,7 @@
 // Importing React and necessary hooks for state management and side effects
 import React, { useState, useEffect } from "react"; 
+
+
 // Importing ProgressBar for visualizing step progress
 import { ProgressBar } from "react-step-progress-bar"; 
 // Importing Info icon for UI elements
@@ -32,6 +34,10 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { toast } from "react-hot-toast"; 
 
 const ApplyForm = ({ setRight }) => {
+  ApplyForm.propTypes = {
+    setRight: PropTypes.func.isRequired,
+  };
+
   // Accessing user details from Redux store
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -113,8 +119,12 @@ const ApplyForm = ({ setRight }) => {
   const validateStep1 = () => {
     const newErrors = {};
     if (!input.fullname.trim()) newErrors.fullname = "Full Name is required.";
-    if (!input.number.trim()) newErrors.number = "Phone Number is required.";
-    if (!input.email.trim()) newErrors.email = "Email is required.";
+if (!/^\d{10}$/.test(input.number.trim())) newErrors.number = "Phone Number must be a valid 10-digit number.";
+
+if (!/\S+@\S+\.\S+/.test(input.email.trim())) newErrors.email = "Email must be a valid email address.";
+
+
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
