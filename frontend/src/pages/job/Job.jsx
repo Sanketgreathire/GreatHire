@@ -116,6 +116,7 @@ const Job = ({ job }) => {
       <div className="flex items-center justify-between gap-2 my-2">
         <div>{job?.jobDetails?.companyName}</div>
         <div>
+          <p className="text-sm text-gray-500">{job?.jobDetails?.workPlaceFlexibility}</p>
           <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
         </div>
       </div>
