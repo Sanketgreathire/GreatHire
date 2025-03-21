@@ -87,6 +87,16 @@ const UserProfile = () => {
       window.removeEventListener("popstate", handlePopState);
     };
   }, [user]);
+
+  // Prevent forward navigation if resume is missing
+  const handleNext = () => {
+    if (!user?.profile?.resume) {
+      toast.error("Please upload your resume before proceeding.");
+      return;
+    }
+    navigate("/next-page"); // Change this to your actual next route
+  };
+
   // Function to handle account deletion
   const handleDeleteAccount = async () => {
     try {

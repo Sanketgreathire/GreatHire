@@ -1,5 +1,5 @@
 // Importing React and necessary hooks for state management and side effects
-import React, { useState } from "react";
+import {React,useRef, useState } from "react";
 // Importing an image asset for the signup page
 import img1 from "../../../assets/img1.png"; 
 // Google OAuth provider for authentication
@@ -25,6 +25,9 @@ import { useDispatch } from "react-redux";
 // Redux action to set user data
 import { setUser } from "@/redux/authSlice"; 
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 const Signup = () => {
   // State to manage loading status while making API requests
   const [loading, setLoading] = useState(false);
@@ -35,6 +38,8 @@ const Signup = () => {
   // React Router navigation hook to redirect users after successful signup
   const navigate = useNavigate();
 
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [prevResumeName, setPrevResumeName] = useState("");
   // State to manage form input values
   const [formData, setFormData] = useState({
     fullname: "", 
@@ -43,6 +48,12 @@ const Signup = () => {
     password: "",
   });
 
+  const [input, setInput] = useState({
+    resume: "",
+    resumeOriginalName: "",
+  });
+  
+  const resumeRef = useRef(null); // Use ref for file
 
   // Update state when input fields change
   const handleChange = (e) => {
@@ -52,29 +63,73 @@ const Signup = () => {
       [name]: value,
     });
   };
-
+  // Handles file input change for resume upload
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        console.log("Selected file:", file);
+        resumeRef.current = file; // Store file in ref instead of state
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error("Resume size should be less than 10 MB.");
+          return;
+        }
+  
+        setInput((prevData) => ({
+          ...prevData,
+          resume: file,
+          resumeOriginalName: file.name,
+        }));
+        setResumeUrl(file.name);
+        setPrevResumeName(file.name); // Store last uploaded resume name
+      }
+      e.target.value = ""; // Reset input value to allow re-upload of the same file
+    };
+  
+     // Removes the currently uploaded resume
+    const removeResume = () => {
+      setInput((prev) => ({
+        ...prev,
+        resume: "",
+        resumeOriginalName: "",
+      }));
+      setResumeUrl("");
+      setPrevResumeName(input.resumeOriginalName);
+    };
+  
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true
+    console.log("File in resumeRef before sending:", resumeRef.current);
+
+    if (!resumeRef.current) {
+      toast.error("Please upload a resume!");
+      return;
+    }
+
+    setLoading(true);
+
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("fullname", formData.fullname);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("resume", resumeRef.current); // Use ref instead of state
+
+      console.log("Final FormData:", [...formDataToSend]);
+
       const response = await axios.post(
         `${USER_API_END_POINT}/register`,
-        {
-          ...formData,
-        },
+        formDataToSend,
         {
           withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
+      console.log("Response:", response.data);
+
       if (response?.data?.success) {
-        setFormData({
-          fullname: "",
-          email: "",
-          phoneNumber: "",
-          password: "",
-        });
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
         navigate("/profile");
@@ -82,14 +137,13 @@ const Signup = () => {
         toast.error(response.data.message);
       }
     } catch (err) {
-      // Show error message
-      console.log(`error in sign up ${err}`);
-      toast.error(err);
+      console.error("Error in signup:", err);
+      toast.error(err.response?.data?.message || "Signup failed");
     } finally {
-      setLoading(false); // Set loading to false
+      setLoading(false);
     }
   };
-
+  
   return (
     <>
     <div className="flex flex-col min-h-screen">
@@ -189,6 +243,43 @@ const Signup = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
+              <div className="w-full">
+                          <Label htmlFor="resume" className="block mb-2 font-semibold">
+                            Resume
+                          </Label>
+              
+                          <div className="relative w-full">
+                            {/* File Input */}
+                            <Input
+                              id="resume"
+                              name="resume"
+                              type="text"
+                              value={input.resumeOriginalName}
+                              placeholder="Upload your resume"
+                              readOnly
+                              className="pr-10"
+                            />
+                            <input
+                              type="file"
+                              id="resumeInput"
+                              accept=".pdf, .doc, .docx"
+                              onChange={handleFileChange}
+                              className="absolute inset-0 opacity-0 cursor-pointer"
+                            />
+                            <p><strong>Note:</strong> PDF (.pdf)  are allowed.</p>
+              
+                            {/* Display remove button inside input field */}
+                            {resumeUrl && (
+                              <button
+                                type="button"
+                                onClick={removeResume}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500"
+                              >
+                                ✖
+                              </button>
+                            )}
+                          </div>
+                        </div>
             </div>
             <button
               type="submit"

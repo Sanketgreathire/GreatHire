@@ -163,7 +163,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
     try {
       setLoading(true);
-
+      console.log("formData", formData);
         // API call to update the user profile
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
