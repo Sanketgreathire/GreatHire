@@ -24,17 +24,7 @@ import { Application } from "../models/application.model.js";
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    console.log(req.body);  // ✅ Logs form fields
-    console.log(req.files);  // ✅ Logs uploaded file
-
     const { fullname, email, phoneNumber, password } = req.body;
-    const resume = req.files?.resume?.[0];// Multer places the uploaded file here
-    console.log("Uploaded Resume File:", resume);
-
-
-     if (!resume) {
-      return res.status(400).json({ message: "Resume file is required!" });
-     }
 
     // checking validatoin result of req object
     const errors = validationResult(req);
@@ -55,23 +45,8 @@ export const register = async (req, res) => {
       });
     }
 
-    // Declare variables for resume
-    let resume_url = "";
-    let resume_name = "";
-
     // Hash/encrypt the password by performing hashing 10 times on a password
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Upload resume if provided
-    if (resume) {
-      // fetching data uri of file
-      const fileUri = getDataUri(resume);
-       // upload file to cloudnary
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      // set cloudResponse.secure_url to user resume
-      resume_url = cloudResponse.secure_url;
-      console.log(resume[0]);
-      resume_name = resume.originalname;
-    }
 
     // Create new user
     let newUser = await User.create({
@@ -85,13 +60,7 @@ export const register = async (req, res) => {
         isVerified: false, // Default to false unless you have a value to set
       },
       password: hashedPassword,
-      profile: {
-        resume: resume_url, // URL for the resume
-        resumeOriginalName: resume_name,
-      },
     });
-    
-    
 
     // Remove sensitive information before sending the response
     const userWithoutPassword = await User.findById(newUser._id).select(
@@ -376,7 +345,7 @@ export const updateProfile = async (req, res) => {
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
     const userId = req.id;
-    console.log(req.files);
+
     if (!userId) {
       return res.status(400).json({
         message: "User ID is missing in the request.",
