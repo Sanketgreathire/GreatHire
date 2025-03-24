@@ -449,21 +449,25 @@ const PostJob = () => {
                     >
                       Experience<span className="text-red-500 ml-1">*</span>
                     </Label>
-                    <input
-                      id="experience"
-                      name="experience"
-                      type="text"
-                      placeholder="Enter experience in years (e.g., 1, 2)"
-                      className="w-full p-2 border border-gray-300 rounded"
-                      onChange={formik.handleChange}
-                      value={formik.values.experience}
-                    />
+                    <div className="grid grid-cols-2 gap-2">
+                    {["0-1 years", "1-2 years", "2-3 years", "3-4 years", "More than 5 years", "Others"].map((option) => (
+                    <label key={option} className="flex items-center space-x-2">
+                      <input
+                         type="radio"
+                         name="experience"
+                         value={option}
+                         checked={formik.values.experience === option}
+                         onChange={(e) => formik.setFieldValue("experience", e.target.value)}
+                         className="accent-blue-500"
+                       />
+                     <span className="text-gray-700">{option}</span>
+                   </label>
+                   ))}
+                 </div>
                     {formik.touched.experience && formik.errors.experience && (
-                      <div className="text-red-500 text-sm">
-                        {formik.errors.experience}
-                      </div>
-                    )}
-                  </div>
+                 <div className="text-red-500 text-sm">{formik.errors.experience}</div>
+                  )}
+                </div>
 
                   {/* Salary */}
                   <div className="mb-6">
@@ -488,9 +492,9 @@ const PostJob = () => {
                       name="salaryType"
                       className="p-2 border border-gray-300 rounded bg-white h-10 w-32 text-gray-700"
                       onChange={formik.handleChange}
-                      value={formik.values.salaryType}
+                      value={formik.values.salaryType || ""}
                     >
-                      <option value="Rate">Rate</option>
+                      <option value="" disabled>Rate</option>
                       <option value="per year">per year</option>
                       <option value="per month">per month</option>
                       <option value="per week">per week</option>
@@ -561,28 +565,54 @@ const PostJob = () => {
                   </div>
 
                   {/* Location */}
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="location"
-                      className="block text-gray-700 mb-1"
-                    >
-                      Location<span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <input
-                      id="location"
-                      name="location"
-                      type="text"
-                      placeholder="Enter location (e.g., New Delhi, USA)"
-                      className="w-full p-2 border border-gray-300 rounded"
-                      onChange={formik.handleChange}
-                      value={formik.values.location}
+                  <div className="mb-6 relative">
+                  <Label htmlFor="location" className="block text-gray-700 mb-1">
+                  Location<span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    className="w-full p-2 border border-gray-300 rounded bg-white"
+                    placeholder="Enter location or select from dropdown"
+                    value={formik.values.location}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                      e.target.nextSibling.classList.remove("hidden");
+                    }}
+                      onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
+                      onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
                     />
-                    {formik.touched.location && formik.errors.location && (
-                      <div className="text-red-500 text-sm">
-                        {formik.errors.location}
-                      </div>
-                    )}
-                  </div>
+                    <div className="absolute w-full bg-white border border-gray-300 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden">
+                    {[
+                      ...Object.values(allLocations)
+                      .flat()
+                      .filter((location) =>
+                       location.toLowerCase().includes(formik.values.location.toLowerCase())
+                     ),
+                      ...Object.values(allLocations)
+                      .flat()
+                      .filter(
+                     (location) =>
+                      !location.toLowerCase().includes(formik.values.location.toLowerCase())
+                     ),
+                 ].map((location) => (
+              <div
+                 key={location}
+                 className="p-2 hover:bg-gray-200 cursor-pointer"
+                 onMouseDown={(e) => {
+                 formik.setFieldValue("location", location);
+                e.target.parentNode.classList.add("hidden");
+               }}
+                >
+               {location}
+             </div>
+              ))}
+           </div>
+               {formik.touched.location && formik.errors.location && (
+            <div className="text-red-500 text-sm">{formik.errors.location}</div>
+               )}
+          </div>
 
                   {/* Navigation Buttons */}
                   <div className="flex justify-between">
@@ -770,14 +800,20 @@ const PostJob = () => {
                     </div>
                     <div className="mb-2">
                       <strong>Experience:</strong>{" "}
-                      {formik.values.experience + " years" || "N/A"}
+                      {formik.values.experience || "N/A"}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Benefits:</strong>{" "}
+                      {formik.values.benefits
+                        ? formik.values.benefits.split("\n").join(", "): "N/A"}
                     </div>
                     <div className="mb-2">
                       <strong>Qualification:</strong>{" "}
                       {formik.values.qualifications || "N/A"}
                     </div>
                     <div className="mb-2">
-                      <strong>Salary:</strong> {formik.values.salary || "N/A"}
+                      <strong>Salary:</strong>{" "} 
+                      {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim(): "N/A"}
                     </div>
                     <div className="mb-2">
                       <strong>Job Type:</strong>{" "}
