@@ -76,7 +76,7 @@ const JobMajorDetails = ({ selectedJob }) => {
                 {selectedJob?.jobDetails?.experience}{" "}
                 {selectedJob?.jobDetails?.experience !== "Fresher" &&
                   selectedJob?.jobDetails?.experience !== "fresher" &&
-                  "Years"}
+                  ""}
               </span>
             </div>
           </div>
