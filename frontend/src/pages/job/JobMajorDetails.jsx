@@ -119,7 +119,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         </ul>
       </div>
 
-      {/* Responsibilities */}
+      {/* Responsibilities
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Responsibilities</h1>
         <ul
@@ -132,7 +132,7 @@ const JobMajorDetails = ({ selectedJob }) => {
             )
           )}
         </ul>
-      </div>
+      </div> */}
 
       {/* qualifications */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
