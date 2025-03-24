@@ -1,4 +1,5 @@
 import { Company } from "../../models/company.model.js";
+import { deletedCompany } from "../../models/deletedCompany.model.js";
 
 // returning total number of company, active company, deactive company
 export const companyStats = async (req, res) => {
@@ -35,6 +36,25 @@ export const companyList = async (req, res) => {
   try {
     // Fetch all companies with only the selected fields
     const companies = await Company.find(
+      {},
+      "companyName email adminEmail phone isActive"
+    );
+
+    // Send the response with a success status
+    res.status(200).json({ success: true, companies });
+  } catch (err) {
+    console.error("Error retrieving company list:", err);
+    res
+      .status(500)
+      .json({ error: "Server error: Unable to retrieve company list" });
+  }
+};
+
+// return all deleted company list to admin
+export const deletedCompanyList = async (req, res) => {
+  try {
+    // Fetch all companies with only the selected fields
+    const companies = await deletedCompany.find(
       {},
       "companyName email adminEmail phone isActive"
     );
