@@ -11,6 +11,8 @@ import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { check, validationResult } from "express-validator";
+import { deletedCompany } from "../models/deletedCompany.model.js";
+
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -519,17 +521,18 @@ export const deleteAccount = async (req, res) => {
         _id: { $in: company.userId.map((u) => u.user) },
       });
 
-      // // Save the unique fields into the BlacklistedCompany collection
-      // const blacklistedData = {
-      //   companyName: company.companyName,
-      //   email: company.email,
-      //   adminEmail: company.adminEmail,
-      //   CIN: company.CIN,
-      // };
+      // Save the unique fields into the Deleted Company collection
+      const deletedData = {
+        companyName: company.companyName,
+        email: company.email,
+        adminEmail: company.adminEmail,
+        CIN: company.CIN,
+        phone: company.phone,
+      };
 
-      // // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
-      // // if recrutier want to create again need permission of admin
-      // await BlacklistedCompany.create(blacklistedData);
+      // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
+      // if recrutier want to create again need permission of admin
+      await deletedCompany.create(deletedData);
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);

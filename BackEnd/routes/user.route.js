@@ -19,7 +19,7 @@ import { validateContactUsForm } from "../middlewares/contactValidator.js";
 
 const router = express.Router();
 
-router.route("/register").post(singleUpload,validateUser, register);
+router.route("/register").post(validateUser, register);
 router.route("/login").post(validateLogin, login);
 router.route("/googleLogin").post(googleLogin);
 

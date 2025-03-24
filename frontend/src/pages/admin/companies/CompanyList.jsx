@@ -61,6 +61,8 @@ const CompanyList = () => {
   // State to store the list of companies
   const [companyList, setCompanyList] = useState([]);
 
+  const [deletedcompanyList, setDeletedCompanyList] = useState([]);
+
   // Fetch logged-in user details from Redux store
   const { user } = useSelector((state) => state.auth);
 
@@ -200,6 +202,25 @@ const CompanyList = () => {
     if (user) fetchCompanyList();
   }, [user]);
 
+
+  const fetchDeletedCompanyList = async () => {
+    try {
+      const response = await axios.get(
+        `${ADMIN_COMPANY_DATA_API_END_POINT}/deleted-company-list`,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setDeletedCompanyList(response.data.companies);
+      }
+    } catch (err) {
+      console.log(`error in recruiter fetching ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchDeletedCompanyList();
+  }, [user]);
+
   const filteredCompanies = companyList?.filter((company) => {
     const matchesSearch =
       company.companyName.toLowerCase().includes(search.toLowerCase()) ||
@@ -210,6 +231,22 @@ const CompanyList = () => {
 
     return matchesSearch && matchesStatus;
   });
+
+  const filteredDeletedCompanies = deletedcompanyList?.filter((company) => {
+    const matchesSearch = 
+      company.companyName.toLowerCase().includes(search.toLowerCase()) ||
+      company.email.toLowerCase().includes(search.toLowerCase()) ||
+      company.phone.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus = status === "All" || company.isActive === status;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const paginatedDeletedCompanies = filteredDeletedCompanies.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
   const paginatedCompanies = filteredCompanies.slice(
     (page - 1) * itemsPerPage,
@@ -339,18 +376,20 @@ const CompanyList = () => {
           </TableBody>
         </Table>
 
+        
+        
         <div className="flex justify-between items-center mt-4">
           <span>
             Showing{" "}
-            {Math.min((page - 1) * itemsPerPage + 1, filteredCompanies.length)}{" "}
-            to {Math.min(page * itemsPerPage, filteredCompanies.length)} of{" "}
-            {filteredCompanies.length} results
+            {Math.min((page - 1) * itemsPerPage + 1, filteredDeletedCompanies.length)}{" "}
+            to {Math.min(page * itemsPerPage, filteredDeletedCompanies.length)} of{" "}
+            {filteredDeletedCompanies.length} results
           </span>
           <div className="flex gap-2">
             <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
               Previous
             </Button>
-            {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map(
+            {[...Array(Math.ceil(filteredDeletedCompanies.length / itemsPerPage))].map(
               (_, i) => (
                 <Button
                   key={i}
@@ -363,7 +402,71 @@ const CompanyList = () => {
             )}
             <Button
               disabled={
-                page === Math.ceil(filteredCompanies.length / itemsPerPage)
+                page === Math.ceil(filteredDeletedCompanies.length / itemsPerPage)
+              }
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div className="m-4 p-4 bg-white shadow rounded-lg">
+        <div className="m-5 font-bold text-2xl ">Deleted Companies</div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Company Name</TableHead>
+              <TableHead>Company Email</TableHead>
+              <TableHead>Company Contact</TableHead>
+              <TableHead>Admin Email</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedDeletedCompanies.map((company) => (
+              <TableRow key={company._id}>
+                <TableCell>{company.companyName}</TableCell>
+                <TableCell>{company.email}</TableCell>
+                <TableCell>{company.phone}</TableCell>
+                <TableCell>{company.adminEmail}</TableCell>
+                
+
+                
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        
+
+        <div className="flex justify-between items-center mt-4">
+          <span>
+            Showing{" "}
+            {Math.min((page - 1) * itemsPerPage + 1, filteredDeletedCompanies.length)}{" "}
+            to {Math.min(page * itemsPerPage, filteredDeletedCompanies.length)} of{" "}
+            {filteredDeletedCompanies.length} results
+          </span>
+          <div className="flex gap-2">
+            <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              Previous
+            </Button>
+            {[...Array(Math.ceil(filteredDeletedCompanies.length / itemsPerPage))].map(
+              (_, i) => (
+                <Button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={page === i + 1 ? "bg-blue-700 text-white" : ""}
+                >
+                  {i + 1}
+                </Button>
+              )
+            )}
+            <Button
+              disabled={
+                page === Math.ceil(filteredDeletedCompanies.length / itemsPerPage)
               }
               onClick={() => setPage(page + 1)}
             >
