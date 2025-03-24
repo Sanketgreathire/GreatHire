@@ -251,9 +251,25 @@ const JobDetail = () => {
               </ul>
             )}
           </div>
-
-          {/* Responsibilities Section */}
+          
           <div>
+              <h4 className="font-semibold text-gray-700">Work Place Flexibility</h4>
+              {editMode ? (
+                <input
+                  type="text"
+                  name="workPlaceFelxibility"
+                  value={editedJob.workPlaceFlexibility || ""}
+                  onChange={handleInputChange}
+                  className="w-full p-2 rounded border"
+                />
+              ) : (
+                <p className="text-gray-600">
+                  {jobDetails?.workPlaceFlexibility || "Not specified"}
+                </p>
+              )}
+            </div>
+          {/* Responsibilities Section */}
+          {/* <div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">
               Responsibilities
             </h3>
@@ -285,7 +301,7 @@ const JobDetail = () => {
                 )}
               </ul>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Additional Details */}
@@ -379,7 +395,7 @@ const JobDetail = () => {
                 />
               ) : (
                 <p className="text-gray-600">
-                  {jobDetails?.experience || "Not specified"} years
+                  {jobDetails?.experience || "Not specified"} 
                 </p>
               )}
             </div>
