@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import ReviewsSection from "../ui/ReviewsCarousel";
+import Footer from "./Footer";
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -117,8 +118,8 @@ const Navbar = () => {
 
   const policyLinks = [
     { to: "/policy/privacy-policy", label: "Privacy Policy" },
-    { to: "/policy/refund-policy", label: "Refund and Return Policy" },
-    { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
+    // { to: "/policy/refund-policy", label: "Refund and Return Policy" },
+    // { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
   ];
 
   return (
@@ -478,6 +479,11 @@ const Navbar = () => {
     {/* Reviews Section */}
     <div className="w-full mt-20">
       <ReviewsSection />
+    </div>
+
+    {/* Footer Section */}
+    <div className="w-full mt-20">
+      <Footer />
     </div>
   </div>
 )}

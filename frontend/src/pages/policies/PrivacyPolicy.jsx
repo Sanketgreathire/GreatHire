@@ -8,8 +8,11 @@ const PrivacyPolicy = () => {
     <div>
       <Navbar />
       <div className="flex flex-col gap-2 w-full">
-        <h1 className="text-3xl font-bold text-center text-blue-600 w-full mt-2 ">
-          Privacy Policy
+      <h1 className="text-2xl font-bold text-center text-gray-800 w-full mt-2 underline">
+          Everything You Need To Know!
+        </h1>
+        <h1 className="text-2xl font-bold text-center text-blue-600 w-full mt-2 underline">
+          Privacy, Refund and Returns Policy & Terms and Conditions
         </h1>
 
         {/* Section 1: Who We Are */}
@@ -26,131 +29,194 @@ const PrivacyPolicy = () => {
           </p>
         </section>
 
-        {/* Comments */}
+        {/* Introduction */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Comments
+          Introduction
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            When visitors leave comments on the site we collect the data shown
-            in the comments form, and also the visitor’s IP address and browser
-            user agent string to help spam detection. An anonymized string
-            created from your email address (also called a hash) may be provided
-            to the Gravatar service to see if you are using it. The Gravatar
-            service privacy policy is available here:{" "}
-            <a href="https://automattic.com/privacy/" className="text-blue-500">
-              https://automattic.com/privacy/
-            </a>
-            . After approval of your comment, your profile picture is visible to
-            the public in the context of your comment.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Welcome to the Greathire platform, operated by Greathire Inc. ("Greathire") and its affiliates. By accessing our website and mobile application (collectively, "Platform"), you agree to comply with these Terms of Service ("Terms"). These Terms constitute a legally binding agreement between you ("User") and Greathire.
           </p>
         </section>
 
-        {/* Media */}
+        {/* Purpose */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Media
+          Purpose
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            If you upload images to the website, you should avoid uploading
-            images with embedded location data (EXIF GPS) included. Visitors to
-            the website can download and extract any location data from images
-            on the website.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          The Platform connects job seekers and recruiters to facilitate employment-related interactions. Greathire serves as an intermediary and does not guarantee job placements.
           </p>
         </section>
 
-        {/* Cookies */}
+        {/* Eligibility */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Cookies
+          Eligibility
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            If you leave a comment on our site you may opt-in to saving your
-            name, email address and website in cookies. These are for your
-            convenience so that you do not have to fill in your details again
-            when you leave another comment. These cookies will last for one
-            year. If you visit our login page, we will set a temporary cookie to
-            determine if your browser accepts cookies. This cookie contains no
-            personal data and is discarded when you close your browser. When you
-            log in, we will also set up several cookies to save your login
-            information and your screen display choices. Login cookies last for
-            two days, and screen options cookies last for a year. If you select
-            “Remember Me”, your login will persist for two weeks. If you log out
-            of your account, the login cookies will be removed. If you edit or
-            publish an article, an additional cookie will be saved in your
-            browser. This cookie includes no personal data and simply indicates
-            the post ID of the article you just edited. It expires after 1 day.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Users must be at least 18 years old and legally eligible to apply for job.
           </p>
         </section>
 
-        {/* Embedded content from other websites */}
+        {/* User Participation */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Embedded content from other websites
+          User Participation
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            Articles on this site may include embedded content (e.g. videos,
-            images, articles, etc.). Embedded content from other websites
-            behaves in the exact same way as if the visitor has visited the
-            other website. These websites may collect data about you, use
-            cookies, embed additional third-party tracking, and monitor your
-            interaction with that embedded content, including tracking your
-            interaction with the embedded content if you have an account and are
-            logged in to that website.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Users may apply for jobs by submitting accurate information regarding their qualifications, experience, and skills. Providing false or misleading information may result in account suspension or termination.
           </p>
         </section>
 
-        {/* Who we share your data with */}
+        {/* Usage Restrictions */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Who we share your data with
+          Usage Restrictions
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            If you request a password reset, your IP address will be included in
-            the reset email.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Users agree not to:<br />
+          
+          Engage in fraudulent, abusive, or disruptive activities. <br />
+
+          Violate any applicable local laws or regulations. <br />
+
+          Perform unauthorized access, hacking, data mining, or spamming. <br />
+
+          Resell, distribute, or exploit platform services for commercial gain. <br />
           </p>
         </section>
 
-        {/* How long we retain your data */}
+        {/* Intellectual Property Rights */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            How long we retain your data
+          Intellectual Property Rights
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            If you leave a comment, the comment and its metadata are retained
-            indefinitely. This is so we can recognize and approve any follow-up
-            comments automatically instead of holding them in a moderation
-            queue. For users that register on our website (if any), we also
-            store the personal information they provide in their user profile.
-            All users can see, edit, or delete their personal information at any
-            time (except they cannot change their username). Website
-            administrators can also see and edit that information.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          All content, graphics, software, and intellectual property on the Platform are owned by Greathire and its licensors. Users are granted a limited, non-transferable license to use the Platform and must not reproduce, modify, or distribute materials without written consent.
           </p>
         </section>
 
-        {/* What rights you have over your data */}
+        {/* Privacy and Data Protection */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            What rights you have over your data
+          Privacy and Data Protection
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            If you have an account on this site, or have left comments, you can
-            request to receive an exported file of the personal data we hold
-            about you, including any data you have provided to us. You can also
-            request that we erase any personal data we hold about you. This does
-            not include any data we are obliged to keep for administrative,
-            legal, or security purposes.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          User data is collected and managed in accordance with Greathire's Privacy Policy. Personal information will not be shared without consent. Misuse of shared data may result in account suspension.
           </p>
         </section>
 
-        {/* Where we send your data */}
+        {/* Third-Party Links and Services */}
         <section className="bg-white border rounded-lg shadow-md m-2">
           <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
-            Where we send your data
+          Third-Party Links and Services
           </h2>
-          <p className="text-gray-600 mt-2 p-2 text-md">
-            Visitor comments may be checked through an automated spam detection
-            service.
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          The Platform may include links to third-party websites and services. Greathire does not endorse or control these third-party entities and is not responsible for any transactions or losses resulting from their use.
+          </p>
+        </section>
+
+        {/* Security and Account Responsibilities */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Security and Account Responsibilities
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Users must maintain the confidentiality of their login credentials. Any unauthorized access or suspected security breaches must be reported immediately to Greathire.
+          </p>
+        </section>
+
+        {/* Payment and Refund Policy */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Payment and Refund Policy
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Paid services must be purchased in advance. Payments are non-refundable unless explicitly stated otherwise. Refund requests, if applicable, will be considered at Greathire’s sole discretion.
+          </p>
+        </section>
+
+        {/* Limitation of Liability */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Limitation of Liability
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Greathire provides services "as is" without warranties regarding uptime, security, or accuracy. Greathire is not liable for any indirect, incidental, or consequential damages. Liability, if any, is limited to the amount of fees paid by the User.
+          </p>
+        </section>
+
+        {/* Dispute Resolution */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Dispute Resolution
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Any disputes arising from these Terms will be resolved through arbitration in Hyderabad, India, in accordance with the Arbitration & Conciliation Act, 1996. The governing law shall be Indian law, and the language of arbitration will be English.
+          </p>
+        </section>
+
+        {/* Termination and Suspension */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Termination and Suspension
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Greathire reserves the right to suspend or terminate access if a User violates these Terms. Upon termination, all rights granted to the User will cease immediately, and any confidential information must be returned or destroyed.
+          </p>
+        </section>
+
+        {/* Compliance with Local Laws */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Compliance with Local Laws
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Users must adhere to all applicable laws and regulations, including tax obligations such as GST or VAT. Any discrepancies in tax details are the User’s responsibility.
+          </p>
+        </section>
+
+        {/* Amendments to Terms */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Amendments to Terms
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Greathire reserves the right to modify these Terms at any time. Users are encouraged to review the Terms periodically for updates.
+          </p>
+        </section>
+
+        {/* Conditions for Job Seekers */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Conditions for Job Seekers
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          By registering, job seekers agree to receive job alerts and promotional communications. They may adjust their preferences at any time. Greathire is not liable for any communications received from recruiters.
+          </p>
+        </section>
+
+        {/* Conditions for Recruiters */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Conditions for Recruiters
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          Recruiters must post genuine job openings and comply with applicable data protection laws. Resumes accessed through the Platform must be used solely for recruitment purposes and not for unauthorized data sharing.
+          </p>
+        </section>
+
+        {/* Contact Information */}
+        <section className="bg-white border rounded-lg shadow-md m-2">
+          <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
+          Contact Information
+          </h2>
+          <p className="text-gray-600 mt-2 p-2 text-md text-justify">
+          For support, inquiries, or complaints, Users may contact Greathire at: <br />
+          Email:            <br />
+          Address: 5 th floor, Doc, Vasantha Bhavana Rd, Whitefields, Kondapur, Hyderabad, Telangana 500006 <br />
+          By using the Greathire Platform, you acknowledge that you have read, understood, and agreed to these Terms of Service.
           </p>
         </section>
       </div>
