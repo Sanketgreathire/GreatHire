@@ -122,7 +122,7 @@ const JobDescription = () => {
               </ul>
             </div>
 
-            <div>
+            {/* <div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Responsibilities:
               </h3>
@@ -137,7 +137,7 @@ const JobDescription = () => {
                   <li>Not specified</li>
                 )}
               </ul>
-            </div>
+            </div> */}
 
             <div className="md:col-span-2">
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -194,7 +194,7 @@ const JobDescription = () => {
                   {selectedJob?.jobDetails.experience || "Not specified"}{" "}
                   {selectedJob?.jobDetails?.experience !== "Fresher" &&
                     selectedJob?.jobDetails?.experience !== "fresher" &&
-                    "Years"}
+                    " "}
                 </p>
               </div>
               <div>
