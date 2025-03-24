@@ -19,6 +19,17 @@ const PostJob = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const lines = e.target.value.split("\n");
+  
+    // Ensure each new line starts with a single bullet point, avoiding duplicate bullets
+    const formattedText = lines.map(line => {
+      return line.startsWith("• ") ? line : `• ${line.trim()}`;
+    }).join("\n");
+  
+    formik.setFieldValue("details", formattedText);
+  };
+  
   useEffect(() => {
     if (company && company?.maxJobPosts === 0)
       navigate("/recruiter/dashboard/your-plans");
@@ -230,7 +241,7 @@ const PostJob = () => {
                       name="details"
                       placeholder="Enter job details"
                       className="w-full p-3 border border-gray-300 rounded"
-                      onChange={formik.handleChange}
+                      onChange={handleChange}
                       value={formik.values.details}
                     />
                     {formik.touched.details && formik.errors.details && (
