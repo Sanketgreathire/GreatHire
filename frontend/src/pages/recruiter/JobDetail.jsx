@@ -216,7 +216,14 @@ const JobDetail = () => {
             />
           ) : (
             <p className="text-gray-600 text-lg">
-              {jobDetails?.details || "No description provided."}
+              {jobDetails?.details 
+                ? jobDetails.details.split("\n").map((line, index) => (
+                <span key={index}>
+                  {line}
+                  <br />
+              </span>
+      )) 
+    : "No description provided."}
             </p>
           )}
         </div>

@@ -103,8 +103,18 @@ const JobMajorDetails = ({ selectedJob }) => {
       {/* Full Job Description */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Full Job Description</h1>
-        <p className="font-semibold">{selectedJob?.jobDetails?.details}</p>
-      </div>
+        <p className="font-semibold">
+          {selectedJob?.jobDetails?.details 
+            ? selectedJob.jobDetails.details.split("\n").map((line, index) => (
+              <span key={index}>
+              {line}
+              <br />
+              </span>
+          )) 
+          : "No description provided."}
+        </p>
+</div>
+
 
       {/* Benifits */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
