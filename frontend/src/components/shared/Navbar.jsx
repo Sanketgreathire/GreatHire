@@ -114,6 +114,7 @@ const Navbar = () => {
     // Common links
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/blogs", label: "Blogs" },
+    { to: "/about", label: "About"},
     { to: "/contact", label: "Contact Us" },
   ];
 
