@@ -454,38 +454,70 @@ const PostJob = () => {
                 <div>
                   {/* Experience */}
                   <div className="mb-6">
-                    <Label
-                      htmlFor="experience"
-                      className="block text-gray-700 mb-1"
-                    >
-                      Experience<span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
-                    {["Fresher","6 months-1 year", "1-2 years", "2-3 years", "3-4 years", "More than 5 years"].map((option) => (
+                  <Label htmlFor="experience" className="block text-gray-700 mb-1">
+                  Experience<span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                   {[
+                    "Fresher",
+                    "6 months-1 year",
+                    "1-2 years",
+                    "2-3 years",
+                    "3-4 years",
+                    "More than 5 years",
+                   ].map((option) => {
+                  // Convert the current string value into an array for easier handling
+                    const selectedOptions = formik.values.experience
+                    ? formik.values.experience.split(", ")
+                    : [];
+                  return (
                     <label key={option} className="flex items-center space-x-2">
-                      <input
-                         type="radio"
-                         name="experience"
-                         value={option}
-                         checked={formik.values.experience === option}
-                         onChange={(e) => formik.setFieldValue("experience", e.target.value)}
-                         className="peer hidden"
-                       />
-                       <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
-                         {formik.values.experience === option && (
-                         <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="butt" strokeLinejoin="miter">
-                           <polyline points="4 12 10 18 20 5" />
-                         </svg>
-                         )}
-                       </div>
-                     <span className="text-gray-700">{option}</span>
-                   </label>
-                   ))}
-                 </div>
-                    {formik.touched.experience && formik.errors.experience && (
-                 <div className="text-red-500 text-sm">{formik.errors.experience}</div>
-                  )}
-                </div>
+                    {/* Changed input type from radio to checkbox */}
+                    <input
+                      type="checkbox"
+                      name="experience"
+                      value={option}
+                     // Updated to check if the option exists in the array derived from the string
+                      checked={selectedOptions.includes(option)}
+                      onChange={(e) => {
+                    // Create a mutable copy of the current selections from the string value
+                    let updatedOptions = [...selectedOptions];
+                     if (e.target.checked) {
+                    // Add the option if checked
+                      updatedOptions.push(option);
+                     } else {
+                    // Remove the option if unchecked
+                      updatedOptions = updatedOptions.filter((opt) => opt !== option);
+                     }
+                    // Join the array back into a string (comma separated) to meet the expected type
+                      formik.setFieldValue("experience", updatedOptions.join(", "));
+                     }}
+                      className="peer hidden"
+                    />
+                  <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
+                    {selectedOptions.includes(option) && (
+                      <svg
+                       className="w-4 h-4 text-white"
+                       viewBox="0 0 24 24"
+                       fill="none"
+                       stroke="currentColor"
+                       strokeWidth="4"
+                       strokeLinecap="butt"
+                       strokeLinejoin="miter"
+                      >
+                       <polyline points="4 12 10 18 20 5" />
+                      </svg>
+                    )}
+                  </div>
+                    <span className="text-gray-700">{option}</span>
+                 </label>
+                   );
+                  })}
+               </div>
+                  {formik.touched.experience && formik.errors.experience && (
+               <div className="text-red-500 text-sm">{formik.errors.experience}</div>
+                 )}
+             </div>
 
                   {/* Salary */}
                   <div className="mb-6">
