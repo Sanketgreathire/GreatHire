@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "react-simple-typewriter": "^5.0.1",
     "tailwind-scrollbar-hide": "^2.0.0"
   }
 }

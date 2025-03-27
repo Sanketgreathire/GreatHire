@@ -24,6 +24,7 @@ import SavedJobs from "./pages/job/SavedJob";
 // Service & Policy Pages
 import Contact from "./pages/services/Contact";
 import OurService from "./pages/services/OurService";
+import Blogs from "./pages/services/Blogs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
@@ -84,6 +85,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/blogs",
+    element: <Blogs />,
   },
   {
     path: "/login",
