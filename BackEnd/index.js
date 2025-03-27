@@ -26,6 +26,7 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import userRoute from "./routes/user.route.js";
 import recruiterRoute from "./routes/recruiter.route.js";
+import digitalmarketerRoute from "./routes/digitalmarketer.route.js";
 import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import revenueRoute from "./routes/revenue.route.js";
@@ -94,6 +95,7 @@ app.use("/api", apiLimiter); // Apply rate limiting to all API routes
 // API Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/recruiter", recruiterRoute);
+app.use("/api/v1/digitalmarketer", digitalmarketerRoute);
 app.use("/api/v1/verification", verificationRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
