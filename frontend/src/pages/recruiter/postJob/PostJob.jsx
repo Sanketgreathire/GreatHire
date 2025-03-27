@@ -23,11 +23,11 @@ const PostJob = () => {
     const lines = e.target.value.split("\n");
   
     // Ensure each new line starts with a single bullet point, avoiding duplicate bullets
-    const formattedText = lines.map(line => {
-      return line.startsWith("• ") ? line : `• ${line.trim()}`;
-    }).join("\n");
-  
-    formik.setFieldValue("details", formattedText);
+  //    formattedText = lines.map(line => {
+  //     return line.startsWith("• ") ? line : `• ${line.trim()}`;
+  //   }).join("\n");
+  // const
+  //   formik.setFieldValue("details", formattedText);
   };
   
   useEffect(() => {
@@ -241,7 +241,7 @@ const PostJob = () => {
                       name="details"
                       placeholder="Enter job details"
                       className="w-full p-3 border border-gray-300 rounded"
-                      onChange={handleChange}
+                      onChange={formik.handleChange}
                       value={formik.values.details}
                     />
                     {formik.touched.details && formik.errors.details && (
@@ -461,7 +461,7 @@ const PostJob = () => {
                       Experience<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <div className="grid grid-cols-2 gap-2">
-                    {["0-1 years", "1-2 years", "2-3 years", "3-4 years", "More than 5 years", "Others"].map((option) => (
+                    {["Fresher","6 months-1 year", "1-2 years", "2-3 years", "3-4 years", "More than 5 years"].map((option) => (
                     <label key={option} className="flex items-center space-x-2">
                       <input
                          type="radio"
@@ -469,8 +469,15 @@ const PostJob = () => {
                          value={option}
                          checked={formik.values.experience === option}
                          onChange={(e) => formik.setFieldValue("experience", e.target.value)}
-                         className="accent-blue-500"
+                         className="peer hidden"
                        />
+                       <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
+                         {formik.values.experience === option && (
+                         <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="butt" strokeLinejoin="miter">
+                           <polyline points="4 12 10 18 20 5" />
+                         </svg>
+                         )}
+                       </div>
                      <span className="text-gray-700">{option}</span>
                    </label>
                    ))}
@@ -585,7 +592,7 @@ const PostJob = () => {
                     id="location"
                     name="location"
                     className="w-full p-2 border border-gray-300 rounded bg-white"
-                    placeholder="Enter location or select from dropdown"
+                    placeholder="Enter location manually or select from dropdown"
                     value={formik.values.location}
                     onChange={(e) => {
                       formik.handleChange(e);
