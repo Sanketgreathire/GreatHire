@@ -21,7 +21,7 @@ const DigitalMarketerLogin = () => {
   useEffect(() => {
     if (user) {
       if (user.role === "digitalmarketer" || user.role === "Owner")
-        navigate("/digitalmarketer/blogs");
+        navigate("/blogs");
       else navigate("/digitalmarketer/login");
     }
   }, [user]);
