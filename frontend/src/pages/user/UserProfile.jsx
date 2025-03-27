@@ -61,7 +61,7 @@ import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const UserProfile = () => {
   // State variables for managing modals and UI state
-  const [open, setOpen] = useState(false); // Controls profile update modal
+  const [open, setOpen] = useState(true); // Controls profile update modal
   const [loading, setLoading] = useState(false); // Controls loading state during account deletion
   const navigate = useNavigate(); // Navigation hook
   const dispatch = useDispatch(); // Redux dispatch function
@@ -301,7 +301,7 @@ const UserProfile = () => {
             </div>
 
             {/* Delete Account Button */}
-            <div className="flex justify-center mt-8">
+            {/* <div className="flex justify-center mt-8">
               <Button
                 onClick={() => setShowDeleteModal(true)}
                 variant="destructive"
@@ -312,7 +312,7 @@ const UserProfile = () => {
               >
                 {loading ? "Deleting..." : "Delete Account"}
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Applied Jobs Section */}
@@ -338,13 +338,13 @@ const UserProfile = () => {
         )}
       </div>
 
-      {showDeleteModal && (
+      {/* {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
           onConfirm={onConfirmDelete}
           onCancel={onCancelDelete}
         />
-      )}
+      )} */}
     </>
   );
 };

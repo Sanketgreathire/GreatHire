@@ -55,6 +55,9 @@ import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 
+//Digital Marketer routes
+import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
+
 // Candidate Management (Recruiter Side)
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
@@ -243,6 +246,12 @@ const appRouter = createBrowserRouter([
       </ProtectedRecruiterRoute>
     ),
   },
+  //Digital Marketer Routes
+  {
+    path: "/digitalmarketer/login",
+    element: <DigitalMarketerLogin />,
+  },
+  
 
   // Admin Routes
   {
