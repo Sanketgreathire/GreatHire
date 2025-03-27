@@ -58,6 +58,7 @@
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.8.1",
     "sonner": "^1.7.4",
+    "swiper": "^11.2.6",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "yup": "^1.6.1"
