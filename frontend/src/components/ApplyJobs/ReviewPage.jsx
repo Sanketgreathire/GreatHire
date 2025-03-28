@@ -21,7 +21,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { ProgressBar } from "react-step-progress-bar"; 
 import "react-step-progress-bar/styles.css";
 
-const ReviewPage = ({ handleReview1, input, fileURL }) => {
+const ReviewPage = ({ handleReview1, input, fileURL,fileType,user }) => {
   const dispatch = useDispatch(); // Redux dispatcher to update global state
   const [loading, setLoading] = useState(false); // State to manage loading status
   const navigate = useNavigate(); // React Router navigation hook
@@ -109,7 +109,15 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 
       <p className="text-gray-500 text-2xl mb-5">Resume</p>
       <div className="h-96">
-        <Viewer fileUrl={fileURL || input.resume} />
+        { user.profile.resumeOriginalName.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
+            <Viewer fileUrl={fileURL || input.resume} />
+                  ) : (
+                    <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
+                      You uploaded a .docx or .doc file. It cannot be open here.  
+                      <br />
+                      <span className="font-bold">Go to Profile → Click "View Resume" to open it.  and check it.</span>
+                    </div>
+                  )}
       </div>
 
       <h4 className="text-lg font-medium mt-5 mb-5">Employee Questions</h4>

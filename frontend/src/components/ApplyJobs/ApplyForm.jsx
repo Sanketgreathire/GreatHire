@@ -34,6 +34,7 @@ import { toast } from "react-hot-toast";
 const ApplyForm = ({ setRight }) => {
   // Accessing user details from Redux store
   const { user } = useSelector((state) => state.auth);
+  console.log("user",user);
   const navigate = useNavigate();
   // Accessing selected job details from context
   const { selectedJob } = useJobDetails();
@@ -70,6 +71,7 @@ const ApplyForm = ({ setRight }) => {
 
   // State to store uploaded file URL
   const [fileURL, setFileURL] = useState(null);
+  const [fileType, setFileType] = useState("");
 
   // Validation errors
   const [errors, setErrors] = useState({});
@@ -121,6 +123,7 @@ const ApplyForm = ({ setRight }) => {
 
   // Handles transition from Step 1 to Step 2
 const handleContinue1 = (e) => {
+  console.log("for resume",input);
   e.preventDefault();
   if (validateStep1()) { // Validates Step 1 before proceeding
     setStep1(false);
@@ -183,24 +186,35 @@ const [input, setInput] = useState({
   company: user?.profile?.experience?.companyName, // Pre-fills company name from experience
 });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]; // Get the uploaded file
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
-        alert("File size exceeds 10MB. Please choose a smaller file.");
-        return;
-      }
-
-      const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
-      setInput((prevData) => ({
-        ...prevData,
-        resume: file, // Update the resume field with the uploaded file
-      }));
-      setFileURL(fileUrl); // Set the file URL for preview or further use
-      setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
+const handleFileChange = (e) => {
+  const file = e.target.files[0]; // Get the uploaded file
+  if (file) {
+    if (file.size > 10 * 1024 * 1024) {
+      // 10MB limit
+      alert("File size exceeds 10MB. Please choose a smaller file.");
+      return;
     }
-  };
+
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+
+    if (fileExtension === "pdf") {
+      const fileUrl = URL.createObjectURL(file); // Generate URL for PDF preview
+      setFileURL(fileUrl);
+      setFileType("pdf"); // Set the file type
+    } else {
+      setFileURL(null); // No preview for non-PDF files
+      setFileType(fileExtension);
+    }
+
+    setInput((prevData) => ({
+      ...prevData,
+      resume: file, // Update the resume field with the uploaded file
+    }));
+    
+    setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
+  }
+};
+
 
   return (
     <div>
@@ -351,9 +365,17 @@ const [input, setInput] = useState({
             </h6>
           </div>
           <div className="mt-4">
-            {fileURL || input.resume ? (
-              <div className="h-96 flex flex-col items-center">
-                <Viewer fileUrl={fileURL || input.resume} />
+          {fileURL || input.resume ? (
+        <div className="h-96 flex flex-col items-center">
+          {user.profile.resumeOriginalName.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
+            <Viewer fileUrl={fileURL || input.resume} />
+          ) : (
+            <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
+              You uploaded a .docx or .doc file. It cannot be open here.  
+              <br />
+              <span className="font-bold">Go to Profile → Click "View Resume" to open it. and check it </span>
+            </div>
+          )}
                 <div className="mt-4 flex justify-center">
                   <button
                     onClick={() =>
@@ -645,6 +667,8 @@ const [input, setInput] = useState({
           input={input}
           handleReview1={handleReview1}
           fileURL={fileURL}
+          fileType={fileType}
+          user={user}
         />
       )}
     </div>
