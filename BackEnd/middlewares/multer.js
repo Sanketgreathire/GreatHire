@@ -5,6 +5,13 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 // restrict image type to be allowed
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_PDF_TYPE = "application/pdf";
+const ALLOWED_WORD_TYPES = [
+  "application/msword", // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+];
+
+const ALLOWED_RESUME_TYPES = [ALLOWED_PDF_TYPE, ...ALLOWED_WORD_TYPES];
+
 
 // Configure storage in memory (for processing before upload)
 const storage = multer.memoryStorage();
@@ -24,10 +31,12 @@ const fileFilter = (req, file, cb) => {
       );
     }
   } else if (file.fieldname === "resume") {
-    // Allow only PDF for resume
-    if (file.mimetype === ALLOWED_PDF_TYPE) {
+    // Allow PDF, DOC, DOCX for resume
+    if (ALLOWED_RESUME_TYPES.includes(file.mimetype)) {
+      console.log("Accepted resume file.");
       cb(null, true);
     } else {
+      console.log("Rejected file. MIME type:", file.mimetype);
       cb(
         new Error("Invalid file type for resume! Only .pdf is allowed."),
         false

@@ -322,6 +322,27 @@ export const logout = async (req, res) => {
     });
   }
 };
+// for uploading services
+export const uploadResumeToCloudinary = async (fileBuffer, fileName) => {
+  try {
+    return await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          resource_type: "raw",
+          public_id: fileName,
+          folder: "resumes",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(fileBuffer);
+    });
+  } catch (error) {
+    console.error("Cloudinary Upload Error:", error);
+    throw new Error("Error uploading resume to Cloudinary");
+  }
+};
 
 //this controller  update the profile of user
 export const updateProfile = async (req, res) => {
@@ -344,6 +365,7 @@ export const updateProfile = async (req, res) => {
     } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
+    //console.log(req.files);
     const userId = req.id;
 
     if (!userId) {
@@ -382,14 +404,26 @@ export const updateProfile = async (req, res) => {
 
     // Upload resume if provided
     if (resume && resume.length > 0) {
-      // fetching data uri of file
-      const fileUri = getDataUri(resume[0]);
-       // upload file to cloudnary
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      // set cloudResponse.secure_url to user resume
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = resume[0].originalname;
-    }
+      console.log("Uploading resume:", resume[0].originalname);
+   
+      try {
+        // ✅ Upload resume to Cloudinary using the function
+        const cloudResponse = await uploadResumeToCloudinary(
+          resume[0].buffer,
+          resume[0].originalname
+        );
+   
+        user.profile.resume = cloudResponse.secure_url;
+        user.profile.resumeOriginalName = resume[0].originalname;
+      } catch (error) {
+        console.error("Resume Upload Error:", error);
+        return res.status(500).json({
+          message: "Failed to upload resume.",
+          success: false,
+        });
+      }
+   }
+   
 
     // checking is skillsArray is array by Array.isArray(variable)
     const skillsArray = Array.isArray(skills)

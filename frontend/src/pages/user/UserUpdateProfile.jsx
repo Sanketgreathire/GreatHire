@@ -160,6 +160,9 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     if (input.profilePhoto) {
       formData.append("profilePhoto", input.profilePhoto);
     }
+    // console.log("Selected file:", input.resume);
+    // console.log("MIME type:", input.resume?.type);
+
 
     try {
       setLoading(true);
@@ -513,7 +516,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              <p><strong>Note:</strong> PDF (.pdf)  are allowed.</p>
+              <p><strong>Note:</strong> PDF or DOCX  (.pdf , .docx)  are allowed.</p>
 
               {/* Display remove button inside input field */}
               {resumeUrl && (
