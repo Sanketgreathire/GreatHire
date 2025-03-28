@@ -113,6 +113,8 @@ const Navbar = () => {
 
     // Common links
     { to: "/great-hire/services", label: "Our Services" },
+    { to: "/blogs", label: "Blogs" },
+    { to: "/about", label: "About"},
     { to: "/contact", label: "Contact Us" },
   ];
 
@@ -435,7 +437,7 @@ const Navbar = () => {
 
       {/* Signup Modal */}
       {isSignupModalOpen && (
-  <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-start p-6 space-y-6 w-full h-screen overflow-y-auto">
+  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start p-6 space-y-6 w-full h-screen overflow-y-auto">
     <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
     
     <div className="w-full max-w-sm space-y-4">

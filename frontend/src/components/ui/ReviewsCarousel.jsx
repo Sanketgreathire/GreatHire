@@ -61,8 +61,8 @@ const ReviewsCarousel = ({ reviews, title }) => {
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Left & Right Fading Gradient Effect */}
-        <div className="absolute top-0 left-0 w-5 h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute top-0 right-0 w-5 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 left-0 w-5 h-full bg-gradient-to-r from-blue-100 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-5 h-full bg-gradient-to-l from-blue-100 to-transparent z-10 pointer-events-none"></div>
         
         {/* Disable animation on small screens, allow scrolling inside */}
         <div className={`w-full flex gap-6 flex-nowrap overflow-x-auto lg:w-max lg:animate-scroll-infinite scrollbar-hide ${isPaused ? "paused" : ""}`}>

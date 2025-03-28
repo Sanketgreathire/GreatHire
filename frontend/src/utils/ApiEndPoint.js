@@ -1,6 +1,7 @@
 // all Api points 
 export const USER_API_END_POINT = "http://localhost:8000/api/v1/user";
 export const RECRUITER_API_END_POINT = "http://localhost:8000/api/v1/recruiter";
+export const DIGITAL_MARKETER_API_END_POINT = "http://localhost:8000/api/v1/digitalmarketer";
 export const ADMIN_API_END_POINT = "http://localhost:8000/api/v1/admin";
 export const ADMIN_STAT_API_END_POINT =
   "http://localhost:8000/api/v1/admin/stat";

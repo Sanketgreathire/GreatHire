@@ -24,9 +24,11 @@ import SavedJobs from "./pages/job/SavedJob";
 // Service & Policy Pages
 import Contact from "./pages/services/Contact";
 import OurService from "./pages/services/OurService";
+import Blogs from "./pages/services/Blogs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
+import About from "./pages/services/About";
 
 // Password Management
 import ForgotPassword from "./pages/ForgotPassword";
@@ -52,6 +54,9 @@ import RecruiterList from "./pages/recruiter/RecruiterList";
 import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
+
+//Digital Marketer routes
+import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 
 // Candidate Management (Recruiter Side)
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
@@ -81,6 +86,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/blogs",
+    element: <Blogs />,
+  },
+  {
+    path: "/about",
+    element: <About />
   },
   {
     path: "/login",
@@ -233,6 +246,12 @@ const appRouter = createBrowserRouter([
       </ProtectedRecruiterRoute>
     ),
   },
+  //Digital Marketer Routes
+  {
+    path: "/digitalmarketer/login",
+    element: <DigitalMarketerLogin />,
+  },
+  
 
   // Admin Routes
   {
