@@ -10,47 +10,55 @@ import 'swiper/css';
 const About = () => {
 
     const clientLogos = [
-        { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
-        { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/240px-Infosys_logo.svg.png" },
+        { name: "GOOGLE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/240px-Google_2015_logo.svg.png" },
+        { name: "TELEPERFORMANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Teleperformance_logo.svg/240px-Teleperformance_logo.svg.png" },
         { name: "Wipro", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Wipro_Primary_Logo_Color_RGB.svg/240px-Wipro_Primary_Logo_Color_RGB.svg.png" },
-        { name: "HCL Technologies", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/HCL_Technologies_logo.svg/240px-HCL_Technologies_logo.svg.png" },
+        { name: "NEXUSI", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nexusi_logo.svg/240px-Nexusi_logo.svg.png" },
         { name: "Tech Mahindra", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tech_Mahindra_New_Logo.svg/240px-Tech_Mahindra_New_Logo.svg.png" },
-        { name: "Larsen & Toubro Infotech", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/LTI_Mindtree_logo.svg/240px-LTI_Mindtree_logo.svg.png" },
-        { name: "Reliance Industries", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reliance_Communications_Logo.svg/240px-Reliance_Communications_Logo.svg.png" },
-        { name: "Bharti Airtel", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
-        { name: "HDFC Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "ICICI Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
-        { name: "State Bank of India", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
-        { name: "Axis Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
-        { name: "Mahindra Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
-        { name: "Tata Motors", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
-        { name: "Maruti Suzuki", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
-        { name: "Hero MotoCorp", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
-        { name: "Bajaj Auto", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
-        { name: "ITC Limited", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
-        { name: "Hindustan Unilever", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
-        { name: "Asian Paints", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
-        { name: "Adani Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
-        { name: "JSW Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
-        { name: "Godrej Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
-        { name: "Bharat Petroleum", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" }
+        { name: "AIEDGE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Aiedge_logo.svg/240px-Aiedge_logo.svg.png" },
+        { name: "VORTAL SOFT", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Vortal_Soft_logo.svg/240px-Vortal_Soft_logo.svg.png" },
+        { name: "REH LEGAL SOLUTION", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
+        { name: "DW LABS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "SEVAN TECHNOLOGIES", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
+        { name: "SRI COMFORT", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
+        { name: "BAKLAVA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
+        { name: "SIND BAKERY", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
+        { name: "MARVEL", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
+        { name: "SM FIBERS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
+        { name: "A1 TOWNSHIP", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
+        { name: "SIMPLE INTERIOR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
+        { name: "ZEELMEDIA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
+        { name: "ALKALINE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
+        { name: "HRH", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
+        { name: "SRI RAM FINANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
+        { name: "KOTAK LIFE INSURANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
+        { name: "ACCENFLAIR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
+        {name:"TADASTHU", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tata_Logo.svg/240px-Tata_Logo.svg.png"},
+        { name: "OM INNOVATIONS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "GENERIC SOLUTIONS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "CLEVERNEST", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "BANDHARY GLASS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "REKNSMARKETING", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        {name:"DADUS", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png"},
+        { name: "QUIEST", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "ASHANERO", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" }
       ];
     
       const teamMembers = {
         leadership: [
           {
-            role: "Founder",
-            name: "Sarah Johnson",
+            role: "CEO / Founder",
+            name: "SANKET",
             image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
             achievement: "15+ years of industry experience",
-            about: "A visionary leader with a passion for transforming the recruitment industry. Sarah founded GreatHire with the mission to bridge the gap between talent and opportunity using cutting-edge technology. Her background in both tech and HR has been instrumental in shaping GreatHire's innovative approach.",
+            about: " Sanket Babde is the visionary leader behind Great Hire with extensive expertise in recruitment and talent acquisition. Hisstrategic leadership and innovative approach have been instrumental in establishing GreatHire.in as a trusted platform for both job seekers and employers, driving the company's growth and success.",
           },
           {
-            role: "CEO",
-            name: "Michael Chen",
+            role: "Managing Director",
+            name: "SONIKA REDDY",
             image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
             achievement: "Led 3 successful tech startups",
-            about: "With a proven track record in scaling tech companies, Michael brings strategic insight and operational excellence to GreatHire. His focus on AI-driven solutions and user experience has revolutionized how companies approach hiring.",
+            about: "Sonika Reddy, Managing Director at GreatHire.in, is a seasoned leader in Great Hire. Herstrategic vision for talent development and her dedication to fostering a positive workplace culture have been key to the company’s success. With a focus on excellence, Sonika empowers individuals and organizations, shaping the future of recruitment at GreatHire.in.",
           },
         ],
         developers: [
@@ -167,7 +175,7 @@ const About = () => {
             <div className="container mx-auto px-4">
               <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">About GreatHire</h1>
               <p className="text-xl text-center max-w-3xl mx-auto">
-                Transforming the way companies hire and people find their dream jobs through innovative technology and human expertise.
+              Sanket serves as a Director at Great Hire and is the driving force behind the strategic direction and growth of greathire.in. Appointed as a Founder of Great Hire in 2017, Mr. Sanket provides visionary leadership to the company.
               </p>
             </div>
           </div>
@@ -178,7 +186,27 @@ const About = () => {
               <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  At GreatHire, our mission is to revolutionize the recruitment landscape by bridging the gap between exceptional talent and innovative companies. We believe in creating meaningful connections that drive career growth and business success through cutting-edge technology and human-centric approaches.
+                Under Mr. Babde's guidance, the mission of Babde Private Limited and greathire.in is to empower businesses with effective hiring solutions, connect professionals with meaningful career opportunities, and provide innovative solutions across all greathire.in services. This mission is underpinned by a steadfast commitment to:
+                </p>
+                <ul className="list-disc list-inside text-left mt-4 space-y-2">
+                  <li className="text-gray-700">Innovation:  Continuously pursuing and integrating cutting-edge technologies and methodologies to enhance the user experience and ensure superior outcomes across all greathire.in services.</li>
+                  <li className="text-gray-700">User-Centricity: Prioritizing the needs and satisfaction of our users in every aspect of our decision-making and the development of all greathire.in services.</li>
+                  <li className="text-gray-700">Excellence: Maintaining the highest standards of quality and reliability in our platform and the delivery of all greathire.in services.</li>
+                  <li className="text-gray-700">Growth & Impact: Fostering the growth and success of our users and making a positive contribution to the relevant industries through the comprehensive offerings of greathire.in.</li>
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Our Vision Section */}
+          <div className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-6">Our vision</h2>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                Mr.Sanket envisions greathire.in as a leading platform revolutionizing the landscape of IT services, encompassing areas such as AI, software development, digital marketing, and staffing. His vision is to cultivate a seamless and efficient ecosystem for both businesses and individuals, connecting job seekers with recruiters and empowering users to access valuable resources and achieve sustainable business growth through greathire.in's comprehensive suite of services. He is dedicated to developing a technologically advanced platform that remains deeply attuned to user needs and consistently delivers tangible value across all greathire.in services.
+
                 </p>
               </div>
             </div>
@@ -191,18 +219,36 @@ const About = () => {
                 <h2 className="text-3xl font-bold text-center mb-6">Our Story</h2>
                 <div className="space-y-6 text-gray-700">
                   <p className="leading-relaxed">
-                    Founded in 2020, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.
+                  Established in 2017 and registered in Hyderabad, Telangana, India, with its operational headquarters in Kondapur, Hyderabad, Great Hire is committed to developing impactful ventures. Mr.Sanket collaborates with fellow Director, Soma Sonika Reddy, who was appointed in 2017, to collaboratively guide the company towards its strategic objectives.
+
                   </p>
-                  <p className="leading-relaxed">
+                  {/* <p className="leading-relaxed">
                     Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We've helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.
                   </p>
                   <p className="leading-relaxed">
                     Today, we re proud to be one of India s fastest-growing recruitment platforms, but our mission remains the same: to create meaningful connections that drive careers and businesses forward.
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* professional biography Section */}
+          {/* <div className="py-16 bg-white">
+            <div className="container mx-auto px-4">
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-6">Professional biography</h2>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  <ul className="list-disc list-inside text-left mt-4 space-y-2">
+                    <li className="text-gray-700">Specific accomplishments and key milestones overseen by Mr. Babde since 2017.</li>
+                    <li className="text-gray-700">Details regarding his relevant background and expertise within the industries served by greathire.in.</li>
+                    <li className="text-gray-700">A more precise articulation of the core challenges that greathire.in aims to address through its services.</li>
+                    <li className="text-gray-700">A direct quote from Mr. Babde that encapsulates his vision for the future of greathire.in.</li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+          </div> */}
     
           {/* Achievements Section */}
           <div className="py-16 bg-white">
