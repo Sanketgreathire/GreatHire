@@ -68,20 +68,20 @@ export const registerCompany = async (req, res) => {
 
     const adminEmail = userEmail;
     // CIN validation function
-    const isValidCIN = (cin) => {
-      const cinRegex = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
-      return cinRegex.test(cin);
-    };
+    // const  isValidCIN = (cin) => {
+    //   const cinRegex = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
+    //   return cinRegex.test(cin);
+    // };
 
     //console.log("is valid true otherwise false :"+isValidCIN(CIN));             //for testing purpose
 
     // CIN is unique number of a any bussiness
-    if (!isValidCIN(CIN)) {
-      return res.status(400).json({
-        message: "Invalid CIN format.",
-        success: false,
-      });
-    }
+    // if (!isValidCIN(CIN)) {
+    //   return res.status(400).json({
+    //     message: "Invalid CIN format.",
+    //     success: false,
+    //   });
+    // }
 
     // Check if any unique field exists in the BlacklistedCompany collection
     const isBlacklisted = await BlacklistedCompany.findOne({
