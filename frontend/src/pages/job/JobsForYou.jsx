@@ -295,7 +295,7 @@ const JobsForYou = () => {
 
           {/* Job title and other info's for small screen */}
           <div className="p-6 pt-20">
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold text-gray-900 pr-12">
               {selectedJob?.jobDetails?.title}
             </h3>
             <p className="text-sm text-gray-600">

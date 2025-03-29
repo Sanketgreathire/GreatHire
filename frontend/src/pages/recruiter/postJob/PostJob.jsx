@@ -831,7 +831,7 @@ const PostJob = () => {
                     </div>
                     <div className="mb-2">
                       <strong>Job Details:</strong>{" "}
-                      <div className="whitespace-pre-wrap">{formik.values.details || "N/A"}</div>
+                      <div className="whitespace-pre-wrap text-justify">{formik.values.details || "N/A"}</div>
                     </div>
                     <div className="mb-2">
                       <strong>Skills:</strong>{" "}

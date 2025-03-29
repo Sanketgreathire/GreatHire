@@ -103,7 +103,7 @@ const JobMajorDetails = ({ selectedJob }) => {
       {/* Full Job Description */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Full Job Description</h1>
-        <p className="font-semibold">
+        <p className="font-semibold text-justify">
           {selectedJob?.jobDetails?.details 
             ? selectedJob.jobDetails.details.split("\n").map((line, index) => (
               <span key={index}>

@@ -100,7 +100,7 @@ const JobDescription = () => {
             <h2 className="text-xl font-bold text-gray-800 mb-3">
               Job Description:
             </h2>
-            <p className="text-gray-700 leading-relaxed text-base">
+            <p className="text-gray-700 leading-relaxed text-base text-justify">
             {selectedJob?.jobDetails?.details 
             ? selectedJob.jobDetails.details.split("\n").map((line, index) => (
               <span key={index}>
