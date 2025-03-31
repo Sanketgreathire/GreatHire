@@ -7,39 +7,64 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 
+//logos 
+import teleperformance from "../../assets/clientLogos/teleperformance.png";
+import techmahindra from "../../assets/clientLogos/techmahindra.png";
+import aiedge from "../../assets/clientLogos/aiedge.jpeg";
+import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
+import dwlabs from "../../assets/clientLogos/dwlabs.jpeg";
+import sevan from "../../assets/clientLogos/sevan.avif";
+import sricomfort from "../../assets/clientLogos/sricomfort.png";
+import baklava from "../../assets/clientLogos/baklava.avif";
+import sindbakery from "../../assets/clientLogos/sindbakery.png";
+import marvel from "../../assets/clientLogos/marvel.png";
+import smfibers from "../../assets/clientLogos/smfibers.svg";
+import a1township from "../../assets/clientLogos/a1township.png";
+import zeelmedia from "../../assets/clientLogos/zeelmedia.png";
+import alkaline from "../../assets/clientLogos/alkaline.png";
+import hrh from "../../assets/clientLogos/hrh.jpeg";
+import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg";
+import kotaklife from "../../assets/clientLogos/kotaklife.jpg";
+import accenflair from "../../assets/clientLogos/accenflair.webp";
+import ominnovation from "../../assets/clientLogos/ominnovation.png";
+import genericsol from "../../assets/clientLogos/genericsol.jpeg"
+import clevernest from "../../assets/clientLogos/clevernest.jpg";
+import bandharyglass from "../../assets/clientLogos/bandharyglass.png";
+import dadus from "../../assets/clientLogos/dadus.avif"
+
 const About = () => {
 
     const clientLogos = [
         { name: "GOOGLE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/240px-Google_2015_logo.svg.png" },
-        { name: "TELEPERFORMANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Teleperformance_logo.svg/240px-Teleperformance_logo.svg.png" },
+        { name: "TELE PERFORMANCE", logo: teleperformance },
         { name: "Wipro", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Wipro_Primary_Logo_Color_RGB.svg/240px-Wipro_Primary_Logo_Color_RGB.svg.png" },
         { name: "NEXUSI", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nexusi_logo.svg/240px-Nexusi_logo.svg.png" },
-        { name: "Tech Mahindra", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tech_Mahindra_New_Logo.svg/240px-Tech_Mahindra_New_Logo.svg.png" },
-        { name: "AIEDGE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Aiedge_logo.svg/240px-Aiedge_logo.svg.png" },
-        { name: "VORTAL SOFT", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Vortal_Soft_logo.svg/240px-Vortal_Soft_logo.svg.png" },
+        { name: "Tech Mahindra", logo: techmahindra },
+        { name: "AIEDGE", logo: aiedge },
+        { name: "VORTAL SOFT", logo: vortalsoft },
         { name: "REH LEGAL SOLUTION", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
-        { name: "DW LABS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "SEVAN TECHNOLOGIES", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
-        { name: "SRI COMFORT", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
-        { name: "BAKLAVA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
-        { name: "SIND BAKERY", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
-        { name: "MARVEL", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
-        { name: "SM FIBERS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
-        { name: "A1 TOWNSHIP", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
+        { name: "DW LABS", logo: dwlabs },
+        { name: "SEVAN TECHNOLOGIES", logo: sevan },
+        { name: "SRI COMFORT", logo: sricomfort },
+        { name: "BAKLAVA", logo: baklava },
+        { name: "SIND BAKERY", logo: sindbakery },
+        { name: "MARVEL", logo: marvel },
+        { name: "SM FIBERS", logo: smfibers },
+        { name: "A1 TOWNSHIP", logo: a1township },
         { name: "SIMPLE INTERIOR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
-        { name: "ZEELMEDIA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
-        { name: "ALKALINE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
-        { name: "HRH", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
-        { name: "SRI RAM FINANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
-        { name: "KOTAK LIFE INSURANCE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
-        { name: "ACCENFLAIR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
+        { name: "ZEELMEDIA", logo: zeelmedia },
+        { name: "ALKALINE", logo: alkaline },
+        { name: "HRH", logo: hrh },
+        { name: "SRI RAM FINANCE", logo: sriramfinance },
+        { name: "KOTAK LIFE INSURANCE", logo: kotaklife },
+        { name: "ACCENFLAIR", logo: accenflair },
         {name:"TADASTHU", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tata_Logo.svg/240px-Tata_Logo.svg.png"},
-        { name: "OM INNOVATIONS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "GENERIC SOLUTIONS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "CLEVERNEST", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "BANDHARY GLASS", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+        { name: "OM INNOVATIONS", logo: ominnovation },
+        { name: "GENERIC SOLUTIONS", logo: genericsol },
+        { name: "CLEVERNEST", logo: clevernest },
+        { name: "BANDHARY GLASS", logo: bandharyglass },
         { name: "REKNSMARKETING", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        {name:"DADUS", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png"},
+        {name:"DADUS", logo:dadus},
         { name: "QUIEST", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
         { name: "ASHANERO", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" }
       ];
