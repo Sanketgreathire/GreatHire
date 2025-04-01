@@ -5,6 +5,29 @@ import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 
+//logos from assets folder
+
+/*import a1township from "../../assets/a1township2.png";
+import accenflair from "../../assets/accenflair.png";
+import aiedge from "../../assets/aiedge.png";
+import alkaline from "../../assets/alkaline.png";
+import baklava from "../../assets/baklava.avif";
+import bandharyglass from "../../assets/bandharyglass.png";
+import clevernest from "../../assets/clevernest.png";
+import dabus from "../../assets/dabus.avif";
+import dwlabs from "../../assets/dwlabs.png";
+import genericsol from "../../assets/generiscol.jpeg";
+import hrh from "../../assets/hrh.jpeg";
+import kotaklife from "../../assets/kotaklife.jpg";
+import smfibers from "../../assets/smfibers.svg";
+import sriramfinance from "../../assets/sriramfinance.jpg";
+import techmahindra from "../../assets/techmahindra.png";
+import teleperformance from "../../assets/teleperformance.png";
+import vortalsoft from "../../assets/vortalsoft.png";
+import wipro from "../../assets/wipro.png"; 
+import zeelmedia from "../../assets/zeelmedia.png"; */        
+
+
 function App() {
   const clientLogos = [
     { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
@@ -38,13 +61,6 @@ function App() {
       name: "Software Developers",
       members: [
         {
-          name: "CH Tanmai",
-          image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
-          role: "Team Lead",
-          expertise: "Full Stack Developer",
-          about: "Experienced in building scalable web applications with a focus on user experience.",
-        },
-        {
           name: "Charan Sai",
           image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
           role: "AWS Artichect",
@@ -66,10 +82,10 @@ function App() {
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
-          name: "Mahesh Kumar",
+          name: "Maheswar Reddy",
           image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
           role: "Frontend Developer",
-          expertise: "React, Angular, Vue.js",
+          expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, Mongodb",
           about: "Skilled in creating responsive and interactive user interfaces.",
         },
         {
@@ -79,51 +95,79 @@ function App() {
           expertise: "React Native, iOS, Android",
           about: "Specialized in cross-platform mobile development.",
         },
+        {
+          name: "Sonu Kumar",
+          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          role: "Full Stack Developer",
+          expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, Tailwind CSS",
+          about: "Experienced in building full-stack applications with a focus on user experience and performance.",
+        },
       ],
     },
     {
       name: "Human Resources",
       members: [
         {
-          name: "Jessica Patel",
+          name: "Naveneeth",
           image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
-          role: "HR Manager",
-          expertise: "Employee Relations, Culture Building",
-          about: "Expert in workplace culture and employee satisfaction.",
+          role: "Human Resource",
+          expertise: "Recruitment, Employee Relations",
+          about: "Oversees recruitment and employee relations.",
         },
         {
-          name: "Robert Wilson",
+          name: "Mounika",
           image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
-          role: "Training Lead",
-          expertise: "L&D, Professional Development",
-          about: "Specializes in employee training and development programs.",
+          role: "Screening Specialist",
+          expertise: "Talent Acquisition, Screening",
+          about: "Responsible for screening and shortlisting candidates.",
         },
         {
-          name: "Maria Garcia",
+          name: "Koshistha",
           image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-          role: "HR Specialist",
-          expertise: "Benefits, Compensation",
-          about: "Manages employee benefits and compensation strategies.",
+          role: "Sourcing Specialist",
+          expertise: "Talent Sourcing, Networking",
+          about: "Focuses on sourcing candidates through various channels.",
         },
         {
-          name: "Thomas Lee",
+          name: "Rohit",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-          role: "Employee Experience",
-          expertise: "Engagement, Wellness Programs",
-          about: "Focuses on creating positive workplace experiences.",
+          role: "Interviewer",
+          expertise: "Interviewing, Assessment",
+          about: "Conducts interviews and assesses candidates skills.",
         },
         {
-          name: "Priya Shah",
+          name: "Lahari",
           image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
-          role: "HR Analytics",
-          expertise: "Data Analysis, Reporting",
-          about: "Drives HR decisions through data-driven insights.",
+          role: "On Boarding Specialist",
+          expertise: "Onboarding, Employee Engagement",
+          about: "Facilitates onboarding and employee engagement activities.",
+        },
+        {
+          name: "Dikshit",
+          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          role: "Hiring Manager",
+          expertise: "Hiring, Team Management",
+          about: "Responsible for managing the hiring process and team.",
         },
       ],
     },
     {
       name: "Digital Marketing",
       members: [
+        {
+          name: "John Lee",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          role: "Marketing Director",
+          expertise: "Digital Strategy, SEO",
+          about: "Leads digital marketing initiatives and growth strategies.",
+        },
+        {
+          name: "John Lee",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          role: "Marketing Director",
+          expertise: "Digital Strategy, SEO",
+          about: "Leads digital marketing initiatives and growth strategies.",
+        },
         {
           name: "John Lee",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
@@ -145,25 +189,58 @@ function App() {
           expertise: "Social Media, Community Management",
           about: "Manages social media presence and community engagement.",
         },
-        {
-          name: "Emma Thompson",
-          image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=400",
-          role: "PPC Specialist",
-          expertise: "Paid Advertising, Analytics",
-          about: "Manages paid campaigns and performance optimization.",
-        },
-        {
-          name: "David Kim",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
-          role: "Marketing Analytics",
-          expertise: "Data Analysis, Reporting",
-          about: "Drives marketing decisions through data insights.",
-        },
       ],
     },
     {
       name: "Talent Acquisition",
       members: [
+        {
+          name: "Rachel Foster",
+          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          role: "Technical Recruiter",
+          expertise: "Tech Recruitment, Talent Assessment",
+          about: "Specializes in recruiting top tech talent.",
+        },
+        {
+          name: "Michael Zhang",
+          image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+          role: "Senior Recruiter",
+          expertise: "Executive Search, Talent Strategy",
+          about: "Focuses on executive and leadership recruitment.",
+        },
+        {
+          name: "Anita Sharma",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          role: "Campus Recruiter",
+          expertise: "Graduate Hiring, University Relations",
+          about: "Manages campus recruitment programs.",
+        },
+        {
+          name: "Carlos Rodriguez",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          role: "Global Talent Lead",
+          expertise: "International Hiring, Relocation",
+          about: "Handles international recruitment and talent mobility.",
+        },
+        {
+          name: "Lisa Chen",
+          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
+          role: "Recruitment Operations",
+          expertise: "Process Optimization, Tools",
+          about: "Streamlines recruitment processes and systems.",
+        },
+      ],
+    },
+    {
+      name: "Sales and Marketing",
+      members: [
+        {
+          name: "Rachel Foster",
+          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          role: "Technical Recruiter",
+          expertise: "Tech Recruitment, Talent Assessment",
+          about: "Specializes in recruiting top tech talent.",
+        },
         {
           name: "Rachel Foster",
           image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
@@ -256,12 +333,12 @@ function App() {
     },
     {
       icon: <Award className="w-8 h-8 text-blue-600" />,
-      title: "50+",
+      title: "28+",
       description: "Industry Awards",
     },
     {
       icon: <Building2 className="w-8 h-8 text-blue-600" />,
-      title: "1000+",
+      title: "573+",
       description: "Partner Companies",
     },
   ];
@@ -286,20 +363,22 @@ function App() {
 
   const leadership = [
     {
-      name: "Rajesh Kumar",
-      title: "CEO & Founder",
-      description: "With over 20 years of experience in the IT industry, Rajesh Kumar founded GreatHire with a vision to revolutionize the recruitment process. His journey began at leading tech companies where he identified the gaps in traditional hiring methods. Under his leadership, GreatHire has grown from a startup to a trusted partner for hundreds of companies across India.",
+      name: "Babde Sanket",
+      title: "Founder & CEO",
+      description: "Sanket Babde has been the driving force behind greathire.in and Babde Private Limited since 2017, With a vision to revolutionize IT services. Under his leadership, the company has grown into a trusted platform for AI-driven recruitment, software development, digital marketing, and IT staffing solutions.",
       achievements: [
-        "Pioneer in implementing AI-driven recruitment solutions",
-        "Led the company to achieve 500% growth in 3 years",
-        "Recognized as Top 40 Under 40 Business Leaders by Economic Times",
+        "Simplified Hiring for Businesses – Developed a recruitment platform that helps companies streamline their hiring process efficiently.",
+        "Achieved 500% Growth in 9 Years – Expanded from a startup to a trusted recruitment partner for businesses across industries.",
+        "Built Strong Employer & Candidate Connections – Successfully facilitated thousands of job placements by bridging the gap between recruiters and job seekers.",
+        "Recognized for Industry Impact – Featured among emerging leaders in IT tech for driving innovation in modern recruitment solutions.",
       ],
       vision: "To create a recruitment ecosystem that prioritizes both technical excellence and cultural fit, ensuring sustainable growth for companies and fulfilling careers for professionals."
     },
     {
-      name: "Priya Sharma",
-      title: "Co-Founder & CTO",
-      description: "A technology veteran with 15 years of experience in building scalable platforms, Priya Sharma co-founded GreatHire to bring technological innovation to recruitment. Her expertise in AI and machine learning has been instrumental in developing GreatHire's cutting-edge matching algorithms and assessment tools.",
+      name: "Babde Sonika",
+      title: "Director of Human Resources Operations",
+      description: "Sonika Babde has been a pivotal figure in shaping the HR operations at greathire.in. With a strong background in human resources and organizational development, she has been instrumental in creating a culture of excellence and inclusivity within the company.",
+      //description: "A technology veteran with 9 years of experience in building scalable platforms, babde Sonika co-founded GreatHire to bring technological innovation to recruitment. Her expertise in AI and machine learning has been instrumental in developing GreatHire's cutting-edge matching algorithms and assessment tools.",
       achievements: [
         "Architected GreatHire's proprietary AI matching system",
         "Published research on ML applications in recruitment",
@@ -370,7 +449,7 @@ function App() {
             <h2 className="text-3xl font-bold text-center mb-6">Our Story</h2>
             <div className="space-y-6 text-gray-700">
               <p className="leading-relaxed">
-                Founded in 2020, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.
+                Founded in 2016, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.
               </p>
               <p className="leading-relaxed">
                 Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We've helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.
