@@ -122,6 +122,13 @@ function App() {
           about: "Responsible for screening and shortlisting candidates.",
         },
         {
+          name: "CH Tanmai",
+          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          role: "HR Manager & Team Lead",
+          expertise: "Recruitment, Team Management",
+          about: "Manages HR team and oversees recruitment processes.",
+        },
+        {
           name: "Koshistha",
           image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
           role: "Sourcing Specialist",
@@ -192,7 +199,7 @@ function App() {
       ],
     },
     {
-      name: "Talent Acquisition",
+      name: "US IT Recruiters",
       members: [
         {
           name: "Sushma",
@@ -279,7 +286,7 @@ function App() {
       ],
     },
     {
-      name: "Bench Sales",
+      name: "Bench Sales Recruitment",
       members: [
         {
           name: "Sarah Anderson",
