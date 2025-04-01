@@ -94,7 +94,12 @@ const RecruiterList = () => {
   };
 
   // Filtering recruiters based on search term and status
-  const filteredRecruiters = recruiters.filter((recruiter) => {
+  const filteredRecruiters = (recruiters || []).filter((recruiter) => {
+    // Ensure recruiter is a valid object before accessing its properties
+    if (!recruiter || typeof recruiter !== "object" || !recruiter.fullname) {
+      return false;
+    }
+    console.log("recruiter",recruiter);
     const searchMatch =
       recruiter.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       recruiter.emailId.email
@@ -173,7 +178,7 @@ const RecruiterList = () => {
                       )
                     }
                   >
-                    <td className="py-3 px-6">{recruiter.fullname}</td>
+                    <td className="py-3 px-6">{recruiter?.fullname || " "}</td>
                     <td className="py-3 px-6">{recruiter.emailId.email}</td>
                     <td className="py-3 px-6">
                       {recruiter.phoneNumber?.number || "N/A"}
