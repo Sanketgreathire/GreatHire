@@ -27,6 +27,12 @@ import techmahindra from "../../assets/clientLogos/techmahindra.png";
 //import wipro from "../../assets/clientLogos/wipro.png"; 
 //import zeelmedia from "../../assets/clientLogos/zeelmedia.png"; */       
 
+// Import User Photos
+import sonu from "../../assets/user Photos/sonu.jpeg";
+import Mahesh from "../../assets/user Photos/Mahesh.jpeg";
+import eswar from "../../assets/user Photos/eswar.jpeg";
+
+
 
 function App() {
   const clientLogos = [
@@ -76,14 +82,14 @@ function App() {
         },
         {
           name: "Eswar Reddy",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+          image: eswar,
           role: "Full Stack Developer",
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, ",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Maheswar Reddy",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+          image: Mahesh,
           role: "Frontend Developer",
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, Mongodb",
           about: "Skilled in creating responsive and interactive user interfaces.",
@@ -97,7 +103,7 @@ function App() {
         },
         {
           name: "Sonu Kumar",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          image: sonu,
           role: "Full Stack Developer",
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
