@@ -2,6 +2,12 @@ import React from 'react'
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
 
+import img6 from "../../assets/img6.png";
+import img3 from "../../assets/img3.png";
+import img8 from "../../assets/img8.png";
+import img11 from "../../assets/img11.png";
+
+
 import { Users, Target, Award, Briefcase, Building2 } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
@@ -49,14 +55,14 @@ const About = () => {
           {
             role: "CEO / Founder",
             name: "SANKET",
-            image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+            // image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
             achievement: "15+ years of industry experience",
             about: " Sanket Babde is the visionary leader behind Great Hire with extensive expertise in recruitment and talent acquisition. Hisstrategic leadership and innovative approach have been instrumental in establishing GreatHire.in as a trusted platform for both job seekers and employers, driving the company's growth and success.",
           },
           {
             role: "Managing Director",
             name: "SONIKA REDDY",
-            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+            // image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
             achievement: "Led 3 successful tech startups",
             about: "Sonika Reddy, Managing Director at GreatHire.in, is a seasoned leader in Great Hire. Herstrategic vision for talent development and her dedication to fostering a positive workplace culture have been key to the company’s success. With a focus on excellence, Sonika empowers individuals and organizations, shaping the future of recruitment at GreatHire.in.",
           },

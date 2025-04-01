@@ -113,7 +113,7 @@ const Blogs = () => {
           />
           <div className="w-full md:w-1/2">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
-              GreatHire Insights – The Future of Work
+              GreatHire Insights The Future of Work
             </h2>
             <p className="mt-3 text-gray-700 text-sm sm:text-base text-justify">
               The way people work is evolving, with professionals seizing new opportunities and reshaping industries. GreatHire is here to bridge the gap, connecting top talent with the right opportunities to fuel growth, innovation, and success.
