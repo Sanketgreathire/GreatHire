@@ -2,6 +2,7 @@
 /node_modules
 
 # Ignore environment files
+Frontend.env
 .env
 
 # Ignore logs
