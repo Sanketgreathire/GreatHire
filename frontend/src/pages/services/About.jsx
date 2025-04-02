@@ -23,9 +23,10 @@ import smfibers from "../../assets/clientLogos/smfibers.svg";
 import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg"; */
 import techmahindra from "../../assets/clientLogos/techmahindra.png";
 //import teleperformance from "../../assets/clientLogos/teleperformance.png";
-//import vortalsoft from "../../assets/clientLogos/vortalsoft.png";
+import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
 //import wipro from "../../assets/clientLogos/wipro.png"; 
-//import zeelmedia from "../../assets/clientLogos/zeelmedia.png"; */       
+//import zeelmedia from "../../assets/clientLogos/zeelmedia.png"; */      
+import raviraj from "../../assets/clientLogos/raviraj.svg"; 
 
 // Import User Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
@@ -36,30 +37,32 @@ import eswar from "../../assets/user Photos/eswar.jpeg";
 
 function App() {
   const clientLogos = [
-    { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
-    { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/240px-Infosys_logo.svg.png" },
+   // { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
+   // { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/240px-Infosys_logo.svg.png" },
    // { name: "Wipro", logo: wipro },
-    { name: "HCL Technologies", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/HCL_Technologies_logo.svg/240px-HCL_Technologies_logo.svg.png" },
+   // { name: "HCL Technologies", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/HCL_Technologies_logo.svg/240px-HCL_Technologies_logo.svg.png" },
     { name: "Tech Mahindra", logo: techmahindra },
-    { name: "Larsen & Toubro Infotech", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/LTI_Mindtree_logo.svg/240px-LTI_Mindtree_logo.svg.png" },
-    { name: "Reliance Industries", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reliance_Communications_Logo.svg/240px-Reliance_Communications_Logo.svg.png" },
-    { name: "Bharti Airtel", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
-    { name: "HDFC Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-    { name: "ICICI Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
-    { name: "State Bank of India", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
-    { name: "Axis Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
-    { name: "Mahindra Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
-    { name: "Tata Motors", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
-    { name: "Maruti Suzuki", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
-    { name: "Hero MotoCorp", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
-    { name: "Bajaj Auto", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
-    { name: "ITC Limited", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
-    { name: "Hindustan Unilever", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
-    { name: "Asian Paints", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
-    { name: "Adani Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
-    { name: "JSW Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
-    { name: "Godrej Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
-    { name: "Bharat Petroleum", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" }
+   // { name: "Larsen & Toubro Infotech", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/LTI_Mindtree_logo.svg/240px-LTI_Mindtree_logo.svg.png" },
+   // { name: "Reliance Industries", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reliance_Communications_Logo.svg/240px-Reliance_Communications_Logo.svg.png" },
+   // { name: "Bharti Airtel", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
+   // { name: "HDFC Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
+   // { name: "ICICI Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
+   // { name: "State Bank of India", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
+   // { name: "Axis Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
+   // { name: "Mahindra Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
+   // { name: "Tata Motors", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
+   // { name: "Maruti Suzuki", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
+   // { name: "Hero MotoCorp", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
+   // { name: "Bajaj Auto", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
+   // { name: "ITC Limited", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
+   // { name: "Hindustan Unilever", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
+   // { name: "Asian Paints", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
+   // { name: "Adani Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
+   // { name: "JSW Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
+   // { name: "Godrej Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
+   // { name: "Bharat Petroleum", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" },
+    { name: "Voralsoft", logo: vortalsoft },
+    { name: "raviraj", logo: raviraj },
   ];
 
   const departments = [
