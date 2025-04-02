@@ -46,6 +46,7 @@ import sushma from "../../assets/user Photos/sushma.jpeg";
 import janaki from "../../assets/user Photos/janki.jpeg";
 import madhu from "../../assets/user Photos/madhu.jpeg";
 import mansi from "../../assets/user Photos/mansi.jpeg";
+import tanmai from "../../assets/user Photos/tanmai.jpeg";
 
 
 function App() {
@@ -87,18 +88,18 @@ function App() {
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
-          name: "Sujeeth Kumar",
-          image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
-          role: "Information Security Analyst, Full Stack Developer & Team Lead",
-          expertise: "Web Development, Cyber Security, AWS Cloud",
-          about: "Expert in building scalable web applications with modern technologies and security best practices.",
-        },
-        {
           name: "Eswar Reddy",
           image: eswar,
           role: "Full Stack Developer",
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, ",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
+        },
+        {
+          name: "Sujeeth Kumar",
+          image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
+          role: "Information Security Analyst, Full Stack Developer & Team Lead",
+          expertise: "Web Development, Cyber Security, AWS Cloud",
+          about: "Expert in building scalable web applications with modern technologies and security best practices.",
         },
         {
           name: "Maheswar Reddy",
@@ -134,6 +135,13 @@ function App() {
           about: "Oversees recruitment and employee relations.",
         },
         {
+          name: "Koshistha",
+          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          role: "Sourcing Specialist",
+          expertise: "Talent Sourcing, Networking",
+          about: "Focuses on sourcing candidates through various channels.",
+        },
+        {
           name: "Mounika",
           image: Mounika,
           role: "Screening Specialist",
@@ -141,18 +149,11 @@ function App() {
           about: "Responsible for screening and shortlisting candidates.",
         },
         {
-          name: "CH Tanmai",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          name: "Tanmai",
+          image: tanmai,
           role: "Hiring Manager & Team Lead",
           expertise: "Recruitment, Team Management",
           about: "Manages HR team and oversees recruitment processes.",
-        },
-        {
-          name: "Koshistha",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-          role: "Sourcing Specialist",
-          expertise: "Talent Sourcing, Networking",
-          about: "Focuses on sourcing candidates through various channels.",
         },
         {
           name: "Rohit",
@@ -181,27 +182,27 @@ function App() {
       name: "Digital Marketing",
       members: [
         {
-          name: "John Lee",
+          name: "Vikram",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-          role: "Marketing Director",
-          expertise: "Digital Strategy, SEO",
-          about: "Leads digital marketing initiatives and growth strategies.",
+          role: "Digital Marketing Specialist",
+          expertise: "SEO, SEM, Content Marketing",
+          about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
-          name: "John Lee",
+          name: "Anuskha",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-          role: "Marketing Director",
-          expertise: "Digital Strategy, SEO",
-          about: "Leads digital marketing initiatives and growth strategies.",
+          role: "Digital Marketing",
+          expertise: "Social Media, Content Creation",
+          about: "Specializes in digital marketing strategies, Content marketing, performance analysis and social media management with optimized campaigns.",
         },
         {
-          name: "John Lee",
+          name: "Anil",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-          role: "Marketing Director",
-          expertise: "Digital Strategy, SEO",
-          about: "Leads digital marketing initiatives and growth strategies.",
+          role: "Digital Marketing",
+          expertise: "SEO, SEM, Content Marketing",
+          about: "Works on innovative starategies, Leveraging the latest trends in SEO, PPC, and social media marketing.",
         },
-        {
+      /*  {
           name: "Sophie Wang",
           image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
           role: "Content Strategist",
@@ -214,7 +215,7 @@ function App() {
           role: "Social Media Manager",
           expertise: "Social Media, Community Management",
           about: "Manages social media presence and community engagement.",
-        },
+        },*/
       ],
     },
     {
