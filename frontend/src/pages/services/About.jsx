@@ -143,7 +143,7 @@ function App() {
         {
           name: "CH Tanmai",
           image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
-          role: "HR Manager & Team Lead",
+          role: "Hiring Manager & Team Lead",
           expertise: "Recruitment, Team Management",
           about: "Manages HR team and oversees recruitment processes.",
         },
@@ -171,7 +171,7 @@ function App() {
         {
           name: "Dikshit",
           image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
-          role: "Hiring Manager",
+          role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
         },
