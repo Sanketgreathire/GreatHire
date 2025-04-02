@@ -39,12 +39,20 @@ import nabhay from "../../assets/user Photos/nabhay.jpeg";
 import Navaneeth from "../../assets/user Photos/Navaneeth.jpeg";
 import Virendar from "../../assets/user Photos/Virendar.jpeg";
 import santhosh from "../../assets/user Photos/santhosh.jpeg";
+import Mounika from "../../assets/user Photos/Mounika.jpeg";
+import lahari from "../../assets/user Photos/lahari.jpeg";
+import riya from "../../assets/user Photos/riya.jpeg";
+import sushma from "../../assets/user Photos/sushma.jpeg";
+import janaki from "../../assets/user Photos/janki.jpeg";
+import madhu from "../../assets/user Photos/madhu.jpeg";
+import mansi from "../../assets/user Photos/mansi.jpeg";
 
 
 function App() {
   const clientLogos = [
 
     { name: "Tech Mahindra", logo: techmahindra },
+   // { name: "Wipro", logo: Wipro },
     { name: "Voralsoft", logo: vortalsoft },
     { name: "raviraj", logo: raviraj },
     { name: "teleperformance", logo: teleperformance },
@@ -127,7 +135,7 @@ function App() {
         },
         {
           name: "Mounika",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          image: Mounika,
           role: "Screening Specialist",
           expertise: "Talent Acquisition, Screening",
           about: "Responsible for screening and shortlisting candidates.",
@@ -155,7 +163,7 @@ function App() {
         },
         {
           name: "Lahari",
-          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          image: lahari,
           role: "On Boarding Specialist",
           expertise: "Onboarding, Employee Engagement",
           about: "Facilitates onboarding and employee engagement activities.",
@@ -214,14 +222,14 @@ function App() {
       members: [
         {
           name: "Sushma",
-          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          image: sushma,
           role: "Technical Recruiter",
           expertise: "Tech Recruitment, Talent Assessment",
           about: "Specializes in recruiting top tech talent.",
         },
         {
-          name: "Janaki",
-          image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+          name: "Janki",
+          image: janaki,
           role: "Talent Acquisition Specialist",
           expertise: "Executive Search, Talent Strategy",
           about: "Focuses on executive and leadership recruitment.",
@@ -235,14 +243,14 @@ function App() {
         },
         {
           name: "Mansi",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: mansi,
           role: "Talent Acquisition",
           expertise: "International Recruitment, Relocation",
           about: "Focuses on identifying and attracting top talent from around the world.",
         },
         {
           name: "Riya",
-          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
+          image: riya,
           role: "Recruitment Operations",
           expertise: "Process Optimization, Tools",
           about: "Focuses on streamlining recruitment processes by connecting the right talent with the right opportunities.",
