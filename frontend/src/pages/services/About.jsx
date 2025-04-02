@@ -498,21 +498,35 @@ function App() {
           <h2 className="text-3xl font-bold text-center mb-12">Our Leadership</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {leadership.map((leader, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-8">
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-blue-600 mb-2">{leader.name}</h3>
-                  <p className="text-lg font-semibold text-gray-600 mb-4">{leader.title}</p>
-                  <p className="text-gray-700 mb-6 leading-relaxed">{leader.description}</p>
+              <div
+                key={index}
+                className="bg-white border-2 border-blue-600 rounded-lg shadow-lg p-8 flex flex-col items-center text-center space-y-6"
+              >
+                {/* Name */}
+                <h3 className="text-2xl font-bold text-blue-600">{leader.name}</h3>
+
+                {/* Title */}
+                <div className="text-lg font-semibold text-gray-600">
+                  {Array.isArray(leader.title)
+                    ? leader.title.map((t, i) => <div key={i}>{t}</div>)
+                    : leader.title}
                 </div>
-                <div className="mb-6">
+
+                {/* Description */}
+                <p className="text-gray-700 leading-relaxed">{leader.description}</p>
+
+                {/* Achievements */}
+                <div className="w-full text-center">
                   <h4 className="text-lg font-semibold mb-3">Key Achievements:</h4>
-                  <ul className="list-disc list-inside space-y-2 text-gray-700">
+                  <ul className="list-disc list-inside space-y-2 text-gray-700 inline-block text-left">
                     {leader.achievements.map((achievement, i) => (
                       <li key={i}>{achievement}</li>
                     ))}
                   </ul>
                 </div>
-                <div>
+
+                {/* Vision */}
+                <div className="w-full text-center">
                   <h4 className="text-lg font-semibold mb-3">Vision:</h4>
                   <p className="text-gray-700 italic">{leader.vision}</p>
                 </div>
