@@ -137,6 +137,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   // Handles form submission to update user profile
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Check if resume is uploaded
+    if (!input.resume || !(input.resume instanceof File)) {
+      toast.error("Resume is required! Please upload your resume before updating.");
+      return; // Stop form submission
+    }
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);

@@ -9,34 +9,40 @@ import 'swiper/css/free-mode';
 
 //logos from assets folder
 
-/*import a1township from "../../assets/a1township2.png";
-import accenflair from "../../assets/accenflair.png";
-import aiedge from "../../assets/aiedge.png";
-import alkaline from "../../assets/alkaline.png";
-import baklava from "../../assets/baklava.avif";
-import bandharyglass from "../../assets/bandharyglass.png";
-import clevernest from "../../assets/clevernest.png";
-import dabus from "../../assets/dabus.avif";
-import dwlabs from "../../assets/dwlabs.png";
-import genericsol from "../../assets/generiscol.jpeg";
-import hrh from "../../assets/hrh.jpeg";
-import kotaklife from "../../assets/kotaklife.jpg";
-import smfibers from "../../assets/smfibers.svg";
-import sriramfinance from "../../assets/sriramfinance.jpg";
-import techmahindra from "../../assets/techmahindra.png";
-import teleperformance from "../../assets/teleperformance.png";
-import vortalsoft from "../../assets/vortalsoft.png";
-import wipro from "../../assets/wipro.png"; 
-import zeelmedia from "../../assets/zeelmedia.png"; */        
+/*import a1township from "../../assets/clientLogos/a1township.png";
+import accenflair from "../../assets/clientLogos/accenflair.png";
+import aiedge from "../../assets/clientLogos/aiedge.png";
+import alkaline from "../../assets/clientLogos/alkaline.png";
+import baklava from "../../assets/clientLogos/baklava.avif";
+import bandharyglass from "../../assets/clientLogos/bandharyglass.png";
+import clevernest from "../../assets/clientLogos/clevernest.png";
+import dabus from "../../assets/clientLogos/dabus.avif";
+import dwlabs from "../../assets/clientLogos/dwlabs.png";
+import genericsol from "../../assets/clientLogos/generiscol.jpeg";
+import hrh from "../../assets/clientLogos/hrh.jpeg";
+import kotaklife from "../../assets/clientLogos/kotaklife.jpg";
+import smfibers from "../../assets/clientLogos/smfibers.svg";
+import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg"; */
+import techmahindra from "../../assets/clientLogos/techmahindra.png";
+//import teleperformance from "../../assets/clientLogos/teleperformance.png";
+//import vortalsoft from "../../assets/clientLogos/vortalsoft.png";
+//import wipro from "../../assets/clientLogos/wipro.png"; 
+//import zeelmedia from "../../assets/clientLogos/zeelmedia.png"; */       
+
+// Import User Photos
+import sonu from "../../assets/user Photos/sonu.jpeg";
+import Mahesh from "../../assets/user Photos/Mahesh.jpeg";
+import eswar from "../../assets/user Photos/eswar.jpeg";
+
 
 
 function App() {
   const clientLogos = [
     { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
     { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/240px-Infosys_logo.svg.png" },
-    { name: "Wipro", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Wipro_Primary_Logo_Color_RGB.svg/240px-Wipro_Primary_Logo_Color_RGB.svg.png" },
+   // { name: "Wipro", logo: wipro },
     { name: "HCL Technologies", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/HCL_Technologies_logo.svg/240px-HCL_Technologies_logo.svg.png" },
-    { name: "Tech Mahindra", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Tech_Mahindra_New_Logo.svg/240px-Tech_Mahindra_New_Logo.svg.png" },
+    { name: "Tech Mahindra", logo: techmahindra },
     { name: "Larsen & Toubro Infotech", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/LTI_Mindtree_logo.svg/240px-LTI_Mindtree_logo.svg.png" },
     { name: "Reliance Industries", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reliance_Communications_Logo.svg/240px-Reliance_Communications_Logo.svg.png" },
     { name: "Bharti Airtel", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
@@ -78,14 +84,14 @@ function App() {
         },
         {
           name: "Eswar Reddy",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+          image: eswar,
           role: "Full Stack Developer",
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, ",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Maheswar Reddy",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+          image: Mahesh,
           role: "Frontend Developer",
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, Mongodb",
           about: "Skilled in creating responsive and interactive user interfaces.",
@@ -99,7 +105,7 @@ function App() {
         },
         {
           name: "Sonu Kumar",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          image: sonu,
           role: "Full Stack Developer",
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
