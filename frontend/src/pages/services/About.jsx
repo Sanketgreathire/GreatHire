@@ -51,29 +51,27 @@ import tanmai from "../../assets/user Photos/tanmai.jpeg";
 
 function App() {
   const clientLogos = [
-
     { name: "Tech Mahindra", logo: techmahindra },
     { name: "Wipro", logo: wipro },
-    { name: "teleperformance", logo: teleperformance },
-    { name: "google", logo: google },
-    { name: "kotaklife", logo: kotaklife },
-    { name: "dwlabs", logo: dwlabs },
+    { name: "Teleperformance", logo: teleperformance },
+    { name: "Google", logo: google },
+    { name: "Kotak Life", logo: kotaklife },
+    { name: "DWLabs", logo: dwlabs },
     { name: "Voralsoft", logo: vortalsoft },
-    { name: "sriramfinance", logo: sriramfinance },
-    { name: "raviraj", logo: raviraj },
-    { name: "a1township", logo: a1township },
-    { name: "smfibers", logo: smfibers },
-    { name: "zeelmedia", logo: zeelmedia },
-    { name: "accenflair", logo: accenflair },
-    { name: "genericsol", logo: genericsol },
-    { name: "bandharyglass", logo: bandharyglass },
-    { name: "alkaline", logo: alkaline },
-    { name: "aiedge", logo: aiedge },
-    { name: "clevernest", logo: clevernest },
-    { name: "baklava", logo: baklava },
-    { name: "hrh", logo: hrh },
-    { name: "dadus", logo: dadus },
-
+    { name: "Sriram Finance", logo: sriramfinance },
+    { name: "Raviraj", logo: raviraj },
+    { name: "A1 Township", logo: a1township },
+    { name: "SM Fibers", logo: smfibers },
+    { name: "Zeel Media", logo: zeelmedia },
+    { name: "Accenflair", logo: accenflair },
+    { name: "Generic Sol", logo: genericsol },
+    { name: "Bandhary Glass", logo: bandharyglass },
+    { name: "Alkaline", logo: alkaline },
+    { name: "AI Edge", logo: aiedge },
+    { name: "Clever Nest", logo: clevernest },
+    { name: "Baklava", logo: baklava },
+    { name: "HRH", logo: hrh },
+    { name: "Dadus", logo: dadus },
   ];
 
   const departments = [
@@ -83,43 +81,43 @@ function App() {
         {
           name: "Charan Sai",
           image: Charan,
-          role: "AWS Artichect",
+          role: ["AWS Architect"],
           expertise: "Cloud Solutions, DevOps",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
           name: "Eswar Reddy",
           image: eswar,
-          role: "Full Stack Developer",
-          expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, ",
+          role: ["Full Stack Developer"],
+          expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Sujeeth Kumar",
           image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
-          role: "Information Security Analyst, Full Stack Developer & Team Lead",
+          role: ["Information Security Analyst", "Full Stack Developer", "Team Lead"],
           expertise: "Web Development, Cyber Security, AWS Cloud",
           about: "Expert in building scalable web applications with modern technologies and security best practices.",
         },
         {
           name: "Maheswar Reddy",
           image: Mahesh,
-          role: "Frontend Developer",
-          expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, Mongodb",
+          role: ["Frontend Developer"],
+          expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
           about: "Skilled in creating responsive and interactive user interfaces.",
         },
         {
           name: "Virender",
           image: Virendar,
-          role: "Mobile Developer",
+          role: ["Mobile Developer"],
           expertise: "React Native, iOS, Android",
           about: "Specialized in cross-platform mobile development.",
         },
         {
           name: "Sonu Kumar",
           image: sonu,
-          role: "Full Stack Developer",
-          expertise: "React, Node.js, MongoDB, Express, JavaScript, Node.js, Python, Tailwind CSS",
+          role: ["Full Stack Developer"],
+          expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
       ],
@@ -156,18 +154,25 @@ function App() {
           about: "Manages HR team and oversees recruitment processes.",
         },
         {
-          name: "Rohit",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-          role: "Interviewer",
-          expertise: "Interviewing, Assessment",
-          about: "Conducts interviews and assesses candidates skills.",
-        },
-        {
           name: "Lahari",
           image: lahari,
           role: "On Boarding Specialist",
           expertise: "Onboarding, Employee Engagement",
           about: "Facilitates onboarding and employee engagement activities.",
+        },
+        {
+          name: "Madhu",
+          image: madhu,
+          role: "Human Resource",
+          expertise: "Recruitment, Employee Relations",
+          about: "Oversees recruitment and employee relations.",
+        },
+        {
+          name: "Rohit",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          role: "Interviewer",
+          expertise: "Interviewing, Assessment",
+          about: "Conducts interviews and assesses candidates skills.",
         },
         {
           name: "Dikshit",
@@ -202,20 +207,6 @@ function App() {
           expertise: "SEO, SEM, Content Marketing",
           about: "Works on innovative starategies, Leveraging the latest trends in SEO, PPC, and social media marketing.",
         },
-      /*  {
-          name: "Sophie Wang",
-          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
-          role: "Content Strategist",
-          expertise: "Content Marketing, SEO",
-          about: "Creates engaging content strategies that drive growth.",
-        },
-        {
-          name: "Raj Patel",
-          image: "https://images.unsplash.com/photo-1516914943479-89db7d9ae7f2?auto=format&fit=crop&q=80&w=400",
-          role: "Social Media Manager",
-          expertise: "Social Media, Community Management",
-          about: "Manages social media presence and community engagement.",
-        },*/
       ],
     },
     {
@@ -445,7 +436,6 @@ function App() {
       name: "Babde Sonika",
       title: "Director of Human Resources Operations",
       description: "Sonika Babde has been a pivotal figure in shaping the HR operations at greathire.in. With a strong background in human resources and organizational development, she has been instrumental in creating a culture of excellence and inclusivity within the company.",
-      //description: "A technology veteran with 9 years of experience in building scalable platforms, babde Sonika co-founded GreatHire to bring technological innovation to recruitment. Her expertise in AI and machine learning has been instrumental in developing GreatHire's cutting-edge matching algorithms and assessment tools.",
       achievements: [
         "Architected GreatHire's proprietary AI matching system",
         "Published research on ML applications in recruitment",
@@ -656,7 +646,11 @@ function App() {
                         </div>
                         <div className="text-center">
                           <h4 className="text-xl font-semibold mb-2 line-clamp-1">{member.name}</h4>
-                          <p className="text-blue-600 text-sm mb-3 line-clamp-2 min-h-[2.5rem]">{member.role}</p>
+                          <div className="text-blue-600 text-sm mb-3">
+                            {Array.isArray(member.role)
+                              ? member.role.map((r, index) => <div key={index}>{r}</div>)
+                              : member.role}
+                          </div>
                           <p className="text-gray-600 text-sm mb-3">
                             <strong className="block mb-1">Expertise:</strong>
                             <span className="line-clamp-2 min-h-[2.5rem]">{member.expertise}</span>
