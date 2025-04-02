@@ -34,7 +34,11 @@ import raviraj from "../../assets/clientLogos/raviraj.svg";
 import sonu from "../../assets/user Photos/sonu.jpeg";
 import Mahesh from "../../assets/user Photos/Mahesh.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
-
+import Charan from "../../assets/user Photos/Charan.jpeg";
+import nabhay from "../../assets/user Photos/nabhay.jpeg";
+import Navaneeth from "../../assets/user Photos/Navaneeth.jpeg";
+import Virendar from "../../assets/user Photos/Virendar.jpeg";
+import santhosh from "../../assets/user Photos/santhosh.jpeg";
 
 
 function App() {
@@ -69,7 +73,7 @@ function App() {
       members: [
         {
           name: "Charan Sai",
-          image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
+          image: Charan,
           role: "AWS Artichect",
           expertise: "Cloud Solutions, DevOps",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
@@ -96,8 +100,8 @@ function App() {
           about: "Skilled in creating responsive and interactive user interfaces.",
         },
         {
-          name: "Marcus Chen",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+          name: "Virender",
+          image: Virendar,
           role: "Mobile Developer",
           expertise: "React Native, iOS, Android",
           about: "Specialized in cross-platform mobile development.",
@@ -116,7 +120,7 @@ function App() {
       members: [
         {
           name: "Naveneeth",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+          image: Navaneeth,
           role: "Human Resource",
           expertise: "Recruitment, Employee Relations",
           about: "Oversees recruitment and employee relations.",
@@ -224,7 +228,7 @@ function App() {
         },
         {
           name: "Santhosh",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          image: santhosh,
           role: "Talent Acquisition",
           expertise: " Graduate Hiring, University Relations",
           about: "Focuses on strategic hiring pratices, I ensure we attract and retain top talent.",
@@ -337,7 +341,7 @@ function App() {
       members: [
         {
           name: "Nabhy Singh",
-          image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+          image: nabhay,
           role: "Business Development Professional",
           expertise: "B2B Sales, Account Management",
           about: "focused on identifying the new market opportunities anad building startegic partnerships and strategies.",
