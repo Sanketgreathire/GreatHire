@@ -26,11 +26,11 @@ import techmahindra from "../../assets/clientLogos/techmahindra.png";
 import google from "../../assets/clientLogos/google.png";
 import teleperformance from "../../assets/clientLogos/teleperformance.png";
 import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
-//import wipro from "../../assets/clientLogos/wipro.png"; 
+import wipro from "../../assets/clientLogos/Wipro.svg"; 
 import zeelmedia from "../../assets/clientLogos/zeelmedia.png";      
 import raviraj from "../../assets/clientLogos/raviraj.svg"; 
 
-// Import User Photos
+// Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
 import Mahesh from "../../assets/user Photos/Mahesh.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
@@ -52,19 +52,19 @@ function App() {
   const clientLogos = [
 
     { name: "Tech Mahindra", logo: techmahindra },
-   // { name: "Wipro", logo: Wipro },
-    { name: "Voralsoft", logo: vortalsoft },
-    { name: "raviraj", logo: raviraj },
+    { name: "Wipro", logo: wipro },
     { name: "teleperformance", logo: teleperformance },
+    { name: "google", logo: google },
+    { name: "kotaklife", logo: kotaklife },
+    { name: "dwlabs", logo: dwlabs },
+    { name: "Voralsoft", logo: vortalsoft },
     { name: "sriramfinance", logo: sriramfinance },
+    { name: "raviraj", logo: raviraj },
     { name: "a1township", logo: a1township },
     { name: "smfibers", logo: smfibers },
     { name: "zeelmedia", logo: zeelmedia },
-    { name: "google", logo: google },
-    { name: "kotaklife", logo: kotaklife },
     { name: "accenflair", logo: accenflair },
     { name: "genericsol", logo: genericsol },
-    { name: "dwlabs", logo: dwlabs },
     { name: "bandharyglass", logo: bandharyglass },
     { name: "alkaline", logo: alkaline },
     { name: "aiedge", logo: aiedge },
