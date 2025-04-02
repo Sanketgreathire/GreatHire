@@ -12,6 +12,9 @@ const ApplicationList = ({ applications }) => {
 
   // Filter applications by job title and company, then by status (if a filter is applied)
   const filteredApplications = applications?.filter((app) => {
+    const jobDetails = app?.job?.jobDetails; // Ensure jobDetails exists
+    if (!jobDetails) return false; // Skip applications with null job
+
     const matchesSearch =
       app.job.jobDetails.title
         .toLowerCase()

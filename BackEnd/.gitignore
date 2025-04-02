@@ -3,6 +3,7 @@
 
 # Ignore environment files
 .env
+Backend.env
 
 # Ignore logs
 logs
