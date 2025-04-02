@@ -2,6 +2,8 @@ import React from 'react';
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
+import Navbar from '@/components/shared/Navbar';
+import Footer from '@/components/shared/Footer';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 
@@ -446,6 +448,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
+      {/* Navbar */}
+      <Navbar />
       {/* Hero Section */}
       <div className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4">
@@ -658,6 +663,9 @@ function App() {
           ))}
         </div>
       </div>
+
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }
