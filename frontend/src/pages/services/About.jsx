@@ -1,11 +1,12 @@
 import React from 'react';
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
+import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import 'swiper/css';
 import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
 
 //logos from assets folder
 import a1township from "../../assets/clientLogos/a1township.png";
@@ -30,6 +31,7 @@ import wipro from "../../assets/clientLogos/Wipro.svg";
 import zeelmedia from "../../assets/clientLogos/zeelmedia.png";      
 import raviraj from "../../assets/clientLogos/raviraj.svg";
 import eeshanya from "../../assets/clientLogos/eeshanya.png";
+import tata from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
@@ -52,6 +54,7 @@ import Blank from "../../assets/user Photos/Blank.jpg";
 
 function App() {
   const clientLogos = [
+    { name: "Tata", logo: tata },
     { name: "Tech Mahindra", logo: techmahindra },
     { name: "Wipro", logo: wipro },
     { name: "Teleperformance", logo: teleperformance },
@@ -178,7 +181,7 @@ function App() {
         },
         {
           name: "Dikshit",
-          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
@@ -270,42 +273,42 @@ function App() {
       members: [
         {
           name: "Chirag",
-          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales Manager",
           expertise: "B2B Sales, Account Management",
           about: "Focused on driving business growth through marketing strategies, client relationships, and sales initiatives.",
         },
         {
           name: "Divya",
-          image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Involves into creating impactful marketing campaigns, fostering client relationship, and ensuring services stand out in competitive market.",
         },
         {
           name: "Riya",
-          image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales and Marketing",
           expertise: "Market Research, Lead Generation",
           about: "Conducts market research and generates leads for sales.",
         },
         {
           name: "Anita Sharma",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Campus Recruiter",
           expertise: "Graduate Hiring, University Relations",
           about: "Manages campus recruitment programs.",
         },
         {
           name: "Carlos Rodriguez",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Global Talent Lead",
           expertise: "International Hiring, Relocation",
           about: "Handles international recruitment and talent mobility.",
         },
         {
           name: "Lisa Chen",
-          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Recruitment Operations",
           expertise: "Process Optimization, Tools",
           about: "Streamlines recruitment processes and systems.",
@@ -317,35 +320,35 @@ function App() {
       members: [
         {
           name: "Neha",
-          image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Bench Sales Specialist",
           expertise: "B2B Sales, Account Management",
           about: "Leads bench sales and client relationship management.",
         },
         {
           name: "Babitha",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Manages key client accounts and sales strategies.",
         },
         {
           name: "Cherry",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales Operations",
           expertise: "Process Management, Analytics",
           about: "Optimizes sales processes and reporting.",
         },
         {
           name: "Dakshitha",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
           about: "Develops new business opportunities and partnerships.",
         },
         {
           name: "Gunjana",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Client Success",
           expertise: "Account Management, Growth",
           about: "Ensures client satisfaction and retention.",
@@ -364,28 +367,28 @@ function App() {
         },
         {
           name: "Mani kumar",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Specilized in business expansion by levaraging marketing insights and innovative sales strategies.",
         },
         {
           name: "Dharshini",
-          image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Business Development",
           expertise: "Process Management, Analytics",
           about: "Focuses on lead generation, client acuisition, and partnership building to ensure sustained growth and a competitive market presence.",
         },
         {
           name: "Shobita",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
           about: "works towards expanding the company's market reach by identifying new opportunities and collaborating with potential partners and strategic planning.",
         },
         {
           name: "Aina",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Client Success",
           expertise: "Account Management, Growth",
           about: "Ensures client satisfaction and retention.",
@@ -612,27 +615,20 @@ function App() {
         </div>
       </div>
 
-      {/* Team Section with Free Scroll */}
+      {/* Team Section with Navigation */}
       <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Meet Our Team</h2>
-          
           {departments.map((department, dIndex) => (
             <div key={dIndex} className="mb-16 last:mb-0">
               <h3 className="text-2xl font-semibold mb-8 text-blue-600">{department.name}</h3>
               <Swiper
-                modules={[FreeMode, Autoplay]}
+                modules={[Navigation]}
                 spaceBetween={24}
                 slidesPerView={1}
-                freeMode={{
-                  enabled: true,
-                  sticky: false,
-                  momentumRatio: 0.25,
-                  momentumVelocityRatio: 0.5,
-                }}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: true,
+                navigation={{
+                  nextEl: `.swiper-button-next-team-${dIndex}`,
+                  prevEl: `.swiper-button-prev-team-${dIndex}`,
                 }}
                 breakpoints={{
                   640: {
@@ -648,7 +644,7 @@ function App() {
                     slidesPerView: 5,
                   },
                 }}
-                className="team-swiper"
+                className="relative"
               >
                 {department.members.map((member, mIndex) => (
                   <SwiperSlide key={mIndex} className="h-auto">
@@ -679,6 +675,17 @@ function App() {
                   </SwiperSlide>
                 ))}
               </Swiper>
+              {/* Navigation Buttons */}
+              <div
+                className={`swiper-button-prev-team-${dIndex} text-blue-600 hover:text-blue-800 absolute left-0 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer`}
+              >
+                &#8592;
+              </div>
+              <div
+                className={`swiper-button-next-team-${dIndex} text-blue-600 hover:text-blue-800 absolute right-0 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer`}
+              >
+                &#8594;
+              </div>
             </div>
           ))}
         </div>
