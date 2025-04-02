@@ -93,16 +93,16 @@ function App() {
         {
           name: "Eswar Reddy",
           image: eswar,
-          role: ["Full Stack Developer"],
+          role: ["Full Stack Developer","Test Engineer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Sujeeth Kumar",
           image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
-          role: ["Information Security Analyst", "Full Stack Developer", "Team Lead"],
+          role: ["Information Security Analyst","Full Stack Developer","Team Lead"],
           expertise: "Web Development, Cyber Security, AWS Cloud",
-          about: "Expert in building scalable web applications with modern technologies and security best practices.",
+          about: "Skilled in building scalable web applications with modern technologies and security best practices.",
         },
         {
           name: "Maheswar Reddy",
