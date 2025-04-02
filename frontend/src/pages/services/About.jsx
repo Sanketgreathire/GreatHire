@@ -89,7 +89,7 @@ function App() {
         {
           name: "Sujeeth Kumar",
           image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
-          role: "Information Security Analyst & Full Stack Developer",
+          role: "Information Security Analyst, Full Stack Developer & Team Lead",
           expertise: "Web Development, Cyber Security, AWS Cloud",
           about: "Expert in building scalable web applications with modern technologies and security best practices.",
         },
