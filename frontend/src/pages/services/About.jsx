@@ -28,7 +28,8 @@ import teleperformance from "../../assets/clientLogos/teleperformance.png";
 import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
 import wipro from "../../assets/clientLogos/Wipro.svg"; 
 import zeelmedia from "../../assets/clientLogos/zeelmedia.png";      
-import raviraj from "../../assets/clientLogos/raviraj.svg"; 
+import raviraj from "../../assets/clientLogos/raviraj.svg";
+import eeshanya from "../../assets/clientLogos/eeshanya.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
@@ -47,7 +48,7 @@ import janaki from "../../assets/user Photos/janki.jpeg";
 import madhu from "../../assets/user Photos/madhu.jpeg";
 import mansi from "../../assets/user Photos/mansi.jpeg";
 import tanmai from "../../assets/user Photos/tanmai.jpeg";
-
+import Blank from "../../assets/user Photos/Blank.jpg";
 
 function App() {
   const clientLogos = [
@@ -72,6 +73,7 @@ function App() {
     { name: "Baklava", logo: baklava },
     { name: "HRH", logo: hrh },
     { name: "Dadus", logo: dadus },
+    { name: "Eeshanya", logo: eeshanya },
   ];
 
   const departments = [
@@ -101,7 +103,7 @@ function App() {
         },
         {
           name: "Maheswar Reddy",
-          image: Mahesh,
+          image: Blank,
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
           about: "Skilled in creating responsive and interactive user interfaces.",
@@ -115,7 +117,7 @@ function App() {
         },
         {
           name: "Sonu Kumar",
-          image: sonu,
+          image: Blank,
           role: ["Full Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
@@ -134,7 +136,7 @@ function App() {
         },
         {
           name: "Koshistha",
-          image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Sourcing Specialist",
           expertise: "Talent Sourcing, Networking",
           about: "Focuses on sourcing candidates through various channels.",
@@ -169,7 +171,7 @@ function App() {
         },
         {
           name: "Rohit",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Interviewer",
           expertise: "Interviewing, Assessment",
           about: "Conducts interviews and assesses candidates skills.",
@@ -188,21 +190,35 @@ function App() {
       members: [
         {
           name: "Vikram",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
+          role: "Digital Marketing Specialist",
+          expertise: "SEO, SEM, Content Marketing",
+          about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
+        },
+        {
+          name: "Alekhya",
+          image: Blank,
+          role: "Digital Marketing Specialist",
+          expertise: "SEO, SEM, Content Marketing",
+          about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
+        },
+        {
+          name: "Darshini",
+          image: Blank,
           role: "Digital Marketing Specialist",
           expertise: "SEO, SEM, Content Marketing",
           about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
           name: "Anuskha",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Digital Marketing",
           expertise: "Social Media, Content Creation",
           about: "Specializes in digital marketing strategies, Content marketing, performance analysis and social media management with optimized campaigns.",
         },
         {
           name: "Anil",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          image: Blank,
           role: "Digital Marketing",
           expertise: "SEO, SEM, Content Marketing",
           about: "Works on innovative starategies, Leveraging the latest trends in SEO, PPC, and social media marketing.",
@@ -368,7 +384,7 @@ function App() {
           about: "works towards expanding the company's market reach by identifying new opportunities and collaborating with potential partners and strategic planning.",
         },
         {
-          name: "Maya Patel",
+          name: "Aina",
           image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
           role: "Client Success",
           expertise: "Account Management, Growth",
@@ -421,7 +437,7 @@ function App() {
 
   const leadership = [
     {
-      name: "Babde Sanket",
+      name: "BABDE SANKET",
       title: "Founder & CEO",
       description: "Sanket Babde has been the driving force behind greathire.in and Babde Private Limited since 2017, With a vision to revolutionize IT services. Under his leadership, the company has grown into a trusted platform for AI-driven recruitment, software development, digital marketing, and IT staffing solutions.",
       achievements: [
@@ -433,15 +449,16 @@ function App() {
       vision: "To create a recruitment ecosystem that prioritizes both technical excellence and cultural fit, ensuring sustainable growth for companies and fulfilling careers for professionals."
     },
     {
-      name: "Babde Sonika",
+      name: "BABDE SONIKA",
       title: "Director of Human Resources Operations",
-      description: "Sonika Babde has been a pivotal figure in shaping the HR operations at greathire.in. With a strong background in human resources and organizational development, she has been instrumental in creating a culture of excellence and inclusivity within the company.",
+      description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
-        "Architected GreatHire's proprietary AI matching system",
-        "Published research on ML applications in recruitment",
-        "Former Tech Lead at Google India",
+        "Designed and implemented Great Hire’s proprietary AI-driven talent matching system, revolutionizing recruitment efficiency and accuracy.",
+        "Previously served as a experience in technology-driven HR solutions.",
+        "Data-Driven Decision Making: Leveraged advanced analytics to refine hiring strategies, improving workforce planning and talent acquisition outcomes.",
+        "Employee-Centric HR Policies: Developed comprehensive policies fostering inclusivity, employee engagement, and long-term retention in the organization. ",
       ],
-      vision: "To leverage technology not just for efficiency, but to create more equitable and effective hiring practices that benefit both employers and job seekers."
+      vision: "Sonika envisions a future where technology not only enhances hiring efficiency but also promotes fairness and effectiveness in recruitment. She is dedicated to leveraging cutting-edge innovations to create hiring practices that benefit both employers and job seekers, ensuring a more equitable and dynamic job market."
     }
   ];
 
