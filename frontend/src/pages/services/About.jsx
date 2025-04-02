@@ -8,26 +8,26 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 
 //logos from assets folder
-
-/*import a1township from "../../assets/clientLogos/a1township.png";
-import accenflair from "../../assets/clientLogos/accenflair.png";
-import aiedge from "../../assets/clientLogos/aiedge.png";
+import a1township from "../../assets/clientLogos/a1township.png";
+import accenflair from "../../assets/clientLogos/accenflair.webp";
+import aiedge from "../../assets/clientLogos/aiedge.jpeg";
 import alkaline from "../../assets/clientLogos/alkaline.png";
 import baklava from "../../assets/clientLogos/baklava.avif";
 import bandharyglass from "../../assets/clientLogos/bandharyglass.png";
-import clevernest from "../../assets/clientLogos/clevernest.png";
-import dabus from "../../assets/clientLogos/dabus.avif";
-import dwlabs from "../../assets/clientLogos/dwlabs.png";
-import genericsol from "../../assets/clientLogos/generiscol.jpeg";
+import clevernest from "../../assets/clientLogos/clevernest.jpg";
+import dadus from "../../assets/clientLogos/dadus.avif";
+import dwlabs from "../../assets/clientLogos/dwlabs.jpeg";
+import genericsol from "../../assets/clientLogos/genericsol.jpeg";
 import hrh from "../../assets/clientLogos/hrh.jpeg";
 import kotaklife from "../../assets/clientLogos/kotaklife.jpg";
 import smfibers from "../../assets/clientLogos/smfibers.svg";
-import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg"; */
+import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg";
 import techmahindra from "../../assets/clientLogos/techmahindra.png";
-//import teleperformance from "../../assets/clientLogos/teleperformance.png";
+import google from "../../assets/clientLogos/google.png";
+import teleperformance from "../../assets/clientLogos/teleperformance.png";
 import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
 //import wipro from "../../assets/clientLogos/wipro.png"; 
-//import zeelmedia from "../../assets/clientLogos/zeelmedia.png"; */      
+import zeelmedia from "../../assets/clientLogos/zeelmedia.png";      
 import raviraj from "../../assets/clientLogos/raviraj.svg"; 
 
 // Import User Photos
@@ -39,32 +39,28 @@ import eswar from "../../assets/user Photos/eswar.jpeg";
 
 function App() {
   const clientLogos = [
-   // { name: "Tata Consultancy Services", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Tata_Consultancy_Services_Logo.svg/240px-Tata_Consultancy_Services_Logo.svg.png" },
-   // { name: "Infosys", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/240px-Infosys_logo.svg.png" },
-   // { name: "Wipro", logo: wipro },
-   // { name: "HCL Technologies", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/HCL_Technologies_logo.svg/240px-HCL_Technologies_logo.svg.png" },
+
     { name: "Tech Mahindra", logo: techmahindra },
-   // { name: "Larsen & Toubro Infotech", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/LTI_Mindtree_logo.svg/240px-LTI_Mindtree_logo.svg.png" },
-   // { name: "Reliance Industries", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Reliance_Communications_Logo.svg/240px-Reliance_Communications_Logo.svg.png" },
-   // { name: "Bharti Airtel", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
-   // { name: "HDFC Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-   // { name: "ICICI Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/ICICI_Bank_Logo.svg/240px-ICICI_Bank_Logo.svg.png" },
-   // { name: "State Bank of India", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/State_Bank_of_India_logo.svg/240px-State_Bank_of_India_logo.svg.png" },
-   // { name: "Axis Bank", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Axis_Bank_logo.svg/240px-Axis_Bank_logo.svg.png" },
-   // { name: "Mahindra Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Mahindra_Rise_Logo.svg/240px-Mahindra_Rise_Logo.svg.png" },
-   // { name: "Tata Motors", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_Motors_Logo.svg/240px-Tata_Motors_Logo.svg.png" },
-   // { name: "Maruti Suzuki", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Maruti_Suzuki_Logo.svg/240px-Maruti_Suzuki_Logo.svg.png" },
-   // { name: "Hero MotoCorp", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Hero_MotoCorp_Logo.svg/240px-Hero_MotoCorp_Logo.svg.png" },
-   // { name: "Bajaj Auto", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
-   // { name: "ITC Limited", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/ITC_Limited_Logo.svg/240px-ITC_Limited_Logo.svg.png" },
-   // { name: "Hindustan Unilever", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hindustan_Unilever_Logo.svg/240px-Hindustan_Unilever_Logo.svg.png" },
-   // { name: "Asian Paints", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Asian_Paints_Logo.svg/240px-Asian_Paints_Logo.svg.png" },
-   // { name: "Adani Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Adani_2012_logo.png/240px-Adani_2012_logo.png" },
-   // { name: "JSW Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/JSW_Group_Logo.svg/240px-JSW_Group_Logo.svg.png" },
-   // { name: "Godrej Group", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Godrej_Logo.svg/240px-Godrej_Logo.svg.png" },
-   // { name: "Bharat Petroleum", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" },
     { name: "Voralsoft", logo: vortalsoft },
     { name: "raviraj", logo: raviraj },
+    { name: "teleperformance", logo: teleperformance },
+    { name: "sriramfinance", logo: sriramfinance },
+    { name: "a1township", logo: a1township },
+    { name: "smfibers", logo: smfibers },
+    { name: "zeelmedia", logo: zeelmedia },
+    { name: "google", logo: google },
+    { name: "kotaklife", logo: kotaklife },
+    { name: "accenflair", logo: accenflair },
+    { name: "genericsol", logo: genericsol },
+    { name: "dwlabs", logo: dwlabs },
+    { name: "bandharyglass", logo: bandharyglass },
+    { name: "alkaline", logo: alkaline },
+    { name: "aiedge", logo: aiedge },
+    { name: "clevernest", logo: clevernest },
+    { name: "baklava", logo: baklava },
+    { name: "hrh", logo: hrh },
+    { name: "dadus", logo: dadus },
+
   ];
 
   const departments = [
@@ -300,35 +296,35 @@ function App() {
       name: "Bench Sales Recruitment",
       members: [
         {
-          name: "Sarah Anderson",
+          name: "Neha",
           image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
-          role: "Sales Director",
+          role: "Bench Sales Specialist",
           expertise: "B2B Sales, Account Management",
           about: "Leads bench sales and client relationship management.",
         },
         {
-          name: "James Chen",
+          name: "Babitha",
           image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
-          role: "Account Executive",
+          role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Manages key client accounts and sales strategies.",
         },
         {
-          name: "Aisha Khan",
+          name: "Cherry",
           image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
           role: "Sales Operations",
           expertise: "Process Management, Analytics",
           about: "Optimizes sales processes and reporting.",
         },
         {
-          name: "Tom Wilson",
+          name: "Dakshitha",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
           about: "Develops new business opportunities and partnerships.",
         },
         {
-          name: "Maya Patel",
+          name: "Gunjana",
           image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
           role: "Client Success",
           expertise: "Account Management, Growth",
@@ -340,32 +336,32 @@ function App() {
       name: "Business development",
       members: [
         {
-          name: "Sarah Anderson",
+          name: "Nabhy Singh",
           image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
-          role: "Sales Director",
+          role: "Business Development Professional",
           expertise: "B2B Sales, Account Management",
-          about: "Leads bench sales and client relationship management.",
+          about: "focused on identifying the new market opportunities anad building startegic partnerships and strategies.",
         },
         {
-          name: "James Chen",
+          name: "Mani kumar",
           image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
-          role: "Account Executive",
+          role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
-          about: "Manages key client accounts and sales strategies.",
+          about: "Specilized in business expansion by levaraging marketing insights and innovative sales strategies.",
         },
         {
-          name: "Aisha Khan",
+          name: "Dharshini",
           image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
-          role: "Sales Operations",
+          role: "Business Development",
           expertise: "Process Management, Analytics",
-          about: "Optimizes sales processes and reporting.",
+          about: "Focuses on lead generation, client acuisition, and partnership building to ensure sustained growth and a competitive market presence.",
         },
         {
-          name: "Tom Wilson",
+          name: "Shobita",
           image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
-          about: "Develops new business opportunities and partnerships.",
+          about: "works towards expanding the company's market reach by identifying new opportunities and collaborating with potential partners and strategic planning.",
         },
         {
           name: "Maya Patel",
@@ -513,7 +509,7 @@ function App() {
                 Founded in 2016, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.
               </p>
               <p className="leading-relaxed">
-                Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We've helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.
+                Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.
               </p>
               <p className="leading-relaxed">
                 Today, we're proud to be one of India's fastest-growing recruitment platforms, but our mission remains the same: to create meaningful connections that drive careers and businesses forward.
