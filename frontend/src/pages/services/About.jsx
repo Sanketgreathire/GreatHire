@@ -123,9 +123,9 @@ function App() {
         {
           name: "Virender",
           image: Virendar,
-          role: ["Mobile Developer"],
-          expertise: "React Native, iOS, Android",
-          about: "Specialized in cross-platform mobile development.",
+          role: ["Mern Stack Developer"],
+          expertise: "React, Node.js, MongoDB, Express, JavaScript",
+          about: "Specialized in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Sonu Kumar",
