@@ -35,7 +35,8 @@ import tata from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
-import Mahesh from "../../assets/user Photos/Mahesh.jpeg";
+import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
+import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
 import Charan from "../../assets/user Photos/Charan.jpeg";
 import nabhay from "../../assets/user Photos/nabhay.jpeg";
@@ -91,6 +92,13 @@ function App() {
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
+          name: "Aman",
+          image: Aman,
+          role: ["Frontend Developer"],
+          expertise: "React, HTML, CSS, JavaScript",
+          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
+        },
+        {
           name: "Eswar Reddy",
           image: eswar,
           role: ["Full Stack Developer","Test Engineer"],
@@ -106,7 +114,7 @@ function App() {
         },
         {
           name: "Maheswar Reddy",
-          image: Blank,
+          image: Mahesh,
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
           about: "Skilled in creating responsive and interactive user interfaces.",
