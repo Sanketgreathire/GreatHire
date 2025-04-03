@@ -12,7 +12,7 @@ import { Typewriter } from "react-simple-typewriter";
 const blogPosts = [
     {
       title: "Mastering Remote Work",
-      description: "Tips and strategies to stay productive while working remotely.",
+      description: "Tips and strategies to stay productive while working remotely, especially in tech, finance, and healthcare, where remote work is becoming the norm.",
       image: img3,
     },
     {

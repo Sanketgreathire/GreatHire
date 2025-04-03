@@ -461,7 +461,7 @@ function App() {
       vision: "To create a recruitment ecosystem that prioritizes both technical excellence and cultural fit, ensuring sustainable growth for companies and fulfilling careers for professionals."
     },
     {
-      name: "BABDE SONIKA",
+     name: "BABDE SONIKA",
       title: "Director of Human Resources Operations",
       description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
