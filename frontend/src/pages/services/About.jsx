@@ -88,7 +88,7 @@ function App() {
         {
           name: "Charan Sai",
           image: Charan,
-          role: ["AWS Architect"],
+          role: ["Associate AWS Architect"],
           expertise: "Cloud Solutions, DevOps",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
@@ -189,7 +189,7 @@ function App() {
           about: "Conducts interviews and assesses candidates skills.",
         },
         {
-          name: "Dikshit",
+          name: "Dikshita",
           image: Blank,
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
@@ -386,14 +386,14 @@ function App() {
           image: Blank,
           role: "Business Development",
           expertise: "Process Management, Analytics",
-          about: "Focuses on lead generation, client acuisition, and partnership building to ensure sustained growth and a competitive market presence.",
+          about: "Excelled in client engagement and negotation strageries, leading to the successful deals and strong client relationships.",
         },
         {
           name: "Shobita",
           image: Blank,
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
-          about: "works towards expanding the company's market reach by identifying new opportunities and collaborating with potential partners and strategic planning.",
+          about: "works towards conducting market research and implementing innovative sales strategies to drive business growth in greathire.",
         },
         {
           name: "Aina",
