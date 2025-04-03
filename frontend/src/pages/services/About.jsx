@@ -35,6 +35,7 @@ import tata from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
+import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
 import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
 import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
@@ -107,7 +108,7 @@ function App() {
         },
         {
           name: "Sujeeth Kumar",
-          image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
+          image: Sujeeth,
           role: ["Information Security Analyst","Full Stack Developer","Team Lead"],
           expertise: "Web Development, Cyber Security, AWS Cloud",
           about: "Skilled in building scalable web applications with modern technologies and security best practices.",
@@ -637,7 +638,7 @@ function App() {
         </div>
       </div>
 
-      {/* Team Section with Navigation */}
+      {/* Team Section with Sliding Functionality */}
       <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Meet Our Team</h2>
@@ -645,12 +646,18 @@ function App() {
             <div key={dIndex} className="mb-16 last:mb-0">
               <h3 className="text-2xl font-semibold mb-8 text-blue-600">{department.name}</h3>
               <Swiper
-                modules={[Navigation]}
+                modules={[FreeMode, Autoplay]}
                 spaceBetween={24}
                 slidesPerView={1}
-                navigation={{
-                  nextEl: `.swiper-button-next-team-${dIndex}`,
-                  prevEl: `.swiper-button-prev-team-${dIndex}`,
+                freeMode={{
+                  enabled: true,
+                  sticky: false,
+                  momentumRatio: 0.25,
+                  momentumVelocityRatio: 0.5,
+                }}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: true,
                 }}
                 breakpoints={{
                   640: {
@@ -666,7 +673,7 @@ function App() {
                     slidesPerView: 5,
                   },
                 }}
-                className="relative"
+                className="team-swiper"
               >
                 {department.members.map((member, mIndex) => (
                   <SwiperSlide key={mIndex} className="h-auto">
@@ -697,17 +704,6 @@ function App() {
                   </SwiperSlide>
                 ))}
               </Swiper>
-              {/* Navigation Buttons */}
-              <div
-                className={`swiper-button-prev-team-${dIndex} text-blue-600 hover:text-blue-800 absolute left-0 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer`}
-              >
-                &#8592;
-              </div>
-              <div
-                className={`swiper-button-next-team-${dIndex} text-blue-600 hover:text-blue-800 absolute right-0 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer`}
-              >
-                &#8594;
-              </div>
             </div>
           ))}
         </div>
