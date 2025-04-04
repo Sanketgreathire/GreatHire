@@ -30,7 +30,7 @@ function App() {
       {/* Header Section */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2 justify-center">
             <Shield className="h-8 w-8 text-blue-600" />
             Terms & Privacy Policy
           </h1>
@@ -281,7 +281,7 @@ function App() {
                 For questions or concerns about these terms, please contact us at:
                 <br />
                 <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2">Website: https://greathire.in</a>
-                <a href="mailto:legal@greathire.in" className="text-blue-600 hover:text-blue-800">Email: legal@greathire.in</a>
+                <a href="mailto:hr@greathire.in" className="text-blue-600 hover:text-blue-800">Email: hr@greathire.in</a>
               </p>
             </section>
           </div>
