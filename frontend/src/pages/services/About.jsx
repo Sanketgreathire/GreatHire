@@ -34,7 +34,6 @@ import tata from "../../assets/clientLogos/tata.png";
 
 
 // Import User-Team Photos
-import sonu from "../../assets/user Photos/sonu.jpeg";
 import Nazir from "../../assets/user Photos/Nazir.jpeg";
 import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
 import KOI from "../../assets/user Photos/KOI.jpeg";
@@ -55,7 +54,6 @@ import madhu from "../../assets/user Photos/madhu.jpeg";
 import mansi from "../../assets/user Photos/mansi.jpeg";
 import tanmai from "../../assets/user Photos/tanmai.jpeg";
 import Blank from "../../assets/user Photos/Blank.jpg";
-import { useState } from 'react';
 
 
 function App() {
