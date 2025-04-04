@@ -35,6 +35,7 @@ import tata from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
+import Nazir from "../../assets/user Photos/Nazir.jpeg";
 import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
 import KOI from "../../assets/user Photos/KOI.jpeg";
 import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
@@ -130,7 +131,7 @@ function App() {
         },
         {
           name: "Nazir",
-          image: Blank,
+          image: Nazir,
           role: ["Full Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
