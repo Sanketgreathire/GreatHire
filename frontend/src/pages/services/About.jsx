@@ -1,6 +1,6 @@
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
+import { Autoplay, FreeMode, } from 'swiper/modules';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import 'swiper/css';
