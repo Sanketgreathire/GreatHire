@@ -36,7 +36,7 @@ import tata from "../../assets/clientLogos/tata.png";
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
 import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
-import koshistha from "../../assets/user Photos/koshistha.jpeg";
+import KOI from "../../assets/user Photos/KOI.jpeg";
 import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
 import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
@@ -129,7 +129,7 @@ function App() {
           about: "Specialized in building full-stack applications with a focus on user experience and performance.",
         },
         {
-          name: "Sonu Kumar",
+          name: "Nazir",
           image: Blank,
           role: ["Full Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
@@ -149,7 +149,7 @@ function App() {
         },
         {
           name: "Koshistha",
-          image: koshistha,
+          image: KOI,
           role: "Sourcing Specialist",
           expertise: "Talent Sourcing, Networking",
           about: "Focuses on sourcing candidates through various channels.",
