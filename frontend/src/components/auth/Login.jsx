@@ -43,7 +43,7 @@ const Login = () => {
   useEffect(() => {
     if (user) {
       if (user.role === "recruiter") navigate("/recruiter/dashboard");
-      else navigate("/");
+      else navigate("/profile");
     }
   }, [user]);
   // Update state when input fields change
