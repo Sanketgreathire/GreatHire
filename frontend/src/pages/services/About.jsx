@@ -36,6 +36,7 @@ import tata from "../../assets/clientLogos/tata.png";
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
 import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
+import koshistha from "../../assets/user Photos/koshistha.jpeg";
 import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
 import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
@@ -148,7 +149,7 @@ function App() {
         },
         {
           name: "Koshistha",
-          image: Blank,
+          image: koshistha,
           role: "Sourcing Specialist",
           expertise: "Talent Sourcing, Networking",
           about: "Focuses on sourcing candidates through various channels.",
