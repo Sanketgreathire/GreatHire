@@ -1,5 +1,14 @@
-import React from 'react';
+
+import React from 'react'
+
+import img6 from "../../assets/img6.png";
+import img3 from "../../assets/img3.png";
+import img8 from "../../assets/img8.png";
+import img11 from "../../assets/img11.png";
+
+
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import Navbar from '@/components/shared/Navbar';
@@ -33,6 +42,7 @@ import raviraj from "../../assets/clientLogos/raviraj.svg";
 import eeshanya from "../../assets/clientLogos/eeshanya.png";
 import tata from "../../assets/clientLogos/tata.png";
 
+
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
 import Nazir from "../../assets/user Photos/Nazir.jpeg";
@@ -41,6 +51,94 @@ import KOI from "../../assets/user Photos/KOI.jpeg";
 import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
 import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
+
+
+    
+      const teamMembers = {
+        leadership: [
+          {
+            role: "CEO / Founder",
+            name: "SANKET",
+            // image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+            achievement: "15+ years of industry experience",
+            about: " Sanket Babde is the visionary leader behind Great Hire with extensive expertise in recruitment and talent acquisition. Hisstrategic leadership and innovative approach have been instrumental in establishing GreatHire.in as a trusted platform for both job seekers and employers, driving the company's growth and success.",
+          },
+          {
+            role: "Managing Director",
+            name: "SONIKA REDDY",
+            // image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+            achievement: "Led 3 successful tech startups",
+            about: "Sonika Reddy, Managing Director at GreatHire.in, is a seasoned leader in Great Hire. Herstrategic vision for talent development and her dedication to fostering a positive workplace culture have been key to the company’s success. With a focus on excellence, Sonika empowers individuals and organizations, shaping the future of recruitment at GreatHire.in.",
+          },
+        ],
+        developers: [
+          {
+            name: "David Kumar",
+            image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400",
+            specialty: "Full Stack Developer",
+            about: "Expert in building scalable web applications with modern technologies. David leads the development of GreatHire's core platform, focusing on performance and user experience.",
+          },
+          {
+            name: "Emily Rodriguez",
+            image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
+            specialty: "Frontend Specialist",
+            about: "A creative developer passionate about building intuitive user interfaces. Emily has been key in developing GreatHire's responsive design system and accessibility features.",
+          },
+          {
+            name: "Alex Thompson",
+            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+            specialty: "Backend Engineer",
+            about: "Specializes in database architecture and API design. Alex ensures GreatHire's infrastructure remains robust and scalable while handling millions of job searches.",
+          },
+        ],
+        hr: [
+          {
+            name: "Jessica Patel",
+            image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400",
+            specialty: "Employee Relations",
+            about: "With expertise in conflict resolution and workplace culture, Jessica ensures both clients and candidates have a positive experience with GreatHire's services.",
+          },
+          {
+            name: "Robert Wilson",
+            image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+            specialty: "Training & Development",
+            about: "A certified professional development coach who designs and implements comprehensive training programs for both internal teams and client companies.",
+          },
+          {
+            name: "Maria Garcia",
+            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+            specialty: "Compensation & Benefits",
+            about: "An expert in developing competitive compensation packages and benefits strategies that help companies attract and retain top talent.",
+          },
+        ],
+        marketing: [
+          {
+            name: "John Lee",
+            image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+            specialty: "Digital Strategy",
+            about: "A digital marketing veteran specializing in SEO and content strategy. John leads GreatHire's online presence and market expansion initiatives.",
+          },
+          {
+            name: "Sophie Wang",
+            image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
+            specialty: "Content Marketing",
+            about: "Creative storyteller focused on producing engaging content that helps job seekers and employers make better career decisions.",
+          },
+        ],
+        talent: [
+          {
+            name: "Rachel Foster",
+            image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400",
+            specialty: "Technical Recruitment",
+            about: "Specialized in tech recruitment with deep understanding of the industry. Rachel has successfully placed hundreds of developers in leading tech companies.",
+          },
+        ],
+      };
+    
+      const achievements = [];
+
+
+
 import Charan from "../../assets/user Photos/Charan.jpeg";
 import nabhay from "../../assets/user Photos/nabhay.jpeg";
 import Navaneeth from "../../assets/user Photos/Navaneeth.jpeg";
@@ -55,6 +153,7 @@ import madhu from "../../assets/user Photos/madhu.jpeg";
 import mansi from "../../assets/user Photos/mansi.jpeg";
 import tanmai from "../../assets/user Photos/tanmai.jpeg";
 import Blank from "../../assets/user Photos/Blank.jpg";
+
 
 function App() {
   const clientLogos = [
@@ -87,6 +186,7 @@ function App() {
     {
       name: "Software Developers",
       members: [
+
         {
           name: "Charan Sai",
           image: Charan,

@@ -24,6 +24,7 @@ export const applyJob = async (req, res) => {
       jobId,
     } = req.body;
     const { resume } = req.files;
+    console.log("resume", resume);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -41,7 +42,7 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    // Check if the job is active, user cannot applied if job is not active
+    // Check if the job is active, user cannot apply if job is not active
     if (!job.jobDetails.isActive) {
       return res.status(400).json({ success: false, message: "This job is not active" });
     }
@@ -67,11 +68,30 @@ export const applyJob = async (req, res) => {
 
     // Update resume if provided
     if (resume && resume.length > 0) {
-      const fileUri = getDataUri(resume[0]);
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = resume[0].originalname;
+      console.log("Uploading resume to Cloudinary...");
+      
+      // Upload the file buffer directly to Cloudinary using upload_stream
+      await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { resource_type: "raw" }, // Treat it as a generic file
+          (error, result) => {
+            if (error) {
+              console.error("Cloudinary Upload Error:", error);
+              reject(error);
+            } else {
+              user.profile.resume = result.secure_url;
+              user.profile.resumeOriginalName = resume[0].originalname;
+              console.log("Resume uploaded successfully:", result.secure_url);
+              resolve();
+            }
+          }
+        );
+        uploadStream.end(resume[0].buffer);
+      });
     }
+
+    console.log("resume", user.profile.resume);
+    console.log("resumeOriginalName", user.profile.resumeOriginalName);
 
     // Save the updated user
     const updateUser = await user.save();
@@ -82,7 +102,7 @@ export const applyJob = async (req, res) => {
       applicant: userId,
     });
 
-    // if the application exist of a user related to a particular job then user cannot applied to that job
+    // If the application exists, prevent duplicate applications
     if (existingApplication) {
       return res.status(400).json({
         message: "You have already applied for this job",

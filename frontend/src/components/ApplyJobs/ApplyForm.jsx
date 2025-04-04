@@ -72,6 +72,8 @@ const ApplyForm = ({ setRight }) => {
   // State to store uploaded file URL
   const [fileURL, setFileURL] = useState(null);
   const [fileType, setFileType] = useState("");
+  const [filename, setFilename] = useState(user?.profile?.resumeOriginalName || "");
+
 
   // Validation errors
   const [errors, setErrors] = useState({});
@@ -196,7 +198,9 @@ const handleFileChange = (e) => {
     }
 
     const fileExtension = file.name.split(".").pop().toLowerCase();
-
+    //console.log("extension:",fileExtension);
+    setFilename(file.name);  // Update filename with the uploaded file name
+    setFileType(file.name); // Set the file type
     if (fileExtension === "pdf") {
       const fileUrl = URL.createObjectURL(file); // Generate URL for PDF preview
       setFileURL(fileUrl);
@@ -367,7 +371,7 @@ const handleFileChange = (e) => {
           <div className="mt-4">
           {fileURL || input.resume ? (
         <div className="h-96 flex flex-col items-center">
-          {user.profile.resumeOriginalName.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
+          {filename.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
             <Viewer fileUrl={fileURL || input.resume} />
           ) : (
             <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
@@ -669,6 +673,8 @@ const handleFileChange = (e) => {
           fileURL={fileURL}
           fileType={fileType}
           user={user}
+          filename={filename}
+
         />
       )}
     </div>
