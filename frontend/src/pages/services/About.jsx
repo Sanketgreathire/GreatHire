@@ -41,10 +41,7 @@ import zeelmedia from "../../assets/clientLogos/zeelmedia.png";
 import raviraj from "../../assets/clientLogos/raviraj.svg";
 import eeshanya from "../../assets/clientLogos/eeshanya.png";
 import tata from "../../assets/clientLogos/tata.png";
-import sevan from "../../assets/clientLogos/sevan.avif";
-import sricomfort from "../../assets/clientLogos/sricomfort.png";
-import sindbakery from "../../assets/clientLogos/sindbakery.png";
-import ominnovation from "../../assets/clientLogos/ominnovation.png";
+
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
@@ -54,40 +51,6 @@ import Aman from "../../assets/user Photos/Aman.jpeg";
 import eswar from "../../assets/user Photos/eswar.jpeg";
 
 
-
-    const clientLogos = [
-        { name: "GOOGLE", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/240px-Google_2015_logo.svg.png" },
-        { name: "TELE PERFORMANCE", logo: teleperformance },
-        { name: "Wipro", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Wipro_Primary_Logo_Color_RGB.svg/240px-Wipro_Primary_Logo_Color_RGB.svg.png" },
-        { name: "NEXUSI", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nexusi_logo.svg/240px-Nexusi_logo.svg.png" },
-        { name: "Tech Mahindra", logo: techmahindra },
-        { name: "AIEDGE", logo: aiedge },
-        { name: "VORTAL SOFT", logo: vortalsoft },
-        { name: "REH LEGAL SOLUTION", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Airtel_logo.svg/240px-Airtel_logo.svg.png" },
-        { name: "DW LABS", logo: dwlabs },
-        { name: "SEVAN TECHNOLOGIES", logo: sevan },
-        { name: "SRI COMFORT", logo: sricomfort },
-        { name: "BAKLAVA", logo: baklava },
-        { name: "SIND BAKERY", logo: sindbakery },
-        { name: "SM FIBERS", logo: smfibers },
-        { name: "A1 TOWNSHIP", logo: a1township },
-        { name: "SIMPLE INTERIOR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
-        { name: "ZEELMEDIA", logo: zeelmedia },
-        { name: "ALKALINE", logo: alkaline },
-        { name: "HRH", logo: hrh },
-        { name: "SRI RAM FINANCE", logo: sriramfinance },
-        { name: "KOTAK LIFE INSURANCE", logo: kotaklife },
-        { name: "ACCENFLAIR", logo: accenflair },
-        {name:"TADASTHU", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Tata_Logo.svg/240px-Tata_Logo.svg.png"},
-        { name: "OM INNOVATIONS", logo: ominnovation },
-        { name: "GENERIC SOLUTIONS", logo: genericsol },
-        { name: "CLEVERNEST", logo: clevernest },
-        { name: "BANDHARY GLASS", logo: bandharyglass },
-        { name: "REKNSMARKETING", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        {name:"DADUS", logo:dadus},
-        { name: "QUIEST", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/HDFC_Bank_Logo.svg/240px-HDFC_Bank_Logo.svg.png" },
-        { name: "ASHANERO", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Bharat_Petroleum_Logo.svg/240px-Bharat_Petroleum_Logo.svg.png" }
-      ];
     
       const teamMembers = {
         leadership: [
