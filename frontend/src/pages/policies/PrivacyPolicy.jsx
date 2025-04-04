@@ -7,8 +7,6 @@ import {
   Lock,
   Eye,
   FileCheck,
-  Clock,
-  Trash2,
   MessageSquare,
   Book,
   Target,
