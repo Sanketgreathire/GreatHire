@@ -281,7 +281,7 @@ function App() {
                 For questions or concerns about these terms, please contact us at:
                 <br />
                 <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2">Website: https://greathire.in</a>
-                <a href="mailto:hr@greathire.in" className="text-blue-600 hover:text-blue-800">Email: legal@greathire.in</a>
+                <a href="mailto:hr@greathire.in" className="text-blue-600 hover:text-blue-800">Email: hr@greathire.in</a>
               </p>
             </section>
           </div>
