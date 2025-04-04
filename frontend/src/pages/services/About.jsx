@@ -1,7 +1,5 @@
 
 import React from 'react'
-import Navbar from '@/components/shared/Navbar'
-import Footer from '@/components/shared/Footer'
 
 import img6 from "../../assets/img6.png";
 import img3 from "../../assets/img3.png";
@@ -9,9 +7,6 @@ import img8 from "../../assets/img8.png";
 import img11 from "../../assets/img11.png";
 
 
-import { Users, Target, Award, Briefcase, Building2 } from 'lucide-react';
-
-import React from 'react';
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -46,6 +41,10 @@ import zeelmedia from "../../assets/clientLogos/zeelmedia.png";
 import raviraj from "../../assets/clientLogos/raviraj.svg";
 import eeshanya from "../../assets/clientLogos/eeshanya.png";
 import tata from "../../assets/clientLogos/tata.png";
+import sevan from "../../assets/clientLogos/sevan.avif";
+import sricomfort from "../../assets/clientLogos/sricomfort.png";
+import sindbakery from "../../assets/clientLogos/sindbakery.png";
+import ominnovation from "../../assets/clientLogos/ominnovation.png";
 
 // Import User-Team Photos
 import sonu from "../../assets/user Photos/sonu.jpeg";
@@ -70,7 +69,6 @@ import eswar from "../../assets/user Photos/eswar.jpeg";
         { name: "SRI COMFORT", logo: sricomfort },
         { name: "BAKLAVA", logo: baklava },
         { name: "SIND BAKERY", logo: sindbakery },
-        { name: "MARVEL", logo: marvel },
         { name: "SM FIBERS", logo: smfibers },
         { name: "A1 TOWNSHIP", logo: a1township },
         { name: "SIMPLE INTERIOR", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Bajaj_Auto_Logo.svg/240px-Bajaj_Auto_Logo.svg.png" },
@@ -172,7 +170,7 @@ import eswar from "../../assets/user Photos/eswar.jpeg";
         ],
       };
     
-      const achievements = [
+      const achievements = [];
 
 
 
