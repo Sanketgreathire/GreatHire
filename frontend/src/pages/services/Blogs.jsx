@@ -37,6 +37,7 @@ const blogPosts = [
   
 ];  
 
+
 const categories = [  
   { id: "career-advice", title: "Career Advice", posts: [  
       { title: "Advancing Your Career in Tech", description: "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.", image: advanceYourCareerImg },  
@@ -77,6 +78,33 @@ const categories = [
       { title: "Industry Trends", description: " Emerging trends across industries include AI-driven automation, sustainable business practices, and the rise of remote/hybrid work models. Companies are also focusing on digital transformation and cybersecurity to stay competitive.", image: industry },  
       { title: "Development Programs", description: "Leading companies invest in training programs, mentorship, and upskilling initiatives to enhance employee growth. Programs like leadership development, technical certifications, and continuous learning platforms improve workforce productivity and retention.", image: dev }  
 
+const blogPosts = [
+    {
+      title: "Mastering Remote Work",
+      description: "Tips and strategies to stay productive while working remotely, especially in tech, finance, and healthcare, where remote work is becoming the norm.",
+      image: img3,
+    },
+    {
+      title: "AI in Recruitment",
+      description: "How artificial intelligence is transforming the hiring process.",
+      image: img3,
+    },
+    {
+      title: "Building a Winning Resume",
+      description: "Essential tips to craft a resume that stands out.",
+      image: img3,
+    },
+    {
+      title: "Interview Preparation",
+      description: "A step-by-step guide to ace your next job interview.",
+      image: img3,
+    },
+    {
+      title: "The Future of Work",
+      description: "Emerging trends shaping the workplace of tomorrow.",
+      image: img3,
+    },
+  ];
   ]}  
 ];  
 

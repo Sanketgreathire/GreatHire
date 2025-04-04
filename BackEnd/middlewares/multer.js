@@ -28,7 +28,7 @@ const fileFilter = (req, file, cb) => {
           `Invalid file type for ${file.fieldname}! Only .jpg, .jpeg, and .png are allowed.`
         ),
         false
-      );
+      ); 
     }
   } else if (file.fieldname === "resume") {
     // Allow PDF, DOC, DOCX for resume
@@ -36,9 +36,9 @@ const fileFilter = (req, file, cb) => {
       console.log("Accepted resume file.");
       cb(null, true);
     } else {
-      console.log("Rejected file. MIME type:", file.mimetype);
+      console.log(`Rejected file. Field: ${file.fieldname}, MIME type: ${file.mimetype}`);
       cb(
-        new Error("Invalid file type for resume! Only .pdf is allowed."),
+        new Error("Invalid file type for resume! Only .pdf, .doc, and .docx are allowed."),
         false
       );
     }

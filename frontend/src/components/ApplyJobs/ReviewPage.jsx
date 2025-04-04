@@ -21,7 +21,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { ProgressBar } from "react-step-progress-bar"; 
 import "react-step-progress-bar/styles.css";
 
-const ReviewPage = ({ handleReview1, input, fileURL,fileType,user }) => {
+const ReviewPage = ({ handleReview1, input, fileURL,fileType,user,filename }) => {
   const dispatch = useDispatch(); // Redux dispatcher to update global state
   const [loading, setLoading] = useState(false); // State to manage loading status
   const navigate = useNavigate(); // React Router navigation hook
@@ -109,7 +109,7 @@ const ReviewPage = ({ handleReview1, input, fileURL,fileType,user }) => {
 
       <p className="text-gray-500 text-2xl mb-5">Resume</p>
       <div className="h-96">
-        { user.profile.resumeOriginalName.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
+        { filename.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf"  ? (
             <Viewer fileUrl={fileURL || input.resume} />
                   ) : (
                     <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
