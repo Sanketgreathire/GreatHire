@@ -28,7 +28,7 @@ import Blogs from "./pages/services/Blogs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import About from "./pages/services/About";
+import About from "./pages/services/About Us";
 
 // Password Management
 import ForgotPassword from "./pages/ForgotPassword";
