@@ -8,79 +8,79 @@ import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 
 //logos from assets folder
-import a1township from "../../assets/clientLogos/a1township.png";
-import accenflair from "../../assets/clientLogos/accenflair.webp";
-import aiedge from "../../assets/clientLogos/aiedge.jpeg";
-import alkaline from "../../assets/clientLogos/alkaline.png";
-import baklava from "../../assets/clientLogos/baklava.avif";
-import bandharyglass from "../../assets/clientLogos/bandharyglass.png";
-import clevernest from "../../assets/clientLogos/clevernest.jpg";
-import dadus from "../../assets/clientLogos/dadus.avif";
-import dwlabs from "../../assets/clientLogos/dwlabs.jpeg";
-import genericsol from "../../assets/clientLogos/genericsol.jpeg";
-import hrh from "../../assets/clientLogos/hrh.jpeg";
-import kotaklife from "../../assets/clientLogos/kotaklife.jpg";
-import smfibers from "../../assets/clientLogos/smfibers.svg";
-import sriramfinance from "../../assets/clientLogos/sriramfinance.jpg";
-import techmahindra from "../../assets/clientLogos/techmahindra.png";
-import google from "../../assets/clientLogos/google.png";
-import teleperformance from "../../assets/clientLogos/teleperformance.png";
-import vortalsoft from "../../assets/clientLogos/vortalsoft.jpg";
-import wipro from "../../assets/clientLogos/Wipro.svg"; 
-import zeelmedia from "../../assets/clientLogos/zeelmedia.png";      
-import raviraj from "../../assets/clientLogos/raviraj.svg";
-import eeshanya from "../../assets/clientLogos/eeshanya.png";
-import tata from "../../assets/clientLogos/tata.png";
+import a1townshipImg from "../../assets/clientLogos/a1township.png";
+import accenflairImg from "../../assets/clientLogos/accenflair.webp";
+import aiedgeImg from "../../assets/clientLogos/aiedge.jpeg";
+import alkalineImg from "../../assets/clientLogos/alkaline.png";
+import baklavaImg from "../../assets/clientLogos/baklava.avif";
+import bandharyglassImg from "../../assets/clientLogos/bandharyglass.png";
+import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
+import dadusImg from "../../assets/clientLogos/dadus.avif";
+import dwlabsImg from "../../assets/clientLogos/dwlabs.jpeg";
+import genericsolImg from "../../assets/clientLogos/genericsol.jpeg";
+import hrhImg from "../../assets/clientLogos/hrh.jpeg";
+import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
+import smfibersImg from "../../assets/clientLogos/smfibers.svg";
+import sriramfinanceImg from "../../assets/clientLogos/sriramfinance.jpg";
+import techmahindraImg from "../../assets/clientLogos/techmahindra.png";
+import googleImg from "../../assets/clientLogos/google.png";
+import teleperformanceImg from "../../assets/clientLogos/teleperformance.png";
+import vortalsoftImg from "../../assets/clientLogos/vortalsoft.jpg";
+import wiproImg from "../../assets/clientLogos/Wipro.svg"; 
+import zeelmediaImg from "../../assets/clientLogos/zeelmedia.png";      
+import ravirajImg from "../../assets/clientLogos/raviraj.svg";
+import eeshanyaImg from "../../assets/clientLogos/eeshanya.png";
+import tataImg from "../../assets/clientLogos/tata.png";
 
 
 // Import User-Team Photos
-import Nazir from "../../assets/user Photos/Nazir.jpeg";
-import Sujeeth from "../../assets/user Photos/Sujeeth.jpeg";
-import KOI from "../../assets/user Photos/KOI.jpeg";
-import Mahesh  from "../../assets/user Photos/Mahesh.jpg";
-import Aman from "../../assets/user Photos/Aman.jpeg";
-import eswar from "../../assets/user Photos/eswar.jpeg";
-import Charan from "../../assets/user Photos/Charan.jpeg";
-import nabhay from "../../assets/user Photos/nabhay.jpeg";
-import Navaneeth from "../../assets/user Photos/Navaneeth.jpeg";
-import Virendar from "../../assets/user Photos/Virendar.jpeg";
-import santhosh from "../../assets/user Photos/santhosh.jpeg";
-import Mounika from "../../assets/user Photos/Mounika.jpeg";
-import lahari from "../../assets/user Photos/lahari.jpeg";
-import riya from "../../assets/user Photos/riya.jpeg";
-import sushma from "../../assets/user Photos/sushma.jpeg";
-import janaki from "../../assets/user Photos/janki.jpeg";
-import madhu from "../../assets/user Photos/madhu.jpeg";
-import mansi from "../../assets/user Photos/mansi.jpeg";
-import tanmai from "../../assets/user Photos/tanmai.jpeg";
-import Blank from "../../assets/user Photos/Blank.jpg";
+import NazirImg from "../../assets/user Photos/Nazir.jpeg";
+import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
+import KOIImg from "../../assets/user Photos/KOI.jpeg";
+import MaheshImg  from "../../assets/user Photos/Mahesh.jpg";
+import AmanImg from "../../assets/user Photos/Aman.jpeg";
+import eswarImg from "../../assets/user Photos/eswar.jpeg";
+import CharanImg from "../../assets/user Photos/Charan.jpeg";
+import nabhayImg from "../../assets/user Photos/nabhay.jpeg";
+import NavaneethImg from "../../assets/user Photos/Navaneeth.jpeg";
+import VirendarImg from "../../assets/user Photos/Virendar.jpeg";
+import santhoshImg from "../../assets/user Photos/santhosh.jpeg";
+import MounikaImg from "../../assets/user Photos/Mounika.jpeg";
+import lahariImg from "../../assets/user Photos/lahari.jpeg";
+import riyaImg from "../../assets/user Photos/riya.jpeg";
+import sushmaImg from "../../assets/user Photos/sushma.jpeg";
+import janakiImg from "../../assets/user Photos/janki.jpeg";
+import madhuImg from "../../assets/user Photos/madhu.jpeg";
+import mansiImg from "../../assets/user Photos/mansi.jpeg";
+import tanmaiImg from "../../assets/user Photos/tanmai.jpeg";
+import BlankImg from "../../assets/user Photos/Blank.jpg";
 
 
 function App() {
   const clientLogos = [
-    { name: "Tata", logo: tata },
-    { name: "Tech Mahindra", logo: techmahindra },
-    { name: "Wipro", logo: wipro },
-    { name: "Teleperformance", logo: teleperformance },
-    { name: "Google", logo: google },
-    { name: "Kotak Life", logo: kotaklife },
-    { name: "DWLabs", logo: dwlabs },
-    { name: "Voralsoft", logo: vortalsoft },
-    { name: "Sriram Finance", logo: sriramfinance },
-    { name: "Raviraj", logo: raviraj },
-    { name: "A1 Township", logo: a1township },
-    { name: "SM Fibers", logo: smfibers },
-    { name: "Zeel Media", logo: zeelmedia },
-    { name: "Accenflair", logo: accenflair },
-    { name: "Generic Sol", logo: genericsol },
-    { name: "Bandhary Glass", logo: bandharyglass },
-    { name: "Alkaline", logo: alkaline },
-    { name: "AI Edge", logo: aiedge },
-    { name: "Clever Nest", logo: clevernest },
-    { name: "Baklava", logo: baklava },
-    { name: "HRH", logo: hrh },
-    { name: "Dadus", logo: dadus },
-    { name: "Eeshanya", logo: eeshanya },
+    { name: "Tata", logo: tataImg },
+    { name: "Tech Mahindra", logo: techmahindraImg },
+    { name: "Wipro", logo: wiproImg },
+    { name: "Teleperformance", logo: teleperformanceImg },
+    { name: "Google", logo: googleImg },
+    { name: "Kotak Life", logo: kotaklifeImg },
+    { name: "DWLabs", logo: dwlabsImg },
+    { name: "Voralsoft", logo: vortalsoftImg },
+    { name: "Sriram Finance", logo: sriramfinanceImg },
+    { name: "Raviraj", logo: ravirajImg },
+    { name: "A1 Township", logo: a1townshipImg },
+    { name: "SM Fibers", logo: smfibersImg },
+    { name: "Zeel Media", logo: zeelmediaImg },
+    { name: "Accenflair", logo: accenflairImg },
+    { name: "Generic Sol", logo: genericsolImg },
+    { name: "Bandhary Glass", logo: bandharyglassImg },
+    { name: "Alkaline", logo: alkalineImg },
+    { name: "AI Edge", logo: aiedgeImg },
+    { name: "Clever Nest", logo: clevernestImg },
+    { name: "Baklava", logo: baklavaImg },
+    { name: "HRH", logo: hrhImg },
+    { name: "Dadus", logo: dadusImg },
+    { name: "Eeshanya", logo: eeshanyaImg },
   ];
 
   const departments = [
@@ -90,49 +90,49 @@ function App() {
 
         {
           name: "Charan Sai",
-          image: Charan,
+          image: CharanImg,
           role: ["Associate AWS Architect"],
           expertise: "Cloud Solutions, DevOps",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
           name: "Aman",
-          image: Aman,
+          image: AmanImg,
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript",
           about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
         },
         {
           name: "Eswar Reddy",
-          image: eswar,
+          image: eswarImg,
           role: ["Full Stack Developer","Test Engineer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Sujeeth Kumar",
-          image: Sujeeth,
+          image: SujeethImg,
           role: ["Information Security Analyst","Full Stack Developer","Team Lead"],
           expertise: "Web Development, Cyber Security, AWS Cloud",
           about: "Skilled in building scalable web applications with modern technologies and security best practices.",
         },
         {
           name: "Maheswar Reddy",
-          image: Mahesh,
+          image: MaheshImg,
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
           about: "Skilled in creating responsive and interactive user interfaces.",
         },
         {
           name: "Virender",
-          image: Virendar,
+          image: VirendarImg,
           role: ["Mern Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript",
           about: "Specialized in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Nazir",
-          image: Nazir,
+          image: NazirImg,
           role: ["Full Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
@@ -144,56 +144,56 @@ function App() {
       members: [
         {
           name: "Naveneeth",
-          image: Navaneeth,
+          image: NavaneethImg,
           role: "Human Resource",
           expertise: "Recruitment, Employee Relations",
           about: "Oversees recruitment and employee relations.",
         },
         {
           name: "Koshistha",
-          image: KOI,
+          image: KOIImg,
           role: "Sourcing Specialist",
           expertise: "Talent Sourcing, Networking",
           about: "Focuses on sourcing candidates through various channels.",
         },
         {
           name: "Mounika",
-          image: Mounika,
+          image: MounikaImg,
           role: "Screening Specialist",
           expertise: "Talent Acquisition, Screening",
           about: "Responsible for screening and shortlisting candidates.",
         },
         {
           name: "Tanmai",
-          image: tanmai,
+          image: tanmaiImg,
           role: "Hiring Manager & Team Lead",
           expertise: "Recruitment, Team Management",
           about: "Manages HR team and oversees recruitment processes.",
         },
         {
           name: "Lahari",
-          image: lahari,
+          image: lahariImg,
           role: "On Boarding Specialist",
           expertise: "Onboarding, Employee Engagement",
           about: "Facilitates onboarding and employee engagement activities.",
         },
         {
           name: "Madhu",
-          image: madhu,
+          image: madhuImg,
           role: "Human Resource",
           expertise: "Recruitment, Employee Relations",
           about: "Oversees recruitment and employee relations.",
         },
         {
           name: "Rohit",
-          image: Blank,
+          image: BlankImg,
           role: "Interviewer",
           expertise: "Interviewing, Assessment",
           about: "Conducts interviews and assesses candidates skills.",
         },
         {
           name: "Dikshita",
-          image: Blank,
+          image: BlankImg,
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
@@ -205,35 +205,35 @@ function App() {
       members: [
         {
           name: "Vikram",
-          image: Blank,
+          image: BlankImg,
           role: "Digital Marketing Specialist",
           expertise: "SEO, SEM, Content Marketing",
           about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
           name: "Alekhya",
-          image: Blank,
+          image: BlankImg,
           role: "Digital Marketing Specialist",
           expertise: "SEO, SEM, Content Marketing",
           about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
           name: "Darshini",
-          image: Blank,
+          image: BlankImg,
           role: "Digital Marketing Specialist",
           expertise: "SEO, SEM, Content Marketing",
           about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
           name: "Anuskha",
-          image: Blank,
+          image: BlankImg,
           role: "Digital Marketing",
           expertise: "Social Media, Content Creation",
           about: "Specializes in digital marketing strategies, Content marketing, performance analysis and social media management with optimized campaigns.",
         },
         {
           name: "Anil",
-          image: Blank,
+          image: BlankImg,
           role: "Digital Marketing",
           expertise: "SEO, SEM, Content Marketing",
           about: "Works on innovative starategies, Leveraging the latest trends in SEO, PPC, and social media marketing.",
@@ -245,35 +245,35 @@ function App() {
       members: [
         {
           name: "Sushma",
-          image: sushma,
+          image: sushmaImg,
           role: "Technical Recruiter",
           expertise: "Tech Recruitment, Talent Assessment",
           about: "Specializes in recruiting top tech talent.",
         },
         {
           name: "Janki",
-          image: janaki,
+          image: janakiImg,
           role: "Talent Acquisition Specialist",
           expertise: "Executive Search, Talent Strategy",
           about: "Focuses on executive and leadership recruitment.",
         },
         {
           name: "Santhosh",
-          image: santhosh,
+          image: santhoshImg,
           role: "Talent Acquisition",
           expertise: " Graduate Hiring, University Relations",
           about: "Focuses on strategic hiring pratices, I ensure we attract and retain top talent.",
         },
         {
           name: "Mansi",
-          image: mansi,
+          image: mansiImg,
           role: "Talent Acquisition",
           expertise: "International Recruitment, Relocation",
           about: "Focuses on identifying and attracting top talent from around the world.",
         },
         {
           name: "Riya",
-          image: riya,
+          image: riyaImg,
           role: "Recruitment Operations",
           expertise: "Process Optimization, Tools",
           about: "Focuses on streamlining recruitment processes by connecting the right talent with the right opportunities.",
@@ -285,42 +285,42 @@ function App() {
       members: [
         {
           name: "Chirag",
-          image: Blank,
+          image: BlankImg,
           role: "Sales Manager",
           expertise: "B2B Sales, Account Management",
           about: "Focused on driving business growth through marketing strategies, client relationships, and sales initiatives.",
         },
         {
           name: "Divya",
-          image: Blank,
+          image: BlankImg,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Involves into creating impactful marketing campaigns, fostering client relationship, and ensuring services stand out in competitive market.",
         },
         {
           name: "Riya",
-          image: Blank,
+          image: BlankImg,
           role: "Sales and Marketing",
           expertise: "Market Research, Lead Generation",
           about: "Conducts market research and generates leads for sales.",
         },
         {
           name: "Anita Sharma",
-          image: Blank,
+          image: BlankImg,
           role: "Campus Recruiter",
           expertise: "Graduate Hiring, University Relations",
           about: "Manages campus recruitment programs.",
         },
         {
           name: "Carlos Rodriguez",
-          image: Blank,
+          image: BlankImg,
           role: "Global Talent Lead",
           expertise: "International Hiring, Relocation",
           about: "Handles international recruitment and talent mobility.",
         },
         {
           name: "Lisa Chen",
-          image: Blank,
+          image: BlankImg,
           role: "Recruitment Operations",
           expertise: "Process Optimization, Tools",
           about: "Streamlines recruitment processes and systems.",
@@ -332,35 +332,35 @@ function App() {
       members: [
         {
           name: "Neha",
-          image: Blank,
+          image: BlankImg,
           role: "Bench Sales Specialist",
           expertise: "B2B Sales, Account Management",
           about: "Leads bench sales and client relationship management.",
         },
         {
           name: "Babitha",
-          image: Blank,
+          image: BlankImg,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Manages key client accounts and sales strategies.",
         },
         {
           name: "Cherry",
-          image: Blank,
+          image: BlankImg,
           role: "Sales Operations",
           expertise: "Process Management, Analytics",
           about: "Optimizes sales processes and reporting.",
         },
         {
           name: "Dakshitha",
-          image: Blank,
+          image: BlankImg,
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
           about: "Develops new business opportunities and partnerships.",
         },
         {
           name: "Gunjana",
-          image: Blank,
+          image: BlankImg,
           role: "Client Success",
           expertise: "Account Management, Growth",
           about: "Ensures client satisfaction and retention.",
@@ -372,35 +372,35 @@ function App() {
       members: [
         {
           name: "Nabhy Singh",
-          image: nabhay,
+          image: nabhayImg,
           role: "Business Development Professional",
           expertise: "B2B Sales, Account Management",
           about: "focused on identifying the new market opportunities anad building startegic partnerships and strategies.",
         },
         {
           name: "Mani kumar",
-          image: Blank,
+          image: BlankImg,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Specilized in business expansion by levaraging marketing insights and innovative sales strategies.",
         },
         {
           name: "Dharshini",
-          image: Blank,
+          image: BlankImg,
           role: "Business Development",
           expertise: "Process Management, Analytics",
           about: "Excelled in client engagement and negotation strageries, leading to the successful deals and strong client relationships.",
         },
         {
           name: "Shobita",
-          image: Blank,
+          image: BlankImg,
           role: "Business Development",
           expertise: "Market Expansion, Partnerships",
           about: "works towards conducting market research and implementing innovative sales strategies to drive business growth in greathire.",
         },
         {
           name: "Aina",
-          image: Blank,
+          image: BlankImg,
           role: "Client Success",
           expertise: "Account Management, Growth",
           about: "Ensures client satisfaction and retention.",
