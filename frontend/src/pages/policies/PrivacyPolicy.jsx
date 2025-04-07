@@ -65,6 +65,23 @@ function App() {
               </p>
             </section>
 
+            {/* Conditions for Recruiters */}
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Users className="h-6 w-6 text-blue-600" />
+                Conditions for Recruiters
+              </h2>
+              <p className="text-gray-700 leading-relaxed">
+                Recruiters must:
+              </p>
+              <ul className="list-disc list-inside text-gray-700 space-y-2 mt-2">
+                <li>Post accurate job descriptions</li>
+                <li>Maintain confidentiality of candidate data</li>
+                <li>Follow fair hiring practices</li>
+                <li>Provide timely feedback to candidates</li>
+              </ul>
+            </section>
+
             {/* Eligibility Section */}
             <section>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -251,23 +268,6 @@ function App() {
                 <li>Maintain current availability status</li>
                 <li>Respect confidentiality of employer information</li>
                 <li>Attend scheduled interviews professionally</li>
-              </ul>
-            </section>
-
-            {/* Conditions for Recruiters */}
-            <section>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Users className="h-6 w-6 text-blue-600" />
-                Conditions for Recruiters
-              </h2>
-              <p className="text-gray-700 leading-relaxed">
-                Recruiters must:
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-2 mt-2">
-                <li>Post accurate job descriptions</li>
-                <li>Maintain confidentiality of candidate data</li>
-                <li>Follow fair hiring practices</li>
-                <li>Provide timely feedback to candidates</li>
               </ul>
             </section>
 
