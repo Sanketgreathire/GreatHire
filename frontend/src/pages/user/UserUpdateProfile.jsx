@@ -34,6 +34,9 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [prevResumeName, setPrevResumeName] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
+  const [hasExperience, setHasExperience] = useState(
+    !!user?.profile?.experience?.jobProfile // true if experience exists
+  );
 
   // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
@@ -157,6 +160,15 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("experienceDetails", input.experienceDetails);
     formData.append("bio", input.bio) || "";
     formData.append("skills", input.skills || "");
+
+
+    if (!hasExperience) {
+      formData.set("experience", "0");
+      formData.set("jobProfile", "Fresher");
+      formData.set("companyName", "N/A");
+      formData.set("currentCTC", "0");
+    }
+    
 
     if (input.resume instanceof File) {
       formData.append("resume", input.resume);
@@ -356,11 +368,47 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
           {/* Professional Details Section */}
           <div>
+            {/* <h3 className="text-lg font-semibold mb-3">
+              Professional / Experience Details
+            </h3> */}
             <h3 className="text-lg font-semibold mb-3">
               Professional / Experience Details
             </h3>
+            <div className="flex items-center gap-6 mb-4">
+              <p className="font-medium">Do you have any professional experience?</p>
+              <label className="flex items-center gap-1">
+                <input
+                  type="radio"
+                  name="experienceRadio"
+                  value="yes"
+                  checked={hasExperience}
+                  onChange={() => setHasExperience(true)}
+                />
+                Yes
+              </label>
+              <label className="flex items-center gap-1">
+                <input
+                  type="radio"
+                  name="experienceRadio"
+                  value="no"
+                  checked={!hasExperience}
+                  onChange={() => {
+                    setHasExperience(false);
+                    setInput((prev) => ({
+                      ...prev,
+                      jobProfile: "",
+                      companyName: "",
+                      experience: "0",
+                      currentCTC: "0",
+                    }));
+                  }}
+                />
+                No
+              </label>
+            </div>
+
             <div className="space-y-4">
-              <div className="w-full">
+              {/* <div className="w-full">
                 <Label
                   htmlFor="jobProfile"
                   className="block mb-2 font-semibold"
@@ -405,7 +453,104 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
+              </div> */}
+              {hasExperience && (
+                <>
+                  <div className="w-full">
+                    <Label htmlFor="jobProfile" className="block mb-2 font-semibold">
+                      Job Profile
+                    </Label>
+                    <Input
+                      id="jobProfile"
+                      name="jobProfile"
+                      value={input.jobProfile}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="w-full">
+                      <Label htmlFor="companyName" className="block mb-2 font-semibold">
+                        Company Name
+                      </Label>
+                      <Input
+                        id="companyName"
+                        name="companyName"
+                        value={input.companyName}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="w-full">
+                      <Label htmlFor="experience" className="block mb-2 font-semibold">
+                        Experience in Years
+                      </Label>
+                      <Input
+                        id="experience"
+                        name="experience"
+                        value={input.experience}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <Label htmlFor="currentCTC" className="block mb-2 font-semibold">
+                      Current CTC
+                    </Label>
+                    <Input
+                      id="currentCTC"
+                      name="currentCTC"
+                      value={input.currentCTC}
+                      onChange={handleChange}
+                      placeholder="Enter Current CTC (In LPA)"
+                    />
+                  </div>
+                </>
+              )}
+
+                <div className="w-full">
+                  <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
+                    Bio
+                  </Label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={input.bio}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                    placeholder="Enter your bio..."
+                  />
+                  <p className="text-sm text-gray-600 mt-1 self-end text-right">
+                    {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
+                  </p>
+                </div>
+
+                <div className="w-full">
+                  <Label
+                    htmlFor="experienceDetails"
+                    className="block mb-2 font-semibold pt-2"
+                  >
+                    Experience Details
+                  </Label>
+                  <textarea
+                    id="experienceDetails"
+                    name="experienceDetails"
+                    value={input.experienceDetails}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                    placeholder="Describe your work experience in detail..."
+                  />
+                  <p className="text-sm text-gray-600 mt-1 self-end text-right">
+                    {input.experienceDetails.trim()
+                      ? input.experienceDetails.trim().length
+                      : 0}
+                    /{maxExperienceChars}
+                  </p>
+                </div>
+              
 
               <div className="w-full">
                 <Label htmlFor="skills" className="block mb-2 font-semibold">
@@ -420,24 +565,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 />
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="w-full">
-                  <Label
-                    htmlFor="currentCTC"
-                    className="block mb-2 font-semibold"
-                  >
-                    Current CTC
-                  </Label>
-                  <Input
-                    id="currentCTC"
-                    name="currentCTC"
-                    value={input.currentCTC}
-                    onChange={handleChange}
-                    placeholder="Enter Current CTC (In LPA)"
-                  />
-                </div>
-
-                <div className="w-full">
+              <div className="w-full">
                   <Label
                     htmlFor="expectedCTC"
                     className="block mb-2 font-semibold"
@@ -451,52 +579,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     onChange={handleChange}
                     placeholder="Enter Expected CTC (In LPA)"
                   />
-                </div>
-              </div>
+               </div>
             </div>
           </div>
 
-          <div className="w-full">
-            <Label
-              htmlFor="experienceDetails"
-              className="block mb-2 font-semibold pt-2"
-            >
-              Experience Details
-            </Label>
-            <textarea
-              id="experienceDetails"
-              name="experienceDetails"
-              value={input.experienceDetails}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="3"
-              placeholder="Describe your work experience in detail..."
-            />
-            <p className="text-sm text-gray-600 mt-1 self-end text-right">
-              {input.experienceDetails.trim()
-                ? input.experienceDetails.trim().length
-                : 0}
-              /{maxExperienceChars}
-            </p>
-          </div>
 
-          <div className="w-full">
-            <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
-              Bio
-            </Label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={input.bio}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="3"
-              placeholder="Enter your bio..."
-            />
-            <p className="text-sm text-gray-600 mt-1 self-end text-right">
-              {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
-            </p>
-          </div>
+          
 
           <div className="w-full">
             <Label htmlFor="resume" className="block mb-2 font-semibold">
