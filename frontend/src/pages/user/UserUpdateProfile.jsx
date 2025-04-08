@@ -565,7 +565,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 />
               </div>
 
-              <div className="w-full">
+              <div className="w-full">  
                   <Label
                     htmlFor="expectedCTC"
                     className="block mb-2 font-semibold"
