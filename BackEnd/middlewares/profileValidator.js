@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+const salaryPattern = /^(\d+(\.\d+)?)(\s*LPA)?$/i;
 
 export const validateProfileUpdate = [
   // Full Name (If provided, min length: 3)
@@ -61,10 +62,16 @@ export const validateProfileUpdate = [
   // Current & Expected CTC (If provided, must be numbers)
   body("currentCTC")
     .optional()
-    .isNumeric()
-    .withMessage("Current CTC must be a number"),
+    .custom(value => {
+      if (typeof value !== 'string') value = String(value);
+      return salaryPattern.test(value.trim());
+    })
+    .withMessage("Current CTC must be a number or in format like '12LPA', '12.5 LPA', etc."),
   body("expectedCTC")
     .optional()
-    .isNumeric()
-    .withMessage("Expected CTC must be a number"),
+    .custom(value => {
+      if (typeof value !== 'string') value = String(value);
+      return salaryPattern.test(value.trim());
+    })
+    .withMessage("Expected CTC must be a number or in format like '12LPA', '12.5 LPA', etc."),
 ];

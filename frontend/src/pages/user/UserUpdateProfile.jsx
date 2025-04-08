@@ -503,7 +503,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       name="currentCTC"
                       value={input.currentCTC}
                       onChange={handleChange}
-                      placeholder="Enter Current CTC (In LPA)"
+                      placeholder="Enter Expected CTC must be a number or in format like '12LPA', '12.5 LPA', etc."
                     />
                   </div>
                 </>
@@ -577,7 +577,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     name="expectedCTC"
                     value={input.expectedCTC}
                     onChange={handleChange} 
-                    placeholder="Enter Expected CTC (In LPA)"
+                    placeholder="Enter Expected CTC must be a number or in format like '12LPA', '12.5 LPA', etc."
                   />
                </div>
             </div>

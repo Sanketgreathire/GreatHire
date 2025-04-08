@@ -65,11 +65,11 @@ const userSchema = new mongoose.Schema(
         },
       },
       currentCTC: {
-        type: Number,
+        type: String,
         default: 0,
       },
       expectedCTC: {
-        type: Number,
+        type: String,
         default: 0,
       },
 
