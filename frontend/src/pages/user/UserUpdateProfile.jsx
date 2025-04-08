@@ -576,7 +576,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     id="expectedCTC"
                     name="expectedCTC"
                     value={input.expectedCTC}
-                    onChange={handleChange}
+                    onChange={handleChange} 
                     placeholder="Enter Expected CTC (In LPA)"
                   />
                </div>
