@@ -4,6 +4,7 @@
 # Ignore environment files
 Frontend.env
 .env
+front.env
 
 # Ignore logs
 logs
