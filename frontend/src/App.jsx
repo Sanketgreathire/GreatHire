@@ -1,6 +1,7 @@
 // Import necessary modules and dependencies
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+
 // Context Provider
 import JobDetailsProvider from "./context/JobDetailsContext";
 
@@ -81,6 +82,7 @@ import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
 // External Libraries
 import { Worker } from "@react-pdf-viewer/core";
+import JobsFeed from "./components/JobsFeed";
 
 const appRouter = createBrowserRouter([
   {
@@ -266,6 +268,7 @@ const appRouter = createBrowserRouter([
     path: "*",
     element: <PageNotFound />,
   },
+
 ]);
 
 function App() {

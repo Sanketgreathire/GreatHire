@@ -29,6 +29,9 @@ import FAQ from "../../assets/Animation/FAQ.lottie";
 import Top_Companies from "../../assets/Animation/Top_Companies.lottie";
 import Industry_Trends from "../../assets/Animation/Industry_Trends.lottie";
 import Development_Progress from "../../assets/Animation/Development_Progress.lottie";
+import Future_Work from "../../assets/Animation/Future_Work.lottie";
+import Future_Skills from "../../assets/Animation/Future_Skills.lottie";
+import Global_Impact from "../../assets/Animation/Global_Impact.lottie";
 
 
 // import Lottie from 'lottie-react';
@@ -143,23 +146,23 @@ const categories = [
 
       } 
   ]},  
-  { id: "news", title: "News", posts: [  
+  { id: "news", title: "Trending Topics", posts: [  
       { 
         title: "The Future of Work", 
         description: "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.", 
-        image: futureOfWorkImg 
+        animation: Future_Work
 
       },
       { 
         title: "Future Skills for Job Seekers", 
         description: "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.", 
-        image: upskilling 
+        animation: Future_Skills
 
       },
       { 
         title: "Impact of Global Events on Workforce", 
         description: "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.", 
-        image: globalevent
+        animation: Global_Impact
 
       }
     ]},
