@@ -302,10 +302,6 @@ function App() {
       <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
-          <section className="my-12 px-4 md:px-8">
-            <h2 className="text-2xl font-bold mb-6">Latest Jobs from Around the Web</h2>
-            <JobsFeed />
-          </section>
         </Worker>
       </JobDetailsProvider>
     </div>
