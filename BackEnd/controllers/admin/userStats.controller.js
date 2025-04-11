@@ -92,6 +92,10 @@ export const getUsersList = async (req, res) => {
         },
       },
       {
+        // Sort by createdAt descending (latest first)
+        $sort: { createdAt: -1 },
+      },
+      {
         // Project only the required fields:
         // - fullname
         // - email (from emailId.email)
