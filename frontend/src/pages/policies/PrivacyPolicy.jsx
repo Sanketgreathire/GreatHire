@@ -89,9 +89,9 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 flex gap-6">
+      <main className="max-w-8xl mx-auto px-4 py-8 sm:px-6 lg:px-8 flex gap-6">
         {/* Sidebar Table of Contents */}
-        <aside className="w-64 hidden md:block sticky top-20 h-fit bg-white border rounded shadow p-4">
+        <aside className="w-70 hidden md:block sticky top-20 h-fit bg-white border rounded shadow p-5">
           <h3 className="text-xl font-bold mb-4">Table of Contents</h3>
           <ul className="space-y-3 text-lg">
             {sections.map(({ id, label, icon }) => (
@@ -113,7 +113,7 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 space-y-12">
+        <div className="flex-1 space-y-12 font-serif">
           {sections.map(({ id, label, icon }) => (
             <Section
               key={id}

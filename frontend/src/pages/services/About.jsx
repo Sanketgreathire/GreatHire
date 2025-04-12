@@ -36,8 +36,10 @@ import tataImg from "../../assets/clientLogos/tata.png";
 // Import User-Team Photos
 import NazirImg from "../../assets/user Photos/Nazir.jpeg";
 import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
+import DhanshreeImg from "../../assets/user Photos/Dhanshree.png";
 import KOIImg from "../../assets/user Photos/KOI.jpeg";
 import MaheshImg  from "../../assets/user Photos/Mahesh.jpg";
+import MoizImg from "../../assets/user Photos/MoizImg.jpg";
 import AmanImg from "../../assets/user Photos/Aman.jpeg";
 import eswarImg from "../../assets/user Photos/Eswar.jpeg";
 import CharanImg from "../../assets/user Photos/Charan.jpeg";
@@ -59,6 +61,21 @@ import Gen2Img from "../../assets/user Photos/Gen2.jpeg";
 import Gen3Img from "../../assets/user Photos/Gen3.jpeg";
 import Gen4Img from "../../assets/user Photos/Gen4.jpeg";
 import Gen5Img from "../../assets/user Photos/Gen5.jpeg";
+import Gen6Img from "../../assets/user Photos/Gen6.jpeg";
+import Gen7Img from "../../assets/user Photos/Gen7.jpeg";
+import Gen8Img from "../../assets/user Photos/Gen8.jpeg";
+import Gen9Img from "../../assets/user Photos/Gen9.jpeg";
+import Gen10Img from "../../assets/user Photos/Gen10.jpeg";
+import Gen11Img from "../../assets/user Photos/Gen11.jpeg";
+import Gen12Img from "../../assets/user Photos/Gen12.jpeg";
+import Gen13Img from "../../assets/user Photos/Gen13.jpeg";
+import Gen14Img from "../../assets/user Photos/Gen14.jpeg";
+import Gen15Img from "../../assets/user Photos/Gen15.jpg";
+import Gen16Img from "../../assets/user Photos/Gen16.jpg";
+import Gen17Img from "../../assets/user Photos/Gen17.jpg";
+import Gen18Img from "../../assets/user Photos/Gen18.jpg";
+import Gen19Img from "../../assets/user Photos/Gen19.jpg";
+import RashiImg from "../../assets/user Photos/Rashi.jpg";
 
 
 function App() {
@@ -95,7 +112,7 @@ function App() {
 
         {
           name: "G Sujith",
-          image: BlankImg,
+          image: Gen15Img,
           role: ["ChatGPT Developer"],
           expertise: "ChatGPT, AI, Machine Learning",
           about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
@@ -108,11 +125,11 @@ function App() {
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
-          name: "DhanShree Parab",
-          image: BlankImg,
-          role: ["Frontend Developer"],
-          expertise: "React, HTML, CSS, JavaScript",
-          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
+          name: "Dhanshree Parab",
+          image: DhanshreeImg,
+          role: ["Full Stack Developer"],
+          expertise: "Web Development, DJango, SQL, Python, MongoDB, Machine Learning",
+          about: "Skilled with expertise in emerging technologies, crafting high-level websites and applications from core logic to polished interfaces.",
         },
         {
           name: "Aman",
@@ -144,7 +161,7 @@ function App() {
         },
         {
           name: "Moiz Qureshi",
-          image: BlankImg,
+          image: MoizImg,
           role: ["Full Stack Developer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
@@ -212,14 +229,14 @@ function App() {
         },
         {
           name: "Rohit",
-          image: BlankImg,
+          image: Gen17Img,
           role: "Interviewer",
           expertise: "Interviewing, Assessment",
           about: "Conducts interviews and assesses candidates skills.",
         },
         {
           name: "Dikshita",
-          image: BlankImg,
+          image: Gen2Img,
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
@@ -231,35 +248,35 @@ function App() {
       members: [
         {
           name: "Vikram",
-          image: BlankImg,
+          image: Gen18Img,
           role: "Digital Marketing Specialist",
           expertise: "SEO, SEM, Content Marketing",
           about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
         },
         {
           name: "Alekhya",
-          image: BlankImg,
+          image: Gen3Img,
           role: "Digital Marketing Executive",
           expertise: "Social media strategy, content creation",
           about: "Drives brand growth through creative and data-driven digital campaigns.",
         },
         {
           name: "Darshini",
-          image: BlankImg,
+          image: Gen4Img,
           role: "Digital Marketing Manager",
           expertise: "Content Marketing, conversion rate optimization",
           about: "Delivers high-performing digital solutions through deep performance insights.",
         },
         {
           name: "Anuskha",
-          image: BlankImg,
+          image: Gen5Img,
           role: "Digital Marketing",
           expertise: "Multi-channel marketing, team leadership",
           about: "Builds strong digital brands with scalable, results-oriented plans.",
         },
         {
           name: "Anil",
-          image: BlankImg,
+          image: Gen19Img,
           role: "Content & Digital Marketing Strategist",
           expertise: "Content marketing, email campaigns",
           about: "Crafts engaging digital journeys that connect and convert audiences.",
@@ -306,7 +323,7 @@ function App() {
         },
         {
           name: "Rashi sharma",
-          image: BlankImg,
+          image: RashiImg,
           role: "Technical Recruiter",
           expertise: "Tech Recruitment, Talent Assessment",
           about: "Specializes in recruiting top tech talent.",
@@ -318,42 +335,42 @@ function App() {
       members: [
         {
           name: "Chirag",
-          image: BlankImg,
+          image: Gen16Img,
           role: "Sales Manager",
           expertise: "B2B Sales, Account Management, campaign strategy",
           about: "Focused on driving business growth through marketing strategies, client relationships, and sales initiatives.",
         },
         {
           name: "Divya",
-          image: BlankImg,
+          image: Gen6Img,
           role: "Sales Executive",
           expertise: "Solution Sales, Negotiations",
           about: "Involves into creating impactful marketing campaigns, fostering client relationship, and ensuring services stand out in competitive market.",
         },
         {
           name: "Riya",
-          image: BlankImg,
+          image: Gen12Img,
           role: "Sales and Marketing",
           expertise: "Market Research, Lead Generation",
           about: "Conducts market research and generates leads for sales.",
         },
         {
           name: "Anita Sharma",
-          image: BlankImg,
+          image: Gen8Img,
           role: "Sales and Marketing Executive",
           expertise: "Lead generation, client relationship management",
           about: " Passionate about driving growth through smart sales strategies and engaging marketing campaigns.",
         },
         {
-          name: "Raju",
-          image: BlankImg,
+          name: "Aditi Mishra",
+          image: Gen9Img,
           role: " Digital Marketing & Sales Strategist",
           expertise: "SEO, content marketing, email campaigns",
           about: "Blends creativity and analytics to turn prospects into loyal customers.",
         },
         {
-          name: "Babu Rao",
-          image: BlankImg,
+          name: "Tanaya Suchak",
+          image: Gen10Img,
           role: "Sales Representative & Marketing Coordinator",
           expertise: "Customer engagement, promotional planning",
           about: "Committed to delivering value by connecting the right product to the right audience.",
@@ -361,39 +378,39 @@ function App() {
       ],
     },
     {
-      name: "Bench Sales Recruitment",
+      name: "Bench Sales Recruiters",
       members: [
         {
           name: "Neha",
-          image: BlankImg,
+          image: Gen11Img,
           role: "Bench Sales Specialist",
           expertise: "B2B Sales, Account Management",
           about: "Leads bench sales and client relationship management.",
         },
         {
           name: "Babitha",
-          image: BlankImg,
+          image: Gen2Img,
           role: "Bench Sales Recruiter",
           expertise: "Marketing IT consultants to clients and vendors, handling Negotiations",
           about: "Efficient in building vendor relationships and placing bench candidates across various technologies.",
         },
         {
           name: "Cherry",
-          image: BlankImg,
+          image: Gen3Img,
           role: "US IT Bench Sales Executive",
           expertise: "Expertise in sourcing requirements, closing deals with implementation",
           about: "Proven ability to place consultants quickly through strong networking and communication skills.",
         },
         {
           name: "Dakshitha",
-          image: BlankImg,
+          image: Gen4Img,
           role: "Technical Bench Sales Specialist",
           expertise: "Skilled in promoting bench candidates, resume formatting",
           about: "Focused on maximizing consultant utilization and aligning talent with the right opportunities.",
         },
         {
           name: "Gunjana",
-          image: BlankImg,
+          image: Gen5Img,
           role: "IT Bench Sales Executive",
           expertise: "Candidate profiling, vendor networking",
           about: "Skilled in accelerating consultant placements by building long-term vendor relationships.",
@@ -412,28 +429,28 @@ function App() {
         },
         {
           name: "Mani kumar",
-          image: BlankImg,
+          image: Gen15Img,
           role: "Business Development Manager",
           expertise: "Lead generation, client relationship management",
           about: "Specilized in business expansion by levaraging marketing insights and innovative sales strategies.",
         },
         {
           name: "Dharshini",
-          image: BlankImg,
+          image: Gen5Img,
           role: "Business Development",
           expertise: "Process Management, Analytics",
           about: "Excelled in client engagement and negotation strageries, leading to the successful deals and strong client relationships.",
         },
         {
           name: "Shobita",
-          image: BlankImg,
+          image: Gen13Img,
           role: "Business Development Executive",
           expertise: "Market Expansion, Partnerships",
           about: "Works towards conducting market research and implementing innovative sales strategies to drive business growth in greathire.",
         },
         {
           name: "Aina",
-          image: BlankImg,
+          image: Gen1Img,
           role: "Business Development Associate",
           expertise: "Account Management, Growth",
           about: "Ensures client satisfaction and retention.",
@@ -519,7 +536,7 @@ function App() {
       <div className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">About GreatHire</h1>
-          <p className="text-xl text-center max-w-3xl mx-auto">
+          <p className="text-xl text-center max-w-3xl mx-auto font-serif">
           GreatHire Business Solutions provides strategic staffing and workforce solutions tailored to meet diverse business needs. We specialize in connecting companies with top-tier talent, driving efficiency, productivity, and long-term success through our expert recruitment services.          </p>
         </div>
       </div>
