@@ -56,6 +56,9 @@ app.use(helmet({
 })); // Use Helmet to set security-related HTTP headers
 
 
+// app.use(cors({
+//   origin:"http://localhost:5173/",
+// }))
 
 
 app.disable("x-powered-by"); // Explicitly disable X-Powered-By header
