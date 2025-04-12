@@ -54,6 +54,11 @@ import madhuImg from "../../assets/user Photos/madhu.jpeg";
 import mansiImg from "../../assets/user Photos/Mansi.jpeg";
 import tanmaiImg from "../../assets/user Photos/Tanmai.jpeg";
 import BlankImg from "../../assets/user Photos/Blank.jpg";
+import Gen1Img from "../../assets/user Photos/Gen1.jpeg";
+import Gen2Img from "../../assets/user Photos/Gen2.jpeg";
+import Gen3Img from "../../assets/user Photos/Gen3.jpeg";
+import Gen4Img from "../../assets/user Photos/Gen4.jpeg";
+import Gen5Img from "../../assets/user Photos/Gen5.jpeg";
 
 
 function App() {
@@ -89,11 +94,25 @@ function App() {
       members: [
 
         {
+          name: "G Sujith",
+          image: BlankImg,
+          role: ["ChatGPT Developer"],
+          expertise: "ChatGPT, AI, Machine Learning",
+          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
+        },
+        {
           name: "Charan Sai",
           image: CharanImg,
           role: ["Associate AWS Architect"],
           expertise: "Cloud Solutions, DevOps",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
+        },
+        {
+          name: "DhanShree Parab",
+          image: BlankImg,
+          role: ["Frontend Developer"],
+          expertise: "React, HTML, CSS, JavaScript",
+          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
         },
         {
           name: "Aman",
@@ -122,6 +141,13 @@ function App() {
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
           about: "Skilled in creating responsive and interactive user interfaces.",
+        },
+        {
+          name: "Moiz Qureshi",
+          image: BlankImg,
+          role: ["Full Stack Developer"],
+          expertise: "React, Node.js, MongoDB, Express, JavaScript",
+          about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Virender",
@@ -178,7 +204,7 @@ function App() {
           about: "Facilitates onboarding and employee engagement activities.",
         },
         {
-          name: "Madhu",
+          name: "Madhu Sri",
           image: madhuImg,
           role: "Human Resource",
           expertise: "Recruitment, Employee Relations",
@@ -251,21 +277,21 @@ function App() {
           about: "Specializes in recruiting top tech talent.",
         },
         {
-          name: "Janki",
+          name: "Janki Patel",
           image: janakiImg,
           role: "Talent Acquisition Specialist",
           expertise: "Executive Search, Talent Strategy",
           about: "Focuses on executive and leadership recruitment.",
         },
         {
-          name: "Santhosh",
+          name: "Santhosh Kumar",
           image: santhoshImg,
           role: "US IT Recruiter",
           expertise: " Graduate Hiring, University Relations",
           about: "Focuses on strategic hiring pratices, I ensure we attract and retain top talent.",
         },
         {
-          name: "Mansi",
+          name: "Mansi Kargar",
           image: mansiImg,
           role: "Talent Acquisition – US IT Staffing",
           expertise: "International Recruitment, Relocation",
@@ -277,6 +303,13 @@ function App() {
           role: "Recruitment Operations",
           expertise: "Process Optimization, Tools",
           about: "Focuses on streamlining recruitment processes by connecting the right talent with the right opportunities.",
+        },
+        {
+          name: "Rashi sharma",
+          image: BlankImg,
+          role: "Technical Recruiter",
+          expertise: "Tech Recruitment, Talent Assessment",
+          about: "Specializes in recruiting top tech talent.",
         },
       ],
     },
@@ -312,14 +345,14 @@ function App() {
           about: " Passionate about driving growth through smart sales strategies and engaging marketing campaigns.",
         },
         {
-          name: "Carlos Rodriguez",
+          name: "Raju",
           image: BlankImg,
           role: " Digital Marketing & Sales Strategist",
           expertise: "SEO, content marketing, email campaigns",
           about: "Blends creativity and analytics to turn prospects into loyal customers.",
         },
         {
-          name: "Lisa Chen",
+          name: "Babu Rao",
           image: BlankImg,
           role: "Sales Representative & Marketing Coordinator",
           expertise: "Customer engagement, promotional planning",
