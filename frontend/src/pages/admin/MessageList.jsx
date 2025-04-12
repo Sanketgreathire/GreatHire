@@ -12,6 +12,13 @@ const MessageList = () => {
   // Assuming useMessage returns messages and setMessages
   const { messages, setMessages } = useNotification();
   const navigate = useNavigate();
+  // State to manage replies
+  const [replies, setReplies] = React.useState({});
+
+  
+  // Manage loading state per message (you can use a single boolean for all or an object keyed by msg.id)
+  const [loadingReply, setLoadingReply] = React.useState({});
+
 
   // Delete a single message according to its type
   const handleDeleteMessage = async (msgId, type) => {
@@ -60,6 +67,40 @@ const MessageList = () => {
     } catch (error) {
       console.error("Error deleting all messages:", error);
       toast.error("Error deleting all messages");
+    }
+  };
+  // Reply handler
+  const handleReplyToUser = async (msgId, type, replyMessage) => {
+    if (!replyMessage.trim()) {
+      toast.error("Reply message cannot be empty.");
+      return;
+    }
+    //console.log("Replying to message:", msgId, type, replyMessage);
+    // Mark the reply as loading for this message
+    setLoadingReply((prev) => ({ ...prev, [msgId]: true }));
+
+    try {
+      const response = await axios.post(
+        `${NOTIFICATION_API_END_POINT}/sendreply`,
+        {
+          msgId,
+          type,
+          replyMessage,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        toast.success("Reply sent successfully!");
+      }
+    } catch (error) {
+      console.error("Error sending reply:", error);
+      toast.error("Failed to send reply.");
+    }finally {
+      // Remove loading state after request
+      setLoadingReply((prev) => ({ ...prev, [msgId]: false }));
     }
   };
 
@@ -185,6 +226,34 @@ const MessageList = () => {
                     </div>
                   </div>
                 )}
+                {/* Reply Section */}
+                <div className="mt-4">
+                  <textarea
+                    rows={2}
+                    placeholder="Write your reply here..."
+                    value={replies[msg.id] || ""}
+                    onChange={(e) =>
+                      setReplies((prev) => ({
+                        ...prev,
+                        [msg.id]: e.target.value,
+                      }))
+                    }
+                    className="w-full border rounded-md p-2 text-sm"
+                  ></textarea>
+                  <button
+                    onClick={() =>
+                      handleReplyToUser(msg.id, msg.type, replies[msg.id] || "")
+                    }
+                    disabled={loadingReply[msg.id]}
+                    className={`mt-2 px-6 py-2 rounded-lg transition-all duration-200 text-sm font-semibold tracking-wide shadow-md ${
+                      loadingReply[msg.id]
+                        ? "bg-blue-300 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                  >
+                    {loadingReply[msg.id] ? "Sending..." : "Send Reply"}
+                  </button>
+                </div>
               </div>
             ))}
             {messages.length === 0 && (
