@@ -61,7 +61,6 @@ import inter from "../../assets/blogs images/interview quest.jpg";
 import dev from "../../assets/blogs images/dev pro.jpg";
 import hire from "../../assets/blogs images/hiring.jpg";
 import upskilling from "../../assets/blogs images/upskilling career.jpg";
-import bgImage from "../../assets/blogs images/BGImageBlogsHD.png";
 
 
 
