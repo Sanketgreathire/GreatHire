@@ -56,6 +56,12 @@ app.use(helmet({
 })); // Use Helmet to set security-related HTTP headers
 
 
+// app.get("/api/adzuna/jobs", async (req, res) => {
+//   const response = await fetch("https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=6de556e8&app_key=f1b3e3c8c3bf2cfd3b6c5a20c7e5432a&page=1&results_per_page=6&job_country_code_or=IN%2CUS");
+//   const data = await response.json();
+//   res.json(data);
+// });
+
 // app.use(cors({
 //   origin:"http://localhost:5173/",
 // }))
@@ -72,15 +78,15 @@ const io = new Server(server, {
 });
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/socket.io/", (req, res, next)=> next());
 
