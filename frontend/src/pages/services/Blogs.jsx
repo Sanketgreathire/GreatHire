@@ -64,8 +64,14 @@ import upskilling from "../../assets/blogs images/upskilling career.jpg";
 
 
 
+
 const blogPosts = [
-  { title: "Mastering remote work",
+  { title:  (
+    <>
+      Mastering<br />
+      remote work
+    </>
+  ),
     description: "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
     animation: Remote
   },
@@ -261,7 +267,7 @@ const Blogs = () => {
       <Navbar />
       <div className="min-h-screen flex flex-col">
         <div className="px-4 sm:px-6 lg:px-8 py-6 text-center flex-grow">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
               <Typewriter
                 words={["Unlock Your Potential With Great"]}
@@ -280,10 +286,11 @@ const Blogs = () => {
                 cursor={false}
               />
             </span>
+            
           </h1>
-          <p className="text-base sm:text-lg mt-4 max-w-2xl mx-auto">
-            Your all-in-one platform for job applications, recruitment, and
-            many more—connecting talent with opportunity!
+          <p className="text-base sm:text-2xl mt-4 mx-auto font-serif">
+            Your all-in-one platform for job applications, recruitment, and much more.<br/>
+            Connecting talent with opportunity!
           </p>
 
           {/* Navigation Menu */}
@@ -294,23 +301,33 @@ const Blogs = () => {
           </div>
 
           {/* Blog Section */}
-          <div className="mt-10 mb-28 sm:mt-12 flex flex-col md:flex-row items-center gap-6 sm:gap-8 max-w-5xl mx-auto">
+          <div className="mt-10 mb-28 sm:mt-12 flex flex-col md:flex-row items-center gap-6 sm:gap-5 max-w-5xl mx-auto" 
+          // style={{
+          //   // backgroundImage: `url(${bgImage})`,
+          //   // backgroundSize: 'cover',
+          //   // backgroundPosition: 'center',
+          //   // opacity:10
+          //   backgroundColor:'lightblue',
+          //   borderRadius:'30px'
+          // }}
+          
+          >
             <DotLottieReact
               src={Work}
               loop
               autoplay
 
-              style={{ padding:"0px 0px 20px 50px", width: "400px", height: "400px"}}
+              style={{ padding:"0px 0px 10px 10px", width: "450px", height: "450px"}}
             />
-            <div className="w-full md:w-1/2 pl-7">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
-                GreatHire Insights – The Future of Work
+            <div className="w-full  pl-7">
+              <h3 className="text-4xl font-bold text-gray-800 font-[Oswald]"  style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}>
+                GreatHire Insights - The Future of Work
               </h3>
-              <p className="mt-3 mx-auto max-w-2xl text-gray-700 text-sm sm:text-base ">
+              <p className=" mt-3 mx-auto max-w-2xl text-gray-700 text-xl font-serif ">
                 The way people work is evolving, with professionals seizing new
                 opportunities and reshaping industries.
               </p>
-              <p className="mt-2 text-gray-500 text-xs sm:text-sm">
+              <p className="mt-2 text-gray-500 text-lg font-serif">
                 - GreatHire Team
               </p>
             </div>
@@ -318,7 +335,7 @@ const Blogs = () => {
 
           {/* Featured Blog Posts */}
           <div className="mt-16 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+            <h2 className="text-5xl font-bold text-gray-800 text-center mb-6 pb-5 font-[Oswald]">
               Featured Articles
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -336,8 +353,8 @@ const Blogs = () => {
                     />
                   )}
                   <div className="p-4 flex flex-col justify-between flex-grow">
-                    <h3 className="text-lg font-semibold">{post.title}</h3>
-                    <p className="text-gray-600 text-sm mt-2">
+                    <h3 className="text-xl font-semibold font-[Oswald]">{post.title}</h3>
+                    <p className="text-gray-600 text-lg mt-3 font-[Pacifico]">
                       {post.description}
                     </p>
                   </div>
