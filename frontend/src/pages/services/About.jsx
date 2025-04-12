@@ -109,7 +109,7 @@ function App() {
         },
         {
           name: "DhanShree Parab",
-          image: BlankImg,
+          image: Gen1Img,
           role: ["Frontend Developer"],
           expertise: "React, HTML, CSS, JavaScript",
           about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
@@ -219,7 +219,7 @@ function App() {
         },
         {
           name: "Dikshita",
-          image: BlankImg,
+          image: Gen2Img,
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
@@ -361,7 +361,7 @@ function App() {
       ],
     },
     {
-      name: "Bench Sales Recruitment",
+      name: "Bench Sales Recruiters",
       members: [
         {
           name: "Neha",
