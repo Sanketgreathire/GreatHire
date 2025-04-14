@@ -82,7 +82,7 @@ import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
 // External Libraries
 import { Worker } from "@react-pdf-viewer/core";
-import JobsFeed from "./components/JobsFeed";
+// import JobsFeed from "./components/JobsFeed";
 
 const appRouter = createBrowserRouter([
   {

@@ -61,13 +61,14 @@ import inter from "../../assets/blogs images/interview quest.jpg";
 import dev from "../../assets/blogs images/dev pro.jpg";
 import hire from "../../assets/blogs images/hiring.jpg";
 import upskilling from "../../assets/blogs images/upskilling career.jpg";
+import bg1 from "../../assets/blogs images/bg1.png";
 
 
 
 
 const blogPosts = [
   { title:  (
-    <>
+    < >
       Mastering<br />
       remote work
     </>
@@ -75,20 +76,40 @@ const blogPosts = [
     description: "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
     animation: Remote
   },
-  { title: "AI in Recruitment",
+  { title: (
+    < >
+      AI<br />
+      Recruitment
+    </>
+  ),
     description: "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
     animation: Artificial_intelligence
   },
-  { title: "Building a Winning Resume", 
-    description: "Your resume is your first impression—highlight key skills, use clear formatting, and tailor it for each job. GreatHire.in helps you create an ATS-friendly resume and connect with top opportunities to land your dream role.", 
+  { title: (
+    < >
+      Build<br />
+      Winning Resumes
+    </>
+  ), 
+    description: "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.", 
     animation: Resume
   },  
-  { title: "Interview Preparation", 
+  { title: (
+    < >
+      Interview<br />
+      Preparations
+    </>
+  ), 
     description: "Research the company, practice questions, and present yourself professionally. GreatHire.in provides expert tips and top job opportunities to help you succeed and make a lasting impression.", 
     animation: Interview
   },  
-  { title: "The Future of Work", 
-    description: "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.", 
+  { title: (
+    < >
+      The Future<br />
+      Of Work
+    </>
+  ), 
+    description: "AI-driven hiring, remote work, and flexible roles are reshaping the workplace, making upskilling crucial. GreatHire.in keeps you informed on trends and connects you to top career opportunities.", 
     animation: Future
   },
   { title: "Upskilling for Career Growth", 
@@ -102,17 +123,32 @@ const blogPosts = [
 const categories = [  
   { id: "career-advice", title: "Career Advice", posts: [  
       { 
-        title: "Advancing Your Career in Tech", 
+        title: (
+          < >
+            Advance Your<br />
+            Career in Tech
+          </>
+        ), 
         description: "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.", 
         animation: Tech
       },
       { 
-        title: "Work-Life Balance Tips", 
-        description: "Balancing work and personal life is key to success. Set realist boundaries, take breaks, and manage time wisely to reduce stress. GreatHire.in connects you with flexible job opportunities to support a healthy work-life balance.", 
+        title:  (
+          < >
+            Work-Life<br />
+            Balance Tips
+          </>
+        ), 
+        description: "Balancing work and personal life is essential for success. Set realistic boundaries, take breaks, and manage time to reduce stress. GreatHire.in offers flexible job opportunities for a healthy work-life balance.", 
         animation: Work_Life
       },  
       { 
-        title: "Networking for Career Growth", 
+        title: (
+          < >
+            Networking For<br />
+            Career Growth
+          </>
+        ), 
         description: "Networking opens doors to career growth engage on LinkedIn, attend events, and build meaningful connections. GreatHire.in helps you find the right opportunities and insights to advance your career.", 
         animation: Network
       }  
@@ -142,12 +178,12 @@ const categories = [
       },
       { 
         title: "ATS Optimization", 
-        description: "In today's competitive job market, crafting an ATS-friendly resume is essential for ensuring your application gets noticed by hiring systems. Applicant Tracking Systems (ATS) scan resumes for specific criteria before they reach human eyes. ", 
+        description: "In today’s job market, an ATS-friendly resume is crucial to get noticed. Applicant Tracking Systems scan resumes for key criteria before they reach recruiters. ", 
         animation: ATS
       } ,
       { 
         title: "Using Keywords", 
-        description: "Incorporating industry-specific keywords into your resume is a vital strategy for enhancing its visibility to ATS.Start by thoroughly reviewing the job descriptions of positions you're interested in to identify commonly used terms and phrases. ", 
+        description: "Using industry-specific keywords boosts your resume’s visibility to ATS. Review job descriptions to spot and include common terms and phrases. ", 
         animation: Keywords
 
       } 
@@ -227,7 +263,7 @@ const categories = [
       },  
       { 
         title: "Development Programs", 
-        description: "Leading companies invest in training programs, mentorship, and upskilling initiatives to enhance employee growth. Programs like leadership development, technical certifications, and continuous learning platforms improve workforce productivity and retention.", 
+        description: "Leading companies invest in training, mentorship, and upskilling to boost employee growth. Programs like leadership development, technical certifications, and continuous learning enhance productivity and retention.", 
         animation: Development_Progress
       }  
   ]},
@@ -261,12 +297,167 @@ const categories = [
 //       image: img3,
 //     }, 
 // ];
+// const Blogs = () => {
+//   return (
+//     <>
+//       <Navbar />
+//       <div className="min-h-screen flex flex-col w-screen">
+//         <div className="py-2 text-center flex-grow w-screen">
+//           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
+//             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
+//               <Typewriter
+//                 words={["Unlock Your Potential With Great"]}
+//                 typeSpeed={50}
+//                 cursor={false}
+//               />
+//             </span>
+//             <span
+//               className="text-blue-700"
+//               style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.4)" }}
+//             >
+//               <Typewriter
+//                 words={["Hire"]}
+//                 typeSpeed={50}
+//                 delaySpeed={500}
+//                 cursor={false}
+//               />
+//             </span>
+            
+//           </h1>
+//           <p className="text-base sm:text-2xl mt-4 mx-auto font-serif">
+//             Your all-in-one platform for job applications, recruitment, and much more.<br/>
+//             Connecting talent with opportunity!
+//           </p>
+//           <div className="mt-5 sm:mt-6 border-t  border-blue-200 ">
+//           {/* Navigation Menu */}
+//             {/* <nav className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm sm:text-base md:text-lg font-semibold text-gray-800"> */}
+//               {/* Navigation links */}
+//             {/* </nav> */}
+//           </div>
+// {/* ---------------------------------------------------------------------------------------------------------------- */}
+
+//           {/* Blog Section */}
+//           <div className="mt-2 mb-2 sm:mt-1 w-full flex flex-col md:flex-row items-center gap-3 sm:gap-1"
+//           style={{
+//             backgroundImage:`url(${bg1})`,
+//             backgroundSize: 'cover',
+//             backgroundPosition: 'center',
+//             backgroundRepeat: 'no-repeat',
+//             height: '760px', // or any fixed height
+//             width: '100%', 
+            
+//           }}
+//           >
+//             <DotLottieReact
+//               src={Work}
+//               loop
+//               autoplay
+
+//               style={{ padding:"30px 0px 10px 0px", width: "600px", height: "800px",}}
+//             />
+//             <div className="w-full">
+//               <h3 className="text-4xl font-bold text-black font-[Oswald]"  style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}>
+//                 GreatHire Insights - The Future of Work
+//               </h3>
+//               <p className=" mt-3 mx-auto max-w-2xl text-zinc-800 text-xl font-serif ">
+//                 The way people work is evolving, with professionals seizing new
+//                 opportunities and reshaping industries.
+//               </p>
+//               <p className="mt-2 text-gray-600 text-lg font-serif">
+//                 - GreatHire Team
+//               </p>
+//             </div>
+//           </div>
+// {/* ----------------------------------------------------------------------------------------------------------- */}
+
+//           {/* Featured Blog Posts */}
+//           <div className="mt-10 px-4 sm:px-6 lg:px-8">
+//             <h2 className="text-5xl font-bold text-gray-800 text-center mb-6 pb-5 font-[Oswald]">
+//               Featured Articles
+//             </h2>
+//             <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-9 max-w-5xl mx-auto">
+//               {blogPosts.map((post, index) => (
+//                 <div
+//                   key={index}
+//                   className="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col max-w-[280px] mx-auto"
+//                 >
+//                   {post.animation && (
+//                     <DotLottieReact
+//                       src={post.animation}
+//                       loop
+//                       autoplay
+//                       style={{ width: "100%", height: "200px" }}
+//                     />
+//                   )}
+
+
+//                   <div className="p-4 flex flex-col justify-between flex-grow">
+//                     <h3 className="text-xl font-semibold font-[Oswald]">{post.title}</h3>
+//                     <p className="text-gray-600 text-lg mt-3 font-['Pacifico']">
+//                       {post.description}
+//                     </p>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+// {/* ----------------------------------------------------------------------------------------------------------- */}
+
+//           {/* Additional Blog Sections */}
+//           {categories.map((category) => (
+//             <div
+//               key={category.id}
+//               id={category.id}
+//               className="mt-16 scroll-mt-20 bg-indigo-100 py-10 px-12 rounded-xl gap-9"
+//             >
+//               <h2 className="text-5xl font-bold mb-4 font-[Oswald]">{category.title}</h2>
+//               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
+//                 {category.posts.map((post, index) => (
+//                   <div
+//                     key={index}
+//                     className="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col max-w-[280px] mx-auto"
+//                   >
+//                     {post.animation ? (
+//                       <DotLottieReact
+//                         src={post.animation}
+//                         loop
+//                         autoplay
+//                         style={{ width: "100%", height: "200px" }}
+//                       />
+//                     ) :
+//                      (
+//                       <img
+//                         src={post.image}
+//                         alt={`Blog cover for ${post.title}`}
+//                         className="w-full h-48 object-cover bg-zinc-800 rounded-t-xl"
+//                       />
+//                     )
+//                     }
+//                     <div className="p-4 flex flex-col justify-between flex-grow">
+//                       <h3 className="text-xl font-bold font-[Oswald]">{post.title}</h3>
+//                       <p className="text-gray-900 text-lg mt-2 font-['Pacifico']">
+//                         {post.description}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//         <Footer />
+//       </div>
+//     </>
+//   );
+// };
+
+// export default Blogs;
 const Blogs = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex flex-col">
-        <div className="px-4 sm:px-6 lg:px-8 py-6 text-center flex-grow">
+      <div className="min-h-screen flex flex-col w-screen">
+        <div className="py-2 text-center flex-grow w-screen">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
               <Typewriter
@@ -286,59 +477,61 @@ const Blogs = () => {
                 cursor={false}
               />
             </span>
-            
           </h1>
+
           <p className="text-base sm:text-2xl mt-4 mx-auto font-serif">
-            Your all-in-one platform for job applications, recruitment, and much more.<br/>
+            Your all-in-one platform for job applications, recruitment, and much more.<br />
             Connecting talent with opportunity!
           </p>
 
-          {/* Navigation Menu */}
-          <div className="mt-10 sm:mt-14 border-t  border-blue-200 py-4">
-            <nav className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm sm:text-base md:text-lg font-semibold text-gray-800">
-              {/* Navigation links */}
-            </nav>
-          </div>
+          <div className="mt-5 sm:mt-6 border-t border-blue-200"></div>
+
+{/* ------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
           {/* Blog Section */}
-          <div className="mt-10 mb-28 sm:mt-12 flex flex-col md:flex-row items-center gap-6 sm:gap-5 max-w-5xl mx-auto" 
-          // style={{
-          //   // backgroundImage: `url(${bgImage})`,
-          //   // backgroundSize: 'cover',
-          //   // backgroundPosition: 'center',
-          //   // opacity:10
-          //   backgroundColor:'lightblue',
-          //   borderRadius:'30px'
-          // }}
-          
-          >
-            <DotLottieReact
-              src={Work}
-              loop
-              autoplay
+                  
+          <div
+  className="mb-2 w-full flex justify-center items-center px-4"
+  style={{
+    backgroundImage: `url(${bg1})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    minHeight: "500px",
+    width: "100%",
+  }}
+>
+  <div className="flex flex-col lg:flex-row items-center justify-center gap-4 w-full max-w-6xl text-center">
+    <DotLottieReact
+      src={Work}
+      loop
+      autoplay
+      className="w-full max-w-[600px] sm:h-[300px] md:h-[350px] lg:h-[400px]"
+      style={{
+        height: "auto",
+        flexShrink: 0,
+      }}
+    />
+    <div className="w-full max-w-xl mt-4 lg:mt-0">
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-black font-[Oswald] whitespace-nowrap">
+        Great<span className="text-blue-700">Hire</span> Insights - The Future of Work
+      </h3>
+      <p className="mt-3 text-zinc-800 text-base sm:text-lg font-serif">
+        The way people work is evolving, with professionals seizing new opportunities and reshaping industries.
+      </p>
+      <p className="mt-2 text-gray-600 text-sm sm:text-base font-serif">- GreatHire Team</p>
+    </div>
+  </div>
+</div>
 
-              style={{ padding:"0px 0px 10px 10px", width: "450px", height: "450px"}}
-            />
-            <div className="w-full  pl-7">
-              <h3 className="text-4xl font-bold text-gray-800 font-[Oswald]"  style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)" }}>
-                GreatHire Insights - The Future of Work
-              </h3>
-              <p className=" mt-3 mx-auto max-w-2xl text-gray-700 text-xl font-serif ">
-                The way people work is evolving, with professionals seizing new
-                opportunities and reshaping industries.
-              </p>
-              <p className="mt-2 text-gray-500 text-lg font-serif">
-                - GreatHire Team
-              </p>
-            </div>
-          </div>
+{/* ----------------------------------------------------------------------------------------------------------------------------------------------------- */}
 
           {/* Featured Blog Posts */}
-          <div className="mt-16 px-4 sm:px-6 lg:px-8">
+          <div className="mt-9 py-8 px-4 sm:px-6 lg:px-8">
             <h2 className="text-5xl font-bold text-gray-800 text-center mb-6 pb-5 font-[Oswald]">
               Featured Articles
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-9 max-w-5xl mx-auto">
               {blogPosts.map((post, index) => (
                 <div
                   key={index}
@@ -354,7 +547,7 @@ const Blogs = () => {
                   )}
                   <div className="p-4 flex flex-col justify-between flex-grow">
                     <h3 className="text-xl font-semibold font-[Oswald]">{post.title}</h3>
-                    <p className="text-gray-600 text-lg mt-3 font-[Pacifico]">
+                    <p className="text-gray-600 text-lg mt-3 font-['Pacifico']">
                       {post.description}
                     </p>
                   </div>
@@ -368,9 +561,9 @@ const Blogs = () => {
             <div
               key={category.id}
               id={category.id}
-              className="mt-16 scroll-mt-20 bg-indigo-100 py-10 px-4 rounded-xl"
+              className="mt-16 scroll-mt-20 bg-indigo-100 py-10 px-6 sm:px-12 rounded-xl gap-9"
             >
-              <h2 className="text-2xl font-bold mb-4">{category.title}</h2>
+              <h2 className="text-5xl font-bold mb-4 font-[Oswald]">{category.title}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {category.posts.map((post, index) => (
                   <div
@@ -384,18 +577,16 @@ const Blogs = () => {
                         autoplay
                         style={{ width: "100%", height: "200px" }}
                       />
-                    ) :
-                     (
+                    ) : (
                       <img
                         src={post.image}
                         alt={`Blog cover for ${post.title}`}
                         className="w-full h-48 object-cover bg-zinc-800 rounded-t-xl"
                       />
-                    )
-                    }
+                    )}
                     <div className="p-4 flex flex-col justify-between flex-grow">
-                      <h3 className="text-lg font-semibold">{post.title}</h3>
-                      <p className="text-gray-600 text-sm mt-2">
+                      <h3 className="text-xl font-bold font-[Oswald]">{post.title}</h3>
+                      <p className="text-gray-900 text-lg mt-2 font-['Pacifico']">
                         {post.description}
                       </p>
                     </div>
