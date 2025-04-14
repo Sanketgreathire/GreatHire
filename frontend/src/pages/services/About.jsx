@@ -34,9 +34,10 @@ import tataImg from "../../assets/clientLogos/tata.png";
 
 
 // Import User-Team Photos
+import SujithImg from "../../assets/user Photos/G.Sujith.jpeg";
 import NazirImg from "../../assets/user Photos/Nazir.jpeg";
 import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
-import DhanshreeImg from "../../assets/user Photos/Dhanshree.png";
+import DhanshreeImg from "../../assets/user Photos/Dhanshree.jpeg";
 import KOIImg from "../../assets/user Photos/KOI.jpeg";
 import MaheshImg  from "../../assets/user Photos/Mahesh.jpg";
 import MoizImg from "../../assets/user Photos/MoizImg.jpg";
@@ -112,7 +113,7 @@ function App() {
 
         {
           name: "G Sujith",
-          image: Gen15Img,
+          image: SujithImg,
           role: ["ChatGPT Developer"],
           expertise: "ChatGPT, AI, Machine Learning",
           about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
@@ -128,7 +129,7 @@ function App() {
           name: "Dhanshree Parab",
           image: DhanshreeImg,
           role: ["Full Stack Developer"],
-          expertise: "Web Development, DJango, SQL, Python, MongoDB, Machine Learning",
+          expertise: "Web Development, Machine Learning, DJango, MongoDB SQL, Python",
           about: "Skilled with expertise in emerging technologies, crafting high-level websites and applications from core logic to polished interfaces.",
         },
         {
@@ -209,7 +210,7 @@ function App() {
         {
           name: "Tanmai",
           image: tanmaiImg,
-          role: "Hiring Manager & Team Lead",
+          role: "Hiring Manager",
           expertise: "Recruitment, Team Management",
           about: "A cross-functional Team Lead, aligns talent with team dynamics and performance goals.",
         },
