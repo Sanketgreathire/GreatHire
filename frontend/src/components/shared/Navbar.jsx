@@ -479,12 +479,12 @@ const Navbar = () => {
     </div>
 
     {/* Reviews Section */}
-    <div className="w-full mt-20">
+    <div className="w-full ">
       <ReviewsSection />
     </div>
 
     {/* Footer Section */}
-    <div className="w-full mt-20">
+    <div className="w-screen">
       <Footer />
     </div>
   </div>
