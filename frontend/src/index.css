@@ -68,4 +68,20 @@
   }  
 }
 
+/* 
+@keyframes scrollLoop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 
+.animate-loop-scroll {
+  animation: scrollLoop 30s linear infinite;
+}
+
+.pause-on-hover:hover {
+  animation-play-state: paused;
+} */

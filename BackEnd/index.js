@@ -57,7 +57,7 @@ app.use(helmet({
 
 
 // app.get("/api/adzuna/jobs", async (req, res) => {
-//   const response = await fetch("https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id=6de556e8&app_key=f1b3e3c8c3bf2cfd3b6c5a20c7e5432a&page=1&results_per_page=6&job_country_code_or=IN%2CUS");
+//   const response = await fetch("https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=6de556e8&app_key=f1b3e3c8c3bf2cfd3b6c5a20c7e5432a&results_per_page=6");
 //   const data = await response.json();
 //   res.json(data);
 // });
@@ -260,3 +260,5 @@ process.on("SIGINT", async () => {
   console.log("MongoDB Disconnected.");
   process.exit(0);
 });
+
+
