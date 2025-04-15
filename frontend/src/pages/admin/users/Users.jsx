@@ -118,6 +118,40 @@ const Users = () => {
     }
   };
 
+
+  const downloadCSV = () => {
+    const headers = ["Name", "Email", "Contact", "Join Date", "Applications","Resume"];
+    const rows = usersList.map((user) => [
+      user.fullname,
+      user.email,
+      user.phoneNumber,
+      user.joined,
+      user.applicationCount,
+      user.resumeurl,
+    ]);
+  
+    let csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((row) =>
+          row
+            .map((field) => `"${String(field).replace(/"/g, '""')}"`)
+            .join(",")
+        )
+        .join("\n");
+  
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "users_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  
+  
+
   // Function to confirm deletion and proceed with account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
@@ -294,6 +328,12 @@ const Users = () => {
           onCancel={onCancelDelete}
         />
       )}
+      <div className="flex justify-end items-center mb-4">
+        <Button onClick={downloadCSV} className="bg-green-600 text-white">
+          Download CSV
+        </Button>
+      </div>
+
     </>
   );
 };

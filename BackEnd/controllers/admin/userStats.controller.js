@@ -108,9 +108,11 @@ export const getUsersList = async (req, res) => {
           phoneNumber: "$phoneNumber.number",
           joined: "$joinedFormatted",
           applicationCount: 1,
+          resumeurl:"$profile.resume",
         },
       },
     ]);
+    
 
     return res.status(200).json({
       success: true,
