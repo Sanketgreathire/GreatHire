@@ -97,7 +97,7 @@ const Signup = () => {
        <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300">
 
         {/* Large Screen Left Side */}
-        <div className="relative h-screen w-2/3 hidden xl:flex items-center justify-center">
+        <div className="relative h-screen w-2/3 hidden xl:flex items-center justify-center ">
         <div className="text-center p-10 rounded-lg">
          <h1 className="font-bold text-3xl text-gray-900 mb-6">
           Follow These <span className="text-blue-600">Simple Steps</span>

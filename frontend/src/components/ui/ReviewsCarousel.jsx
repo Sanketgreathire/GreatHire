@@ -93,7 +93,7 @@ const ReviewsCarousel = ({ reviews, title }) => {
 export default function ReviewsSection() {
   return (
     <div className="py-12 overflow-x-hidden w-full"> {/* Prevent page horizontal scrolling */}
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="w-full px-0 mx-0">
         <ReviewsCarousel reviews={clientReviews} title={<span className="text-blue-800 text-xl font-semibold">Our Client & Recruiter Reviews</span>}
         />
         <ReviewsCarousel reviews={candidateReviews} title={<span className="text-blue-800 text-xl font-semibold">Our Candidate & Employee Reviews</span>}
