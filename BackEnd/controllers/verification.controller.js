@@ -158,7 +158,7 @@ export const sendVerificationStatus = async (req, res) => {
         <span class="great">Great</span><span class="hire">Hire</span>
       </div>
       <div class="message">
-        <p>Dear ${company.companyName},</p>
+        <p>Team  ${company.companyName},</p>
         <p>Greetings from <strong><span class="great">Great</span><span class="hire">Hire</span></strong>!</p>
         <p>
           We hope you are doing well. We are writing to inform you that the verification status of your company has been updated to: 
@@ -173,7 +173,7 @@ export const sendVerificationStatus = async (req, res) => {
       </div>
       <div class="footer">
         <p>Warm regards,</p>
-        <p>The <span class="great">Great</span><span class="hire">Hire</span> Team</p>
+        <p><span class="great">Great</span><span class="hire">Hire</span>Team</p>
       </div>
     </div>
   </body>

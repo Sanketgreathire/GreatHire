@@ -1,5 +1,6 @@
 import { Company } from "../../models/company.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
+import nodemailer from "nodemailer";
 
 // returning total number of recruiter, total active recruiters, total deactive recruiters
 export const getRecrutierStats = async (req, res) => {
@@ -243,3 +244,77 @@ export const getRecruiter = async (req, res) => {
     });
   }
 };
+
+// Controller to send email reply to recruiter 
+export const sendMessage = async (req, res) => {
+  const { recruiterId, message } = req.body;
+  //console.log(req.body);
+
+  try {
+    let email = "";
+    let name = "";
+    let subject = "Reply from GreatHire Support";
+
+    
+
+    const recruiter = await Recruiter.findById(recruiterId);
+    if (!recruiter) return res.status(404).json({ success: false, message: "Recruiter not found" });
+    email = recruiter.emailId.email;
+    name = recruiter.fullname;
+    // You can extend this with saving messages in DB or sending email
+    console.log(`Message to ${email} ${name}: ${message}`);
+
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+            <p style="color: #555;">Message from GreatHire Support</p>
+          </div>
+
+          <h3 style="color: #333;">Hello ${name},</h3>
+          <p style="color: #555;">
+            Thank you for reaching out to GreatHire. Please find below our reply:
+          </p>
+          
+          <blockquote style="background-color: #f9f9f9; padding: 10px; border-left: 4px solid #1D4ED8; margin: 20px 0;">
+            ${message}
+          </blockquote>
+          
+          <p style="color: #555;">
+            If you have further questions, feel free to reach out.
+          </p>
+          
+          <p style="color: #555;">
+            Best Regards,<br/>GreatHire Support Team
+          </p>
+
+          <div style="margin-top: 20px; text-align: center;">
+            <p style="font-size: 14px; color: #aaa;">This is an automated email, please do not reply.</p>
+            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+          </div>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ success: true, message: "Reply sent successfully via email." });
+  } catch (error) {
+    console.error("Error sending reply:", error);
+    return res.status(500).json({ success: false, message: "Server error while sending email." });
+  }
+};
+

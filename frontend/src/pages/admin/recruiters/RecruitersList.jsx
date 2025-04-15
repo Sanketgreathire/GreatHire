@@ -16,6 +16,7 @@ import {
   Briefcase,
   UserCheck,
   XCircle,
+  MessageSquare,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
@@ -75,6 +76,14 @@ const RecruitersList = () => {
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
 
   const [blocking, setBlocking] = useState({});  //for blocking recruiter
+
+  //send message to the Recruiter
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [selectedMessageRecruiter, setSelectedMessageRecruiter] = useState(null);
+  const [sendingMessage, setSendingMessage] = useState(false);
+
+
 
   const stats = [
     {
@@ -195,6 +204,40 @@ const RecruitersList = () => {
       setBlocking((prev) => ({ ...prev, [recruiterId]: false }));
     }
   };
+
+  const sendMessageToRecruiter = async () => {
+    try {
+      if (!messageText.trim()) {
+        toast.error("Message cannot be empty");
+        return;
+      }
+
+      setSendingMessage(true); // Start loading
+      // Replace with your actual API
+      const response = await axios.post(
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-message`,
+        {
+          recruiterId: selectedMessageRecruiter._id,
+          message: messageText,
+        },
+        { withCredentials: true }
+      );
+  
+      if (response.data.success) {
+        toast.success("Message sent successfully");
+        setShowMessageModal(false);
+        setMessageText("");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (err) {
+      console.error("Error sending message:", err);
+      toast.error("Failed to send message. Try again later.");
+    } finally {
+    setSendingMessage(false); // End loading
+    }
+  };
+  
   
 
   const deleteRecruiter = async (
@@ -423,6 +466,14 @@ const RecruitersList = () => {
                       }}
                     />
                   )}
+                  <MessageSquare
+                    className="text-blue-600 cursor-pointer"
+                    size={20}
+                    onClick={() => {
+                      setSelectedMessageRecruiter(recruiter);
+                      setShowMessageModal(true);
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -470,6 +521,33 @@ const RecruitersList = () => {
           onCancel={onCancelDelete}
         />
       )}
+
+      {showMessageModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="bg-white p-6 rounded-lg w-[90%] max-w-md shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">
+              Message to {selectedMessageRecruiter?.fullname}
+            </h2>
+            <textarea
+              className="w-full border rounded-lg p-2 h-32 resize-none"
+              placeholder="Type your message here..."
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+            ></textarea>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setShowMessageModal(false)}>
+                Cancel
+              </Button>
+              {/* <Button onClick={sendMessageToRecruiter}>Send</Button> */}
+              <Button onClick={sendMessageToRecruiter} disabled={sendingMessage}>
+                {sendingMessage ? "Sending..." : "Send"}
+              </Button>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 };
