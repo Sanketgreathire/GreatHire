@@ -437,7 +437,7 @@ const Navbar = () => {
 
       {/* Signup Modal */}
       {isSignupModalOpen && (
-  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start p-6 space-y-6 w-full h-screen overflow-y-auto">
+  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start space-y-6 w-full h-screen overflow-y-auto">
     <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
     
     <div className="w-full max-w-sm space-y-4">
@@ -484,17 +484,13 @@ const Navbar = () => {
     </div>
 
     {/* Footer Section */}
-    <div className="w-screen">
-      <Footer />
-    </div>
+    <footer className="w-full border-t-2 border-gray-300 ">
+    <Footer />
+    </footer>
   </div>
 )}
 
-
-
-
-      {/* Spacer for fixed navbar */}
-      <div className="h-16" />
+     
     </>
   );
 };
