@@ -59,7 +59,7 @@ const Signup = () => {
         });
         dispatch(setUser(response.data.user)); // Set user in redux store
         // Redirect to login page
-        navigate("/recruiter/dashboard/home");
+        navigate("/recruiter/dashboard/create-company");
       }
       toast.success(response.data.message);
     } catch (err) {
