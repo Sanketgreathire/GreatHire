@@ -185,7 +185,7 @@
                 style={{ listStyleType: "circle" }}
               >
                 <span>{job.jobDetails?.benefits[0]},</span>
-                <span>{job.jobDetails?.responsibilities[0]},</span>
+                <span>{job.jobDetails?.responsibilities[0]}</span>
                 <span>{job.jobDetails?.qualifications[0]}</span>
               </div>
   
