@@ -159,7 +159,7 @@ function getSectionContent(id) {
             • Your data is collected to enhance user experience, optimize job matching, and support recruiters in hiring efficiently.<br></br>
             • We employ robust technical safeguards and strict access controls to ensure the security of your personal information.<br></br>
             • GreatHire does not sell or rent user data to third parties. Your trust remains our top priority.<br></br>
-            • For inquiries or concerns, please contact us at <a href="privacy@greathire.com" className="text-blue-600 hover:text-blue-800">privacy@greathire.com</a>.
+            • For inquiries or concerns, please contact us at <a href="hr@babde.tech" className="text-blue-600 hover:text-blue-800">hr@babde.tech</a>.
           </p>
         </div>
       );
@@ -463,10 +463,10 @@ function getSectionContent(id) {
         For any questions, concerns, or feedback regarding GreatHire’s Terms, Privacy Policy, or platform usage, please contact us:<br></br>
 
         <br></br>
-        Phone: +91 9999999999 <br></br> 
+        Phone: +91 8328192093 <br></br> 
         (Mon–Fri, 9 AM – 6 PM, local time)
-        <a href=" support@greathire.com " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Email : </b>support@greathire.com</a>
-        <a href=" privacy@greathire.com " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Privacy inquiries : </b> privacy@greathire.com     </a>
+        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Email : </b>hr@babde.tech</a>
+        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Privacy inquiries : </b> hr@babde.tech     </a>
         <br></br>
 
         Additional Information:<br></br>
@@ -481,7 +481,7 @@ function getSectionContent(id) {
       <br></br>
         Visit us: <br></br>
         <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2"><b>Website : </b> https://greathire.in</a>
-        <a href="mailto:hr@greathire.in" className="text-blue-600 hover:text-blue-800"><b>Email :</b> hr@greathire.in</a>
+        <a href="mailto:hr@babde.tech" className="text-blue-600 hover:text-blue-800"><b>Email :</b> hr@babde.tech</a>
 
       </p>;
     default:
