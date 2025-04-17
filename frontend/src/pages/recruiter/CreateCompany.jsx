@@ -311,7 +311,7 @@ const CreateCompany = () => {
                 </h2>
                 <div className="mt-4">
                   <label className="block text-gray-600">
-                    Corporate Identification Number.
+                    CIN/EAN
                   </label>
                   <input
                     type="text"
