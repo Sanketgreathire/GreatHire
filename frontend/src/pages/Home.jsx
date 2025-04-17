@@ -55,10 +55,10 @@ const Home = () => {
         />
         <LatestJobs /> {/* Display latest job postings */}
       </div>
-             <section className="my-12 px-4 md:px-8">
+             {/*<section className="my-12 px-4 md:px-8">
                         <h2 className="text-2xl font-bold mb-6">Latest Jobs from Around the Web</h2>
-            {/* <JobsFeed /> */}
-            </section>
+             <JobsFeed />
+            </section>*/}
       <Footer /> {/* Display the footer */}
     </>
   );
