@@ -119,40 +119,58 @@ const Users = () => {
   }
 };
 
+const [selectedUsers, setSelectedUsers] = useState([])
+
 
 const downloadCSV = () => {
-  const headers = ["Name", "Email", "Contact", "Join Date", "Applications","Resume"];
-  const rows = usersList.map((user) => [
+  const headers = ["Name", "Email", "Contact", "Join Date", "Applications", "Resume"];
+
+  // Filter selected users
+  const exportUsers = selectedUsers.length > 0
+    ? usersList.filter(user => selectedUsers.includes(user._id))
+    : filteredUsers;
+
+  const rows = exportUsers.map((user) => [
     user.fullname,
     user.email,
     user.phoneNumber,
-      user.joined,
-      user.applicationCount,
-      user.resumeurl,
-    ]);
-    
-    let csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers, ...rows]
+    user.joined,
+    user.applicationCount,
+    user.resumeurl,
+  ]);
+
+  let csvContent =
+    "data:text/csv;charset=utf-8," +
+    [headers, ...rows]
       .map((row) =>
-          row
-      .map((field) => `"${String(field).replace(/"/g, '""')}"`)
-      .join(",")
-    )
-    .join("\n");
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "users_data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-  
-  
-  
-  
+        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
+      )
+      .join("\n");
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "users_data.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const toggleSelectAll = () => {
+  if (selectedUsers.length === paginatedUsers.length) {
+    setSelectedUsers([]);
+  } else {
+    const allUserIds = paginatedUsers.map((user) => user._id);
+    setSelectedUsers(allUserIds);
+  }
+};
+const toggleUserSelection = (userId) => {
+  setSelectedUsers((prevSelected) =>
+    prevSelected.includes(userId)
+      ? prevSelected.filter((id) => id !== userId)
+      : [...prevSelected, userId]
+  );
+};
   // Function to confirm deletion and proceed with account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
@@ -255,7 +273,16 @@ const downloadCSV = () => {
         </div>
         <Table className="text-center">
           <TableHeader>
+
             <TableRow>
+
+            <TableHead>
+              <input
+                type="checkbox"
+                checked={selectedUsers.length === paginatedUsers.length}
+                onChange={toggleSelectAll}
+              />
+            </TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
@@ -267,8 +294,17 @@ const downloadCSV = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
+
             {paginatedUsers?.map((user) => (
+
               <TableRow key={user._id}>
+          <TableHead>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.includes(user._id)}
+                    onChange={() => toggleUserSelection(user._id)}
+                    />
+                    </TableHead>
                 <TableCell>{user.fullname}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.phoneNumber}</TableCell>
