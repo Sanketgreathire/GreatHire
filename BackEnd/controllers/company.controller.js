@@ -352,13 +352,12 @@ export const getCandidateData = async (req, res) => {
     const { jobTitle, experience, salaryBudget, companyId } = req.query;
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
     }
 
-    // Securely Validate jobTitle
     if (
       typeof jobTitle !== "string" ||
       jobTitle.trim().length === 0 ||
@@ -369,22 +368,27 @@ export const getCandidateData = async (req, res) => {
         .json({ message: "Invalid job title", success: false });
     }
 
-    // Safe escape function (Prevents .replace() on non-strings)
-    const escapeRegex = (str) => {
-      if (typeof str !== "string") return "";
-      return str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&");
-    };
+    const escapeRegex = (str) =>
+      typeof str === "string" ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&") : "";
 
     const sanitizedJobTitle = escapeRegex(jobTitle.trim());
 
-    const candidates = await User.find({
+    const query = {
       "profile.experience.jobProfile": {
         $regex: new RegExp(`^${sanitizedJobTitle}$`, "i"),
-      }, // Case-insensitive match
-      "profile.experience.duration": experience,
-      "profile.expectedCTC": salaryBudget,
-      "profile.resume": { $exists: true, $ne: "" }, // Ensure resume exists
-    }).select({
+      },
+      "profile.resume": { $exists: true, $ne: "" },
+    };
+
+    if (experience) {
+      query["profile.experience.duration"] = experience;
+    }
+    console.log(salaryBudget);
+    if (salaryBudget) {
+      query["profile.expectedCTC"] = salaryBudget;
+    }
+
+    const candidates = await User.find(query).select({
       fullname: 1,
       "profile.experience.jobProfile": 1,
       "profile.skills": 1,

@@ -41,13 +41,25 @@ const CandidateList = () => {
   const fetchCandidates = async () => {
     try {
       setIsLoading(true);
+  
+      // Convert filters to appropriate types or remove empty ones
+      const sanitizedFilters = {
+        companyId: company?._id,
+        ...(filters.jobTitle && { jobTitle: filters.jobTitle }),
+        ...(filters.experience && { experience: Number(filters.experience) }),
+        ...(filters.salaryBudget && {
+          salaryBudget: Number(filters.salaryBudget),
+        }),
+      };
+  
       const response = await axios.get(
         `${COMPANY_API_END_POINT}/candidate-list`,
         {
-          params: { ...filters, companyId: company?._id }, // Sending filters and company ID as parameters
+          params: sanitizedFilters,
           withCredentials: true,
         }
       );
+  
       if (response.data.success) {
         if (response.data.candidates.length === 0)
           setMessage("No Candidate found");
@@ -56,10 +68,14 @@ const CandidateList = () => {
       }
     } catch (error) {
       console.error("Error fetching candidates:", error);
+      toast.error(
+        error.response?.data?.message || "Error fetching candidate list"
+      );
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   // Function to decrease credits when a recruiter views a candidate's resume
   const handleViewCandidate = async (candidate) => {
@@ -122,7 +138,7 @@ const CandidateList = () => {
 
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mt-4 mb-4 justify-evenly">
-            <Combobox
+            {/*<Combobox
               value={filters.jobTitle}
               onChange={(value) => setFilters({ ...filters, jobTitle: value })}
               className="w-full md:w-60"
@@ -147,7 +163,16 @@ const CandidateList = () => {
                   ))}
                 </ComboboxOptions>
               </div>
-            </Combobox>
+            </Combobox>*/}
+            <input
+              type="text"
+              placeholder="Select Job Title"
+              className="p-2 border rounded-md w-full md:w-60"
+              value={filters.jobTitle}
+              onChange={(e) =>
+                setFilters({ ...filters, jobTitle:e.target.value })
+              }
+            />
             <input
               type="text"
               placeholder="Min Experience (0, 1, 2 years)"
@@ -158,7 +183,7 @@ const CandidateList = () => {
               }
             />
 
-            <input
+            {/* <input
               type="text"
               placeholder="Expected CTC (₹) eg.. 0, 50000"
               className="p-2 border rounded-md w-full md:w-60"
@@ -166,7 +191,7 @@ const CandidateList = () => {
               onChange={(e) =>
                 setFilters({ ...filters, salaryBudget: e.target.value })
               }
-            />
+            /> */}
 
             <Button
               onClick={fetchCandidates}
