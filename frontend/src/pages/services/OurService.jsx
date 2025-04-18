@@ -26,7 +26,7 @@ const OurService = () => {
       description:
         "Enhance your online presence and connect with your audience effectively.",
       icon: "📈",
-      url: "/contact",
+      url: "/Blogs",
     },
     {
       title: "Staffing",
