@@ -134,10 +134,10 @@ const ContactSection = () => {
                       <br />
                       Email:{" "}
                       <a
-                        href="mailto:Hr@greathire.in"
+                        href="mailto:hr@babde.tech"
                         className="text-blue-600 hover:underline"
                       >
-                        Hr@greathire.in
+                        hr@babde.tech
                       </a>
                     </p>
                   </div>
