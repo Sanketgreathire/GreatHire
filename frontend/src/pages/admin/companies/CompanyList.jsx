@@ -300,12 +300,12 @@ const CompanyList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Company Email</TableHead>
-              <TableHead>Company Contact</TableHead>
-              <TableHead>Admin Email</TableHead>
-              <TableHead>Company Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Email</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Contact</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Admin Email</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Status</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

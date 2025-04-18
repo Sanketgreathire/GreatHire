@@ -109,6 +109,8 @@ export const getUsersList = async (req, res) => {
           joined: "$joinedFormatted",
           applicationCount: 1,
           resumeurl:"$profile.resume",
+          jobRole: "$profile.experience.jobProfile",
+          duration: "$profile.experience.duration"
         },
       },
     ]);

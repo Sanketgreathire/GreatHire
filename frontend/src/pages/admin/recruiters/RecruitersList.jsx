@@ -377,13 +377,13 @@ const RecruitersList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Recruiter Name</TableHead>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Recruiter Contact</TableHead>
-              <TableHead>Recruiter Position</TableHead>
-              <TableHead>Posted Jobs</TableHead>
-              <TableHead>Recruiter Status</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Name</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Contact</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Position</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Posted Jobs</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Status</TableHead>
+              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Details</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
