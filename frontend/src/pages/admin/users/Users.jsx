@@ -268,7 +268,7 @@ const toggleUserSelection = (userId) => {
             placeholder="Search users by name, email, contact, job role, experience"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-1/3"
+            className="w-1/6"
           />
         </div>
         <Table className="text-center">
@@ -283,7 +283,7 @@ const toggleUserSelection = (userId) => {
                 onChange={toggleSelectAll}
               />
             </TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
+              <TableHead className="w-fit text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
               <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
