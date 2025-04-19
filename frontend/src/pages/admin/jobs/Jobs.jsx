@@ -219,7 +219,7 @@ const Jobs = () => {
           >
             <div>
               <h3 className="text-lg font-semibold">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">{stat.count}</p>
+              <p className="text-2xl font-bold text-left">{stat.count}</p>
             </div>
             {stat.icon}
           </Card>

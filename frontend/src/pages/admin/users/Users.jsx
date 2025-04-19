@@ -236,7 +236,10 @@ const toggleUserSelection = (userId) => {
     page * itemsPerPage
   );
 
-
+  // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  // const visiblePages = 20;
+  // const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
+  // const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
   return (
     <>
@@ -250,7 +253,7 @@ const toggleUserSelection = (userId) => {
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">{stat.count}</p>
+              <p className="text-2xl font-bold text-left">{stat.count}</p>
               {/* <span className="text-sm text-gray-500">
                 {stat.change} from last month
                 </span> */}
@@ -262,16 +265,19 @@ const toggleUserSelection = (userId) => {
         ))}
       </div>
       {/* -------------------------------------------------------------------------------------- */}
-      <div className=" m-4 p-4 bg-white shadow rounded-lg">
+      <div className="w-full overflow-x-auto px-4 m-4">
+  <div className="min-w-[1500px] bg-white shadow rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <Input
             placeholder="Search users by name, email, contact, job role, experience"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-1/6"
+            className="w-1/3"
           />
         </div>
-        <Table className="text-center">
+        <div className="overflow-x-auto w-full">
+
+        <Table className="table-auto min-w-[1500px] w-full text-center border border-gray-300 border-collapse">
           <TableHeader>
 
             <TableRow>
@@ -281,22 +287,22 @@ const toggleUserSelection = (userId) => {
                 type="checkbox"
                 checked={selectedUsers.length === paginatedUsers.length}
                 onChange={toggleSelectAll}
-              />
+                />
             </TableHead>
-              <TableHead className="w-fit text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
-              <TableHead className="text-center text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
+              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
 
             {paginatedUsers?.map((user) => (
-
+              
               <TableRow key={user._id}>
           <TableHead>
                   <input
@@ -305,30 +311,30 @@ const toggleUserSelection = (userId) => {
                     onChange={() => toggleUserSelection(user._id)}
                     />
                     </TableHead>
-                <TableCell>{user.fullname}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.phoneNumber}</TableCell>
-                <TableCell>{user.joined}</TableCell>
-                <TableCell>{user.applicationCount}</TableCell>
-                <TableCell>{user.jobRole|| "N/A"}</TableCell>
-                <TableCell>{user.duration|| "N/A"}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.fullname}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.email}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.phoneNumber}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.joined}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.applicationCount}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole|| "N/A"}</TableCell>
+                <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration|| "N/A"}</TableCell>
 
                 <TableCell className="flex gap-4 justify-center">
                   <Eye
                     className="text-blue-500 cursor-pointer"
                     size={16}
                     onClick={() => navigate(`/admin/users/details/${user._id}`)}
-                  />
+                    />
                   {dloading[user?.email] ? (
                     "deleting..."
                   ) : (
                     <Trash
-                      className="text-red-500 cursor-pointer"
-                      size={16}
-                      onClick={() => {
-                        setUserEmail(user.email);
-                        setShowDeleteModal(true);
-                      }}
+                    className="text-red-500 cursor-pointer"
+                    size={16}
+                    onClick={() => {
+                      setUserEmail(user.email);
+                      setShowDeleteModal(true);
+                    }}
                     />
                   )}
                 </TableCell>
@@ -336,28 +342,33 @@ const toggleUserSelection = (userId) => {
             ))}
           </TableBody>
         </Table>
-        <div className="flex justify-between items-center mt-4">
-          <span>
-            Showing{" "}
-            {Math.min((page - 1) * itemsPerPage + 1, filteredUsers.length)} to{" "}
-            {Math.min(page * itemsPerPage, filteredUsers.length)} of{" "}
-            {filteredUsers.length} results
-          </span>
-          <div className="flex gap-2">
-            <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            </div>
+            </div>
+        <div className="flex gap-2">
+        <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
               Previous
             </Button>
-            {[...Array(Math.ceil(filteredUsers.length / itemsPerPage))].map(
-              (_, i) => (
-                <Button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={page === i + 1 ? "bg-blue-700 text-white" : ""}
-                >
-                  {i + 1}
-                </Button>
-              )
-            )}
+
+            {(() => {
+              const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+              const visiblePages = 20;
+              const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
+              const endPage = Math.min(startPage + visiblePages - 1, totalPages);
+
+              return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                const pageNumber = startPage + i;
+                return (
+                  <Button
+                    key={pageNumber}
+                    onClick={() => setPage(pageNumber)}
+                    className={page === pageNumber ? "bg-blue-700 text-white" : ""}
+                  >
+                    {pageNumber}
+                  </Button>
+                );
+              });
+            })()}
+
             <Button
               disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
               onClick={() => setPage(page + 1)}
@@ -365,8 +376,9 @@ const toggleUserSelection = (userId) => {
               Next
             </Button>
           </div>
+
         </div>
-      </div>
+      
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
