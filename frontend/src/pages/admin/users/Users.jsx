@@ -36,7 +36,7 @@ const Users = () => {
 
   // State for pagination
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
   
   // State to store the list of users
   const [usersList, setUsersList] = useState([]);
