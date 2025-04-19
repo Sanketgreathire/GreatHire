@@ -261,11 +261,11 @@ const CompanyList = () => {
         {stats.map((stat, index) => (
           <Card
             key={index}
-            className="p-4 flex items-center justify-between bg-white shadow rounded-xl"
+            className="p-4 flex items-center justify-between bg-white shadow rounded-xl "
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">{stat.count}</p>
+              <p className="text-2xl font-bold text-left">{stat.count}</p>
               {/* <span className="text-sm text-gray-500">{stat.change} from last month</span> */}
             </div>
             <div className={`p-2 rounded-full ${stat.bg} ${stat.color}`}>
@@ -300,12 +300,12 @@ const CompanyList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Email</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Contact</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Admin Email</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Status</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Company Email</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Company Contact</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Admin Email</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Company Status</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

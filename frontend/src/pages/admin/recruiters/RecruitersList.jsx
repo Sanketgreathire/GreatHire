@@ -342,7 +342,7 @@ const RecruitersList = () => {
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">{stat.count}</p>
+              <p className="text-2xl font-bold text-left">{stat.count}</p>
               {/* <span className="text-sm text-gray-500">{stat.change} from last month</span> */}
             </div>
             <div className={`p-2 rounded-full ${stat.bg} ${stat.color}`}>
@@ -377,13 +377,13 @@ const RecruitersList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Name</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Contact</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Position</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Posted Jobs</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Status</TableHead>
-              <TableHead className=" text-2xl text-blue-700 font-bold font-[Oswald]">Details</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Name</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Company Name</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Contact</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Position</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Posted Jobs</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Status</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Details</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
