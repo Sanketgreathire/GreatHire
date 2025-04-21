@@ -235,7 +235,7 @@ const CandidateList = () => {
                 <p className="text-4xl text-gray-400">{message}</p>
               </div>
             ) : (
-              candidates.map((candidate) => (
+              currentCandidates.map((candidate) => (
                 <div
                   key={candidate._id}
                   className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg shadow-md bg-white gap-4"
