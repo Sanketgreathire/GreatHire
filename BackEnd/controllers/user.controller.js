@@ -750,7 +750,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // If an admin deletes another user's account, just send a success response
-    return res.status(200).json({
+   return res.status(200).json({
       message: "User account deleted successfully.",
       success: true,
     });

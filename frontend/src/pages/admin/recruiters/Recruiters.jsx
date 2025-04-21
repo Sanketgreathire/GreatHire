@@ -1,4 +1,4 @@
-// Import necessary modules and dependencies
+ // Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,7 @@ const Recruiters = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Number of items displayed per page
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   // Hook for navigation within the application
   const navigate = useNavigate();
