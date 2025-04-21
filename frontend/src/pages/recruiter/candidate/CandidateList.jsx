@@ -253,7 +253,7 @@ const CandidateList = () => {
                       />
                     </Avatar>
                     <div className="text-center md:w-60">
-                      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                      <h1 className="text-1xl md:text-1xl font-bold text-gray-800">
                         {candidate?.fullname || "User Name"}
                       </h1>
                       <p className="text-gray-600 mt-1">
