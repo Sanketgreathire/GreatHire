@@ -16,7 +16,7 @@ const HeroSection = ({ searchInfo }) => {
   };
 
   return (
-    <div className="text-center px-4 sm:px-6 lg:px-12">
+    <div className="py-3 text-center px-4 sm:px-6 lg:px-12">
       <div className="flex flex-col gap-5 my-10">
         <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce ">
           No. 1 Job Hunt Website
