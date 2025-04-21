@@ -78,7 +78,7 @@ const OurService = () => {
       <div className="bg-gray-50">
         {/* Hero Section */}
         <header className="bg-gradient-to-tr from-indigo-400 to-purple-500 text-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-5">
             <h1 className="text-3xl md:text-5xl font-bold">
               Our Services Tailored for Your Success
             </h1>

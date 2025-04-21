@@ -456,7 +456,8 @@ const Blogs = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex flex-col w-screen">
+        <div className="min-h-screen flex flex-col w-screen pt-10">
+      
         <div className="py-2 text-center flex-grow w-screen">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>

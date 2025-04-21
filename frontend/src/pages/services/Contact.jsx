@@ -83,7 +83,8 @@ const ContactSection = () => {
     <>
       <Navbar />
       <div className="flex flex-col min-h-screen">
-        <section className="bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 py-16 px-6 flex-1">
+          <section className="bg-gradient-to-r from-blue-100 via-indigo-100 to-purple-100 pt-32 pb-16 px-6 flex-1">
+
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="bg-white p-8 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300">
               <h2 className="text-4xl font-semibold mb-6 text-indigo-700">
