@@ -354,6 +354,8 @@ export const updateProfile = async (req, res) => {
       city,
       state,
       country,
+      gender,
+      qualification,
       experience,
       jobProfile,
       companyName,
@@ -363,7 +365,7 @@ export const updateProfile = async (req, res) => {
       bio,
       skills,
     } = req.body;
-
+    console.log(req.body);
     const { profilePhoto, resume } = req.files; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
@@ -435,6 +437,10 @@ export const updateProfile = async (req, res) => {
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
+
+     // Updating gender and qualification
+     if (gender && user.profile.gender !== gender) user.profile.gender = gender;
+     if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
 
     if (email && user.emailId.email !== email) {
       // Check if the email already exists in the database

@@ -400,12 +400,12 @@ export const getCandidateData = async (req, res) => {
 
     // Gender (Assuming you have added gender in schema under profile or user directly)
     if (gender) {
-      query["gender"] = new RegExp(`^${escapeRegex(gender)}$`, "i");
+      query["profile.gender"] = new RegExp(`^${escapeRegex(gender)}$`, "i");
     }
 
     // Qualification (Assuming stored in profile.bio or new field you add)
     if (qualification) {
-      query["profile.bio"] = new RegExp(escapeRegex(qualification), "i");
+      query["profile.qualification"] = new RegExp(escapeRegex(qualification), "i");
     }
 
     // Last Active (uses `updatedAt` field from timestamps)

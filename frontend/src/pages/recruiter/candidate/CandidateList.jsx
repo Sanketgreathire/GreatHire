@@ -162,7 +162,7 @@ const CandidateList = () => {
                   name: "qualification",
                   type: "select",
                   options: [
-                    "", "B.Tech", "M.Tech", "MBA", "B.Sc", "M.Sc", "B.Com", "M.Com", "Diploma","12'th Pass","10'th pass", "Others"
+                    "", "Post Graduation","Under Graduation","B.Tech", "M.Tech", "MBA", "MCA","B.Sc", "M.Sc", "B.Com", "M.Com", "Diploma","12th Pass","10th pass", "Others"
                   ]
                 },
                 { label: "Last Active", name: "lastActive", type: "text", placeholder: "YYYY-MM-DD" },
