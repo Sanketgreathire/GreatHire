@@ -49,7 +49,7 @@ const RecruitersList = () => {
   const [page, setPage] = useState(1);
 
   // Number of items displayed per page
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   // Hook for navigation within the application
   const navigate = useNavigate();
