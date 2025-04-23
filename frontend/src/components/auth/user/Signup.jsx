@@ -25,6 +25,9 @@ import { useDispatch } from "react-redux";
 // Redux action to set user data
 import { setUser } from "@/redux/authSlice"; 
 
+//user video
+import user_video from "../../../assets/videos/user_video.mp4";
+
 const Signup = () => {
   // State to manage loading status while making API requests
   const [loading, setLoading] = useState(false);
@@ -115,6 +118,13 @@ const Signup = () => {
           </li>
           ))}
         </ul>
+        <video
+          src={user_video}
+          autoPlay
+          loop
+          controls
+          className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
+        />
        </div>
      </div>
 

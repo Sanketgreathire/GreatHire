@@ -13,6 +13,8 @@ import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 
+import recruiter_video from "../../../assets/videos/recruiter_video.mp4";
+
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ const Signup = () => {
 
   return (
     <>
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Navbar />
       <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300">
 
@@ -91,26 +93,32 @@ const Signup = () => {
           
           {/* Centered Content */}
         <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4 pt-10">
-          <div className="mb-32 text-gray-900">
-          <h2 className="text-2xl font-bold mb-2">Follow These <span className="text-blue-600">Simple Steps :</span>
-          </h2>
-                <ul className="text-lg md:text-lg font-semibold text-gray-900 space-y-2">
-                  {[
+          <div className="mt-20 text-gray-900">
+            <h2 className="text-4xl font-bold mb-2">Follow These <span className="text-blue-600">Simple Steps :</span></h2>
+              <ul className="text-lg md:text-lg font-semibold text-gray-900 space-y-2">
+                {[
                     "Create An Account",
                     "Create Your Company",
                     "Post Jobs",
-                  ].map((step, index) => (
-                    <li key={index} className="flex items-center gap-2 bg-white shadow-md px-4 py-2 rounded-lg">
-                      <span className="text-blue-600 font-semibold text-lg">
-                        {index + 1}.
-                      </span>
-                      {step}
-                    </li>
+                 ].map((step, index) => (
+                <li key={index} className="flex items-center gap-2 bg-white shadow-md px-4 py-2 rounded-lg">
+                  <span className="text-blue-600 font-semibold text-lg">
+                    {index + 1}.
+                  </span>
+                  {step}
+                </li>
                   ))}
-                </ul>
-              </div>
+              </ul>
+              <video
+              src={recruiter_video}
+              autoPlay
+              loop
+              controls
+              className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
+            />
+          </div>
 
-              <div className="relative top-[-60px] flex flex-col items-center text-center space-y-4 px-4">
+              <div className=" flex flex-col items-center text-center space-y-4 px-4">
                 <h1 className="font-semibold text-xl md:text-2xl text-gray-900">
                   Powerful recruiting tools to find your{" "}
                   <span className="text-gray-800">Perfect Team!</span>
