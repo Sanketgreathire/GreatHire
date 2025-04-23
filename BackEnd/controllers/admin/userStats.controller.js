@@ -92,6 +92,13 @@ export const getUsersList = async (req, res) => {
         },
       },
       {
+      $addFields: {
+        lastActiveAt: {
+          $ifNull: ["$lastActiveAt", new Date("2025-01-01T00:00:00.000Z")]
+        }
+      }
+    },
+      {
         // Sort by createdAt descending (latest first)
         $sort: { createdAt: -1 },
       },
@@ -110,7 +117,8 @@ export const getUsersList = async (req, res) => {
           applicationCount: 1,
           resumeurl:"$profile.resume",
           jobRole: "$profile.experience.jobProfile",
-          duration: "$profile.experience.duration"
+          duration: "$profile.experience.duration",
+          lastActiveAt: 1,
         },
       },
     ]);

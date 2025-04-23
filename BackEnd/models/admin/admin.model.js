@@ -29,6 +29,10 @@ const adminSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    lastActiveAt: {
+      type: Date,
+      default: Date.now,
+    },
     role: {
       type: String,
       default: "admin",

@@ -61,6 +61,8 @@ export const register = async (req, res) => {
       },
       password: hashedPassword,
     });
+    newUser.lastActiveAt = new Date();
+    await newUser.save();
 
     // Remove sensitive information before sending the response
     const userWithoutPassword = await User.findById(newUser._id).select(
@@ -89,13 +91,13 @@ export const register = async (req, res) => {
         success: true,
         user: userWithoutPassword,
       });
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-};
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  };
 
 //login section...
 export const login = async (req, res) => {
@@ -134,6 +136,9 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+    user.lastActiveAt = new Date();
+    await user.save();
+
     const tokenData = {
       userId: user._id,
     };
