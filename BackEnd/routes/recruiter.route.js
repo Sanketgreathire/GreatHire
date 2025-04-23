@@ -9,6 +9,7 @@ import {
   deleteAccount,
   toggleActive,
   toggleBlock,
+  hasCreatedCompany,
 } from "../controllers/recruiter.contoller.js";
 import { singleUpload } from "../middlewares/multer.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
@@ -30,5 +31,6 @@ router
 router.route("/delete").delete(isAuthenticated, deleteAccount);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);
 router.route("/toggle-block").put(isAuthenticated, toggleBlock);
+router.route("/has-company").get(isAuthenticated, hasCreatedCompany);
 
 export default router;

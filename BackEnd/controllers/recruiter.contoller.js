@@ -731,3 +731,27 @@ export const toggleActive = async (req, res) => {
     });
   }
 };
+
+export const hasCreatedCompany = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+
+    const company = await Company.findOne({ "userId.user": recruiterId });
+   
+
+    if (company) {
+      
+      return res.status(200).json({ companyExists: true });
+    } else {
+      return res.status(200).json({ companyExists: false });
+    }
+  } catch (error) {
+    console.error("Error checking company existence:", error);
+    return res.status(500).json({
+      companyExists: false,
+      message: "Server error",
+    });
+  }
+};
+
+

@@ -184,8 +184,8 @@
                 className=" text-sm text-gray-400 flex flex-col font-semibold"
                 style={{ listStyleType: "circle" }}
               >
-                <span>{job.jobDetails?.benefits[0]},</span>
-                <span>{job.jobDetails?.responsibilities[0]},</span>
+                <span>{job.jobDetails?.benefits[0]}</span>
+                <span>{job.jobDetails?.responsibilities[0]}</span>
                 <span>{job.jobDetails?.qualifications[0]}</span>
               </div>
   

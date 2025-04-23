@@ -61,6 +61,8 @@ export const register = async (req, res) => {
       },
       password: hashedPassword,
     });
+    newUser.lastActiveAt = new Date();
+    await newUser.save();
 
     // Remove sensitive information before sending the response
     const userWithoutPassword = await User.findById(newUser._id).select(
@@ -89,13 +91,13 @@ export const register = async (req, res) => {
         success: true,
         user: userWithoutPassword,
       });
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-};
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  };
 
 //login section...
 export const login = async (req, res) => {
@@ -134,6 +136,9 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+    user.lastActiveAt = new Date();
+    await user.save();
+
     const tokenData = {
       userId: user._id,
     };
@@ -354,6 +359,8 @@ export const updateProfile = async (req, res) => {
       city,
       state,
       country,
+      gender,
+      qualification,
       experience,
       jobProfile,
       companyName,
@@ -363,7 +370,7 @@ export const updateProfile = async (req, res) => {
       bio,
       skills,
     } = req.body;
-
+    console.log(req.body);
     const { profilePhoto, resume } = req.files; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
@@ -435,6 +442,10 @@ export const updateProfile = async (req, res) => {
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
+
+     // Updating gender and qualification
+     if (gender && user.profile.gender !== gender) user.profile.gender = gender;
+     if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
 
     if (email && user.emailId.email !== email) {
       // Check if the email already exists in the database
@@ -750,7 +761,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // If an admin deletes another user's account, just send a success response
-    return res.status(200).json({
+   return res.status(200).json({
       message: "User account deleted successfully.",
       success: true,
     });

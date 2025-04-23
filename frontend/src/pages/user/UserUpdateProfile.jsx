@@ -43,6 +43,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
     phoneNumber: user?.phoneNumber.number || "",
+    
     bio: user?.profile?.bio || "",
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
@@ -57,6 +58,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     country: user?.address?.country || "",
     profilePhoto: user?.profile?.profilePhoto || "",
     resumeOriginalName: user?.profile?.resumeOriginalName || "",
+    gender: user?.profile?.gender || "",
+    qualification: user?.profile?.qualification || "",
   });
 
   // State for profile image preview
@@ -149,6 +152,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
+    formData.append("gender", input.gender || "");
     formData.append("city", input.city);
     formData.append("state", input.state);
     formData.append("country", input.country);
@@ -160,6 +164,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("experienceDetails", input.experienceDetails);
     formData.append("bio", input.bio) || "";
     formData.append("skills", input.skills || "");
+    formData.append("qualification", input.qualification || ""); 
 
 
     if (!hasExperience) {
@@ -318,6 +323,53 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     onChange={handleChange}
                   />
                 </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label htmlFor="gender" className="sm:w-20 w-full font-semibold">
+                    Gender
+                  </Label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    value={input.gender}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label htmlFor="qualification" className="sm:w-20 w-full font-semibold">
+                    Qualification
+                  </Label>
+                  <select
+                    id="qualification"
+                    name="qualification"
+                    value={input.qualification}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Qualification</option>
+                    <option value="Post Graduation">Post Graduation</option>
+                    <option value="Under Graduation">Under Graduation</option>
+                    <option value="M.Tech">M.Tech</option>
+                    <option value="MBA">MBA</option>
+                    <option value="MCA">MCA</option>
+                    <option value="B.Sc">B.Sc</option>
+                    <option value="M.Sc">M.Sc</option>
+                    <option value="B.Com">B.Com</option>
+                    <option value="M.Com">M.Com</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="12th Pass">12th Pass</option>
+                    <option value="10th Pass">10th Pass</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+
+
               </div>
             </div>
 

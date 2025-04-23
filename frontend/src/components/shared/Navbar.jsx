@@ -8,7 +8,7 @@ import { removeCompany } from "@/redux/companySlice";
 import { removeJobPlan } from "@/redux/jobPlanSlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
@@ -72,6 +72,18 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      if (user.role === "recruiter") {
+        // Check if the recruiter has created a company
+        const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
+          withCredentials: true,
+        });
+  
+        if (!checkRes.data.companyExists) {
+          toast.error("Please create a company before logging out.");
+          return;
+        }
+      }
+  
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
       });
@@ -437,7 +449,7 @@ const Navbar = () => {
 
       {/* Signup Modal */}
       {isSignupModalOpen && (
-  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start p-6 space-y-6 w-full h-screen overflow-y-auto">
+  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start space-y-6 w-full h-screen overflow-y-auto">
     <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
     
     <div className="w-full max-w-sm space-y-4">
@@ -484,17 +496,13 @@ const Navbar = () => {
     </div>
 
     {/* Footer Section */}
-    <div className="w-screen">
-      <Footer />
-    </div>
+    <footer className="w-full border-t-2 border-gray-300 ">
+    <Footer />
+    </footer>
   </div>
 )}
 
-
-
-
-      {/* Spacer for fixed navbar */}
-      <div className="h-16" />
+     
     </>
   );
 };

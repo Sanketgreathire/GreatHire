@@ -80,7 +80,21 @@ const userSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+      gender: {
+        type: String,
+        enum: ["Male", "Female", "Other"],
+        default: "Other", // Default gender is "Male"
+      },
+      qualification: {
+        type: String,
+        enum: [
+          "B.Tech", "M.Tech", "MBA", "B.Sc", "M.Sc", "B.Com", "M.Com",
+          "Diploma", "12'th Pass", "10'th Pass", "Others"
+        ],
+        default: "Others", // Default qualification is "Others"
+      }
     },
+    
   },
   { timestamps: true }
 );

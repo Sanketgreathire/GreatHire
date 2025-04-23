@@ -219,7 +219,7 @@ const Jobs = () => {
           >
             <div>
               <h3 className="text-lg font-semibold">{stat.title}</h3>
-              <p className="text-2xl font-bold text-center">{stat.count}</p>
+              <p className="text-2xl font-bold text-left">{stat.count}</p>
             </div>
             {stat.icon}
           </Card>
@@ -248,12 +248,12 @@ const Jobs = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Job Details</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Posted Date</TableHead>
-              <TableHead>Applications</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Job Details</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Company</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Posted Date</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Status</TableHead>
+              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -31,7 +31,13 @@ const CandidateList = () => {
     jobTitle: "",
     experience: "",
     salaryBudget: "",
+    gender: "",
+    qualification: "",
+    lastActive: "",
+    location: "",
+    skills: "",
   });
+  
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
@@ -41,13 +47,29 @@ const CandidateList = () => {
   const fetchCandidates = async () => {
     try {
       setIsLoading(true);
+  
+      // Convert filters to appropriate types or remove empty ones
+      const sanitizedFilters = {
+        companyId: company?._id,
+        ...(filters.jobTitle && { jobTitle: filters.jobTitle }),
+        ...(filters.experience && { experience: Number(filters.experience) }),
+        ...(filters.salaryBudget && { salaryBudget: Number(filters.salaryBudget) }),
+        ...(filters.gender && { gender: filters.gender }),
+        ...(filters.qualification && { qualification: filters.qualification }),
+        ...(filters.lastActive && { lastActive: filters.lastActive }),
+        ...(filters.location && { location: filters.location }),
+        ...(filters.skills && { skills: filters.skills.split(",").map(skill => skill.trim()) }),
+      };
+      
+  
       const response = await axios.get(
         `${COMPANY_API_END_POINT}/candidate-list`,
         {
-          params: { ...filters, companyId: company?._id }, // Sending filters and company ID as parameters
+          params: sanitizedFilters,
           withCredentials: true,
         }
       );
+  
       if (response.data.success) {
         if (response.data.candidates.length === 0)
           setMessage("No Candidate found");
@@ -56,10 +78,14 @@ const CandidateList = () => {
       }
     } catch (error) {
       console.error("Error fetching candidates:", error);
+      toast.error(
+        error.response?.data?.message || "Error fetching candidate list"
+      );
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   // Function to decrease credits when a recruiter views a candidate's resume
   const handleViewCandidate = async (candidate) => {
@@ -89,7 +115,9 @@ const CandidateList = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="p-4 md:p-6 min-h-screen container  bg-gray-100 mx-auto">
+        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20">
+
+
           {/* Header */}
           <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center">
             <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-0">
@@ -121,64 +149,65 @@ const CandidateList = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col md:flex-row gap-4 mt-4 mb-4 justify-evenly">
-            <Combobox
-              value={filters.jobTitle}
-              onChange={(value) => setFilters({ ...filters, jobTitle: value })}
-              className="w-full md:w-60"
-            >
-              <div className="relative ">
-                <ComboboxInput
-                  className="p-2 border border-gray-400 rounded-md w-full"
-                  placeholder="Select Job Title"
-                />
-                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                  <FaAngleDown />
-                </ComboboxButton>
-                <ComboboxOptions className="absolute bg-white border rounded-md mt-1 shadow-lg h-40 overflow-y-scroll w-full">
-                  {jobTitles.map((title) => (
-                    <ComboboxOption
-                      key={title}
-                      value={title}
-                      className="p-2 hover:bg-gray-200 cursor-pointer"
+          {/* Filters Section */}
+          <div className="mt-6 mb-4">
+            {/* <h2 className="text-xl font-semibold text-gray-800 mb-4">Filter Candidates</h2> */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              {[
+                { label: "Job Title", name: "jobTitle", type: "text", placeholder: "e.g. Frontend Developer" },
+                { label: "Experience", name: "experience", type: "text", placeholder: "e.g. 0, 1, 2" },
+                { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
+                {
+                  label: "Qualification",
+                  name: "qualification",
+                  type: "select",
+                  options: [
+                    "", "Post Graduation","Under Graduation","B.Tech", "M.Tech", "MBA", "MCA","B.Sc", "M.Sc", "B.Com", "M.Com", "Diploma","12th Pass","10th pass", "Others"
+                  ]
+                },
+                { label: "Last Active", name: "lastActive", type: "text", placeholder: "YYYY-MM-DD" },
+                { label: "Location", name: "location", type: "text", placeholder: "e.g. Bangalore" },
+                { label: "Skills", name: "skills", type: "text", placeholder: "e.g. React, Node.js" },
+                { label: "Expected CTC", name: "salaryBudget", type: "text", placeholder: "e.g. 50000" }
+              ].map((field, idx) => (
+                <div key={idx} className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">{field.label}</label>
+                  {field.type === "select" ? (
+                    <select
+                      className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={filters[field.name]}
+                      onChange={(e) => setFilters({ ...filters, [field.name]: e.target.value })}
                     >
-                      {title}
-                    </ComboboxOption>
-                  ))}
-                </ComboboxOptions>
-              </div>
-            </Combobox>
-            <input
-              type="text"
-              placeholder="Min Experience (0, 1, 2 years)"
-              className="p-2 border rounded-md w-full md:w-60"
-              value={filters.experience}
-              onChange={(e) =>
-                setFilters({ ...filters, experience: e.target.value })
-              }
-            />
+                      {field.options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt === "" ? `Select ${field.label}` : opt}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={field.placeholder}
+                      value={filters[field.name]}
+                      onChange={(e) => setFilters({ ...filters, [field.name]: e.target.value })}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-            <input
-              type="text"
-              placeholder="Expected CTC (₹) eg.. 0, 50000"
-              className="p-2 border rounded-md w-full md:w-60"
-              value={filters.salaryBudget}
-              onChange={(e) =>
-                setFilters({ ...filters, salaryBudget: e.target.value })
-              }
-            />
-
-            <Button
+          <Button
               onClick={fetchCandidates}
               className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 w-full md:w-40"
               disabled={isLoading}
             >
               {isLoading ? "Loading..." : "Find Candidates"}
-            </Button>
-          </div>
+          </Button> 
 
           {/* Candidates List */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mb-6">
             {isLoading ? (
               <div className="flex items-center justify-center py-10">
                 <div className="flex items-center space-x-2">
@@ -210,7 +239,7 @@ const CandidateList = () => {
                 <p className="text-4xl text-gray-400">{message}</p>
               </div>
             ) : (
-              candidates.map((candidate) => (
+              currentCandidates.map((candidate) => (
                 <div
                   key={candidate._id}
                   className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg shadow-md bg-white gap-4"
@@ -228,7 +257,7 @@ const CandidateList = () => {
                       />
                     </Avatar>
                     <div className="text-center md:w-60">
-                      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                      <h1 className="text-1xl md:text-1xl font-bold text-gray-800">
                         {candidate?.fullname || "User Name"}
                       </h1>
                       <p className="text-gray-600 mt-1">
@@ -295,29 +324,30 @@ const CandidateList = () => {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && !isLoading && (
-            <div className="flex flex-col sm:flex-row justify-center items-center mt-6 gap-2">
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2"
-              >
-                Previous
-              </Button>
-              <span className="px-4 py-2 border rounded-md">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-                className="px-4 py-2"
-              >
-                Next
-              </Button>
-            </div>
-          )}
+          {candidates.length > 0 && (
+          <div className="flex flex-col sm:flex-row justify-center items-center mt-6 gap-2">
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2"
+            >
+              Previous
+            </Button>
+            <span className="px-4 py-2 border rounded-md">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="px-4 py-2"
+            >
+              Next
+            </Button>
+          </div>
+        )}
+
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">

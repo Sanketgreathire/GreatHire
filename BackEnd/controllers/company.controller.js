@@ -349,42 +349,114 @@ export const getCurrentPlan = async (req, res) => {
 // This controller will help to get candiadate data mean recruiter can find user or candidate according to their need
 export const getCandidateData = async (req, res) => {
   try {
-    const { jobTitle, experience, salaryBudget, companyId } = req.query;
+    const {
+      jobTitle,
+      experience,
+      salaryBudget,
+      gender,
+      qualification,
+      lastActive,
+      location,
+      skills,
+      companyId,
+    } = req.query;
+    console.log(req.query); // for testing purpose
+
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized", success: false });
+    if (!(await isUserAssociated(companyId, userId))) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
     }
 
-    // Securely Validate jobTitle
-    if (
-      typeof jobTitle !== "string" ||
-      jobTitle.trim().length === 0 ||
-      jobTitle.length > 50
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Invalid job title", success: false });
-    }
+    const escapeRegex = (str) =>
+      typeof str === "string"
+        ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&")
+        : "";
 
-    // Safe escape function (Prevents .replace() on non-strings)
-    const escapeRegex = (str) => {
-      if (typeof str !== "string") return "";
-      return str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&");
+    const query = {
+      "profile.resume": { $exists: true, $ne: "" },
     };
 
-    const sanitizedJobTitle = escapeRegex(jobTitle.trim());
-
-    const candidates = await User.find({
-      "profile.experience.jobProfile": {
+    // Job Title
+    if (jobTitle?.trim()) {
+      const sanitizedJobTitle = escapeRegex(jobTitle.trim());
+      query["profile.experience.jobProfile"] = {
         $regex: new RegExp(`^${sanitizedJobTitle}$`, "i"),
-      }, // Case-insensitive match
-      "profile.experience.duration": experience,
-      "profile.expectedCTC": salaryBudget,
-      "profile.resume": { $exists: true, $ne: "" }, // Ensure resume exists
-    }).select({
+      };
+    }
+
+    // Experience
+    if (experience) {
+      query["profile.experience.duration"] = experience;
+    }
+
+    // Salary
+    if (salaryBudget) {
+      query["profile.expectedCTC"] = salaryBudget;
+    }
+
+    // Gender (Assuming you have added gender in schema under profile or user directly)
+    if (gender) {
+      query["profile.gender"] = new RegExp(`^${escapeRegex(gender)}$`, "i");
+    }
+
+    // Qualification (Assuming stored in profile.bio or new field you add)
+    if (qualification) {
+      query["profile.qualification"] = new RegExp(escapeRegex(qualification), "i");
+    }
+
+    // Last Active (uses `updatedAt` field from timestamps)
+    if (lastActive) {
+      const lastActiveDate = new Date(lastActive);
+      if (!isNaN(lastActiveDate)) {
+        query["updatedAt"] = { $gte: lastActiveDate };
+      }
+    }
+
+    // Location (assumes city/state/country)
+    if (location) {
+      const sanitizedLocation = escapeRegex(location.trim().toLowerCase());
+      const locationRegex = new RegExp(sanitizedLocation, "i");
+    
+      query.$or = [
+        { "address.city": locationRegex },
+        { "address.state": locationRegex },
+        { "address.country": locationRegex },
+      ];
+    }
+    
+
+    // Skills (array match)
+    if (skills) {
+      let skillArray = [];
+    
+      if (typeof skills === "string") {
+        skillArray = skills.split(",").map((s) => s.trim().toLowerCase());
+      } else if (Array.isArray(skills)) {
+        skillArray = skills.map((s) => String(s).trim().toLowerCase());
+      }
+    
+      if (skillArray.length > 0) {
+        // Using aggregation expression to match lowercased DB skills
+        query.$expr = {
+          $setIsSubset: [
+            skillArray,
+            {
+              $map: {
+                input: "$profile.skills",
+                as: "skill",
+                in: { $toLower: "$$skill" },
+              },
+            },
+          ],
+        };
+      }
+    }
+
+    const candidates = await User.find(query).select({
       fullname: 1,
       "profile.experience.jobProfile": 1,
       "profile.skills": 1,
@@ -392,6 +464,8 @@ export const getCandidateData = async (req, res) => {
       "profile.expectedCTC": 1,
       "profile.resume": 1,
       "profile.profilePhoto": 1,
+      updatedAt: 1,
+      address: 1,
     });
 
     res.status(200).json({ success: true, candidates });
@@ -400,6 +474,7 @@ export const getCandidateData = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error", error });
   }
 };
+
 
 // if recruiter finding the candidate and if they view the resume of candidate then one credit decrease 1 Resume === 1 credit
 export const decreaseCandidateCredits = async (req, res) => {
