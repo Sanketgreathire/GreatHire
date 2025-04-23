@@ -6,6 +6,7 @@ import {
   getAllApplication,
 } from "../../controllers/admin/userStats.controller.js";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
+// import updateLastActive from "../middlewares/updateLastActive.js";
 
 const router = express.Router();
 // Define routes
