@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
     "axios": "^1.8.4",
     "backend": "file:",
     "bcryptjs": "^2.4.3",

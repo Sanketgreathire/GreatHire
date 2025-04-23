@@ -36,15 +36,20 @@ const GoogleLogin = ({ text, role, route }) => {
 
   // Handle successful login
   const handleSuccess = (data) => {
+    console.log(data);
     toast.success(data.message);
-    const { role: userRole } = data.user;
+    const { role: userRole , isCompanyCreated} = data.user;
     dispatch(setUser(data.user));
-    navigateBasedOnRole(userRole);
+    navigateBasedOnRole(userRole,isCompanyCreated);
   };
 
   // Navigate based on user role
-  const navigateBasedOnRole = (userRole) => {
+  const navigateBasedOnRole = (userRole,isCompanyCreated) => {
     if (userRole.includes("student")) navigate("/");
+    else if(!isCompanyCreated && userRole.includes("recruiter"))
+    {
+      navigate("/recruiter/dashboard/create-company");
+    }
     else if (userRole.includes("recruiter"))
       navigate("/recruiter/dashboard/home");
   };

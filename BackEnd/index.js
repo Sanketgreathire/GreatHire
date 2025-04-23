@@ -1,9 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 // cookie-parser package help to handle cookie in coming from frontend HTTP Request
 import cookieParser from "cookie-parser";
 // this help to cross origin resource sharing enable secure communication between a server and a client application running on a different origin (domain, protocol, or port). 
 import cors from "cors";
 // this package help to read environment variables
-import dotenv from "dotenv";
+
 import express from "express";
 // fetching server by https
 import { createServer } from "http";
@@ -19,6 +21,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 // helmet help to secure Express apps by setting HTTP response headers.
 import helmet from "helmet";
+//import chatbotRoute from "./routes/chatbot.route.js"; // ✅ Add this
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -45,12 +48,12 @@ import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
+import chatbotRoutes from "./routes/chatbot.js";
 
-dotenv.config();
+
 const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 3000;
-
 app.use(helmet({
   contentSecurityPolicy: false,
 })); // Use Helmet to set security-related HTTP headers
@@ -68,6 +71,7 @@ app.use(helmet({
 
 
 app.disable("x-powered-by"); // Explicitly disable X-Powered-By header
+// app.use("/api/v1/chatbot", chatbotRoute); // ✅ Add this after all other route imports
 
 // WebSocket Server with CORS
 const io = new Server(server, {
@@ -80,8 +84,8 @@ const io = new Server(server, {
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true,
+    origin: "http://localhost:5173", // Explicitly allow the correct origin
+    credentials: true, // Include credentials like cookies if needed
   })
 );
 app.use(express.json());
@@ -124,7 +128,7 @@ app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/notifications", notificationRoute);
-
+app.use("/api/v1/chatbot", chatbotRoutes);
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
@@ -260,5 +264,4 @@ process.on("SIGINT", async () => {
   console.log("MongoDB Disconnected.");
   process.exit(0);
 });
-
 
