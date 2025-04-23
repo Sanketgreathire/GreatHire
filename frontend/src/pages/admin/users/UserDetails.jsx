@@ -83,7 +83,8 @@ const UserDetails = () => {
   // console.log(user);
   // console.log("jobProfile:", user.profile?.experience?.jobProfile);
   // console.log("duration:", user.profile?.experience?.duration);
-  
+
+
   
   return (
     <>
