@@ -8,6 +8,7 @@ import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
 
 // Pages
+import SignupPage from "./components/shared/SignupPage";
 import Home from "./pages/Home";
 import UserProfile from "./pages/user/UserProfile";
 import JobDescription from "./pages/job/JobDescription";
@@ -74,6 +75,7 @@ const appRouter = createBrowserRouter([
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
+  {path: "/signup-choice",element:<SignupPage />},
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
   { path: "/jobs", element: <Jobs /> },

@@ -26,7 +26,6 @@ const Navbar = () => {
   // State management
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPolicyMenuOpen, setIsPolicyMenuOpen] = useState(false);
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   // Refs for click outside detection
@@ -238,12 +237,12 @@ const Navbar = () => {
                   >
                     Login
                   </Link>
-                  <button
-                    onClick={() => setIsSignupModalOpen(true)}
+                  <Link
+                    to="/signup-choice"
                     className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
                   >
                     Signup
-                  </button>
+                  </Link>
                 </>
               ) : (
                 <div ref={profileMenuRef} className="relative ">
@@ -448,94 +447,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-
-      {/* Signup Modal */}
-      {isSignupModalOpen && (
-  <div   style={{ backgroundImage: `url(${joinBg})` }}
-  className="   inset-0 absolute opacity-200 bg-cover bg-center z-50 flex flex-col items-center justify-content overflow-y-auto w-full ">
-    {/* Main Layout */}
-    <div  className="mt-12 w-full max-w-9xl  flex-col gap-9  lg:px-14 ">
-      {/* Top Row: Hiring Section and Join GreatHire Section */}
-      <div className="flex flex-items  gap-2 justify-center w-full lg:gap-14 md:flex-row flex-cols-reverse">
-        {/* Left Column: Hiring Process Section */}
-        <div  className=" font-[Oswald] text-center justify-content d-flex flex flex-col items-center  md:w-1/4  mt-5 ">
-          
-          <h2 className="text-3xl font-semibold text-gray-800 py-7 ">
-            {/* How to hire in less than 48 hours */}
-          </h2>
-          <div className=" grid text-center justify-content gap-9">
-            <div className=" flex items-center  gap-4">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
-                <span className="text-4xl text-blue-600">📢</span>
-              </div>
-              <p className="text-2xl font-medium text-gray-700">
-                Post a free job in a few minutes
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
-                <span className="text-4xl text-blue-600">📞</span>
-              </div>
-              <p className="text-2xl font-medium text-gray-700">
-                Get direct phone calls from HR
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
-                <span className="text-4xl text-blue-600">👔</span>
-              </div>
-              <p className="text-2xl font-medium text-gray-700">
-                Interview and hire the right staff
-              </p>
-            </div>
-           
-            </div>
-            <p className="text-center mt-14 text-3xl font-bold text-gray-800 whitespace-nowrap w-screen">
-            1000+ employers found success on GreatHire 🌟
-          </p>
-        </div>
-        
-
-        {/* Right Column: Join GreatHire Section */}
-        <div className="tracking-wide mb-24 mt-8 text-center bg-white   md:w-2/4 p-20 ml-20 rounded-2xl shadow-lg " style={{ backgroundImage: "url('/img.jpeg')" }}>
-          <h2 className="text-4xl font-bold text-gray-800 p-4 ">
-            Join Great<span className="text-blue-700 ">Hire</span>
-          </h2>
-          <div className="space-y-3">
-            <button
-              onClick={() => handleSignupOption("job")}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md mt-4"
-            >
-              I'm looking for a Job
-            </button>
-            <button
-              onClick={() => handleSignupOption("recruiter")}
-              className="w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all shadow-md"
-            >
-              I'm looking for Candidates
-            </button>
-            <button
-              onClick={() => setIsSignupModalOpen(false)}
-              className="w-full py-4 rounded-lg text-lg text-gray-600 hover:bg-gray-100 transition-all"
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Row: Reviews Section */}
-      <div className="mt-4">
-        <ReviewsSection />
-      </div>
-    </div>
-
-    {/* Footer Section */}
-    <footer className="w-full mt-9 border-gray-300  bg-white">
-      <Footer />
-    </footer>
-  </div>
-)}
 
      
     </>
