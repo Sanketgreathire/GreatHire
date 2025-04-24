@@ -12,6 +12,8 @@ import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
+import joinBg from "@/assets/img121.jpeg";
+
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -449,55 +451,88 @@ const Navbar = () => {
 
       {/* Signup Modal */}
       {isSignupModalOpen && (
-  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start space-y-6 w-full h-screen overflow-y-auto">
-    <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
-    
-    <div className="w-full max-w-sm space-y-4">
-      <button onClick={() => handleSignupOption("job")} className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition-colors">
-        I'm looking for a Job
-      </button>
-      <button onClick={() => handleSignupOption("recruiter")} className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-        I'm looking for Candidates
-      </button>
-      <button onClick={() => setIsSignupModalOpen(false)} className="w-full py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
-        Go Back
-      </button>
-    </div>
+  <div   style={{ backgroundImage: `url(${joinBg})` }}
+  className="   inset-0 absolute opacity-200 bg-cover bg-center z-50 flex flex-col items-center justify-content overflow-y-auto w-full ">
+    {/* Main Layout */}
+    <div  className="mt-12 w-full max-w-9xl  flex-col gap-9  lg:px-14 ">
+      {/* Top Row: Hiring Section and Join GreatHire Section */}
+      <div className="flex flex-items  gap-2 justify-center w-full lg:gap-14 md:flex-row flex-cols-reverse">
+        {/* Left Column: Hiring Process Section */}
+        <div  className=" font-[Oswald] text-center justify-content d-flex flex flex-col items-center  md:w-1/4  mt-5 ">
+          
+          <h2 className="text-3xl font-semibold text-gray-800 py-7 ">
+            {/* How to hire in less than 48 hours */}
+          </h2>
+          <div className=" grid text-center justify-content gap-9">
+            <div className=" flex items-center  gap-4">
+              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
+                <span className="text-4xl text-blue-600">📢</span>
+              </div>
+              <p className="text-2xl font-medium text-gray-700">
+                Post a free job in a few minutes
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
+                <span className="text-4xl text-blue-600">📞</span>
+              </div>
+              <p className="text-2xl font-medium text-gray-700">
+                Get direct phone calls from HR
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full shadow-md">
+                <span className="text-4xl text-blue-600">👔</span>
+              </div>
+              <p className="text-2xl font-medium text-gray-700">
+                Interview and hire the right staff
+              </p>
+            </div>
+           
+            </div>
+            <p className="text-center mt-14 text-3xl font-bold text-gray-800 whitespace-nowrap w-screen">
+            1000+ employers found success on GreatHire 🌟
+          </p>
+        </div>
+        
 
-    {/* Hiring Process Section */}
-    <div className="mt-10 w-full max-w-3xl text-center">
-      <h3 className="text-3xl font-bold mb-16">How to hire in less than 48 hours</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">📢</span> {/* Job Posting */}
+        {/* Right Column: Join GreatHire Section */}
+        <div className="tracking-wide mb-24 mt-8 text-center bg-white   md:w-2/4 p-20 ml-20 rounded-2xl shadow-lg " style={{ backgroundImage: "url('/img.jpeg')" }}>
+          <h2 className="text-4xl font-bold text-gray-800 p-4 ">
+            Join Great<span className="text-blue-700 ">Hire</span>
+          </h2>
+          <div className="space-y-3">
+            <button
+              onClick={() => handleSignupOption("job")}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md mt-4"
+            >
+              I'm looking for a Job
+            </button>
+            <button
+              onClick={() => handleSignupOption("recruiter")}
+              className="w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all shadow-md"
+            >
+              I'm looking for Candidates
+            </button>
+            <button
+              onClick={() => setIsSignupModalOpen(false)}
+              className="w-full py-4 rounded-lg text-lg text-gray-600 hover:bg-gray-100 transition-all"
+            >
+              Go Back
+            </button>
           </div>
-          <p className="text-lg font-medium">Post a free job in <br /> few minutes</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">📞</span> {/* Phone Call */}
-          </div>
-          <p className="text-lg font-medium">Get direct phone calls <br /> from HR</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">👔</span> {/* Interview & Hire */}
-          </div>
-          <p className="text-lg font-medium">Interview and hire the <br /> right staff</p>
         </div>
       </div>
-      <p className="mt-14 text-3xl font-bold">1000+ employers found success on GreatHire 🌟</p>
-    </div>
 
-    {/* Reviews Section */}
-    <div className="w-full ">
-      <ReviewsSection />
+      {/* Bottom Row: Reviews Section */}
+      <div className="mt-4">
+        <ReviewsSection />
+      </div>
     </div>
 
     {/* Footer Section */}
-    <footer className="w-full border-t-2 border-gray-300 ">
-    <Footer />
+    <footer className="w-full mt-9 border-gray-300  bg-white">
+      <Footer />
     </footer>
   </div>
 )}
