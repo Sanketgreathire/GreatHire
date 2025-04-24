@@ -8,7 +8,7 @@ import { removeCompany } from "@/redux/companySlice";
 import { removeJobPlan } from "@/redux/jobPlanSlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
@@ -74,6 +74,18 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      if (user.role === "recruiter") {
+        // Check if the recruiter has created a company
+        const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
+          withCredentials: true,
+        });
+  
+        if (!checkRes.data.companyExists) {
+          toast.error("Please create a company before logging out.");
+          return;
+        }
+      }
+  
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
       });
