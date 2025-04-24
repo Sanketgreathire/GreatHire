@@ -28,6 +28,8 @@ const HeroSection = ({ searchInfo }) => {
         </h1>
 
         <JobSearch searchInfo={searchInfo} />
+
+
       </div>
     </div>
   );

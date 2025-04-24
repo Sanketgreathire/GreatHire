@@ -16,6 +16,7 @@ import { validateUser } from "../middlewares/userValidator.js";
 import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 import { validateContactUsForm } from "../middlewares/contactValidator.js";
+import { updateLastActive } from "../middlewares/updateLastActive.js";
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.route("/googleLogin").post(googleLogin);
 
 router.route("/profile/update").put(
   isAuthenticated,
+  updateLastActive,
   (req, res, next) => {
     singleUpload(req, res, (err) => {
       if (err) {
@@ -41,7 +43,7 @@ router.route("/sendMessage").post(validateContactUsForm, sendMessage);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 
-router.route("/logout").get(isAuthenticated, logout);
-router.route("/delete").delete(isAuthenticated, deleteAccount);
+router.route("/logout").get(isAuthenticated, updateLastActive, logout);
+router.route("/delete").delete(isAuthenticated, updateLastActive, deleteAccount);
 
 export default router;

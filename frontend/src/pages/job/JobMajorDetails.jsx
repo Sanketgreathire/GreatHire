@@ -12,33 +12,7 @@ const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   return (
-    <div>
-      {/* profile insight */}
-      <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 ">
-        <div>
-          <h1 className="text-xl font-bold">Profile Insight</h1>
-        </div>
-
-        {/* Skills Section */}
-        <div className="mt-2">
-          <h3 className="text-xl text-gray-500 flex items-center gap-2">
-            <HiLightBulb />
-            <span className="text-xl font-bold text-black">Skills</span>
-          </h3>
-
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedJob?.jobDetails?.skills.map((skill, index) => (
-              <div
-                key={index}
-                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
-              >
-                <span className="font-bold">{skill}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+  <div>
       {/* Job details */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <div>
@@ -63,7 +37,8 @@ const JobMajorDetails = ({ selectedJob }) => {
               ))}
           </div>
         </div>
-
+{/* ---------------------------------------------------------------------------------------------------- */}
+{/* ------------------------------------------------------------------------------------------------------------ */}
         {/* Experience Section */}
         <div className="mt-2">
           <h3 className="text-xl text-gray-500 flex items-center gap-2">
@@ -99,11 +74,37 @@ const JobMajorDetails = ({ selectedJob }) => {
           </div>
         </div>
       </div>
+{/* -------------------------------------------------------------------------------------------------------------- */}
+      {/* profile insight */}
+      <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 ">
+        <div>
+          <h1 className="text-xl font-bold">Profile Insight</h1>
+        </div>
+
+        {/* Skills Section */}
+        <div className="mt-2">
+          <h3 className="text-xl text-gray-500 flex items-center gap-2">
+            <HiLightBulb />
+            <span className="text-xl font-bold text-black">Skills</span>
+          </h3>
+
+          <div className="flex flex-wrap gap-2 mt-2">
+            {selectedJob?.jobDetails?.skills.map((skill, index) => (
+              <div
+                key={index}
+                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
+              >
+                <span className="font-bold">{skill}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Full Job Description */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Full Job Description</h1>
-        <p className="font-semibold text-justify">
+        <p className=" text-justify">
           {selectedJob?.jobDetails?.details 
             ? selectedJob.jobDetails.details.split("\n").map((line, index) => (
               <span key={index}>

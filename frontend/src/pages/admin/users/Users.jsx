@@ -235,7 +235,8 @@ const toggleUserSelection = (userId) => {
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
-
+  console.log(user.lastActiveAt);
+  const formattedDate = new Date(user.lastActiveAt).toLocaleString();
   // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   // const visiblePages = 20;
   // const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
@@ -289,14 +290,15 @@ const toggleUserSelection = (userId) => {
                 onChange={toggleSelectAll}
                 />
             </TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
-              <TableHead className="border border-gray-300 text-center text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Last Active</TableHead>
+              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -318,7 +320,9 @@ const toggleUserSelection = (userId) => {
                 <TableCell className='whitespace-nowrap border border-gray-300' >{user.applicationCount}</TableCell>
                 <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole|| "N/A"}</TableCell>
                 <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration|| "N/A"}</TableCell>
-
+                <TableCell className="whitespace-nowrap border border-gray-300">
+                    {new Date(user.lastActiveAt).toLocaleString()}
+                </TableCell>
                 <TableCell className="flex gap-4 justify-center">
                   <Eye
                     className="text-blue-500 cursor-pointer"
