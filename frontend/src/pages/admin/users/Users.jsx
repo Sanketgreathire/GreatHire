@@ -1,4 +1,4 @@
-// Import necessary modules and dependencies
+// Import necessary modules and dependencies a
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -235,13 +235,16 @@ const toggleUserSelection = (userId) => {
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
-  console.log(user.lastActiveAt);
-  const formattedDate = new Date(user.lastActiveAt).toLocaleString();
+  console.log(paginatedUsers.map(u => ({ name: u?.fullname, lastActiveAt: u?.lastActiveAt })));
+   // console.log("🧪 user.lastActiveAt:", user.fullname, user.lastActiveAt);
+  // console.log(user.lastActiveAt);
+  // const formattedDate = new Date(user.lastActiveAt).toLocaleString();
   // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   // const visiblePages = 20;
   // const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
   // const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
+console.log(paginatedUsers)
   return (
     <>
       <Navbar linkName={"Users"} />
@@ -303,8 +306,8 @@ const toggleUserSelection = (userId) => {
           </TableHeader>
           <TableBody>
 
-            {paginatedUsers?.map((user) => (
-              
+            {paginatedUsers?.filter(Boolean).map((user) => (
+
               <TableRow key={user._id}>
           <TableHead>
                   <input
@@ -321,9 +324,9 @@ const toggleUserSelection = (userId) => {
                 <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole|| "N/A"}</TableCell>
                 <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration|| "N/A"}</TableCell>
                 <TableCell className="whitespace-nowrap border border-gray-300">
-                    {new Date(user.lastActiveAt).toLocaleString()}
+                  {user.lastActiveAt|| 'N/A'}
                 </TableCell>
-                <TableCell className="flex gap-4 justify-center">
+                                <TableCell className="flex gap-4 justify-center">
                   <Eye
                     className="text-blue-500 cursor-pointer"
                     size={16}

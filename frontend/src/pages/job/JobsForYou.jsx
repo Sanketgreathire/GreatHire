@@ -114,10 +114,10 @@
     };
   
     return (
-      <div className="flex justify-center mt-4 gap-4 h-screen sticky top-10 md:px-6">
+      <div className=" flex justify-center mt-4 gap-4 top-10 md:px-6 ">
         {/* Job List */}
         <div
-          className={`flex flex-col gap-4  w-full md:w-1/2 h-screen m-5 md:m-0 scrollbar-hide overflow-y-scroll`}
+          className={`flex flex-col gap-4  w-full md:w-1/2 m-5 md:m-0 scrollbar-hide`}
         >
           {jobs?.map((job) => (
             <div
@@ -200,7 +200,7 @@
   
         {/* Job Details */}
         {selectedJob && (
-          <div className="md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden">
+          <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden h-fit">
             <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-2 flex flex-col space-y-1 w-full">
               <h3 className="text-2xl font-semibold">
                 {selectedJob?.jobDetails?.title}

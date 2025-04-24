@@ -287,10 +287,10 @@ const Recruiters = () => {
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
                       recruiter.isActive
-                        ? "bg-green-200 text-green-800"
+                      ? "bg-green-200 text-green-800"
                         : "bg-red-200 text-red-800"
-                    }`}
-                  >
+                        }`}
+                        >
                     {recruiter.isActive ? "Active" : "Deactive"}
                   </span>
                 </TableCell>
@@ -302,7 +302,8 @@ const Recruiters = () => {
                     onClick={() =>
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
-                  />
+                    />
+                    <TableCell>{recruiter.joi}</TableCell>
 
                   {/* Toggle for recruiter activeness */}
                   {loading[recruiter._id] ? (

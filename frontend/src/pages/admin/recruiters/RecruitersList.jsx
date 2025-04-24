@@ -383,6 +383,7 @@ const RecruitersList = () => {
               <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Position</TableHead>
               <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Posted Jobs</TableHead>
               <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Recruiter Status</TableHead>
+              <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
               <TableHead className="whitespace-nowrap text-2xl text-blue-700 font-bold font-[Oswald]">Details</TableHead>
             </TableRow>
           </TableHeader>
@@ -405,14 +406,17 @@ const RecruitersList = () => {
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
                       recruiter.isActive
-                        ? "bg-green-200 text-green-800"
-                        : "bg-red-200 text-red-800"
-                    }`}
-                  >
+                      ? "bg-green-200 text-green-800"
+                      : "bg-red-200 text-red-800"
+                      }`}
+                      >
                     {recruiter.isActive ? "Active" : "Deactive"}
                   </span>
                 </TableCell>
 
+                  <TableCell>{recruiter.joined}</TableCell>
+
+                  
                 <TableCell className="flex items-center gap-3">
                   <Eye
                     className="text-blue-500 cursor-pointer"
@@ -420,26 +424,26 @@ const RecruitersList = () => {
                     onClick={() =>
                       navigate(`/admin/recruiter/details/${recruiter._id}`)
                     }
-                  />
+                    />
                   {/* Toggle for recruiter activeness */}
                   {loading[recruiter._id] ? (
                     "loading..."
                   ) : (
                     <Switch
-                      checked={recruiter.isActive}
-                      onChange={(e) =>
-                        toggleActive(
-                          recruiter.companyId,
-                          recruiter._id,
-                          !recruiter.isActive,
-                          recruiter.isAdmin
-                        )
-                      }
-                      color="primary"
-                      size="20"
-                      inputProps={{
-                        "aria-label": "Toggle Recruiter Active Status",
-                      }}
+                    checked={recruiter.isActive}
+                    onChange={(e) =>
+                      toggleActive(
+                        recruiter.companyId,
+                        recruiter._id,
+                        !recruiter.isActive,
+                        recruiter.isAdmin
+                      )
+                    }
+                    color="primary"
+                    size="20"
+                    inputProps={{
+                      "aria-label": "Toggle Recruiter Active Status",
+                    }}
                     />
                   )}
                   {blocking[recruiter._id] ? (
