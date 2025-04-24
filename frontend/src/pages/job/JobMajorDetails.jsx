@@ -14,7 +14,7 @@ const JobMajorDetails = ({ selectedJob }) => {
   return (
   <div>
       {/* Job details */}
-      <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
+      <div className="p-4  flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <div>
           <h1 className="text-xl font-bold">Job details</h1>
         </div>

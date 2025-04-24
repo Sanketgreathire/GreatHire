@@ -73,6 +73,55 @@ export const getRecruitersList = async (req, res) => {
           postedJobs: { $size: "$jobs" },
         },
       },
+      {
+      $addFields: {
+        joinedFormatted: {
+          $concat: [
+            {
+              // $switch converts the day of the week ($dayOfWeek) from createdAt into a short string (e.g., "Sun", "Mon").
+              $switch: {
+                branches: [
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 1] },
+                    then: "Sun",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 2] },
+                    then: "Mon",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 3] },
+                    then: "Tue",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 4] },
+                    then: "Wed",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 5] },
+                    then: "Thu",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 6] },
+                    then: "Fri",
+                  },
+                  {
+                    case: { $eq: [{ $dayOfWeek: "$createdAt" }, 7] },
+                    then: "Sat",
+                  },
+                ],
+                default: "N/A",
+              },
+            },
+            ", ",
+            {
+              // $dateToString formats the date as day, year (e.g., 05, 2024).
+              $dateToString: { format: "%d, %Y", date: "$createdAt" },
+            },
+          ],
+        },
+      },
+    },
       // Project the desired fields
       {
         $project: {
@@ -82,6 +131,7 @@ export const getRecruitersList = async (req, res) => {
           position: 1,
           postedJobs: 1,
           isActive: 1, // Recruiter status (active/inactive)
+          joined:"$joinedFormatted",
         },
       },
     ]);
@@ -125,72 +175,60 @@ export const getRecruitersList = async (req, res) => {
 };
 
 // returning all recruiter list of all company
-export const getAllRecruitersList = async (req, res) => {
-  try {
-    const recruitersAggregation = await Recruiter.aggregate([
-      // Lookup the company details where this recruiter is referenced in the company's userId array
-      {
-        $lookup: {
-          from: "companies", //  Specifies the collection to join (companies).
-          let: { recruiterId: "$_id" }, // Defines a local variable (recruiterId) for use in the pipeline.
-          // pipeline is series of stages and in one stage perform operation upon document of collection and send result of one stage to another stage
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ["$$recruiterId", "$userId.user"],//  Finds companies where the recruiterId exists in the userId.user array.
+
+    export const getAllRecruitersList = async (req, res) => {
+      try {
+        const recruitersAggregation = await Recruiter.aggregate([
+          {
+            $lookup: {
+              from: "companies",
+              localField: "_id",
+              foreignField: "userId.user",
+              as: "companyDetails",
+            },
+          },
+          {
+            $unwind: {
+              path: "$companyDetails",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              from: "jobs",
+              localField: "_id",
+              foreignField: "created_by",
+              as: "jobs",
+            },
+          },
+          {
+            $project: {
+              fullname: 1,
+              email: "$emailId.email",
+              phone: "$phoneNumber.number",
+              position: 1,
+              postedJobs: { $size: "$jobs" },
+              isActive: 1,
+              isBlocked: 1,
+              companyName: "$companyDetails.companyName",
+              companyId: "$companyDetails._id",
+              adminEmail: "$companyDetails.adminEmail",
+              isAdmin: {
+                $cond: {
+                  if: { $eq: ["$emailId.email", "$companyDetails.adminEmail"] },
+                  then: true,
+                  else: false,
+                },
+              },
+              joined: {
+                $dateToString: {
+                  format: "%b %d, %Y",
+                  date: "$createdAt",
                 },
               },
             },
-            // Project the fields you need from the company, including adminEmail
-            {
-              $project: {
-                companyName: 1,
-                adminEmail: 1,
-              },
-            },
-          ],
-          as: "companyDetails", // Stores the result in the companyDetails array.
-        },
-      },
-      // Unwind the companyDetails array (if a recruiter belongs to one company)
-      {
-        // Converts the companyDetails array to an object.
-        $unwind: {
-          path: "$companyDetails",
-          preserveNullAndEmptyArrays: true, // it keeps companyDetails as null instead of dropping the document.
-        },
-      },
-      // Lookup jobs created by each recruiter
-      {
-        $lookup: {
-          from: "jobs", // Ensure this matches the actual collection name for jobs
-          localField: "_id",
-          foreignField: "created_by",
-          as: "jobs",
-        },
-      },
-      // Add a field counting the number of posted jobs
-      {
-        $addFields: {
-          postedJobs: { $size: "$jobs" },
-        },
-      },
-      // Project the desired fields for output and include adminEmail from companyDetails
-      {
-        $project: {
-          fullname: 1,
-          email: "$emailId.email", // flatten the nested email field
-          phone: "$phoneNumber.number", // flatten the nested phone number
-          position: 1,
-          postedJobs: 1,
-          isActive: 1,
-          companyName: "$companyDetails.companyName",
-          companyId: "$companyDetails._id",
-          adminEmail: "$companyDetails.adminEmail",
-        },
-      },
-    ]);
+          },
+        ]);
 
     // Map each recruiter to add an "isAdmin" flag based on comparison with company's adminEmail
     const recruitersWithAdmin = recruitersAggregation.map((recruiter) => ({

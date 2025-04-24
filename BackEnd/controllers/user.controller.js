@@ -60,6 +60,7 @@ export const register = async (req, res) => {
         isVerified: false, // Default to false unless you have a value to set
       },
       password: hashedPassword,
+      lastActiveAt: new Date(),
     });
     newUser.lastActiveAt = new Date();
     await newUser.save();
@@ -136,8 +137,8 @@ export const login = async (req, res) => {
         success: false,
       });
     }
-    user.lastActiveAt = new Date();
-    await user.save();
+
+await user.save();
 
     const tokenData = {
       userId: user._id,
@@ -160,6 +161,7 @@ export const login = async (req, res) => {
       role: user.role,
       profile: user.profile,
       address: user.address,
+      lastActiveAt: user.lastActiveAt,
       isCompanyCreated,
       position,
       isActive,
@@ -302,17 +304,30 @@ export const googleLogin = async (req, res) => {
 };
 
 // Logout Section
+
 export const logout = async (req, res) => {
   try {
-    // fetching token from header or cookies and put into blacklist token collection after logout
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    await BlacklistToken.create({ token });
-    // delete the cookie after logout
+
+    if (token) {
+      // Decode the token to get user ID (assuming your token includes `id`)
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.userId; // ✅ declare userId here
+
+      // ✅ Update lastActiveAt
+      await User.findByIdAndUpdate(userId, {
+        $set: { lastActiveAt: new Date() },
+      });
+
+      // ✅ Blacklist the token
+      await BlacklistToken.create({ token });
+    }
+
     return res
       .status(200)
       .cookie("token", "", {
         maxAge: 0,
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "strict",
       })
       .json({
