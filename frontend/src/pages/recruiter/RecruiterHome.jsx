@@ -151,7 +151,7 @@ const RecruiterHome = () => {
     <>
     {/* If company exists and user is active, show dashboard */}
       {company && user?.isActive ? (
-        <div className="min-h-screen p-8">
+        <div className="min-h-screen p-8 pt-20">
           {/* Header Section */}
           <header className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800">

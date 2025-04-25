@@ -75,7 +75,7 @@ const AddRecruiter = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="flex items-center justify-center ">
+        <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100">
           <form
             className="w-full p-4 md:w-1/2 space-y-4"
             onSubmit={handleSubmit}

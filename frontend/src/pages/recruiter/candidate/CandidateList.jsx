@@ -115,11 +115,11 @@ const CandidateList = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20">
+        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20 ">
 
 
           {/* Header */}
-          <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center">
+          <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center pt-20">
             <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-0">
               Find Candidates
             </h1>
