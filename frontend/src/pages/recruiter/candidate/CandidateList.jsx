@@ -104,13 +104,14 @@ const CandidateList = () => {
       toast.error("Something went wrong!");
     }
   };
-
+  console.log("candidates", candidates);
   // Pagination logic
   const totalPages = Math.ceil(candidates.length / ITEMS_PER_PAGE);
   const currentCandidates = candidates.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+  
 
   return (
     <>
@@ -165,7 +166,7 @@ const CandidateList = () => {
                     "", "Post Graduation","Under Graduation","B.Tech", "M.Tech", "MBA", "MCA","B.Sc", "M.Sc", "B.Com", "M.Com", "Diploma","12th Pass","10th pass", "Others"
                   ]
                 },
-                { label: "Last Active", name: "lastActive", type: "text", placeholder: "YYYY-MM-DD" },
+                { label: "Last Active", name: "lastActive", type: "text", placeholder: "No.of Days e.g 3" },
                 { label: "Location", name: "location", type: "text", placeholder: "e.g. Bangalore" },
                 { label: "Skills", name: "skills", type: "text", placeholder: "e.g. React, Node.js" },
                 { label: "Expected CTC", name: "salaryBudget", type: "text", placeholder: "e.g. 50000" }
@@ -299,6 +300,10 @@ const CandidateList = () => {
                       <p>
                         <strong>Expected CTC:</strong> ₹
                         {candidate.profile.expectedCTC}
+                      </p>
+                      <p>
+                      <strong>Last Active:</strong>
+                        {candidate.lastActiveAgo}
                       </p>
                     </div>
                   </div>
