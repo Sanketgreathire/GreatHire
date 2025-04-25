@@ -279,7 +279,8 @@ const Blogs = () => {
         <div className="py-2 text-center flex-grow w-screen">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
-              <Typewriter
+              Unlock Your Pontential with Great<span className='text-blue-700'>Hire</span>
+              {/* <Typewriter
                 words={["Unlock Your Potential With Great"]}
                 typeSpeed={50}
                 cursor={false}
@@ -294,7 +295,7 @@ const Blogs = () => {
                 typeSpeed={50}
                 delaySpeed={500}
                 cursor={false}
-              />
+              /> */}
             </span>
           </h1>
 

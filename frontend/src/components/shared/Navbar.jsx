@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
+import GreatHire from '../../assets/GreatHireLogo.jpg'
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
@@ -142,22 +143,8 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
           {/* Logo */}
-          <div
-            to={
-              user
-                ? user.role === "student"
-                  ? "/"
-                  : "/recruiter/dashboard/home"
-                : "/"
-            }
-            className={`flex items-center w-full ${
-              user && user.role === "recruiter" && "justify-center"
-            } 
-             lg:block lg:w-auto lg:justify-normal lg:items-start 
-              text-2xl font-bold relative`}
-          >
-            <span
-              onClick={() => {
+          <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
+            onClick={() => {
                 {
                   user
                     ? user?.role === "student"
@@ -165,9 +152,36 @@ const Navbar = () => {
                       : navigate("/recruiter/dashboard/home")
                     : navigate("/");
                 }
+              }}/>
+          <div>
+          
+          </div>
+          <div
+            to={
+              user
+              ? user.role === "student"
+              ? "/"
+              : "/recruiter/dashboard/home"
+              : "/"
+            }
+            className={`flex items-center w-full ${
+              user && user.role === "recruiter" && "justify-center"
+              } 
+              lg:block lg:w-auto lg:justify-normal lg:items-start 
+              text-2xl font-bold relative`}
+          >
+            <span
+              onClick={() => {
+                {
+                  user
+                  ? user?.role === "student"
+                  ? navigate("/")
+                  : navigate("/recruiter/dashboard/home")
+                  : navigate("/");
+                }
               }}
             >
-              Great<span className="text-blue-700">Hire</span>
+             
             </span>
           </div>
 
@@ -178,7 +192,12 @@ const Navbar = () => {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="hover:text-blue-700 transition-colors"
+                    className={
+                      location.pathname === to
+                        ? "text-blue-700 underline font-bold font-[Oswald]"
+                        : "hover:text-blue-700 transition-colors"
+                    }
+      
                   >
                     {label}
                   </Link>
