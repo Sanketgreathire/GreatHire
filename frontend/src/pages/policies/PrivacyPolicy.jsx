@@ -79,8 +79,8 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <Navbar />
 
-      <header className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-inner">
-        <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center">
+      <header className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-inner pt-10">
+        <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center pt-20">
           <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-3">
             <Shield className="h-9 w-9 text-blue-600" />
             Terms & Privacy Policy

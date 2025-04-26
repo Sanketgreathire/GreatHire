@@ -260,7 +260,7 @@ const categories = [
         title: "Industry Trends", 
         description: " Emerging trends across industries include AI-driven automation, sustainable business practices, and the rise of remote/hybrid work models. Companies are also focusing on digital transformation and cybersecurity to stay competitive.", 
         animation: Industry_Trends
-      },  
+      },
       { 
         title: "Development Programs", 
         description: "Leading companies invest in training, mentorship, and upskilling to boost employee growth. Programs like leadership development, technical certifications, and continuous learning enhance productivity and retention.", 
@@ -274,9 +274,9 @@ const Blogs = () => {
   return (
     <>
       <Navbar />
-        <div className="min-h-screen flex flex-col w-screen pt-10">
+        <div className="min-h-screen flex flex-col w-screen pt-20">
       
-        <div className="py-2 text-center flex-grow w-screen">
+        <div className="py-2 text-center flex-grow w-screen pt-10">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
               <Typewriter

@@ -102,8 +102,8 @@ const Jobs = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow w-full mx-auto bg-gray-100">
-        <div className="w-full px-4 py-4">
+      <div className="flex-grow w-full mx-auto bg-gray-100 ">
+        <div className="w-full px-4 py-4 pt-20">
           <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
         </div>
         <div className="px-4 py-4">
