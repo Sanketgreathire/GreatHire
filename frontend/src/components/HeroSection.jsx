@@ -65,12 +65,12 @@ const HeroSection = ({ searchInfo }) => {
         <div className="flex flex-wrap justify-center gap-4 mt-5 relative">
           {/* DROPDOWN BUTTONS */}
           {[
-            { name: "REMOTE", state: remoteOpen, toggle: () => setRemoteOpen(!remoteOpen), ref: remoteRef, options: ["All Jobs", "Hybrid Work", "Remote"] },
+            { name: "REMOTE", state: remoteOpen, toggle: () => setRemoteOpen(!remoteOpen), ref: remoteRef, options: ["All Jobs", "Hybrid Work", "Remote", "Onsite"] },
             { name: "DATE POSTED", state: datePostedOpen, toggle: () => setDatePostedOpen(!datePostedOpen), ref: datePostedRef, options: ["Last 24 hours", "Last 3 days", "Last 7 days", "Last 14 days"] },
-            { name: "JOB TYPE", state: jobTypeOpen, toggle: () => setJobTypeOpen(!jobTypeOpen), ref: jobTypeRef, options: ["Full-time", "Permanent", "Fresher", "Part-time"] },
+            { name: "JOB TYPE", state: jobTypeOpen, toggle: () => setJobTypeOpen(!jobTypeOpen), ref: jobTypeRef, options: ["Full-time", "Permanent", "Fresher", "Part-time", "Freelancer"] },
             { name: "DISTANCE", state: locationOpen, toggle: () => setLocationOpen(!locationOpen), ref: locationRef, options: ["Exact Location Only", "Within 5 Kilometers", "Within 10 Kilometers", "Within 15 Kilometers", "Within 20 Kilometers", "Within 25 Kilometers", "Within 35 Kilometers", "Within 50 Kilometers", "Within 100 Kilometers"] },
-            { name: "EXPERIENCE LEVEL", state: experienceLevelOpen, toggle: () => setExperienceLevelOpen(!experienceLevelOpen), ref: experienceLevelRef, options: ["Junior", "Mid-level", "Senior"] },
-            { name: "EDUCATION", state: educationOpen, toggle: () => setEducationOpen(!educationOpen), ref: educationRef, options: ["Bachelor's Degree", "12th Pass", "Master's Degree", "10th Pass", "Diploma"] },
+            { name: "EXPERIENCE LEVEL", state: experienceLevelOpen, toggle: () => setExperienceLevelOpen(!experienceLevelOpen), ref: experienceLevelRef, options: ["Fresher (0 - 1 years)","Junior (1 - 3 years)", "Mid-level (5 - 10 years)", "Senior ( 10+ years)"] },
+            { name: "EDUCATION", state: educationOpen, toggle: () => setEducationOpen(!educationOpen), ref: educationRef, options: ["10th Pass", "12th Pass", "Diploma", "Bachelor's Degree", "Master's Degree"] },
           ].map(({ name, state, toggle, ref, options }, index) => (
             <div className="relative" ref={ref} key={index}>
               <button onClick={toggle} className={dropdownClass}>
