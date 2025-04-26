@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
     },
+    lastActiveAt: {
+      type: Date,
+      default: Date.now,
+    },
     profile: {
       coverLetter: {
         type: String,

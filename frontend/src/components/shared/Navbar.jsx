@@ -10,8 +10,11 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
+import GreatHire from '../../assets/GreatHireLogo.jpg'
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
+import joinBg from "@/assets/img121.jpeg";
+
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -24,7 +27,6 @@ const Navbar = () => {
   // State management
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPolicyMenuOpen, setIsPolicyMenuOpen] = useState(false);
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   // Refs for click outside detection
@@ -141,22 +143,8 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
           {/* Logo */}
-          <div
-            to={
-              user
-                ? user.role === "student"
-                  ? "/"
-                  : "/recruiter/dashboard/home"
-                : "/"
-            }
-            className={`flex items-center w-full ${
-              user && user.role === "recruiter" && "justify-center"
-            } 
-             lg:block lg:w-auto lg:justify-normal lg:items-start 
-              text-2xl font-bold relative`}
-          >
-            <span
-              onClick={() => {
+          <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
+            onClick={() => {
                 {
                   user
                     ? user?.role === "student"
@@ -164,9 +152,36 @@ const Navbar = () => {
                       : navigate("/recruiter/dashboard/home")
                     : navigate("/");
                 }
+              }}/>
+          <div>
+          
+          </div>
+          <div
+            to={
+              user
+              ? user.role === "student"
+              ? "/"
+              : "/recruiter/dashboard/home"
+              : "/"
+            }
+            className={`flex items-center w-full ${
+              user && user.role === "recruiter" && "justify-center"
+              } 
+              lg:block lg:w-auto lg:justify-normal lg:items-start 
+              text-2xl font-bold relative`}
+          >
+            <span
+              onClick={() => {
+                {
+                  user
+                  ? user?.role === "student"
+                  ? navigate("/")
+                  : navigate("/recruiter/dashboard/home")
+                  : navigate("/");
+                }
               }}
             >
-              Great<span className="text-blue-700">Hire</span>
+             
             </span>
           </div>
 
@@ -177,7 +192,12 @@ const Navbar = () => {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="hover:text-blue-700 transition-colors"
+                    className={
+                      location.pathname === to
+                        ? "text-blue-700 underline font-bold font-[Oswald]"
+                        : "hover:text-blue-700 transition-colors"
+                    }
+      
                   >
                     {label}
                   </Link>
@@ -236,12 +256,12 @@ const Navbar = () => {
                   >
                     Login
                   </Link>
-                  <button
-                    onClick={() => setIsSignupModalOpen(true)}
+                  <Link
+                    to="/signup-choice"
                     className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
                   >
                     Signup
-                  </button>
+                  </Link>
                 </>
               ) : (
                 <div ref={profileMenuRef} className="relative ">
@@ -446,61 +466,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-
-      {/* Signup Modal */}
-      {isSignupModalOpen && (
-  <div className="fixed inset-0 bg-gradient-to-b from-white to-blue-200 z-50 flex flex-col items-center justify-start space-y-6 w-full h-screen overflow-y-auto">
-    <h2 className="text-2xl font-semibold mt-10">Join Great<span className="text-blue-700">Hire</span></h2>
-    
-    <div className="w-full max-w-sm space-y-4">
-      <button onClick={() => handleSignupOption("job")} className="w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition-colors">
-        I'm looking for a Job
-      </button>
-      <button onClick={() => handleSignupOption("recruiter")} className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-        I'm looking for Candidates
-      </button>
-      <button onClick={() => setIsSignupModalOpen(false)} className="w-full py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
-        Go Back
-      </button>
-    </div>
-
-    {/* Hiring Process Section */}
-    <div className="mt-10 w-full max-w-3xl text-center">
-      <h3 className="text-3xl font-bold mb-16">How to hire in less than 48 hours</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">📢</span> {/* Job Posting */}
-          </div>
-          <p className="text-lg font-medium">Post a free job in <br /> few minutes</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">📞</span> {/* Phone Call */}
-          </div>
-          <p className="text-lg font-medium">Get direct phone calls <br /> from HR</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 flex items-center justify-center bg-gray-100 rounded-full mb-6">
-            <span className="text-4xl">👔</span> {/* Interview & Hire */}
-          </div>
-          <p className="text-lg font-medium">Interview and hire the <br /> right staff</p>
-        </div>
-      </div>
-      <p className="mt-14 text-3xl font-bold">1000+ employers found success on GreatHire 🌟</p>
-    </div>
-
-    {/* Reviews Section */}
-    <div className="w-full ">
-      <ReviewsSection />
-    </div>
-
-    {/* Footer Section */}
-    <footer className="w-full border-t-2 border-gray-300 ">
-    <Footer />
-    </footer>
-  </div>
-)}
 
      
     </>
