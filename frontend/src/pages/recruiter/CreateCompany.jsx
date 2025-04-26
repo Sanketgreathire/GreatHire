@@ -153,7 +153,7 @@ const CreateCompany = () => {
       <Navbar />
       {/* Show form only if user exists and hasn't created a company */}
       {user && !user?.isCompanyCreated ? (
-        <div className="flex m-2 min-h-screen">
+        <div className="flex m-2 min-h-screen pt-20 bg-gray-100">
           <div className="w-full md:w-1/2 flex flex-col space-y-2 p-4">
             <h1 className="text-2xl font-bold mb-6 text-center text-blue-700">
               Company Details Form

@@ -311,7 +311,7 @@ export const logout = async (req, res) => {
 
     if (token) {
       // Decode the token to get user ID (assuming your token includes `id`)
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
       const userId = decoded.userId; // ✅ declare userId here
 
       // ✅ Update lastActiveAt
@@ -327,7 +327,7 @@ export const logout = async (req, res) => {
       .status(200)
       .cookie("token", "", {
         maxAge: 0,
-        httpOnly: true,
+        httpOnly: true,  // Ensuring security by keeping it HTTP only
         sameSite: "strict",
       })
       .json({
@@ -342,6 +342,8 @@ export const logout = async (req, res) => {
     });
   }
 };
+
+
 // for uploading services
 export const uploadResumeToCloudinary = async (fileBuffer, fileName) => {
   try {

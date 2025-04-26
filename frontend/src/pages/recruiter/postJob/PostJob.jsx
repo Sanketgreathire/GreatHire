@@ -152,7 +152,7 @@ const PostJob = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="px-2 py-4">
+        <div className="px-2 py-4 pt-20">
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg">
             <h1>
               {/* Display only the title of the current step */}

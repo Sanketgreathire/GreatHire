@@ -408,11 +408,13 @@ export const getCandidateData = async (req, res) => {
       query["profile.qualification"] = new RegExp(escapeRegex(qualification), "i");
     }
 
-    // Last Active (uses `updatedAt` field from timestamps)
+    // Last Active - days based filter
     if (lastActive) {
-      const lastActiveDate = new Date(lastActive);
-      if (!isNaN(lastActiveDate)) {
-        query["updatedAt"] = { $gte: lastActiveDate };
+      const daysAgo = parseInt(lastActive);
+      if (!isNaN(daysAgo)) {
+        const sinceDate = new Date();
+        sinceDate.setDate(sinceDate.getDate() - daysAgo);
+        query["updatedAt"] = { $gte: sinceDate };
       }
     }
 
@@ -468,7 +470,35 @@ export const getCandidateData = async (req, res) => {
       address: 1,
     });
 
-    res.status(200).json({ success: true, candidates });
+    // Add daysAgoLastActive to each candidate
+    const enhancedCandidates = candidates
+      .map((candidate) => {
+        const lastActiveDate = new Date(candidate.updatedAt);
+        const now = new Date();
+        const diffMs = now - lastActiveDate;
+
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor(
+          (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+
+        return {
+          ...candidate.toObject(),
+          daysAgoLastActive: diffDays,
+          hoursAgoLastActive: diffHours,
+          lastActiveAgo: `${diffDays} day${diffDays !== 1 ? "s" : ""} ${
+            diffHours
+          } hour${diffHours !== 1 ? "s" : ""} ago`,
+        };
+      })
+      .sort((a, b) => {
+        const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
+        const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
+        return totalA - totalB; // most recent first
+      });
+
+
+    res.status(200).json({ success: true, candidates:enhancedCandidates });
   } catch (error) {
     console.error("Error fetching candidate data:", error);
     res.status(500).json({ message: "Internal Server Error", error });
