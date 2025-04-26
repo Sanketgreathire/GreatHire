@@ -118,7 +118,7 @@ const RecruiterList = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="container mx-auto p-4 min-h-screen">
+        <div className="container mx-auto p-4 min-h-screen pt-20">
           <h2 className="text-2xl text-center underline font-semibold mb-4">Recruiter List</h2>
           <div className="mb-4 flex justify-between px-2">
             <input

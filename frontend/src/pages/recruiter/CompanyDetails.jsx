@@ -129,7 +129,7 @@ const CompanyDetails = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="max-w-6xl mx-auto p-8  mt-10  bg-white">
+        <div className="max-w-6xl mx-auto p-8  mt-10  bg-white pt-10 rounded-lg shadow-md">
           <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
             Company Details
           </h1>

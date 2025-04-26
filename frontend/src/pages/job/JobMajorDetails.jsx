@@ -25,7 +25,7 @@ const JobMajorDetails = ({ selectedJob }) => {
             <PiMoneyWavyFill />
             <span className="text-xl font-bold text-black">Pay</span>
           </h3>
-          <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 font-semibold">
+          <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 ">
             {selectedJob?.jobDetails?.salary
               .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
               .split("-")
@@ -47,7 +47,7 @@ const JobMajorDetails = ({ selectedJob }) => {
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
             <div className="flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
-              <span className="font-bold">
+              <span className="">
                 {selectedJob?.jobDetails?.experience}{" "}
                 {selectedJob?.jobDetails?.experience !== "Fresher" &&
                   selectedJob?.jobDetails?.experience !== "fresher" &&
@@ -67,7 +67,7 @@ const JobMajorDetails = ({ selectedJob }) => {
             <div
               className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
             >
-              <span className="font-bold">
+              <span className="">
                 {selectedJob?.jobDetails?.jobType}
               </span>
             </div>
@@ -94,7 +94,7 @@ const JobMajorDetails = ({ selectedJob }) => {
                 key={index}
                 className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
               >
-                <span className="font-bold">{skill}</span>
+                <span className="">{skill}</span>
               </div>
             ))}
           </div>
