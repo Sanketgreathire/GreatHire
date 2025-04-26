@@ -65,9 +65,6 @@ import VerifyNumber from "./components/VerifyNumber";
 // PDF
 import { Worker } from "@react-pdf-viewer/core";
 
-// ✅ Chatbot Widget
-import ChatbotWidget from "./components/ChatbotWidget";
-
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/blogs", element: <Blogs /> },
@@ -136,7 +133,6 @@ function App() {
     if (!token) dispatch(logOut());
   }, []);
 
-  // Optional: unregister previous service workers
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((registration) => registration.unregister());
@@ -148,8 +144,6 @@ function App() {
       <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
-          {/* ✅ Include floating chatbot widget globally */}
-          <ChatbotWidget />
         </Worker>
       </JobDetailsProvider>
     </div>

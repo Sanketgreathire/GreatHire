@@ -535,7 +535,7 @@ function App() {
       <Navbar />
       {/* Hero Section */}
       <div className="bg-blue-600 text-white py-20">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 pt-10">
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">About GreatHire</h1>
           <p className="text-xl text-center max-w-3xl mx-auto font-serif">
           GreatHire Business Solutions provides strategic staffing and workforce solutions tailored to meet diverse business needs. We specialize in connecting companies with top-tier talent, driving efficiency, productivity, and long-term success through our expert recruitment services.          </p>
