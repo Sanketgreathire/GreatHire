@@ -104,22 +104,23 @@ const CandidateList = () => {
       toast.error("Something went wrong!");
     }
   };
-
+  console.log("candidates", candidates);
   // Pagination logic
   const totalPages = Math.ceil(candidates.length / ITEMS_PER_PAGE);
   const currentCandidates = candidates.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+  
 
   return (
     <>
       {company && user?.isActive ? (
-        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20">
+        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20 ">
 
 
           {/* Header */}
-          <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center">
+          <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center pt-20">
             <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-0">
               Find Candidates
             </h1>
@@ -165,7 +166,7 @@ const CandidateList = () => {
                     "", "Post Graduation","Under Graduation","B.Tech", "M.Tech", "MBA", "MCA","B.Sc", "M.Sc", "B.Com", "M.Com", "Diploma","12th Pass","10th pass", "Others"
                   ]
                 },
-                { label: "Last Active", name: "lastActive", type: "text", placeholder: "YYYY-MM-DD" },
+                { label: "Last Active", name: "lastActive", type: "text", placeholder: "No.of Days e.g 3" },
                 { label: "Location", name: "location", type: "text", placeholder: "e.g. Bangalore" },
                 { label: "Skills", name: "skills", type: "text", placeholder: "e.g. React, Node.js" },
                 { label: "Expected CTC", name: "salaryBudget", type: "text", placeholder: "e.g. 50000" }
@@ -299,6 +300,10 @@ const CandidateList = () => {
                       <p>
                         <strong>Expected CTC:</strong> ₹
                         {candidate.profile.expectedCTC}
+                      </p>
+                      <p>
+                      <strong>Last Active:</strong>
+                        {candidate.lastActiveAgo}
                       </p>
                     </div>
                   </div>

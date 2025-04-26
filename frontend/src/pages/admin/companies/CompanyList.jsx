@@ -70,6 +70,10 @@ const CompanyList = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [companyId, setCompanyId] = useState(null);
 
+  const [activePage, setActivePage] = useState(1);
+  const [deletedPage, setDeletedPage] = useState(1);
+
+
   const stats = [
     {
       title: "Total Companies",
@@ -243,15 +247,16 @@ const CompanyList = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const paginatedDeletedCompanies = filteredDeletedCompanies.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
-
   const paginatedCompanies = filteredCompanies.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+    (activePage - 1) * itemsPerPage,
+    activePage * itemsPerPage
   );
+  
+  const paginatedDeletedCompanies = filteredDeletedCompanies.slice(
+    (deletedPage - 1) * itemsPerPage,
+    deletedPage * itemsPerPage
+  );
+  
 
   return (
     <>
@@ -376,40 +381,35 @@ const CompanyList = () => {
           </TableBody>
         </Table>
 
-        
-        
         <div className="flex justify-between items-center mt-4">
           <span>
             Showing{" "}
-            {Math.min((page - 1) * itemsPerPage + 1, filteredDeletedCompanies.length)}{" "}
-            to {Math.min(page * itemsPerPage, filteredDeletedCompanies.length)} of{" "}
-            {filteredDeletedCompanies.length} results
+            {Math.min((activePage - 1) * itemsPerPage + 1, filteredCompanies.length)}{" "}
+            to {Math.min(activePage * itemsPerPage, filteredCompanies.length)} of{" "}
+            {filteredCompanies.length} results
           </span>
           <div className="flex gap-2">
-            <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <Button disabled={activePage === 1} onClick={() => setActivePage(activePage - 1)}>
               Previous
             </Button>
-            {[...Array(Math.ceil(filteredDeletedCompanies.length / itemsPerPage))].map(
-              (_, i) => (
-                <Button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={page === i + 1 ? "bg-blue-700 text-white" : ""}
-                >
-                  {i + 1}
-                </Button>
-              )
-            )}
+            {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map((_, i) => (
+              <Button
+                key={i}
+                onClick={() => setActivePage(i + 1)}
+                className={activePage === i + 1 ? "bg-blue-700 text-white" : ""}
+              >
+                {i + 1}
+              </Button>
+            ))}
             <Button
-              disabled={
-                page === Math.ceil(filteredDeletedCompanies.length / itemsPerPage)
-              }
-              onClick={() => setPage(page + 1)}
+              disabled={activePage === Math.ceil(filteredCompanies.length / itemsPerPage)}
+              onClick={() => setActivePage(activePage + 1)}
             >
               Next
             </Button>
           </div>
         </div>
+
       </div>
 
       
@@ -440,40 +440,35 @@ const CompanyList = () => {
           </TableBody>
         </Table>
 
-        
-
         <div className="flex justify-between items-center mt-4">
           <span>
             Showing{" "}
-            {Math.min((page - 1) * itemsPerPage + 1, filteredDeletedCompanies.length)}{" "}
-            to {Math.min(page * itemsPerPage, filteredDeletedCompanies.length)} of{" "}
+            {Math.min((deletedPage - 1) * itemsPerPage + 1, filteredDeletedCompanies.length)}{" "}
+            to {Math.min(deletedPage * itemsPerPage, filteredDeletedCompanies.length)} of{" "}
             {filteredDeletedCompanies.length} results
           </span>
           <div className="flex gap-2">
-            <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+            <Button disabled={deletedPage === 1} onClick={() => setDeletedPage(deletedPage - 1)}>
               Previous
             </Button>
-            {[...Array(Math.ceil(filteredDeletedCompanies.length / itemsPerPage))].map(
-              (_, i) => (
-                <Button
-                  key={i}
-                  onClick={() => setPage(i + 1)}
-                  className={page === i + 1 ? "bg-blue-700 text-white" : ""}
-                >
-                  {i + 1}
-                </Button>
-              )
-            )}
+            {[...Array(Math.ceil(filteredDeletedCompanies.length / itemsPerPage))].map((_, i) => (
+              <Button
+                key={i}
+                onClick={() => setDeletedPage(i + 1)}
+                className={deletedPage === i + 1 ? "bg-blue-700 text-white" : ""}
+              >
+                {i + 1}
+              </Button>
+            ))}
             <Button
-              disabled={
-                page === Math.ceil(filteredDeletedCompanies.length / itemsPerPage)
-              }
-              onClick={() => setPage(page + 1)}
+              disabled={deletedPage === Math.ceil(filteredDeletedCompanies.length / itemsPerPage)}
+              onClick={() => setDeletedPage(deletedPage + 1)}
             >
               Next
             </Button>
           </div>
         </div>
+
       </div>
 
       {showDeleteModal && (

@@ -140,17 +140,7 @@ const PostedJobList = () => {
   return (
     <>
       {company && user.isActive ? (
-        <div className="p-5 bg-gray-50 shadow-md rounded-lg">
-          <div className="mb-6">
-            <div className="p-10 bg-white shadow-md rounded-lg flex justify-center items-center">
-              <button
-                onClick={handlePostJob}
-                className="bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-bold hover:bg-blue-600 transition flex items-center"
-              >
-                <span className="text-2xl font-bold mr-1">+</span> Post New Job
-              </button>
-            </div>
-          </div>
+        <div className="p-5 bg-gray-50 shadow-md rounded-lg pt-20 ">
 
           {loading ? (
             <div className="flex justify-center items-center">

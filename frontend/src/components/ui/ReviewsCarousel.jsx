@@ -51,18 +51,18 @@ const ReviewsCarousel = ({ reviews, title }) => {
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <div className="mt-10 px-4">
-      <h3 className="text-2xl md:text-3xl font-bold text-center mb-6">{title}</h3>
+    <div>
+      <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">{title}</h2>
 
       {/* Wrapper to prevent page-level horizontal scrolling */}
       <div 
-        className="relative max-w-7xl mx-auto overflow-hidden py-4"
+        className=" relative max-w-9xl mx-auto overflow-hidden py-8"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Left & Right Fading Gradient Effect */}
-        <div className="absolute top-0 left-0 w-5 h-full bg-gradient-to-r from-blue-100 to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute top-0 right-0 w-5 h-full bg-gradient-to-l from-blue-100 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 left-0 w-5 bg-gradient-to-r from-blue-100 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-5  bg-gradient-to-l from-blue-100 to-transparent z-10 pointer-events-none"></div>
         
         {/* Disable animation on small screens, allow scrolling inside */}
         <div className={`w-full flex gap-6 flex-nowrap overflow-x-auto lg:w-max lg:animate-scroll-infinite scrollbar-hide ${isPaused ? "paused" : ""}`}>
@@ -92,11 +92,11 @@ const ReviewsCarousel = ({ reviews, title }) => {
 
 export default function ReviewsSection() {
   return (
-    <div className="py-12 overflow-x-hidden w-full"> {/* Prevent page horizontal scrolling */}
+    <div className="py-2 overflow-x-hidden w-full"> {/* Prevent page horizontal scrolling */}
       <div className="w-full px-0 mx-0">
-        <ReviewsCarousel reviews={clientReviews} title={<span className="text-blue-800 text-xl font-semibold">Our Client & Recruiter Reviews</span>}
+        <ReviewsCarousel reviews={clientReviews} title={<span className="text-blue-800 text-4xl font-[oswald] font-bold mb-8">Our Client Reviews</span>}
         />
-        <ReviewsCarousel reviews={candidateReviews} title={<span className="text-blue-800 text-xl font-semibold">Our Candidate & Employee Reviews</span>}
+        <ReviewsCarousel reviews={candidateReviews} title={<span className="text-blue-800 text-4xl font-[oswald] font-bold mb-8">Our Employee Reviews</span>}
         />
       </div>
     </div>

@@ -91,7 +91,7 @@ const AllApplicantsList = () => {
     if (totalPages <= 1) return null;
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     return (
-      <div className="flex justify-center mt-4 space-x-2">
+      <div className="flex justify-center mt-4 space-x-2 pt-20">
         {pages.map((page) => (
           <button
             key={page}
@@ -113,8 +113,8 @@ const AllApplicantsList = () => {
     <>
       {company && user?.isActive ? (
         !applicantDetailsModal ? (
-          <div className="min-h-screen p-4 sm:p-8">
-            <div className="bg-white shadow-md rounded-lg p-6">
+          <div className="min-h-screen  p-4 sm:p-8 pt-32">
+            <div className="bg-white shadow-md rounded-lg p-6 pt-10">
               <h1 className="text-2xl font-bold text-gray-700 mb-6 flex items-center gap-2">
                 <FiUsers className="text-blue-700 text-3xl" /> All Applicants
               </h1>

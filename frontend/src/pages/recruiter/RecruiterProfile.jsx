@@ -28,7 +28,7 @@ const RecruiterProfile = () => {
   //console.log(user);
   //console.log(company);
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 pt-10">
       {/* Navbar */}
       <Navbar />
 
