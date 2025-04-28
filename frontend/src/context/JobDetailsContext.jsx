@@ -111,20 +111,26 @@ const JobDetailsProvider = ({ children }) => {
     setSaveJobsList(savedJobs);
   };
 
-  const filterJobs = (titleKeyword, location) => {
+  const filterJobs = (
+    titleKeyword,
+    location,
+    jobType,
+    remoteOption,
+    experienceLevel,
+    education
+  ) => {
     const filteredJobs = originalJobsList.filter((job) => {
       const { jobDetails } = job;
-
-      if (!jobDetails) {
-        return false;
-      }
-
+      if (!jobDetails) return false;
+  
       const isTitleMatch = titleKeyword
         ? [jobDetails.title, jobDetails.companyName]
             .map((field) => (field ? field.toLowerCase().trim() : ""))
-            .some((field) => field.includes(titleKeyword.toLowerCase().trim()))
+            .some((field) =>
+              field.includes(titleKeyword.toLowerCase().trim())
+            )
         : true;
-
+  
       const isLocationMatch = location
         ? jobDetails.location
             .toLowerCase()
@@ -135,18 +141,37 @@ const JobDetailsProvider = ({ children }) => {
             .trim()
             .includes(jobDetails.location.toLowerCase().trim())
         : true;
-
-      return isTitleMatch && isLocationMatch;
+  
+      const isJobTypeMatch = jobType
+        ? jobDetails.jobType?.toLowerCase() === jobType.toLowerCase()
+        : true;
+  
+      const isRemoteMatch = remoteOption
+        ? jobDetails.remoteOption?.toLowerCase() === remoteOption.toLowerCase()
+        : true;
+  
+      const isExperienceMatch = experienceLevel
+        ? jobDetails.experienceLevel?.toLowerCase() === experienceLevel.toLowerCase()
+        : true;
+  
+      const isEducationMatch = education
+        ? jobDetails.education?.toLowerCase() === education.toLowerCase()
+        : true;
+  
+      return (
+        isTitleMatch &&
+        isLocationMatch &&
+        isJobTypeMatch &&
+        isRemoteMatch &&
+        isExperienceMatch &&
+        isEducationMatch
+      );
     });
-
+  
     setJobsList(filteredJobs);
     setSelectedJob(filteredJobs[0] || null);
   };
-
-  const resetFilter = () => {
-    setJobsList(originalJobsList);
-    setSelectedJob(originalJobsList[0] || null);
-  };
+  
 
   // New function to add an application to a job
   const addApplicationToJob = (jobId, newApplication) => {
@@ -185,7 +210,10 @@ const JobDetailsProvider = ({ children }) => {
       return prevSelectedJob;
     });
   };
-
+  const resetFilter = () => {
+    setJobsList(originalJobsList);
+    setSelectedJob(originalJobsList[0] || null);
+  };
   return (
     <JobDetailsContext.Provider
       value={{

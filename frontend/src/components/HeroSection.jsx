@@ -4,15 +4,37 @@ import JobSearch from "@/pages/job/JobSearch";
 import { useDispatch } from "react-redux";
 import { setSearchedQuery } from "@/redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const HeroSection = ({ searchInfo }) => {
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { filterJobs } = useJobDetails();
 
-  const searchJobHandler = () => {
-    dispatch(setSearchedQuery(query));
-    navigate("/browse");
+  const keyMap = {
+    "REMOTE": "remoteOption",
+    "DATE POSTED": "datePosted",
+    "JOB TYPE": "jobType",
+    "DISTANCE": "locationDistance",
+    "EXPERIENCE LEVEL": "experienceLevel",
+    "EDUCATION": "education",
+  };
+
+  const [filters, setFilters] = useState({
+    jobType: null,
+    remoteOption: null,
+    experienceLevel: null,
+    education: null,
+    locationDistance: null,
+    datePosted: null,
+  });
+
+  const updateFilter = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
   // Dropdown states
@@ -60,7 +82,15 @@ const HeroSection = ({ searchInfo }) => {
           Search, Apply & <br /> Get Your <span className="text-[#384ac2]">Dream Jobs</span>
         </h1>
 
-        <JobSearch searchInfo={searchInfo} />
+        <JobSearch searchInfo={{
+          ...searchInfo,
+          jobType: filters.jobType,
+          remoteOption: filters.remoteOption,
+          experienceLevel: filters.experienceLevel,
+          education: filters.education,
+          locationDistance: filters.locationDistance,
+          datePosted: filters.datePosted,
+        }} />
 
         <div className="flex flex-wrap justify-center gap-4 mt-5 relative">
           {/* DROPDOWN BUTTONS */}
@@ -71,33 +101,59 @@ const HeroSection = ({ searchInfo }) => {
             { name: "DISTANCE", state: locationOpen, toggle: () => setLocationOpen(!locationOpen), ref: locationRef, options: ["Exact Location Only", "Within 5 Kilometers", "Within 10 Kilometers", "Within 15 Kilometers", "Within 20 Kilometers", "Within 25 Kilometers", "Within 35 Kilometers", "Within 50 Kilometers", "Within 100 Kilometers"] },
             { name: "EXPERIENCE LEVEL", state: experienceLevelOpen, toggle: () => setExperienceLevelOpen(!experienceLevelOpen), ref: experienceLevelRef, options: ["Junior", "Mid-level", "Senior"] },
             { name: "EDUCATION", state: educationOpen, toggle: () => setEducationOpen(!educationOpen), ref: educationRef, options: ["Bachelor's Degree", "12th Pass", "Master's Degree", "10th Pass", "Diploma"] },
-          ].map(({ name, state, toggle, ref, options }, index) => (
-            <div className="relative" ref={ref} key={index}>
-              <button onClick={toggle} className={dropdownClass}>
-                <span>{name}</span>
-                <svg
-                  className={`w-4 h-4 transform transition-transform duration-200 ${state ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {state && (
-                <div className={menuClass}>
-                  <ul className="py-1 text-sm text-gray-700">
-                    {options.map((item, i) => (
-                      <li key={i}>
-                        <button className={menuItemClass}>{item}</button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          ))}
+          ].map(({ name, state, toggle, ref, options }, index) => {
+            const filterKey = keyMap[name]; // 👈 NOW inside .map()
+
+            return (
+              <div className="relative" ref={ref} key={index}>
+                <button onClick={toggle} className={dropdownClass}>
+                  <span>{filters[filterKey] || name}</span> {/* ✅ Dynamic label */}
+                  <svg
+                    className={`w-4 h-4 transform transition-transform duration-200 ${state ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {state && (
+                  <div className={menuClass}>
+                    <ul className="py-1 text-sm text-gray-700">
+                      {options.map((item, i) => (
+                        <li key={i}>
+                          <button
+                            className={menuItemClass}
+                            onClick={() => {
+                              const updatedFilters = { ...filters, [filterKey]: item };
+                              updateFilter(filterKey, item);
+                              toggle();
+
+                              // 🔥 Auto-apply filter immediately
+                              filterJobs(
+                                searchInfo.titleKeyword,
+                                searchInfo.location,
+                                updatedFilters.jobType,
+                                updatedFilters.remoteOption,
+                                updatedFilters.experienceLevel,
+                                updatedFilters.education,
+                                updatedFilters.locationDistance,
+                                updatedFilters.datePosted
+                              );
+                            }}
+                          >
+                            {item}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
