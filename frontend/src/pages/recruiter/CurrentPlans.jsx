@@ -10,7 +10,7 @@ const CurrentPlans = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const { jobPlan } = useSelector((state) => state.jobPlan);
-
+  console.log("CurrentPlans", user, company, jobPlan);
   // Show loading message if user or company data is not available
   if (!user || !company) return <p>Loading...</p>;
 
@@ -18,7 +18,7 @@ const CurrentPlans = () => {
     <>
     {/* Check if the company exists and the user is active */}
       {company && user?.isActive ? (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4 pt-20">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
             {/* Header */}
             <div className="bg-blue-600 text-white p-6 text-center">
@@ -43,6 +43,22 @@ const CurrentPlans = () => {
                   </p>
 
                   <div className="space-y-3 text-gray-700">
+                    <div className="flex justify-between p-3 bg-white rounded-lg shadow">
+                      <span className="font-medium">Company:</span>
+                      <span className="font-semibold">{company.companyName}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-white rounded-lg shadow">
+                      <span className="font-medium">Phone:</span>
+                      <span className="font-semibold">{company.phone}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-white rounded-lg shadow items-start">
+                      <span className="font-medium">Location:</span>
+                      <div className="flex flex-col text-right font-semibold">
+                        <span>{company.address.streetAddress}</span>
+                        <span>{company.address.city}, {company.address.state}</span>
+                        <span>{company.address.country} - {company.address.postalCode}</span>
+                      </div>
+                    </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Price:</span>
                       <span className="font-semibold text-blue-600">

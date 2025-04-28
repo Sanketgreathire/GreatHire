@@ -224,9 +224,9 @@ const FilterCard = ({ onSearch, resetFilters }) => {
 
   return (
     <div className="sticky top-0 rounded-md p-4 bg-white shadow-md">
-      <h1 className="text-2xl text-center">
-        Find Your Ideal Job with Custom Filters
-      </h1>
+      <h3 className="text-2xl text-center">
+        <h5>Find Your Ideal Job with Custom Filters</h5>
+      </h3>
       <hr className="mt-3" />
 
       {/* Search Fields in One Row with Four Columns */}

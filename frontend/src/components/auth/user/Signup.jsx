@@ -97,7 +97,7 @@ const Signup = () => {
     <>
     <div className="flex flex-col min-h-screen">
       <Navbar />
-       <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300">
+       <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300 pt-10">
 
         {/* Large Screen Left Side */}
         <div className="relative h-screen w-2/3 hidden xl:flex items-center justify-center ">
