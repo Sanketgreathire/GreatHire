@@ -48,7 +48,7 @@ import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
-import chatbotRoutes from "./routes/chatbot.js";
+// import chatbotRoutes from "./routes/chatbot.js";
 
 
 const app = express();
@@ -128,7 +128,7 @@ app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/notifications", notificationRoute);
-app.use("/api/v1/chatbot", chatbotRoutes);
+//app.use("/api/v1/chatbot", chatbotRoutes);
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();

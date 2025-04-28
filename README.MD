@@ -1,4 +1,6 @@
-# GreatHire
+# GreatHire Project Documentation
+
+
 
 ## Project Setup
 

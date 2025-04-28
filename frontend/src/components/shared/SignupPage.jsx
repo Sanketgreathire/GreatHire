@@ -2,8 +2,20 @@ import joinBg from "@/assets/img121.jpeg";
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
-const SignupPage = ({ handleSignupOption }) => {
+const SignupPage = () => {
+  const navigate = useNavigate();
+
+
+  const handleSignupOption = (option) => {
+    if (option === "recruiter") {
+      navigate("/recruiter/signup");
+    } else if (option === "job") {
+      navigate("/signup"); // or whatever route you intend
+    }
+  };
+  
   return (
     <>
     <div
