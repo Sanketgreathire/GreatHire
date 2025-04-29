@@ -79,7 +79,7 @@ const Signup = () => {
     <>
     <div className="flex flex-col min-h-screen ">
       <Navbar />
-      <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300 pt-16">
+      <div className="flex flex-col xl:flex-row flex-grow bg-gradient-to-b from-white to-blue-300 pt-10">
 
         {/* Updated Left Section - Background Image and Content */}
 
@@ -92,7 +92,7 @@ const Signup = () => {
           /> */}
           
           {/* Centered Content */}
-        <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4 pt-10">
+        <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4 ">
           <div className="mt-20 text-gray-900">
             <h2 className="text-4xl font-bold mb-2">Follow These <span className="text-blue-600">Simple Steps :</span></h2>
               <ul className="text-lg md:text-lg font-semibold text-gray-900 space-y-2">
@@ -118,7 +118,7 @@ const Signup = () => {
             />
           </div>
 
-              <div className=" flex flex-col items-center text-center space-y-4 px-4">
+              <div className=" flex flex-col items-center text-center space-y-1 px-5">
                 <h1 className="font-semibold text-xl md:text-2xl text-gray-900">
                   Powerful recruiting tools to find your{" "}
                   <span className="text-gray-800">Perfect Team!</span>
@@ -129,7 +129,7 @@ const Signup = () => {
                   "Free built-in ATS to manage your pipeline.",
                   "Industry high 40% candidate response rate.",
                 ].map((text, index) => (
-                  <p key={index} className="flex items-center gap-2 font-semibold text-sm md:text-lg text-gray-800">
+                  <p key={index} className="flex items-center gap-2 font-semibold text-sm md:text-lg text-gray-800 ">
                     <MdOutlineVerified size={30} color="red" />
                     {text}
                   </p>
@@ -149,12 +149,12 @@ const Signup = () => {
               Where the best company find their teams
             </h1>
             {/* Google Sign up Button */}
-            <GoogleOAuthProvider clientId={google_client_id}>
+            {/* <GoogleOAuthProvider clientId={google_client_id}>
               <GoogleLogin text="Sign up" role="recruiter" route="recruiter" />
             </GoogleOAuthProvider>
             <h1 className="text-sm font-semibold text-gray-400 text-center">
               ---- or Sign up with email ----
-            </h1>
+            </h1> */}
             <div className="flex flex-col space-y-2">
               <label className="font-bold">Full Name</label>
               <input
@@ -228,6 +228,13 @@ const Signup = () => {
               </li>
             ))}
           </ul>
+          <video
+              src={recruiter_video}
+              autoPlay
+              loop
+              controls
+              className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
+            />
         </div>
       </div>
 
