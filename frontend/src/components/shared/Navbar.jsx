@@ -410,7 +410,7 @@ const Navbar = () => {
 
               {/* Mobile User Actions updated with login and signup button */}
               {!user ? (
-                <div className="mt-4 border-t p-4">
+                <div className="mt-4 border-t p-4 space-y-3">
                   <Link
                     to="/login"
                     className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
@@ -418,15 +418,12 @@ const Navbar = () => {
                   >
                     Login
                   </Link>
-                  <button
-                    onClick={() => {
-                      setIsSignupModalOpen(true);
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors block mt-2"
+                  <Link
+                    to="/signup-choice"
+                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
                   >
                     Signup
-                  </button>
+                  </Link>
                 </div>
               ) : (
                 <div className="mt-4 border-t p-4">
