@@ -464,7 +464,7 @@ function getSectionContent(id) {
 
         <br></br>
         Phone: +91 8328192093 <br></br> 
-        (Mon–Fri, 9 AM – 6 PM, local time)
+        (Mon–Sat, 9am-7pm, local time)
         <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Email : </b>hr@babde.tech</a>
         <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Privacy inquiries : </b> hr@babde.tech     </a>
         <br></br>
