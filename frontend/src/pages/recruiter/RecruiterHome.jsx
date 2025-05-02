@@ -8,7 +8,9 @@ import {
   FaClipboardList,
   FaChevronUp,
   FaChevronDown,
+  FaCoins,
 } from "react-icons/fa"; // Importing icons
+import { BsCoin } from 'react-icons/bs';
 import { addCompany } from "@/redux/companySlice";
 
 const RecruiterHome = () => {
@@ -145,6 +147,29 @@ const RecruiterHome = () => {
       ),
       description: "Candidates who have been selected.",
     },
+    {
+      title: "Credits For Job Post", 
+      count: company?.creditedForJobs || 0, // Number of credits for job posts
+      icon: (
+        <FaCoins
+         className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2" 
+          size={45}
+        />
+      ),
+      description: "Candidates who have been selected.",
+    },
+    {
+      title: "Credits For Database", 
+      count: company?.creditedForCandidates || 0, // Number of credits for job posts
+      icon: (
+        <BsCoin
+          className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2"
+          size={45}
+        />
+      ),
+      description: "Candidates who have been selected.",
+    },
+
   ];
 
   return (

@@ -12,16 +12,22 @@ const razorpayInstance = new Razorpay({
 // this one create order for job plan
 export const createOrderForJobPlan = async (req, res) => {
   try { 
-    const { planName, companyId, amount, jobBoost } = req.body;
+    const { planName, companyId, amount, creditsForJobs,creditsForCandidates } = req.body;
+    console.log("req.body", req.body);
 
     const userId = req.id; // recruiter id
+    //console.log("userId:", userId);
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized: no user ID" });
 
-    if (!isUserAssociated(companyId, userId)) {
+
+    const isAssociated = await isUserAssociated(companyId, userId);
+    if (!isAssociated) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
       });
     }
+    
 
     // Validate input
     if (!planName || !companyId || !amount) {
@@ -58,7 +64,8 @@ export const createOrderForJobPlan = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       company: companyId,
       paymentStatus: "created",
-      jobBoost,
+      creditedForJobs: creditsForJobs,
+      creditedForCandidates: creditsForCandidates,
     });
 
     await newSubscription.save();
@@ -81,8 +88,9 @@ export const createOrderForJobPlan = async (req, res) => {
 // this one create order for candidate plan
 export const createOrderForCandidatePlan = async (req, res) => {
   try {
-    const { planName, companyId, amount, creditBoost } = req.body;
+    const { planName, companyId, amount, credits } = req.body;
     const userId = req.id; // recruiter id
+    console.log(" create orsed for candiate plan req.body", req.body);
 
     if (!isUserAssociated(companyId, userId)) {
       return res.status(403).json({
@@ -126,7 +134,7 @@ export const createOrderForCandidatePlan = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       company: companyId,
       paymentStatus: "created",
-      creditBoost,
+      credits,
     });
 
     await newSubscription.save();

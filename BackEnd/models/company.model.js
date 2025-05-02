@@ -48,12 +48,15 @@ const companySchema = new mongoose.Schema(
     },
     maxJobPosts: {
       type: Number,
-      default: 5, // Default for Free plan
+      default: 1, // Default for Free plan
     },
-
+    creditedForJobs: {
+      type: Number,
+      default: 0, // Default for Free plan
+    },
     creditedForCandidates: {
       type: Number,
-      default: 35, // Default for Free plan
+      default: 0, // Default for Free plan
     },
     userId: [
       {

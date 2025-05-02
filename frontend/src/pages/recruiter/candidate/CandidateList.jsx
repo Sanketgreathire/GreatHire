@@ -140,7 +140,7 @@ const CandidateList = () => {
                 <Button
                   className="bg-blue-700 hover:bg-blue-800"
                   onClick={() =>
-                    navigate("/recruiter/dashboard/candidate-plans")
+                    navigate("/recruiter/dashboard/upgrade-plans")
                   }
                 >
                   Upgrade Plan

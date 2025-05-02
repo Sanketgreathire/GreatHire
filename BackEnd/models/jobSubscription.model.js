@@ -7,10 +7,14 @@ const jobSubscriptionSchema = new mongoose.Schema(
     },
     planName: {
       type: String,
-      enum: ["Basic", "Standard", "Premium"],
+      enum: ["1 x Premium Job", "5 x Premium Jobs", "10 x Premium Jobs"],
       required: true,
     },
-    jobBoost: {
+    creditedForJobs: {
+      type: Number,
+      required: true,
+    },
+    creditedForCandidates: {
       type: Number,
       required: true,
     },
