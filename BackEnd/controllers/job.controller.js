@@ -53,10 +53,10 @@ export const postJob = [
 
       const company = await Company.findById(companyId);
 
-      if (company.maxJobPosts === 0) {
+      if (company.maxJobPosts === 0 &&  company.creditedForJobs < 500) {
         return res.status(400).json({
           success: false,
-          message: "Company needs job plans",
+          message: "Company needs  credits to post jobs.",
         });
       }
 
@@ -136,6 +136,12 @@ export const postJob = [
           }
         }
       }
+
+      if(company.maxJobPosts===0)
+      {
+        company.creditedForJobs = company.creditedForJobs - 500;
+        await company.save();
+      } // Deduct 500 credits for job posting
 
       return res.status(201).json({
         success: true,

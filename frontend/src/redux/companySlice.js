@@ -49,6 +49,10 @@ const companySlice = createSlice({
       state.company.creditedForCandidates =
         state.company.creditedForCandidates - action.payload;
     },
+    decreaseCandidateCredits: (state, action) => {
+      state.company.creditedForJobs =
+        state.company.creditedForJobs - action.payload;
+    },
   },
 });
 

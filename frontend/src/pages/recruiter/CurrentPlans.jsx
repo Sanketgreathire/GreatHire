@@ -66,8 +66,12 @@ const CurrentPlans = () => {
                       </span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
-                      <span className="font-medium">Job Boosts:</span>
-                      <span className="font-semibold">{jobPlan.jobBoost}</span>
+                      <span className="font-medium">Credits For Job Posting:</span>
+                      <span className="font-semibold">{company.creditedForJobs}</span>
+                    </div>
+                    <div className="flex justify-between p-3 bg-white rounded-lg shadow">
+                      <span className="font-medium">Credits For Database:</span>
+                      <span className="font-semibold">{company.creditedForCandidates}</span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Purchase Date:</span>

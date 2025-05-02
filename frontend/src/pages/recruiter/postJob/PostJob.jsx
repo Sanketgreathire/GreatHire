@@ -31,9 +31,9 @@ const PostJob = () => {
   };
   
   useEffect(() => {
-    if (company && company?.maxJobPosts === 0)
+    if (company && company?.maxJobPosts === 0 && company?.creditedForJobs < 500)
       navigate("/recruiter/dashboard/your-plans");
-  }, []);
+  },[]);
 
   const formik = useFormik({
     initialValues: {
@@ -92,7 +92,12 @@ const PostJob = () => {
           }
         );
         if (response.data.success) {
-          if (company?.maxJobPosts !== null) dispatch(decreaseMaxPostJobs(1));
+          if (company?.maxJobPosts !== null ){
+               dispatch(decreaseMaxPostJobs(1));
+          }//else if(company?.creditedForJobs !== null ){
+          //   dispatch(decreaseJobCredits(500));
+          // }
+          
           toast.success("Job post successfully");
           // Redirect to the dashboard after 2 seconds
           setTimeout(() => {

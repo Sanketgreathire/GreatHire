@@ -369,7 +369,8 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      jobBoost,
+      creditsForJobs,
+      creditsForCandidates,
       companyId,
     } = req.body;
 
@@ -388,7 +389,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           status: "Active", // Activate the plan after paymentStatus is paid
         },
         { new: true } // Return the updated document
-      ).select("jobBoost expiryDate planName price status purchaseDate");
+      ).select("credits expiryDate planName price status purchaseDate");
 
       // here remove expired plan of company
       await JobSubscription.deleteOne({
@@ -403,9 +404,9 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           .status(404)
           .json({ success: false, message: "Company not found" });
       }
-
-      company.maxJobPosts = company.maxJobPosts + jobBoost; // Add the jobBoost to existing maxPostJobs
-
+      
+      company.creditedForCandidates = company.creditedForCandidates + creditsForCandidates; // Add the creditings to existing credits
+      company.creditedForJobs = company.creditedForJobs + creditsForJobs; // Add the creditings to existing credits
       await company.save();
 
       res.status(200).json({
