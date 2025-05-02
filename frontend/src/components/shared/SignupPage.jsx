@@ -22,11 +22,11 @@ const SignupPage = () => {
         style={{ backgroundImage: `url(${joinBg})` }}
         className="min-h-screen bg-cover bg-center flex flex-col items-center w-full"
       >
-        <div className="mt-12 w-full max-w-7xl flex flex-col gap-9 px-4 md:px-14">
-          <div className="flex flex-col-reverse md:flex-row gap-10 md:gap-20 justify-center items-center w-full">
+        <div className="mt-12 w-full flex flex-col gap-9  ">
+          <div className="flex flex-col-reverse md:flex-row gap-10 px-4 md:gap-20 justify-center items-center w-full">
             
             {/* Left Info Section */}
-            <div className="font-[Oswald] text-center flex flex-col items-center md:w-1/2">
+            <div className="font-[Oswald] text-center flex flex-col items-center md:w-2/1">
               <h2 className="text-3xl font-semibold text-gray-800 py-7"></h2>
               <div className="grid gap-9">
                 <div className="flex items-center gap-4">
@@ -60,20 +60,20 @@ const SignupPage = () => {
             </div>
 
             {/* Signup Form Box */}
-            <div className="bg-white w-full md:w-1/2 p-8 md:p-20 rounded-2xl shadow-lg text-center">
+            <div className=" bg-white w-full md:w-1/2 p-8 md:p-24 rounded-2xl shadow-lg text-center mt-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
                 Join Great<span className="text-blue-700">Hire</span>
               </h2>
               <div className="space-y-4">
                 <button
                   onClick={() => handleSignupOption("job")}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md"
+                  className="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-all shadow-md"
                 >
                   I'm looking for a Job
                 </button>
                 <button
                   onClick={() => handleSignupOption("recruiter")}
-                  className="w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-all shadow-md"
+                  className="w-full bg-gray-800 text-white py-4 rounded-lg hover:bg-gray-900 transition-all shadow-md"
                 >
                   I'm looking for Candidates
                 </button>
@@ -82,7 +82,7 @@ const SignupPage = () => {
           </div>
 
           {/* Reviews Section */}
-          <div className="pt-10 w-full">
+          <div className="pt-10 w-full ">
             <ReviewsSection />
           </div>
         </div>
