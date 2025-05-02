@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const clientReviews = [
+  
   {
     text: "As a fast-growing startup, we needed to find candidates quickly, and Great Hire delivered. The talent pool is extensive, and the platform’s sorting tools allowed us to quickly narrow down our search to candidates who matched our needs. I can confidently say that Great Hire is an essential for our recruiting strategy.",
     name: "Anirban Barman",
@@ -51,12 +52,12 @@ const ReviewsCarousel = ({ reviews, title }) => {
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <div>
+    <div className="w-full">
       <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">{title}</h2>
 
       {/* Wrapper to prevent page-level horizontal scrolling */}
       <div 
-        className=" relative max-w-9xl mx-auto overflow-hidden py-8"
+        className=" relative w-full  overflow-hidden py-8"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
