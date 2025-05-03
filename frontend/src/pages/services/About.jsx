@@ -140,9 +140,9 @@ function App() {
           about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
         },
         {
-          name: "Eswar Reddy",
+          name: "T.Eswar Reddy",
           image: eswarImg,
-          role: ["Full Stack Developer","Test Engineer"],
+          role: ["Full Stack Developer","AI Engineer","Test Engineer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },

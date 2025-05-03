@@ -27,6 +27,7 @@ import About from "./pages/services/About";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
+import Packges from "./pages/services/Packages";
 
 // Recruiter Pages
 import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
@@ -87,6 +88,7 @@ const appRouter = createBrowserRouter([
   { path: "/policy/terms-and-conditions", element: <TermsAndConditions /> },
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
+  {path:"/packages",element:<Packges />},
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
