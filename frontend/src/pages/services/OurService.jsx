@@ -12,7 +12,7 @@ const OurService = () => {
       description:
         "Publish job for your organization or find best candidate that fits with you goal .",
       icon: "🔍",
-      url: "/recruiter/signup",
+      url: "/packages",
     },
     {
       title: "Accounts and Payroll",
