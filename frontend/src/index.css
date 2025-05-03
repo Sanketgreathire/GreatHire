@@ -1,7 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
+  /* Root CSS Variables */
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -29,6 +31,8 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
+  /* Dark mode adjustments */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -55,33 +59,45 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
-@layer base {
+
+  /* Default CSS reset */
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   .paused {
     animation-play-state: paused !important;
-  }  
+  }
 }
 
-/* 
+/* Keyframes for continuous scrolling animation */
 @keyframes scrollLoop {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%); /* Move by the entire width (effectively wrapping content) */
   }
 }
 
-.animate-loop-scroll {
-  animation: scrollLoop 30s linear infinite;
+/* Apply scrolling animation */
+.carousel {
+  display: flex;
+  flex-wrap: nowrap;
+  animation-name: scrollLoop;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-.pause-on-hover:hover {
+/* Pause animation on hover */
+.carousel-wrapper:hover .carousel {
   animation-play-state: paused;
-} */
+}
+
+.paused {
+  animation-play-state: paused !important;
+}
