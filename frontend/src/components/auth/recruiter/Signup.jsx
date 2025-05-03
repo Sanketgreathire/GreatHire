@@ -118,7 +118,7 @@ const Signup = () => {
             />
           </div>
 
-              <div className=" flex flex-col items-center text-center space-y-1 px-5">
+              <div className=" flex flex-col items-center text-center space-y-2 px-5">
                 <h1 className="font-semibold text-xl md:text-2xl text-gray-900">
                   Powerful recruiting tools to find your{" "}
                   <span className="text-gray-800">Perfect Team!</span>
@@ -140,7 +140,7 @@ const Signup = () => {
 
         {/* Updated Right Section - Form */}
         <div className="w-full xl:w-1/3 flex justify-center py-8 mb-16">
-          <form className="w-full max-w-md space-y-4 px-6" onSubmit={handleSubmit}>
+          <form className="w-full max-w-md space-y-5 px-6" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
