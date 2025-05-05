@@ -24,6 +24,15 @@ const JobDetailsProvider = ({ children }) => {
   // State to manage errors during API calls
   const [error, setError] = useState(null);
 
+  // Define the qualification categories for filtering
+const qualificationCategories = {
+  bachelors: ["B.Tech", "BE", "B.Sc", "BCA", "BBA", "B.Com", "Bachelor’s Degree","Any Graduate"],
+  masters: ["MCA", "MBA", "M.Sc", "M.Tech", "Master’s Degree", "Post Graduate", "MRCEM"],
+  diploma: ["Diploma", "Polytechnic"],
+  twelfth: ["12th Pass", "Intermediate"],
+  tenth: ["10th Pass", "Matriculation"],
+};
+
   // Fetch job listings from the API when the component mounts
   useEffect(() => {
     const fetchJobs = async () => {
@@ -111,14 +120,65 @@ const JobDetailsProvider = ({ children }) => {
     setSaveJobsList(savedJobs);
   };
 
+  const parseExperience = (experience) => {
+    experience = experience.toLowerCase().trim(); // Always normalize input first
+  
+    if (experience.includes("fresher")) {
+      return { min: 0, max: 0 }; // Freshers = 0 years experience
+    } else if (experience.includes("more than")) {
+      return { min: parseInt(experience.split(" ")[2]), max: Infinity }; // "More than X years"
+    } else if (experience.includes("months")) {
+      // Handle "6 months - 1 year" type
+      const [minStr, maxStr] = experience.split("-").map(str => str.trim());
+      let min = 0;
+      let max = 0;
+  
+      if (minStr.includes("month")) {
+        min = parseInt(minStr) / 12; // months to years
+      } else {
+        min = parseInt(minStr);
+      }
+  
+      if (maxStr.includes("month")) {
+        max = parseInt(maxStr) / 12;
+      } else if (maxStr.includes("year")) {
+        max = parseInt(maxStr);
+      }
+  
+      return { min, max };
+    } else if (experience.includes("-")) {
+      const [min, max] = experience.split("-").map(str => parseInt(str.trim())); // "2-3 years"
+      return { min, max };
+    } else {
+      const years = parseInt(experience);
+      return { min: years, max: years }; // Single year "2 years"
+    }
+  };
+  
+const calculateActiveDays = (createdAt) => {
+  if (!createdAt) return 0;
+  const postedDate = new Date(createdAt);
+  if (isNaN(postedDate.getTime())) return 0;
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  postedDate.setUTCHours(0, 0, 0, 0);
+  const diffInMs = today - postedDate;
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  return diffInDays >= 0 ? diffInDays : 0;
+};
+
+
   const filterJobs = (
     titleKeyword,
     location,
     jobType,
-    remoteOption,
-    experienceLevel,
-    education
+    workPlaceFlexibility,
+    experience,
+    qualifications,
+    datePosted
   ) => {
+
+
     const filteredJobs = originalJobsList.filter((job) => {
       const { jobDetails } = job;
       if (!jobDetails) return false;
@@ -126,9 +186,7 @@ const JobDetailsProvider = ({ children }) => {
       const isTitleMatch = titleKeyword
         ? [jobDetails.title, jobDetails.companyName]
             .map((field) => (field ? field.toLowerCase().trim() : ""))
-            .some((field) =>
-              field.includes(titleKeyword.toLowerCase().trim())
-            )
+            .some((field) => field.includes(titleKeyword.toLowerCase().trim()))
         : true;
   
       const isLocationMatch = location
@@ -146,33 +204,103 @@ const JobDetailsProvider = ({ children }) => {
         ? jobDetails.jobType?.toLowerCase() === jobType.toLowerCase()
         : true;
   
-      const isRemoteMatch = remoteOption
-        ? jobDetails.remoteOption?.toLowerCase() === remoteOption.toLowerCase()
+      const isWorkPlaceFlexibilityMatch = workPlaceFlexibility
+        ? jobDetails.workPlaceFlexibility?.toLowerCase() === workPlaceFlexibility.toLowerCase()
         : true;
   
-      const isExperienceMatch = experienceLevel
-        ? jobDetails.experienceLevel?.toLowerCase() === experienceLevel.toLowerCase()
+      const isExperienceMatch = experience
+        ? (() => {
+            const parseExperience = (exp) => {
+              exp = exp.toLowerCase().trim();
+              if (exp.includes("fresher")) return { min: 0, max: 0 };
+              if (exp.includes("more than")) {
+                return { min: parseInt(exp.split(" ")[2]), max: Infinity };
+              }
+              if (exp.includes("months")) {
+                const [minStr, maxStr] = exp.split("-").map((str) => str.trim());
+                let min = minStr.includes("month")
+                  ? parseInt(minStr) / 12
+                  : parseInt(minStr);
+                let max = maxStr.includes("month")
+                  ? parseInt(maxStr) / 12
+                  : parseInt(maxStr);
+                return { min, max };
+              }
+              if (exp.includes("-")) {
+                const [min, max] = exp
+                  .split("-")
+                  .map((str) => parseInt(str.trim()));
+                return { min, max };
+              }
+              const years = parseInt(exp);
+              return { min: years, max: years };
+            };
+  
+            const jobExperience = parseExperience(jobDetails.experience || "");
+            const filterExperience = parseExperience(experience);
+            return (
+              jobExperience.min <= filterExperience.max &&
+              jobExperience.max >= filterExperience.min
+            );
+          })()
         : true;
   
-      const isEducationMatch = education
-        ? jobDetails.education?.toLowerCase() === education.toLowerCase()
+      const isQualificationsMatch = qualifications
+        ? (Array.isArray(jobDetails.qualifications)
+            ? jobDetails.qualifications
+            : [jobDetails.qualifications]
+          ).some((q) => {
+            console.log('hi')
+            if (!q || typeof q !== "string") return false;
+            return q.toLowerCase().trim().includes(qualifications.toLowerCase().trim());
+          })()
+        : true;
+
+
+        const isDatePostedMatch = datePosted
+        ? ((job) => {
+
+            if (!job.createdAt) {
+              console.warn(`Job ${job._id} has no createdAt field`);
+              return false;
+            }
+            const diffInDays = calculateActiveDays(job.createdAt);
+            if (diffInDays === 0 && job.createdAt) {
+              console.warn(`Job ${job._id} has invalid createdAt: ${job.createdAt}`);
+              return false;
+            }
+            const dateFilters = {
+              "Last 24 hours": 1,
+              "Last 3 days": 3,
+              "Last 7 days": 7,
+              "Last 14 days": 14,
+            };
+            const daysThreshold = dateFilters[datePosted];
+            if (!daysThreshold) {
+              console.warn(`Invalid datePosted value: ${datePosted}`);
+              return true;
+            }
+            // console.log(`Job ${job._id}: diffInDays = ${diffInDays}, threshold = ${daysThreshold}`);
+            return diffInDays <= daysThreshold;
+          })(job)
         : true;
   
       return (
         isTitleMatch &&
         isLocationMatch &&
         isJobTypeMatch &&
-        isRemoteMatch &&
+        isWorkPlaceFlexibilityMatch &&
         isExperienceMatch &&
-        isEducationMatch
+        isQualificationsMatch &&
+        isDatePostedMatch
       );
     });
   
     setJobsList(filteredJobs);
     setSelectedJob(filteredJobs[0] || null);
   };
-  
 
+  
   // New function to add an application to a job
   const addApplicationToJob = (jobId, newApplication) => {
     setJobsList((prevJobsList) =>

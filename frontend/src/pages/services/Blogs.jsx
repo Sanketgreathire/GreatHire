@@ -274,7 +274,7 @@ const Blogs = () => {
   return (
     <>
       <Navbar />
-        <div className="min-h-screen flex flex-col w-screen pt-20">
+        <div className="min-h-screen flex flex-col w-screen">
       
         <div className="py-2 text-center flex-grow w-screen pt-10">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
