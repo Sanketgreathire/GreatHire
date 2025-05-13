@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from 'react-router-dom';
 
 // Component for filtering job listings
 import FilterCard from "./FilterCard";
@@ -113,13 +114,21 @@ const Jobs = () => {
             </div>
           ) : currentJobs.length > 0 ? (
             <>
+
+{/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {currentJobs.map((job) => (
                   <div key={job._id}>
+                    <Link to={`/jobs/${job._id}`}>
                     <Job job={job} />
+                    </Link>
                   </div>
                 ))}
               </div>
+
+{/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
+
               <div className="flex justify-between items-center mt-6">
                 <button
                   onClick={() =>
