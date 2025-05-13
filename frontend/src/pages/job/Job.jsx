@@ -166,8 +166,7 @@ const Job = ({ job }) => {
       <div className="flex w-full items-center justify-between gap-4">
         <Button
           onClick={() => {
-            setSelectedJob(job);
-            navigate(`/description`);
+            navigate(`/jobs/${job._id}`);
           }}
           variant="outline"
           className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white"
