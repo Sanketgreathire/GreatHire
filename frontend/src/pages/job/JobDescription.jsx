@@ -19,7 +19,7 @@ const JobDescription = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/job/get/${jobId}`);
+        const res = await fetch(`/api/v1/job/get/${jobId}`);
 
 
         // Log raw response
