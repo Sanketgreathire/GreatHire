@@ -121,8 +121,8 @@ function App() {
         {
           name: "Charan Sai",
           image: CharanImg,
-          role: ["Associate AWS Architect"],
-          expertise: "Cloud Solutions, DevOps",
+          role: ["Associate AWS Architect","Full Stack Developer","AI Engineer"],
+          expertise: "Cloud Solutions, DevOps, Web Development",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
         {
