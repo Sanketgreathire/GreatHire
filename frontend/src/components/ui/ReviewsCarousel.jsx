@@ -17,33 +17,33 @@ const ReviewsCarousel = ({ reviews, title, speed = 100 }) => {
 
   return (
     <div
-      className="py-8 relative max-w-full mx-auto overflow-hidden"
+      className="py-8 relative w-full overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">
+      <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
         {title}
       </h2>
-
-      {/* Left/Right fading overlays */}
-      <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-white to-transparent pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-white to-transparent pointer-events-none" />
 
       {/* Scrolling container */}
       <div
         ref={containerRef}
-        className={`carousel ${isPaused ? "paused" : ""}`}
+        className={`carousel flex gap-6 ${isPaused ? "paused" : ""}`}
         style={{
           animationDuration: `${duration}s`,
-          width: "100%", // Ensure the container spans full width
         }}
       >
         {[...reviews, ...reviews].map((r, i) => (
           <div
             key={i}
-            className="relative w-[90%] max-w-[450px] h-[250px] flex-shrink-0 bg-gray-100 p-6 shadow-xl rounded-2xl flex flex-col mx-auto md:mx-0"
+            className="relative w-[90%] max-w-[450px] h-[250px] flex-shrink-0 bg-gray-100 p-6 shadow-xl rounded-2xl flex flex-col"
           >
-            <span className="text-9xl text-gray-300 absolute top-2 left-2 font-serif opacity-50">“</span>
+            {/* Large Double Quotes on the Left */}
+            <span className="text-9xl text-gray-300 absolute top-2 left-2 font-serif opacity-50">
+              “
+            </span>
+
+            {/* Name & Author in Top Right */}
             <div className="text-right mb-5">
               <p className="text-gray-900 font-semibold">{r.name}</p>
               <p className="text-gray-500 text-sm">{r.author}</p>
@@ -77,7 +77,7 @@ export default function ReviewsSection() {
     },
     {
       text: "Great Hire doesn’t just send resumes—they send the right people. Every candidate they’ve placed with us came prepared and passionate, ready to support our busy agents from day one.",
-      name: " ",
+      name: "XYZ ",
       author: "Hiring Manager",
     },
     {
@@ -87,10 +87,10 @@ export default function ReviewsSection() {
     },
     {
       text: "We had trouble finding talent who could keep up with the demands of a high-volume brokerage. Great Hire delivered professionals who not only kept pace but helped us grow.",
-      name: " ",
+      name: " XYZ",
       author: "Sales Managers",
     },
-  
+
     {
       text: "As a fast-growing startup, we needed to find candidates quickly, and Great Hire delivered. The talent pool is extensive, and the platform’s sorting tools allowed us to quickly narrow down our search to candidates who matched our needs. I can confidently say that Great Hire is an essential for our recruiting strategy.",
       name: "Anirban Barman",
@@ -119,7 +119,7 @@ export default function ReviewsSection() {
       name: "R Krishnaveni",
       author: "Human Resource",
     },
-  
+
     {
       text: "I’m grateful for the incredible journey at Great Hire, where I received invaluable mentorship and support. Special thanks to Ch Tanmai Ma for her guidance, Sanket Babde Sir for fostering growth, and Sonika Babde Ma for her expertise in talent acquisition. This experience has been phenomenal.",
       name: "Meer Ahmadi",
@@ -145,8 +145,7 @@ export default function ReviewsSection() {
       name: "K Navaneeth",
       author: "Human Resource",
     },
-  
-  
+
     {
       text: "Great Hire made my job search effortless. The platform matched me with roles that fit my skills perfectly. Within weeks, I landed a data analyst position at a fantastic company. The process was smooth, and the support was excellent. Highly recommend Great Hire to anyone looking for the right opportunity.",
       name: "Rohan Das",
@@ -168,17 +167,25 @@ export default function ReviewsSection() {
       author: "DevOps Engineer",
     },
   ];
-  
+
   return (
     <div className="overflow-x-hidden w-full">
       <ReviewsCarousel
         reviews={clientReviews}
-        title={<span className="text-blue-800 text-4xl font-[oswald] font-bold">Our Client Reviews</span>}
+        title={
+          <span className="text-blue-800 text-4xl font-[oswald] font-bold">
+            Our Client Reviews
+          </span>
+        }
         speed={120}
       />
       <ReviewsCarousel
         reviews={candidateReviews}
-        title={<span className="text-blue-800 text-4xl font-[oswald] font-bold">Our Employee Reviews</span>}
+        title={
+          <span className="text-blue-800 text-4xl font-[oswald] font-bold">
+            Our Employee Reviews
+          </span>
+        }
         speed={120}
       />
     </div>
