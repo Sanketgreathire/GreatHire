@@ -14,6 +14,7 @@ import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 import { CiMenuBurger } from "react-icons/ci";
+import { FaDatabase } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 const DashboardNavigations = () => {
@@ -215,6 +216,18 @@ const DashboardNavigations = () => {
                   <>
                     <PiStudent size={25} className={iconClass(isActive)} />
                     <span>Find Candidates</span>
+                  </>
+                )}
+              </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/candidate-database"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FaDatabase size={25} className={iconClass(isActive)} />
+                    <span>Candidate Database</span>
                   </>
                 )}
               </NavLink>
