@@ -47,6 +47,7 @@ import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetai
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
+import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
@@ -105,6 +106,7 @@ const appRouter = createBrowserRouter([
       { path: "company-details", element: <CompanyDetails /> },
       { path: "applicants-list", element: <AllApplicantsList /> },
       { path: "candidate-list", element: <CandidateList /> },
+      { path: "candidate-database", element: <CandidateDatabase /> },
       { path: "candidate-plans", element: <CandidatePlans /> },
       { path: "your-plans", element: <CurrentPlans /> },
       { path: "upgrade-plans", element: <RecruiterPlans /> },
