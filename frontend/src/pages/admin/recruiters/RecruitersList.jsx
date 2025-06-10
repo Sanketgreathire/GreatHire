@@ -38,6 +38,8 @@ const RecruitersList = () => {
   // State to manage the search input value
   const [search, setSearch] = useState("");
 
+  const [toLowerCase, setToLowerCase] = useState(false);
+
   // State to manage loading status for various operations
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
@@ -313,17 +315,17 @@ const RecruitersList = () => {
     if (user) fetchRecruiterList();
   }, [user]);
 
-  const filteredRecruiters = recruiterList?.filter((recruiter) => {
-    const matchesSearch =
-      recruiter.fullname.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.companyName.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.email.toLowerCase().includes(search.toLowerCase()) ||
-      recruiter.phone.toLowerCase().includes(search.toLowerCase());
+const filteredRecruiters = recruiterList?.filter((recruiter) => {
+  const matchesSearch =
+    (recruiter.fullname || "").toLowerCase().includes(search.toLowerCase()) ||
+    (recruiter.companyName || "").toLowerCase().includes(search.toLowerCase()) ||
+    (recruiter.email || "").toLowerCase().includes(search.toLowerCase()) ||
+    (recruiter.phone || "").toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus = status === "All" || recruiter.isActive === status;
+  const matchesStatus = status === "All" || recruiter.isActive === status;
 
-    return matchesSearch && matchesStatus;
-  });
+  return matchesSearch && matchesStatus;
+});
 
   const paginatedRecruiters = filteredRecruiters.slice(
     (page - 1) * itemsPerPage,
