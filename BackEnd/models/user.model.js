@@ -43,6 +43,12 @@ const userSchema = new mongoose.Schema(
       country: {
         type: String,
       },
+      pincode:{
+        type: Number,
+        min: 100000,   // minimum 6-digit pincode in India
+        max: 999999, 
+        required: true,
+      }
     },
     lastActiveAt: {
       type: Date,

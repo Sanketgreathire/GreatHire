@@ -46,6 +46,7 @@ export const validateProfileUpdate = [
   body("city").optional().isString().withMessage("City must be a string"),
   body("state").optional().isString().withMessage("State must be a string"),
   body("country").optional().isString().withMessage("Country must be a string"),
+  body("pincode").optional().isNumeric().withMessage("Pincode must be a number"),
 
   // Job Profile (If provided, should be a string)
   body("companyName")
