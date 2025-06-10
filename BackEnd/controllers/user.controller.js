@@ -376,6 +376,7 @@ export const updateProfile = async (req, res) => {
       city,
       state,
       country,
+      pincode,
       gender,
       qualification,
       experience,
@@ -459,6 +460,7 @@ export const updateProfile = async (req, res) => {
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
+    if (pincode) user.address.pincode = pincode;
 
      // Updating gender and qualification
      if (gender && user.profile.gender !== gender) user.profile.gender = gender;

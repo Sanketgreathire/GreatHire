@@ -55,6 +55,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     experienceDetails: user?.profile?.experience?.experienceDetails || "",
     city: user?.address?.city || "",
     state: user?.address?.state || "",
+    pincode:user?.address?.pincode || "",
     country: user?.address?.country || "",
     profilePhoto: user?.profile?.profilePhoto || "",
     resumeOriginalName: user?.profile?.resumeOriginalName || "",
@@ -156,6 +157,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("city", input.city);
     formData.append("state", input.state);
     formData.append("country", input.country);
+    formData.append("pincode", input.pincode || "");
     formData.append("experience", input.experience || "");
     formData.append("jobProfile", input.jobProfile || "");
     formData.append("companyName", input.companyName || "");
@@ -375,32 +377,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
             <div className="grid sm:grid-cols-3 gap-4 mt-3">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
-                  City
-                </Label>
-                <Input
-                  id="city"
-                  name="city"
-                  value={input.city}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
-                  State
-                </Label>
-                <Input
-                  id="state"
-                  name="state"
-                  value={input.state}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                 <Label
                   htmlFor="country"
                   className="sm:w-20 w-full font-semibold"
@@ -415,6 +391,44 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   className="w-full"
                 />
               </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
+                  State
+                </Label>
+                <Input
+                  id="state"
+                  name="state"
+                  value={input.state}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
+                  City
+                </Label>
+                <Input
+                  id="city"
+                  name="city"
+                  value={input.city}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                <Label htmlFor="pincode" className="sm:w-20 w-full font-semibold">
+                  pincode
+                </Label>
+                <Input
+                  id="pincode"
+                  name="pincode"
+                  value={input.pincode}
+                  onChange={handleChange}
+                  className="w-full"
+                />
+              </div>
+
+
             </div>
           </div>
 
