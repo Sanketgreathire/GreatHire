@@ -1,6 +1,8 @@
 // Import React and useState hook for component state management
 import React, { useState } from "react";  
 
+
+
 // Import Redux hooks for dispatching actions and accessing state
 import { useDispatch, useSelector } from "react-redux";  
 
@@ -17,12 +19,14 @@ import { setUser } from "@/redux/authSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import  JobCategory from "@/components/ui/JobCategory"; 
 
 // Import icons for UI enhancement
 import { Loader2, Pencil } from "lucide-react";  
 
 // Import API endpoint for user-related requests
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
+import Job from "../job/Job";
 
 
 
@@ -45,6 +49,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     phoneNumber: user?.phoneNumber.number || "",
     
     bio: user?.profile?.bio || "",
+    category: user?.profile?.experience?.category,
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
@@ -158,6 +163,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("state", input.state);
     formData.append("country", input.country);
     formData.append("pincode", input.pincode || "");
+    formData.append("category", input.category);
     formData.append("experience", input.experience || "");
     formData.append("jobProfile", input.jobProfile || "");
     formData.append("companyName", input.companyName || "");
@@ -171,6 +177,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
     if (!hasExperience) {
       formData.set("experience", "0");
+      formData.set("category", "Fresher");
       formData.set("jobProfile", "Fresher");
       formData.set("companyName", "N/A");
       formData.set("currentCTC", "0");
@@ -215,6 +222,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   // If the modal is closed, return null to prevent rendering
   if (!open) return null;
+
+
 
   return (
     <div
@@ -574,6 +583,18 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   </div>
                 </>
               )}
+{/* 
+              <button
+                type="button"
+                className="border border-gray-300 rounded-md py-2 px-6"
+                onClick={(e) => {
+                  e.preventDefault();
+                  
+                }}
+              >
+                Category
+              </button> */}
+              {/* <JobCategory /> */}
 
                 <div className="w-full">
                   <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
