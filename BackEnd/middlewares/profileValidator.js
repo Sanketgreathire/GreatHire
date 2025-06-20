@@ -22,6 +22,11 @@ export const validateProfileUpdate = [
     .matches(/^[6789]\d{9}$|^\d{10}$/)
     .withMessage("Invalid mobile number. It should be 10 digits"),
 
+    // Category (If provided, must be a boolean)
+  body("category")
+  .isBoolean()
+  .withMessage("You have to select a category"),
+
   // Bio (If provided, max length: 500)
   body("bio")
     .optional()

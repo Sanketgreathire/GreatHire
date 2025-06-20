@@ -61,6 +61,11 @@ const userSchema = new mongoose.Schema(
 
       bio: { type: String },
       experience: {
+        category: {
+          type: Boolean,
+          enum: ["Fresher", "Experienced"],
+          default: "Not Specified", // Default category is "Fresher"
+        },
         companyName: {
           type: String,
         },

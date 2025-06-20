@@ -379,6 +379,7 @@ export const updateProfile = async (req, res) => {
       pincode,
       gender,
       qualification,
+      category,
       experience,
       jobProfile,
       companyName,
@@ -465,6 +466,7 @@ export const updateProfile = async (req, res) => {
      // Updating gender and qualification
      if (gender && user.profile.gender !== gender) user.profile.gender = gender;
      if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
+     if (category && user.profile.category !== category) user.profile.category = category;
 
     if (email && user.emailId.email !== email) {
       // Check if the email already exists in the database
