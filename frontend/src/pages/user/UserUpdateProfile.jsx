@@ -36,11 +36,18 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
   const [prevResumeName, setPrevResumeName] = useState("");
+  const [isCategoryVisible, setCategoryVisible] = useState(false);
+  
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
     !!user?.profile?.experience?.jobProfile // true if experience exists
   );
+
+   const toggleCategoryVisibility = (event) => {
+    event.preventDefault();
+    setCategoryVisible(!isCategoryVisible);
+  };
 
   // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
@@ -583,18 +590,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   </div>
                 </>
               )}
-{/* 
-              <button
-                type="button"
-                className="border border-gray-300 rounded-md py-2 px-6"
-                onClick={(e) => {
-                  e.preventDefault();
-                  
-                }}
-              >
-                Category
-              </button> */}
-              {/* <JobCategory /> */}
+
+              <JobCategory />
 
                 <div className="w-full">
                   <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
