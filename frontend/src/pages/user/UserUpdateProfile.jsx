@@ -31,13 +31,13 @@ import Job from "../job/Job";
 
 
 const UserUpdateProfile = ({ open, setOpen }) => {
-
   // State for managing loading state, resume URL, and previous resume name
   const [loading, setLoading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState("");
   const [prevResumeName, setPrevResumeName] = useState("");
   const [isCategoryVisible, setCategoryVisible] = useState(false);
-  
+  const [selectedCategories, setSelectedCategories] = useState([]);
+const categoryArray = Object.keys(selectedCategories).filter(key => selectedCategories[key]);
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
@@ -56,7 +56,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     phoneNumber: user?.phoneNumber.number || "",
     
     bio: user?.profile?.bio || "",
-    category: user?.profile?.experience?.category,
+    category: user?.profile?.category||[],
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
@@ -170,14 +170,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("state", input.state);
     formData.append("country", input.country);
     formData.append("pincode", input.pincode || "");
-    formData.append("category", input.category);
+    formData.append("category", categoryArray.join(","));
     formData.append("experience", input.experience || "");
     formData.append("jobProfile", input.jobProfile || "");
     formData.append("companyName", input.companyName || "");
     formData.append("currentCTC", input.currentCTC || "");
     formData.append("expectedCTC", input.expectedCTC);
     formData.append("experienceDetails", input.experienceDetails);
-    formData.append("bio", input.bio) || "";
+    formData.append("bio", input.bio|| "");
     formData.append("skills", input.skills || "");
     formData.append("qualification", input.qualification || ""); 
 
@@ -591,7 +591,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 </>
               )}
 
-              <JobCategory />
+              <JobCategory
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+                
+              />
 
                 <div className="w-full">
                   <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">

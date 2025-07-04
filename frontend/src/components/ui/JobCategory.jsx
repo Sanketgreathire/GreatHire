@@ -2,19 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
-function JobCategory() {
+function JobCategory({ selectedCategories, setSelectedCategories}) {
   // Define a state to manage the selected checkboxes
-  const [selectedCategories, setSelectedCategories] = useState({});
+  // const [selectedCategories, setSelectedCategories] = useState({});
   const [isVisible, setIsVisible] = useState(false); // State for visibility of the categories
 
   const categoryRef = useRef(null);
 
-  const handleCheckboxChange = (category) => {
-    setSelectedCategories((prev,event) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
-  };
+ const handleCheckboxChange = (category) => {
+  setSelectedCategories((prev) =>
+    prev.includes(category)
+      ? prev.filter((c) => c !== category) // remove if already selected
+      : [...prev, category] // add if not selected
+  );
+};
 
   
 
@@ -78,13 +79,13 @@ function JobCategory() {
                   <FaTimes />
                 </button>
 
-                <div className="w-[100%] h-[100%] overflow-y-auto">
-                  <ul className="flex flex-col gap-3">
+                <div className="w-[100%] h-[100%] pt-4 flex overflow-y-auto">
+                  <ul className="flex flex-col  gap-3">
                     {categories.map((category) => (
                       <li key={category} className="text-lg font-semibold border-b border-b-gray-300 flex items-center gap-2">
                         <input
                           type="checkbox"
-                          checked={selectedCategories[category] || false}
+                          checked={selectedCategories.includes(category)}
                           onChange={() => handleCheckboxChange(category)}
                           className="mr-2"
                         />

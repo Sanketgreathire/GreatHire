@@ -55,17 +55,15 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
     profile: {
+      category:[{ 
+        type: String
+      }],
       coverLetter: {
         type: String,
       },
 
       bio: { type: String },
       experience: {
-        category: {
-          type: Boolean,
-          enum: ["Fresher", "Experienced"],
-          default: "Not Specified", // Default category is "Fresher"
-        },
         companyName: {
           type: String,
         },
