@@ -400,16 +400,16 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors);
       return res.status(400).json({ errors: errors.array() });
     }
-
+    
     // finding the user by userId
     let user = await User.findById(userId);
-
+    
     // if not user return user not found
     if (!user) {
       return res.status(404).json({
@@ -438,7 +438,7 @@ export const updateProfile = async (req, res) => {
           resume[0].buffer,
           resume[0].originalname
         );
-   
+        
         user.profile.resume = cloudResponse.secure_url;
         user.profile.resumeOriginalName = resume[0].originalname;
       } catch (error) {
@@ -448,25 +448,34 @@ export const updateProfile = async (req, res) => {
           success: false,
         });
       }
-   }
-   
-
+    }
+    
+    
     // checking is skillsArray is array by Array.isArray(variable)
     const skillsArray = Array.isArray(skills)
-      ? skills
-      : skills?.split(",").map((skill) => skill.trim()) || [];
-
+    ? skills
+    : skills?.split(",").map((skill) => skill.trim()) || [];
+    
     if (fullname && user.fullname !== fullname) user.fullname = fullname;
-
+    
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
     if (pincode) user.address.pincode = pincode;
-
-     // Updating gender and qualification
-     if (gender && user.profile.gender !== gender) user.profile.gender = gender;
-     if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
-     if (category && user.profile.category !== category) user.profile.category = category;
+    
+    // Updating gender and qualification
+    if (gender && user.profile.gender !== gender) user.profile.gender = gender;
+    if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
+    const categoryArray = Array.isArray(category)
+      ? category
+      : category?.split(',').map((c) => c.trim()) || [];
+    if (categoryArray.length > 0) {
+      const existing = user.profile.category?.join(',') || "";
+      const incoming = categoryArray.join(',');
+      if (existing !== incoming) {
+        user.profile.category = categoryArray;
+      }
+}
 
     if (email && user.emailId.email !== email) {
       // Check if the email already exists in the database

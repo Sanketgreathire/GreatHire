@@ -226,7 +226,7 @@ const UserProfile = () => {
                 <div className="flex items-center gap-4">
                   <LuMapPin size={25} className="text-blue-500" />
                   <span className="text-gray-700">
-                    {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`}
+                    {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}, ${user?.address?.pincode}`}
                   </span>
                 </div>
               </div>
