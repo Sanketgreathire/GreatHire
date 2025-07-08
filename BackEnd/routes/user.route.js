@@ -17,12 +17,15 @@ import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 import { validateContactUsForm } from "../middlewares/contactValidator.js";
 import { updateLastActive } from "../middlewares/updateLastActive.js";
+import { updateUserLanguages } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 router.route("/register").post(validateUser, updateLastActive, register);
 router.route("/login").post(validateLogin, updateLastActive, login);
 router.route("/googleLogin").post(updateLastActive, googleLogin);
+
+
 
 router.route("/profile/update").put(
   isAuthenticated,
@@ -36,7 +39,8 @@ router.route("/profile/update").put(
     });
   },
   validateProfileUpdate,
-  updateProfile
+  updateProfile,
+  updateUserLanguages,
 );
 
 router.route("/sendMessage").post(validateContactUsForm, updateLastActive, sendMessage);
@@ -45,5 +49,7 @@ router.route("/reset-password").post(updateLastActive, resetPassword);
 
 router.route("/logout").get(isAuthenticated, updateLastActive, logout);
 router.route("/delete").delete(isAuthenticated, updateLastActive, deleteAccount);
+
+
 
 export default router;

@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
     profile: {
+      languaes:{
+        type:[String],
+        default:["Not Specified"]
+      },
       category:[{ 
         type: String
       }],
