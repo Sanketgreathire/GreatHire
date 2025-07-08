@@ -1,7 +1,7 @@
 // Import React and useState hook for component state management
 import React, { useState } from "react";  
 
-
+import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 
 // Import Redux hooks for dispatching actions and accessing state
 import { useDispatch, useSelector } from "react-redux";  
@@ -226,6 +226,13 @@ const categoryArray = Object.keys(selectedCategories).filter(key => selectedCate
       setLoading(false);
     }
   };
+  const handleCheckboxChange = (category) => {
+  setSelectedCategories((prev) =>
+    prev.includes(category)
+      ? prev.filter((c) => c !== category)
+      : [...prev, category]
+  );
+};
 
   // If the modal is closed, return null to prevent rendering
   if (!open) return null;
@@ -238,7 +245,7 @@ const categoryArray = Object.keys(selectedCategories).filter(key => selectedCate
       onClick={() => setOpen(false)}
     >
       <div
-        className="relative bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-white sm:max-w-[850px] w-full p-6 shadow-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -596,6 +603,26 @@ const categoryArray = Object.keys(selectedCategories).filter(key => selectedCate
                 setSelectedCategories={setSelectedCategories}
                 
               />
+                   {selectedCategories.length > 0 && (
+  <div className="flex flex-wrap gap-2 mt-4">
+    {selectedCategories.map((category) => (
+      <span
+        key={category}
+        className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+      >
+        {category}
+        <button
+          onClick={() =>
+            setSelectedCategories((prev) => prev.filter((c) => c !== category))
+          }
+          className="text-blue-700 hover:text-red-600 transition-colors"
+        >
+          &times;
+        </button>
+      </span>
+    ))}
+  </div>
+)}
 
                 <div className="w-full">
                   <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">

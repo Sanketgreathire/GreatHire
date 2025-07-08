@@ -1,23 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import axios from 'axios';
 
-function JobCategory({ selectedCategories, setSelectedCategories}) {
-  // Define a state to manage the selected checkboxes
-  // const [selectedCategories, setSelectedCategories] = useState({});
-  const [isVisible, setIsVisible] = useState(false); // State for visibility of the categories
-
+function JobCategory({ selectedCategories, setSelectedCategories }) {
+  const [isVisible, setIsVisible] = useState(false);
   const categoryRef = useRef(null);
-
- const handleCheckboxChange = (category) => {
-  setSelectedCategories((prev) =>
-    prev.includes(category)
-      ? prev.filter((c) => c !== category) // remove if already selected
-      : [...prev, category] // add if not selected
-  );
-};
-
-  
 
   const categories = [
     'Software Development', 'Data Science', 'Design', 'Marketing', 'Sales',
@@ -29,10 +15,18 @@ function JobCategory({ selectedCategories, setSelectedCategories}) {
     'Information Technology', 'Business Development', 'Public Relations'
   ];
 
+  const handleCheckboxChange = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (categoryRef.current && !categoryRef.current.contains(event.target)) {
-        setIsVisible(false); // Close the categories if clicked outside
+        setIsVisible(false);
       }
     };
 
@@ -41,59 +35,69 @@ function JobCategory({ selectedCategories, setSelectedCategories}) {
   }, []);
 
   const toggleVisibility = () => {
-    setIsVisible(!isVisible); // Toggle the visibility of the category list
+    setIsVisible(!isVisible);
   };
 
   const closeComponent = () => {
-    setIsVisible(false); // Close the component when the close button is clicked
+    setIsVisible(false);
   };
 
   return (
     <div>
-      {/* Button to toggle the categories */}
-      <button onClick={(event)=>{toggleVisibility(),event.preventDefault()}} className="btn-open-categories border border-blue-600 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300">
+      <button
+        onClick={(event) => {
+          toggleVisibility();
+          event.preventDefault();
+        }}
+        className="btn-open-categories border border-blue-600 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300"
+      >
         Categories
       </button>
 
-      {/* Show the category list only if isVisible is true */}
       {isVisible && (
-        <div className="w-[100%] h-[1500px] absolute top-0 left-0 z-30 flex flex-grow justify-end items-center">
-          {/* Overlay only when component is visible */}
-          <div className="w-[100%] h-[100%] bg-gray-500 absolute top-0 left-0 z-10 opacity-50" />
+        <div className="w-full h-[1500px] absolute top-0 left-0 z-30 flex justify-end items-center">
+          <div className="w-full h-full bg-gray-500 absolute top-0 left-0 z-10 opacity-50" />
 
           <div
             ref={categoryRef}
-            className="flex w-[350px] h-[100%] right-0 bg-white flex-grow shadow-lg absolute z-20 transition-all duration-300 ease-in-out transform translate-x-0"
+            className="w-[350px] h-full bg-white shadow-lg z-20 relative"
           >
-            <div className="w-[100%] h-[100%] flex flex-col justify-between items-center p-4">
-              <div className="w-[100%] relative">
-                <h1 className="text-2xl py-4 text-center font-semibold font-poppins border-b border-b-gray-300">
+            <div className="flex flex-col h-full p-4">
+              <div className="relative">
+                <h1 className="text-2xl py-4 text-center font-semibold border-b border-b-gray-300">
                   Categories
                 </h1>
-
-                {/* Close Icon */}
                 <button
                   onClick={closeComponent}
                   className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700"
                 >
                   <FaTimes />
                 </button>
+              </div>
 
-                <div className="w-[100%] h-[100%] pt-4 flex overflow-y-auto">
-                  <ul className="flex flex-col  gap-3">
-                    {categories.map((category) => (
-                      <li key={category} className="text-lg font-semibold border-b border-b-gray-300 flex items-center gap-2">
+              <div className="pt-4 overflow-y-auto flex-grow">
+                <ul className="flex flex-col gap-3">
+                  {categories.map((category) => (
+                    <li
+                      key={category}
+                      className="text-lg font-semibold border-b border-b-gray-300"
+                    >
+                      <label
+                        htmlFor={category}
+                        className="flex items-center gap-2 cursor-pointer w-full"
+                      >
                         <input
+                          id={category}
                           type="checkbox"
                           checked={selectedCategories.includes(category)}
                           onChange={() => handleCheckboxChange(category)}
                           className="mr-2"
                         />
                         {category}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>

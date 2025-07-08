@@ -418,6 +418,13 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+
+
+
+
+
+    
+
     // Upload profile photo if provided
     if (profilePhoto && profilePhoto.length > 0) {
       // fetching data uri of file
@@ -805,3 +812,36 @@ export const deleteAccount = async (req, res) => {
     });
   }
 };
+export const updateUserLanguages = async (req, res) => {
+  const { languages } = req.body;
+
+  if (!Array.isArray(languages)) {
+    return res.status(400).json({ error: "Languages must be an array of strings." });
+  }
+
+  // Sanitize: Trim, capitalize first letter, and remove empty strings
+  const cleanLanguages = languages
+    .map(lang => {
+      if (typeof lang !== "string") return null;
+      const trimmed = lang.trim();
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase(); // Capitalize
+    })
+    .filter(lang => lang && lang.length > 0);
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { "profile.languages": cleanLanguages.length ? cleanLanguages : ["Not Specified"] },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({ message: "Languages updated successfully.", languages: user.profile.languages });
+  } catch (err) {
+    res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
