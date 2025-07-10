@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import  JobCategory from "@/components/ui/JobCategory"; 
+import LanguageSelector from "@/components/ui/LanguageSelector";
+import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
 
 // Import icons for UI enhancement
 import { Loader2, Pencil } from "lucide-react";  
@@ -27,6 +29,7 @@ import { Loader2, Pencil } from "lucide-react";
 // Import API endpoint for user-related requests
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
 import Job from "../job/Job";
+
 
 
 
@@ -38,6 +41,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [isCategoryVisible, setCategoryVisible] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
 const categoryArray = Object.keys(selectedCategories).filter(key => selectedCategories[key]);
+const [selectedLanguages, setSelectedLanguages] = useState([]);
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
@@ -48,6 +52,12 @@ const categoryArray = Object.keys(selectedCategories).filter(key => selectedCate
     event.preventDefault();
     setCategoryVisible(!isCategoryVisible);
   };
+
+
+
+
+
+
 
   // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
@@ -450,6 +460,34 @@ const categoryArray = Object.keys(selectedCategories).filter(key => selectedCate
                   className="w-full"
                 />
               </div>
+
+                    <LanguageSelector
+  selectedLanguages={selectedLanguages}
+  setSelectedLanguages={setSelectedLanguages}
+/>
+
+{selectedLanguages.length > 0 && (
+  <div className="flex flex-wrap gap-2 mt-4">
+    {selectedLanguages.map((language) => (
+      <span
+        key={language}
+        className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+      >
+        {language}
+        <button
+          onClick={() =>
+            setSelectedLanguages((prev) =>
+              prev.filter((l) => l !== language)
+            )
+          }
+          className="text-green-700 hover:text-red-600 transition-colors"
+        >
+          &times;
+        </button>
+      </span>
+    ))}
+  </div>
+)}
 
 
             </div>
