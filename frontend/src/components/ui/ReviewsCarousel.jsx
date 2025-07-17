@@ -77,7 +77,7 @@ export default function ReviewsSection() {
     },
     {
       text: "Great Hire doesn’t just send resumes—they send the right people. Every candidate they’ve placed with us came prepared and passionate, ready to support our busy agents from day one.",
-      name: "XYZ ",
+      name: "Sarath",
       author: "Hiring Manager",
     },
     {
@@ -87,7 +87,7 @@ export default function ReviewsSection() {
     },
     {
       text: "We had trouble finding talent who could keep up with the demands of a high-volume brokerage. Great Hire delivered professionals who not only kept pace but helped us grow.",
-      name: " XYZ",
+      name: " Shrikanth",
       author: "Sales Managers",
     },
 
