@@ -77,7 +77,6 @@ import Gen17Img from "../../assets/user Photos/Gen17.jpg";
 import Gen18Img from "../../assets/user Photos/Gen18.jpg";
 import Gen19Img from "../../assets/user Photos/Gen19.jpg";
 import RashiImg from "../../assets/user Photos/Rashi.jpg";
-import
 
 
 function App() {
