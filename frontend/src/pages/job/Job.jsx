@@ -1,47 +1,80 @@
 // Import necessary modules and dependencies
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Axios for making API requests
-import axios from "axios"; 
+import axios from "axios";
 
 // Button component for UI
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
 
 // Hook for navigation
 import { useNavigate } from "react-router-dom";
 
 // Icon for job application
-import { AiOutlineThunderbolt } from "react-icons/ai"; 
+import { AiOutlineThunderbolt } from "react-icons/ai";
 
 // Redux hook to access global state
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 
 // Unbookmarked icon
 import { CiBookmark } from "react-icons/ci";
 
 // Bookmarked icon
-import { FaBookmark } from "react-icons/fa"; 
+import { FaBookmark } from "react-icons/fa";
 
 // API endpoint for job-related actions
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint"; 
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
 // Toast notifications for user feedback
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 
 // Context for managing job details
-import { useJobDetails } from "@/context/JobDetailsContext"; 
+import { useJobDetails } from "@/context/JobDetailsContext";
+
+// Share Job using ShareJob.jsx
+import ShareCard from "./ShareJob";
+import { FiShare2 } from "react-icons/fi";
+
 
 // Job Component - Displays job details and handles bookmarking functionality
 const Job = ({ job }) => {
 
   // Hook for programmatic navigation
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+
+  // Share Jobs
+  const [showShareCard, setShowShareCard] = useState(false);
+
+  useEffect(() => {
+    const handleCloseAll = (e) => {
+      if (e.detail !== job._id) {
+        setShowShareCard(false);
+      }
+    };
+
+    window.addEventListener("close-all-share-cards", handleCloseAll);
+    return () => {
+      window.removeEventListener("close-all-share-cards", handleCloseAll);
+    };
+  }, [job._id]);
+
+  const handleShareClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Close others first
+    window.dispatchEvent(new CustomEvent("close-all-share-cards", { detail: job._id }));
+    // Toggle current
+    setShowShareCard((prev) => !prev);
+  };
+
+
 
   // Functions to manage job bookmarks and selection
-  const { toggleBookmarkStatus, setSelectedJob } = useJobDetails(); 
+  const { toggleBookmarkStatus, setSelectedJob } = useJobDetails();
 
   // Get authenticated user details from Redux store
-  const { user } = useSelector((state) => state.auth); 
+  const { user } = useSelector((state) => state.auth);
 
   // Check if the job is bookmarked by the user
   const isBookmarked = job?.saveJob?.includes(user?._id) || false;
@@ -52,10 +85,10 @@ const Job = ({ job }) => {
     const currentDate = new Date();
 
     // Time difference in milliseconds
-    const timeDifference = currentDate - jobCreatedDate; 
+    const timeDifference = currentDate - jobCreatedDate;
 
     // Convert milliseconds to days
-    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); 
+    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     return activeDays;
   };
 
@@ -93,25 +126,47 @@ const Job = ({ job }) => {
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
       <div className="flex justify-between items-center mb-2 min-h-[28px]">
+
+        {/* Urgent Hiring Label */}
         {job?.jobDetails?.urgentHiring === "Yes" && (
           <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
             Urgent Hiring
           </p>
         )}
-          {user &&
-            !isApplied && ( // Hides the bookmark button if the user has applied
-              <div
-                onClick={() => handleBookmark(job._id)}
-                className="cursor-pointer ml-auto"
-              >
-                {isBookmarked ? (
-                  <FaBookmark size={25} className="text-green-700" />
-                ) : (
-                  <CiBookmark size={25} />
-                )}
-              </div>
+
+        {/* Right side icons */}
+        <div className="flex items-center gap-3 ml-auto">
+
+          {/* Share Icon (always visible) */}
+          <div className="relative inline-block">
+            <div onClick={handleShareClick} className="cursor-pointer">
+              <FiShare2 size={22} />
+            </div>
+            {showShareCard && (
+              <ShareCard
+                urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                onClose={() => setShowShareCard(false)}
+              />
             )}
+          </div>
+
+          {/* Bookmark Icon (only if logged in & not applied) */}
+          {user && !isApplied && (
+            <div
+              onClick={() => handleBookmark(job._id)}
+              className="cursor-pointer"
+            >
+              {isBookmarked ? (
+                <FaBookmark size={25} className="text-green-700" />
+              ) : (
+                <CiBookmark size={25} />
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+
       <h3 className="text-lg font-semibold line-clamp-2 h-[48px]">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
         <div>{job?.jobDetails?.companyName}</div>
@@ -173,7 +228,9 @@ const Job = ({ job }) => {
         >
           Details
         </Button>
+
       </div>
+
     </div>
   );
 };
