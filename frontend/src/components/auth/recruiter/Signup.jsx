@@ -111,7 +111,6 @@ const Signup = () => {
               </ul>
               <video
               src={recruiter_video}
-              autoPlay
               loop
               controls
               className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
@@ -230,7 +229,6 @@ const Signup = () => {
           </ul>
           <video
               src={recruiter_video}
-              autoPlay
               loop
               controls
               className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
