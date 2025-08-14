@@ -219,7 +219,7 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
-              <NavLink
+              {/* <NavLink
                 to="/recruiter/dashboard/candidate-database"
                 className={navLinkClass}
                 onClick={() => setSidebarOpen(false)}
@@ -230,7 +230,7 @@ const DashboardNavigations = () => {
                     <span>Candidate Database</span>
                   </>
                 )}
-              </NavLink>
+              </NavLink> */}
             </ul>
           </section>
 
@@ -254,7 +254,7 @@ const DashboardNavigations = () => {
                 )}
               </NavLink>
               <NavLink
-                to="/recruiter/dashboard/your-plans"
+                to="/recruiter/dashboard/free-plan"
                 className={navLinkClass}
                 onClick={() => setSidebarOpen(false)}
               >

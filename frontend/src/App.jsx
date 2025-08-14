@@ -67,6 +67,7 @@ import VerifyNumber from "./components/VerifyNumber";
 
 // PDF
 import { Worker } from "@react-pdf-viewer/core";
+import FreePlan from "./pages/recruiter/FreePlan";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -112,6 +113,7 @@ const appRouter = createBrowserRouter([
       { path: "upgrade-plans", element: <RecruiterPlans /> },
       { path: "delete-account", element: <DeleteAccount /> },
       { path: "recruiter-list", element: <RecruiterList /> },
+      { path:"free-plan", element:<FreePlan/>},
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
