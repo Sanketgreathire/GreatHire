@@ -120,10 +120,9 @@ const Signup = () => {
         </ul>
         <video
           src={user_video}
-          autoPlay
-          loop
-          controls
-          className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
+                loop
+                controls
+                className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
         />
        </div>
      </div>
@@ -222,6 +221,12 @@ const Signup = () => {
             </li>
           ))}
         </ul>
+        <video
+            src={user_video}
+            loop
+            controls
+            className="mt-4 rounded-lg shadow-lg w-full max-w-md mx-auto"
+          />
       </div>
         </div>
       </div>

@@ -58,6 +58,10 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 0, // Default for Free plan
     },
+    hasSubscription: { 
+      type: Boolean, 
+      default: false 
+    },
     userId: [
       {
         user: {
@@ -74,5 +78,13 @@ const companySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+companySchema.pre("save", function (next) {
+  if (this.hasSubscription) {
+    this.maxJobPosts = -1; // unlimited job
+    
+  }
+  next();
+});
 
 export const Company = mongoose.model("Company", companySchema);
