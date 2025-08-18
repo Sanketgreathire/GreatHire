@@ -535,26 +535,26 @@ function App() {
       <Navbar />
       {/* Hero Section */}
     
-     {/* <div className="bg-blue-600 text-white py-20">
+     <div className="bg-blue-600 text-white py-20">
         <div className="container mx-auto px-4 pt-10">
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">About GreatHire</h1>
           <p className="text-xl text-center max-w-3xl mx-auto font-serif">
           GreatHire Business Solutions provides strategic staffing and workforce solutions tailored to meet diverse business needs. We specialize in connecting companies with top-tier talent, driving efficiency, productivity, and long-term success through our expert recruitment services.          </p>
         </div>
-      </div> */}
+      </div>
 
 
-<div className="bg-gray-50 py-24">
+{/* <div className="bg-gray-50 py-24">
   <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-44 ">
     
-    {/* Left Side Circle Image / Placeholder */}
+
     <div className="flex-shrink-0">
       <div className="w-64 h-64 rounded-full bg-gray-300 flex items-center justify-center text-lg font-semibold text-gray-700 mr-10 ">
         Sticker Placeholder
       </div>
     </div>
 
-    {/* Right Side Text */}
+  
     <div className="text-center max-w-lg">
       <h1 className="text-4xl md:text-5xl font-bold mb-6">About GreatHire</h1>
       <p className="text-lg md:text-xl font-serif text-gray-800 leading-relaxed ">
@@ -564,7 +564,7 @@ function App() {
       </p>
     </div>
   </div>
-</div>
+</div> */}
 
 
       
