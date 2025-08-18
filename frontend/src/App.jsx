@@ -1,35 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Worker } from "@react-pdf-viewer/core";
 
-// Context
 import JobDetailsProvider from "./context/JobDetailsContext";
 
-// Auth Pages
-import AuthPage from "./components/auth/user/AuthPage.jsx";
-import JobSeekerSignup from "./components/auth/user/Signup.jsx";
-import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 
-// Protected Routes
+import JobSeekerSignup from "./components/auth/user/Signup"; 
+
+// // Auth
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
+import AuthPage from './components/auth/user/AuthPage';
 
-// Shared Pages
+// // Pages
 import SignupPage from "./components/shared/SignupPage";
-import VerifyEmail from "./components/VerifyEmail";
-import VerifyNumber from "./components/VerifyNumber";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import PageNotFound from "./pages/PageNotFound";
-
-// General Pages
 import Home from "./pages/Home";
-import Jobs from "./pages/job/Jobs";
+import UserProfile from "./pages/user/UserProfile";
 import JobDescription from "./pages/job/JobDescription";
-import SavedJobs from "./pages/job/SavedJob";
+import Jobs from "./pages/job/Jobs";
+import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/job/ReportJob";
 import Success from "./pages/job/Success";
+import SavedJobs from "./pages/job/SavedJob";
 import Contact from "./pages/services/Contact";
 import OurService from "./pages/services/OurService";
 import Blogs from "./pages/services/Blogs";
@@ -37,10 +28,13 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import About from "./pages/services/About";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import PageNotFound from "./pages/PageNotFound";
 import Packges from "./pages/services/Packages";
-import MainApply from "./components/ApplyJobs/MainApply";
 
-// Recruiter Pages
+// // Recruiter Pages
+import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
@@ -61,21 +55,32 @@ import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
-// Other Roles
+// // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 
-// Redux
+// // Redux
+// // Note: Aapko in dependencies ko install karna hoga: npm install react-redux @reduxjs/toolkit
 import { logOut } from "./redux/authSlice.js";
+import { useDispatch } from "react-redux";
 
+// // Verification
+import VerifyEmail from "./components/VerifyEmail";
+import VerifyNumber from "./components/VerifyNumber";
+
+// // PDF
+// // Note: Aapko is dependency ko install karna hoga: npm install @react-pdf-viewer/core
+import { Worker } from "@react-pdf-viewer/core";
+
+// // Saare routes ko createBrowserRouter ke andar define kiya gaya hai
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },
-  { path: "/signup", element: <JobSeekerSignup /> },
+  { path: "/signup", element: <AuthPage /> },
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
@@ -84,6 +89,7 @@ const appRouter = createBrowserRouter([
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
+  { path: "/profile", element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
   { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
   { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
   { path: "/policy/privacy-policy", element: <PrivacyPolicy /> },
@@ -94,8 +100,8 @@ const appRouter = createBrowserRouter([
   { path: "/packages", element: <Packges /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
-
-  // Recruiter Routes
+//   // Naya code
+{ path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   {
     path: "/recruiter/dashboard",
@@ -123,13 +129,9 @@ const appRouter = createBrowserRouter([
   },
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },
   { path: "/recruiter/add-user", element: <ProtectedRecruiterRoute><AddRecruiter /></ProtectedRecruiterRoute> },
-
-  // Other Roles
   { path: "/digitalmarketer/login", element: <DigitalMarketerLogin /> },
   { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/*", element: <AdminLayout /> },
-
-  // 404
   { path: "*", element: <PageNotFound /> }
 ]);
 
@@ -145,9 +147,8 @@ function App() {
     };
     const token = getCookie("token");
     if (!token) dispatch(logOut());
-  }, [dispatch]);
+  }, []);
 
-  // Remove service workers
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((registration) => registration.unregister());
@@ -155,12 +156,13 @@ function App() {
   }
 
   return (
-    <JobDetailsProvider>
-      <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-        <RouterProvider router={appRouter} />
-      </Worker>
-    </JobDetailsProvider>
+    <div>
+      <JobDetailsProvider>
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
+          <RouterProvider router={appRouter} />
+        </Worker>
+      </JobDetailsProvider>
+    </div>
   );
 }
-
 export default App;
