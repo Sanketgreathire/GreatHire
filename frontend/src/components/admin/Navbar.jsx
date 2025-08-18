@@ -52,6 +52,7 @@ const Navbar = ({ linkName }) => {
     }
   };
 
+  
   return (
     <nav className="flex justify-between items-center fixed top-0 left-0 right-0 ml-16 md:ml-52 bg-white px-3 py-2 z-30">
       <div className="text-2xl font-light">{linkName}</div>
@@ -116,7 +117,8 @@ const Navbar = ({ linkName }) => {
           ) : (
             <div className="flex gap-3">
               <a
-                href="/admin/login"
+                // href="/admin/login"
+                href = "/auth"
                 className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
               >
                 Login
