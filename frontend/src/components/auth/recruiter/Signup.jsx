@@ -99,7 +99,6 @@ const Signup = ({ toggleForm }) => {
                 />
               </div>
 
-<<<<<<< Updated upstream
         {/* Updated Left Section - Background Image and Content */}
 
         <div className="relative h-screen w-2/3 hidden xl:flex">
@@ -137,9 +136,9 @@ const Signup = ({ toggleForm }) => {
           </div>
 
               <div className=" flex flex-col items-center text-center space-y-2 px-5">
-=======
+
               <div className="flex flex-col items-center text-center space-y-2 px-5">
->>>>>>> Stashed changes
+
                 <h1 className="font-semibold text-xl md:text-2xl text-gray-900">
                   Powerful recruiting tools to find your{" "}
                   <span className="text-gray-800">Perfect Team!</span>
