@@ -22,7 +22,7 @@
     "csurf": "^1.2.2",
     "datauri": "^4.1.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.1",
