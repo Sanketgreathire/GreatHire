@@ -1,13 +1,17 @@
-
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../shared/Navbar";
-import Footer from "../../shared/Footer";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/authSlice";
+import axios from "axios";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+
 
 const Login = () => {
-  const navigate = useNavigate(); // ✅ sahi hook use karo
-  const [user, setUserState] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // State to manage the form data for email and password
   const [formData, setFormData] = useState({
@@ -38,7 +42,7 @@ const Login = () => {
 
   // Handler for the "Sign Up" link click
   const handleSignUpClick = () => {
-    navigate("/signup-choice"); // ✅ ab ye route par navigate karega
+    navigate("/signup-choice");
   };
 
   // Handler to show the OTP input field
@@ -46,41 +50,51 @@ const Login = () => {
     setShowOtpInput(!showOtpInput);
   };
 
+  // Handle the form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (showOtpInput) {
-        if (otpData.otp === "123456") {
-          const mockUser = { role: "student", name: "OTP User" };
-          setUserState(mockUser);
-          toast.success("OTP login successful!");
+        // Handle OTP login
+        // Make an API call to verify the OTP and email
+                const response = await axios.post(
+          `${USER_API_END_POINT}/verify-otp`,
+          {
+            email: formData.email,
+            otp: otpData.otp,
+          }
+        );
+
+
+        if (response?.data?.success) {
+          toast.success(response.data.message);
+          dispatch(setUser(response.data.user));
+          navigate("/profile");
         } else {
-          toast.error("Invalid OTP. Please try again.");
+          toast.error(response.data.message);
         }
       } else {
-        if (
-          formData.email === "test@example.com" &&
-          formData.password === "password123"
-        ) {
-          const mockUser = { role: "student", name: "Test User" };
-          setUserState(mockUser);
-          toast.success("Login successful!");
-        } else if (
-          formData.email === "recruiter@example.com" &&
-          formData.password === "password123"
-        ) {
-          const mockUser = { role: "recruiter", name: "Test Recruiter" };
-          setUserState(mockUser);
-          toast.success("Login successful!");
+        // Handle password login
+        // Make an API call to log in with email and password
+        const response = await axios.post(
+                `${USER_API_END_POINT}/login`,
+                { ...formData },
+                { withCredentials: true }
+              );
+
+        if (response?.data?.success) {
+          toast.success(response.data.message);
+          dispatch(setUser(response.data.user));
+          navigate("/profile");
         } else {
-          toast.error("Invalid email or password. Please try again.");
+          toast.error(response.data.message);
         }
       }
     } catch (err) {
-      console.error(`Error in login: ${err}`);
-      toast.error("An error occurred. Please try again.");
+      console.error("Error in login:", err);
+      toast.error(err?.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -155,9 +169,7 @@ const Login = () => {
             </>
           ) : (
             <>
-
-
-            <div>
+              <div>
                 <label
                   htmlFor="email"
                   className="block text-gray-700 font-semibold mb-1"
@@ -197,7 +209,8 @@ const Login = () => {
             </>
           )}
 
-          <p className="text-blue-600 text-sm cursor-pointer hover:underline text-right">
+          <p className="text-blue-600 text-sm cursor-pointer hover:underline text-right"
+            onClick={() => navigate("/forgot-password")}>
             Forgot Password?
           </p>
 

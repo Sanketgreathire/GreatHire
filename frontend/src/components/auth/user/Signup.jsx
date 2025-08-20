@@ -1,22 +1,12 @@
-
-
-
-// Importing React and necessary hooks
 import React, { useState } from "react";
-import img1 from "../../../assets/img1.png";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import GoogleLogin from "@/components/GoogleLogin";
-import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
-import axios from "axios";
 import { toast } from "react-hot-toast";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
-
-//user video
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import user_video from "../../../assets/videos/user_video.mp4";
 
 const Signup = () => {
@@ -24,7 +14,7 @@ const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Form data
+  // Form data state
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -32,61 +22,30 @@ const Signup = () => {
     password: "",
   });
 
-  // OTP states
-  const [otp, setOtp] = useState("");
-  const [showOtpInput, setShowOtpInput] = useState(false);
-
   // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "otp") {
-      setOtp(value);
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
-  // Step 1 -> Send OTP
-  const handleSendOtp = async (e) => {
+  // Handle account creation
+  const handleCreateAccount = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // API call to register the user directly
       const response = await axios.post(
-        `${USER_API_END_POINT}/send-signup-otp`, // backend endpoint banana hoga
+       ` ${USER_API_END_POINT}/register`,
         { ...formData },
         { withCredentials: true }
       );
 
       if (response?.data?.success) {
         toast.success(response.data.message);
-        setShowOtpInput(true);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (err) {
-      console.error("Error sending OTP:", err);
-      toast.error(err?.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Step 2 -> Verify OTP & Create Account
-  const handleVerifyOtpAndSignup = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        `${USER_API_END_POINT}/register`, //  backend pe OTP verify + register handle karna hoga
-        { ...formData, otp },
-        { withCredentials: true }
-      );
-
-      if (response?.data?.success) {
-        toast.success(response.data.message);
+        // Clear form data after successful registration
         setFormData({
           fullname: "",
           email: "",
@@ -149,7 +108,7 @@ const Signup = () => {
           <div className="w-full xl:w-1/3 flex flex-col items-center pt-12 sm:pt-20 xl:items-center xl:min-h-screen">
             <form
               className="w-4/5 max-w-lg p-2 rounded-lg mb-8 sm:mb-12"
-              onSubmit={showOtpInput ? handleVerifyOtpAndSignup : handleSendOtp}
+              onSubmit={handleCreateAccount}
             >
               <h1 className="text-3xl font-bold text-center">
                 Great<span className="text-blue-700">Hire</span>
@@ -172,7 +131,6 @@ const Signup = () => {
                   placeholder="Full Name"
                   value={formData.fullname}
                   onChange={handleChange}
-                  disabled={showOtpInput}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
@@ -185,7 +143,6 @@ const Signup = () => {
                   placeholder="mail@domain.com"
                   value={formData.email}
                   onChange={handleChange}
-                  disabled={showOtpInput}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
@@ -198,7 +155,6 @@ const Signup = () => {
                   placeholder="Contact number"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  disabled={showOtpInput}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
@@ -211,26 +167,9 @@ const Signup = () => {
                   placeholder="min 8 characters"
                   value={formData.password}
                   onChange={handleChange}
-                  disabled={showOtpInput}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
-
-                {/* OTP Input (Only after OTP sent) */}
-                {showOtpInput && (
-                  <>
-                    <label className="font-bold">Enter OTP</label>
-                    <input
-                      type="text"
-                      name="otp"
-                      placeholder="6-digit OTP"
-                      value={otp}
-                      onChange={handleChange}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      required
-                    />
-                  </>
-                )}
               </div>
 
               {/* Submit Button */}
@@ -241,11 +180,7 @@ const Signup = () => {
                 }`}
                 disabled={loading}
               >
-                {loading
-                  ? "Processing..."
-                  : showOtpInput
-                  ? "Verify & Create Account"
-                  : "Send OTP & Continue"}
+                {loading ? "Processing..." : "Create Account"}
               </button>
 
               <p className="text-center text-sm text-gray-500">
