@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import JobDetailsProvider from "./context/JobDetailsContext";
-
-
 import JobSeekerSignup from "./components/auth/user/Signup"; 
 
 // // Auth
@@ -28,12 +26,14 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import About from "./pages/services/About";
-import ForgotPassword from "./pages/ForgotPassword";
+
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
 import Packges from "./pages/services/Packages";
+import ForgotPassword from './pages/ForgotPassword';
 
-// // Recruiter Pages
+
+// Recruiter Pages
 import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
@@ -55,25 +55,21 @@ import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
-// // Other Roles
+
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 
-// // Redux
-// // Note: Aapko in dependencies ko install karna hoga: npm install react-redux @reduxjs/toolkit
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
 
-// // Verification
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 
-// // PDF
-// // Note: Aapko is dependency ko install karna hoga: npm install @react-pdf-viewer/core
 import { Worker } from "@react-pdf-viewer/core";
 
-// // Saare routes ko createBrowserRouter ke andar define kiya gaya hai
+
+
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/blogs", element: <Blogs /> },
@@ -98,9 +94,10 @@ const appRouter = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/packages", element: <Packges /> },
-  { path: "/forgot-password", element: <ForgotPassword /> },
+   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
-//   // Naya code
+
+
 { path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   {
@@ -133,6 +130,8 @@ const appRouter = createBrowserRouter([
   { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/*", element: <AdminLayout /> },
   { path: "*", element: <PageNotFound /> }
+  
+  
 ]);
 
 function App() {
@@ -157,6 +156,8 @@ function App() {
 
   return (
     <div>
+
+   
       <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />

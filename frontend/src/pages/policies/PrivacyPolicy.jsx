@@ -81,8 +81,8 @@ function App() {
 
       <header className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-inner pt-10">
         <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center pt-20">
-          <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-3">
-            <Shield className="h-9 w-9 text-blue-600" />
+          <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-3 font-[oswald]">
+            <Shield className="h-9 w-9 text-blue-600 " />
             Terms & Privacy Policy
           </h1>
           <p className="text-gray-600 mt-2 text-lg">Please read the following policies carefully for using our services.</p>

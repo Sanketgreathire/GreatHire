@@ -30,6 +30,7 @@
     "@react-oauth/google": "^0.12.1",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-three/fiber": "^8.15.16",
     "@reduxjs/toolkit": "^2.5.1",
     "@shadcn/ui": "^0.0.4",
     "axios": "^1.7.9",
@@ -40,6 +41,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^12.23.12",
     "frontend": "file:",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.482.0",
     "next-themes": "^0.4.3",
     "pdfjs-dist": "^2.16.105",
@@ -65,6 +67,7 @@
     "swiper": "^11.2.6",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.179.1",
     "yup": "^1.6.1"
   },
   "devDependencies": {
