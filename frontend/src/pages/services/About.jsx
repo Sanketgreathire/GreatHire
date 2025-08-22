@@ -1,11 +1,19 @@
+
+import React, { useState } from "react";
 import { Users, Target, Award, Building2, Briefcase } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode, } from 'swiper/modules';
+
+
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
+
+import Silk from "../../components/ui/Silk";
+
+
 
 //logos from assets folder
 import a1townshipImg from "../../assets/clientLogos/a1township.png";
@@ -26,8 +34,8 @@ import techmahindraImg from "../../assets/clientLogos/techmahindra.png";
 import googleImg from "../../assets/clientLogos/Google.png";
 import teleperformanceImg from "../../assets/clientLogos/teleperformance.png";
 import vortalsoftImg from "../../assets/clientLogos/vortalsoft.jpg";
-import wiproImg from "../../assets/clientLogos/Wipro.svg"; 
-import zeelmediaImg from "../../assets/clientLogos/zeelmedia.png";      
+import wiproImg from "../../assets/clientLogos/Wipro.svg";
+import zeelmediaImg from "../../assets/clientLogos/zeelmedia.png";
 import ravirajImg from "../../assets/clientLogos/Raviraj.svg";
 import eeshanyaImg from "../../assets/clientLogos/eeshanya.png";
 import tataImg from "../../assets/clientLogos/tata.png";
@@ -39,7 +47,7 @@ import NazirImg from "../../assets/user Photos/Nazir.jpeg";
 import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
 import DhanshreeImg from "../../assets/user Photos/Dhanshree.jpeg";
 import KOIImg from "../../assets/user Photos/KOI.jpeg";
-import MaheshImg  from "../../assets/user Photos/Mahesh.jpg";
+import MaheshImg from "../../assets/user Photos/Mahesh.jpg";
 import MoizImg from "../../assets/user Photos/MoizImg.jpg";
 import AmanImg from "../../assets/user Photos/Aman.jpeg";
 import eswarImg from "../../assets/user Photos/Eswar.jpeg";
@@ -77,6 +85,7 @@ import Gen17Img from "../../assets/user Photos/Gen17.jpg";
 import Gen18Img from "../../assets/user Photos/Gen18.jpg";
 import Gen19Img from "../../assets/user Photos/Gen19.jpg";
 import RashiImg from "../../assets/user Photos/Rashi.jpg";
+import NumberCounter from '@/components/ui/NumberCounter';
 
 
 function App() {
@@ -121,7 +130,7 @@ function App() {
         {
           name: "Charan Sai",
           image: CharanImg,
-          role: ["Associate AWS Architect","Full Stack Developer","AI Engineer"],
+          role: ["Associate AWS Architect", "Full Stack Developer", "AI Engineer"],
           expertise: "Cloud Solutions, DevOps, Web Development",
           about: "Specializes in designing and implementing cloud solutions on AWS.",
         },
@@ -142,14 +151,14 @@ function App() {
         {
           name: "T.Eswar Reddy",
           image: eswarImg,
-          role: ["Full Stack Developer","AI Engineer","Test Engineer"],
+          role: ["Full Stack Developer", "AI Engineer", "Test Engineer"],
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
         {
           name: "Sujeeth Kumar",
           image: SujeethImg,
-          role: ["Information Security Analyst","Full Stack Developer","AI Engineer","Team Lead"],
+          role: ["Information Security Analyst", "Full Stack Developer", "AI Engineer", "Team Lead"],
           expertise: "Web Development, Cyber Security, AWS Cloud",
           about: "Skilled in building scalable web applications with modern technologies and security best practices.",
         },
@@ -460,46 +469,100 @@ function App() {
     },
   ];
 
+  // const achievements = [
+  //   {
+  //     icon: <Users className="w-8 h-8 text-blue-600" />,
+  //     title: "500+",
+  //     description: "Successful Placements",
+  //   },
+  //   {
+  //     icon: <Target className="w-8 h-8 text-blue-600" />,
+  //     title: "98%",
+  //     description: "Client Satisfaction",
+  //   },
+  //   {
+  //     icon: <Award className="w-8 h-8 text-blue-600" />,
+  //     title: "28+",
+  //     description: "Industry Awards",
+  //   },
+  //   {
+  //     icon: <Building2 className="w-8 h-8 text-blue-600" />,
+  //     title: "573+",
+  //     description: "Partner Companies",
+  //   },
+  // ];
+
+
   const achievements = [
     {
-      icon: <Users className="w-8 h-8 text-blue-600" />,
-      title: "500+",
+      icon: <Users className="w-8 h-8 text-blue-600 bg" />,
+      value: 500,
+      suffix: "+",
       description: "Successful Placements",
+      duration: 1500,
     },
     {
       icon: <Target className="w-8 h-8 text-blue-600" />,
-      title: "98%",
+      value: 98,
+      suffix: "%",
       description: "Client Satisfaction",
+      duration: 1500,
     },
     {
       icon: <Award className="w-8 h-8 text-blue-600" />,
-      title: "28+",
+      value: 28,
+      suffix: "+",
       description: "Industry Awards",
+      duration: 1500,
     },
     {
       icon: <Building2 className="w-8 h-8 text-blue-600" />,
-      title: "573+",
+      value: 573,
+      suffix: "+",
       description: "Partner Companies",
+      duration: 1500,
     },
   ];
 
+  // const services = [
+  //   {
+  //     icon: <Briefcase className="w-8 h-8 text-blue-600 bg-blue-100 rounded-full" />,
+  //     title: "Job Matching",
+  //     description: "AI-powered job matching system connecting the right talent with the right opportunities",
+  //   },
+  //   {
+  //     icon: <Users className="w-8 h-8 text-blue-600  "  />,
+  //     title: "Talent Assessment",
+  //     description: "Comprehensive skill assessment and verification process",
+  //   },
+  //   {
+  //     icon: <Building2 className="w-6 h-6 text-blue-600" />,
+  //     title: "Corporate Solutions",
+  //     description: "Customized hiring solutions for enterprises",
+  //   },
+  // ];
+
+
+
   const services = [
     {
-      icon: <Briefcase className="w-6 h-6 text-blue-600" />,
+      icon: <Briefcase className="w-7 h-7" />,
       title: "Job Matching",
-      description: "AI-powered job matching system connecting the right talent with the right opportunities",
+      description:
+        "AI-powered job matching system connecting the right talent with the right opportunities",
     },
     {
-      icon: <Users className="w-6 h-6 text-blue-600" />,
+      icon: <Users className="w-7 h-7 " />,
       title: "Talent Assessment",
       description: "Comprehensive skill assessment and verification process",
     },
     {
-      icon: <Building2 className="w-6 h-6 text-blue-600" />,
+      icon: <Building2 className="w-7 h-7" />,
       title: "Corporate Solutions",
       description: "Customized hiring solutions for enterprises",
     },
   ];
+
 
   const leadership = [
     {
@@ -515,7 +578,7 @@ function App() {
       vision: "To create a recruitment ecosystem that prioritizes both technical excellence and cultural fit, ensuring sustainable growth for companies and fulfilling careers for professionals."
     },
     {
-     name: "BABDE SONIKA",
+      name: "BABDE SONIKA",
       title: "Director of Human Resources Operations",
       description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
@@ -528,33 +591,63 @@ function App() {
     }
   ];
 
+  const[isCenter , setIsCenter] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
 
       {/* Navbar */}
       <Navbar />
       {/* Hero Section */}
-    
-     <div className="bg-blue-600 text-white py-20">
+
+
+      <div className="relative w-full h-[400px] overflow-hidden">
+        {/* Silk Background */}
+        <div className="absolute inset-0">
+          <Silk
+            speed={5}
+            scale={1}
+            color="#395384ff"
+            noiseIntensity={1.5}
+            rotation={0}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-5 text-white py-20">
+          <div className="container mx-auto px-10 pt-14">
+            <h1 className="text-4xl md:text-5xl font-bold text-center mb-4 font-[Oswald]">
+              About GreatHire
+            </h1>
+            <p className="text-xl text-center max-w-3xl mx-auto font-serif py-5">
+              GreatHire Business Solutions provides strategic staffing and
+              workforce solutions tailored to meet diverse business needs. We
+              specialize in connecting companies with top-tier talent, driving
+              efficiency, productivity, and long-term success through our expert
+              recruitment services.
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      {/* <div className="bg-blue-600 text-white py-20 ">
         <div className="container mx-auto px-4 pt-10">
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">About GreatHire</h1>
           <p className="text-xl text-center max-w-3xl mx-auto font-serif">
           GreatHire Business Solutions provides strategic staffing and workforce solutions tailored to meet diverse business needs. We specialize in connecting companies with top-tier talent, driving efficiency, productivity, and long-term success through our expert recruitment services.          </p>
         </div>
-      </div>
+      </div> * */}
 
 
-{/* <div className="bg-gray-50 py-24">
+      {/* <div className="bg-gray-50 py-24">
   <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-44 ">
-    
-
     <div className="flex-shrink-0">
       <div className="w-64 h-64 rounded-full bg-gray-300 flex items-center justify-center text-lg font-semibold text-gray-700 mr-10 ">
         Sticker Placeholder
       </div>
     </div>
 
-  
     <div className="text-center max-w-lg">
       <h1 className="text-4xl md:text-5xl font-bold mb-6">About GreatHire</h1>
       <p className="text-lg md:text-xl font-serif text-gray-800 leading-relaxed ">
@@ -567,69 +660,89 @@ function App() {
 </div> */}
 
 
-      
+
 
       {/* Our Mission Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-blue-200">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
+            <h2 className="text-3xl font-bold mb-6 font-[Oswald]">Our Mission</h2>
             <p className="text-lg text-gray-700 leading-relaxed">
               At GreatHire, our mission is to revolutionize the recruitment landscape by bridging the gap between exceptional talent and innovative companies. We believe in creating meaningful connections that drive career growth and business success through cutting-edge technology and human-centric approaches.
             </p>
           </div>
         </div>
       </div>
-
       {/* Leadership Section */}
+
       <div className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Leadership</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {leadership.map((leader, index) => (
-              <div
-                key={index}
-                className="bg-white border-2 border-blue-600 rounded-lg shadow-lg p-8 flex flex-col items-center text-center space-y-6"
-              >
-                {/* Name */}
-                <h3 className="text-2xl font-bold text-blue-600">{leader.name}</h3>
+  <div className="container mx-auto px-4">
+    <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] text-gray-800">
+      Our Leadership
+    </h2>
 
-                {/* Title */}
-                <div className="text-lg font-semibold text-gray-600">
-                  {Array.isArray(leader.title)
-                    ? leader.title.map((t, i) => <div key={i}>{t}</div>)
-                    : leader.title}
-                </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+      {leadership.map((leader, index) => (
+        <div
+          key={index}
+          className="relative group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-10 flex flex-col items-center text-center overflow-hidden transform hover:-translate-y-2"
+        >
+          {/*  Page Curl Style */}
+          <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
+            {/* Main fold white base */}
+            <div className="absolute top-0 right-0 w-16 h-16 
+                            bg-white 
+                            [clip-path:polygon(100%_0,0_0,100%_100%)]" />
+            {/* Gradient shadow curl */}
+            <div className="absolute top-0 right-0 w-16 h-16 
+                            bg-gradient-to-br from-blue-400 via-gray-300 to-transparent
+                            [clip-path:polygon(100%_0,0_0,100%_100%)] shadow-md" />
+          </div>
 
-                {/* Description */}
-                <p className="text-gray-700 leading-relaxed">{leader.description}</p>
+          {/* Image k liye  */}
+          {/* <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow-md mb-6">
+            {leader.name.charAt(0)}
+          </div> */}
 
-                {/* Achievements */}
-                <div className="w-full text-center">
-                  <h4 className="text-lg font-semibold mb-3">Key Achievements:</h4>
-                  <ul className="list-disc list-inside space-y-2 text-gray-700 inline-block text-left">
-                    {leader.achievements.map((achievement, i) => (
-                      <li key={i}>{achievement}</li>
-                    ))}
-                  </ul>
-                </div>
+          <h3 className="text-2xl font-bold text-blue-700 mb-2">{leader.name}</h3>
 
-                {/* Vision */}
-                <div className="w-full text-center">
-                  <h4 className="text-lg font-semibold mb-3">Vision:</h4>
-                  <p className="text-gray-700 italic">{leader.vision}</p>
-                </div>
-              </div>
-            ))}
+         
+          <div className="text-lg font-semibold text-gray-600 mb-4">
+            {Array.isArray(leader.title)
+              ? leader.title.map((t, i) => <div key={i}>{t}</div>)
+              : leader.title}
+          </div>
+          <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mb-6"></div>
+          <p className="text-gray-600 leading-relaxed mb-6">
+            {leader.description}
+          </p>
+
+          <div className="w-full text-center mb-6">
+            <h4 className="text-lg font-semibold mb-3 text-blue-800 font-[Oswald]">
+              Key Achievements
+            </h4>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 inline-block text-left">
+              {leader.achievements.map((achievement, i) => (
+                <li key={i}>{achievement}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="w-full text-center">
+            <h4 className="text-lg font-semibold mb-3 text-blue-800 font-[Oswald]">Vision</h4>
+            <p className="text-gray-700 italic">{leader.vision}</p>
           </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
       {/* Our Story Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-blue-200">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-6">Our Story</h2>
+            <h2 className="text-3xl font-bold text-center mb-6 font-[Oswald]">Our Story</h2>
             <div className="space-y-6 text-gray-700">
               <p className="leading-relaxed">
                 Founded in 2016, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.
@@ -646,7 +759,7 @@ function App() {
       </div>
 
       {/* Achievements Section */}
-      <div className="py-16 bg-white">
+      {/* <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Our Achievements</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -659,30 +772,65 @@ function App() {
             ))}
           </div>
         </div>
+      </div> */}
+
+      <div className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Our Achievements</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {achievements.map((a, index) => (
+              <div
+                key={index}
+                className="text-center p-6 rounded-lg bg-gray-50 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex justify-center mb-4">{a.icon}</div>
+
+                <h3 className="text-2xl font-bold text-blue-600 mb-2">
+                  <NumberCounter end={a.value} duration={1500} suffix={a.suffix} />
+
+                </h3>
+
+                <p className="text-gray-600">{a.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
+
       {/* Client Logo Carousel */}
-      <div className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Trusted By Leading Companies</h2>
+      <div className="py-16 bg-gray-50  relative overflow-hidden ">
+        <div className="container mx-auto px-4  relative ">
+          <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] ">Trusted By Leading Companies</h2>
+
+          {/* left Shadow  */}
+         <div className="absolute top-0 left-0 w-24 h-full z-20 bg-gradient-to-r from-gray-50 via-gray-50/80 to-transparent pointer-events-none"></div>
+
+          {/* Right Shadow */}
+    <div className="absolute top-0 right-0 w-24 h-full z-20 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none"></div>
           <Swiper
             modules={[Autoplay]}
             spaceBetween={30}
             slidesPerView={2}
             loop={true}
+            
+            speed={8000}
             autoplay={{
-              delay: 2000,
+              delay: 0,
               disableOnInteraction: false,
             }}
             breakpoints={{
+              0: {
+                slidesPerView: 2,
+              },
               640: {
                 slidesPerView: 3,
               },
               768: {
-                slidesPerView: 4,
-              },
-              1024: {
                 slidesPerView: 6,
+              },
+               1024: {
+                slidesPerView: 8,
               },
             }}
             className="py-4"
@@ -703,12 +851,12 @@ function App() {
       </div>
 
       {/* Services Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Services</h2>
+      {/* <div className="py-16 bg-gray-50 ">
+        <div className="container mx-auto px-4  ">
+          <h2 className="text-3xl font-bold text-center mb-12 ">Our Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+              <div key={index} className=" p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
                 <div className="mb-4">{service.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
@@ -716,90 +864,147 @@ function App() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
-      {/* Team Section with Sliding Functionality */}
-      <div className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Meet Our Team</h2>
-          {departments.map((department, dIndex) => (
-            <div key={dIndex} className="mb-16 last:mb-0">
-              <h3 className="text-2xl font-semibold mb-8 text-blue-600">{department.name}</h3>
-              <Swiper
-                modules={[FreeMode, Autoplay]}
-                spaceBetween={24}
-                slidesPerView={1}
-                freeMode={{
-                  enabled: true,
-                  sticky: false,
-                  momentumRatio: 0.25,
-                  momentumVelocityRatio: 0.5,
-                }}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: true,
-                }}
-                breakpoints={{
-                  640: {
-                    slidesPerView: 2,
-                  },
-                  768: {
-                    slidesPerView: 3,
-                  },
-                  1024: {
-                    slidesPerView: 4,
-                  },
-                  1280: {
-                    slidesPerView: 5,
-                  },
-                }}
-                className="team-swiper"
-              >
-                {department.members.map((member, mIndex) => (
-                  <SwiperSlide key={mIndex} className="h-auto">
-                    <div className="bg-gray-50 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                      <div className="p-6">
-                        <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-blue-100">
-                          <img
-                            src={member.image}
-                            alt={member.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="text-center">
-                          <h4 className="text-xl font-semibold mb-2 line-clamp-1">{member.name}</h4>
-                          <div className="text-blue-600 text-sm mb-3">
-                            {Array.isArray(member.role)
-                              ? member.role.map((r, index) => <div key={index}>{r}</div>)
-                              : member.role}
+      {/* Services Section */}
+<div className="py-16 bg-gray-50">
+  <div className="container mx-auto px-4">
+    <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Our Services</h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {services.map((service, index) => (
+        <div
+          key={index}
+         className={[
+      "relative p-6 rounded-2xl transition-all duration-300 overflow-hidden",
+      "border backdrop-blur-sm",
+      index === 1 
+        ? "bg-blue-200 text-white"   
+        : "bg-white text-slate-100", 
+    ].join(" ")}
+        >
+          {isCenter && (
+            <div className="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-200/40 blur-2xl" />
+          )}
+
+          <div
+            className={[
+              "inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-blue-100",
+              "transition-all duration-300",
+              isCenter
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                : "bg-blue-100 text-blue-600 shadow-sm",
+            ].join(" ")}
+          >
+            {service.icon}
+          </div>
+
+          <h3
+            className={[
+              "text-xl font-semibold mb-2",
+              isCenter ? "text-blue-900" : "text-slate-900",
+            ].join(" ")}
+          >
+            {service.title}
+          </h3>
+
+          <p
+            className={[
+              "leading-relaxed",
+              isCenter ? "text-blue-900/80" : "text-slate-600",
+            ].join(" ")}
+          >
+            {service.description}
+          </p>
+
+          {!isCenter && (
+            <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-blue-200/60 to-transparent opacity-0 group-hover:opacity-100" />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
+        {/* Team Section with Sliding Functionality */}
+        <div className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Meet Our Team</h2>
+            {departments.map((department, dIndex) => (
+              <div key={dIndex} className="mb-16 last:mb-0">
+                <h3 className="text-2xl font-semibold mb-8 text-blue-600">{department.name}</h3>
+                <Swiper
+                  modules={[FreeMode, Autoplay]}
+                  spaceBetween={24}
+                  slidesPerView={1}
+                  freeMode={{
+                    enabled: true,
+                    sticky: false,
+                    momentumRatio: 0.25,
+                    momentumVelocityRatio: 0.5,
+                  }}
+                  autoplay={{
+                    delay: 3000,
+                    disableOnInteraction: true,
+                  }}
+                  breakpoints={{
+                    640: {
+                      slidesPerView: 2,
+                    },
+                    768: {
+                      slidesPerView: 3,
+                    },
+                    1024: {
+                      slidesPerView: 4,
+                    },
+                    1280: {
+                      slidesPerView: 5,
+                    },
+                  }}
+                  className="team-swiper"
+                >
+                  {department.members.map((member, mIndex) => (
+                    <SwiperSlide key={mIndex} className="h-auto">
+                      <div className="bg-gray-50 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                        <div className="p-6">
+                          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-blue-100">
+                            <img
+                              src={member.image}
+                              alt={member.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          <p className="text-gray-600 text-sm mb-3">
-                            <strong className="block mb-1">Expertise:</strong>
-                            <span className="line-clamp-2 min-h-[2.5rem]">{member.expertise}</span>
-                          </p>
-                          <p className="text-gray-700 text-sm line-clamp-3">{member.about}</p>
+                          <div className="text-center">
+                            <h4 className="text-xl font-semibold mb-2 line-clamp-1">{member.name}</h4>
+                            <div className="text-blue-600 text-sm mb-3">
+                              {Array.isArray(member.role)
+                                ? member.role.map((r, index) => <div key={index}>{r}</div>)
+                                : member.role}
+                            </div>
+                            <p className="text-gray-600 text-sm mb-3">
+                              <strong className="block mb-1">Expertise:</strong>
+                              <span className="line-clamp-2 min-h-[2.5rem]">{member.expertise}</span>
+                            </p>
+                            <p className="text-gray-700 text-sm line-clamp-3">{member.about}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-          ))}
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Footer Section */}
+        <Footer />
       </div>
-
-      {/* Footer Section */}
-      <Footer />
-    </div>
+       
+    
   );
-}
-
-export default App;
+};
 
 
-
-
-
-
-
+      export default App;

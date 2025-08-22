@@ -367,7 +367,7 @@ const Blogs = () => {
                   )}
                   <div className="p-4 flex flex-col justify-between flex-grow">
                     <h3 className="text-xl font-semibold font-[Oswald]">{post.title}</h3>
-                    <p className="text-gray-600 text-lg mt-3 font-['Pacifico']">
+                    <p className="text-gray-600 text-lg mt-3 font-['Pacifico'] text-justify hyphens-auto ">
                       {post.description}
                     </p>
                   </div>
@@ -406,7 +406,7 @@ const Blogs = () => {
                     )}
                     <div className="p-4 flex flex-col justify-between flex-grow">
                       <h3 className="text-xl font-bold font-[Oswald]">{post.title}</h3>
-                      <p className="text-gray-900 text-lg mt-2 font-['Pacifico']">
+                      <p className="text-gray-900 text-lg mt-2 font-['Pacifico'] text-justify hyphens-auto">
                         {post.description}
                       </p>
                     </div>
