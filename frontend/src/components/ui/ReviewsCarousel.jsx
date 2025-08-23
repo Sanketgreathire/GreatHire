@@ -173,7 +173,7 @@ export default function ReviewsSection() {
       <ReviewsCarousel
         reviews={clientReviews}
         title={
-          <span className="text-blue-800 text-4xl font-[oswald] font-bold">
+          <span className="text-white text-4xl font-[oswald] font-bold">
             Our Client Reviews
           </span>
         }
@@ -182,7 +182,7 @@ export default function ReviewsSection() {
       <ReviewsCarousel
         reviews={candidateReviews}
         title={
-          <span className="text-blue-800 text-4xl font-[oswald] font-bold">
+          <span className="text-white text-4xl font-[oswald] font-bold">
             Our Employee Reviews
           </span>
         }

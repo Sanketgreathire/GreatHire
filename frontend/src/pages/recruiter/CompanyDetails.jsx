@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { BACKEND_URL, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { addCompany } from "@/redux/companySlice";
@@ -59,7 +59,6 @@ const CompanyDetails = () => {
       },
     });
   };
-
   // Submit updated company details
   const handleFormSubmit = async (e) => {
     e.preventDefault();

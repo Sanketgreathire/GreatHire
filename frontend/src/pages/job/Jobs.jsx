@@ -119,12 +119,12 @@ const Jobs = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {currentJobs.map((job) => (
-                  <div key={job._id}>
-                    <Link to={`/jobs/${job._id}`}>
-                    <Job job={job} />
-                    </Link>
-                  </div>
-                ))}
+                        <div key={job._id}>
+                          <Link to={`/jobs/${job._id}`}>
+                            <Job job={job} />
+                          </Link>
+                        </div>
+                      ))}
               </div>
 
 {/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
