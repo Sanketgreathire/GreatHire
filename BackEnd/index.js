@@ -1,27 +1,18 @@
 import dotenv from "dotenv";
 dotenv.config();
-// cookie-parser package help to handle cookie in coming from frontend HTTP Request
 import cookieParser from "cookie-parser";
-// this help to cross origin resource sharing enable secure communication between a server and a client application running on a different origin (domain, protocol, or port). 
 import cors from "cors";
-// this package help to read environment variables
-
 import express from "express";
-// fetching server by https
 import { createServer } from "http";
 import { Server } from "socket.io";
-// this one is cron scheduler to check in each 5 min is plan is expired of any company
 import cron from "node-cron";
-// this package help to restrict a window for a number of reqeust to server in a particular time. 
-import rateLimit from "express-rate-limit"; // Import Rate Limiter
+import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import fs from "fs";
-// helmet help to secure Express apps by setting HTTP response headers.
 import helmet from "helmet";
-//import chatbotRoute from "./routes/chatbot.route.js"; // ✅ Add this
+
 
 // Import Routes
 import applicationRoute from "./routes/application.route.js";
@@ -41,72 +32,61 @@ import adminRecruiterDataRoute from "./routes/admin/recruiterStats.route.js";
 import adminJobDataRoute from "./routes/admin/jobStats.route.js";
 import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
 import notificationRoute from "./routes/notification.route.js";
+import messageRoute from "./routes/message.route.js";
 
 // Import Models
 import { JobSubscription } from "./models/jobSubscription.model.js";
 import JobReport from "./models/jobReport.model.js";
 import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
+import Notification  from "./models/notification.model.js";
 
-// import chatbotRoutes from "./routes/chatbot.js";
-
+// Import socket utility
+import { setIO } from "./utils/socket.js";
+import notificationService from "./utils/notificationService.js";
 
 const app = express();
 const server = createServer(app);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
+
+// Security Middleware
 app.use(helmet({
   contentSecurityPolicy: false,
-})); // Use Helmet to set security-related HTTP headers
-
-
-// app.get("/api/adzuna/jobs", async (req, res) => {
-//   const response = await fetch("https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=6de556e8&app_key=f1b3e3c8c3bf2cfd3b6c5a20c7e5432a&results_per_page=6");
-//   const data = await response.json();
-//   res.json(data);
-// });
-
-// app.use(cors({
-//   origin:"http://localhost:5173/",
-// }))
-
-
-app.disable("x-powered-by"); // Explicitly disable X-Powered-By header
-// app.use("/api/v1/chatbot", chatbotRoute); // ✅ Add this after all other route imports
+}));
+app.disable("x-powered-by");
 
 // WebSocket Server with CORS
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   },
 });
 
+// Set the io instance in the socket utility
+setIO(io);
+notificationService.setIO(io);
+
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // Explicitly allow the correct origin
-    credentials: true, // Include credentials like cookies if needed
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/socket.io/", (req, res, next) => next());
 
-app.use("/socket.io/", (req, res, next)=> next());
-
-
-// // 📌 CSRF Protection
-// const csrfProtection = csurf({ cookie: true });
-// app.use(csrfProtection);
-
-// 📌 Rate Limiting (Limits API requests per IP)
+// Rate Limiting
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Max 200 requests per IP per window
+  windowMs: 15 * 60 * 1000,
+  max: 200,
   message: "Too many requests, please try again later.",
   headers: true,
 });
-app.use("/api", apiLimiter); // Apply rate limiting to all API routes
+app.use("/api", apiLimiter);
 
 // API Routes
 app.use("/api/v1/user", userRoute);
@@ -128,127 +108,138 @@ app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/notifications", notificationRoute);
-//app.use("/api/v1/chatbot", chatbotRoutes);
+app.use("/api/v1/messages", messageRoute);
+
+// Request logging
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
 
+// Static files and SPA fallback
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-app.use(express.static(path.join(__dirname, "../frontend/dist"))); // Go up one level
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-  });
-
-// Start Server & Connect to Database
-server.listen(PORT, async () => {
-  await connectDB();
-  console.log(`🚀 Server running at port ${PORT}`);
-
-  // Function to emit the updated unseen notification count
-  const emitUnseenNotificationCount = async () => {
-    try {
-      const unseenJobReportsCount = await JobReport.countDocuments({
-        status: "unseen",
-      });
-      const unseenContactsCount = await Contact.countDocuments({
-        status: "unseen",
-      });
-      const totalUnseenNotifications =
-        unseenJobReportsCount + unseenContactsCount;
-        // here server emit a custom event newNotificationCount with totalUnseenNotifications
-      io.emit("newNotificationCount", { totalUnseenNotifications });
-    } catch (error) {
-      console.error("Error emitting unseen notification count:", error);
-    }
-  };
-
-  // Function to create and manage the JobReport change stream
-  const createJobReportChangeStream = () => {
-    // this watch() method used to create change stream that help to watch real time change in JobReport Collection.
-    const jobReportChangeStream = JobReport.watch();
-
-    // if any change in happened in with operation type insert then emit a event from the server
-    jobReportChangeStream.on("change", async (change) => {
-      if (change.operationType === "insert") {
-        await emitUnseenNotificationCount();
-      }
-    });
-
-    jobReportChangeStream.on("error", (error) => {
-      console.error("JobReport ChangeStream error:", error);
-      jobReportChangeStream.close();
-      // Reinitialize after 5 seconds
-      setTimeout(createJobReportChangeStream, 5000);
-    });
-  };
-
-  // Function to create and manage the Contact change stream
-  const createContactChangeStream = () => {
-    // this watch() method used to create change stream that help to watch real time change in Contact Collection.
-    const contactChangeStream = Contact.watch();
-
-    // if any change in happened in with operation type insert then emit a event from the server
-    contactChangeStream.on("change", async (change) => {
-      if (change.operationType === "insert") {
-        await emitUnseenNotificationCount();
-      }
-    });
-
-    contactChangeStream.on("error", (error) => {
-      console.error("Contact ChangeStream error:", error);
-      contactChangeStream.close();
-      // Reinitialize after 5 seconds
-      setTimeout(createContactChangeStream, 5000);
-    });
-  };
-
-  // Initialize the change streams with error handling
-  createJobReportChangeStream();
-  createContactChangeStream();
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 // WebSocket Handling
 io.on("connection", (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
+  // Handle joining user-specific rooms
+  socket.on("joinUserRoom", (userId) => {
+    socket.join(`user_${userId}`);
+    console.log(`User ${userId} joined their notification room`);
+  });
+
+  // Handle joining admin room
+  socket.on("joinAdminRoom", () => {
+    socket.join("adminRoom");
+    console.log(`Admin joined notification room`);
+  });
+
   socket.on("disconnect", () => {
     console.log(`Client disconnected: ${socket.id}`);
   });
 });
 
-// Cron Job to Check for Expired Plans (Runs every hour)
+// Start Server & Connect to Database
+server.listen(PORT, async () => {
+  await connectDB();
+  console.log(`🚀 Server running at port ${PORT}`);
+
+  // Notification count emitter
+  const emitUnseenNotificationCount = async () => {
+    try {
+      const [unseenJobReportsCount, unseenContactsCount, adminNotificationCount] = await Promise.all([
+        JobReport.countDocuments({ status: "unseen" }),
+        Contact.countDocuments({ status: "unseen" }),
+        Notification.countDocuments({ recipientModel: 'Admin', isRead: false })
+      ]);
+      
+      const totalUnseenNotifications = 
+        unseenJobReportsCount + unseenContactsCount + adminNotificationCount;
+        
+      io.emit("newNotificationCount", { totalUnseenNotifications });
+    } catch (error) {
+      console.error("Error emitting unseen notification count:", error);
+    }
+  };
+
+  // Change stream handlers
+  const setupChangeStream = (model, errorMsg) => {
+    const changeStream = model.watch();
+    
+    changeStream.on("change", async (change) => {
+      if (change.operationType === "insert") {
+        await emitUnseenNotificationCount();
+      }
+    });
+
+    changeStream.on("error", (error) => {
+      console.error(`${errorMsg}:`, error);
+      changeStream.close();
+      setTimeout(() => setupChangeStream(model, errorMsg), 5000);
+    });
+  };
+
+  // Initialize change streams
+  setupChangeStream(JobReport, "JobReport ChangeStream error");
+  setupChangeStream(Contact, "Contact ChangeStream error");
+  
+  // Also set up for Notification model
+  const notificationChangeStream = Notification.watch();
+  notificationChangeStream.on("change", async (change) => {
+    if (change.operationType === "insert") {
+      await emitUnseenNotificationCount();
+    }
+  });
+});
+
+// Cron Job to Check for Expired Plans
 cron.schedule("* * * * *", async () => {
   console.log("Running cron job: Checking expired plans...");
   try {
-    // here first we fetching all active jobSubscriptions and candidateSubscriptions plans
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
       CandidateSubscription.find({ status: "Active" }),
     ]);
 
-    // here we check validity of all active job subscription and emit event to client plan expired
     await Promise.all([
       ...jobSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
-          io.emit("planExpired", {
-            companyId: subscription.company,
-            type: "job",
-            message: "Job plan expired, please renew.",
+          // Create notification
+          const notification = new Notification({
+            recipient: subscription.company,
+            recipientModel: 'Company',
+            title: 'Plan Expired',
+            message: 'Your job plan has expired. Please renew to continue posting jobs.',
+            type: 'system',
+            metadata: { subscriptionId: subscription._id, type: 'job' }
           });
+          await notification.save();
+          
+          // Emit to company
+          io.to(`user_${subscription.company}`).emit('newNotification', notification);
         }
       }),
-       // here we check validity of all active candidate subscription and emit event to client plan expired
       ...candidateSubscriptions.map(async (subscription) => {
         if (await subscription.checkValidity()) {
-          io.emit("planExpired", {
-            companyId: subscription.company,
-            type: "candidate",
-            message: "Candidate data plan expired, please renew.",
+          // Create notification
+          const notification = new Notification({
+            recipient: subscription.company,
+            recipientModel: 'Company',
+            title: 'Plan Expired',
+            message: 'Your candidate data plan has expired. Please renew to access candidate database.',
+            type: 'system',
+            metadata: { subscriptionId: subscription._id, type: 'candidate' }
           });
+          await notification.save();
+          
+          // Emit to company
+          io.to(`user_${subscription.company}`).emit('newNotification', notification);
         }
       }),
     ]);
@@ -257,7 +248,7 @@ cron.schedule("* * * * *", async () => {
   }
 });
 
-// Graceful Shutdown for MongoDB & Server
+// Graceful Shutdown
 process.on("SIGINT", async () => {
   console.log("Shutting down server...");
   await mongoose.connection.close();
@@ -265,3 +256,7 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
+// Helper function to emit notifications
+export const emitNotification = (recipientId, notificationData) => {
+  io.to(`user_${recipientId}`).emit('newNotification', notificationData);
+};

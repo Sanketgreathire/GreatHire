@@ -7,6 +7,8 @@ import { Admin } from "../models/admin/admin.model.js";
 import { check, validationResult } from "express-validator";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
+import { User } from "../models/user.model.js";
+import notificationService from "../utils/notificationService.js";
 import axios from "axios";
 
 // postjob by recruiter
@@ -116,6 +118,17 @@ export const postJob = [
       });
 
       await newJob.save();
+
+      // ✅ Notify recruiter about successful job posting
+      await notificationService.notifyNewJobPosted({
+        recruiterId: userId,
+        jobId: newJob._id,
+        jobTitle: title,
+        companyName: companyName
+      });
+
+      // ✅ Find and notify matching candidates
+      await findAndNotifyMatchingCandidates(newJob);
 
       if (company.maxJobPosts > 0) {
         const updatedCompany = await Company.findOneAndUpdate(
@@ -583,3 +596,50 @@ export const getJobsStatistics = async (req, res) => {
     });
   }
 };
+
+// Helper function to find and notify matching candidates
+async function findAndNotifyMatchingCandidates(job) {
+  try {
+    const jobSkills = job.jobDetails.skills || [];
+    const jobLocation = job.jobDetails.location;
+    const jobType = job.jobDetails.jobType;
+    
+    // Find users with matching skills or location preferences
+    const matchingUsers = await User.find({
+      $or: [
+        { "profile.skills": { $in: jobSkills } },
+        { "address.city": { $regex: jobLocation, $options: 'i' } },
+        { "profile.jobPreferences.jobType": jobType }
+      ]
+    }).select('_id fullname profile.skills address.city');
+
+    // Calculate match scores and send notifications
+    for (const user of matchingUsers) {
+      const userSkills = user.profile?.skills || [];
+      const matchingSkills = jobSkills.filter(skill => 
+        userSkills.some(userSkill => 
+          userSkill.toLowerCase().includes(skill.toLowerCase())
+        )
+      );
+      
+      const matchScore = Math.min(
+        Math.round((matchingSkills.length / Math.max(jobSkills.length, 1)) * 100),
+        95
+      );
+
+      if (matchScore >= 30) { // Only notify if match score is 30% or higher
+        await notificationService.notifyJobMatch({
+          userId: user._id,
+          jobId: job._id,
+          jobTitle: job.jobDetails.title,
+          companyName: job.jobDetails.companyName,
+          matchScore: matchScore,
+          location: job.jobDetails.location,
+          salary: job.jobDetails.salary
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error finding matching candidates:", error);
+  }
+}

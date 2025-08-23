@@ -1,28 +1,24 @@
 import express from "express";
 import {
-  getUnseenNotificationsCount,
-  getUnseenMessages,
-  getMessages,
-  markAsSeen,
-  deleteContact,
-  deleteJobReport,
-  deleteAllMessages,
-  sendReplyToMessage,
+  getNotifications,
+  markAsRead,
+  markAllAsRead,
+  getAdminNotifications,
+  markAdminNotificationAsRead,
+  getUnreadCount
 } from "../controllers/notification.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+
 const router = express.Router();
 
-// Define your routes here
-router.get("/unseen", isAuthenticated, getUnseenNotificationsCount);
-router.get("/unseen/messages", isAuthenticated, getUnseenMessages);
-router.get("/getAll-messages", isAuthenticated, getMessages);
-router.put("/mark-seen", isAuthenticated, markAsSeen);
+// 🔹 User Routes
+router.get("/", isAuthenticated, getNotifications);                  // Get logged-in user's notifications
+router.get("/unread-count", isAuthenticated, getUnreadCount);        // Get unread count
+router.put("/:id/read", isAuthenticated, markAsRead);                // Mark one notification as read
+router.put("/mark-all-read", isAuthenticated, markAllAsRead);        // Mark all as read
 
-router.delete("/contacts/:msgId", isAuthenticated, deleteContact);
-router.delete("/jobReports/:msgId", isAuthenticated, deleteJobReport);
-router.delete("/deleteMessages", isAuthenticated, deleteAllMessages);
-
-
-router.post("/sendreply", isAuthenticated, sendReplyToMessage);
+// 🔹 Admin Routes
+router.get("/admin", isAuthenticated, getAdminNotifications);        // Get all admin notifications
+router.put("/admin/:id/read", isAuthenticated, markAdminNotificationAsRead); // Mark admin notification as read
 
 export default router;

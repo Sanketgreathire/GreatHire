@@ -4,20 +4,20 @@ const contactSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true, // Full name of the person contacting
+      required: false, // Full name of the person contacting
     },
     email: {
       type: String,
-      required: true, // Email of the person contacting
+      required: false, // Email of the person contacting
       match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
     phoneNumber: {
       type: String,
-      required: true, // phoneNumber of the person contacting
+      required: false, // phoneNumber of the person contacting
     },
     message: {
       type: String,
-      required: true, // Message content
+      required: false, // Message content
     },
     status: {
       type: String,
