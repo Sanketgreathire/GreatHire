@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import JobDetailsProvider from "./context/JobDetailsContext";
+import { NotificationProvider } from './context/NotificationContext';
+import { MessageProvider } from './context/MessageContext';
 
-// Auth
+// Auth components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import Login from "./components/auth/Login";
@@ -55,6 +57,8 @@ import DeleteAccount from "./pages/recruiter/DeleteAccount";
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
+import Notifications from "./components/NotificationBell";
+import NotificationPage from "./components/notifications/NotificationPage";
 
 // Redux
 import { useEffect } from "react";
@@ -91,6 +95,7 @@ const appRouter = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
   {path:"/packages",element:<Packges />},
+  { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
@@ -140,20 +145,25 @@ function App() {
     if (!token) dispatch(logOut());
   }, []);
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      registrations.forEach((registration) => registration.unregister());
-    });
-  }
+  // Cleanup service workers
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => registration.unregister());
+      });
+    }
+  }, []);
 
   return (
-    <div>
-      <JobDetailsProvider>
+    <NotificationProvider>
+      <MessageProvider>
+        <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
         </Worker>
       </JobDetailsProvider>
-    </div>
+      </MessageProvider>
+    </NotificationProvider>
   );
 }
 
