@@ -1,33 +1,33 @@
 // Import React and useState hook for component state management
-import React, { useState } from "react";  
+import React, { useState } from "react";
 
 import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 
 // Import Redux hooks for dispatching actions and accessing state
-import { useDispatch, useSelector } from "react-redux";  
+import { useDispatch, useSelector } from "react-redux";
 
 // Import Axios for making API requests
-import axios from "axios";  
+import axios from "axios";
 
 // Import toast notifications for displaying success/error messages
-import { toast } from "react-hot-toast";  
+import { toast } from "react-hot-toast";
 
 // Import Redux action to update the user state
-import { setUser } from "@/redux/authSlice";   
+import { setUser } from "@/redux/authSlice";
 
 // Import UI components for form elements and buttons
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import  JobCategory from "@/components/ui/JobCategory"; 
+import JobCategory from "@/components/ui/JobCategory";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
 
 // Import icons for UI enhancement
-import { Loader2, Pencil } from "lucide-react";  
+import { Loader2, Pencil } from "lucide-react";
 
 // Import API endpoint for user-related requests
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import Job from "../job/Job";
 
 
@@ -40,15 +40,15 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [prevResumeName, setPrevResumeName] = useState("");
   const [isCategoryVisible, setCategoryVisible] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-const categoryArray = Object.keys(selectedCategories).filter(key => selectedCategories[key]);
-const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const categoryArray = Object.keys(selectedCategories).filter(key => selectedCategories[key]);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
     !!user?.profile?.experience?.jobProfile // true if experience exists
   );
 
-   const toggleCategoryVisibility = (event) => {
+  const toggleCategoryVisibility = (event) => {
     event.preventDefault();
     setCategoryVisible(!isCategoryVisible);
   };
@@ -64,9 +64,9 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
     phoneNumber: user?.phoneNumber.number || "",
-    
+
     bio: user?.profile?.bio || "",
-    category: user?.profile?.category||[],
+    category: user?.profile?.category || [],
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
@@ -77,7 +77,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     experienceDetails: user?.profile?.experience?.experienceDetails || "",
     city: user?.address?.city || "",
     state: user?.address?.state || "",
-    pincode:user?.address?.pincode || "",
+    pincode: user?.address?.pincode || "",
     country: user?.address?.country || "",
     profilePhoto: user?.profile?.profilePhoto || "",
     resumeOriginalName: user?.profile?.resumeOriginalName || "",
@@ -90,7 +90,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     user?.profile?.profilePhoto || ""
   );
 
-// Character limits for bio and experience details
+  // Character limits for bio and experience details
   const maxBioChars = 500;
   const maxExperienceChars = 750;
 
@@ -106,8 +106,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
       } else {
         // Optionally, show an error message or prevent further input
         toast.error(
-          `${
-            name === "bio" ? "Bio" : "Experience details"
+          `${name === "bio" ? "Bio" : "Experience details"
           } cannot exceed ${charLimit} characters`
         );
       }
@@ -117,7 +116,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     }
   };
 
-   // Handles file input change for resume upload
+  // Handles file input change for resume upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -137,7 +136,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     e.target.value = ""; // Reset input value to allow re-upload of the same file
   };
 
-   // Removes the currently uploaded resume
+  // Removes the currently uploaded resume
   const removeResume = () => {
     setInput((prev) => ({
       ...prev,
@@ -187,9 +186,9 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     formData.append("currentCTC", input.currentCTC || "");
     formData.append("expectedCTC", input.expectedCTC);
     formData.append("experienceDetails", input.experienceDetails);
-    formData.append("bio", input.bio|| "");
+    formData.append("bio", input.bio || "");
     formData.append("skills", input.skills || "");
-    formData.append("qualification", input.qualification || ""); 
+    formData.append("qualification", input.qualification || "");
 
 
     if (!hasExperience) {
@@ -199,7 +198,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
       formData.set("companyName", "N/A");
       formData.set("currentCTC", "0");
     }
-    
+
 
     if (input.resume instanceof File) {
       formData.append("resume", input.resume);
@@ -214,7 +213,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
 
     try {
       setLoading(true);
-        // API call to update the user profile
+      // API call to update the user profile
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
         formData,
@@ -237,12 +236,12 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
     }
   };
   const handleCheckboxChange = (category) => {
-  setSelectedCategories((prev) =>
-    prev.includes(category)
-      ? prev.filter((c) => c !== category)
-      : [...prev, category]
-  );
-};
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
 
   // If the modal is closed, return null to prevent rendering
   if (!open) return null;
@@ -259,7 +258,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
         onClick={(e) => e.stopPropagation()}
       >
 
-         {/* Close Button */}
+        {/* Close Button */}
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -269,7 +268,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
           ✖
         </button>
 
-          {/* Modal Heading */}
+        {/* Modal Heading */}
         <h2 className="text-2xl text-center font-semibold mb-4">
           Update Profile
         </h2>
@@ -326,6 +325,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                     name="fullname"
                     value={input.fullname}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -341,6 +341,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                     name="email"
                     value={input.email}
                     onChange={handleChange}
+                    required
                   />
                 </div>
 
@@ -356,6 +357,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                     name="phoneNumber"
                     value={input.phoneNumber}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
@@ -368,6 +370,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                     value={input.gender}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -386,6 +389,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                     value={input.qualification}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   >
                     <option value="">Select Qualification</option>
                     <option value="Post Graduation">Post Graduation</option>
@@ -422,6 +426,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                   value={input.country}
                   onChange={handleChange}
                   className="w-full"
+                  required
                 />
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
@@ -434,6 +439,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                   value={input.state}
                   onChange={handleChange}
                   className="w-full"
+                  required
                 />
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
@@ -446,6 +452,7 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                   value={input.city}
                   onChange={handleChange}
                   className="w-full"
+                  required
                 />
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
@@ -458,36 +465,37 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                   value={input.pincode}
                   onChange={handleChange}
                   className="w-full"
+                  required
                 />
               </div>
 
-                    <LanguageSelector
-  selectedLanguages={selectedLanguages}
-  setSelectedLanguages={setSelectedLanguages}
-/>
+              <LanguageSelector
+                selectedLanguages={selectedLanguages}
+                setSelectedLanguages={setSelectedLanguages}
+              />
 
-{selectedLanguages.length > 0 && (
-  <div className="flex flex-wrap gap-2 mt-4">
-    {selectedLanguages.map((language) => (
-      <span
-        key={language}
-        className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
-      >
-        {language}
-        <button
-          onClick={() =>
-            setSelectedLanguages((prev) =>
-              prev.filter((l) => l !== language)
-            )
-          }
-          className="text-green-700 hover:text-red-600 transition-colors"
-        >
-          &times;
-        </button>
-      </span>
-    ))}
-  </div>
-)}
+              {selectedLanguages.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {selectedLanguages.map((language) => (
+                    <span
+                      key={language}
+                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+                    >
+                      {language}
+                      <button
+                        onClick={() =>
+                          setSelectedLanguages((prev) =>
+                            prev.filter((l) => l !== language)
+                          )
+                        }
+                        className="text-green-700 hover:text-red-600 transition-colors"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
 
 
             </div>
@@ -639,71 +647,71 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
               <JobCategory
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
-                
+
               />
-                   {selectedCategories.length > 0 && (
-  <div className="flex flex-wrap gap-2 mt-4">
-    {selectedCategories.map((category) => (
-      <span
-        key={category}
-        className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
-      >
-        {category}
-        <button
-          onClick={() =>
-            setSelectedCategories((prev) => prev.filter((c) => c !== category))
-          }
-          className="text-blue-700 hover:text-red-600 transition-colors"
-        >
-          &times;
-        </button>
-      </span>
-    ))}
-  </div>
-)}
-
-                <div className="w-full">
-                  <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
-                    Bio
-                  </Label>
-                  <textarea
-                    id="bio"
-                    name="bio"
-                    value={input.bio}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="3"
-                    placeholder="Enter your bio..."
-                  />
-                  <p className="text-sm text-gray-600 mt-1 self-end text-right">
-                    {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
-                  </p>
+              {selectedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
+                    >
+                      {category}
+                      <button
+                        onClick={() =>
+                          setSelectedCategories((prev) => prev.filter((c) => c !== category))
+                        }
+                        className="text-blue-700 hover:text-red-600 transition-colors"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
                 </div>
+              )}
 
-                <div className="w-full">
-                  <Label
-                    htmlFor="experienceDetails"
-                    className="block mb-2 font-semibold pt-2"
-                  >
-                    Experience Details
-                  </Label>
-                  <textarea
-                    id="experienceDetails"
-                    name="experienceDetails"
-                    value={input.experienceDetails}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows="3"
-                    placeholder="Describe your work experience in detail..."
-                  />
-                  <p className="text-sm text-gray-600 mt-1 self-end text-right">
-                    {input.experienceDetails.trim()
-                      ? input.experienceDetails.trim().length
-                      : 0}
-                    /{maxExperienceChars}
-                  </p>
-                </div>
-              
+              <div className="w-full">
+                <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
+                  Bio
+                </Label>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  value={input.bio}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3"
+                  placeholder="Enter your bio..."
+                />
+                <p className="text-sm text-gray-600 mt-1 self-end text-right">
+                  {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
+                </p>
+              </div>
+
+              <div className="w-full">
+                <Label
+                  htmlFor="experienceDetails"
+                  className="block mb-2 font-semibold pt-2"
+                >
+                  Experience Details
+                </Label>
+                <textarea
+                  id="experienceDetails"
+                  name="experienceDetails"
+                  value={input.experienceDetails}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows="3"
+                  placeholder="Describe your work experience in detail..."
+                />
+                <p className="text-sm text-gray-600 mt-1 self-end text-right">
+                  {input.experienceDetails.trim()
+                    ? input.experienceDetails.trim().length
+                    : 0}
+                  /{maxExperienceChars}
+                </p>
+              </div>
+
 
               <div className="w-full">
                 <Label htmlFor="skills" className="block mb-2 font-semibold">
@@ -715,29 +723,30 @@ const [selectedLanguages, setSelectedLanguages] = useState([]);
                   value={input.skills}
                   onChange={handleChange}
                   placeholder="Enter skills (comma separated)"
+                  required
                 />
               </div>
 
-              <div className="w-full">  
-                  <Label
-                    htmlFor="expectedCTC"
-                    className="block mb-2 font-semibold"
-                  >
-                    Expected CTC
-                  </Label>
-                  <Input
-                    id="expectedCTC"
-                    name="expectedCTC"
-                    value={input.expectedCTC}
-                    onChange={handleChange} 
-                    placeholder="Enter Expected CTC must be a number or in format like '12LPA', '12.5 LPA', etc."
-                  />
-               </div>
+              <div className="w-full">
+                <Label
+                  htmlFor="expectedCTC"
+                  className="block mb-2 font-semibold"
+                >
+                  Expected CTC
+                </Label>
+                <Input
+                  id="expectedCTC"
+                  name="expectedCTC"
+                  value={input.expectedCTC}
+                  onChange={handleChange}
+                  placeholder="Enter Expected CTC must be a number or in format like '12LPA', '12.5 LPA', etc."
+                />
+              </div>
             </div>
           </div>
 
 
-          
+
 
           <div className="w-full">
             <Label htmlFor="resume" className="block mb-2 font-semibold">

@@ -1,15 +1,19 @@
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import JobDetailsProvider from "./context/JobDetailsContext";
 import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
-// Auth components
+
+import JobSeekerSignup from "./components/auth/user/Signup"; 
+
+// // Auth components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
-import Login from "./components/auth/Login";
-import Signup from "./components/auth/user/Signup.jsx";
+import AuthPage from './components/auth/user/AuthPage';
 
-// Pages
+// // Pages
 import SignupPage from "./components/shared/SignupPage";
 import Home from "./pages/Home";
 import UserProfile from "./pages/user/UserProfile";
@@ -31,7 +35,7 @@ import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
 import Packges from "./pages/services/Packages";
 
-// Recruiter Pages
+// // Recruiter Pages
 import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PostJob from "./pages/recruiter/postJob/PostJob";
@@ -53,32 +57,35 @@ import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
-// Other Roles
+// // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import Notifications from "./components/NotificationBell";
 import NotificationPage from "./components/notifications/NotificationPage";
 
-// Redux
-import { useEffect } from "react";
+// // Redux
+// // Note: Aapko in dependencies ko install karna hoga: npm install react-redux @reduxjs/toolkit
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
 
-// Verification
+// // Verification
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 
-// PDF
+// // PDF
+// // Note: Aapko is dependency ko install karna hoga: npm install @react-pdf-viewer/core
 import { Worker } from "@react-pdf-viewer/core";
 
+// // Saare routes ko createBrowserRouter ke andar define kiya gaya hai
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/about", element: <About /> },
-  { path: "/login", element: <Login /> },
-  { path: "/signup", element: <Signup /> },
-  {path: "/signup-choice",element:<SignupPage />},
+  { path: "/auth", element: <AuthPage /> },
+  { path: "/login", element: <AuthPage /> },
+  { path: "/signup", element: <AuthPage /> },
+  { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
   { path: "/jobs", element: <Jobs /> },
@@ -94,10 +101,12 @@ const appRouter = createBrowserRouter([
   { path: "/policy/terms-and-conditions", element: <TermsAndConditions /> },
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
-  {path:"/packages",element:<Packges />},
+  { path: "/packages", element: <Packges /> },
   { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
+//   // Naya code
+{ path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   {
     path: "/recruiter/dashboard",
@@ -166,5 +175,4 @@ function App() {
     </NotificationProvider>
   );
 }
-
 export default App;

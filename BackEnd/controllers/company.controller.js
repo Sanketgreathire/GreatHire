@@ -11,6 +11,7 @@ import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
 
+
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const isUserAssociated = async (companyId, userId) => {
   try {
@@ -170,6 +171,7 @@ export const registerCompany = async (req, res) => {
   }
 };
 
+
 //get  company by company id ...
 export const getCompanyById = async (req, res) => {
   try {
@@ -182,10 +184,10 @@ export const getCompanyById = async (req, res) => {
         Success: false,
       });
     }
-    return res.status(200).json({
-      company,
-      success: true,
-    });
+    company.hasSubscription = true;
+    await company.save();
+
+    res.status(200).json({ message: "Subscription activated successfully" });
   } catch (error) {
     console.log(error);
   }
@@ -221,7 +223,6 @@ export const companyByUserId = async (req, res) => {
       .json({ success: false, message: "Internal server error." });
   }
 };
-
 //update company details
 export const updateCompany = async (req, res) => {
   try {
@@ -603,3 +604,22 @@ export const reportJob = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
+// Temporary test to check pre-save hook
+// (async () => {
+//   try {
+//     const temp = new Company({
+//       companyName: "Temp Test Company",
+//       email: `temp${Date.now()}@example.com`,
+//       adminEmail: `admintemp${Date.now()}@example.com`,
+//       CIN: `CIN${Date.now()}`,
+//       hasSubscription: true // This should trigger unlimited jobs
+//     });
+
+//     await temp.save();
+//     console.log("Saved company:", temp);
+//     console.log("maxJobPosts value after save:", temp.maxJobPosts);
+//   } catch (err) {
+//     console.error("Test save error:", err.message);
+//   }
+// })();
+

@@ -230,7 +230,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       <hr className="mt-3" />
 
       {/* Search Fields in One Row with Four Columns */}
-      <div className="grid grid-cols-4 gap-4 mt-4">
+      {/* <div className="grid grid-cols-4 gap-4 mt-4"> */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {filterData.map((data, index) => (
           <div key={index} className="relative">
             {/* Input field for filter type */}
@@ -258,7 +259,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
             />
             {/* Dropdown suggestions based on user input */}
             {showDropdown[data.filterType] && (
-              <div className="absolute mt-2 max-h-40 overflow-y-auto border rounded-md bg-white w-full shadow-md">
+              <div className="absolute mt-2 max-h-40 overflow-y-auto border rounded-md bg-white w-full shadow-md z-50">
+              {/* <div className="absolute mt-2 max-h-40 overflow-y-auto border rounded-md bg-white w-full shadow-md"> */}
                 {data.array
                   .filter((item) =>
                     item
