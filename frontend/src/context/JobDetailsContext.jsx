@@ -29,11 +29,9 @@ const JobDetailsProvider = ({ children }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-<<<<<<< HEAD
-        const response = await fetch(`${JOB_API_END_POINT}/get`);
+        // const response = await fetch(`${JOB_API_END_POINT}/get`);
   
         // If API call fails, throw an error
-=======
         const response = await fetch(`${JOB_API_END_POINT}/jobs`, {
           method: "GET",
           headers: {
@@ -41,7 +39,6 @@ const JobDetailsProvider = ({ children }) => {
           },
         });
 
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
         if (!response.ok) {
           throw new Error(`Failed to fetch jobs: ${response.statusText}`);
         }
