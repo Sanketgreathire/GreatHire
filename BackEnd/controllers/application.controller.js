@@ -2,9 +2,11 @@
 import { Application } from "../models/application.model.js";
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
+import Notification from "../models/notification.model.js";  
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
+import notificationService from "../utils/notificationService.js";
 
 // this controller apply to a particular job
 export const applyJob = async (req, res) => {
@@ -24,7 +26,6 @@ export const applyJob = async (req, res) => {
       jobId,
     } = req.body;
     const { resume } = req.files;
-    console.log("resume", resume);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -42,7 +43,7 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    // Check if the job is active, user cannot apply if job is not active
+    // Check if the job is active
     if (!job.jobDetails.isActive) {
       return res.status(400).json({ success: false, message: "This job is not active" });
     }
@@ -66,22 +67,16 @@ export const applyJob = async (req, res) => {
     user.profile.experience.jobProfile = jobTitle;
     user.profile.experience.companyName = company;
 
-    // Update resume if provided
+    // Upload resume if provided
     if (resume && resume.length > 0) {
-      console.log("Uploading resume to Cloudinary...");
-      
-      // Upload the file buffer directly to Cloudinary using upload_stream
       await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { resource_type: "raw" }, // Treat it as a generic file
+          { resource_type: "raw" },
           (error, result) => {
-            if (error) {
-              console.error("Cloudinary Upload Error:", error);
-              reject(error);
-            } else {
+            if (error) reject(error);
+            else {
               user.profile.resume = result.secure_url;
               user.profile.resumeOriginalName = resume[0].originalname;
-              console.log("Resume uploaded successfully:", result.secure_url);
               resolve();
             }
           }
@@ -90,19 +85,13 @@ export const applyJob = async (req, res) => {
       });
     }
 
-    console.log("resume", user.profile.resume);
-    console.log("resumeOriginalName", user.profile.resumeOriginalName);
-
-    // Save the updated user
     const updateUser = await user.save();
 
-    // Check if the user has already applied for the job
+    // Check duplicate applications
     const existingApplication = await Application.findOne({
       job: jobId,
       applicant: userId,
     });
-
-    // If the application exists, prevent duplicate applications
     if (existingApplication) {
       return res.status(400).json({
         message: "You have already applied for this job",
@@ -116,15 +105,21 @@ export const applyJob = async (req, res) => {
       applicant: userId,
       status: "Pending",
     });
-
-    // Save the application to the database
     await newApplication.save();
 
-    // Push the new application ID to the job's applications array
+    // Push application into job
     job.application.push(newApplication._id);
-
-    // Save the updated job
     await job.save();
+
+    // ✅ Create notifications using the notification service
+    await notificationService.notifyApplicationSubmitted({
+      applicantId: userId,
+      jobId: jobId,
+      jobTitle: job.jobDetails.title,
+      companyName: job.jobDetails.companyName,
+      recruiterId: job.created_by,
+      applicationId: newApplication._id
+    });
 
     res.status(201).json({
       success: true,
@@ -134,10 +129,7 @@ export const applyJob = async (req, res) => {
     });
   } catch (err) {
     console.error("Error applying for job:", err);
-    return res.status(500).json({
-      message: "Internal server error",
-      error: err.message,
-    });
+    return res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 
@@ -145,34 +137,20 @@ export const applyJob = async (req, res) => {
 export const getAppliedJobs = async (req, res) => {
   try {
     const userId = req.id;
-    // return application of a user in assecending order
     const application = await Application.find({ applicant: userId })
       .sort({ createdAt: -1 })
       .populate({
         path: "job",
-        options: { sort: { createdAt: -1 } },
-        populate: {
-          path: "company",
-          options: { sort: { createdAt: -1 } },
-        },
+        populate: { path: "company" },
       });
 
     if (!application) {
-      return res.status(404).json({
-        message: "No Applications.",
-        success: false,
-      });
+      return res.status(404).json({ message: "No Applications.", success: false });
     }
-    return res.status(200).json({
-      application,
-      success: true,
-    });
+    return res.status(200).json({ application, success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -180,23 +158,14 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
-
-    // Find all applications for the given job and populate the applicant user details
     const applicants = await Application.find({ job: jobId })
-      .populate("applicant") // Populating applicant details
-      .sort({ createdAt: -1 }); // Sorting by createdAt in descending order
+      .populate("applicant")
+      .sort({ createdAt: -1 });
 
-    return res.status(200).json({
-      success: true,
-      applicants, // Returning only the list of applicants
-    });
+    return res.status(200).json({ success: true, applicants });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
+    return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -207,34 +176,34 @@ export const updateStatus = async (req, res) => {
     const applicationId = req.params.id;
 
     if (!status) {
-      return res.status(400).json({
-        message: "Status is required.",
-        success: false,
-      });
+      return res.status(400).json({ message: "Status is required.", success: false });
     }
 
-    // Find the application by applicant id
-    const application = await Application.findOne({ _id: applicationId });
+    const application = await Application.findById(applicationId).populate("applicant job");
     if (!application) {
-      return res.status(404).json({
-        message: "Application not found.",
-        success: false,
-      });
+      return res.status(404).json({ message: "Application not found.", success: false });
     }
 
+    // Store previous status before updating
+    const previousStatus = application.status;
+    
     // Update status
     application.status = status;
     await application.save();
-
-    return res.status(200).json({
-      message: "Status updated successfully.",
-      success: true,
+    
+    await notificationService.notifyApplicationStatusChanged({
+      applicantId: application.applicant._id,
+      jobId: application.job._id,
+      jobTitle: application.job.jobDetails.title,
+      companyName: application.job.jobDetails.companyName,
+      status: status,
+      previousStatus: previousStatus,
+      recruiterId: req.user._id
     });
+
+    return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };

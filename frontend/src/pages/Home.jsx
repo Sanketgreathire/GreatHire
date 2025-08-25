@@ -22,6 +22,9 @@ import { useSelector } from "react-redux";
 // Import useNavigate hook for navigation
 import { useNavigate } from "react-router-dom"; 
 
+// Import messaging components
+import QuickMessageButton from "../components/messaging/QuickMessageButton"; 
+
 // Home component - Main landing page
 const Home = () => {
   // State variables for search filters
@@ -54,6 +57,13 @@ const Home = () => {
           }}
         />
         <LatestJobs /> {/* Display latest job postings */}
+        
+        {/* Quick Message Button for starting conversations - Only show when authenticated */}
+        {user && (
+          <div className="fixed bottom-6 right-6 z-50">
+            <QuickMessageButton className="shadow-lg" />
+          </div>
+        )}
       </div>
              {/*<section className="my-12 px-4 md:px-8">
                         <h2 className="text-2xl font-bold mb-6">Latest Jobs from Around the Web</h2>
