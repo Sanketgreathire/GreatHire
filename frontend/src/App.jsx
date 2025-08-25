@@ -2,13 +2,10 @@ import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import JobDetailsProvider from "./context/JobDetailsContext";
-<<<<<<< HEAD
-=======
 import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
 
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
 import JobSeekerSignup from "./components/auth/user/Signup"; 
 
 // // Auth components
@@ -103,12 +100,9 @@ const appRouter = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/packages", element: <Packges /> },
-<<<<<<< HEAD
    { path: "/forgot-password", element: <ForgotPassword /> },
-=======
   { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
   { path: "/forgot-password", element: <ForgotPassword /> },
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
   { path: "/reset-password/:token", element: <ResetPassword /> },
 
 
@@ -172,7 +166,6 @@ function App() {
   }, []);
 
   return (
-<<<<<<< HEAD
     <div>
         {/* <div className='min-h-screen bg-white text-black dark:bg-gray-800 text-white transition-colors duration-300'>
     */}
@@ -180,22 +173,18 @@ function App() {
     <div className="min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white transition-colors duration-300">
 
       <JobDetailsProvider>
-=======
     <NotificationProvider>
       <MessageProvider>
-        <JobDetailsProvider>
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
+        
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
         </Worker>
-      </JobDetailsProvider>
-<<<<<<< HEAD
-    </div>
-    </div>
-=======
-      </MessageProvider>
+       </MessageProvider>
     </NotificationProvider>
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
+    </JobDetailsProvider>
+    </div>
+    </div>
+     
   );
 }
 export default App;

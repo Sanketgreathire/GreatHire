@@ -1,14 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import './index.css';
-import { Toaster } from 'react-hot-toast';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import store, { persistor } from './redux/store.js';
+
 import { NotificationProvider } from './context/NotificationContext.jsx';
 
-<<<<<<< HEAD
 // React DOM for rendering components
 import ReactDOM from "react-dom/client"; 
 
@@ -35,25 +28,25 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 
 // Rendering the application into the root element
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <ThemeProvider>
-  <Provider store={store}> {/* Provides Redux store to the application */}
-    <PersistGate loading={null} persistor={persistor}> {/* Ensures persisted state is loaded before rendering */}
-      <App /> {/* Main App component */}
-      <Toaster
-        position="bottom-right" // Positioning toast notifications at the bottom-right
-        reverseOrder={false} // Toasts appear in the order they are triggered
-        toastOptions={{
-          duration: 3000, // Toast disappears after 3 seconds
-        }}
-      />
-    </PersistGate>
-  </Provider>
-  </ThemeProvider>
-);
-=======
+// ReactDOM.createRoot(document.getElementById("root")).render(
+//   <ThemeProvider>
+//   <Provider store={store}> {/* Provides Redux store to the application */}
+//     <PersistGate loading={null} persistor={persistor}> {/* Ensures persisted state is loaded before rendering */}
+//       <App /> {/* Main App component */}
+//       <Toaster
+//         position="bottom-right" // Positioning toast notifications at the bottom-right
+//         reverseOrder={false} // Toasts appear in the order they are triggered
+//         toastOptions={{
+//           duration: 3000, // Toast disappears after 3 seconds
+//         }}
+//       />
+//     </PersistGate>
+//   </Provider>
+//   </ThemeProvider>
+// );
 // Create root and render the application
 ReactDOM.createRoot(document.getElementById('root')).render(
+    <ThemeProvider>
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -76,5 +69,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </PersistGate>
     </Provider>
   </React.StrictMode>
+  </ThemeProvider>
 );
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f

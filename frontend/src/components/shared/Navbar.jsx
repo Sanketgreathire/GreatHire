@@ -161,7 +161,6 @@ const Navbar = () => {
                       : navigate("/recruiter/dashboard/home")
                     : navigate("/");
                 }
-<<<<<<< HEAD
               }}/> */}
 
 
@@ -174,9 +173,7 @@ const Navbar = () => {
           
         </div>
           <div>
-=======
-              }}/>
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
+       
           
           {/* Mobile Notifications - show only on mobile when user is logged in */}
           <div className="lg:hidden">
@@ -274,14 +271,11 @@ const Navbar = () => {
 
             {/* Desktop User Section */}
             <div className="flex items-center gap-4">
-<<<<<<< HEAD
                <ThemeToggle />
-=======
               {/* Notifications - only show for logged in users */}
               {user && <NotificationDropdown />}
               
               
->>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
               {!user ? (
                 <>
                   <Link
@@ -502,7 +496,7 @@ const Navbar = () => {
             </div>
             
           </div>
-         
+         </div>
         </div>
       </nav>
 
