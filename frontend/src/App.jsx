@@ -156,13 +156,17 @@ function App() {
 
   return (
     <div>
+        {/* <div className='min-h-screen bg-white text-black dark:bg-gray-800 text-white transition-colors duration-300'>
+    */}
 
-   
+    <div className="min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white transition-colors duration-300">
+
       <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
         </Worker>
       </JobDetailsProvider>
+    </div>
     </div>
   );
 }

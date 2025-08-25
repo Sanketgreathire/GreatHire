@@ -82,7 +82,7 @@ const [showDropdown, setShowDropdown] = useState(false);
         </span>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
-          Search, Apply & <br /> Get Your <span className="text-[#384ac2]">Dream Jobs</span>
+          Search, Apply & <br /> Get Your <span className=" text-blue-700 dark:text-blue-500">Dream Jobs</span>
         </h1>
         <div className="flex items-center justify-center gap-2 ">
       <div className="max-w-[900px]">

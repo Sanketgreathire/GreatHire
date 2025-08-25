@@ -7,8 +7,6 @@ import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-
-
 import user_video from "../../../assets/videos/user_video.mp4";
 
 const Signup = () => {
@@ -40,7 +38,7 @@ const Signup = () => {
     try {
       // API call to register the user directly
       const response = await axios.post(
-        `${USER_API_END_POINT}/register`,
+       ` ${USER_API_END_POINT}/register`,
         { ...formData },
         { withCredentials: true }
       );

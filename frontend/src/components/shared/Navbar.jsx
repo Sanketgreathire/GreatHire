@@ -10,10 +10,15 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
-import GreatHire from '../../assets/GreatHireLogo.jpg'
+// import GreatHire from '../../assets/GreatHireLogo.jpg'
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
+
+import ThemeToggle from "../ThemeToggle";
+
+
+
 
 
 // Accept showJobDetails and setShowJobDetails props
@@ -138,12 +143,15 @@ const Navbar = () => {
     // { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
   ];
 
+  
+
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
+      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300">
+
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
           {/* Logo */}
-          <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
+          {/* <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
             onClick={() => {
                 {
                   user
@@ -152,7 +160,17 @@ const Navbar = () => {
                       : navigate("/recruiter/dashboard/home")
                     : navigate("/");
                 }
-              }}/>
+              }}/> */}
+
+
+               {/* Logo and Text */}
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl font-bold mb-1 hover:text-blue-600 transition duration-300 ease-in-out">
+            <span className="text-black dark:text-white">Great</span>
+            <span className="text-blue-600">Hire</span>
+          </h2>
+          
+        </div>
           <div>
           
           </div>
@@ -248,6 +266,7 @@ const Navbar = () => {
 
             {/* Desktop User Section */}
             <div className="flex items-center gap-4">
+               <ThemeToggle />
               {!user ? (
                 <>
                   <Link
@@ -347,6 +366,7 @@ const Navbar = () => {
           }`}
           onClick={() => setIsMenuOpen(false)}
         >
+          
           {/* Mobile Menu Panel */}
           <div
             ref={mobileMenuRef}
@@ -424,6 +444,9 @@ const Navbar = () => {
                   >
                     Signup
                   </Link>
+                  <div className="pt-2">
+      <ThemeToggle />
+    </div>
                 </div>
               ) : (
                 <div className="mt-4 border-t p-4">
@@ -457,10 +480,14 @@ const Navbar = () => {
                   >
                     Logout
                   </button>
+                  
                 </div>
+                
               )}
             </div>
+            
           </div>
+         
         </div>
       </nav>
 

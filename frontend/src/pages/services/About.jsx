@@ -86,6 +86,9 @@ import Gen18Img from "../../assets/user Photos/Gen18.jpg";
 import Gen19Img from "../../assets/user Photos/Gen19.jpg";
 import RashiImg from "../../assets/user Photos/Rashi.jpg";
 import NumberCounter from '@/components/ui/NumberCounter';
+import Pratibhaimg from '../../assets/User Photos/Pratibhaimg.jpg';
+import Jitendraimg from '../../assets/User Photos/Jitendraimg.jpg'
+import sakshiimg from '../../assets/User Photos/sakshiimg.jpg';
 
 
 function App() {
@@ -190,6 +193,31 @@ function App() {
           expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
           about: "Experienced in building full-stack applications with a focus on user experience and performance.",
         },
+           {
+          name: "Pratibha",
+          image: Pratibhaimg ,
+          role: ["Frontend Developer"],
+          expertise:"HTML, CSS, Tailwind, JavaScript, React ",
+          about: "Dedicated to crafting seamless web solutions that blend creativity with functionality"
+        
+        },
+        {
+          name: "Sakshi ",
+          image: sakshiimg,
+          role : "Full Stack Developer",
+          expertise:"Frontend",
+          about: "Crafts engaging digital journeys that connect and convert audiences",
+        },
+        {
+          name: "Jitendra",
+          image: Jitendraimg,
+          role : "Full Stack developer",
+          expertise:"Frontend",
+          about: "Crafts engaging digital journeys that connect and convert audiences",
+        }
+
+
+
       ],
     },
     {
@@ -251,6 +279,8 @@ function App() {
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
         },
+
+
       ],
     },
     {
@@ -594,7 +624,7 @@ function App() {
   const[isCenter , setIsCenter] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 dark:text-white transition-colors duration-300">
 
       {/* Navbar */}
       <Navbar />
@@ -675,9 +705,9 @@ function App() {
       </div>
       {/* Leadership Section */}
 
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 bg-gray-50 dark:bg-gray-800 dark:text-white transition-colors duration-300">
   <div className="container mx-auto px-4">
-    <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] text-gray-800">
+    <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] text-gray-800 text-black dark:text-white">
       Our Leadership
     </h2>
 
@@ -774,9 +804,9 @@ function App() {
         </div>
       </div> */}
 
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-white dark:bg-gray-800 dark:text-white transition-colors duration-300">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Our Achievements</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 font-[oswald] text-white ">Our Achievements</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {achievements.map((a, index) => (
               <div
@@ -799,7 +829,7 @@ function App() {
 
 
       {/* Client Logo Carousel */}
-      <div className="py-16 bg-gray-50  relative overflow-hidden ">
+      <div className="py-16 bg-gray-50  relative overflow-hidden dark:bg-gray-800 dark:text-white transition-colors duration-300 ">
         <div className="container mx-auto px-4  relative ">
           <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] ">Trusted By Leading Companies</h2>
 
@@ -867,7 +897,7 @@ function App() {
       </div> */}
 
       {/* Services Section */}
-<div className="py-16 bg-gray-50">
+<div className="py-16 bg-gray-50 dark:bg-gray-800 dark:text-white transition-colors duration-300">
   <div className="container mx-auto px-4">
     <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Our Services</h2>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -928,9 +958,9 @@ function App() {
 
 
         {/* Team Section with Sliding Functionality */}
-        <div className="py-16 bg-white">
+        <div className="py-16 bg-white dark:bg-gray-800 dark:text-white transition-colors duration-300">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12 font-[oswald]">Meet Our Team</h2>
+            <h2 className="text-3xl font-bold text-center mb-12 font-[oswald] dark:bg-gray-800 dark:text-white transition-colors duration-300">Meet Our Team</h2>
             {departments.map((department, dIndex) => (
               <div key={dIndex} className="mb-16 last:mb-0">
                 <h3 className="text-2xl font-semibold mb-8 text-blue-600">{department.name}</h3>
@@ -976,7 +1006,7 @@ function App() {
                             />
                           </div>
                           <div className="text-center">
-                            <h4 className="text-xl font-semibold mb-2 line-clamp-1">{member.name}</h4>
+                            <h4 className="text-xl font-semibold mb-2 line-clamp-1 dark:text-gray-600">{member.name}</h4>
                             <div className="text-blue-600 text-sm mb-3">
                               {Array.isArray(member.role)
                                 ? member.role.map((r, index) => <div key={index}>{r}</div>)
