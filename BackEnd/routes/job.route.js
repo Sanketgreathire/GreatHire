@@ -21,6 +21,7 @@ router.route("/post-job").post(isAuthenticated, postJob);
 router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);
 router.route("/get").get(getAllJobs);
+router.route("/jobs").get(getAllJobs);
 router.route("/get/:id").get(getJobById); // 🟢 Now it's public
 router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
 router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);

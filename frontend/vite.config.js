@@ -13,7 +13,13 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8000", // ✅ your backend server
+        target: "http://localhost:8000", // Your backend server
+        changeOrigin: true,
+        secure: false,
+      },
+      "/socket.io": {  // Add this for WebSocket proxying
+        target: "http://localhost:8000", // Same as API target
+        ws: true,  // Enable WebSocket proxying
         changeOrigin: true,
         secure: false,
       },

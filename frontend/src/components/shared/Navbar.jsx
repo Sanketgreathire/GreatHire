@@ -14,6 +14,7 @@ import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
+import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 
 import ThemeToggle from "../ThemeToggle";
 
@@ -160,6 +161,7 @@ const Navbar = () => {
                       : navigate("/recruiter/dashboard/home")
                     : navigate("/");
                 }
+<<<<<<< HEAD
               }}/> */}
 
 
@@ -172,7 +174,13 @@ const Navbar = () => {
           
         </div>
           <div>
+=======
+              }}/>
+>>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
           
+          {/* Mobile Notifications - show only on mobile when user is logged in */}
+          <div className="lg:hidden">
+            {user && <NotificationDropdown />}
           </div>
           <div
             to={
@@ -266,7 +274,14 @@ const Navbar = () => {
 
             {/* Desktop User Section */}
             <div className="flex items-center gap-4">
+<<<<<<< HEAD
                <ThemeToggle />
+=======
+              {/* Notifications - only show for logged in users */}
+              {user && <NotificationDropdown />}
+              
+              
+>>>>>>> 13c876bee7ce8d83c9a86e4503bb10cf67358b5f
               {!user ? (
                 <>
                   <Link
@@ -335,7 +350,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className={`lg:hidden p-2  hover:bg-gray-100  rounded-lg transition-all fixed z-50 right-4 top-2 `}
+            className={`lg:hidden p-2  hover:bg-gray-100  rounded-lg transition-all fixed z-50 right-4 -top-1 `}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
