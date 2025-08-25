@@ -38,7 +38,7 @@ const qualificationCategories = {
     const fetchJobs = async () => {
       try {
         const response = await fetch(`${JOB_API_END_POINT}/get`);
-
+  
         // If API call fails, throw an error
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");

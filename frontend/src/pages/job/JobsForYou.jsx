@@ -114,7 +114,7 @@
     };
   
     return (
-      <div className=" flex justify-center mt-4 gap-4 top-10 md:px-6 ">
+      <div className=" flex justify-center mt-4 gap-4 top-10 md:px-6 text-gray-800 ">
         {/* Job List */}
         <div
           className={`flex flex-col gap-4  w-full md:w-1/2 m-5 md:m-0 scrollbar-hide`}
@@ -122,25 +122,25 @@
           {jobs?.map((job) => (
             <div
               key={job._id}
-              className={`p-4 border-2  rounded-lg cursor-pointer hover:shadow-lg relative flex flex-col space-y-2 ${
+              className={`p-4 border-2  rounded-lg cursor-pointer hover:shadow-lg relative flex flex-col space-y-2 text-gray-800 dark:text-white ${
                 selectedJob?._id === job._id
                   ? "border-blue-600"
                   : "border-gray-400"
               }`}
               onClick={() => handleJobClick(job)} // Clicking on job card will show the details
             >
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center text-gray-800 dark:text-white">
                 {job?.jobDetails?.urgentHiring === "Yes" && (
-                  <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
+                  <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold ">
                     Urgent Hiring
                   </p>
                 )}
               </div>
-              <h3 className="text-lg font-semibold">{job.jobDetails?.title}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{job.jobDetails?.title}</h3>
+              <p className="text-sm text-gray-600 text-gray-800 dark:text-white">
                 {job.jobDetails?.companyName}
               </p>
-              <p className="text-sm text-gray-500">{job.jobDetails?.workPlaceFlexibility}   {job.jobDetails?.location}</p>
+              <p className="text-sm text-gray-500 text-gray-800 dark:text-white">{job.jobDetails?.workPlaceFlexibility}   {job.jobDetails?.location}</p>
          
   
               <div className="p-1 flex items-center w-fit text-sm bg-blue-100 text-blue-800 rounded-md">
@@ -150,8 +150,8 @@
                 </span>
               </div>
   
-              <div className="text-sm flex flex-col">
-                <div className="flex gap-2 items-center">
+              <div className="text-sm flex flex-col text-gray-800 dark:text-white">
+                <div className="flex gap-2 items-center ">
                   <p className="p-1 font-semibold text-gray-700 rounded-md bg-gray-200 ">
                     {job?.jobDetails?.salary
                       .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
@@ -181,7 +181,7 @@
   
               {/* Job details in circle bullets */}
               <div
-                className=" text-sm text-gray-400 flex flex-col font-semibold"
+                className=" text-sm text-gray-700 flex flex-col font-semibold dark:text-gray-200"
                 style={{ listStyleType: "circle" }}
               >
                 <span>{job.jobDetails?.benefits[0]}</span>
@@ -190,7 +190,7 @@
               </div>
   
               <div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600  dark:text-gray-200">
                   Active {calculateActiveDays(job?.createdAt)} days ago
                 </p>
               </div>
@@ -200,18 +200,18 @@
   
         {/* Job Details */}
         {selectedJob && (
-          <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden h-fit">
-            <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-2 flex flex-col space-y-1 w-full">
-              <h3 className="text-2xl font-semibold">
+          <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden h-fit ">
+            <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-2 flex flex-col space-y-1 w-full dark:text-white ">
+              <h3 className="text-2xl font-semibold dark:text-white dark:text-black ">
                 {selectedJob?.jobDetails?.title}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 text-gray-800 dark:text-gray-400">
                 {selectedJob?.jobDetails?.companyName}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-black ">
                 {selectedJob?.jobDetails?.location}
               </p>
-              <p className="px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200">
+              <p className="px-3 py-1 font-semibold text-gray-700 rounded-md w-fit ">
                 {selectedJob?.jobDetails?.salary
                   .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                   .split("-")
@@ -223,7 +223,7 @@
                   ))}
               </p>
   
-              <div className="p-1 flex items-center w-fit text-sm text-blue-800 bg-blue-200">
+              <div className="p-1 flex items-center w-fit text-sm text-blue-800 bg-blue-200 ">
                 <AiOutlineThunderbolt className="mr-1" size={20} />
                 <span className="text-blue-800">
                   Typically Responds in {selectedJob?.jobDetails?.respondTime}{" "}
@@ -231,19 +231,19 @@
                 </span>
               </div>
   
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 ">
                 <div
-                  className={`py-2 px-5 rounded-lg text-white ${
+                  className={`py-2 px-5 rounded-lg text-white dark:text-white ${
                     isApplied
                       ? "bg-green-600 hover:bg-green-700 "
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
                   {isApplied ? (
-                    <div className="flex items-center gap-1">Applied</div>
+                    <div className="flex items-center gap-1 dark:text-white">Applied</div>
                   ) : (
                     <button
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 "
                       onClick={() => {
                         navigate(`/apply/${selectedJob?._id}`);
                       }}
@@ -260,7 +260,7 @@
                     <FaBookmark
                       size={25}
                       onClick={() => handleBookmark(selectedJob._id)}
-                      className="text-green-700 cursor-pointer"
+                      className="text-green-700 cursor-pointer dark: text-grey-100"
                     />
                   ) : (
                     <CiBookmark
@@ -275,7 +275,7 @@
             <div
               ref={jobContainerRef}
               onScroll={handleScroll}
-              className="overflow-y-auto scrollbar-hide max-h-[calc(100vh-200px)] px-4 py-4"
+              className="overflow-y-auto scrollbar-hide max-h-[calc(100vh-200px)] px-4 py-4 text-gray-800 dark:text-white "
             >
               <JobMajorDetails selectedJob={selectedJob} />
             </div>
@@ -284,7 +284,7 @@
   
         {/* SMALL SCREEN JOB DETAILS SECTION */}
         {showJobDetails && selectedJob && (
-          <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out">
+          <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out ">
             {/* Button for closing small screen job details */}
             <button
               className="fixed top-[80px] right-4 bg-gray-200 p-2 rounded-md text-gray-700 hover:bg-gray-300 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
@@ -294,17 +294,17 @@
             </button>
   
             {/* Job title and other info's for small screen */}
-            <div className="p-6 pt-20">
-              <h3 className="text-xl font-semibold text-gray-900 pr-12">
+            <div className="p-6 pt-20 ">
+              <h3 className="text-xl font-semibold text-gray-900 pr-12 ">
                 {selectedJob?.jobDetails?.title}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 ">
                 {selectedJob?.jobDetails?.companyName}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 ">
                 {selectedJob?.jobDetails?.location}
               </p>
-              <p className="mt-2 px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200">
+              <p className="mt-2 px-3 py-1 font-semibold text-gray-700 rounded-md w-fit bg-gray-200 text-gray-800 dark:text-white">
                 {selectedJob?.jobDetails?.salary
                   .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                   .split("-")
@@ -316,13 +316,13 @@
                   ))}
               </p>
   
-              <div className="mt-2 flex items-center text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded-md w-fit">
+              <div className="mt-2 flex items-center text-sm text-blue-800 bg-blue-100 px-2 py-1 rounded-md w-fit text-gray-800 dark:text-white">
                 <AiOutlineThunderbolt className="mr-1" />
                 Typically Responds in {selectedJob?.jobDetails?.respondTime} days
               </div>
             </div>
   
-            <div className="p-2 flex items-center gap-8 border-b ml-4">
+            <div className="p-2 flex items-center gap-8 border-b ml-4  text-gray-800 dark:text-white">
               {user &&
                 (isJobBookmarked(user?._id) ? (
                   <FaBookmark
@@ -340,17 +340,17 @@
             </div>
   
             {/* Job details for small screen*/}
-            <div className="p-6 overflow-y-auto h-[calc(100vh-300px)] pb-20">
-              <div className="mt-4 space-y-1">
-                <p className="font-semibold text-gray-700">
+            <div className="p-6 overflow-y-auto h-[calc(100vh-300px)] pb-20 text-gray-800 dark:text-white">
+              <div className="mt-4 space-y-1 text-gray-800 dark:text-white">
+                <p className="font-semibold text-gray-700 text-gray-800 dark:text-white">
                   Job Type :{" "}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 text-gray-800 dark:text-white">
                     {selectedJob?.jobDetails?.jobType}
                   </span>
                 </p>
-                <p className="font-semibold text-gray-700">
+                <p className="font-semibold text-gray-700 text-gray-800 dark:text-white">
                   Duration :{" "}
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 text-gray-800 dark:text-white">
                     {selectedJob?.jobDetails?.duration}
                   </span>
                 </p>
@@ -363,9 +363,9 @@
             </div>
   
             {/*Apply button for small screen job details*/}
-            <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center">
+            <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center text-gray-800 dark:text-white">
               <button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2 text-gray-800 dark:text-white"
                 onClick={() => navigate(`/apply/${selectedJob?._id}`)}
               >
                 Apply Now

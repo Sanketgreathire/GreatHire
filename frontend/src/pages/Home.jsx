@@ -44,7 +44,7 @@ const Home = () => {
       <Navbar /> {/* Display the navigation bar */}
 
       {/* Main content area with Hero section and latest job listings */}
-      <div className="p-12 bg-white">
+      <div className="p-12 bg-white dark:bg-gray-800">
         <HeroSection
           searchInfo={{
             titleKeyword,

@@ -9,7 +9,7 @@ import AdminProtectWrapper from "./AdminProtectWrapper";
 import Dashboard from "../../pages/admin/Dashboard";
 import Users from "../../pages/admin/users/Users";
 import RecruitersList from "@/pages/admin/recruiters/RecruitersList";
-import Recruiters from "../../pages/admin/recruiters/Recruiters";
+import Recruiters from "../../pages/admin/recruiters/Recruiters.jsx";
 import Jobs from "../../pages/admin/jobs/Jobs";
 import Reports from "../../pages/admin/reports/Reports";
 import Settings from "../../pages/admin/settings/Settings";

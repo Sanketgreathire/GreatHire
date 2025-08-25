@@ -95,9 +95,9 @@ const OurService = () => {
         </header>
 
         {/* Services Section */}
-        <section className="py-16 bg-blue-50">
+        <section className="py-16 bg-blue-50 dark:bg-gray-800 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-            <h2 className="text-2xl md:text-4xl font-bold text-center mb-12 text-blue-600 animate-bounce font-[Oswald]">
+            <h2 className="  text-2xl md:text-4xl font-bold text-center mb-12 text-blue-700 animate-bounce font-[Oswald] dark:text-white">
               What We Offer
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3
@@ -124,8 +124,7 @@ const OurService = () => {
         </section>
 
         {/* Call-to-Action Section */}
-        <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16
- text-white py-16 ">
+        <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16 text-white py-16 ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center ">
             <h2 className="text-3xl md:text-4xl font-bold font-[Oswald]">
               Let's Work Together

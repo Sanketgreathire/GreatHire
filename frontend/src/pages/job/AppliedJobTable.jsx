@@ -90,7 +90,7 @@ const AppliedJobTable = () => {
   };
 
   return (
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg">
+    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black dark:gray-700">
       {/* Job Applications Table */}
       <Table className="w-full border-collapse border border-gray-200">
         {/* Table Header */}

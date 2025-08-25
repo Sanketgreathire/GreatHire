@@ -76,4 +76,18 @@ export default {
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],
+
+  
 };
+module.expots = {
+     darkMode : "class",
+     content : [
+      "./index.html",
+      "./src/**/*.{js, jsx ,ts , tsx}"
+     ],
+     theme:{
+      extend: {},
+
+     },
+     plugins: [],
+  }
