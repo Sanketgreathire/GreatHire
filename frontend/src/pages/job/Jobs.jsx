@@ -42,7 +42,7 @@ const Jobs = () => {
     }
   }, [jobs, error]);
 
-  // Function to handle job search with filters
+  // Function to handle job search with multiple filters
   const handleSearch = (filters) => {
     setFilteredJobs(
       jobs.filter((job) => {
