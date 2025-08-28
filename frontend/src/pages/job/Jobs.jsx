@@ -42,7 +42,7 @@ const Jobs = () => {
     }
   }, [jobs, error]);
 
-  // Function to handle job search with filters
+  // Function to handle job search with multiple filters
   const handleSearch = (filters) => {
     setFilteredJobs(
       jobs.filter((job) => {
@@ -53,32 +53,81 @@ const Jobs = () => {
               .toLowerCase()
               .includes(filters.Location.toLowerCase())) &&
           // Filter by job title if provided
-          (!filters["Job Title"] ||
+          (!filters.JobTitle ||
             (job?.jobDetails?.title || "")
               .toLowerCase()
-              .includes(filters["Job Title"].toLowerCase())) &&
+              .includes(filters.JobTitle.toLowerCase())) &&
           // Filter by job type if provided
-          (!filters["Job Type"] ||
+          (!filters.JobType ||
             (job?.jobDetails?.jobType || "")
               .toLowerCase()
-              .includes(filters["Job Type"].toLowerCase())) &&
+              .includes(filters.JobType.toLowerCase())) &&
+          // Filter by Company name if provided
+          (!filters.Company ||
+            (job?.jobDetails?.company || "")
+              .toLowerCase()
+              .includes(filters.Company.toLowerCase())) &&
+          // Filter by Company name if provided
+          (!filters.WorkPlace ||
+            (job?.jobDetails?.workPlaceFlexibility || "")
+              .toLowerCase()
+              .includes(filters.WorkPlace.toLowerCase())) &&
           // Filter by salary range if provided
           (!filters.Salary ||
             (() => {
-              const enteredSalary = parseInt(filters.Salary, 10);
-              if (isNaN(enteredSalary)) return true; // Ignore if salary is not a valid number
+              const selectedRange = filters.Salary;
 
-              // Extract numerical values from salary string
+              // Handle "100000+" case
+              let [min, max] = selectedRange.includes("+")
+                ? [parseInt(selectedRange, 10), Infinity]
+                : selectedRange.split("-").map((v) => parseInt(v, 10));
+
+              if (isNaN(min)) return true;
+
+              // Extract numerical values from job salary
               const salaryRange = job?.jobDetails?.salary?.match(/\d+/g);
-              if (!salaryRange) return false; // Skip if no salary information is found
+              if (!salaryRange) return false;
 
-              const minSalary = parseInt(salaryRange[0], 10);
-              const maxSalary = salaryRange[1]
+              const jobMin = parseInt(salaryRange[0], 10);
+              const jobMax = salaryRange[1]
                 ? parseInt(salaryRange[1], 10)
-                : minSalary;
+                : jobMin;
 
-              // Check if the entered salary falls within the job's salary range
-              return enteredSalary >= minSalary && enteredSalary <= maxSalary;
+              // Check overlap between selected range and job's salary range
+              return jobMax >= min && jobMin <= max;
+            })()) &&
+          (!filters.Qualification ||
+            (job?.jobDetails?.qualification || "")
+              .toLowerCase()
+              .includes(filters.Qualification.toLowerCase())) &&
+          // Date Posted filter
+          (!filters.DatePosted ||
+            (() => {
+              const jobDate = new Date(job?.jobDetails?.datePosted); // must be valid ISO date
+              if (isNaN(jobDate)) return false;
+              const today = new Date();
+              let daysLimit = 0;
+              switch (filters.DatePosted) {
+                case "Last 24 hours":
+                  daysLimit = 1; // 1 day
+                  break;
+                case "Last 7 days":
+                  daysLimit = 7;
+                  break;
+                case "Last 14 days":
+                  daysLimit = 14;
+                  break;
+                case "Last 30 days":
+                  daysLimit = 30;
+                  break;
+                default:
+                  return true;
+              }
+              // Calculate difference in days
+              const diffTime = today - jobDate;
+              const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+              return diffDays <= daysLimit;
             })())
         );
       })
@@ -103,7 +152,7 @@ const Jobs = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow w-full mx-auto bg-gray-100 ">
+      <div className="flex-grow w-full mx-auto bg-gray-500 ">
         <div className="w-full px-4 py-4 pt-20">
           <FilterCard onSearch={handleSearch} resetFilters={resetFilters} />
         </div>
@@ -115,19 +164,19 @@ const Jobs = () => {
           ) : currentJobs.length > 0 ? (
             <>
 
-{/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
+              {/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {currentJobs.map((job) => (
-                        <div key={job._id}>
-                          <Link to={`/jobs/${job._id}`}>
-                            <Job job={job} />
-                          </Link>
-                        </div>
-                      ))}
+                  <div key={job._id}>
+                    <Link to={`/jobs/${job._id}`}>
+                      <Job job={job} />
+                    </Link>
+                  </div>
+                ))}
               </div>
 
-{/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
+              {/* --------------------------------------------------------------------------------------------------------------------------------------------------- */}
 
               <div className="flex justify-between items-center mt-6">
                 <button
@@ -135,11 +184,10 @@ const Jobs = () => {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === 1
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 rounded ${currentPage === 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    }`}
                 >
                   Previous
                 </button>
@@ -151,11 +199,10 @@ const Jobs = () => {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded ${
-                    currentPage === totalPages
-                      ? "bg-gray-300 cursor-not-allowed"
-                      : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 rounded ${currentPage === totalPages
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                    }`}
                 >
                   Next
                 </button>

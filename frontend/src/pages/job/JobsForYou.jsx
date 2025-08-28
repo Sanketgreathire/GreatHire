@@ -202,10 +202,10 @@
         {selectedJob && (
           <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden h-fit ">
             <div className="sticky top-[60px] bg-white z-10 shadow-md border-b px-4 py-2 flex flex-col space-y-1 w-full dark:text-white ">
-              <h3 className="text-2xl font-semibold dark:text-white dark:text-black ">
+              <h3 className="text-2xl font-semibold  dark:text-black ">
                 {selectedJob?.jobDetails?.title}
               </h3>
-              <p className="text-sm text-gray-600 text-gray-800 dark:text-gray-400">
+              <p className="text-sm text-gray-600 text-gray-800 dark:text-gray-400 dark:text-black">
                 {selectedJob?.jobDetails?.companyName}
               </p>
               <p className="text-sm text-gray-500 dark:text-black ">
@@ -363,9 +363,9 @@
             </div>
   
             {/*Apply button for small screen job details*/}
-            <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center text-gray-800 dark:text-white">
+            <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex justify-center text-gray-800 dark:text-white ">
               <button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2 text-gray-800 dark:text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md flex items-center justify-center gap-2 text-gray-800"
                 onClick={() => navigate(`/apply/${selectedJob?._id}`)}
               >
                 Apply Now

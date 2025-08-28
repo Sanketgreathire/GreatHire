@@ -202,7 +202,7 @@ const MessageList = () => {
                         <h3 className="text-lg font-semibold mb-1">
                           Job Details:
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 ">
                           <strong>Title:</strong> {msg.job?.title}
                         </p>
                         <p className="text-gray-600">

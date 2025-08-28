@@ -58,8 +58,8 @@ const JobDescription = () => {
     return (
       <div>
         <Navbar />
-        <div className=" text-gray-800 min-h-screen flex items-center justify-center dark:text-gray-100">
-          <p className="text-lg text-gray-700">Loading job details...</p>
+        <div className=" text-gray-800 min-h-screen flex items-center justify-center dark:text-gray-100 ">
+          <p className="text-lg text-gray-700 dark:text-gray-100">Loading job details...</p>
         </div>
         <Footer />
       </div>
@@ -69,32 +69,32 @@ const JobDescription = () => {
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8">
+      <div className="min-h-screen bg-gray-50 py-12 px-4 dark:bg-gray-100 ">
+        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8 dark:bg-gray-700 ">
           {/* Back Button */}
           <div className="mb-6">
             <IoIosArrowRoundBack
               size={35}
-              className="text-gray-700 hover:text-gray-800 transition-colors cursor-pointer"
+              className="text-gray-700 hover:text-gray-800 transition-colors cursor-pointer dark:text-gray-100"
               onClick={() => navigate(-1)}
             />
           </div>
 
           {/* Job Title and Overview */}
-          <div className="border-b pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div className="border-b pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center ">
             {/* Left Section */}
-            <div className="mb-4 md:mb-0">
-              <h1 className="text-3xl font-extrabold text-gray-900">
+            <div className="mb-4 md:mb-0 ">
+              <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
                 {job?.jobDetails?.title || "Job Title Not Available"}
               </h1>
-              <div className="mt-2 space-y-1">
-                <h5 className="text-md text-gray-600">
+              <div className="mt-2 space-y-1 ">
+                <h5 className="text-md text-gray-600 dark:text-gray-100">
                   {job?.jobDetails?.companyName || "Company Not Specified"}
                 </h5>
-                <h6 className="text-sm text-gray-500">
+                <h6 className="text-sm text-gray-500 dark:text-gray-100">
                   {job?.jobDetails?.location || "Location Not Available"}
                 </h6>
-                <h6 className="text-xl text-gray-700 font-medium">
+                <h6 className="text-xl text-gray-700 font-medium dark:text-gray-100">
                   {job?.jobDetails?.salary
                     ?.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                     .split("-")
@@ -114,8 +114,8 @@ const JobDescription = () => {
               className={`${
                 isApplied
                   ? "bg-green-600 hover:bg-green-700"
-                  : "bg-blue-700 hover:bg-blue-800"
-              } text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+                  : "bg-blue-600 hover:bg-blue-800"
+              } text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:text-gray-100 `}
               disabled={isApplied}
             >
               {isApplied ? "Applied" : "Apply Now"}
@@ -123,11 +123,11 @@ const JobDescription = () => {
           </div>
 
           {/* Job Description */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-3">
+          <div className="mb-8 dark:text-gray-100 dark:text-gray-100">
+            <h2 className="text-xl font-bold text-gray-800 mb-3 dark:text-gray-100">
               Job Description:
             </h2>
-            <p className="text-gray-700 leading-relaxed text-base text-justify">
+            <p className="text-gray-700 leading-relaxed text-base text-justify dark:text-gray-100">
               {job?.jobDetails?.details
                 ? job.jobDetails.details.split("\n").map((line, index) => (
                     <span key={index}>
@@ -142,10 +142,10 @@ const JobDescription = () => {
           {/* Benefits and Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 dark:text-gray-100">
                 Benefits:
               </h3>
-              <ul className="list-disc list-inside text-gray-600 text-base space-y-1">
+              <ul className="list-disc list-inside text-gray-600 text-base space-y-1 dark:text-gray-100">
                 {job?.jobDetails?.benefits?.length > 0 ? (
                   job.jobDetails.benefits.map((benefit, index) => (
                     <li key={index}>{benefit}</li>
@@ -157,10 +157,10 @@ const JobDescription = () => {
             </div>
 
             <div className="md:col-span-2">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3 dark:text-gray-100">
                 Job Details:
               </h3>
-              <div className="space-y-2 text-base text-gray-600">
+              <div className="space-y-2 text-base text-gray-600 dark:text-gray-100">
                 <p>
                   <strong>Job Type:</strong>{" "}
                   {job?.jobDetails?.jobType || "Not specified"}
@@ -185,30 +185,30 @@ const JobDescription = () => {
 
           {/* Requirements */}
           <div className="mt-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-4 dark:text-gray-100">
               Job Requirements:
             </h2>
             <div className="space-y-6">
               <div>
-                <h4 className="font-semibold text-gray-700 mb-1">
+                <h4 className="font-semibold text-gray-700 mb-1 dark:text-gray-100">
                   Qualifications:
                 </h4>
-                <p className="text-gray-600 text-base">
+                <p className="text-gray-600 text-base dark:text-gray-100">
                   {job?.jobDetails?.qualifications?.join(", ") ||
                     "Not specified"}
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-700 mb-1">
+                <h4 className="font-semibold text-gray-700 mb-1 dark:text-gray-100">
                   Experience:
                 </h4>
-                <p className="text-gray-600 text-base">
+                <p className="text-gray-600 text-base dark:text-gray-100">
                   {job?.jobDetails?.experience || "Not specified"}
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-700 mb-1">Skills:</h4>
-                <p className="text-gray-600 text-base">
+                <h4 className="font-semibold text-gray-700 mb-1 dark:text-gray-800">Skills:</h4>
+                <p className="text-gray-600 text-base dark:text-gray-800">
                   {job?.jobDetails?.skills?.join(", ") || "Not specified"}
                 </p>
               </div>
