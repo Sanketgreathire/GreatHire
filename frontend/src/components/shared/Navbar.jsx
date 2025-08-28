@@ -258,7 +258,7 @@ const Navbar = () => {
                       <Link
                         key={to}
                         to={to}
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800 "
                         onClick={() => setIsPolicyMenuOpen(false)}
                       >
                         {label}
@@ -313,7 +313,7 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
                       <Link
                         to={isRecruiter ? "/recruiter/profile" : "/profile"}
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
                         {isRecruiter ? "Recruiter" : "User"} Profile
@@ -322,7 +322,7 @@ const Navbar = () => {
                       {!isRecruiter && (
                         <Link
                           to="/saved-jobs"
-                          className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
                           Saved Jobs
@@ -421,15 +421,15 @@ const Navbar = () => {
               ))}
 
               {/* Mobile Policy Section */}
-              <div className="mt-4 border-t">
-                <div className="px-4 py-2">
-                  <p className="text-lg font-medium text-gray-500">Policies</p>
+              <div className="mt-4 border-t dark:text-gray-800">
+                <div className="px-4 py-2dark:text-gray-800 ">
+                  <p className="text-lg font-medium dark:text-gray-800 ">Policies</p>
                 </div>
                 {policyLinks.map(({ to, label }) => (
                   <Link
                     key={to}
                     to={to}
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors dark:text-gray-800"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {label}

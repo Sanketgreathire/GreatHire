@@ -68,7 +68,7 @@ const AppliedJobTable = () => {
 
   // Display loading message while data is being fetched
   if (loading) {
-    return <p className="text-center text-gray-600">Loading applied jobs...</p>;
+    return <p className="text-center text-gray-600 dark:text-gray-100">Loading applied jobs...</p>;
   }
 
   // Pagination logic
@@ -90,16 +90,16 @@ const AppliedJobTable = () => {
   };
 
   return (
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black dark:gray-700">
+    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black dark:bg-gray-700 ">
       {/* Job Applications Table */}
-      <Table className="w-full border-collapse border border-gray-200">
+      <Table className="w-full border-collapse border border-gray-200 dark:gray-700">
         {/* Table Header */}
-        <TableHeader className="bg-gray-100">
+        <TableHeader className="bg-gray-100 dark:gray-800">
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Job Role</TableHead>
             <TableHead>Company</TableHead>
-            <TableHead className="text-right">Status</TableHead>
+            <TableHead className="text-right dark:text-white">Status</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -109,13 +109,13 @@ const AppliedJobTable = () => {
             currentJobs.map((job, index) => (
               <TableRow
                 key={index}
-                className="hover:bg-gray-50 transition duration-150 cursor-pointer"
+                className="hover:bg-gray-50 transition duration-150 cursor-pointer dark:text-gray-700 "
                 onClick={() => handleRowClick(job.applicant, job.job)}
               >
-                <TableCell className="text-gray-700">
+                <TableCell className="text-gray-700 dark:text-gray-100">
                   {new Date(job.createdAt).toLocaleDateString()}
                 </TableCell>
-                <TableCell className="text-gray-800 font-medium">
+                <TableCell className="text-gray-800 font-medium  " >
                   {job.job?.jobDetails?.title || "N/A"}
                 </TableCell>
                 <TableCell className="text-gray-800 font-medium">
@@ -134,7 +134,7 @@ const AppliedJobTable = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-gray-500">
+              <TableCell colSpan={4} className="text-center text-gray-500 dark:bg-gray-700">
                 No applications found.
               </TableCell>
             </TableRow>
@@ -143,7 +143,7 @@ const AppliedJobTable = () => {
       </Table>
 
       {/* Pagination Controls */}
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-4 dark:bg-gray-700">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}

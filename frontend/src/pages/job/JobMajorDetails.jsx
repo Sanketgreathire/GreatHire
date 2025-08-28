@@ -88,11 +88,11 @@ const JobMajorDetails = ({ selectedJob }) => {
             <span className="text-xl font-bold text-black text-gray-800 dark:text-gray-100">Skills</span>
           </h3>
 
-          <div className="flex flex-wrap gap-2 mt-2 text-gray-800 dark:text-gray-100">
+          <div className="flex flex-wrap gap-2 mt-2 text-gray-800 dark:text-gray-800">
             {selectedJob?.jobDetails?.skills.map((skill, index) => (
               <div
                 key={index}
-                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800 text-gray-800 dark:text-gray-100`}
+                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800 text-gray-800 dark:text-gray-800`}
               >
                 <span className="">{skill}</span>
               </div>
@@ -118,10 +118,10 @@ const JobMajorDetails = ({ selectedJob }) => {
 
 
       {/* Benifits */}
-      <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
+      <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 dark:text-gray-100">
         <h1 className="text-xl font-bold">Benifits</h1>
         <ul
-          className="ml-6 text-sm text-gray-600 mt-2"
+          className="ml-6 text-sm text-gray-600 mt-2 dark:text-gray-100"
           style={{ listStyleType: "circle" }}
         >
           {selectedJob?.jobDetails?.benefits?.map((benifit, index) => (
@@ -147,9 +147,9 @@ const JobMajorDetails = ({ selectedJob }) => {
 
       {/* qualifications */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
-        <h1 className="text-xl font-bold">Qualifications</h1>
+        <h1 className="text-xl font-bold ">Qualifications</h1>
         <ul
-          className="ml-6 text-sm text-gray-600 mt-2"
+          className="ml-6 text-sm text-gray-600 mt-2 dark:text-gray-100"
           style={{ listStyleType: "circle" }}
         >
           {selectedJob?.jobDetails?.qualifications?.map(
