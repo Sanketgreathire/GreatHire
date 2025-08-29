@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
 
 function LanguageSelector({ selectedLanguages, setSelectedLanguages }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [showOtherDialog, setShowOtherDialog] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [customLanguage, setCustomLanguage] = useState('');
-  const languageRef = useRef(null);
-const dialogRef = useRef(null);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const languages = [
+   const languages = [
     'English', 'Hindi', 'Urdu', 'Telugu', 'Marathi',
-    'Tamil', 'Gujarati', 'Punjabi', 'Others'
+    'Tamil', 'Gujarati', 'Punjabi', 'Other'
   ];
 
-
   const handleCheckboxChange = (language) => {
-    if (language === 'Others') {
-      setShowOtherDialog(true);
+    if (language === 'Other') {
+      setShowCustomInput((prev) => !prev);
       return;
     }
-
     setSelectedLanguages((prev) =>
       prev.includes(language)
         ? prev.filter((l) => l !== language)
@@ -27,178 +24,92 @@ const dialogRef = useRef(null);
     );
   };
 
-const handleOtherSubmit = () => {
-  const trimmed = customLanguage.trim();
-
-  if (!trimmed) {
-    alert('Please enter a language.');
-    return;
-  }
-
-  // Auto-capitalize each word (e.g., "british english" => "British English")
-  const formatted = trimmed
-    .split(/\s+/)
-    .map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
-    .join(' ');
-
-  const words = formatted.split(' ');
-
-  // ✅ Allow max 2 words: second can only be "English"
-  const isValid =
-    (words.length === 1 || (words.length === 2 && words[1] === 'English')) &&
-    words.every((word) => /^[A-Z][a-z]+$/.test(word));
-
-  if (!isValid) {
-    alert(
-      'Please enter only one valid language (e.g., "English" or "British English"). Do not combine multiple languages.'
-    );
-    return;
-  }
-
-  if (!selectedLanguages.includes(formatted)) {
-    setSelectedLanguages([...selectedLanguages, formatted]);
-  }
-
-  setShowOtherDialog(false);
-  setCustomLanguage('');
-};
-
-
-
-
-
-const handleClickOutside = (event) => {
-  if (
-    languageRef.current &&
-    !languageRef.current.contains(event.target) &&
-    (!dialogRef.current || !dialogRef.current.contains(event.target))
-  ) {
-    setIsVisible(false);
-    setShowOtherDialog(false);
-  }
-};
+  const handleAddCustomlanguage = () => {
+    const trimmed = customLanguage.trim();
+    if (trimmed && !selectedLanguages.includes(trimmed)) {
+      setSelectedLanguages((prev) => [...prev, trimmed]);
+    }
+    setCustomLanguage('');
+    setShowCustomInput(false);
+  };
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
-  const closeComponent = () => {
-    setIsVisible(false);
-  };
-
-  const customLanguagesCount = selectedLanguages.filter(
-    (lang) => !languages.includes(lang)
-  ).length;
-
   return (
-    <div>
-      <button
-        onClick={(event) => {
-          toggleVisibility();
-          event.preventDefault();
-        }}
-        className="border border-blue-700 bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-800 transition-colors duration-300"
-      >
-        Languages
-      </button>
+    <div className="relative w-full sm:w-80 " ref={dropdownRef}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
+        <label className="block font-semibold">Job Languages</label>
 
-      {isVisible && (
-        <div className="w-full h-[1500px] absolute top-0 left-0 z-30 flex justify-end items-center">
-          <div className="w-full h-full bg-gray-500 absolute top-0 left-0 z-10 opacity-50" />
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="mt-2 sm:mt-0 flex justify-between items-center border border-gray-300 px-3 py-2 rounded-lg bg-white shadow-sm hover:border-blue-500 w-full sm:w-[200px]"
+        >
+          {selectedLanguages.length > 0
+            ? `${selectedLanguages.length} selected`
+            : "Select languages"}
+          <FaChevronDown
+            className={`ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+      </div>
 
-          <div
-            ref={languageRef}
-            className="w-[350px] h-full bg-white shadow-lg z-20 relative"
-          >
-            <div className="flex flex-col h-full p-4">
-              <div className="relative">
-                <h1 className="text-2xl py-4 text-center font-semibold border-b border-b-gray-300">
-                  Languages
-                </h1>
-                <button
-                  onClick={closeComponent}
-                  className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-
-              <div className="pt-4 overflow-y-auto flex-grow">
-                <ul className="flex flex-col gap-3">
-                  {languages.map((language) => (
-                    <li
-                      key={language}
-                      className="text-lg font-semibold border-b border-b-gray-300"
-                    >
-                      <label
-                        htmlFor={language}
-                        className="flex items-center gap-2 cursor-pointer w-full"
-                      >
-                        <input
-                          id={language}
-                          type="checkbox"
-                          checked={selectedLanguages.includes(language)}
-                          onChange={() => handleCheckboxChange(language)}
-                          className="mr-2"
-                        />
-                        {language}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+      {isOpen && (
+        <div className="absolute right-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20">
+          <div className="relative mb-6 pr-10 mr-2">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              aria-label="Close"
+            >
+              ✖
+            </button>
           </div>
-
-          {/* Custom Language Dialog */}
-          {showOtherDialog && (
-            <div className="fixed inset-0 z-40 flex justify-center items-center bg-black bg-opacity-50">
-              <div
-              ref={dialogRef}
-              className="bg-white p-6 rounded shadow-md w-80">
-                  <h2 className="text-lg font-semibold mb-4 text-center">
-                    Add a Language {customLanguagesCount > 0 && <span className="text-blue-600">+{customLanguagesCount}</span>}
-                  </h2>
-
+          <ul className="p-2 space-y-1">
+            {languages.map((language) => (
+              <li key={language}>
+                <label className="flex items-center space-x-2 cursor-pointer">
                   <input
-                    type="text"
-                    value={customLanguage}
-                    onChange={(e) => setCustomLanguage(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault(); // prevent form submit
-                        handleOtherSubmit();
-                      }
-                    }}
-                    className="w-full border px-3 py-2 rounded mb-4"
-                    placeholder="Enter custom language"
+                    type="checkbox"
+                    checked={
+                      language === 'Other'
+                        ? showCustomInput
+                        : selectedLanguages.includes(language)
+                    }
+                    onChange={() => handleCheckboxChange(language)}
                   />
+                  <span>{language}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
 
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      setShowOtherDialog(false);
-                      setCustomLanguage('');
-                    }}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleOtherSubmit}
-                    className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
+          {showCustomInput && (
+            <div className="p-2 border-t border-gray-200 flex gap-2">
+              <input
+                type="text"
+                value={customLanguage}
+                onChange={(e) => setCustomLanguage(e.target.value)}
+                placeholder="Enter language"
+                className="flex-1 border border-gray-300 px-2 py-1 rounded-lg"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomlanguage}
+                className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+              >
+                Add
+              </button>
             </div>
           )}
         </div>
