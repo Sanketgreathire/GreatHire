@@ -92,13 +92,13 @@ export const register = async (req, res) => {
         success: true,
         user: userWithoutPassword,
       });
-    } catch (error) {
-      console.error("Error during registration:", error);
-      return res.status(500).json({
-        message: "Internal Server Error",
-      });
-    }
-  };
+  } catch (error) {
+    console.error("Error during registration:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
 
 //login section...
 export const login = async (req, res) => {
@@ -138,7 +138,7 @@ export const login = async (req, res) => {
       });
     }
 
-await user.save();
+    await user.save();
 
     const tokenData = {
       userId: user._id,
@@ -281,7 +281,7 @@ export const googleLogin = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
-     // return cookies with response
+    // return cookies with response
     return res
       .status(200)
       .cookie("token", token, {
@@ -373,21 +373,19 @@ export const updateProfile = async (req, res) => {
       fullname,
       email,
       phoneNumber,
+      alternatePhone,
       city,
       state,
       country,
       pincode,
       gender,
       qualification,
+      otherQualification,
       category,
-      experience,
-      jobProfile,
-      companyName,
-      currentCTC,
-      expectedCTC,
-      experienceDetails,
+      language,
       bio,
       skills,
+      documents,
     } = req.body;
     console.log(req.body);
     const { profilePhoto, resume } = req.files; // Access files from req.files
@@ -400,16 +398,16 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-    
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors);
       return res.status(400).json({ errors: errors.array() });
     }
-    
+
     // finding the user by userId
     let user = await User.findById(userId);
-    
+
     // if not user return user not found
     if (!user) {
       return res.status(404).json({
@@ -418,12 +416,9 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-
-
-
-
-
-    
+     if (documents) {
+      user.profile.documents = Array.isArray(documents) ? documents : [documents];
+    }
 
     // Upload profile photo if provided
     if (profilePhoto && profilePhoto.length > 0) {
@@ -438,14 +433,14 @@ export const updateProfile = async (req, res) => {
     // Upload resume if provided
     if (resume && resume.length > 0) {
       console.log("Uploading resume:", resume[0].originalname);
-   
+
       try {
         // ✅ Upload resume to Cloudinary using the function
         const cloudResponse = await uploadResumeToCloudinary(
           resume[0].buffer,
           resume[0].originalname
         );
-        
+
         user.profile.resume = cloudResponse.secure_url;
         user.profile.resumeOriginalName = resume[0].originalname;
       } catch (error) {
@@ -456,33 +451,76 @@ export const updateProfile = async (req, res) => {
         });
       }
     }
-    
-    
+
+
     // checking is skillsArray is array by Array.isArray(variable)
     const skillsArray = Array.isArray(skills)
-    ? skills
-    : skills?.split(",").map((skill) => skill.trim()) || [];
-    
+      ? skills
+      : skills?.split(",").map((skill) => skill.trim()) || [];
+
     if (fullname && user.fullname !== fullname) user.fullname = fullname;
-    
+
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
     if (pincode) user.address.pincode = pincode;
-    
-    // Updating gender and qualification
+
+    // Updating gender 
     if (gender && user.profile.gender !== gender) user.profile.gender = gender;
-    if (qualification && user.profile.qualification !== qualification) user.profile.qualification = qualification;
-    const categoryArray = Array.isArray(category)
-      ? category
-      : category?.split(',').map((c) => c.trim()) || [];
-    if (categoryArray.length > 0) {
-      const existing = user.profile.category?.join(',') || "";
-      const incoming = categoryArray.join(',');
-      if (existing !== incoming) {
-        user.profile.category = categoryArray;
+
+    // Updating qualification + otherQualification
+    if (qualification && user.profile.qualification !== qualification) {
+      user.profile.qualification = qualification;
+
+      if (qualification === "Others") {
+        // Save the additional text field
+        user.profile.otherQualification = otherQualification || "";
+      } else {
+        // Clear it if not "Others"
+        user.profile.otherQualification = "";
       }
-}
+    }
+
+    // ✅ Robustly normalize category into an array
+    let categoryArray = [];
+    if (Array.isArray(category)) {
+      categoryArray = category;
+    } else if (typeof category === "string") {
+      // could be "Education" (single), "Education,Manufacturing", or '["Education","Manufacturing"]'
+      try {
+        const parsed = JSON.parse(category);
+        if (Array.isArray(parsed)) {
+          categoryArray = parsed;
+        } else if (parsed) {
+          categoryArray = String(parsed).split(",").map((c) => c.trim()).filter(Boolean);
+        }
+      } catch {
+        categoryArray = category.split(",").map((c) => c.trim()).filter(Boolean);
+      }
+    }
+    if (categoryArray.length > 0) {
+      user.profile.category = categoryArray;
+    }
+
+    // ✅ Robustly normalize category into an array
+    let languageArray = [];
+    if (Array.isArray(language)) {
+      languageArray = language;
+    } else if (typeof language === "string") {
+      try {
+        const parsed = JSON.parse(language);
+        if (Array.isArray(parsed)) {
+          languageArray = parsed;
+        } else if (parsed) {
+          languageArray = String(parsed).split(",").map((c) => c.trim()).filter(Boolean);
+        }
+      } catch {
+        languageArray = language.split(",").map((c) => c.trim()).filter(Boolean);
+      }
+    }
+    if (languageArray.length > 0) {
+      user.profile.language = languageArray;
+    }
 
     if (email && user.emailId.email !== email) {
       // Check if the email already exists in the database
@@ -503,35 +541,38 @@ export const updateProfile = async (req, res) => {
       user.phoneNumber.number = phoneNumber;
       user.phoneNumber.isVerified = false;
     }
+    // Alternate phone update
+    if (alternatePhone && user.alternatePhone?.number !== alternatePhone) {
+      // Make sure alternatePhone object exists
+      if (!user.alternatePhone) {
+        user.alternatePhone = { number: "", isVerified: false };
+      }
+      user.alternatePhone.number = alternatePhone;
+      user.alternatePhone.isVerified = false; // reset verification for alt number
+    }
+
     if (bio && user.profile.bio !== bio) user.profile.bio = bio;
-    if (experience) {
-      user.profile.experience = {
-        ...user.profile.experience,
-        duration: experience,
-      };
-    }
-    if (jobProfile) {
-      user.profile.experience = {
-        ...user.profile.experience,
-        jobProfile,
-      };
-    }
-    if (companyName) {
-      user.profile.experience = {
-        ...user.profile.experience,
-        companyName,
-      };
+    // ✅ Normalize experiences into an array
+    let experiencesArray = [];
+    if (req.body.experiences) {
+      try {
+        experiencesArray =
+          typeof req.body.experiences === "string"
+            ? JSON.parse(req.body.experiences)
+            : req.body.experiences;
+      } catch (err) {
+        console.error("Error parsing experiences:", err);
+        experiencesArray = [];
+      }
     }
 
-    if (experienceDetails) {
-      user.profile.experience = {
-        ...user.profile.experience,
-        experienceDetails,
-      };
+    // ✅ If Fresher (No experience selected)
+    if (Array.isArray(experiencesArray) && experiencesArray.length === 0) {
+      user.profile.experiences = []; // overwrite old experiences
+    } else if (Array.isArray(experiencesArray) && experiencesArray.length > 0) {
+      user.profile.experiences = experiencesArray;
     }
 
-    if (currentCTC) user.profile.currentCTC = currentCTC;
-    if (expectedCTC) user.profile.expectedCTC = expectedCTC;
     if (skillsArray.length) user.profile.skills = skillsArray;
 
     await user.save();
@@ -798,7 +839,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // If an admin deletes another user's account, just send a success response
-   return res.status(200).json({
+    return res.status(200).json({
       message: "User account deleted successfully.",
       success: true,
     });
@@ -830,7 +871,8 @@ export const updateUserLanguages = async (req, res) => {
 
   try {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      // req.user._id,
+       req.id,
       { "profile.languages": cleanLanguages.length ? cleanLanguages : ["Not Specified"] },
       { new: true }
     );
