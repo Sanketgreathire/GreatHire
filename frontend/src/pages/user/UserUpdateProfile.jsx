@@ -324,7 +324,10 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       toast.error("Resume is required! Please upload your resume before updating.");
       return;
     }
-
+    if (selectedDocs.length === 0) {
+      alert("⚠️ Please select at least one ID/Document.");
+      return;
+    }
     // Normalize experiences
     const normalizedExperiences = hasExperience
       ? experiences.map((exp) => ({
@@ -357,10 +360,10 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       formData.append("profile[language][]", lang); // nested
       formData.append("language[]", lang);          // flat fallback
     });
-     (Array.isArray(selectedDocs) ? selectedDocs : []).forEach((doc) => {
-  formData.append("profile[documents][]", doc);  // nested
-  formData.append("documents[]", doc);           // flat fallback
-});
+    (Array.isArray(selectedDocs) ? selectedDocs : []).forEach((doc) => {
+      formData.append("profile[documents][]", doc);  // nested
+      formData.append("documents[]", doc);           // flat fallback
+    });
     formData.append("bio", input.bio || "");
     formData.append("skills", input.skills || "");
     formData.append("qualification", input.qualification || "");
@@ -621,7 +624,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     className="w-full sm:flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     //defaultValue={"Select Qualification"}
                     placeholder="Select"
-                  // required
+                    required
                   >
                     <option value="" disabled>Select Qualification</option>
                     <option value="Post Graduation">Post Graduation</option>
@@ -740,7 +743,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   onChange={handleChange}
                   className="w-full"
                   placeholder="Enter Pincode"
-                //required
+                  required
                 />
               </div>
               {/* Language Selection Dropdown */}
@@ -974,6 +977,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows="3"
                   placeholder="Enter your bio..."
+                  required
                 />
                 <p className="text-sm text-gray-600 mt-1 self-end text-right">
                   {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
@@ -990,7 +994,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   value={input.skills}
                   onChange={handleChange}
                   placeholder="Enter skills (comma separated)"
-                //required
+                  required
                 />
               </div>
             </div>
@@ -1007,11 +1011,10 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     type="button"
                     key={doc}
                     onClick={() => toggleDocSelection(doc)}
-                    className={`px-4 py-1 rounded-full border ${
-                      selectedDocs.includes(doc)
+                    className={`px-4 py-1 rounded-full border ${selectedDocs.includes(doc)
                         ? "bg-blue-100 border-blue-400 text-black"
                         : "bg-white border-gray-300 text-gray-700"
-                    }`}
+                      }`}
                   >
                     {doc}
                     {selectedDocs.includes(doc) && " ✓"}
