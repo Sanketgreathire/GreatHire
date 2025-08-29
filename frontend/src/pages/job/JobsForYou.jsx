@@ -131,7 +131,7 @@
             >
               <div className="flex justify-between items-center text-gray-800 dark:text-white">
                 {job?.jobDetails?.urgentHiring === "Yes" && (
-                  <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold ">
+                  <p className="text-sm bg-violet-200 rounded-md p-1 text-violet-800 font-bold ">
                     Urgent Hiring
                   </p>
                 )}
@@ -248,8 +248,12 @@
                         navigate(`/apply/${selectedJob?._id}`);
                       }}
                     >
-                      Apply Now
+                      Apply Now 
                     </button>
+                    // <button
+                    // className="flex items-center gap-1" onClick={()=> handleApply(job.id)} 
+                    // > Apply Now
+                    // </button>
                   )}
                 </div>
   
@@ -287,7 +291,7 @@
           <div className="lg:hidden fixed inset-0 bg-white z-50 shadow-xl transition-transform duration-300 ease-in-out ">
             {/* Button for closing small screen job details */}
             <button
-              className="fixed top-[80px] right-4 bg-gray-200 p-2 rounded-md text-gray-700 hover:bg-gray-300 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
+              className="fixed top-[80px] right-4 bg-gray-100 p-2 rounded-md text-gray-700 hover:bg-gray-300 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
               onClick={() => setShowJobDetails(false)}
             >
               <IoMdClose size={22} />

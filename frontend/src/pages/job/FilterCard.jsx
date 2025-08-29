@@ -114,7 +114,7 @@ const filterData = [
       "Full-time",
       "Internship",
       "Contract",
-      "Hybrid",
+      "Hybrid ",
       "Remote",
     ],
   },
@@ -231,7 +231,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
   <div className="mt-4 flex flex-wrap gap-3 justify-start">
 
     {/* Location */}
-    <div className="relative flex-shrink-0">
+    <div className="relative flex-shrink-0 ">
       <button
         onClick={() =>
           setShowDropdown(prev => ({
@@ -272,11 +272,12 @@ const FilterCard = ({ onSearch, resetFilters }) => {
 
       {showDropdown.Location && (
         // <div className="absolute left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-[12rem] w-max max-w-[90vw] sm:max-w-[28rem]">
-        <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem]">
+        <div className="absolute top-full left-0 z-[1] mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn"> 
+           <div className="max-h-60 overflow-y-auto">
           {filterData[0].array.map((loc, idx) => (
             <p
               key={idx}
-              className="border rounded-md px-3 py-2 w-auto min-w-[150px] max-w-[250px] flex justify-between items-center dark:text-black"
+              className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-200 border-b last:border-0"
               onMouseDown={() => {
                 const newSearch = { ...search, Location: loc };
                 setSearch(newSearch);
@@ -284,12 +285,15 @@ const FilterCard = ({ onSearch, resetFilters }) => {
                 onSearch(newSearch);
               }}
             >
+              
               {loc}
             </p>
           ))}
         </div>
+        </div>
       )}
     </div>
+    
 
     {/* Job Title */}
     {/* <div className="relative"> */}
@@ -332,7 +336,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       </button>
 
       {showDropdown.JobTitle && (
-        <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem] dark:bg-700">
+         <div className="absolute top-full left-0 z-50 mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn">
+           <div className="max-h-60 overflow-y-auto">
           {filterData[1].array
             .filter(item =>
               item.toLowerCase().includes((search.JobTitle || "").toLowerCase())
@@ -340,7 +345,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
             .map((jobtitle, idx) => (
               <p
                 key={idx}
-                className="border rounded-md px-3 py-2 w-auto min-w-[150px] max-w-[250px] flex justify-between items-center dark:text-black"
+                className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-200 border-b last:border-0"
                 onMouseDown={() => {
                   const newSearch = { ...search, JobTitle: jobtitle };
                   setSearch(newSearch);
@@ -351,6 +356,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
                 {jobtitle}
               </p>
             ))}
+        </div>
         </div>
       )}
     </div>
@@ -395,7 +401,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       </button>
 
       {showDropdown.JobType && (
-        <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem]">
+      <div className="absolute top-full left-0 z-50 mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn">
+           <div className="max-h-60 overflow-y-auto">
           {filterData[2].array
             .filter(item =>
               item.toLowerCase().includes((search.JobType || "").toLowerCase())
@@ -403,7 +410,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
             .map((jobtype, idx) => (
               <p
                 key={idx}
-                className="border rounded-md px-3 py-2 w-auto min-w-[150px] max-w-[250px] flex justify-between items-center dark:text-black"
+                className="px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-200 border-b last:border-0"
                 onMouseDown={() => {
                   const newSearch = { ...search, JobType: jobtype };
                   setSearch(newSearch);
@@ -411,9 +418,11 @@ const FilterCard = ({ onSearch, resetFilters }) => {
                   onSearch(newSearch);
                 }}
               >
-                {jobtype}
+              {jobtype}
+
               </p>
             ))}
+        </div>
         </div>
       )}
     </div>
@@ -458,7 +467,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       </button>
 
       {showDropdown.Company && (
-       <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem]">
+      <div className="absolute top-full left-0 z-50 mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn">
+           <div className="max-h-60 overflow-y-auto">
           {filterData[3].array
             .filter(item =>
               item.toLowerCase().includes((search.Company || "").toLowerCase())
@@ -477,6 +487,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
                 {company}
               </p>
             ))}
+        </div>
         </div>
       )}
     </div>
@@ -521,7 +532,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       </button>
 
       {showDropdown.WorkPlace && (
-        <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem]">
+        <div className="absolute top-full left-0 z-[1] mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn"> 
+           <div className="max-h-60 overflow-y-auto">
           {filterData[4].array
             .filter(item =>
               item.toLowerCase().includes((search.WorkPlace || "").toLowerCase())
@@ -540,6 +552,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
                 {workPlace}
               </p>
             ))}
+        </div>
         </div>
       )}
     </div>
@@ -584,7 +597,8 @@ const FilterCard = ({ onSearch, resetFilters }) => {
       </button>
 
       {showDropdown.Salary && (
-       <div className="absolute top-full left-0 z-50 mt-1 max-h-56 overflow-y-auto border rounded-md bg-white shadow-md min-w-full w-max max-w-[28rem] ">
+        <div className="absolute top-full left-0 z-[1] mt-2  w-full max-w-[28rem] rounded-xl bg-white shadow-lg border border-gray-200 overflow-hidden animate-fadeIn"> 
+           <div className="max-h-60 overflow-y-auto">
           {[
             "0-10000",
             "10000-20000",
@@ -607,6 +621,7 @@ const FilterCard = ({ onSearch, resetFilters }) => {
               {range}
             </p>
           ))}
+        </div>
         </div>
       )}
     </div>

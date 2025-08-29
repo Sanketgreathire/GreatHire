@@ -25,16 +25,16 @@ const Footer = () => {
         {/* Social Media Links */}
         <div className="flex justify-center md:justify-end space-x-6  ">
           {[
-            { Icon: FaFacebookSquare, href: "https://www.facebook.com/share/15WGT743qv/", label: "Facebook" },
-            { Icon: FaXTwitter, href: "https://twitter.com/", label: "Twitter" },
-            { Icon: FaLinkedin, href: "https://www.linkedin.com/company/greathire/", label: "LinkedIn" },
-            { Icon: FaInstagramSquare, href: "https://www.instagram.com/great_hire?igsh=YnQ1a3g2a3Bhc25p", label: "Instagram" },
-            { Icon: FaSquareThreads, href: "https://www.threads.net/@great_hire", label: "Threads" }
-          ].map(({ Icon, href, label }) => (
+            { Icon: FaFacebookSquare, href: "https://www.facebook.com/share/15WGT743qv/", label: "Facebook", hoverColor: "hover:text-[#1877F2] " },
+            { Icon: FaXTwitter, href: "https://twitter.com/", label: "Twitter", hoverColor: "hover:text-blue-500" },
+            { Icon: FaLinkedin, href: "https://www.linkedin.com/company/greathire/", label: "LinkedIn", hoverColor: "hover:text-[#0A66C2]" },
+            { Icon: FaInstagramSquare, href: "https://www.instagram.com/great_hire?igsh=YnQ1a3g2a3Bhc25p", label: "Instagram", hoverColor:"hover:text-[#E4405F]"},
+            { Icon: FaSquareThreads, href: "https://www.threads.net/@great_hire", label: "Threads", hoverColor: "hover:text-blue-500" }
+          ].map(({ Icon, href, label , hoverColor }) => (
             <a
               key={label}
               href={href}
-              className="text-gray-900 dark:text-gray-100 hover:text-blue-500 transition-colors duration-300 ease-in-out transform hover:-translate-y-1"
+              className={`text-gray-500 transition-colors duration-300 ease-in-out transform hover:-translate-y-1 ${hoverColor}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
