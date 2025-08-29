@@ -188,14 +188,14 @@ const UserProfile = () => {
     "Aadhar Card": <IdCard className="w-4 h-4" />,
     "Passport": <FileText className="w-4 h-4" />,
   };
-// Get all experiences
-const experiences = user?.profile?.experiences || [];
+  // Get all experiences
+  const experiences = user?.profile?.experiences || [];
 
-// Calculate total years (make sure duration is numeric)
-const totalYears = experiences.reduce((sum, exp) => {
-  const years = parseFloat(exp.duration) || 0; // fallback if duration is not valid
-  return sum + years;
-}, 0);
+  // Calculate total years (make sure duration is numeric)
+  const totalYears = experiences.reduce((sum, exp) => {
+    const years = parseFloat(exp.duration) || 0; // fallback if duration is not valid
+    return sum + years;
+  }, 0);
 
   return (
     <>
@@ -223,17 +223,10 @@ const totalYears = experiences.reduce((sum, exp) => {
               <h1 className="mt-1 text-gray-600">
                 {firstExp ? firstExp.jobProfile : "Fresher"}
               </h1>
-              {/* <p className="text-gray-500 mt-1">
-                {firstExp?.duration ? `Experience: ${firstExp.duration} Year(s)` : "Experience: 0 Years"}
-              </p> */}
-<p className="text-gray-500 mt-1">
-  Experience: {totalYears > 0 ? `${totalYears} Year(s)` : "0 Years"}
-</p>
+              <p className="text-gray-500 mt-1">
+                Experience: {totalYears > 0 ? `${totalYears} Year(s)` : "0 Years"}
+              </p>
 
-
-              {/* <p className="text-gray-500 mt-1">
-                {`Experience: ${user?.profile?.experience?.duration} Year`}
-              </p> */}
               <Button
                 onClick={() => setOpen(true)}
                 variant="outline"
