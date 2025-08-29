@@ -833,11 +833,7 @@ function App() {
         <div className="container mx-auto px-4  relative ">
           <h2 className="text-3xl font-bold text-center mb-12 font-[Oswald] ">Trusted By Leading Companies</h2>
 
-          {/* left Shadow  */}
-         <div className="absolute top-0 left-0 w-24 h-full z-20 bg-gradient-to-r from-gray-50 via-gray-50/80 to-transparent pointer-events-none"></div>
-
-          {/* Right Shadow */}
-    <div className="absolute top-0 right-0 w-24 h-full z-20 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none"></div>
+         
           <Swiper
             modules={[Autoplay]}
             spaceBetween={30}

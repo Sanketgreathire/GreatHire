@@ -124,7 +124,7 @@ const Job = ({ job }) => {
 
 
   return (
-    <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
+    <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
       <div className="flex justify-between items-center mb-2 min-h-[28px]">
 
         {/* Urgent Hiring Label */}
