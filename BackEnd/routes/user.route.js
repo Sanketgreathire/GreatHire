@@ -18,7 +18,6 @@ import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 import { validateContactUsForm } from "../middlewares/contactValidator.js";
 import { updateLastActive } from "../middlewares/updateLastActive.js";
-import { updateUserLanguages } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -42,7 +41,6 @@ router.route("/profile/update").put(
   },
   validateProfileUpdate,
   updateProfile,
-  updateUserLanguages,
 );
 
 router.route("/sendMessage").post(validateContactUsForm, updateLastActive, sendMessage);
