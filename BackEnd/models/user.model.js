@@ -54,6 +54,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isFirstLogin: {
+      type: Boolean,
+      default: true,
+    },
     profile: {
       languaes:{
         type:[String],

@@ -1,5 +1,6 @@
 // Import React and useState hook for component state management
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 
@@ -43,6 +44,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const categoryArray = Object.keys(selectedCategories).filter(key => selectedCategories[key]);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
     !!user?.profile?.experience?.jobProfile // true if experience exists
@@ -227,6 +229,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         dispatch(setUser(response.data.user));
         toast.success("Profile updated successfully!");
         setOpen(false);
+        
+        // If this was the first login, redirect to home page after profile completion
+        if (user?.isFirstLogin) {
+          setTimeout(() => {
+            navigate("/");
+            toast.success("Welcome to GreatHire! Your profile is now complete.");
+          }, 1000);
+        }
       }
     } catch (err) {
       console.error(err);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -7,7 +7,6 @@ import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,6 +18,9 @@ const Login = () => {
     password: "",
   });
 
+  // State for Remember Me checkbox
+  const [rememberMe, setRememberMe] = useState(false);
+
   // State to manage the OTP data
   const [otpData, setOtpData] = useState({
     otp: "",
@@ -29,6 +31,16 @@ const Login = () => {
 
   // State for loading
   const [loading, setLoading] = useState(false);
+
+  // Load saved credentials on component mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedEmail && savedPassword) {
+      setFormData({ email: savedEmail, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
 
   // Handle changes for both email/password and OTP inputs
   const handleChange = (e) => {
@@ -58,20 +70,35 @@ const Login = () => {
     try {
       if (showOtpInput) {
         // Handle OTP login
-        // Make an API call to verify the OTP and email
-                const response = await axios.post(
-          `${USER_API_END_POINT}/verify-otp`,
+        // Make an API call to login with OTP and email
+        const response = await axios.post(
+          `${USER_API_END_POINT}/otp-login`,
           {
             email: formData.email,
             otp: otpData.otp,
-          }
+          },
+          { withCredentials: true }
         );
-
 
         if (response?.data?.success) {
           toast.success(response.data.message);
           dispatch(setUser(response.data.user));
-          navigate("/profile");
+          
+          // Handle Remember Me functionality
+          if (rememberMe) {
+            localStorage.setItem('rememberedEmail', formData.email);
+            localStorage.setItem('rememberedPassword', otpData.otp);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('rememberedPassword');
+          }
+          
+          // Redirect based on first login status
+          if (response.data.user.isFirstLogin) {
+            navigate("/profile");
+          } else {
+            navigate("/");
+          }
         } else {
           toast.error(response.data.message);
         }
@@ -79,15 +106,30 @@ const Login = () => {
         // Handle password login
         // Make an API call to log in with email and password
         const response = await axios.post(
-                `${USER_API_END_POINT}/login`,
-                { ...formData },
-                { withCredentials: true }
-              );
+          `${USER_API_END_POINT}/login`,
+          { ...formData },
+          { withCredentials: true }
+        );
 
         if (response?.data?.success) {
           toast.success(response.data.message);
           dispatch(setUser(response.data.user));
-          navigate("/profile");
+          
+          // Handle Remember Me functionality
+          if (rememberMe) {
+            localStorage.setItem('rememberedEmail', formData.email);
+            localStorage.setItem('rememberedPassword', formData.password);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('rememberedPassword');
+          }
+          
+          // Redirect based on first login status
+          if (response.data.user.isFirstLogin) {
+            navigate("/profile");
+          } else {
+            navigate("/");
+          }
         } else {
           toast.error(response.data.message);
         }
@@ -209,10 +251,25 @@ const Login = () => {
             </>
           )}
 
-          <p className="text-blue-600 text-sm cursor-pointer hover:underline text-right"
-            onClick={() => navigate("/forgot-password")}>
-            Forgot Password?
-          </p>
+          {/* Remember Me Checkbox */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                Remember me
+              </label>
+            </div>
+            <p className="text-blue-600 text-sm cursor-pointer hover:underline"
+              onClick={() => navigate("/forgot-password")}>
+              Forgot Password?
+            </p>
+          </div>
 
           <button
             type="submit"
