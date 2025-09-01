@@ -138,7 +138,12 @@ export const login = async (req, res) => {
       });
     }
 
-await user.save();
+    // Update lastActiveAt and set isFirstLogin to false after successful login
+    user.lastActiveAt = new Date();
+    if (user.isFirstLogin) {
+      user.isFirstLogin = false;
+    }
+    await user.save();
 
     const tokenData = {
       userId: user._id,
@@ -162,6 +167,7 @@ await user.save();
       profile: user.profile,
       address: user.address,
       lastActiveAt: user.lastActiveAt,
+      isFirstLogin: user.isFirstLogin,
       isCompanyCreated,
       position,
       isActive,
@@ -228,6 +234,13 @@ export const googleLogin = async (req, res) => {
           success: false,
         });
       }
+
+      // Update lastActiveAt and set isFirstLogin to false for existing users
+      user.lastActiveAt = new Date();
+      if (user.isFirstLogin) {
+        user.isFirstLogin = false;
+      }
+      await user.save();
 
       const tokenData = {
         userId: user._id,
@@ -534,6 +547,9 @@ export const updateProfile = async (req, res) => {
     if (expectedCTC) user.profile.expectedCTC = expectedCTC;
     if (skillsArray.length) user.profile.skills = skillsArray;
 
+    // Mark as not first login after profile update
+    user.isFirstLogin = false;
+
     await user.save();
 
     // extract user without password
@@ -812,6 +828,93 @@ export const deleteAccount = async (req, res) => {
     });
   }
 };
+// OTP login controller
+export const otpLogin = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Email and OTP are required",
+        success: false,
+      });
+    }
+
+    // Check validation of email by express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Find user by email
+    let user =
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email }));
+
+    if (!user) {
+      return res.status(200).json({
+        message: "Account not found.",
+        success: false,
+      });
+    }
+
+    // Update lastActiveAt and set isFirstLogin to false after successful OTP login
+    user.lastActiveAt = new Date();
+    if (user.isFirstLogin) {
+      user.isFirstLogin = false;
+    }
+    await user.save();
+
+    const tokenData = {
+      userId: user._id,
+    };
+    // Generate the token using JWT 
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    const isCompanyCreated = user.isCompanyCreated || false;
+    const position = user.position || "";
+    const isActive = user.isActive || null;
+
+    // Return user data
+    user = {
+      _id: user._id,
+      fullname: user.fullname,
+      emailId: user.emailId,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+      address: user.address,
+      lastActiveAt: user.lastActiveAt,
+      isFirstLogin: user.isFirstLogin,
+      isCompanyCreated,
+      position,
+      isActive,
+    };
+
+    // Send cookies from server to client with response
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome ${user.fullname}`,
+        user,
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
 export const updateUserLanguages = async (req, res) => {
   const { languages } = req.body;
 

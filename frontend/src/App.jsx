@@ -63,6 +63,7 @@ import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import Notifications from "./components/NotificationBell";
 import NotificationPage from "./components/notifications/NotificationPage";
+import MessagingPage from "./components/messaging/MessagingPage";
 
 // // Redux
 // // Note: Aapko in dependencies ko install karna hoga: npm install react-redux @reduxjs/toolkit
@@ -103,6 +104,7 @@ const appRouter = createBrowserRouter([
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/packages", element: <Packges /> },
   { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
+  { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
 //   // Naya code
