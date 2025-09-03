@@ -117,7 +117,7 @@ const handleSendOtp = async () => {
         // Handle OTP login
         // Make an API call to login with OTP and email
         const response = await axios.post(
-          `${USER_API_END_POINT}/otp-login`,
+          `${USER_API_END_POINT}/verify-otp`,
           {
             email: formData.email,
             otp: otpData.otp,
@@ -139,11 +139,23 @@ const handleSendOtp = async () => {
           }
           
           // Redirect based on first login status
-          if (response.data.user.isFirstLogin) {
-            navigate("/profile");
-          } else {
-            navigate("/");
-          }
+          if (response.data.user.role === "student" || response.data.user.role === "candidate") {
+              // normal users
+              if (response.data.user.isFirstLogin) {
+                navigate("/profile");
+              } else {
+                navigate("/");
+              }
+            } else if (response.data.user.role === "recruiter") {
+              // recruiters
+              navigate("/recruiter/dashboard");
+            } else if (response.data.user.role === "admin") {
+              // admins (if you have admin dashboard)
+              navigate("/admin/dashboard");
+            } else {
+              // default fallback
+              navigate("/");
+            }
         } else {
           toast.error(response.data.message);
         }
