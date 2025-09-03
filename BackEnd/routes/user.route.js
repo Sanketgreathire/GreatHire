@@ -9,6 +9,7 @@ import {
   forgotPassword,
   resetPassword,
   deleteAccount,
+  otpLogin,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -17,12 +18,12 @@ import { validateLogin } from "../middlewares/loginValidator.js";
 import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 import { validateContactUsForm } from "../middlewares/contactValidator.js";
 import { updateLastActive } from "../middlewares/updateLastActive.js";
-import { updateUserLanguages } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
 router.route("/register").post(validateUser, updateLastActive, register);
 router.route("/login").post(validateLogin, updateLastActive, login);
+router.route("/otp-login").post(validateLogin, updateLastActive, otpLogin);
 router.route("/googleLogin").post(updateLastActive, googleLogin);
 
 
@@ -40,7 +41,6 @@ router.route("/profile/update").put(
   },
   validateProfileUpdate,
   updateProfile,
-  updateUserLanguages,
 );
 
 router.route("/sendMessage").post(validateContactUsForm, updateLastActive, sendMessage);
