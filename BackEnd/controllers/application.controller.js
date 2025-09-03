@@ -1,13 +1,15 @@
 // this is an applicaton controller to perform action related to application
-import { Application } from "../models/application.model.js";
+
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
+import Application from "../models/application.model.js";
+
+
 import Notification from "../models/notification.model.js";  
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
-
 // this controller apply to a particular job
 export const applyJob = async (req, res) => {
   try {
@@ -24,6 +26,7 @@ export const applyJob = async (req, res) => {
       jobTitle,
       company,
       jobId,
+    
     } = req.body;
     const { resume } = req.files;
 
@@ -103,6 +106,8 @@ export const applyJob = async (req, res) => {
     const newApplication = new Application({
       job: jobId,
       applicant: userId,
+      applicantName: user.fullname,
+  applicantEmail: user.emailId.email,
       status: "Pending",
     });
     await newApplication.save();

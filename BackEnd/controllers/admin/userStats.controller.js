@@ -1,5 +1,5 @@
 import { User } from "../../models/user.model.js";
-import { Application } from "../../models/application.model.js";
+import Application from "../../models/application.model.js";
 
 // Get user statistics and user list with lastActiveAt
 export const getUserStats = async (req, res) => {

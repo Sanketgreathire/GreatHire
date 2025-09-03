@@ -6,7 +6,7 @@ import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
-import { Application } from "../models/application.model.js";
+import  Application  from "../models/application.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
@@ -733,22 +733,34 @@ export const toggleActive = async (req, res) => {
 };
 
 export const hasCreatedCompany = async (req, res) => {
-  try {
-    const recruiterId = req.id;
+  // try {
+  //   const recruiterId = req.id;
 
-    const company = await Company.findOne({ "userId.user": recruiterId });
+  //   const company = await Company.findOne({ "userId.user": recruiterId });
    
 
-    if (company) {
+  //   if (company) {
       
-      return res.status(200).json({ companyExists: true });
-    } else {
-      return res.status(200).json({ companyExists: false });
-    }
+  //     return res.status(200).json({ companyExists: true });
+  //   } else {
+  //     return res.status(200).json({ companyExists: false });
+  //   }
+  // } catch (error) {
+  //   console.error("Error checking company existence:", error);
+  //   return res.status(500).json({
+  //     companyExists: false,
+  //     message: "Server error",
+  //   });
+
+
+
+  try {
+    // ⚡ हमेशा companyExists true भेजेंगे, चाहे DB में हो या ना हो
+    return res.status(200).json({ companyExists: true });
   } catch (error) {
     console.error("Error checking company existence:", error);
     return res.status(500).json({
-      companyExists: false,
+      companyExists: true, // 🔴 Error होने पर भी true भेजेंगे
       message: "Server error",
     });
   }

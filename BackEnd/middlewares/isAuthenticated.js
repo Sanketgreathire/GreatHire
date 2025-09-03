@@ -29,7 +29,9 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
     // associate userId to req object
-    req.id = decode.userId;
+    // req.id = decode.userId;
+    const userId = req.id;
+
     next();
   } catch (error) {
     console.log(error);

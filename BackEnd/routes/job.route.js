@@ -1,4 +1,6 @@
 import express from "express";
+
+
 import {
   postJob,
   getAllJobs,
@@ -10,10 +12,13 @@ import {
   toggleActive,
   getJobByCompanyId,
   getJobsStatistics,
-  getExternalJobsFromFindwork,  // Importing the new function
+  getExternalJobsFromFindwork,
+  applyJob   // Importing the new function
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
+import Application from "../models/application.model.js";
+
 
 const router = express.Router();
 
@@ -31,5 +36,22 @@ router.route("/job-statistics/:id").get(isAuthenticated, getJobsStatistics);
 
 // Add the new route to fetch external jobs
 router.route("/external/findwork").get(getExternalJobsFromFindwork);
+// router.post("/:id/apply", isAuthenticated, applyJob);
+router.post('/:jobId/apply', isAuthenticated, applyJob);
+
+
+
+// jobRoutes.js
+router.get("/:jobId/check-applied/:userId", async (req, res) => {
+  try {
+    const { jobId, userId } = req.params;
+    const application = await Application.findOne({ job: jobId, applicant: userId });
+    res.json({ applied: !!application });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 
 export default router;
