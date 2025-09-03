@@ -9,7 +9,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx"; 
 
 // Global CSS styles
-import "./index.css"; 
+import "./index.css";
+
+
 
 // Toast notifications for user feedback
 import { Toaster } from "react-hot-toast"; 

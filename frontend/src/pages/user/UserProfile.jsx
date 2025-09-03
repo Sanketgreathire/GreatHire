@@ -199,7 +199,7 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-200">
+      <div className="flex flex-col min-h-screen ">
         <Navbar />
         <div className="flex-grow">
           {/* Profile Details Section */}
@@ -543,9 +543,9 @@ const UserProfile = () => {
           </div>
 
           {/* Applied Jobs Section */}
-          <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-            <h2 className="text-lg text-center underline font-semibold text-gray-800 border-b pb-2">
-              Applied Jobs
+          <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8 ">
+            <h2 className="text-lg text-center underline font-semibold  border-b pb-2">
+              
             </h2>
             <div className="mt-4">
               <AppliedJobTable />

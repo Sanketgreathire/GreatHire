@@ -16,43 +16,88 @@ const JobDescription = () => {
 
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        const res = await fetch(`/api/v1/job/get/${jobId}`);
+  // useEffect(() => {
+  //   const fetchJob = async () => {
+  //     try {
+  //       const res = await fetch(`/api/v1/job/get/${jobId}`);
 
 
-        // Log raw response
-        console.log("Raw response:", res);
+  //       // Log raw response
+  //       console.log("Raw response:", res);
 
-        // Check if response is not OK
-        if (!res.ok) {
-          setError(`HTTP ${res.status}`);
-          return;
-        }
+  //       // Check if response is not OK
+  //       if (!res.ok) {
+  //         setError(`HTTP ${res.status}`);
+  //         return;
+  //       }
 
-        const text = await res.text();
-        console.log("Raw response text:", text); // 👀 check if it's HTML
+  //       const text = await res.text();
+  //       console.log("Raw response text:", text); // 👀 check if it's HTML
 
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error("JSON parse failed:", err);
-          setError("Response is not JSON");
-          return;
-        }
+  //       let data;
+  //       try {
+  //         data = JSON.parse(text);
+  //       } catch (err) {
+  //         console.error("JSON parse failed:", err);
+  //         setError("Response is not JSON");
+  //         return;
+  //       }
 
-        console.log("Parsed job data:", data);
-        setJob(data);
-      } catch (err) {
-        console.error("Fetch failed:", err);
-        setError("Network error");
+  //       console.log("Parsed job data:", data);
+  //       setJob(data);
+  //     } catch (err) {
+  //       console.error("Fetch failed:", err);
+  //       setError("Network error");
+  //     }
+  //   };
+
+  //   fetchJob();
+  // }, [jobId]);
+
+
+
+useEffect(() => {
+  const fetchJob = async () => {
+    try {
+      const res = await fetch(`/api/v1/job/get/${jobId}`);
+      if (!res.ok) {
+        setError(`HTTP ${res.status}`);
+        return;
       }
-    };
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        setError("Response is not JSON");
+        return;
+      }
+      setJob(data);
 
-    fetchJob();
-  }, [jobId]);
+      // ✅ Check if user already applied
+      if (user?._id) {
+        const appliedRes = await fetch(`/api/v1/job/${jobId}/check-applied/${user._id}`);
+        const appliedData = await appliedRes.json();
+        setApplied(appliedData.applied);
+      }
+    } catch (err) {
+      setError("Network error");
+    }
+  };
+
+  fetchJob();
+}, [jobId, user]);
+
+
+
+
+
+
+
+
+
+
+
 
   if (!job) {
     return (
@@ -109,7 +154,7 @@ const JobDescription = () => {
             </div>
 
             {/* Right Section - Apply Now Button */}
-            <button
+            {/* <button
               onClick={() => navigate(`/apply/${job?._id}`)}
               className={`${
                 isApplied
@@ -120,7 +165,25 @@ const JobDescription = () => {
             >
               {isApplied ? "Applied" : "Apply Now"}
             </button>
-          </div>
+          </div> */}
+
+
+
+          <button
+  onClick={() => {
+    if (!isApplied) navigate(`/apply/${job?._id}`);
+  }}
+  className={`${
+    isApplied
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-800"
+  } text-white font-semibold px-6 py-3 rounded-lg shadow-md transition duration-200 focus:outline-none`}
+  disabled={isApplied}
+>
+  {isApplied ? "Applied" : "Apply Now"}
+</button>
+</div>
+
 
           {/* Job Description */}
           <div className="mb-8 dark:text-gray-100 dark:text-gray-100">
@@ -207,8 +270,8 @@ const JobDescription = () => {
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-700 mb-1 dark:text-gray-800">Skills:</h4>
-                <p className="text-gray-600 text-base dark:text-gray-800">
+                <h4 className="font-semibold text-gray-700 mb-1 dark:text-gray-100">Skills:</h4>
+                <p className="text-gray-600 text-base dark:text-gray-100">
                   {job?.jobDetails?.skills?.join(", ") || "Not specified"}
                 </p>
               </div>

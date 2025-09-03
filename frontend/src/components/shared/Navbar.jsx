@@ -80,17 +80,17 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      if (user.role === "recruiter") {
-        // Check if the recruiter has created a company
-        const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
-          withCredentials: true,
-        });
+      // if (user.role === "recruiter") {
+      //   // Check if the recruiter has created a company
+      //   const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
+      //     withCredentials: true,
+      //   });
   
-        if (!checkRes.data.companyExists) {
-          toast.error("Please create a company before logging out.");
-          return;
-        }
-      }
+      //   if (!checkRes.data.companyExists) {
+      //     toast.error("Please create a company before logging out.");
+      //     return;
+      //   }
+      // }
   
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,

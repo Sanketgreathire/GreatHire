@@ -16,7 +16,7 @@ const JobMajorDetails = ({ selectedJob }) => {
       {/* Job details */}
       <div className="p-4  flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <div>
-          <h1 className="text-xl font-bold">Job details</h1>
+          <h1 className="text-xl font-bold dark:text-gray-300">Job details</h1>
         </div>
 
         {/* Pay Section */}
@@ -147,7 +147,7 @@ const JobMajorDetails = ({ selectedJob }) => {
 
       {/* qualifications */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
-        <h1 className="text-xl font-bold ">Qualifications</h1>
+        <h1 className="text-xl font-bold dark:text-gray-200">Qualifications</h1>
         <ul
           className="ml-6 text-sm text-gray-600 mt-2 dark:text-gray-100"
           style={{ listStyleType: "circle" }}
