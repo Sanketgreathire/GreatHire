@@ -102,13 +102,29 @@ export const registerCompany = async (req, res) => {
     let company = await Company.findOne({ email, adminEmail, CIN });
 
     //console.log("is company already existed true otherwise false :"+company);             //for testing purpose
+          const existingEmail = await Company.findOne({ email });
+          if (existingEmail) {
+            return res.status(400).json({
+              message: "Email is already used by another company.",
+              success: false,
+            });
+          }
 
-    if (company) {
-      return res.status(200).json({
-        message: "Company already exists.",
-        success: false,
-      });
-    }
+          const existingCIN = await Company.findOne({ CIN });
+          if (existingCIN) {
+            return res.status(400).json({
+              message: "CIN is already registered.",
+              success: false,
+            });
+          }
+
+          const existingPhone = await Company.findOne({ phone });
+          if (existingPhone) {
+            return res.status(400).json({
+              message: "Phone number is already used by another company.",
+              success: false,
+            });
+          }
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
@@ -134,7 +150,7 @@ export const registerCompany = async (req, res) => {
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    }
+    } 
     // Create a new company if it doesn't exist
     company = await Company.create({
       companyName,

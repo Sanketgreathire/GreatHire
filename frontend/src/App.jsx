@@ -176,8 +176,7 @@ function App() {
       <MessageProvider>
         <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-          <RouterProvider router={appRouter} />
-          
+          <RouterProvider router={appRouter} />    
         </Worker>
       </JobDetailsProvider>
       </MessageProvider>
