@@ -14,6 +14,8 @@ import {
 import { singleUpload } from "../middlewares/multer.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { validateUser } from "../middlewares/userValidator.js";
+import { login } from "../controllers/user.controller.js";
+
 
 const router = express.Router();
 router.route("/register").post(validateUser, register);

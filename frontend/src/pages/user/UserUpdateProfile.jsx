@@ -53,6 +53,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     setCategoryVisible(!isCategoryVisible);
   };
 
+        
 
 
 
@@ -62,9 +63,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
-    email: user?.emailId.email || "",
-    phoneNumber: user?.phoneNumber.number || "",
-
+    email: user?.email || "",
+    phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
     category: user?.profile?.category || [],
     experience: user?.profile?.experience?.duration || "",
@@ -166,10 +166,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Check if resume is uploaded
-    if (!input.resume || !(input.resume instanceof File)) {
-      toast.error("Resume is required! Please upload your resume before updating.");
-      return; // Stop form submission
-    }
+    if (!input.resume && !input.resumeOriginalName) {
+  toast.error("Resume is required! Please upload your resume.");
+  return;
+} 
+ // Stop form submission
+    
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
@@ -229,11 +231,22 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         setOpen(false);
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+  console.error("Profile Update Error:", err);
+
+  // Show more meaningful message
+  if (err.response) {
+    // Backend responded with an error
+    toast.error(err.response.data?.message || `Error: ${err.response.status} ${err.response.statusText}`);
+  } else if (err.request) {
+    // Request was made but no response
+    toast.error("No response from server. Please check your connection.");
+  } else {
+    // Something else happened
+    toast.error(`Unexpected error: ${err.message}`);
+  }
+} finally {
+  setLoading(false);
+}
   };
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) =>
@@ -355,7 +368,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   <Input
                     id="phoneNumber"
                     name="phoneNumber"
-                    value={input.phoneNumber}
+                    value={user?.phoneNumber?.number || ""}
                     onChange={handleChange}
                     required
                   />

@@ -56,6 +56,9 @@ import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
+import Logn from "./components/auth/user/Login";
+
+ 
 
 // // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
@@ -108,6 +111,8 @@ const appRouter = createBrowserRouter([
 //   // Naya code
 { path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
+
+
   {
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,
@@ -164,15 +169,18 @@ function App() {
   }, []);
 
   return (
+    
     <NotificationProvider>
       <MessageProvider>
         <JobDetailsProvider>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
+          
         </Worker>
       </JobDetailsProvider>
       </MessageProvider>
     </NotificationProvider>
+    
   );
 }
 export default App;
