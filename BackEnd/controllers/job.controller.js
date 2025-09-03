@@ -1,5 +1,5 @@
 import { Job } from "../models/job.model.js";
-import { Application } from "../models/application.model.js";
+import  Application  from "../models/application.model.js";
 import { Company } from "../models/company.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
@@ -596,7 +596,52 @@ export const getJobsStatistics = async (req, res) => {
     });
   }
 };
+//  -----------------------------------------------------------------------
+export const applyJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;   // URL se jobId
+    const userId = req.id;          // middleware se userId
 
+    // Job check kar
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found" });
+    }
+
+    // Already applied check kar
+    const alreadyApplied = await Application.findOne({ job: jobId, applicant: userId });
+    if (alreadyApplied) {
+      return res.status(400).json({ success: false, message: "Already applied to this job" });
+    }
+
+    // User details fetch kar
+    const user = await User.findById(userId).select("fullname email phone");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Naya application banao
+    const application = await Application.create({
+      job: jobId,
+      applicant: userId,
+      applicantName: user.fullname,     // ✅ add name
+      applicantEmail: user.email,       // ✅ add email
+      applicantPhone: user.phone,       // ✅ optional
+      status: "Pending",
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Applied successfully",
+      application,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+//  -----------------------------------------------------------------------
 // Helper function to find and notify matching candidates
 async function findAndNotifyMatchingCandidates(job) {
   try {
@@ -641,5 +686,56 @@ async function findAndNotifyMatchingCandidates(job) {
     }
   } catch (error) {
     console.error("Error finding matching candidates:", error);
+
   }
+
+  
 }
+
+
+
+// Apply for a job
+// export const applyJob = async (req, res) => {
+//   try {
+//     const jobId = req.params.id;
+//     const userId = req.id; // yeh req.id tumhare auth middleware se aayega
+
+//     // check job exists
+//     const job = await Job.findById(jobId);
+//     if (!job) {
+//       return res.status(404).json({ success: false, message: "Job not found" });
+//     }
+
+//     // check already applied
+//     const existingApplication = await Application.findOne({ job: jobId, applicant: userId });
+//     if (existingApplication) {
+//       return res.status(400).json({ success: false, message: "Already applied to this job" });
+//     }
+
+//     // 🔥 user ka profile fetch kar
+//     const user = await User.findById(userId).select("fullname email profile resume");
+
+//     // create new application with applicantProfile
+//     const newApplication = new Application({
+//       job: jobId,
+//       applicant: userId,
+//       applicantProfile: user,   // ✅ poora user profile bhi recruiter ko save ho jaayega
+//       status: "Pending"
+//     });
+
+//     await newApplication.save();
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Applied successfully",
+//       application: newApplication
+//     });
+//   } catch (error) {
+//     console.error("Error applying for job:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//     });
+//   }
+// };
+
