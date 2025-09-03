@@ -26,79 +26,48 @@ export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
 
-    // checking validatoin result of req object
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Check if user already exists
-    let userExists =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
-
-    if (userExists) {
-      return res.status(200).json({
-        message: "Account already exists.",
+    // 1. Check if email already exists
+    const existingEmail = await User.findOne({ "emailId.email": email });
+    if (existingEmail) {
+      return res.status(400).json({
         success: false,
+        message: "This email is already used by someone",
       });
     }
 
-    // Hash/encrypt the password by performing hashing 10 times on a password
+    // 2. Check if phone number already exists
+    const existingPhone = await User.findOne({ "phoneNumber.number": phoneNumber });
+    if (existingPhone) {
+      return res.status(400).json({
+        success: false,
+        message: "This phone number is already used by someone",
+      });
+    }
+
+    // 3. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
-    let newUser = await User.create({
+    // 4. Create user
+    const user = await User.create({
       fullname,
-      emailId: {
-        email, // Setting the email
-        isVerified: false, // Default to false unless you have a value to set
-      },
-      phoneNumber: {
-        number: phoneNumber, // Setting the phone number
-        isVerified: false, // Default to false unless you have a value to set
-      },
+      emailId: { email },
+      phoneNumber: { number: phoneNumber },
       password: hashedPassword,
-      lastActiveAt: new Date(),
-    });
-    newUser.lastActiveAt = new Date();
-    await newUser.save();
-
-    // Remove sensitive information before sending the response
-    const userWithoutPassword = await User.findById(newUser._id).select(
-      "-password"
-    );
-
-    // creating a token data by user id and creating a token by jwt sign in by token data and secret key
-    const tokenData = {
-      userId: userWithoutPassword._id,
-    };
-    // creating a token with expiry time 1 day
-    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
-      expiresIn: "1d",
     });
 
-    // cookies strict used...
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
-        sameSite: "strict",
-      })
-      .json({
-        message: "Account created successfully.",
-        success: true,
-        user: userWithoutPassword,
-      });
-    } catch (error) {
-      console.error("Error during registration:", error);
-      return res.status(500).json({
-        message: "Internal Server Error",
-      });
-    }
-  };
+    return res.status(201).json({
+      success: true,
+      message: "Account created successfully",
+      user,
+    });
+  } catch (err) {
+    console.error("Register Error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 
 //login section...
 export const login = async (req, res) => {
@@ -812,6 +781,155 @@ export const deleteAccount = async (req, res) => {
     });
   }
 };
+// ---------------- OTP LOGIN ----------------
+
+// Step 1: Send OTP to email
+export const sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    let user =
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
+
+    if (!user) {
+      return res.status(200).json({ success: false, message: "User not found" });
+    }
+
+    //  Check if OTP already exists and not expired
+    if (user.emailId.otp && Date.now() < user.emailId.otpExpiry) {
+      const remainingTime = Math.ceil((user.emailId.otpExpiry - Date.now()) / 1000); // in sec
+      return res.status(400).json({
+        success: false,
+        message: `OTP already sent. Please wait ${remainingTime} seconds before resending.`,
+      });
+    }
+
+    // Generate new OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save OTP + expiry (5 min)
+    user.emailId.otp = otp;
+    user.emailId.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    // Send OTP via email
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    await transporter.sendMail({
+      from: `"GreatHire OTP" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP for Login",
+      html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #eaeaea; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      
+      <h2 style="color: #1d4ed8; text-align: center;">Your Secure OTP for GreatHire Login</h2>
+      
+      <p style="font-size: 16px; color: #555;">Hi there,</p>
+      
+      <p style="font-size: 16px; color: #555;">
+        We’re glad to have you at <strong>GreatHire</strong>! Use the One-Time Password (OTP) below to access your account:
+      </p>
+      
+      <div style="text-align: center; margin: 20px 0;">
+        <span style="display: inline-block; font-size: 24px; color: #1d4ed8; font-weight: bold; border: 2px dashed #1d4ed8; padding: 10px 20px; border-radius: 8px;">
+          ${otp}
+        </span>
+      </div>
+      
+      <p style="font-size: 16px; color: #555;">
+        This code will <strong>expire in 5 minutes</strong>. Please keep it confidential to protect your account.
+      </p>
+      
+      <p style="font-size: 16px; color: #555;">
+       If you did not request for this OTP, please contact our support team at <a style=>hr@babde.tech</a> immediately.
+      </p>
+      
+      <br>
+      <p style="font-size: 16px; color: #555;">
+        Warm regards,<br><strong>GreatHire Support Team</strong>
+      </p>
+      
+      <hr style="margin: 20px 0; border: none; border-top: 1px solid #eaeaea;" />
+      
+      <p style="font-size: 14px; color: #999; text-align: center;">
+        © ${new Date().getFullYear()} GreatHire. All rights reserved.
+      </p>
+    </div>
+  `,
+});
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent successfully. It will expire in 5 minutes.",
+    });
+  } catch (err) {
+    console.error("Send OTP Error:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+// Step 2: Verify OTP
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
+
+    let user =
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
+
+    if (!user || !user.emailId.otp) {
+      return res.status(400).json({ success: false, message: "Invalid request" });
+    }
+
+    if (user.emailId.otp !== otp || Date.now() > user.emailId.otpExpiry) {
+      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+    }
+
+
+    // Clear OTP
+    user.emailId.otp = null;
+    user.emailId.otpExpiry = null;
+    await user.save();
+
+
+
+    // Generate JWT
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        success: true,
+        message: `Welcome ${user.fullname}`,
+        user: {
+          _id: user._id,
+          fullname: user.fullname,
+          emailId: user.emailId,
+          role: user.role,
+        },
+      });
+  } catch (err) {
+    console.error("Verify OTP Error:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 export const updateUserLanguages = async (req, res) => {
   const { languages } = req.body;
 
