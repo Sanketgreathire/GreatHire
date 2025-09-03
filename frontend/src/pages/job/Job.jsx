@@ -129,7 +129,7 @@ const Job = ({ job }) => {
 
         {/* Urgent Hiring Label */}
         {job?.jobDetails?.urgentHiring === "Yes" && (
-          <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold dark:text-gray-800 border-white ">
+          <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white">
             Urgent Hiring
           </p>
         )}

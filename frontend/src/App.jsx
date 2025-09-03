@@ -6,6 +6,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
 
+
 import JobSeekerSignup from "./components/auth/user/Signup"; 
 
 // // Auth components
@@ -129,7 +130,9 @@ const appRouter = createBrowserRouter([
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
+  
       { index: true, element: <RecruiterHome /> },
+      
     ]
   },
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },

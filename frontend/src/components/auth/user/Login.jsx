@@ -840,12 +840,20 @@ const Login = () => {
         );
 
         if (response?.data?.success) {
-          toast.success(response.data.message);
-          dispatch(setUser(response.data.user));
-          navigate("/profile");
-        } else {
-          toast.error(response.data.message);
-        }
+  toast.success(response.data.message);
+  dispatch(setUser(response.data.user));
+
+  // role check karke navigate
+  if (response.data.user.role === "candidate") {
+    navigate("/profile");
+  } else if (response.data.user.role === "recruiter") {
+    navigate("/dashboard"); // recruiter ke liye jo page banaya hai
+  } else {
+    navigate("/"); // fallback
+  }
+}
+
+
       }
     } catch (err) {
       console.error("Error in login:", err);
@@ -886,7 +894,7 @@ const Login = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-gray-700 font-semibold mb-1"
+                  className="block text-gray-700 font-semibold mb-1 "
                 >
                   Email
                 </label>
@@ -897,7 +905,7 @@ const Login = () => {
                   placeholder="mail@domain.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors dark:text-black"
                   required
                 />
               </div>
@@ -906,7 +914,7 @@ const Login = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-gray-700 font-semibold mb-1"
+                  className="block text-gray-700 font-semibold mb-1 "
                 >
                   Password
                 </label>
@@ -917,7 +925,7 @@ const Login = () => {
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors dark:text-black"
                   required
                 />
               </div>
