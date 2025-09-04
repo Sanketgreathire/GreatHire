@@ -15,7 +15,7 @@ import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
-
+import { useMessages } from "@/context/MessageContext";
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -118,7 +118,7 @@ const Navbar = () => {
     }
   };
 
-    const handleSignupOption = (type) => {
+  const handleSignupOption = (type) => {
     navigate(
       type === "job" ? navigate("/signup") : navigate("/recruiter/signup")
     );
@@ -156,69 +156,103 @@ const Navbar = () => {
     // { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
   ];
 
+  const MessageButton = () => {
+    const { conversations } = useMessages();
+    const [totalUnread, setTotalUnread] = useState(0);
+
+    useEffect(() => {
+      const unreadCount = conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
+      setTotalUnread(unreadCount);
+    }, [conversations]);
+
+    return (
+      <Link
+        to="/messages"
+        className="relative p-2 hover:bg-gray-100 rounded-md transition-colors"
+        title="Messages"
+      >
+        <div className="relative">
+          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+          </svg>
+          {totalUnread > 0 && (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold">
+              {totalUnread > 99 ? '99+' : totalUnread}
+            </div>
+          )}
+        </div>
+      </Link>
+    );
+  };
+
+  const MobileMessageButton = () => {
+    const { conversations } = useMessages();
+    const [totalUnread, setTotalUnread] = useState(0);
+
+    useEffect(() => {
+      const unreadCount = conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
+      setTotalUnread(unreadCount);
+    }, [conversations]);
+
+    return (
+      <Link
+        to="/messages"
+        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        <div className="relative">
+          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+          </svg>
+          {totalUnread > 0 && (
+            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold">
+              {totalUnread > 99 ? '99+' : totalUnread}
+            </div>
+          )}
+        </div>
+        <span className="text-gray-700">Messages</span>
+      </Link>
+    );
+  };
+
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30">
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4">
           {/* Logo */}
-          <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
-            onClick={() => {
-                {
-                  user
-                    ? user?.role === "student"
-                      ? navigate("/")
-                      : navigate("/recruiter/dashboard/home")
-                    : navigate("/");
-                }
-              }}/>
+          <div className="flex items-center cursor-pointer" onClick={() => {
+            user
+              ? user?.role === "student"
+                ? navigate("/")
+                : navigate("/recruiter/dashboard/home")
+              : navigate("/");
+          }}>
+            <img 
+              src={GreatHire} 
+              alt="GreatHire Logo" 
+              className="w-[140px] h-auto"
+            />
+          </div>
           
-          {/* Mobile Notifications - show only on mobile when user is logged in */}
+          {/* Mobile Notifications */}
           <div className="lg:hidden">
             {user && <NotificationDropdown />}
           </div>
-          <div
-            to={
-              user
-              ? user.role === "student"
-              ? "/"
-              : "/recruiter/dashboard/home"
-              : "/"
-            }
-            className={`flex items-center w-full ${
-              user && user.role === "recruiter" && "justify-center"
-              } 
-              lg:block lg:w-auto lg:justify-normal lg:items-start 
-              text-2xl font-bold relative`}
-          >
-            <span
-              onClick={() => {
-                {
-                  user
-                  ? user?.role === "student"
-                  ? navigate("/")
-                  : navigate("/recruiter/dashboard/home")
-                  : navigate("/");
-                }
-              }}
-            >
-             
-            </span>
-          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1">
+          <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
             {/* Left side navigation */}
             <div className="flex items-center gap-6">
-              <ul className="flex font-bold items-center gap-5">
+              <ul className="flex items-center gap-6">
                 {primaryNavLinks.map(({ to, label }) => (
                   <li key={to}>
                     <Link
                       to={to}
-                      className={
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                         location.pathname === to
-                          ? "text-blue-700 underline font-bold font-[Oswald]"
-                          : "hover:text-blue-700 transition-colors"
-                      }
+                          ? "text-blue-600 bg-blue-50"
+                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                      }`}
                     >
                       {label}
                     </Link>
@@ -228,19 +262,19 @@ const Navbar = () => {
             </div>
 
             {/* Right side navigation and user section */}
-            <div className="flex items-center gap-6 justify-end">
+            <div className="flex items-center gap-4 justify-end">
               {/* Right side navigation links */}
-              <div className="flex items-center gap-5">
-                <ul className="flex font-bold items-center gap-5">
+              <div className="flex items-center gap-4">
+                <ul className="flex items-center gap-4">
                   {rightNavLinks.map(({ to, label }) => (
                     <li key={to}>
                       <Link
                         to={to}
-                        className={
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                           location.pathname === to
-                            ? "text-blue-700 underline font-bold font-[Oswald]"
-                            : "hover:text-blue-700 transition-colors"
-                        }
+                            ? "text-blue-600 bg-blue-50"
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                        }`}
                       >
                         {label}
                       </Link>
@@ -251,13 +285,13 @@ const Navbar = () => {
                   <li ref={moreMenuRef} className="relative">
                     <button
                       onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                      className="hover:text-blue-700 transition-colors flex items-center gap-1"
+                      className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
                       aria-expanded={isMoreMenuOpen}
                       aria-haspopup="true"
                     >
                       Explore
                       <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${
+                        className={`w-4 h-4 transition-transform ${
                           isMoreMenuOpen ? "rotate-180" : ""
                         }`}
                         fill="none"
@@ -273,12 +307,12 @@ const Navbar = () => {
                       </svg>
                     </button>
                     {isMoreMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg border p-1 z-20">
+                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
                         {secondaryNavLinks.map(({ to, label }) => (
                           <Link
                             key={to}
                             to={to}
-                            className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
                             onClick={() => setIsMoreMenuOpen(false)}
                           >
                             {label}
@@ -286,13 +320,13 @@ const Navbar = () => {
                         ))}
                         
                         {/* Policy submenu */}
-                        <div className="border-t mt-2 pt-2">
-                          <div className="px-4 py-1 text-sm font-medium text-gray-500">Policies</div>
+                        <div className="border-t border-gray-100 mt-1 pt-1">
+                          <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Policies</div>
                           {policyLinks.map(({ to, label }) => (
                             <Link
                               key={to}
                               to={to}
-                              className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                              className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-600"
                               onClick={() => setIsMoreMenuOpen(false)}
                             >
                               {label}
@@ -306,23 +340,11 @@ const Navbar = () => {
               </div>
 
               {/* User actions section */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 {user && (
                   <>
                     {/* Messages */}
-                    <Link
-                      to="/messages"
-                      className="relative p-2 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
-                      title="Messages"
-                    >
-                      <div className="relative">
-                        <svg className="w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-                        </svg>
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                    </Link>
+                    <MessageButton />
                     
                     {/* Notifications */}
                     <NotificationDropdown />
@@ -331,10 +353,10 @@ const Navbar = () => {
                     {!isRecruiter && (
                       <Link
                         to="/saved-jobs"
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
                         title="Saved Jobs"
                       >
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                         </svg>
                       </Link>
@@ -346,7 +368,7 @@ const Navbar = () => {
               {!user ? (
                 <Link
                   to="/login"
-                  className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Login
                 </Link>
@@ -354,7 +376,7 @@ const Navbar = () => {
                 <div ref={profileMenuRef} className="relative">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 transition-colors"
                     aria-expanded={isProfileMenuOpen}
                     aria-haspopup="true"
                   >
@@ -364,24 +386,33 @@ const Navbar = () => {
                         "https://github.com/shadcn.png"
                       }
                       alt={`${user.fullname || "User"}'s avatar`}
-                      className="h-10 w-10 rounded-full border object-cover"
+                      className="h-8 w-8 rounded-md border border-gray-300 object-cover"
                     />
-                    <span className="font-bold">{user?.fullname}</span>
+                    <span className="font-medium text-gray-700 text-sm hidden xl:block">{user?.fullname}</span>
+                    <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
                   {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
                       <Link
                         to={isRecruiter ? "/recruiter/profile" : "/profile"}
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
 
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
+                        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                       >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                         Logout
                       </button>
                     </div>
@@ -393,7 +424,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className={`lg:hidden p-2  hover:bg-gray-100  rounded-lg transition-all fixed z-50 right-4 -top-1 `}
+            className="lg:hidden p-2 hover:bg-gray-100 rounded-md transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
@@ -406,20 +437,22 @@ const Navbar = () => {
                     "https://github.com/shadcn.png"
                   }
                   alt={`${user?.fullname || "User"}'s avatar`}
-                  className=" h-10 w-10 rounded-full border object-cover"
+                  className="h-6 w-6 rounded-md border border-gray-300 object-cover"
                 />
               ) : (
-                <CiMenuBurger size={25} />
+                <CiMenuBurger size={20} className="text-gray-700" />
               )
             ) : (
-              "X"
+              <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             )}
           </button>
         </div>
 
         {/* Mobile Navigation Overlay */}
         <div
-          className={`fixed inset-0 bg-black/50 backdrop-blur-sm  lg:hidden transition-opacity duration-300  ${
+          className={`fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity ${
             isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setIsMenuOpen(false)}
@@ -427,57 +460,44 @@ const Navbar = () => {
           {/* Mobile Menu Panel */}
           <div
             ref={mobileMenuRef}
-            className={`fixed top-0 right-0 h-full w-2/3 sm:w-80 z-20 shadow-lg transform transition-transform duration-300 ease-in-out bg-white  ${
+            className={`fixed top-0 right-0 h-full w-72 z-20 bg-white shadow-lg transform transition-transform ${
               isMenuOpen ? "translate-x-0" : "translate-x-full"
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Mobile User Section */}
-            <div className="p-4 border-b">
-              {
-                user ? (
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={
-                        user?.profile?.profilePhoto ||
-                        "https://github.com/shadcn.png"
-                      }
-                      alt="Profile"
-                      className="h-12 w-12 rounded-full border object-cover"
-                    />
-                    <div>
-                      <p className="font-bold">{user.fullname || "User"}</p>
-                      <p className="text-sm text-gray-500">{user.email}</p>
-                    </div>
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <img
+                    src={
+                      user?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
+                    alt="Profile"
+                    className="h-12 w-12 rounded-md border border-gray-300 object-cover"
+                  />
+                  <div>
+                    <p className="font-semibold text-gray-800">{user.fullname || "User"}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
                   </div>
-                ) : null //remove the login and signup button from here and put that below policy
-              }
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-1">Welcome to GreatHire</h3>
+                  <p className="text-gray-600 text-sm">Sign in to access all features</p>
+                </div>
+              )}
             </div>
 
             {/* Mobile Navigation Links */}
-            <div>
-              <div className="px-4 py-2"></div>
-              {navLinks.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {label}
-                </Link>
-              ))}
-
-              {/* Mobile Policy Section */}
-              <div className="mt-4 border-t">
-                <div className="px-4 py-2">
-                  <p className="text-lg font-bold text-gray-500">Policies</p>
-                </div>
-                {policyLinks.map(({ to, label }) => (
+            <div className="flex-1 overflow-y-auto">
+              <div className="py-2">
+                {navLinks.map(({ to, label }) => (
                   <Link
                     key={to}
                     to={to}
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
+                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {label}
@@ -485,72 +505,78 @@ const Navbar = () => {
                 ))}
               </div>
 
-              {/* Mobile User Actions updated with login and signup button */}
+              {/* Mobile Policy Section */}
+              <div className="border-t border-gray-200">
+                <div className="py-2">
+                  <p className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase">Policies</p>
+                  {policyLinks.map(({ to, label }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      className="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile User Actions */}
               {!user ? (
-                <div className="mt-4 border-t p-4 space-y-3">
+                <div className="border-t border-gray-200 p-4 space-y-3">
                   <Link
                     to="/login"
-                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block font-bold"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup-choice"
-                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block font-bold"
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block"
                   >
-                    Signup
+                    Sign Up
                   </Link>
                 </div>
               ) : (
-                <div className="mt-4 border-t p-4">
+                <div className="border-t border-gray-200 py-2">
                   {/* Messages */}
-                  <Link
-                    to="/messages"
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors group relative"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <div className="relative">
-                      <svg className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-                      </svg>
-                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
-                    </div>
-                    <span className="group-hover:text-blue-600 transition-colors font-bold">Messages</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                  </Link>
+                  <MobileMessageButton />
 
                   {/* Saved Jobs - only for students */}
                   {!isRecruiter && (
                     <Link
                       to="/saved-jobs"
-                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                       </svg>
-                      <span className="font-bold">Saved Jobs</span>
+                      <span className="text-gray-700">Saved Jobs</span>
                     </Link>
                   )}
 
-                  {/* Dynamic profile link based on user role */}
+                  {/* Profile link */}
                   <Link
-                    to={
-                      user.role === "student"
-                        ? "/profile"
-                        : "/recruiter/profile"
-                    }
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
+                    to={user.role === "student" ? "/profile" : "/recruiter/profile"}
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    View Profile
+                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-gray-700">View Profile</span>
                   </Link>
 
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors font-bold"
+                    className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
                   >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
                     Logout
                   </button>
                 </div>
@@ -559,8 +585,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-
-     
     </>
   );
 };

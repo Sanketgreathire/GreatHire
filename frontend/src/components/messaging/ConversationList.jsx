@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMessages } from '../../context/MessageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { Search, MessageCircle, User } from 'lucide-react';
+import LastSeenStatus from '@/components/shared/LastSeenStatus';
 
 const ConversationList = ({ onSelectConversation }) => {
   const { 
@@ -139,11 +140,14 @@ const ConversationList = ({ onSelectConversation }) => {
                       )}
                     </div>
 
-                    {/* Role badge */}
+                    {/* Last seen status */}
                     <div className="mt-1">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                        {conversation.participant?.role || 'User'}
-                      </span>
+                      <LastSeenStatus 
+                        userId={conversation.participant?._id}
+                        showOnlineIndicator={true}
+                        className="text-xs"
+                        isOnlineFromContext={onlineUsers.has(conversation.participant?._id)}
+                      />
                     </div>
                   </div>
                 </div>
