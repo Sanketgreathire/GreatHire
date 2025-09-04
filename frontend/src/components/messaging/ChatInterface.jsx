@@ -19,6 +19,7 @@ import {
   FileText,
   Camera
 } from 'lucide-react';
+import LastSeenStatus from '@/components/shared/LastSeenStatus'; // Make sure to import the LastSeenStatus component
 
 const ChatInterface = () => {
   const { 
@@ -205,10 +206,15 @@ const ChatInterface = () => {
               <h3 className="font-medium text-gray-900">
                 {activeConversation.participant?.fullname || 'Unknown User'}
               </h3>
-              <p className="text-sm text-gray-500">
-                {isOnline ? 'Online' : 'Offline'}
-                {isTyping && ' • typing...'}
-              </p>
+              <LastSeenStatus 
+                userId={activeConversation.participant?._id}
+                showOnlineIndicator={false}
+                className="text-sm"
+                isOnlineFromContext={isOnline}
+              />
+              {isTyping && (
+                <p className="text-xs text-blue-500 animate-pulse">typing...</p>
+              )}
             </div>
           </div>
 

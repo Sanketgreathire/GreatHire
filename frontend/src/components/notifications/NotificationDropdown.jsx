@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, X, Check } from 'lucide-react';
 
 const NotificationDropdown = () => {
@@ -23,6 +24,7 @@ const NotificationDropdown = () => {
   ]);
   const [unreadCount, setUnreadCount] = useState(2);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -165,7 +167,7 @@ const NotificationDropdown = () => {
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  window.location.href = '/notifications';
+                  navigate('/notifications');
                 }}
                 className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium"
               >

@@ -33,6 +33,9 @@ export const MessageProvider = ({ children }) => {
     socketInstance.emit('joinUserRoom', user._id);
     socketInstance.emit('userOnline', user._id);
 
+    // Fetch conversations when user is authenticated
+    fetchConversations();
+
     return () => {
       socketInstance.emit('userOffline', user._id);
       socketInstance.disconnect();
