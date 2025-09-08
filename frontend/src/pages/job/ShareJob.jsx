@@ -6,64 +6,69 @@ import {
   FaTwitter,
   FaLinkedin,
   FaInstagram,
-  //  FaEnvelope,
   FaLink,
 } from "react-icons/fa";
 
 
-
-const ShareCard = ({ urlToShare, onClose }) => {
+const ShareCard = ({ urlToShare, jobTitle, jobLocation,jobSalary,jobDuration,jobType, onClose }) => {
   const encodedURL = encodeURIComponent(urlToShare);
+  const jobMessage = `Check out this job! \n\n📌 ${jobTitle}\n📍 ${jobLocation}\n💰 Salary      : ${jobSalary}\n🕒 Duration : ${jobDuration}\n💼 Type        : ${jobType} \n\n Apply here: ${urlToShare}`; // ✅ Job message string
+
 
   const shareOptions = [
     {
       name: "WhatsApp",
       icon: <FaWhatsapp size={24} className="text-green-500" />,
-      url: `https://wa.me/?text=${encodeURIComponent("Check out this job!\n\n" + "https://" + urlToShare.replace(/^https?:\/\//, ""))}`,
-      // url: `https://wa.me/?text=${encodeURIComponent("Check this out!\nhttps://www.google.com")}`,
-      //url: `https://wa.me/?text=${encodedURL}`,
+      url: `https://wa.me/?text=${encodeURIComponent(jobMessage)}`
     },
     {
       name: "Facebook",
       icon: <FaFacebook size={24} className="text-blue-600" />,
-      //url: `https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      "https://" + urlToShare.replace(/^https?:\/\//, "")
-    )}`,
+      action: () => {
+        // Copy job link
+        navigator.clipboard.writeText(jobMessage);
+        //toast.success("Job link copied! 🚀");
+        alert("Copied job details to clipboard - Now paste it into Facebook chat!")
+
+        // Open Messenger directly
+        window.open("https://www.facebook.com/messages/t/", "_blank");
+      },
     },
     {
       name: "Twitter",
       icon: <FaTwitter size={24} className="text-sky-500" />,
-      //url: `https://twitter.com/intent/tweet?url=${encodedURL}`,
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      "Check out this job! "
-    )}&url=${encodeURIComponent("https://" + urlToShare.replace(/^https?:\/\//, ""))}`,
-  
+      action: () => {
+        navigator.clipboard.writeText(jobMessage);   // Copy full job details
+        alert("Copied job details ✅ Paste it into Twitter DM!");
+        window.open("https://twitter.com/messages", "_blank");    // Open Twitter Direct Messages
+      },
     },
-    // {
-    //   name: "Email",
-    //   icon: <FaEnvelope size={24} className="text-yellow-600" />,
-    //   url: `mailto:?body=${encodedURL}`,
-    // },
     {
       name: "LinkedIn",
       icon: <FaLinkedin size={24} className="text-blue-700" />,
-      //url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedURL}`,
-      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-      "https://" + urlToShare.replace(/^https?:\/\//, "")
-    )}`,
+      action: () => {
+        navigator.clipboard.writeText(jobMessage);
+        //toast.success("Copied! Paste into LinkedIn chat 🚀");
+        alert("Copied job details to clipboard - Now paste it into LinkedIn chat!")
+        window.open("https://www.linkedin.com/messaging/", "_blank");
+      },
     },
     {
       name: "Instagram",
       icon: <FaInstagram size={24} className="text-pink-500" />,
-      url: `https://www.instagram.com/`, // No direct sharing
+      action: () => {
+        navigator.clipboard.writeText(jobMessage);
+        //toast.success("Copied! Paste into LinkedIn chat 🚀");
+        alert("Copied job details to clipboard - Now paste it into Instagram chat!")
+        window.open("https://www.instagram.com/direct/inbox/", "_blank");
+      },
     },
+
   ];
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(urlToShare);
     toast.success("Link copied to clipboard!");
-    //alert("Link copied to clipboard!");
   };
 
   return (
@@ -84,26 +89,42 @@ const ShareCard = ({ urlToShare, onClose }) => {
 
       {/* Grid of Icons */}
       <div className="grid grid-cols-3 gap-4">
-        {shareOptions.map((option, index) => (
-          <a
-            key={index}
-            href={option.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={option.name}
-            onClick={(e) => e.stopPropagation()}
-            className="flex flex-col items-center justify-center hover:opacity-80 transition"
-          >
-            {option.icon}
-          </a>
-        ))}
+        {shareOptions.map((option, index) =>
+          option.url ? (
+            <a
+              key={index}
+              href={option.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={option.name}
+              onClick={(e) => e.stopPropagation()}
+              className="flex flex-col items-center justify-center hover:opacity-80 transition"
+            >
+              {option.icon}
+            </a>
+          ) : (
+            <button
+              key={index}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                option.action();
+              }}
+              title={option.name}
+              className="flex flex-col items-center justify-center hover:opacity-80 transition"
+            >
+              {option.icon}
+            </button>
+          )
+        )}
 
-        {/* Copy Link */}
+        {/* Copy Link Option */}
         <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            copyToClipboard();
+            navigator.clipboard.writeText(urlToShare);
+            toast.success("Link copied to clipboard!");
           }}
           title="Copy Link"
           className="flex flex-col items-center justify-center hover:opacity-80 transition"
@@ -111,6 +132,7 @@ const ShareCard = ({ urlToShare, onClose }) => {
           <FaLink size={24} className="text-gray-600" />
         </button>
       </div>
+
     </div>
   );
 };
