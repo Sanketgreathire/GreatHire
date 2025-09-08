@@ -11,7 +11,9 @@
   import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
   import toast from "react-hot-toast";
   import axios from "axios";
-  
+  import ShareCard from "./ShareJob";
+  import { FiShare2 } from "react-icons/fi";
+
   const JobsForYou = () => {
     // Access functions from context
     const { jobs, selectedJob, setSelectedJob, toggleBookmarkStatus } =
@@ -22,7 +24,14 @@
   
     // Added for small screen job details
     const [showJobDetails, setShowJobDetails] = useState(false);
-  
+
+    const [showShareCard, setShowShareCard] = useState(null); // track jobId
+
+  const handleShareClick = (e, jobId) => {
+  e.stopPropagation();
+  setShowShareCard(prev => (prev === jobId ? null : jobId));
+};
+
     // Ref to track the scrollable container
     const jobContainerRef = useRef(null);
   
@@ -135,6 +144,26 @@
                     Urgent Hiring
                   </p>
                 )}
+                {/* Share button */}
+                <div className="flex items-center gap-3 ml-auto">
+                <div className="relative">
+                  <FiShare2 size={20}
+                  className="cursor-pointer text-gray-600 hover:text-blue-600"
+                  onClick={(e) => handleShareClick(e, job._id)}
+                  />
+                  {showShareCard === job._id && (
+                    <ShareCard
+                    urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                    jobTitle={job?.jobDetails?.title}
+                    jobLocation={job?.jobDetails?.location}
+                    jobSalary={job?.jobDetails?.salary}
+                    jobType={job?.jobDetails?.jobType}
+                    jobDuration={job?.jobDetails?.duration}
+                    onClose={() => setShowShareCard(null)}
+                    />
+                    )}
+                </div>
+              </div>
               </div>
               <h3 className="text-lg font-semibold">{job.jobDetails?.title}</h3>
               <p className="text-sm text-gray-600">

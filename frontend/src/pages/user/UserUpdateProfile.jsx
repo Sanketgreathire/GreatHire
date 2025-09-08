@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import JobCategory from "@/components/ui/JobCategory";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 // Import country, state, city
-import { Country, State, City } from "country-state-city";
+import { Country, State, City } from "country-state-city";  //run in cmd 'npm i country-state-city'
 
 // Import icons for UI enhancement
 import { Loader2, Pencil } from "lucide-react";
@@ -445,11 +445,22 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         }
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+  console.error("Profile Update Error:", err);
+
+  // Show more meaningful message
+  if (err.response) {
+    // Backend responded with an error
+    toast.error(err.response.data?.message || `Error: ${err.response.status} ${err.response.statusText}`);
+  } else if (err.request) {
+    // Request was made but no response
+    toast.error("No response from server. Please check your connection.");
+  } else {
+    // Something else happened
+    toast.error(`Unexpected error: ${err.message}`);
+  }
+} finally {
+  setLoading(false);
+}
   };
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) =>
@@ -577,7 +588,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   <Input
                     id="phoneNumber"
                     name="phoneNumber"
-                    value={input.phoneNumber}
+                    value={user?.phoneNumber?.number || ""}
                     onChange={handleChange}
                     className="flex-1"
                     placeholder="Phone Number"

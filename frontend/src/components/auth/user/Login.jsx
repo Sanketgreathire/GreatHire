@@ -8,7 +8,12 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
-const Login = () => {
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = (seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+};
+const Login = ({ role = "user" }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,6 +33,7 @@ const Login = () => {
 
   // State to toggle the visibility of the OTP input field
   const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpSent, setOtpSent] = useState(false); 
 
   // State for loading
   const [loading, setLoading] = useState(false);
@@ -58,9 +64,48 @@ const Login = () => {
   };
 
   // Handler to show the OTP input field
-  const handleOtpClick = () => {
-    setShowOtpInput(!showOtpInput);
-  };
+// State
+const [resendTimer, setResendTimer] = useState(0);
+
+// Toggle mode
+const handleOtpClick = () => {
+  setShowOtpInput((prev) => !prev);
+};
+
+// Send OTP when user clicks "Send OTP"
+const handleSendOtp = async () => {
+  if (!formData.email) {
+    toast.error("Please enter your email first");
+    return;
+  }
+
+  try {
+    const res = await axios.post(`${USER_API_END_POINT}/send-otp`, { email: formData.email });
+    if (res.data.success) {
+      toast.success("OTP sent to email");
+
+      // Start timer
+      setResendTimer(300);
+      const interval = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      toast.error(res.data.message);
+    }
+  } catch (err) {
+    toast.error("Failed to send OTP");
+  }
+};
+
+
+
+
 
   // Handle the form submission
   const handleSubmit = async (e) => {
@@ -72,7 +117,7 @@ const Login = () => {
         // Handle OTP login
         // Make an API call to login with OTP and email
         const response = await axios.post(
-          `${USER_API_END_POINT}/otp-login`,
+          `${USER_API_END_POINT}/verify-otp`,
           {
             email: formData.email,
             otp: otpData.otp,
@@ -94,11 +139,23 @@ const Login = () => {
           }
           
           // Redirect based on first login status
-          if (response.data.user.isFirstLogin) {
-            navigate("/profile");
-          } else {
-            navigate("/");
-          }
+          if (response.data.user.role === "student" || response.data.user.role === "candidate") {
+              // normal users
+              if (response.data.user.isFirstLogin) {
+                navigate("/profile");
+              } else {
+                navigate("/");
+              }
+            } else if (response.data.user.role === "recruiter") {
+              // recruiters
+              navigate("/recruiter/dashboard");
+            } else if (response.data.user.role === "admin") {
+              // admins (if you have admin dashboard)
+              navigate("/admin/dashboard");
+            } else {
+              // default fallback
+              navigate("/");
+            }
         } else {
           toast.error(response.data.message);
         }
@@ -166,90 +223,93 @@ const Login = () => {
         <form
           className="space-y-4 mt-6 w-full max-w-md"
           onSubmit={handleSubmit}
-        >
-          {!showOtpInput ? (
-            <>
-              {/* Email Input */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-gray-700 font-semibold mb-1"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="mail@domain.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
-                  required
-                />
-              </div>
+        >{!showOtpInput ? (
+                    <>
+                      {/* Email Input */}
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="mail@domain.com"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                          required
+                        />
+                      </div>
 
-              {/* Password Input */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-gray-700 font-semibold mb-1"
-                >
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
-                  required
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-gray-700 font-semibold mb-1"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="mail@domain.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
-                  required
-                />
-              </div>
-              {/* OTP Input */}
-              <div>
-                <label
-                  htmlFor="otp"
-                  className="block text-gray-700 font-semibold mb-1"
-                >
-                  Enter OTP
-                </label>
-                <input
-                  id="otp"
-                  type="text"
-                  name="otp"
-                  placeholder="Enter OTP"
-                  value={otpData.otp}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
-                  required
-                />
-              </div>
-            </>
-          )}
+                      {/* Password Input */}
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1">
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          placeholder="Password"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                          required
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Email Input */}
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="mail@domain.com"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                          required
+                        />
+                      </div>
+
+                      {/* OTP Input */}
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1">
+                          Enter OTP
+                        </label>
+                        <input
+                          type="text"
+                          name="otp"
+                          value={otpData.otp}
+                          onChange={handleChange}
+                          placeholder="Enter OTP"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors"
+                          required
+                        />
+                      </div>
+
+                      {/* Resend OTP / Timer */}
+                      <div className="mt-2 text-center">
+                        {resendTimer > 0 ? (
+                          <p className="text-gray-500 text-sm">
+                            {otpSent ? "Resend OTP available in" : "Send OTP available in"} {formatTime(resendTimer)}
+                          </p>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={handleSendOtp}
+                            className="text-blue-600 text-sm font-semibold hover:underline"
+                          >
+                            {otpSent ? "Resend OTP" : "Send OTP"}
+                          </button>
+                        )}
+                      </div>
+
+                    </>
+                  )}
 
           {/* Remember Me Checkbox */}
           <div className="flex items-center justify-between">
@@ -283,11 +343,12 @@ const Login = () => {
         </form>
 
         <p
-          className="mt-4 text-blue-600 text-sm cursor-pointer hover:underline"
-          onClick={handleOtpClick}
-        >
-          {showOtpInput ? "Login with Password?" : "Login with OTP?"}
-        </p>
+            className="mt-4 text-blue-600 text-sm cursor-pointer hover:underline"
+            onClick={handleOtpClick}
+          >
+            {showOtpInput ? "Login with Password?" : "Login with OTP?"}
+          </p>
+
       </div>
       <Footer />
     </div>

@@ -59,7 +59,38 @@ import VerifyNumber from "@/components/VerifyNumber";
 import { FiStar } from "react-icons/fi";
 
 // Import delete confirmation modal for user account or data deletion
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";  
+
+
+const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Resume size should be less than 10 MB.");
+      return;
+    }
+    const formData = new FormData();
+  formData.append("resume", file);
+
+  try {
+    const response = await axios.put(
+      `${USER_API_END_POINT}/profile/update`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      }
+    );
+
+    if (response.data.success) {
+      dispatch(setUser(response.data.user)); 
+      toast.success("Resume uploaded successfully!");
+    }
+  } catch (err) {
+    console.error("Resume Upload Error:", err);
+    toast.error(err.response?.data?.message || "Failed to upload resume.");
+  }
+}};
 
 import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
@@ -516,16 +547,28 @@ const UserProfile = () => {
                   >
                     View Resume
                   </a>
-                ) : (
+                  ) : (
                   <span className="text-gray-600">
                     No resume uploaded.{" "}
-                    <a href="/upload" className="text-blue-600 underline">
+                    {/* Trigger file input instead of navigation */}
+                    <label
+                      htmlFor="resumeUpload"
+                      className="text-blue-600 underline cursor-pointer"
+                    >
                       Upload now
-                    </a>
+                    </label>
+                    <input
+                      type="file"
+                      id="resumeUpload"
+                      accept=".pdf, .doc, .docx"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
                   </span>
                 )}
               </div>
             </div>
+
 
             {/* Delete Account Button */}
             {/* <div className="flex justify-center mt-8">

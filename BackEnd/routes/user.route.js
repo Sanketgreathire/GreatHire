@@ -9,7 +9,8 @@ import {
   forgotPassword,
   resetPassword,
   deleteAccount,
-  otpLogin,
+  sendOtp,  
+  verifyOtp 
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -23,13 +24,12 @@ const router = express.Router();
 
 router.route("/register").post(validateUser, updateLastActive, register);
 router.route("/login").post(validateLogin, updateLastActive, login);
-router.route("/otp-login").post(validateLogin, updateLastActive, otpLogin);
 router.route("/googleLogin").post(updateLastActive, googleLogin);
 
 
 
 router.route("/profile/update").put(
-  isAuthenticated,
+  isAuthenticated,    
   updateLastActive,
   (req, res, next) => {
     singleUpload(req, res, (err) => {
@@ -47,8 +47,15 @@ router.route("/sendMessage").post(validateContactUsForm, updateLastActive, sendM
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(updateLastActive, resetPassword);
 
-router.route("/logout").get(isAuthenticated, updateLastActive, logout);
+router.route("/logout").get(updateLastActive, logout);
+
 router.route("/delete").delete(isAuthenticated, updateLastActive, deleteAccount);
+
+
+// add after existing login route
+router.route("/send-otp").post(sendOtp);
+router.route("/verify-otp").post(verifyOtp);
+
 
 
 

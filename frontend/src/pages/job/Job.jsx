@@ -145,6 +145,11 @@ const Job = ({ job }) => {
             {showShareCard && (
               <ShareCard
                 urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                jobTitle={job?.jobDetails?.title}
+                jobLocation={job?.jobDetails?.location}
+                jobSalary={job?.jobDetails?.salary}
+                jobType={job?.jobDetails?.jobType}
+                jobDuration={job?.jobDetails?.duration}
                 onClose={() => setShowShareCard(false)}
               />
             )}
