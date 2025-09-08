@@ -101,3 +101,23 @@
 .paused {
   animation-play-state: paused !important;
 }
+
+/* Scoped custom scrollbar only for FilterCard */
+.filter-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-thumb {
+  background: #93c5fd; /* blue-300 */
+  border-radius: 9999px;
+}
+
+.filter-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+}
+
+.filter-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #93c5fd #f1f5f9;
+  scrollbar-gutter: stable;
+}

@@ -13,7 +13,19 @@ const recruiterSchema = new mongoose.Schema(
         unique: true,
         match: [/.+@.+\..+/, "Please enter a valid email address"],
       },
-      isVerified: { type: Boolean, default: false },
+      isVerified: { 
+        type: Boolean, 
+        default: false 
+      },
+      otp: { 
+        type: String, 
+        default: null 
+      },       
+      otpExpiry: { 
+        type: Date, 
+        default: null 
+      }, 
+
     },
     phoneNumber: {
       number: {

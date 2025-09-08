@@ -138,11 +138,13 @@ const CreateCompany = () => {
         toast.success("GreatHire will active company soon!");
         navigate("/recruiter/dashboard/home");
       } else {
-        toast.error("Error creating company");
+        toast.error(res.data.message||"Error creating company");
       }
     } catch (err) {
       console.log(`error in submitting company details ${err}`);
-      toast.error("Error creating company");
+      toast.error(
+      err?.response?.data?.message || "Something went wrong. Please try again."
+    );
     } finally {
       setLoading(false);
     }
