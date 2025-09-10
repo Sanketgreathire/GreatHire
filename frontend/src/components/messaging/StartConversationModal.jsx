@@ -73,10 +73,10 @@ const StartConversationModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 dark:bg-gray-400">
+      <div className="bg-white rounded-lg w-full max-w-md mx-4  ">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 ">
           <h3 className="text-lg font-semibold text-gray-900">Start New Conversation</h3>
           <button
             onClick={onClose}
@@ -87,8 +87,8 @@ const StartConversationModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Quick Actions */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="mb-3">
+        <div className="p-4 border-b border-gray-200 ">
+          <div className="mb-3 ">
             <button
               onClick={() => window.open('https://www.meta.com/help/', '_blank')}
               className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
@@ -119,10 +119,10 @@ const StartConversationModal = ({ isOpen, onClose }) => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="text-center p-8 text-gray-500">
-              <User className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+            <div className="text-center p-8 text-gray-500 ">
+              <User className="w-12 h-12 mx-auto mb-2 text-gray-300 " />
               <p>No {currentUser?.role === 'student' ? 'recruiters' : 'job seekers'} found</p>
-              <p className="text-xs mt-1 text-gray-400">
+              <p className="text-xs mt-1 text-gray-400 ">
                 {currentUser?.role === 'student' 
                   ? 'You can only message recruiters' 
                   : 'You can only message job seekers'

@@ -34,11 +34,13 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPolicyMenuOpen, setIsPolicyMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   // Refs for click outside detection
   const mobileMenuRef = useRef(null);
   const policyMenuRef = useRef(null);
   const profileMenuRef = useRef(null);
+  const moreMenuRef = useRef(null);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -71,6 +73,12 @@ const Navbar = () => {
         !profileMenuRef.current.contains(event.target)
       ) {
         setIsProfileMenuOpen(false);
+      }
+      if (
+        moreMenuRef.current &&
+        !moreMenuRef.current.contains(event.target)
+      ) {
+        setIsMoreMenuOpen(false);
       }
     };
 
@@ -123,20 +131,29 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
-    ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
-
-    // Add Dashboard for recruiters, Jobs for others
+  // Primary navigation links (always visible)
+  const primaryNavLinks = [
     ...(isRecruiter
       ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
-      : [{ to: "/jobs", label: "Jobs" }]),
+      : []),
+  ];
 
-    // Common links
+  // Right side navigation links
+  const rightNavLinks = [
+    ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
+    ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+  ];
+
+  // Secondary navigation links (in dropdown)
+  const secondaryNavLinks = [
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/blogs", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
   ];
+
+  // All nav links for mobile menu
+  const navLinks = [...primaryNavLinks, ...secondaryNavLinks];
 
   const policyLinks = [
     { to: "/policy/privacy-policy", label: "Privacy Policy" },
@@ -209,90 +226,153 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:items-center lg:gap-12">
-            <ul className="flex font-medium items-center gap-5">
-              {navLinks.map(({ to, label }) => (
-                <li key={to}>
-                  <Link
-                    to={to}
-                    className={
-                      location.pathname === to
-                        ? "text-blue-700 underline font-bold font-[Oswald]"
-                        : "hover:text-blue-700 transition-colors"
-                    }
-      
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
+          <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1">
+            {/* Left side navigation */}
+            <div className="flex items-center gap-6">
+              <ul className="flex font-bold items-center gap-5">
+                {primaryNavLinks.map(({ to, label }) => (
+                  <li key={to}>
+                    <Link
+                      to={to}
+                      className={
+                        location.pathname === to
+                          ? "text-blue-700 underline font-bold font-[Oswald]"
+                          : "hover:text-blue-700 transition-colors"
+                      }
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-              {/* Policy Menu */}
-              <li ref={policyMenuRef} className="relative">
-                <button
-                  onClick={() => setIsPolicyMenuOpen(!isPolicyMenuOpen)}
-                  className="hover:text-blue-700 transition-colors flex items-center gap-1"
-                  aria-expanded={isPolicyMenuOpen}
-                  aria-haspopup="true"
-                >
-                  Policies
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isPolicyMenuOpen ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isPolicyMenuOpen && (
-                  <div className="absolute left-0 mt-2 w-60 bg-white rounded-xl shadow-lg border p-1 z-20">
-                    {policyLinks.map(({ to, label }) => (
+            {/* Right side navigation and user section */}
+            <div className="flex items-center gap-6 justify-end">
+              {/* Right side navigation links */}
+              <div className="flex items-center gap-5">
+                <ul className="flex font-bold items-center gap-5">
+                  {rightNavLinks.map(({ to, label }) => (
+                    <li key={to}>
                       <Link
-                        key={to}
                         to={to}
-                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800 "
-                        onClick={() => setIsPolicyMenuOpen(false)}
+                        className={
+                          location.pathname === to
+                            ? "text-blue-700 underline font-bold font-[Oswald]"
+                            : "hover:text-blue-700 transition-colors"
+                        }
                       >
                         {label}
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </li>
-            </ul>
+                    </li>
+                  ))}
 
-            {/* Desktop User Section */}
-            <div className="flex items-center gap-4">
+                  {/* Explore Menu Dropdown */}
+                  <li ref={moreMenuRef} className="relative">
+                    <button
+                      onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                      className="hover:text-blue-700 transition-colors flex items-center gap-1"
+                      aria-expanded={isMoreMenuOpen}
+                      aria-haspopup="true"
+                    >
+                      Explore
+                      <svg
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          isMoreMenuOpen ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    {isMoreMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:text-gray-800 dark:absolute right-0 mt-2 w-60 bg-gray/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1">
+                        {secondaryNavLinks.map(({ to, label }) => (
+                          <Link
+                            key={to}
+                            to={to}
+                            className="block px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                            onClick={() => setIsMoreMenuOpen(false)}
+                          >
+                            {label}
+                          </Link>
+                        ))}
+                        
+                        {/* Policy submenu */}
+                        <div className="border-t mt-2 pt-2">
+                          <div className="px-4 py-1 text-sm font-medium text-gray-500">Policies</div>
+                          {policyLinks.map(({ to, label }) => (
+                            <Link
+                              key={to}
+                              to={to}
+                              className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                              onClick={() => setIsMoreMenuOpen(false)}
+                            >
+                              {label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                </ul>
+              </div>
+
+              {/* User actions section */}
+              <div className="flex items-center gap-4">
                <ThemeToggle />
-              {/* Notifications - only show for logged in users */}
-              {user && <NotificationDropdown />}
-              
+                {user && (
+                  <>
+                    {/* Messages */}
+                    <Link
+                      to="/messages"
+                      className="relative p-2 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+                      title="Messages"
+                    >
+                      <div className="relative">
+                        <svg className="w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                        </svg>
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                    </Link>
+                    
+                    {/* Notifications */}
+                    <NotificationDropdown />
+                    
+                    {/* Saved Jobs - only for students */}
+                    {!isRecruiter && (
+                      <Link
+                        to="/saved-jobs"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        title="Saved Jobs"
+                      >
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                        </svg>
+                      </Link>
+                    )}
+                  </>
+                )}
+              </div>
               
               {!user ? (
-                <>
-                  <Link
-                    to="/login"
-                    className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-                  >
-                    Login
-                  </Link>
-                  {/* <Link
-                    to="/signup-choice"
-                    className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-                  >
-                    Signup
-                  </Link> */}
-                </>
+                <Link
+                  to="/login"
+                  className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+                >
+                  Login
+                </Link>
               ) : (
-                <div ref={profileMenuRef} className="relative ">
+                <div ref={profileMenuRef} className="relative">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -307,7 +387,7 @@ const Navbar = () => {
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
-                    <span className="font-medium">{user?.fullname}</span>
+                    <span className="font-bold">{user?.fullname}</span>
                   </button>
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
@@ -398,7 +478,7 @@ const Navbar = () => {
                       className="h-12 w-12 rounded-full border object-cover"
                     />
                     <div>
-                      <p className="font-medium">{user.fullname || "User"}</p>
+                      <p className="font-bold">{user.fullname || "User"}</p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
                   </div>
@@ -413,7 +493,7 @@ const Navbar = () => {
                 <Link
                   key={to}
                   to={to}
-                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {label}
@@ -442,14 +522,14 @@ const Navbar = () => {
                 <div className="mt-4 border-t p-4 space-y-3">
                   <Link
                     to="/login"
-                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
+                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup-choice"
-                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
+                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block font-bold"
                   >
                     Signup
                   </Link>
@@ -459,6 +539,36 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="mt-4 border-t p-4">
+                  {/* Messages */}
+                  <Link
+                    to="/messages"
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors group relative"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="relative">
+                      <svg className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                      </svg>
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <span className="group-hover:text-blue-600 transition-colors font-bold">Messages</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  </Link>
+
+                  {/* Saved Jobs - only for students */}
+                  {!isRecruiter && (
+                    <Link
+                      to="/saved-jobs"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                      <span className="font-bold">Saved Jobs</span>
+                    </Link>
+                  )}
+
                   {/* Dynamic profile link based on user role */}
                   <Link
                     to={
@@ -466,26 +576,15 @@ const Navbar = () => {
                         ? "/profile"
                         : "/recruiter/profile"
                     }
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     View Profile
                   </Link>
 
-                  {/* Show "My Jobs" only if user role is "student" */}
-                  {user.role === "student" && (
-                    <Link
-                      to="/saved-jobs"
-                      className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Saved Jobs
-                    </Link>
-                  )}
-
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors font-bold"
                   >
                     Logout
                   </button>

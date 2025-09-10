@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        // sans: ["Inter", "sans-serif"],
+            geometric: ["Poppins", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

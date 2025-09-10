@@ -32,38 +32,38 @@ const Signup = () => {
   };
 
   // Handle account creation
-  const handleCreateAccount = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // API call to register the user directly
-      const response = await axios.post(
-       ` ${USER_API_END_POINT}/register`,
-        { ...formData },
-        { withCredentials: true }
-      );
+ const handleCreateAccount = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const response = await axios.post(
+      `${USER_API_END_POINT}/register`,
+      { ...formData },
+      { withCredentials: true }
+    );
 
-      if (response?.data?.success) {
-        toast.success(response.data.message);
-        // Clear form data after successful registration
-        setFormData({
-          fullname: "",
-          email: "",
-          phoneNumber: "",
-          password: "",
-        });
-        dispatch(setUser(response.data.user));
-        navigate("/profile");
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (err) {
-      console.error("Error in signup:", err);
-      toast.error(err?.response?.data?.message || "Signup failed");
-    } finally {
-      setLoading(false);
+    if (response?.data?.success) {
+      toast.success("Account created successfully ✅");
+      setFormData({
+        fullname: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+      });
+      dispatch(setUser(response.data.user));
+      navigate("/profile");
+    } else {
+      toast.error(response?.data?.message || "Signup failed ❌");
     }
-  };
+  } catch (err) {
+    console.error("Error in signup:", err);
+    // Show only backend / network error
+    toast.error(err?.response?.data?.message || "Network error, please try again ❌");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <>
