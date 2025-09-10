@@ -282,3 +282,132 @@ const JobDetailsProvider = ({ children }) => {
 export default JobDetailsProvider;
 
 
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+
+// const JobDescription = () => {
+//   const { id } = useParams();
+//   const [job, setJob] = useState(null);
+//   const [error, setError] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [applied, setApplied] = useState(false);
+
+//   useEffect(() => {
+//     const fetchJob = async () => {
+//       try {
+//         const res = await fetch(`${JOB_API_END_POINT}/get/${id}`, {
+//           credentials: "include",
+//         });
+//         const data = await res.json();
+//         console.log("Backend job response:", data);
+
+//         if (!data.success || !data.job) {
+//           setError("Job not found");
+//           return;
+//         }
+
+//         // Flatten the response for easy access
+//         setJob({
+//           ...data.job.jobDetails,
+//           companyName: data.job.company?.companyName,
+//           createdBy: data.job.created_by,
+//           _id: data.job._id,
+//           createdAt: data.job.createdAt,
+//         });
+
+//         if (data.applied) {
+//           setApplied(true);
+//         }
+//       } catch (err) {
+//         console.error("Error fetching job:", err);
+//         setError("Network error while fetching job details");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (id) fetchJob();
+//   }, [id]);
+
+//   if (loading) return <p>Loading job details...</p>;
+//   if (error) return <p className="text-red-500">{error}</p>;
+//   if (!job) return <p>No job details found.</p>;
+
+//   return (
+//     <div className="p-6">
+//       {/* Job Title and Overview */}
+//       <div className="border-b pb-6 mb-8">
+//         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+//           {job?.title || "Job Title Not Available"}
+//         </h1>
+//         <div className="mt-2 space-y-1">
+//           <h5 className="text-md text-gray-600 dark:text-gray-100">
+//             {job?.companyName || "Company not specified"}
+//           </h5>
+//           <h6 className="text-sm text-gray-500 dark:text-gray-100">
+//             {job?.location || "Location Not Available"}
+//           </h6>
+//           <h6 className="text-lg text-gray-700 font-medium dark:text-gray-100">
+//             {job?.salary || "Salary Not Specified"}
+//           </h6>
+//         </div>
+//       </div>
+
+//       {/* Job Description */}
+//       <div className="mb-6">
+//         <h2 className="text-2xl font-bold text-gray-800 mb-2">Job Description</h2>
+//         <p className="text-gray-600">
+//           {job?.details || "No description provided."}
+//         </p>
+//       </div>
+
+//       {/* Benefits */}
+//       <div className="mb-6">
+//         <h3 className="text-xl font-bold text-gray-800 mb-2">Benefits</h3>
+//         {job?.benefits && job.benefits.length > 0 ? (
+//           <ul className="list-disc pl-5 text-gray-600">
+//             {job.benefits.map((benefit, index) => (
+//               <li key={index}>{benefit}</li>
+//             ))}
+//           </ul>
+//         ) : (
+//           <p className="text-gray-600">Not specified</p>
+//         )}
+//       </div>
+
+//       {/* Requirements */}
+//       <div>
+//         <h3 className="text-xl font-bold text-gray-800 mb-2">Requirements</h3>
+//         <p className="text-gray-600">
+//           {job?.qualifications?.length > 0
+//             ? job.qualifications.join(", ")
+//             : "Not specified"}
+//         </p>
+//         <p className="text-gray-600">
+//           {job?.skills?.length > 0 ? job.skills.join(", ") : "Skills not specified"}
+//         </p>
+//       </div>
+
+//       {/* Apply Status */}
+//       <div className="mt-6">
+//         {applied ? (
+//           <button className="px-4 py-2 bg-gray-400 text-white rounded" disabled>
+//             Already Applied
+//           </button>
+//         ) : (
+//           <button className="px-4 py-2 bg-blue-600 text-white rounded">
+//             Apply Now
+//           </button>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default JobDescription;

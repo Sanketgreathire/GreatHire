@@ -35,6 +35,7 @@ const AdminLayout = () => {
         <div className="flex-1 mt-16 ml-16 md:ml-52 bg-gray-100 min-h-screen">
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
+              {/* <Route path="/description/:id" element={<Description />} /> */}
               <Route path="/" element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<Users />} />

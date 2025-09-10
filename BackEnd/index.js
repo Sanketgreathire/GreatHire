@@ -1,3 +1,4 @@
+
 // import dotenv from "dotenv";
 // dotenv.config();
 // import cookieParser from "cookie-parser";
@@ -12,14 +13,13 @@
 // import path from "path";
 // import { fileURLToPath } from "url";
 // import helmet from "helmet";
+// import jobRoutes from "./routes/job.route.js";
 
 
-
-// //  Import Routes
+// // Import Routes
 // import applicationRoute from "./routes/application.route.js";
-
 // import companyRoute from "./routes/company.route.js";
-// import jobRoute from "./routes/job.route.js";
+// // import jobRoute from "./routes/job.route.js";
 // import userRoute from "./routes/user.route.js";
 // import recruiterRoute from "./routes/recruiter.route.js";
 // import digitalmarketerRoute from "./routes/digitalmarketer.route.js";
@@ -35,8 +35,6 @@
 // import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
 // import notificationRoute from "./routes/notification.route.js";
 // import messageRoute from "./routes/message.route.js";
-// import jobRoutes from "./routes/job.route.js";
-
 
 // // Import Models
 // import { JobSubscription } from "./models/jobSubscription.model.js";
@@ -45,27 +43,12 @@
 // import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 // import Notification  from "./models/notification.model.js";
 
-
 // // Import socket utility
 // import { setIO } from "./utils/socket.js";
 // import notificationService from "./utils/notificationService.js";
 
+
 // const app = express();
-
-
-// // Mount your job routes here
-// app.use('/api/v1/job', jobRoutes);
-
-// // Other routes...
-// // app.use('/api/v1/user', userRoutes);
-
-// app.use("/api/v1/company", companyRoute);
-
-
-// // app.listen(8000, () => {
-// //   console.log("Server running on port 8000");
-// // });
-
 // const server = createServer(app);
 // const PORT = process.env.PORT || 8000;
 
@@ -108,14 +91,16 @@
 // });
 // app.use("/api", apiLimiter);
 
+// app.use("/api/v1/job", jobRoutes);
+
 // // API Routes
 // app.use("/api/v1/user", userRoute);
 // app.use("/api/v1/recruiter", recruiterRoute);
 // app.use("/api/v1/digitalmarketer", digitalmarketerRoute);
 // app.use("/api/v1/verification", verificationRoute);
 // app.use("/api/v1/company", companyRoute);
-// app.use("/api/v1/job", jobRoute);
-//  app.use("/api/v1/application", applicationRoute);
+// // app.use("/api/v1/job", jobRoute);
+// app.use("/api/v1/application", applicationRoute);
 // app.use("/api/v1/order", orderRoute);
 // app.use("/api/v1/revenue", revenueRoute);
 
@@ -129,8 +114,6 @@
 // app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 // app.use("/api/v1/notifications", notificationRoute);
 // app.use("/api/v1/messages", messageRoute);
-// app.use("/api/v1/application", applicationRoute);
-
 
 // // Request logging
 // app.use((req, res, next) => {
@@ -282,9 +265,6 @@
 // export const emitNotification = (recipientId, notificationData) => {
 //   io.to(`user_${recipientId}`).emit('newNotification', notificationData);
 // };
-
-
-
 
 
 

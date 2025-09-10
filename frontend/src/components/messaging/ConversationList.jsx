@@ -42,7 +42,7 @@ const ConversationList = ({ onSelectConversation }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white border-r border-gray-200">
+    <div className="h-full flex flex-col bg-white border-r border-gray-200 dark:bg-gray-500">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -58,25 +58,25 @@ const ConversationList = ({ onSelectConversation }) => {
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 "
           />
         </div>
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto dark:bg-gray-500">
         {loading && conversations.length === 0 ? (
           <div className="flex items-center justify-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-gray-500">
-            <MessageCircle className="w-12 h-12 mb-2 text-gray-300" />
-            <p className="text-sm">
+            <MessageCircle className="w-12 h-12 mb-2 text-gray-300 dark:text-gray-800" />
+            <p className="text-sm dark:text-gray-800">
               {searchQuery ? 'No conversations found' : 'No conversations yet'}
             </p>
             {!searchQuery && (
-              <p className="text-xs mt-1">Start a conversation to get started</p>
+              <p className="text-xs mt-1 dark:text-gray-900">Start a conversation to get started</p>
             )}
           </div>
         ) : (

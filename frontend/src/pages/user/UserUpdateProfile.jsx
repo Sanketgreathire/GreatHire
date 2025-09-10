@@ -1,5 +1,6 @@
 // Import React and useState hook for component state management
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
@@ -44,6 +45,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [isCategoryVisible, setCategoryVisible] = useState(false);
   const [isLanguageVisible, setLanguageVisible] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((store) => store.auth);
   const [hasExperience, setHasExperience] = useState(
     Array.isArray(user?.profile?.experiences) && user.profile.experiences.length > 0
@@ -433,13 +435,32 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
         toast.success("Profile updated successfully!");
         setOpen(false);
+        
+        // If this was the first login, redirect to home page after profile completion
+        if (user?.isFirstLogin) {
+          setTimeout(() => {
+            navigate("/");
+            toast.success("Welcome to GreatHire! Your profile is now complete.");
+          }, 1000);
+        }
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+  console.error("Profile Update Error:", err);
+
+  // Show more meaningful message
+  if (err.response) {
+    // Backend responded with an error
+    toast.error(err.response.data?.message || `Error: ${err.response.status} ${err.response.statusText}`);
+  } else if (err.request) {
+    // Request was made but no response
+    toast.error("No response from server. Please check your connection.");
+  } else {
+    // Something else happened
+    toast.error(`Unexpected error: ${err.message}`);
+  }
+} finally {
+  setLoading(false);
+}
   };
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) =>
@@ -567,7 +588,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   <Input
                     id="phoneNumber"
                     name="phoneNumber"
-                    value={input.phoneNumber}
+                    value={user?.phoneNumber?.number || ""}
                     onChange={handleChange}
                     className="flex-1"
                     placeholder="Phone Number"

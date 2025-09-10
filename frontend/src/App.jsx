@@ -60,12 +60,13 @@ import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
-
+// // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import Notifications from "./components/NotificationBell";
 import NotificationPage from "./components/notifications/NotificationPage";
+import MessagingPage from "./components/messaging/MessagingPage";
 
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -103,12 +104,18 @@ const appRouter = createBrowserRouter([
   { path: "/packages", element: <Packges /> },
    { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
+  { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
 
 
 { path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
+  { path: "/description/:id", element: <JobDetail />},
+ 
+
+
+
   {
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,
@@ -180,7 +187,7 @@ function App() {
       <MessageProvider>
         
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-          <RouterProvider router={appRouter} />
+          <RouterProvider router={appRouter} />    
         </Worker>
        </MessageProvider>
     </NotificationProvider>
