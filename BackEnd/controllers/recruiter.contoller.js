@@ -31,6 +31,13 @@ export const register = async (req, res) => {
     }
 
     const { fullname, email, phoneNumber, password } = req.body;
+    const phoneRegex = /^[6-9]\d{9}$/; // Indian format: must start with 6–9 and be 10 digits
+          if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid phone number. It must be 10 digits and start with 6–9.",
+            });
+          }
 
     // Check if user already exists
     let userExists =
@@ -39,7 +46,7 @@ export const register = async (req, res) => {
       (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Account already exists.",
         success: false,
       });

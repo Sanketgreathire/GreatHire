@@ -47,8 +47,8 @@ const companySchema = new mongoose.Schema(
       type: String,
     },
     maxJobPosts: {
-      type: Number,
-      default: 1, // Default for Free plan
+      type: String,
+      default: "Unlimited", // Default for Free plan
     },
     creditedForJobs: {
       type: Number,

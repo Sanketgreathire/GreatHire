@@ -94,7 +94,7 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company?.maxJobPosts || 0, // Maximum number of jobs that can be posted
+      count:  <span className="text-green-600 text-2xl">Infinity</span>, // Maximum number of jobs that can be posted
       icon: (
         <FaClipboardList
           className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"

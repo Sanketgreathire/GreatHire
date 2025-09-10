@@ -19,7 +19,7 @@ export const isUserAssociated = async (companyId, userId) => {
     const company = await Company.findById(companyId);
     if (!company) {
       // If company is not found, you can either throw an error or return false.
-      throw new Error("Company not found.");
+      throw new Error("Cregompany not found.");
     }
 
     // Check if the user is associated with the company.
@@ -64,6 +64,89 @@ export const registerCompany = async (req, res) => {
       recruiterPosition,
       userEmail,
     } = req.body;
+     //  Added validations here for create company fields
+
+    if (!companyName || companyName.trim().length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "Company name must be at least 2 characters long.",
+      });
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid company email is required.",
+      });
+    }
+
+    if (!phone || !/^\d{10}$/.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number must be exactly 10 digits.",
+      });
+    }
+
+      if (!CIN) {
+      return res.status(400).json({
+        success: false,
+        message: "CIN is required.",
+      });
+    }
+
+    const cinPattern = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
+
+    if (!cinPattern.test(CIN)) {
+      let errorMessage = "Invalid CIN format. ";
+
+      if (CIN.length !== 21) {
+        errorMessage += `CIN must be exactly 21 characters long (you entered ${CIN.length}). `;
+      }
+      if (!/^[A-Z]/.test(CIN)) {
+        errorMessage += "First character must be an uppercase letter. ";
+      }
+      if (!/^[A-Z]\d{5}/.test(CIN)) {
+        errorMessage += "Characters 2–6 must be digits. ";
+      }
+      if (!/^[A-Z]\d{5}[A-Z]{2}/.test(CIN)) {
+        errorMessage += "Characters 7–8 must be uppercase letters (state code). ";
+      }
+      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}/.test(CIN)) {
+        errorMessage += "Characters 9–12 must be digits (incorporation year). ";
+      }
+      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}/.test(CIN)) {
+        errorMessage += "Characters 13–15 must be uppercase letters (company type). ";
+      }
+      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(CIN)) {
+        errorMessage += "Characters 16–21 must be digits (registration number). ";
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: errorMessage.trim(),
+      });
+    }
+
+    if (!companyWebsite || !/^https?:\/\/.+\..+/.test(companyWebsite)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid company website URL is required.",
+      });
+    }
+
+    if (!industry) {
+      return res.status(400).json({
+        success: false,
+        message: "Industry is required.",
+      });
+    }
+
+    if (!streetAddress || !city || !state || !country || !postalCode) {
+      return res.status(400).json({
+        success: false,
+        message: "Complete company address is required.",
+      });
+    }
     
     //console.log(req.body);   //for testing purpose
 
@@ -125,6 +208,32 @@ export const registerCompany = async (req, res) => {
               success: false,
             });
           }
+          // Check if company name already exists
+          const existingCompanyName = await Company.findOne({ companyName });
+          if (existingCompanyName) {
+            return res.status(400).json({
+              message: "Company name is already registered.",
+              success: false,
+            });
+          }
+
+          // Check if company website already exists
+          const existingWebsite = await Company.findOne({ companyWebsite });
+          if (existingWebsite) {
+            return res.status(400).json({
+              message: "Company website is already registered.",
+              success: false,
+            });
+          }
+
+          // Check if industry already exists
+          const existingIndustry = await Company.findOne({ industry });
+          if (existingIndustry) {
+            return res.status(400).json({
+              message: "Industry is already registered with another company.",
+              success: false,
+            });
+          }
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
@@ -170,6 +279,7 @@ export const registerCompany = async (req, res) => {
       },
       businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
       businessFileName: businessFile ? businessFile[0].originalname : undefined,
+      maxJobPosts: "Unlimited",
     });
 
     return res.status(201).json({
@@ -371,7 +481,7 @@ export const getCandidateData = async (req, res) => {
       experience,
       salaryBudget,
       gender,
-      qualification,
+      qualification,    
       lastActive,
       location,
       skills,
