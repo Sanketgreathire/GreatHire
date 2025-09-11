@@ -135,38 +135,6 @@ const Jobs = () => {
         if (!matchesAny) return false;
       }
 
-      // distance
-      if (Array.isArray(filters.distance) && filters.distance.length) {
-        const only50Plus =
-          filters.distance.length === 1 && filters.distance[0].includes("50+");
-        if (only50Plus) return true;
-
-        const jobDistance = job?.jobDetails?.distance;
-        if (!jobDistance) return false;
-
-        const jobDistNum = parseInt(jobDistance.replace(/[^\d]/g, ""), 10);
-
-        const matchesDist = filters.distance.some((sel) => {
-          const cleaned = sel.toLowerCase().replace(/\s+/g, "");
-
-          if (cleaned.includes("+")) {
-            const minNum = parseInt(cleaned.replace(/[^\d]/g, ""), 10);
-            return jobDistNum >= minNum;
-          }
-
-          const [minStr, maxStr] = cleaned.replace("km", "").split("-");
-          const minNum = parseInt(minStr, 10);
-          const maxNum = maxStr ? parseInt(maxStr, 10) : null;
-
-          if (maxNum !== null) {
-            return jobDistNum >= minNum && jobDistNum <= maxNum;
-          }
-          return jobDistNum >= minNum;
-        });
-
-        if (!matchesDist) return false;
-      }
-
       // salary
       if (Array.isArray(filters.salary) && filters.salary.length) {
         const jobSalaryRange = parseJobSalary(job?.jobDetails?.salary);

@@ -34,7 +34,7 @@ import Job from "../job/Job";
 
 // Add & Delete Experience
 import { Trash2, Plus } from "lucide-react"; // Dustbin & Add icons
-
+import { jsPDF } from "jspdf";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   // State for managing loading state, resume URL, and previous resume name
@@ -302,6 +302,189 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     setResumeUrl("");
     setPrevResumeName(input.resumeOriginalName);
   };
+
+
+// Inside the component
+
+// ✅ New states for resume creation
+const [isCreatingResume, setIsCreatingResume] = useState(false);
+const [generatedResumeUrl, setGeneratedResumeUrl] = useState(""); // store generated resume file URL
+
+// Toggle Create Resume UI
+const toggleCreateResume = () => {
+  setIsCreatingResume(!isCreatingResume);
+};
+
+// Generate Resume PDF from entered details
+const generateResumePDF = () => {
+  const doc = new jsPDF();
+  let y = 20;
+
+  doc.setFont("helvetica", "normal"); // ✅ Set default font
+
+  // ------------------ Name ------------------
+  doc.setFontSize(26);
+  doc.setFont("helvetica", "bold");
+  doc.text((input.fullname || "Your Name").toUpperCase(), 20, y);
+ 
+  y += 12;
+ 
+  // ------------------ Experience job profile (if any) ------------------
+  if (experiences.length > 0) {
+    doc.setFontSize(14); 
+    doc.setFont("helvetica", "normal");
+    doc.text((experiences[0].jobProfile || "").toUpperCase(), 20, y);
+    y += 12;
+  } else {
+    y += 12; // blank space if no experience
+  }
+
+  // ------------------ Horizontal line ------------------
+  doc.setLineWidth(0.5);
+  doc.line(20, y, 190, y);
+  y += 14;
+
+// ------------------ Personal Details ------------------
+doc.setFontSize(16);
+doc.setFont("helvetica", "bold");
+doc.text("Personal Details", 20, y);
+y += 10;
+
+// Smaller font for details
+doc.setFontSize(12);
+
+const labels = ["Address", "Gender", "Email", "Phone", "Languages Known", "Qualification"];
+const values = [
+  `${input.city || ""}, ${input.state || ""}, ${input.country || ""} - ${input.pincode || ""}`,
+  input.gender || "",
+  input.email || "",
+  input.phoneNumber || "",
+  input.language && input.language.length ? input.language.join(", ") : "",
+  input.qualification && input.qualification === "Others" ? input.otherQualification || "" : input.qualification || ""
+];
+
+// X positions for label, colon, and value
+const xLabel = 20;
+const xColon = 65; // Adjust to align all colons vertically
+const xValue = 70; // Start of value
+
+for (let i = 0; i < labels.length; i++) {
+   // Label in bold
+  doc.setFont("helvetica", "bold"); 
+  doc.text(labels[i], xLabel, y);
+
+  // Colon
+  doc.text(":", xColon, y);
+
+  // Value in normal font
+  doc.setFont("helvetica", "normal");
+  doc.text(values[i], xValue, y);
+
+  y += 8; // Line spacing
+}
+y += 4; // extra space after the section
+
+
+  // ------------------ Horizontal line ------------------
+  doc.line(20, y, 190, y);
+  y += 12;
+
+  // ------------------ Profile Summary ------------------
+doc.setFontSize(16);
+doc.setFont("helvetica", "bold");
+doc.text("Profile Summary", 20, y);
+y += 10;
+
+// Set smaller font for the bio
+doc.setFontSize(12);
+doc.setFont("helvetica", "normal");
+
+// Wrap the bio text within a width of 170 units
+const bioLines = doc.splitTextToSize(input.bio || "", 170);
+
+// Print each line
+bioLines.forEach(line => {
+  doc.text(line, 20, y);
+  y += 7; // consistent line spacing
+});
+
+y += 5; // extra space after section
+
+
+  // ------------------ Horizontal line ------------------
+  doc.line(20, y, 190, y);
+  y += 12;
+
+
+  // ------------------ Experience (if exists) ------------------
+if (experiences.length > 0) {
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Experience", 20, y);
+  y += 10;
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+
+  experiences.forEach((exp, index) => {
+     // ---------------- Job Profile ----------------
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14); // Bigger for job profile
+  const jobProfile = `${index + 1}. ${exp.jobProfile || ""}`;
+
+  // Left side (Job Profile)
+  doc.text(jobProfile, 20, y);
+
+  // Right side (Duration)
+  const duration = `(${exp.duration || ""} years)`;
+  doc.text(duration, 190, y, { align: "right" });
+
+  y += 8; // gap after job profile
+
+  // ---------------- Company Name ----------------
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12); // Slightly smaller
+  const company = exp.companyName || "";
+  doc.text(company, 25, y); // indent slightly for neatness
+
+  y += 10; // spacing before next experience
+
+doc.setFont("helvetica", "normal");
+    // Details line with indentation
+    const detailsLine = `${exp.experienceDetails || ""}`;
+    const detailsLines = doc.splitTextToSize(detailsLine, 165); // slightly smaller width for indentation
+    detailsLines.forEach(line => {
+      doc.text(line, 25, y); // indented by 5 units
+      y += 7;
+    });
+
+    y += 5; // extra space between experiences
+  });
+}
+  // ------------------ Horizontal line ------------------
+  doc.line(20, y, 190, y);
+  y += 12;
+
+  // ------------------ Skills ------------------
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("Skills", 20, y);
+  y += 10;
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(input.skills || "", 20, y);
+
+  // ------------------ Save file to blob and URL ------------------
+  const blob = doc.output("blob");
+  const fileUrl = URL.createObjectURL(blob);
+  setGeneratedResumeUrl(fileUrl);
+
+  // Also set as input.resume to allow uploading
+  const file = new File([blob], `${input.fullname || "Resume"}.pdf`, { type: "application/pdf" });
+  setInput(prev => ({ ...prev, resume: file, resumeOriginalName: file.name }));
+  toast.success("Resume generated successfully!");
+};
+
 
   // Handles profile photo upload and preview
   const handleImageChange = (e) => {
@@ -907,7 +1090,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                               value={exp.experienceDetails || ""}
                               onChange={(e) => {
                                 const words = e.target.value.trim().split(/\s+/).filter(Boolean);
-                                if (words.length <= 10) {
+                                if (words.length <= 600) {
                                   handleExperienceChange(index, "experienceDetails", e.target.value);
                                 }
                               }}
@@ -1080,6 +1263,47 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 </button>
               )}
             </div>
+            {/* Create Resume Section */}
+<div className="border-b pb-4 pt-4 mt-2">
+  <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
+  <p className="mb-2">You can generate a resume from the details you entered above.</p>
+
+  <div className="flex items-center gap-4 mb-2">
+    <button
+      type="button"
+      onClick={toggleCreateResume}
+      className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+    >
+      {isCreatingResume ? "Close Resume Creator" : "Create Resume"}
+    </button>
+
+    {/* Show download if already generated */}
+    {generatedResumeUrl && (
+      <a
+        href={generatedResumeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
+      >
+        Preview / Download
+      </a>
+    )}
+  </div>
+
+  {isCreatingResume && (
+    <div className="bg-gray-50 p-4 rounded-md border mt-2">
+      <p className="mb-2 text-gray-700">Click the button below to generate your resume PDF:</p>
+      <button
+        type="button"
+        onClick={generateResumePDF}
+        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+      >
+        Generate Resume PDF
+      </button>
+    </div>
+  )}
+</div>
+
           </div>
           {/* Submit Button */}
           <Button type="submit" className="w-full mt-2" disabled={loading}>

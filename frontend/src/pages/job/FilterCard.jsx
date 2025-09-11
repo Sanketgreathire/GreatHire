@@ -3,30 +3,90 @@ import React, { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 
+const formatLabel = (label) =>
+  label
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()); // capitalize first letter
+
 const filterOptions = {
   jobType: ["Internship", "Part-time", "Full-time", "Contract", "Hybrid"],
   datePosted: ["Last 24 hours", "Last 7 days", "Last 14 days", "Last 30 days"],
   salary: [
-    "0-10000",
-    "10000-20000",
-    "20000-30000",
-    "30000-40000",
-    "40000-50000",
-    "50000-100000",
-    "100000+",
+    "0-10000", "10000-20000", "20000-40000", "40000-60000",
+    "60000-80000", "80000-100000", "100000+",
   ],
   workPlace: ["Remote", "On-Site", "Hybrid"],
-  distance: ["0-5km", "5-10km", "10-20km", "20-50km", "50+km"],
   location: [
-    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-    "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-    "Jammu and Kashmir", "Karnataka", "Kerala", "Ladakh", "Maharashtra",
-    "Madhya Pradesh", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
-    "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
-    "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
-    "Arizona", "California", "Florida", "Illinois", "New York",
-    "North Carolina", "Ohio", "Pennsylvania", "Texas", "Remote",
+    // States
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+
+    // Union Territories
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry",
+
+    // Major Job Hubs (A–Z)
+    "Ahmedabad",
+    "Bengaluru",
+    "Bhopal",
+    "Bhubaneswar",
+    "Chandigarh",
+    "Chennai",
+    "Coimbatore",
+    "Delhi NCR",
+    "Gurugram",
+    "Hyderabad",
+    "Indore",
+    "Jaipur",
+    "Kochi",
+    "Kolkata",
+    "Lucknow",
+    "Mumbai",
+    "Nagpur",
+    "Noida",
+    "Patna",
+    "Pune",
+    "Surat",
+    "Thane",
+    "Vadodara",
+    "Visakhapatnam",
+
+    // Optional
+    "Remote"
   ],
+
   jobTitle: [
     "Software Engineer", "React Developer", "Java Developer", "Frontend Developer",
     "Backend Developer", "Full Stack Developer", "Data Scientist",
@@ -58,21 +118,20 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
     datePosted: [],
     salary: [],
     workPlace: [],
-    distance: [],
     location: "",
     jobTitle: "",
     company: "",
     qualification: "",
   });
 
-  // ✅ Notify parent when filters change
+  // Notify parent when filters change
   useEffect(() => {
     onFilterChange?.(filters);
   }, [filters, onFilterChange]);
 
   const handleCheckboxChange = (category, value) => {
     const normalizedValue =
-      category === "distance" ? value.replace(/\s+/g, "") : value;
+      category === "salary" ? value.replace(/\s+/g, "") : value;
 
     setFilters((prev) => {
       const current = Array.isArray(prev[category]) ? prev[category] : [];
@@ -93,7 +152,6 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       datePosted: [],
       salary: [],
       workPlace: [],
-      distance: [],
       location: "",
       jobTitle: "",
       company: "",
@@ -104,7 +162,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
   };
 
   return (
-    <div className="w-72 bg-white shadow-lg rounded-lg pr-8 pl-8 pb-8 sticky top-4 h-[90vh] overflow-y-auto relative filter-scrollbar">
+    <div className="w-72 bg-white shadow-lg rounded-lg pr-8 pl-8 pb-8 sticky top-4 h-[90vh] overflow-y-auto relative filter-scrollbar font-sans">
       {onClose && (
         <button
           onClick={onClose}
@@ -122,35 +180,47 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       </div>
 
       {/* Checkbox Filters */}
-      {["jobType", "datePosted", "salary", "workPlace", "distance"].map(
+      {["jobType", "datePosted", "salary", "workPlace"].map(
         (category) => (
-          <div key={category} className="mb-8 border-b border-blue-200 pb-4">
-            <h3 className="font-semibold text-gray-800 capitalize mb-3">
-              {category}
+          <div key={category} className="mb-6 border-b border-blue-300 pb-8 ">
+            <h3 className="font-semibold text-gray-700 text-lg tracking-wide mb-3">
+              {formatLabel(category)}
             </h3>
             <div className="space-y-2">
-              {filterOptions[category].map((opt) => (
-                <label
-                  key={opt}
-                  className="flex items-center gap-3 text-sm cursor-pointer group"
-                >
-                  <input
-                    type="checkbox"
-                    aria-label={opt}
-                    checked={
-                      Array.isArray(filters[category]) &&
-                      filters[category].includes(
-                        category === "distance" ? opt.replace(/\s+/g, "") : opt
-                      )
-                    }
-                    onChange={() => handleCheckboxChange(category, opt)}
-                    className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition"
-                  />
-                  <span className="text-gray-700 group-hover:text-blue-600 transition select-none">
-                    {opt}
-                  </span>
-                </label>
-              ))}
+              {filterOptions[category].map((opt) => {
+                // ✅ Format salary labels for readability
+                const displayLabel =
+                  category === "salary"
+                    ? opt.replace("-", " - ").replace("+", "+ ")
+                    : category === "jobType"
+                      ? opt.replace("-", " - ")
+                      : opt;
+
+                return (
+                  <label
+                    key={opt}
+                    className="flex items-center gap-3 text-base cursor-pointer group font-sans"
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={displayLabel}
+                      checked={
+                        Array.isArray(filters[category]) &&
+                        filters[category].includes(
+                          category === "salary"
+                            ? opt.replace(/\s+/g, "")
+                            : opt
+                        )
+                      }
+                      onChange={() => handleCheckboxChange(category, opt)}
+                      className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition"
+                    />
+                    <span className="text-gray-700 group-hover:text-blue-600 transition select-none font-sans">
+                      {displayLabel}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
         )
@@ -161,19 +231,20 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
         <div key={category} className="mb-6">
           <label
             htmlFor={category}
-            className="block text-gray-800 mb-2 capitalize font-semibold "
+            className="block text-gray-700 text-lg font-semibold tracking-wide mb-2"
           >
-            {category}
+            {formatLabel(category)}
           </label>
+
           <select
             id={category}
             value={filters[category]}
             onChange={(e) => handleDropdownChange(category, e.target.value)}
-            className="w-full border border-blue-300 bg-white rounded-lg px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+            className="w-full border border-blue-300 bg-white rounded-lg px-3 py-2 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
           >
-            <option value="">All {category}</option>
+            <option value="">All {formatLabel(category)}</option>
             {filterOptions[category].map((opt) => (
-              <option key={opt} value={opt}>
+              <option key={opt} value={opt} className="text-base">
                 {opt}
               </option>
             ))}
@@ -185,11 +256,12 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       <div className="mt-4 flex gap-2 p-4">
         <button
           onClick={handleReset}
-          className="px-10 py-2 rounded-full border border-blue-500 text-blue-500 font-medium shadow-sm hover:bg-blue-600 hover:text-white transition"
+          className="px-10 py-2 rounded-full border border-blue-500 text-blue-600 text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white transition"
         >
           Reset Filters
         </button>
       </div>
+
     </div>
   );
 };
