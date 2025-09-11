@@ -21,6 +21,7 @@ const Signup = () => {
     phoneNumber: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
 
   // Input change handler
   const handleChange = (e) => {
@@ -30,10 +31,45 @@ const Signup = () => {
       [name]: value,
     });
   };
+  const validateForm = () => {
+  let newErrors = {};
 
-  // Handle account creation
+  // Fullname validation
+  if (!formData.fullname || formData.fullname.length < 3) {
+    newErrors.fullname = "Full name must be at least 3 characters long.";
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.email || !emailRegex.test(formData.email)) {
+    newErrors.email = "Enter a valid email address.";
+  }
+
+  // Phone validation
+  const phoneRegex = /^[6-9]\d{9}$/;
+  if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
+    newErrors.phoneNumber =
+      "Enter a valid phone number (10 digits, starting with 6–9).";
+  }
+
+  // Password validation
+  if (!formData.password || formData.password.length < 8) {
+    newErrors.password = "Password must be at least 8 characters long.";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+
  const handleCreateAccount = async (e) => {
   e.preventDefault();
+
+  if (!validateForm()) {
+    toast.error("Please fix the errors in your form before submitting.");
+    return;
+  }
+
   setLoading(true);
   try {
     const response = await axios.post(
@@ -56,13 +92,13 @@ const Signup = () => {
       toast.error(response?.data?.message || "Signup failed ❌");
     }
   } catch (err) {
-    console.error("Error in signup:", err);
-    // Show only backend / network error
     toast.error(err?.response?.data?.message || "Network error, please try again ❌");
   } finally {
     setLoading(false);
   }
 };
+
+
 
 
   return (
@@ -133,6 +169,7 @@ const Signup = () => {
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
+                {errors.fullname && <p className="text-red-500 text-sm">{errors.fullname}</p>}
 
                 {/* Email */}
                 <label className="font-bold">Email</label>
@@ -145,6 +182,7 @@ const Signup = () => {
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
                 {/* Phone Number */}
                 <label className="font-bold">Mobile Number</label>
@@ -157,6 +195,7 @@ const Signup = () => {
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
+                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
 
                 {/* Password */}
                 <label className="font-bold">Password</label>
@@ -169,6 +208,7 @@ const Signup = () => {
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
                 />
+                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
               </div>
 
               {/* Submit Button */}

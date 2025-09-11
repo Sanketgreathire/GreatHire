@@ -31,14 +31,31 @@ export const register = async (req, res) => {
     }
 
     const { fullname, email, phoneNumber, password } = req.body;
-    const phoneRegex = /^[6-9]\d{9}$/; // Indian format: must start with 6–9 and be 10 digits
+    // Fullname validation
+          if (!fullname || fullname.length < 3) {
+            return res.status(400).json({
+              success: false,
+              message: "Full name must be at least 3 characters long.",
+            });
+          }
+
+          // Email validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!email || !emailRegex.test(email)) {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid email format.",
+            });
+          }
+
+          // Phone number validation
+          const phoneRegex = /^[6-9]\d{9}$/;
           if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
             return res.status(400).json({
               success: false,
               message: "Invalid phone number. It must be 10 digits and start with 6–9.",
             });
           }
-
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
