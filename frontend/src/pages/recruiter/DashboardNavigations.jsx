@@ -39,7 +39,7 @@ const DashboardNavigations = () => {
     <>
       {/*  Hamburger Button (Visible on Small Screens) */}
       <button
-        className=" z-30 lg:hidden p-2 fixed top-4 left-4   rounded-sm"
+        className="z-30 lg:hidden p-2 fixed top-4 left-78 rounded-sm"
         onClick={() => setSidebarOpen(true)}
       >
         <CiMenuBurger size={24} />

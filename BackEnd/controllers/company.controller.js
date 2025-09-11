@@ -19,7 +19,7 @@ export const isUserAssociated = async (companyId, userId) => {
     const company = await Company.findById(companyId);
     if (!company) {
       // If company is not found, you can either throw an error or return false.
-      throw new Error("Cregompany not found.");
+      throw new Error("Company not found.");
     }
 
     // Check if the user is associated with the company.
