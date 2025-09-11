@@ -25,6 +25,40 @@ import { Application } from "../models/application.model.js";
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
+            // Validate fullname
+            if (!fullname || fullname.length < 3) {
+              return res.status(400).json({
+                success: false,
+                message: "Full name must be at least 3 characters long.",
+              });
+            }
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+              return res.status(400).json({
+                success: false,
+                message: "Invalid email format.",
+              });
+            }
+
+            // Validate phone number
+            const phoneRegex = /^[6-9]\d{9}$/;
+            if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+              return res.status(400).json({
+                success: false,
+                message: "Invalid phone number. It must be 10 digits starting with 6–9.",
+              });
+            }
+
+            // Validate password
+            if (!password || password.length < 8) {
+              return res.status(400).json({
+                success: false,
+                message: "Password must be at least 8 characters long.",
+              });
+            }
+
 
     // 1. Check if email already exists
     const existingEmail = await User.findOne({ "emailId.email": email });

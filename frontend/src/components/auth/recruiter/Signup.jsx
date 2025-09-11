@@ -25,7 +25,7 @@ const Signup = () => {
     phoneNumber: "",
     password: "",
   });
-
+const [errors, setErrors] = useState({});
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -33,47 +33,66 @@ const Signup = () => {
       [name]: value,
     });
   };
+const validateForm = () => {
+  let newErrors = {};
 
-  // Handle form submission
+  // Fullname validation
+  if (!formData.fullname || formData.fullname.length < 3) {
+    newErrors.fullname = "Full name must be at least 3 characters long.";
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!formData.email || !emailRegex.test(formData.email)) {
+    newErrors.email = "Enter a valid email address.";
+  }
+
+  // Phone number validation
+  const phoneRegex = /^[6-9]\d{9}$/;
+  if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
+    newErrors.phoneNumber =
+      "Enter a valid phone number (10 digits, starting with 6–9).";
+  }
+
+  // Password validation
+  if (!formData.password || formData.password.length < 8) {
+    newErrors.password = "Password must be at least 8 characters long.";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0; // ✅ true if no errors
+};
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Set loading to true
-    try {
-      const response = await axios.post(
-        `${RECRUITER_API_END_POINT}/register`,
-        {
-          ...formData,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+  e.preventDefault();
 
-      if (response.data.success) {
-        // Show success message
+  if (!validateForm()) {
+    toast.error("Please fix the errors in your form before submitting.");
+    return;
+  }
 
-        // Reset form fields
-        setFormData({
-          fullname: "",
-          email: "",
-          phoneNumber: "",
-          password: "",
-        });
-        dispatch(setUser(response.data.user)); // Set user in redux store
-        // Redirect to login page
-        navigate("/recruiter/dashboard/create-company");
-      }
+  setLoading(true);
+  try {
+    const response = await axios.post(
+      `${RECRUITER_API_END_POINT}/register`,
+      { ...formData },
+      { withCredentials: true }
+    );
+
+    if (response.data.success) {
       toast.success(response.data.message);
-    } catch (err) {
-      console.log(err);
-      // Show error message
-      const errorMessage =
-        err.response?.data?.message || "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false); // Set loading to false
+      setFormData({ fullname: "", email: "", phoneNumber: "", password: "" });
+      dispatch(setUser(response.data.user));
+      navigate("/recruiter/dashboard/create-company");
     }
-  };
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || "Something went wrong";
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <>
@@ -165,6 +184,7 @@ const Signup = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
+              {errors.fullname && <p className="text-red-500 text-sm">{errors.fullname}</p>}
               <label className="font-bold">Work Email</label>
               <input
                 type="email"
@@ -175,16 +195,18 @@ const Signup = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
               <label className="font-bold">Mobile Number</label>
               <input
                 type="text"
                 name="phoneNumber"
                 placeholder="Contact number"
-                value={formData.mobileNumber}
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
+              {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               <label className="font-bold">Password</label>
               <input
                 type="password"
@@ -195,6 +217,7 @@ const Signup = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
             <button
               type="submit"
