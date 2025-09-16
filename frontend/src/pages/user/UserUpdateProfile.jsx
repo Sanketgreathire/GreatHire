@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import JobCategory from "@/components/ui/JobCategory";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 // Import country, state, city
-import { Country, State, City } from "country-state-city";  //run in cmd 'npm i country-state-city'
+import { Country, State, City } from "country-state-city";  //run in cmd 'npm install country-state-city'
 
 // Import icons for UI enhancement
 import { Loader2, Pencil } from "lucide-react";
@@ -34,7 +34,7 @@ import Job from "../job/Job";
 
 // Add & Delete Experience
 import { Trash2, Plus } from "lucide-react"; // Dustbin & Add icons
-import { jsPDF } from "jspdf";
+import { jsPDF } from "jspdf"; //run in cmd 'npm install jspdf'
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   // State for managing loading state, resume URL, and previous resume name
