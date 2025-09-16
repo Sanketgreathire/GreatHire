@@ -128,143 +128,128 @@ const CompanyDetails = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="max-w-6xl mx-auto p-8  mt-10  bg-white pt-10 rounded-lg shadow-md">
+        <div className="max-w-6xl mx-auto p-10 mt-20 bg-white rounded-2xl shadow-lg">
           <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
             Company Details
           </h1>
 
           {!isEditing ? (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    Company Name
-                  </p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.companyName}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    Company Address
-                  </p>
-                  <p className="text-xl text-gray-500 font-semibold">
-                    Street Address:{" "}
-                    <span className=" text-gray-800">
-                      {company?.address.streetAddress}
-                    </span>
-                  </p>
-                  <p className="text-xl text-gray-500 font-semibold">
-                    City:{" "}
-                    <span className="text-gray-800">
-                      {company?.address.city}
-                    </span>
-                  </p>
-                  <p className="text-xl text-gray-500 font-semibold">
-                    Postal Code:{" "}
-                    <span className=" text-gray-800">
-                      {company?.address.postalCode}
-                    </span>
-                  </p>
-                  <p className="text-xl text-gray-500 font-semibold">
-                    State:{" "}
-                    <span className="text-gray-800">
-                      {company?.address.state}
-                    </span>
-                  </p>
-                  <p className="text-xl text-gray-500 font-semibold">
-                    Country:{" "}
-                    <span className=" text-gray-800 ">
-                      {company?.address.country}
-                    </span>
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">Website</p>
-                  <a
-                    href={company?.companyWebsite}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-xl font-semibold"
-                  >
-                    {company?.companyWebsite}
-                  </a>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">Industry</p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.industry}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    Business Email
-                  </p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.email}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    Admin Email
-                  </p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.adminEmail}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">Phone</p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.phone}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    CIN Number
-                  </p>
-                  <p className="text-xl text-gray-800 font-semibold">
-                    {company?.CIN}
-                  </p>
-                </div>
-                <div className="info-card">
-                  <p className="text-sm text-gray-500 font-medium">
-                    Business File
-                  </p>
-                  <a
-                    href={company?.businessFile}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-xl font-semibold"
-                  >
-                    View Business File
-                  </a>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Company Info */}
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Company Name</p>
+                <p className="text-lg text-gray-900 font-semibold">{company?.companyName}</p>
+
+                <p className="text-sm text-gray-500 font-medium mb-1 mt-6">Industry</p>
+                <p className="text-lg text-gray-900 font-semibold">{company?.industry}</p>
+              </div>
+
+              {/* Address */}
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors col-span-full lg:col-span-2">
+                <p className="text-sm text-gray-500 font-medium mb-4">Company Address</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium">Street Address</p>
+                    <p className="text-gray-900 font-semibold">{company?.address?.streetAddress}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium">City</p>
+                    <p className="text-gray-900 font-semibold">{company?.address?.city}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium">State</p>
+                    <p className="text-gray-900 font-semibold">{company?.address?.state}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium">Postal Code</p>
+                    <p className="text-gray-900 font-semibold">{company?.address?.postalCode}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 font-medium">Country</p>
+                    <p className="text-gray-900 font-semibold">{company?.address?.country}</p>
+                  </div>
                 </div>
               </div>
 
-              {user?.emailId.email === company?.adminEmail && (
-                <div className="flex justify-end space-x-6 mt-8">
-                  <button
-                    onClick={toggleEdit}
-                    className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
-                  >
-                    Edit Company Details
-                  </button>
+              {/* Other Info */}
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Phone</p>
+                <p className="text-lg text-gray-900 font-semibold">{company?.phone}</p>
+              </div>
 
-                  <button
-                    onClick={() => setShowDeleteModal(true)}
-                    className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${
-                      dloading && "cursor-not-allowed"
-                    }`}
-                    disabled={dloading}
-                  >
-                    {dloading ? "Deleting..." : "Delete Company"}
-                  </button>
-                </div>
-              )}
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Business Email</p>
+                <p className="text-lg text-gray-900 font-semibold break-all">{company?.email}</p>
+              </div>
+
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Admin Email</p>
+                <p className="text-lg text-gray-900 font-semibold break-all">{company?.adminEmail}</p>
+              </div>
+
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Website</p>
+                <a
+                  href={company?.companyWebsite}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 font-semibold break-all"
+                >
+                  {company?.companyWebsite}
+                </a>
+              </div>
+
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">CIN Number</p>
+                <p className="text-md text-gray-900 font-semibold">{company?.CIN}</p>
+              </div>
+
+              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+                <p className="text-sm text-gray-500 font-medium mb-1">Business File</p>
+                <a
+                  href={company?.businessFile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  View Business File
+                </a>
+              </div>
+
+              {/* Buttons (col-span-full for alignment) */}
+              <div className="col-span-full">
+                {user?.emailId.email === company?.adminEmail && (
+                  <div className="flex flex-col sm:flex-row justify-end gap-4 mt-8">
+                    <button
+                      onClick={toggleEdit}
+                      //className="px-8 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+                      className="px-8 py-3 text-white font-semibold rounded-xl shadow-md bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
+                      transition-all duration-300 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 
+                      hover:shadow-blue-500/40 hover:scale-105"
+                    >
+                      Edit Company Details
+                    </button>
+
+                    <button
+                      onClick={() => setShowDeleteModal(true)}
+                      className={`px-8 py-3 text-white font-semibold rounded-xl shadow-md transition-all duration-300 
+                        ${dloading
+                          ? "bg-gradient-to-r from-red-300 to-red-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:via-red-700 hover:to-red-800 hover:shadow-red-500/40 hover:scale-105"
+                        }`}
+                      disabled={dloading}
+                    >
+                      {dloading ? "Deleting..." : "Delete Company"}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
+
           ) : (
             <form onSubmit={handleFormSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div className="input-card">
                   <label className="text-sm text-gray-600 font-medium">
                     Website
@@ -383,12 +368,12 @@ const CompanyDetails = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-6 mt-8">
+              <div className="flex flex-col md:flex-row md:justify-end gap-4 mt-8 w-full">
                 <button
                   type="submit"
-                  className={`px-6 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200 ${
-                    loading && "cursor-not-allowed"
-                  }`}
+                  className={`w-full md:w-auto px-6 py-3 font-semibold text-white bg-green-600 rounded-md border border-transparent 
+      transition-all duration-300 hover:bg-white hover:text-green-600 hover:border-green-600 
+      ${loading && "cursor-not-allowed"}`}
                 >
                   {loading ? "Changing..." : "Save Changes"}
                 </button>
@@ -396,13 +381,14 @@ const CompanyDetails = () => {
                 <button
                   onClick={toggleEdit}
                   type="button"
-                  className={`px-6 py-3 text-white bg-gray-600 rounded-md hover:bg-gray-700 transition duration-200 ${
-                    loading && "cursor-not-allowed"
-                  }`}
+                  className={`w-full md:w-auto px-6 py-3 font-semibold text-white bg-gray-600 rounded-md border border-transparent 
+      transition-all duration-300 hover:bg-white hover:text-gray-600 hover:border-gray-600 
+      ${loading && "cursor-not-allowed"}`}
                 >
                   Cancel
                 </button>
               </div>
+
             </form>
           )}
         </div>
