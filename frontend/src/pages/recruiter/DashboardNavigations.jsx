@@ -29,8 +29,7 @@ const DashboardNavigations = () => {
 
   // Function to apply styles to navigation links
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition ${
-      isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
+    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition ${isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
     }`;
 
   const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600");
@@ -39,7 +38,7 @@ const DashboardNavigations = () => {
     <>
       {/*  Hamburger Button (Visible on Small Screens) */}
       <button
-        className="z-30 lg:hidden p-2 fixed top-4 left-78 rounded-sm"
+        className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm"
         onClick={() => setSidebarOpen(true)}
       >
         <CiMenuBurger size={24} />
@@ -48,13 +47,13 @@ const DashboardNavigations = () => {
       {/*  Sidebar */}
       <div
         className={`
-          fixed top-0 lg:top-16 border-t-2 border-gray-300 left-0 z-30 bg-gradient-to-b bg-white transition-transform duration-300 ease-in-out
-          w-64 h-screen transform ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }
-          lg:sticky  lg:h-[calc(100vh-4rem)] lg:w-52 lg:translate-x-0
-        `}
+    fixed top-0 left-0 z-50 bg-white shadow-lg transition-transform duration-300 ease-in-out
+    w-64 h-screen transform
+    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:w-52 lg:translate-x-0 lg:z-30
+  `}
       >
+
         {/* Close Button (Only for Mobile) */}
         <button
           className="lg:hidden absolute top-4 right-4 text-gray-600"
@@ -62,6 +61,7 @@ const DashboardNavigations = () => {
         >
           <RiCloseFill size={24} />
         </button>
+
 
         <div className="flex flex-col h-full p-4 justify-between ">
           {/* Main Navigation */}
@@ -91,12 +91,12 @@ const DashboardNavigations = () => {
                   <IoCreateOutline size={25} className="text-blue-600" />
                   <span>Create New</span>
                 </span>
+
                 <ul
                   className={`
           absolute left-5 bg-gray-50 shadow-lg rounded-xl py-2 w-full
-          ${
-            isDropdownOpen ? "block" : "hidden"
-          }  /* Mobile: controlled by state */
+          ${isDropdownOpen ? "block" : "hidden"
+                    }  /* Mobile: controlled by state */
           md:group-hover:block              /* Desktop: show on hover */
         `}
                 >
@@ -145,7 +145,7 @@ const DashboardNavigations = () => {
                       </NavLink>
                     )}
 
-                    {/* Post Job (Visible if company is created) */}
+                  {/* Post Job (Visible if company is created) */}
                   {user?.isActive && user?.isCompanyCreated && (
                     <NavLink
                       to="/recruiter/dashboard/post-job"
