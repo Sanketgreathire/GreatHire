@@ -6,11 +6,9 @@ import {
   FaUsers,
   FaBriefcase,
   FaClipboardList,
-  FaChevronUp,
-  FaChevronDown,
   FaCoins,
-} from "react-icons/fa"; // Importing icons
-import { BsCoin } from 'react-icons/bs';
+} from "react-icons/fa";
+import { BsCoin } from "react-icons/bs";
 import { addCompany } from "@/redux/companySlice";
 
 const RecruiterHome = () => {
@@ -19,9 +17,9 @@ const RecruiterHome = () => {
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [loading, setLoading] = useState(false);
-  const [jobsStatistics, setJobsStatistics] = useState(null); // State to store job statistics
+  const [jobsStatistics, setJobsStatistics] = useState(null);
 
-  // Function to fetch job statistics based on the company ID
+  // Fetch job statistics
   const fetchJobsStatistics = async (companyId) => {
     try {
       setLoading(true);
@@ -41,7 +39,7 @@ const RecruiterHome = () => {
     }
   };
 
-  // Function to fetch company details by user ID
+  // Fetch company by user ID
   const fetchCompanyByUserId = async () => {
     try {
       setLoading(true);
@@ -60,7 +58,6 @@ const RecruiterHome = () => {
     }
   };
 
-  // useEffect to fetch company and job statistics when the user is available
   useEffect(() => {
     if (user && company) {
       fetchJobsStatistics();
@@ -68,38 +65,29 @@ const RecruiterHome = () => {
     }
   }, [user]);
 
-  // Data for statistics cards
+  // Cards data
   const cards = [
     {
       title: "Recruiters",
-      count: recruiters.length, // Number of recruiters
+      count: recruiters.length,
       icon: (
-        <FaUsers
-          className="text-4xl text-blue-600 bg-blue-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaUsers className="text-4xl text-blue-600 bg-blue-100 rounded-lg p-2" />
       ),
-      description: "Recruiters in you company.",
+      description: "Recruiters in your company.",
     },
     {
       title: "Posted Jobs",
       count: jobsStatistics?.totalJobs,
       icon: (
-        <FaBriefcase
-          className="text-4xl text-green-600 bg-green-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaBriefcase className="text-4xl text-green-600 bg-green-100 rounded-lg p-2" />
       ),
       description: "Jobs that you have posted.",
     },
     {
       title: "Max Post Jobs",
-      count:  <span className="text-green-600 text-2xl">Infinity</span>, // Maximum number of jobs that can be posted
+      count: <span className="text-green-600 text-2xl">Infinity</span>,
       icon: (
-        <FaClipboardList
-          className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaClipboardList className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2" />
       ),
       description: "Number of jobs you can post.",
     },
@@ -107,108 +95,87 @@ const RecruiterHome = () => {
       title: "Active Jobs",
       count: jobsStatistics?.activeJobs,
       icon: (
-        <FaBriefcase
-          className="text-4xl text-purple-600 bg-purple-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaBriefcase className="text-4xl text-purple-600 bg-purple-100 rounded-lg p-2" />
       ),
-      description: "Jobs that are currently active and open.",
+      description: "Currently active and open jobs.",
     },
     {
       title: "Expired Jobs",
       count: jobsStatistics?.inactiveJobs,
       icon: (
-        <FaBriefcase
-          className="text-4xl text-orange-600 bg-orange-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaBriefcase className="text-4xl text-orange-600 bg-orange-100 rounded-lg p-2" />
       ),
-      description: "Jobs that have expired and are no longer active.",
+      description: "Jobs that have expired.",
     },
     {
       title: "Applicants",
       count: jobsStatistics?.totalApplicants,
       icon: (
-        <FaUsers
-          className="text-4xl text-red-600 bg-red-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaUsers className="text-4xl text-red-600 bg-red-100 rounded-lg p-2" />
       ),
-      description: "Total number of applicants for your jobs.",
+      description: "Total applicants for your jobs.",
     },
     {
       title: "Shortlisted Candidates",
       count: jobsStatistics?.selectedCandidates,
       icon: (
-        <FaUsers
-          className="text-4xl text-teal-600 bg-teal-100 rounded-lg p-2"
-          size={45}
-        />
+        <FaUsers className="text-4xl text-teal-600 bg-teal-100 rounded-lg p-2" />
       ),
-      description: "Candidates who have been selected.",
+      description: "Candidates who have been shortlisted.",
     },
     {
-      title: "Credits For Job Post", 
-      count: company?.creditedForJobs || 0, // Number of credits for job posts
+      title: "Credits For Job Post",
+      count: company?.creditedForJobs || 0,
       icon: (
-        <FaCoins
-         className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2" 
-          size={45}
-        />
+        <FaCoins className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2" />
       ),
-      description: "Candidates who have been selected.",
+      description: "Credits available for job postings.",
     },
     {
-      title: "Credits For Database", 
-      count: company?.creditedForCandidates || 0, // Number of credits for job posts
+      title: "Credits For Database",
+      count: company?.creditedForCandidates || 0,
       icon: (
-        <BsCoin
-          className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2"
-          size={45}
-        />
+        <BsCoin className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2" />
       ),
-      description: "Candidates who have been selected.",
+      description: "Credits available for candidate database.",
     },
-
   ];
 
   return (
     <>
-    {/* If company exists and user is active, show dashboard */}
       {company && user?.isActive ? (
-        <div className="min-h-screen p-8 pt-20">
+        <div className="min-h-screen p-8 pt-20 bg-gray-50">
           {/* Header Section */}
-          <header className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800">
-              Welcome, {company?.companyName || "Recruiter"}
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Empower your hiring process with key insights and metrics at a
-              glance.
-            </p>
+          <header className="mb-10 flex flex-col items-center md:flex-row md:justify-between md:items-center">
+            <div>
+              <h1 className="text-4xl font-extrabold text-gray-800">
+                👋 Welcome,{" "}
+                <span className="text-blue-600">
+                  {company?.companyName || "Recruiter"}
+                </span>
+              </h1>
+              <p className="text-gray-500 mt-2">
+                Here’s an overview of your recruitment activity.
+              </p>
+            </div>
+            
           </header>
 
-          {/* Cards Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {cards.map((card, index) => (
               <div
                 key={index}
-                className="bg-white shadow-lg rounded-lg p-6 flex  items-center justify-evenly border-l-4 border-gray-300 hover:border-blue-700 transition-all duration-300 ease-in-out"
+                className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500"
               >
-                <div className="flex items-center space-x-4 mb-4">
-                  {card.icon}
-                </div>
-                <div className="flex flex-col gap-2 justify-center items-center w-full break-words">
-                  <h2 className="text-xl font-semibold text-gray-700 text-center">
-                    {card.title}
-                  </h2>
-                  <h3 className="text-3xl font-bold text-gray-800">
-                    {card.count}
-                  </h3>
-                  <p className="w-full max-w-[200px] text-gray-600 text-sm text-center break-words">
-                    {card.description}
-                  </p>
-                </div>
+                <div className="mb-3">{card.icon}</div>
+                <h2 className="text-lg font-semibold text-gray-700">
+                  {card.title}
+                </h2>
+                <p className="text-3xl font-bold text-gray-900">{card.count}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {card.description}
+                </p>
               </div>
             ))}
           </div>
