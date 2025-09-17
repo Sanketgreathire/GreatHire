@@ -13,7 +13,7 @@
   "description": "",
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
-    "axios": "^1.8.4",
+    "axios": "^1.12.0",
     "backend": "file:",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
