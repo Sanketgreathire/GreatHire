@@ -160,7 +160,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         </ul>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 mb-14 flex">
         <button
           className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
           onClick={() => navigate(`/report-job`)}
