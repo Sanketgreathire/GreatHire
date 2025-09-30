@@ -304,182 +304,235 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   };
 
 
-// Inside the component
+  // ✅ states for resume creation
+  const [isCreatingResume, setIsCreatingResume] = useState(false);
+  const [generatedResumeUrl, setGeneratedResumeUrl] = useState(""); // store generated resume file URL
 
-// ✅ New states for resume creation
-const [isCreatingResume, setIsCreatingResume] = useState(false);
-const [generatedResumeUrl, setGeneratedResumeUrl] = useState(""); // store generated resume file URL
+  // Toggle Create Resume UI
+  const toggleCreateResume = () => {
+    setIsCreatingResume(!isCreatingResume);
+  };
 
-// Toggle Create Resume UI
-const toggleCreateResume = () => {
-  setIsCreatingResume(!isCreatingResume);
-};
+  // Generate Resume PDF from entered details
+  const generateResumePDF = () => {
+  // --- required fields (core) ---
+  const requiredFields = [
+    { field: "fullname", label: "Full Name" },
+    { field: "email", label: "Email" },
+    { field: "phoneNumber", label: "Phone Number" },
+    { field: "gender", label: "Gender" },
+    { field: "skills", label: "Skills" },
+    { field: "bio", label: "Profile Summary" },
+    { field: "city", label: "City" },
+    { field: "state", label: "State" },
+    { field: "country", label: "Country" },
+    { field: "selectedLanguages", label: "Known Languages" },
+  ];
 
-// Generate Resume PDF from entered details
-const generateResumePDF = () => {
+  const missingFields = [];
+
+  // --- Normal field validation (defensive) ---
+  requiredFields.forEach(f => {
+    if (f.field === "selectedLanguages") {
+      if (!selectedLanguages || !Array.isArray(selectedLanguages) || selectedLanguages.length === 0) {
+        missingFields.push(f.label);
+      }
+    } else {
+      const val = input?.[f.field];
+      if (!val || String(val).trim() === "") {
+        missingFields.push(f.label);
+      }
+    }
+  });
+
+  // --- Qualification / otherQualification ---
+  if (!input.qualification || String(input.qualification).trim() === "") {
+    missingFields.push("Qualification");
+  } else if (String(input.qualification) === "Others") {
+    if (!input.otherQualification || String(input.otherQualification).trim() === "") {
+      missingFields.push("Other Qualification");
+    }
+  }
+
+  // --- Experience validation (use boolean hasExperience from UI) ---
+  if (hasExperience) {
+    if (!Array.isArray(experiences) || experiences.length === 0) {
+      missingFields.push("Experience (Please add at least one experience)");
+    } else {
+      experiences.forEach((exp, idx) => {
+        const requiredExpFields = [
+          { key: "jobProfile", label: "Job Profile" },
+          { key: "companyName", label: "Company Name" },
+          { key: "duration", label: "Duration" },
+          { key: "experienceDetails", label: "Experience Details" },
+        ];
+
+        requiredExpFields.forEach(({ key, label }) => {
+          const v = exp?.[key];
+          if (!v || String(v).trim() === "") {
+            missingFields.push(`Experience ${idx + 1} - ${label}`);
+          }
+        });
+      });
+    }
+  }
+
+  // --- If any missing fields, show error and stop ---
+  if (missingFields.length > 0) {
+    const unique = [...new Set(missingFields)];
+    toast.error(`Please fill in the following fields: ${unique.join(", ")}`);
+    console.log("Resume validation failed:", unique);
+    return;
+  }
+
+  // --- Create PDF ---
   const doc = new jsPDF();
   let y = 20;
+  const checkPageBreak = (yPos, extra = 20) => {
+    const pageHeight = doc.internal.pageSize.getHeight();
+    if (yPos + extra > pageHeight) {
+      doc.addPage();
+      return 20;
+    }
+    return yPos;
+  };
 
-  doc.setFont("helvetica", "normal"); // ✅ Set default font
+  doc.setFont("helvetica", "normal");
 
-  // ------------------ Name ------------------
+  // Name
   doc.setFontSize(26);
   doc.setFont("helvetica", "bold");
   doc.text((input.fullname || "Your Name").toUpperCase(), 20, y);
- 
   y += 12;
- 
-  // ------------------ Experience job profile (if any) ------------------
-  if (experiences.length > 0) {
-    doc.setFontSize(14); 
+
+  // Top job profile (only if user has experience)
+  if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
+    doc.setFontSize(14);
     doc.setFont("helvetica", "normal");
-    doc.text((experiences[0].jobProfile || "").toUpperCase(), 20, y);
+    doc.text(String(experiences[0].jobProfile || "").toUpperCase(), 20, y);
     y += 12;
   } else {
-    y += 12; // blank space if no experience
+    y += 6;
   }
 
-  // ------------------ Horizontal line ------------------
+  // Divider
   doc.setLineWidth(0.5);
   doc.line(20, y, 190, y);
   y += 14;
 
-// ------------------ Personal Details ------------------
-doc.setFontSize(16);
-doc.setFont("helvetica", "bold");
-doc.text("Personal Details", 20, y);
-y += 10;
-
-// Smaller font for details
-doc.setFontSize(12);
-
-const labels = ["Address", "Gender", "Email", "Phone", "Languages Known", "Qualification"];
-const values = [
-  `${input.city || ""}, ${input.state || ""}, ${input.country || ""} - ${input.pincode || ""}`,
-  input.gender || "",
-  input.email || "",
-  input.phoneNumber || "",
-  input.language && input.language.length ? input.language.join(", ") : "",
-  input.qualification && input.qualification === "Others" ? input.otherQualification || "" : input.qualification || ""
-];
-
-// X positions for label, colon, and value
-const xLabel = 20;
-const xColon = 65; // Adjust to align all colons vertically
-const xValue = 70; // Start of value
-
-for (let i = 0; i < labels.length; i++) {
-   // Label in bold
-  doc.setFont("helvetica", "bold"); 
-  doc.text(labels[i], xLabel, y);
-
-  // Colon
-  doc.text(":", xColon, y);
-
-  // Value in normal font
-  doc.setFont("helvetica", "normal");
-  doc.text(values[i], xValue, y);
-
-  y += 8; // Line spacing
-}
-y += 4; // extra space after the section
-
-
-  // ------------------ Horizontal line ------------------
-  doc.line(20, y, 190, y);
-  y += 12;
-
-  // ------------------ Profile Summary ------------------
-doc.setFontSize(16);
-doc.setFont("helvetica", "bold");
-doc.text("Profile Summary", 20, y);
-y += 10;
-
-// Set smaller font for the bio
-doc.setFontSize(12);
-doc.setFont("helvetica", "normal");
-
-// Wrap the bio text within a width of 170 units
-const bioLines = doc.splitTextToSize(input.bio || "", 170);
-
-// Print each line
-bioLines.forEach(line => {
-  doc.text(line, 20, y);
-  y += 7; // consistent line spacing
-});
-
-y += 5; // extra space after section
-
-
-  // ------------------ Horizontal line ------------------
-  doc.line(20, y, 190, y);
-  y += 12;
-
-
-  // ------------------ Experience (if exists) ------------------
-if (experiences.length > 0) {
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text("Experience", 20, y);
+  // Personal details
+  doc.setFontSize(16).setFont("helvetica", "bold");
+  doc.text("Personal Details", 20, y);
   y += 10;
+  doc.setFontSize(12).setFont("helvetica", "normal");
 
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
+  const address = `${input.city || ""}, ${input.state || ""}, ${input.country || ""}${input.pincode && String(input.pincode).trim() ? " - " + input.pincode : ""}`;
+  const labels = ["Address", "Gender", "Email", "Phone", "Languages Known"];
+  const values = [
+    address,
+    input.gender || "",
+    input.email || "",
+    input.phoneNumber || "",
+    selectedLanguages && selectedLanguages.length ? selectedLanguages.join(", ") : "",
+  ];
 
-  experiences.forEach((exp, index) => {
-     // ---------------- Job Profile ----------------
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14); // Bigger for job profile
-  const jobProfile = `${index + 1}. ${exp.jobProfile || ""}`;
+  const xLabel = 20, xColon = 65, xValue = 70;
+  for (let i = 0; i < labels.length; i++) {
+    doc.setFont("helvetica", "bold");
+    doc.text(labels[i], xLabel, y);
+    doc.text(":", xColon, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(values[i], xValue, y);
+    y += 8;
+  }
+  y += 4;
 
-  // Left side (Job Profile)
-  doc.text(jobProfile, 20, y);
+  // Divider
+  doc.line(20, y, 190, y);
+  y += 12;
 
-  // Right side (Duration)
-  const duration = `(${exp.duration || ""} years)`;
-  doc.text(duration, 190, y, { align: "right" });
+  // Profile summary
+  y = checkPageBreak(y);
+  doc.setFontSize(16).setFont("helvetica", "bold");
+  doc.text("Profile Summary", 20, y);
+  y += 10;
+  doc.setFontSize(12).setFont("helvetica", "normal");
+  const bioLines = doc.splitTextToSize(String(input.bio || ""), 170);
+  bioLines.forEach(line => { doc.text(line, 20, y); y += 7; });
+  y += 5;
 
-  y += 8; // gap after job profile
+  // Divider
+  doc.line(20, y, 190, y);
+  y += 12;
 
-  // ---------------- Company Name ----------------
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12); // Slightly smaller
-  const company = exp.companyName || "";
-  doc.text(company, 25, y); // indent slightly for neatness
+  // Experience section (only if hasExperience)
+  if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
+    y = checkPageBreak(y);
+    doc.setFontSize(16).setFont("helvetica", "bold");
+    doc.text("Experience", 20, y);
+    y += 10;
+    doc.setFontSize(12).setFont("helvetica", "normal");
 
-  y += 10; // spacing before next experience
+    experiences.forEach((exp, index) => {
+      y = checkPageBreak(y);
+      doc.setFont("helvetica", "bold").setFontSize(14);
+      const jobProfile = `${index + 1}. ${String(exp.jobProfile || "")}`;
+      doc.text(jobProfile, 20, y);
 
-doc.setFont("helvetica", "normal");
-    // Details line with indentation
-    const detailsLine = `${exp.experienceDetails || ""}`;
-    const detailsLines = doc.splitTextToSize(detailsLine, 165); // slightly smaller width for indentation
-    detailsLines.forEach(line => {
-      doc.text(line, 25, y); // indented by 5 units
-      y += 7;
+      const duration = exp.duration ? `(${String(exp.duration).trim()})` : "";
+      doc.text(duration, 190, y, { align: "right" });
+
+      y += 8;
+
+      doc.setFont("helvetica", "bold").setFontSize(12);
+      doc.text(String(exp.companyName || ""), 25, y);
+      y += 10;
+
+      y = checkPageBreak(y);
+      doc.setFont("helvetica", "normal");
+      const details = String(exp.experienceDetails || "");
+      const detailsLines = doc.splitTextToSize(details, 165);
+      detailsLines.forEach(line => {
+        y = checkPageBreak(y);
+        doc.text(line, 25, y);
+        y += 7;
+      });
+
+      y += 5;
     });
 
-    y += 5; // extra space between experiences
-  });
-}
-  // ------------------ Horizontal line ------------------
+    y = checkPageBreak(y);
+    doc.line(20, y, 190, y);
+    y += 12;
+  }
+
+  // Qualification
+  y = checkPageBreak(y);
+  doc.setFontSize(16).setFont("helvetica", "bold");
+  doc.text("Qualification", 20, y);
+  y += 10;
+  doc.setFontSize(12).setFont("helvetica", "normal");
+  const qual = (input.qualification === "Others") ? (input.otherQualification || "") : (input.qualification || "");
+  doc.text(String(qual), 20, y);
+  y += 10;
+
+  // Divider
+  y = checkPageBreak(y);
   doc.line(20, y, 190, y);
   y += 12;
 
-  // ------------------ Skills ------------------
-  doc.setFontSize(16);
-  doc.setFont("helvetica", "bold");
-  doc.text("Skills", 20, y);
+  // Skills
+  y = checkPageBreak(y);
+  doc.setFontSize(16).setFont("helvetica", "bold").text("Skills", 20, y);
   y += 10;
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text(input.skills || "", 20, y);
+  doc.setFontSize(12).setFont("helvetica", "normal");
+  const skillLines = doc.splitTextToSize(String(input.skills || ""), 170);
+  skillLines.forEach(line => { y = checkPageBreak(y); doc.text(line, 20, y); y += 7; });
 
-  // ------------------ Save file to blob and URL ------------------
+  // Save and set URL
   const blob = doc.output("blob");
   const fileUrl = URL.createObjectURL(blob);
   setGeneratedResumeUrl(fileUrl);
-
-  // Also set as input.resume to allow uploading
   const file = new File([blob], `${input.fullname || "Resume"}.pdf`, { type: "application/pdf" });
   setInput(prev => ({ ...prev, resume: file, resumeOriginalName: file.name }));
   toast.success("Resume generated successfully!");
@@ -618,7 +671,7 @@ doc.setFont("helvetica", "normal");
 
         toast.success("Profile updated successfully!");
         setOpen(false);
-        
+
         // If this was the first login, redirect to home page after profile completion
         if (user?.isFirstLogin) {
           setTimeout(() => {
@@ -628,22 +681,22 @@ doc.setFont("helvetica", "normal");
         }
       }
     } catch (err) {
-  console.error("Profile Update Error:", err);
+      console.error("Profile Update Error:", err);
 
-  // Show more meaningful message
-  if (err.response) {
-    // Backend responded with an error
-    toast.error(err.response.data?.message || `Error: ${err.response.status} ${err.response.statusText}`);
-  } else if (err.request) {
-    // Request was made but no response
-    toast.error("No response from server. Please check your connection.");
-  } else {
-    // Something else happened
-    toast.error(`Unexpected error: ${err.message}`);
-  }
-} finally {
-  setLoading(false);
-}
+      // Show more meaningful message
+      if (err.response) {
+        // Backend responded with an error
+        toast.error(err.response.data?.message || `Error: ${err.response.status} ${err.response.statusText}`);
+      } else if (err.request) {
+        // Request was made but no response
+        toast.error("No response from server. Please check your connection.");
+      } else {
+        // Something else happened
+        toast.error(`Unexpected error: ${err.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
   const handleCheckboxChange = (category) => {
     setSelectedCategories((prev) =>
@@ -1009,14 +1062,16 @@ doc.setFont("helvetica", "normal");
               {/* Experience Section (only if Yes selected) */}
               {hasExperience && (
                 <div className="relative border rounded-xl p-4 bg-gray-50">
-                  {/* Add New button */}
-                  <button
-                    type="button"
-                    onClick={handleAddExperience}
-                    className="absolute -top-12 right-0 flex items-center gap-2 px-3 py-1 bg-sky-600 text-white text-sm rounded-lg shadow hover:bg-sky-700"
-                  >
-                    <Plus size={16} /> Add New
-                  </button>
+                  {/* Add New button (aligned properly for mobile + desktop) */}
+                  <div className="flex justify-end mb-4">
+                    <button
+                      type="button"
+                      onClick={handleAddExperience}
+                      className="flex items-center gap-2 px-3 py-1 bg-sky-600 text-white text-sm rounded-lg shadow hover:bg-sky-700"
+                    >
+                      <Plus size={16} /> Add New
+                    </button>
+                  </div>
 
                   {experiences.map((exp, index) => (
                     <div
@@ -1216,8 +1271,8 @@ doc.setFont("helvetica", "normal");
                     key={doc}
                     onClick={() => toggleDocSelection(doc)}
                     className={`px-4 py-1 rounded-full border ${selectedDocs.includes(doc)
-                        ? "bg-blue-100 border-blue-400 text-black"
-                        : "bg-white border-gray-300 text-gray-700"
+                      ? "bg-blue-100 border-blue-400 text-black"
+                      : "bg-white border-gray-300 text-gray-700"
                       }`}
                   >
                     {doc}
@@ -1264,45 +1319,45 @@ doc.setFont("helvetica", "normal");
               )}
             </div>
             {/* Create Resume Section */}
-<div className="border-b pb-4 pt-4 mt-2">
-  <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
-  <p className="mb-2">You can generate a resume from the details you entered above.</p>
+            <div className="border-b pb-4 pt-4 mt-2">
+              <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
+              <p className="mb-2">You can generate a resume from the details you entered above.</p>
 
-  <div className="flex items-center gap-4 mb-2">
-    <button
-      type="button"
-      onClick={toggleCreateResume}
-      className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-    >
-      {isCreatingResume ? "Close Resume Creator" : "Create Resume"}
-    </button>
+              <div className="flex items-center gap-4 mb-2">
+                <button
+                  type="button"
+                  onClick={toggleCreateResume}
+                  className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  {isCreatingResume ? "Close Resume Creator" : "Create Resume"}
+                </button>
 
-    {/* Show download if already generated */}
-    {generatedResumeUrl && (
-      <a
-        href={generatedResumeUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
-      >
-        Preview / Download
-      </a>
-    )}
-  </div>
+                {/* Show download if already generated */}
+                {generatedResumeUrl && (
+                  <a
+                    href={generatedResumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
+                  >
+                    Preview / Download
+                  </a>
+                )}
+              </div>
 
-  {isCreatingResume && (
-    <div className="bg-gray-50 p-4 rounded-md border mt-2">
-      <p className="mb-2 text-gray-700">Click the button below to generate your resume PDF:</p>
-      <button
-        type="button"
-        onClick={generateResumePDF}
-        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-      >
-        Generate Resume PDF
-      </button>
-    </div>
-  )}
-</div>
+              {isCreatingResume && (
+                <div className="bg-gray-50 p-4 rounded-md border mt-2">
+                  <p className="mb-2 text-gray-700">Click the button below to generate your resume PDF:</p>
+                  <button
+                    type="button"
+                    onClick={generateResumePDF}
+                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    Generate Resume PDF
+                  </button>
+                </div>
+              )}
+            </div>
 
           </div>
           {/* Submit Button */}

@@ -31,10 +31,22 @@ const SavedJobs = () => {
     <>
       <Navbar />
       <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 min-h-screen">
-        <div className="px-4 py-4">
-          <h1 className="text-2xl text-center underline font-semibold mb-6">
+        {/* <div className="px-4 py-4">  */}
+        <div className="px-4 py-20">
+          {/* <h1 className="text-2xl text-center underline font-semibold mb-6">
             Saved Jobs
+          </h1> */}
+
+          <h1 className="text-2xl p-2 font-semibold mb-6 flex items-center gap-4">
+            Your Saved Jobs
+            <span className="bg-blue-500 text-white text-md px-4 py-1 rounded-full shadow-md">
+              {saveJobsList.length}
+            </span> 
+            {/* <span className="text-blue-400 bg-white text-md px-4 py-1 rounded-full shadow-md">
+    {saveJobsList.length}
+  </span> */}
           </h1>
+
 
           {saveJobsList.length > 0 ? (
             <div>
@@ -50,11 +62,10 @@ const SavedJobs = () => {
                 <button
                   onClick={() => setCurrentPage((prev) => prev - 1)}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-md font-medium ${
-                    currentPage === 1
+                  className={`px-4 py-2 rounded-md font-medium ${currentPage === 1
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-blue-700 hover:bg-blue-600 text-white"
-                  }`}
+                    }`}
                 >
                   Previous
                 </button>
@@ -66,11 +77,10 @@ const SavedJobs = () => {
                 <button
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={indexOfLastJob >= saveJobsList.length}
-                  className={`px-4 py-2 rounded-md font-medium ${
-                    indexOfLastJob >= saveJobsList.length
+                  className={`px-4 py-2 rounded-md font-medium ${indexOfLastJob >= saveJobsList.length
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-blue-700 hover:bg-blue-600 text-white"
-                  }`}
+                    }`}
                 >
                   Next
                 </button>

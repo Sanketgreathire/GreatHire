@@ -1,4 +1,3 @@
-// src/components/FilterCard.jsx
 import React, { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
@@ -180,51 +179,48 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       </div>
 
       {/* Checkbox Filters */}
-      {["jobType", "datePosted", "salary", "workPlace"].map(
-        (category) => (
-          <div key={category} className="mb-6 border-b border-blue-300 pb-8 ">
-            <h3 className="font-semibold text-gray-700 text-lg tracking-wide mb-3">
-              {formatLabel(category)}
-            </h3>
-            <div className="space-y-2">
-              {filterOptions[category].map((opt) => {
-                // ✅ Format salary labels for readability
-                const displayLabel =
-                  category === "salary"
-                    ? opt.replace("-", " - ").replace("+", "+ ")
-                    : category === "jobType"
-                      ? opt.replace("-", " - ")
-                      : opt;
+      {["jobType", "datePosted", "salary", "workPlace"].map((category) => (
+        <div key={category} className="mb-6 border-b border-blue-300 pb-8 ">
+          <h3 className="font-semibold text-gray-700 text-lg tracking-wide mb-3">
+            {formatLabel(category)}
+          </h3>
+          <div className="space-y-2">
+            {filterOptions[category].map((opt, index) => {
+              const displayLabel =
+                category === "salary"
+                  ? opt.replace("-", " - ").replace("+", "+ ")
+                  : category === "jobType"
+                  ? opt.replace("-", " - ")
+                  : opt;
 
-                return (
-                  <label
-                    key={opt}
-                    className="flex items-center gap-3 text-base cursor-pointer group font-sans"
-                  >
-                    <input
-                      type="checkbox"
-                      aria-label={displayLabel}
-                      checked={
-                        Array.isArray(filters[category]) &&
-                        filters[category].includes(
-                          category === "salary"
-                            ? opt.replace(/\s+/g, "")
-                            : opt
-                        )
-                      }
-                      onChange={() => handleCheckboxChange(category, opt)}
-                      className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition"
-                    />
-                    <span className="text-gray-700 group-hover:text-blue-600 transition select-none font-sans">
-                      {displayLabel}
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
+              return (
+                <label
+                  key={`${opt}-${index}`} // ✅ unique key
+                  className="flex items-center gap-3 text-base cursor-pointer group font-sans"
+                >
+                  <input
+                    type="checkbox"
+                    aria-label={displayLabel}
+                    checked={
+                      Array.isArray(filters[category]) &&
+                      filters[category].includes(
+                        category === "salary"
+                          ? opt.replace(/\s+/g, "")
+                          : opt
+                      )
+                    }
+                    onChange={() => handleCheckboxChange(category, opt)}
+                    className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition"
+                  />
+                  <span className="text-gray-700 group-hover:text-blue-600 transition select-none font-sans">
+                    {displayLabel}
+                  </span>
+                </label>
+              );
+            })}
           </div>
-        )
-      )}
+        </div>
+      ))}
 
       {/* Dropdown Filters */}
       {["location", "jobTitle", "company", "qualification"].map((category) => (
@@ -243,8 +239,8 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
             className="w-full border border-blue-300 bg-white rounded-lg px-3 py-2 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
           >
             <option value="">All {formatLabel(category)}</option>
-            {filterOptions[category].map((opt) => (
-              <option key={opt} value={opt} className="text-base">
+            {filterOptions[category].map((opt, index) => (
+              <option key={`${opt}-${index}`} value={opt} className="text-base">
                 {opt}
               </option>
             ))}
@@ -261,7 +257,6 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
           Reset Filters
         </button>
       </div>
-
     </div>
   );
 };
