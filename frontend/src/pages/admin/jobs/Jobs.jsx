@@ -1,4 +1,4 @@
-// Import necessary modules and dependencies
+// Jobs.jsx — Clean White & Professional Dashboard UI
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,129 +26,66 @@ import { toast } from "react-hot-toast";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const Jobs = () => {
-  // State for storing the search query
   const [search, setSearch] = useState("");
-
-  // State for tracking the selected status filter (e.g., "All", "Active", "Inactive")
   const [status, setStatus] = useState("All");
-
-  // State for tracking loading status when performing API operations
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
-
-  // Redux dispatch function for dispatching actions
-  const dispatch = useDispatch();
-
-  // React Router navigation hook for programmatic navigation
-  const navigate = useNavigate();
-
-  // State for tracking the current page in pagination
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10; // Number of jobs displayed per page
-
-  // State for storing the list of jobs
   const [jobList, setJobList] = useState([]);
-
-  // Fetch job and application statistics from Redux store
-  const jobStats = useSelector((state) => state.stats.jobStatsData);
-  const applicationStats = useSelector(
-    (state) => state.stats.applicationStatsData
-  );
-
-  // Fetch logged-in user details from Redux store
-  const { user } = useSelector((state) => state.auth);
-
-  // State to manage delete confirmation modal visibility
+  const itemsPerPage = 8;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
 
-  // Function to toggle job active status
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const jobStats = useSelector((state) => state.stats.jobStatsData);
+  const applicationStats = useSelector((state) => state.stats.applicationStatsData);
+  const { user } = useSelector((state) => state.auth);
+
   const toggleActive = async (jobId, isActive, companyId) => {
     try {
-      // Set loading state for the specific job being updated
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
-
-      // API request to toggle job active/inactive status
+      setLoading((prev) => ({ ...prev, [jobId]: true }));
       const response = await axios.put(
         `${JOB_API_END_POINT}/toggle-active`,
-        {
-          jobId,
-          isActive,
-          companyId,
-        },
+        { jobId, isActive, companyId },
         { withCredentials: true }
       );
-
-      // Update job list if the request was successful
       if (response.data.success) {
         setJobList((prevJobs) =>
           prevJobs.map((job) =>
             job._id === jobId ? { ...job, isActive } : job
           )
         );
-
-        // If the user is an admin, fetch updated job statistics
-        if (user?.role !== "recruiter") {
-          dispatch(fetchJobStats());
-        }
-
-        // Show success notification
+        if (user?.role !== "recruiter") dispatch(fetchJobStats());
         toast.success(response.data.message);
-      } else {
-        // Show error notification if the request fails
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error toggling job status:", error);
-      toast.error(
-        "There was an error toggling the job status. Please try again later."
-      );
+      } else toast.error(response.data.message);
+    } catch {
+      toast.error("Error toggling job status.");
     } finally {
-      // Remove loading state after API call completes
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+      setLoading((prev) => ({ ...prev, [jobId]: false }));
     }
   };
 
   const deleteJob = async (jobId, companyId) => {
     try {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
-      const response = await axios.delete(
-        `${JOB_API_END_POINT}/delete/${jobId}`,
-        {
-          data: { companyId }, // Send companyId in request body
-          withCredentials: true,
-        }
-      );
-
+      dsetLoading((prev) => ({ ...prev, [jobId]: true }));
+      const response = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+        data: { companyId },
+        withCredentials: true,
+      });
       if (response.data.success) {
-        setJobList((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
-
-        // this one call when user admin
+        setJobList((prev) => prev.filter((job) => job._id !== jobId));
         if (user?.role !== "recruiter") {
           dispatch(fetchJobStats());
           dispatch(fetchApplicationStats());
         }
         toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting job:", error);
-      toast.error(
-        "There was an error deleting the job. Please try again later."
-      );
+      } else toast.error(response.data.message);
+    } catch {
+      toast.error("Error deleting job.");
     } finally {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+      dsetLoading((prev) => ({ ...prev, [jobId]: false }));
     }
-  };
-
-  const onConfirmDelete = () => {
-    setShowDeleteModal(false);
-    deleteJob(selectedJob._id, selectedJob.companyId);
-  };
-
-  const onCancelDelete = () => {
-    setShowDeleteModal(false);
   };
 
   const fetchJobList = async () => {
@@ -157,11 +94,9 @@ const Jobs = () => {
         `${ADMIN_JOB_DATA_API_END_POINT}/getAllJobs-stats`,
         { withCredentials: true }
       );
-      if (response.data.success) {
-        setJobList(response.data.jobs);
-      }
+      if (response.data.success) setJobList(response.data.jobs);
     } catch (err) {
-      console.log(`error in job fetching ${err}`);
+      console.error("Error fetching jobs", err);
     }
   };
 
@@ -173,22 +108,22 @@ const Jobs = () => {
     {
       title: "Total Jobs",
       count: jobStats.totalJobs || 0,
-      icon: <CheckCircle size={30} className="text-green-500" />,
+      icon: <CheckCircle className="text-blue-500" size={24} />,
     },
     {
       title: "Active Jobs",
       count: jobStats.totalActiveJobs || 0,
-      icon: <FileText size={30} className="text-yellow-500" />,
+      icon: <FileText className="text-green-500" size={24} />,
     },
     {
       title: "Deactive Jobs",
       count: jobStats.totalDeactiveJobs || 0,
-      icon: <XCircle size={30} className="text-red-500" />,
+      icon: <XCircle className="text-yellow-500" size={24} />,
     },
     {
       title: "Total Applications",
       count: applicationStats.totalApplications || 0,
-      icon: <Briefcase size={30} className="text-blue-500" />,
+      icon: <Briefcase className="text-purple-500" size={24} />,
     },
   ];
 
@@ -196,9 +131,7 @@ const Jobs = () => {
     const matchesSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
       job.companyName.toLowerCase().includes(search.toLowerCase());
-
     const matchesStatus = status === "All" || job.isActive === status;
-
     return matchesSearch && matchesStatus;
   });
 
@@ -210,133 +143,143 @@ const Jobs = () => {
 
   return (
     <>
-      <Navbar linkName={"Jobs"} />
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+      <Navbar linkName="Jobs" />
+
+      {/* Stats Section */}
+      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
           <Card
-            key={index}
-            className="p-4 flex items-center justify-between shadow rounded-xl bg-white"
+            key={i}
+            className="p-5 bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md transition-all"
           >
-            <div>
-              <h3 className="text-lg font-semibold">{stat.title}</h3>
-              <p className="text-2xl font-bold text-left">{stat.count}</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-sm text-gray-500 font-medium">{stat.title}</h3>
+                <p className="text-3xl font-semibold text-gray-800 mt-1">
+                  {stat.count}
+                </p>
+              </div>
+              <div className="bg-gray-100 p-3 rounded-full">{stat.icon}</div>
             </div>
-            {stat.icon}
           </Card>
         ))}
       </div>
 
-      <div className="m-4 p-4 bg-white shadow rounded-lg">
-        <div className="flex justify-between items-center mb-4">
-          <Input
-            placeholder="Search jobs by title, company name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-1/3"
-          />
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-1/6 h-10"
-          >
-            <MenuItem value="All">All Status</MenuItem>
-            <MenuItem value={true}>Active</MenuItem>
-            <MenuItem value={false}>Deactive</MenuItem>
-          </Select>
-        </div>
+      {/* Search & Filter */}
+      <div className="mx-6 mt-6 mb-6 bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-wrap gap-4 justify-between items-center">
+        <Input
+          placeholder="Search jobs by title or company..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-1/3 border-gray-300"
+        />
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="w-full sm:w-1/5 bg-white rounded-md"
+        >
+          <MenuItem value="All">All Status</MenuItem>
+          <MenuItem value={true}>Active</MenuItem>
+          <MenuItem value={false}>Deactive</MenuItem>
+        </Select>
+      </div>
 
+      {/* Jobs Table */}
+      <div className="mx-6 mb-8 bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Job Details</TableHead>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Company</TableHead>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Posted Date</TableHead>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Status</TableHead>
-              <TableHead className="text-2xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
+            <TableRow className="bg-gray-50 border-b">
+              <TableHead className="font-semibold text-gray-700">Job Details</TableHead>
+              <TableHead className="font-semibold text-gray-700">Company</TableHead>
+              <TableHead className="font-semibold text-gray-700">Posted Date</TableHead>
+              <TableHead className="font-semibold text-gray-700">Applications</TableHead>
+              <TableHead className="font-semibold text-gray-700">Status</TableHead>
+              <TableHead className="font-semibold text-gray-700 text-center">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedJobs.map((job) => (
-              <TableRow key={job._id}>
-                <TableCell>
-                  <p className="font-semibold">{job.title}</p>
-                  <p className="text-sm text-gray-500">
-                    {job.jobType} • {job.location} •{" "}
-                    {job?.salary
-                      .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                      .split("-")
-                      .map((part, index) => (
-                        <span key={index}>
-                          ₹{part.trim()}
-                          {index === 0 ? " - " : ""}
-                        </span>
-                      ))}
-                  </p>
-                </TableCell>
-                <TableCell>{job.companyName}</TableCell>
-                <TableCell>{job.postedDate}</TableCell>
-                <TableCell>{job.numberOfApplications} applications</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      job.isActive
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
-                    {job.isActive ? "Active" : "Deactive"}
-                  </span>
-                </TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <Eye
-                    className="text-blue-500 cursor-pointer"
-                    size={20}
-                    onClick={() => navigate(`/admin/job/details/${job._id}`)}
-                  />
-                  {loading[job._id] ? (
-                    "loading..."
-                  ) : (
-                    <Switch
-                      checked={job.isActive}
-                      onChange={(e) => {
-                        toggleActive(job._id, !job.isActive, job.companyId);
-                      }}
-                      color="primary"
-                      size="20"
-                      inputProps={{
-                        "aria-label": "Toggle Recruiter Active Status",
-                      }}
-                    />
-                  )}
-
-                  {dloading[job._id] ? (
-                    "loading..."
-                  ) : (
-                    <Trash
-                      className="text-red-500 cursor-pointer"
-                      size={20}
-                      onClick={() => {
-                        setSelectedJob(job);
-                        setShowDeleteModal(true);
-                      }}
-                    />
-                  )}
+            {paginatedJobs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan="6" className="text-center py-10 text-gray-400">
+                  No jobs found
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              paginatedJobs.map((job) => (
+                <TableRow key={job._id} className="hover:bg-gray-50">
+                  <TableCell>
+                    <p className="font-medium text-gray-800">{job.title}</p>
+                    <p className="text-sm text-gray-500">
+                      {job.jobType} • {job.location} • ₹
+                      {job.salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </p>
+                  </TableCell>
+                  <TableCell>{job.companyName}</TableCell>
+                  <TableCell>{job.postedDate}</TableCell>
+                  <TableCell>{job.numberOfApplications}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        job.isActive
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {job.isActive ? "Active" : "Deactive"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="flex justify-center gap-3">
+                    <Eye
+                      className="text-blue-500 cursor-pointer hover:scale-110 transition"
+                      size={20}
+                      onClick={() => navigate(`/admin/job/details/${job._id}`)}
+                    />
+                    {loading[job._id] ? (
+                      <span className="text-gray-400">...</span>
+                    ) : (
+                      <Switch
+                        checked={job.isActive}
+                        onChange={() =>
+                          toggleActive(job._id, !job.isActive, job.companyId)
+                        }
+                        color="primary"
+                      />
+                    )}
+                    {dloading[job._id] ? (
+                      <span className="text-gray-400">...</span>
+                    ) : (
+                      <Trash
+                        className="text-red-500 cursor-pointer hover:scale-110 transition"
+                        size={20}
+                        onClick={() => {
+                          setSelectedJob(job);
+                          setShowDeleteModal(true);
+                        }}
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
 
-        {/* Pagination Controls */}
-        <div className="flex justify-end items-center mt-4 space-x-2">
-          <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+        {/* Pagination */}
+        <div className="flex justify-end items-center gap-3 p-4 border-t bg-gray-50 rounded-b-xl">
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
             Previous
           </Button>
-          <span>
+          <span className="text-gray-600 font-medium">
             Page {page} of {totalPages}
           </span>
           <Button
+            variant="outline"
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
           >
@@ -348,8 +291,11 @@ const Jobs = () => {
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
-          onConfirm={onConfirmDelete}
-          onCancel={onCancelDelete}
+          onConfirm={() => {
+            setShowDeleteModal(false);
+            deleteJob(selectedJob._id, selectedJob.companyId);
+          }}
+          onCancel={() => setShowDeleteModal(false)}
         />
       )}
     </>

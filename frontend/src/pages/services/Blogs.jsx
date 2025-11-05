@@ -277,7 +277,7 @@ const Blogs = () => {
         <div className="min-h-screen flex flex-col w-screen">
       
         <div className="py-2 text-center flex-grow w-screen pt-10">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mt-6 font-[Oswald]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold mt-6 font-[Oswald]">
             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
               Unlock Your Pontential with Great<span className='text-blue-700'>Hire</span>
               {/* <Typewriter
@@ -348,14 +348,14 @@ const Blogs = () => {
 
           {/* Featured Blog Posts */}
           <div className="mt-9 py-8 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-5xl font-bold text-gray-800 text-center mb-6 pb-5 font-[Oswald]">
+            <h2 className="text-5xl font-bold text-gray-800 text-center mb-6 pb-5 font-[Oswald] dark:text-white">
               Featured Articles
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-9 max-w-5xl mx-auto">
               {blogPosts.map((post, index) => (
                 <div
                   key={index}
-                  className="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col max-w-[280px] mx-auto"
+                  className="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col max-w-[280px] mx-auto dark:text-black"
                 >
                   {post.animation && (
                     <DotLottieReact
@@ -367,7 +367,7 @@ const Blogs = () => {
                   )}
                   <div className="p-4 flex flex-col justify-between flex-grow">
                     <h3 className="text-xl font-semibold font-[Oswald]">{post.title}</h3>
-                    <p className="text-gray-600 text-lg mt-3 font-['Pacifico']">
+                    <p className="text-gray-600 text-lg mt-3 font-['Pacifico'] text-justify hyphens-auto ">
                       {post.description}
                     </p>
                   </div>
@@ -381,7 +381,7 @@ const Blogs = () => {
             <div
               key={category.id}
               id={category.id}
-              className="mt-16 scroll-mt-20 bg-indigo-100 py-10 px-6 sm:px-12 rounded-xl gap-9"
+              className="mt-16 scroll-mt-20 bg-indigo-100 py-10 px-6 sm:px-12 rounded-xl gap-9 dark:text-black"
             >
               <h2 className="text-5xl font-bold mb-4 font-[Oswald]">{category.title}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -406,7 +406,7 @@ const Blogs = () => {
                     )}
                     <div className="p-4 flex flex-col justify-between flex-grow">
                       <h3 className="text-xl font-bold font-[Oswald]">{post.title}</h3>
-                      <p className="text-gray-900 text-lg mt-2 font-['Pacifico']">
+                      <p className="text-gray-900 text-lg mt-2 font-['Pacifico'] text-justify hyphens-auto">
                         {post.description}
                       </p>
                     </div>

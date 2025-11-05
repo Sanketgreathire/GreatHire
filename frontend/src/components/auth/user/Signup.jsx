@@ -153,10 +153,6 @@ const Signup = () => {
                 Find your next opportunity!
               </h1>
 
-              {/* <h1 className="text-sm font-semibold text-gray-400 text-center">
-                ---- or Sign up with email ----
-              </h1> */}
-
               <div className="flex flex-col space-y-2">
                 {/* Full Name */}
                 <label className="font-bold">Full Name</label>

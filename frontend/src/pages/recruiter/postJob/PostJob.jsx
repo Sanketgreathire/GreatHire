@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Stepper from "react-stepper-horizontal";
+// import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -157,15 +157,15 @@ const PostJob = () => {
   return (
     <>
       {company && user?.isActive ? (
-        <div className="px-2 py-4 pt-20">
-          <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg">
+        <div className="px-2 py-4 pt-20 dark:bg-gray-800">
+          <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg dark:bg-gray-800">
             <h1>
               {/* Display only the title of the current step */}
-              <h2 className="md:hidden font-bold text-2xl text-blue-700 py-7">
+              <h2 className="md:hidden font-bold text-2xl text-blue-700 py-7 dark:texxt-gray-800 dark:text-gray-800">
                 {steps[step].title}
               </h2>
             </h1>
-            <div className="mb-10 w-full hidden md:block">
+            <div className="mb-10 w-full hidden md:block dark:bg-gray-800 dark:text-gray-800">
               <Stepper
                 steps={steps}
                 activeStep={step}
@@ -178,20 +178,20 @@ const PostJob = () => {
               {step === 0 && (
                 <div>
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
-                      Company Name<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 mb-1 dark:bg-gray-800 dark:text-gray-800">
+                      Company Name<span className="text-red-500 ml-1 dark:text-gray-800">*</span>
                     </Label>
                     <input
                       name="companyName"
                       type="text"
                       placeholder="Enter company name"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 rounded dark:text-black"
                       value={formik.values.companyName}
                       readOnly
                     />
                     {formik.touched.companyName &&
                       formik.errors.companyName && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 text-sm dark:text-black">
                           {formik.errors.companyName}
                         </div>
                       )}
@@ -701,7 +701,7 @@ const PostJob = () => {
               {step === 3 && (
                 <div>
                   {/* Number of Openings */}
-                  <div className="mb-6">
+                  <div className="mb-6 ">
                     <Label className="block text-gray-700 mb-1">
                       Number of Openings
                       <span className="text-red-500 ml-1">*</span>
@@ -853,40 +853,40 @@ const PostJob = () => {
                             ))
                         : "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Experience:</strong>{" "}
                       {formik.values.experience || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Benefits:</strong>{" "}
                       {formik.values.benefits
                         ? formik.values.benefits.split("\n").join(", "): "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Qualification:</strong>{" "}
                       {formik.values.qualifications || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Salary:</strong>{" "} 
                       {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim(): "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Job Type:</strong>{" "}
                       {formik.values.jobType || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Work Place Flexibility:</strong>{" "}
                       {formik.values.workPlaceFlexibility || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Location:</strong>{" "}
                       {formik.values.location || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Number of Openings:</strong>{" "}
                       {formik.values.numberOfOpening || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 dark:text-gray-100">
                       <strong>Response Time:</strong>{" "}
                       {formik.values.respondTime + " days" || "N/A"}
                     </div>
@@ -959,11 +959,11 @@ const PostJob = () => {
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">Company not created</span>
+          <span className="text-4xl text-gray-400 dark:text-white">Company not created</span>
         </p>
       ) : (
         <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">
+          <span className="text-4xl text-gray-400 dark:text-black">
             GreatHire will verify your company soon.
           </span>
         </p>

@@ -9,7 +9,7 @@ import AdminProtectWrapper from "./AdminProtectWrapper";
 import Dashboard from "../../pages/admin/Dashboard";
 import Users from "../../pages/admin/users/Users";
 import RecruitersList from "@/pages/admin/recruiters/RecruitersList";
-import Recruiters from "../../pages/admin/recruiters/Recruiters";
+import Recruiters from "../../pages/admin/recruiters/Recruiters.jsx";
 import Jobs from "../../pages/admin/jobs/Jobs";
 import Reports from "../../pages/admin/reports/Reports";
 import Settings from "../../pages/admin/settings/Settings";
@@ -35,6 +35,7 @@ const AdminLayout = () => {
         <div className="flex-1 mt-16 ml-16 md:ml-52 bg-gray-100 min-h-screen">
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
+              {/* <Route path="/description/:id" element={<Description />} /> */}
               <Route path="/" element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<Users />} />

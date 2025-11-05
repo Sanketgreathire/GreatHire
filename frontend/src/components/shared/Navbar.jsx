@@ -10,12 +10,17 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT, USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
-import GreatHire from '../../assets/GreatHireLogo.jpg'
+// import GreatHire from '../../assets/GreatHireLogo.jpg'
 import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
-import { useMessages } from "@/context/MessageContext";
+
+import ThemeToggle from "../ThemeToggle";
+
+
+
+
 
 // Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
@@ -83,17 +88,17 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      if (user.role === "recruiter") {
-        // Check if the recruiter has created a company
-        const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
-          withCredentials: true,
-        });
+      // if (user.role === "recruiter") {
+      //   // Check if the recruiter has created a company
+      //   const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
+      //     withCredentials: true,
+      //   });
   
-        if (!checkRes.data.companyExists) {
-          toast.error("Please create a company before logging out.");
-          return;
-        }
-      }
+      //   if (!checkRes.data.companyExists) {
+      //     toast.error("Please create a company before logging out.");
+      //     return;
+      //   }
+      // }
   
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
@@ -156,83 +161,36 @@ const Navbar = () => {
     // { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
   ];
 
-  const MessageButton = () => {
-    const { conversations } = useMessages();
-    const [totalUnread, setTotalUnread] = useState(0);
-
-    useEffect(() => {
-      const unreadCount = conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
-      setTotalUnread(unreadCount);
-    }, [conversations]);
-
-    return (
-      <Link
-        to="/messages"
-        className="relative p-2 hover:bg-gray-100 rounded-md transition-colors"
-        title="Messages"
-      >
-        <div className="relative">
-          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-          </svg>
-          {totalUnread > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold">
-              {totalUnread > 99 ? '99+' : totalUnread}
-            </div>
-          )}
-        </div>
-      </Link>
-    );
-  };
-
-  const MobileMessageButton = () => {
-    const { conversations } = useMessages();
-    const [totalUnread, setTotalUnread] = useState(0);
-
-    useEffect(() => {
-      const unreadCount = conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
-      setTotalUnread(unreadCount);
-    }, [conversations]);
-
-    return (
-      <Link
-        to="/messages"
-        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
-        onClick={() => setIsMenuOpen(false)}
-      >
-        <div className="relative">
-          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-          </svg>
-          {totalUnread > 0 && (
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[16px] h-[16px] flex items-center justify-center font-bold">
-              {totalUnread > 99 ? '99+' : totalUnread}
-            </div>
-          )}
-        </div>
-        <span className="text-gray-700">Messages</span>
-      </Link>
-    );
-  };
+  
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4">
+      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300">
+
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer" onClick={() => {
-            user
-              ? user?.role === "student"
-                ? navigate("/")
-                : navigate("/recruiter/dashboard/home")
-              : navigate("/");
-          }}>
-            <img 
-              src={GreatHire} 
-              alt="GreatHire Logo" 
-              className="w-[140px] h-auto"
-            />
-          </div>
+          {/* <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
+            onClick={() => {
+                {
+                  user
+                    ? user?.role === "student"
+                      ? navigate("/")
+                      : navigate("/recruiter/dashboard/home")
+                    : navigate("/");
+                }
+              }}/> */}
+
+
+               {/* Logo and Text */}
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl font-bold mb-1 hover:text-blue-600 transition duration-300 ease-in-out">
+            <span className="text-black dark:text-white">Great</span>
+            <span className="text-blue-600">Hire</span>
+          </h2>
+          
+        </div>
+          <div>
+       
           
           {/* Mobile Notifications */}
           <div className="lg:hidden">
@@ -307,12 +265,12 @@ const Navbar = () => {
                       </svg>
                     </button>
                     {isMoreMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
+                      <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:text-gray-800 dark:absolute right-0 mt-2 w-60 bg-gray/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1">
                         {secondaryNavLinks.map(({ to, label }) => (
                           <Link
                             key={to}
                             to={to}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                            className="block px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
                             onClick={() => setIsMoreMenuOpen(false)}
                           >
                             {label}
@@ -340,11 +298,12 @@ const Navbar = () => {
               </div>
 
               {/* User actions section */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
+               <ThemeToggle />
                 {user && (
                   <>
-                    {/* Messages */}
-                    <MessageButton />
+                    {/* Messages
+                    <MessageButton /> */}
                     
                     {/* Notifications */}
                     <NotificationDropdown />
@@ -397,7 +356,7 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
                       <Link
                         to={isRecruiter ? "/recruiter/profile" : "/profile"}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -405,6 +364,16 @@ const Navbar = () => {
                         </svg>
                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
+
+                      {!isRecruiter && (
+                        <Link
+                          to="/saved-jobs"
+                          className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
+                          onClick={() => setIsProfileMenuOpen(false)}
+                        >
+                          Saved Jobs
+                        </Link>
+                      )}
 
                       <button
                         onClick={handleLogout}
@@ -457,6 +426,7 @@ const Navbar = () => {
           }`}
           onClick={() => setIsMenuOpen(false)}
         >
+          
           {/* Mobile Menu Panel */}
           <div
             ref={mobileMenuRef}
@@ -491,13 +461,29 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Navigation Links */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="py-2">
-                {navLinks.map(({ to, label }) => (
+            <div>
+              <div className="px-4 py-2"></div>
+              {navLinks.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {label}
+                </Link>
+              ))}
+
+              {/* Mobile Policy Section */}
+              <div className="mt-4 border-t dark:text-gray-800">
+                <div className="px-4 py-2dark:text-gray-800 ">
+                  <p className="text-lg font-medium dark:text-gray-800 ">Policies</p>
+                </div>
+                {policyLinks.map(({ to, label }) => (
                   <Link
                     key={to}
                     to={to}
-                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium"
+                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors dark:text-gray-800"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {label}
@@ -538,11 +524,14 @@ const Navbar = () => {
                   >
                     Sign Up
                   </Link>
+                  <div className="pt-2">
+      <ThemeToggle />
+    </div>
                 </div>
               ) : (
                 <div className="border-t border-gray-200 py-2">
                   {/* Messages */}
-                  <MobileMessageButton />
+                  {/* <MobileMessageButton /> */}
 
                   {/* Saved Jobs - only for students */}
                   {!isRecruiter && (
@@ -579,10 +568,14 @@ const Navbar = () => {
                     </svg>
                     Logout
                   </button>
+                  
                 </div>
+                
               )}
             </div>
+            
           </div>
+         </div>
         </div>
       </nav>
     </>

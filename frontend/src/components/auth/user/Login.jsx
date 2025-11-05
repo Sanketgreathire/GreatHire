@@ -160,8 +160,7 @@ const handleSendOtp = async () => {
           toast.error(response.data.message);
         }
       } else {
-        // Handle password login
-        // Make an API call to log in with email and password
+        // Password login
         const response = await axios.post(
           `${USER_API_END_POINT}/login`,
           { ...formData },

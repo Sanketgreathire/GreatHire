@@ -1,10 +1,15 @@
 import { Job } from "../../models/job.model.js";
 import { User } from "../../models/user.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
-import { Application } from "../../models/application.model.js";
+import  { Application } from "../../models/application.model.js";
 import { Company } from "../../models/company.model.js";
 import Revenue from "../../models/revenue.model.js";
 import JobReport from "../../models/jobReport.model.js";
+import fs from "fs";
+import path from "path";
+import { Parser } from "json2csv";
+
+
 
 export const getStatisticInRange = async (req, res) => {
   try {
@@ -173,7 +178,50 @@ export const getStatisticInRange = async (req, res) => {
     });
   }
 };
+export const exportCorporateCSV = async (req, res) => {
+  try {
+    const { year, range } = req.query;
 
+    // Reuse your existing logic from getStatisticInRange
+    const statsResponse = await getStatisticInRange({ query: { year, range } }, {
+      status: () => ({ json: (data) => data }),
+    });
+
+    const stats = statsResponse?.stats;
+    if (!stats) {
+      return res.status(404).json({ success: false, message: "No data found for CSV export" });
+    }
+
+    // Prepare CSV fields
+    const fields = [
+      { label: "Total Revenue", value: "totalRevenue" },
+      { label: "New Users", value: "newUsers" },
+      { label: "Total Applications", value: "totalApplications" },
+      { label: "Shortlisted", value: "shortlistedApplications" },
+      { label: "Rejected", value: "rejectedApplications" },
+      { label: "Pending", value: "pendingApplications" },
+      { label: "Total Jobs", value: "totalJobs" },
+    ];
+
+    const parser = new Parser({ fields });
+    const csv = parser.parse(stats);
+
+    // Save CSV file permanently in /public/reports
+    const reportsDir = path.join(process.cwd(), "public", "reports");
+    if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
+
+    const fileName = `corporate_report_${Date.now()}.csv`;
+    const filePath = path.join(reportsDir, fileName);
+    fs.writeFileSync(filePath, csv);
+
+    // Respond with a permanent URL
+    const fileURL = `${req.protocol}://${req.get("host")}/reports/${fileName}`;
+    return res.status(200).json({ success: true, url: fileURL });
+  } catch (error) {
+    console.error("Error exporting corporate CSV:", error);
+    return res.status(500).json({ success: false, message: "CSV export failed" });
+  }
+};
 // this controller help to return applications according to year
 export const getApplicationsDataByYear = async (req, res) => {
   try {

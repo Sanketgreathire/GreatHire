@@ -266,3 +266,8 @@ const validateForm = () => {
 };
 
 export default Signup;
+
+
+
+
+

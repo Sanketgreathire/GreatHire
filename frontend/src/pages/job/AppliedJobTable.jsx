@@ -1,7 +1,9 @@
 // Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
+
 
 // Import UI components
 import {
@@ -68,7 +70,7 @@ const AppliedJobTable = () => {
 
   // Display loading message while data is being fetched
   if (loading) {
-    return <p className="text-center text-gray-600">Loading applied jobs...</p>;
+    return <p className="text-center text-gray-600 ">Loading applied jobs...</p>;
   }
 
   // Pagination logic
@@ -78,84 +80,151 @@ const AppliedJobTable = () => {
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = appliedJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  // Handle table row click to navigate to job description
+  // const handleRowClick = (applicant, job) => {
+  //   if (job) {
+  //     // Store selected job details in context
+  //     setSelectedJob({ ...job, applicant });
+  //     // navigate(`/description`);
+  //      navigate(`/description/${job._id}`);
+      
+  //   } else {
+  //     console.error("Job ID not found for this application.");
+  //   }
+  // };
+
+
   const handleRowClick = (applicant, job) => {
-    if (job) {
-      // Store selected job details in context
-      setSelectedJob({ ...job, applicant });
-      navigate(`/description`);
-    } else {
-      console.error("Job ID not found for this application.");
-    }
-  };
+  if (job?._id) {
+    navigate(`/description/${job._id}`);   // ✅ id ke saath bhejo
+  } else {
+    console.error("Job ID not found for this application.");
+  }
+};
+
 
   return (
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg">
-      {/* Job Applications Table */}
-      <Table className="w-full border-collapse border border-gray-200">
-        {/* Table Header */}
-        <TableHeader className="bg-gray-100">
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Job Role</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead className="text-right">Status</TableHead>
-          </TableRow>
-        </TableHeader>
+    // <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black  ">
+    //   {/* Job Applications Table */}
+    //   <Table className="w-full border-collapse border border-gray-200 ">
+    //     {/* Table Header */}
+    //     <TableHeader className="bg-gray-50 ">
+    //       currentJobs.map((job, index) => ( 
 
-        {/* Table Body */}
-        <TableBody>
-          {currentJobs.length > 0 ? (
-            currentJobs.map((job, index) => (
-              <TableRow
-                key={index}
-                className="hover:bg-gray-50 transition duration-150 cursor-pointer"
-                onClick={() => handleRowClick(job.applicant, job.job)}
+    //       <TableRow  >
+    //         <TableHead>Date</TableHead>
+    //         <TableHead>Job Role</TableHead>
+    //         <TableHead>Company</TableHead>
+    //         <TableHead className="text-right">Status</TableHead>
+    //       </TableRow>
+    //     </TableHeader>
+
+    //     {/* Table Body */}
+    //     <TableBody>
+    //       {currentJobs.length > 0 ? (
+    //         currentJobs.map((job, index) => (
+    //           <TableRow
+    //             key={index}
+    //             className="transition duration-150 cursor-pointer  "
+    //             onClick={() => handleRowClick(job.applicant, job.job)}
+    //           >
+    //             <TableCell className="text-gray-700 ">
+    //               {new Date(job.createdAt).toLocaleDateString()}
+    //             </TableCell>
+    //             <TableCell className="text-gray-800 font-medium  " >
+    //               {job.job?.jobDetails?.title || "N/A"}
+    //             </TableCell>
+    //             <TableCell className="text-gray-800 font-medium">
+    //               {job.job?.company?.companyName || "N/A"}
+    //             </TableCell>
+    //             <TableCell className="text-right">
+    //               <Badge
+    //                 className={`px-2 py-1 rounded-md ${
+    //                   statusStyles[job.status] || "bg-gray-200 text-gray-300"
+    //                 }`}
+    //               >
+    //                 {job.status || "Pending"}
+    //               </Badge>
+    //             </TableCell>
+    //           </TableRow>
+    //         ))
+    //       ) : (
+    //         <TableRow>
+    //           <TableCell colSpan={4} className="text-center text-gray-500  ">
+    //             No applications found.
+    //           </TableCell>
+    //         </TableRow>
+    //       )}
+    //     </TableBody>
+    //   </Table> 
+
+    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black">
+  {/* Job Applications Table */}
+  <Table className="w-full border-collapse border border-gray-200">
+    
+    {/* Table Header */}
+    <TableHeader className="bg-gray-50">
+      <TableRow>
+        <TableHead>Date</TableHead>
+        <TableHead>Job Role</TableHead>
+        <TableHead>Company</TableHead>
+        <TableHead className="text-right">Status</TableHead>
+      </TableRow>
+    </TableHeader>
+
+    {/* Table Body */}
+    <TableBody>
+      {currentJobs.length > 0 ? (
+        currentJobs.map((job, index) => (
+          <TableRow
+            key={index}
+            className="transition duration-150 cursor-pointer"
+            onClick={() => handleRowClick(job.applicant, job.job)}
+          >
+            <TableCell className="text-gray-700">
+              {new Date(job.createdAt).toLocaleDateString()}
+            </TableCell>
+            <TableCell className="text-gray-800 font-medium">
+              {job.job?.jobDetails?.title || "N/A"}
+            </TableCell>
+            <TableCell className="text-gray-800 font-medium">
+              {job.job?.company?.companyName || "N/A"}
+            </TableCell>
+            <TableCell className="text-right">
+              <Badge
+                className={`px-2 py-1 rounded-md ${
+                  statusStyles[job.status] || "bg-gray-200 text-gray-300"
+                }`}
               >
-                <TableCell className="text-gray-700">
-                  {new Date(job.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-gray-800 font-medium">
-                  {job.job?.jobDetails?.title || "N/A"}
-                </TableCell>
-                <TableCell className="text-gray-800 font-medium">
-                  {job.job?.company?.companyName || "N/A"}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Badge
-                    className={`px-2 py-1 rounded-md ${
-                      statusStyles[job.status] || "bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {job.status || "Pending"}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={4} className="text-center text-gray-500">
-                No applications found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                {job.status || "Pending"}
+              </Badge>
+            </TableCell>
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={4} className="text-center text-gray-500">
+            No applications found.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+
 
       {/* Pagination Controls */}
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-4 p-2 rounded-md dark:bg-white">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
           className={`px-4 py-2 rounded ${
             currentPage === 1
               ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-700 text-white hover:bg-blue-800"
+              : "bg-blue-700 text-gray-100 hover:bg-blue-800"
           }`}
         >
           Previous
         </button>
-        <span className="text-gray-700">
+        <span className="text-gray-400">
           Page {currentPage} of {totalPages}
         </span>
         <button
