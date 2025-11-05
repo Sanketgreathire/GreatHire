@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
-import { Trash, Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
-
-// this will use when user is admin
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
-const RecruiterJob = ({ recruiterId }) => {
-  // State variables for managing job data, loading states, pagination, search, and filters
+const RecruiterJobs = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState({});
@@ -20,6 +16,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [jobId, setJobId] = useState(null);
@@ -28,327 +25,219 @@ const RecruiterJob = ({ recruiterId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-   // Function to fetch jobs created by a recruiter
   const getJobsByRecruiter = async (recruiterId, page = 1) => {
     try {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
-      const response = await axios.get(
+      setLoading(true);
+      const res = await axios.get(
         `${JOB_API_END_POINT}/jobs/${recruiterId}?page=${page}&limit=10`,
         { withCredentials: true }
       );
-
-      if (response.data.success) {
-        setJobs(response.data.jobs);
-        setTotalPages(response.data.totalPages);
-      } else {
-        toast.error(response.data.message);
+      if (res.data.success) {
+        setJobs(res.data.jobs);
+        setTotalPages(res.data.totalPages);
       }
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-      toast.error(
-        "There was an error fetching the jobs. Please try again later."
-      );
+    } catch {
+      toast.error("Unable to load jobs");
     } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+      setLoading(false);
     }
   };
 
-  // Fetch jobs when the component mounts or when recruiterId/currentPage changes
   useEffect(() => {
-    if (recruiterId && jobs.length === 0) {
-      getJobsByRecruiter(recruiterId, currentPage);
-    }
+    if (recruiterId) getJobsByRecruiter(recruiterId, currentPage);
   }, [recruiterId, currentPage]);
 
-   // Function to toggle the job's active status
-  const toggleActive = async (event, jobId, isActive) => {
-    event.stopPropagation();
-    try {
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
-      const response = await axios.put(
-        `
-        ${JOB_API_END_POINT}/toggle-active`,
-        {
-          jobId,
-          isActive,
-          companyId: company?._id,
-        },
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        // Update job status in the state
-        setJobs((prevJobs) =>
-          prevJobs.map((job) =>
-            job._id === jobId
-              ? { ...job, jobDetails: { ...job.jobDetails, isActive } }
-              : job
-          )
-        );
-
-        // this one call when user admin
-        if (user?.role !== "recruiter") {
-          dispatch(fetchJobStats());
-        }
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error toggling job status:", error);
-      toast.error(
-        "There was an error toggling the job status. Please try again later."
-      );
-    } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
-    }
-  };
-
-  // Function to delete a job
-  const deleteJob = async (jobId) => {
-    try {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
-      const response = await axios.delete(
-        `${JOB_API_END_POINT}/delete/${jobId}`,
-        {
-          data: { companyId: company._id }, // Send companyId in request body
-          withCredentials: true,
-        }
-      );
-
-      if (response.data.success) {
-        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
-
-        // this one call when user admin
-        if (user?.role !== "recruiter") {
-          dispatch(fetchJobStats());
-          dispatch(fetchApplicationStats());
-        }
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting job:", error);
-      toast.error(
-        "There was an error deleting the job. Please try again later."
-      );
-    } finally {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
-    }
-  };
-
-  // Delete confirmation handlers
-  const onConfirmDelete = () => {
-    setShowDeleteModal(false);
-    deleteJob(jobId);
-  };
-
-  const onCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Handle pagination
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    getJobsByRecruiter(recruiterId, page);
-  };
-
-  // Filter jobs based on search term and status
-  const filteredJobs = jobs.filter((job) => {
-    const searchMatch =
-      job.jobDetails.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.jobDetails.companyName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      job.jobDetails.jobType.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const statusMatch =
-      filterStatus === "all" ||
-      (filterStatus === "active" && job.jobDetails.isActive) ||
-      (filterStatus === "inactive" && !job.jobDetails.isActive);
-
-    return searchMatch && statusMatch;
-  });
-
-   // Navigate to job details page
   const handleJobDetailsClick = (jobId) => {
     if (user?.role === "recruiter")
       navigate(`/recruiter/dashboard/job-details/${jobId}`);
     else navigate(`/admin/job/details/${jobId}`);
   };
 
+  const toggleActive = async (jobId, isActive) => {
+    try {
+      setLoading((p) => ({ ...p, [jobId]: true }));
+      const res = await axios.put(
+        `${JOB_API_END_POINT}/toggle-active`,
+        { jobId, isActive, companyId: company?._id },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setJobs((jobs) =>
+          jobs.map((j) =>
+            j._id === jobId ? { ...j, jobDetails: { ...j.jobDetails, isActive } } : j
+          )
+        );
+        if (user?.role !== "recruiter") dispatch(fetchJobStats());
+        toast.success(res.data.message);
+      }
+    } catch {
+      toast.error("Error updating job status");
+    } finally {
+      setLoading((p) => ({ ...p, [jobId]: false }));
+    }
+  };
+
+  const deleteJob = async (jobId) => {
+    try {
+      dsetLoading((p) => ({ ...p, [jobId]: true }));
+      const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+        data: { companyId: company._id },
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        setJobs((prev) => prev.filter((j) => j._id !== jobId));
+        dispatch(fetchJobStats());
+        dispatch(fetchApplicationStats());
+        toast.success(res.data.message);
+      }
+    } catch {
+      toast.error("Failed to delete job");
+    } finally {
+      dsetLoading((p) => ({ ...p, [jobId]: false }));
+    }
+  };
+
+  const filteredJobs = jobs.filter((job) => {
+    const t = searchTerm.toLowerCase();
+    const match =
+      job.jobDetails.title.toLowerCase().includes(t) ||
+      job.jobDetails.companyName.toLowerCase().includes(t) ||
+      job.jobDetails.jobType.toLowerCase().includes(t);
+
+    const statusMatch =
+      filterStatus === "all" ||
+      (filterStatus === "active" && job.jobDetails.isActive) ||
+      (filterStatus === "inactive" && !job.jobDetails.isActive);
+
+    return match && statusMatch;
+  });
+
   return (
-    <>
-      <div className="container min-h-screen">
-        <h2 className="text-2xl font-semibold mb-4">Jobs Created By You</h2>
-        <div className="mb-4 flex justify-between px-2">
-          <input
-            type="text"
-            placeholder="Search by title, company or job type"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 w-72 border border-gray-400 rounded-sm"
-          />
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="p-2 border border-gray-400 rounded"
-          >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        {/* Table displaying jobs */}
-        <div className="w-72 flex overflow-x-scroll md:w-full">
-          <table className="bg-white border border-gray-200 rounded-lg">
-            <thead>
-              <tr>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Job Title
-                </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Company
-                </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Job Type
-                </th>
-                {(recruiterId === user?._id ||
-                  user?.emailId.email === company?.adminEmail ||
-                  user?.role === "admin" ||
-                  user?.role === "Owner") && (
-                  <>
-                    <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </>
-                )}
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredJobs.length > 0 ? (
-                filteredJobs.map((job) => (
-                  <tr key={job._id} className="border-b">
-                    <td className="py-3 px-6">{job.jobDetails.title}</td>
-                    <td className="py-3 px-6">{job.jobDetails.companyName}</td>
-                    <td className="py-3 px-6">{job.jobDetails.location}</td>
-                    <td className="py-3 px-6">{job.jobDetails.jobType}</td>
-                    {(recruiterId === user?._id ||
-                      user?.emailId.email === company?.adminEmail ||
-                      user?.role === "admin" ||
-                      user?.role === "Owner") && (
-                      <>
-                        <td className="py-3 px-6 place-items-center">
-                          {loading[job._id] ? (
-                            "loading..."
-                          ) : job.jobDetails.isActive ? (
-                            <FaToggleOn
-                              className="text-green-500 cursor-pointer"
-                              onClick={(event) =>
-                                toggleActive(
-                                  event,
-                                  job._id,
-                                  !job.jobDetails.isActive
-                                )
-                              }
-                              size={30}
-                            />
-                          ) : (
-                            <FaToggleOff
-                              className="text-red-500 cursor-pointer"
-                              onClick={(event) =>
-                                toggleActive(
-                                  event,
-                                  job._id,
-                                  !job.jobDetails.isActive
-                                )
-                              }
-                              size={30}
-                            />
-                          )}
-                        </td>
-                        <td className="py-3 px-6 flex gap-4 items-center justify-center">
-                          <Eye
-                            className="text-blue-500 cursor-pointer"
-                            size={20}
-                            onClick={() => handleJobDetailsClick(job?._id)}
-                          />
-                          {dloading[job._id] ? (
-                            "deleting..."
-                          ) : (
-                            <Trash
-                              size={20}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setJobId(job._id);
-                                setShowDeleteModal(true);
-                              }}
-                              className="text-red-500 hover:text-red-700 cursor-pointer"
-                            />
-                          )}
-                        </td>
-                      </>
-                    )}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="py-3 px-6 text-center">
-                    No jobs found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex w-72 md:w-full justify-between mt-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 border ${
-              currentPage === 1
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-700 text-white"
-            }`}
-          >
-            Previous
-          </button>
-          <span className="px-4 py-2">
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 border ${
-              currentPage === totalPages
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-blue-700 text-white"
-            }`}
-          >
-            Next
-          </button>
+    <div className="bg-white rounded-2xl border shadow-sm p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">Job Listings</h2>
+          <p className="text-sm text-gray-500">All jobs created by this recruiter</p>
         </div>
       </div>
+
+      {/* Search + Filter */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <input
+          type="text"
+          placeholder="Search by title or company…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-3 py-2 border rounded-md w-64 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+        />
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2 border rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+        >
+          <option value="all">All Jobs</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      {/* Corporate Table */}
+      <div className="overflow-x-auto rounded-lg border">
+        <table className="w-full">
+          <thead className="bg-gray-100 text-gray-600 text-sm">
+            <tr>
+              <th className="py-3 px-5 text-left">Job Title</th>
+              <th className="py-3 px-5 text-left">Company</th>
+              <th className="py-3 px-5 text-left">Location</th>
+              <th className="py-3 px-5 text-left">Type</th>
+              <th className="py-3 px-5 text-center">Status</th>
+              <th className="py-3 px-5 text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody className="text-sm text-gray-700">
+            {filteredJobs.length ? (
+              filteredJobs.map((job) => (
+                <tr key={job._id} className="border-b hover:bg-gray-50">
+                  <td className="py-3 px-5">{job.jobDetails.title}</td>
+                  <td className="py-3 px-5">{job.jobDetails.companyName}</td>
+                  <td className="py-3 px-5">{job.jobDetails.location}</td>
+                  <td className="py-3 px-5">{job.jobDetails.jobType}</td>
+
+                  <td className="py-3 px-5 text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        job.jobDetails.isActive
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                      onClick={() =>
+                        toggleActive(job._id, !job.jobDetails.isActive)
+                      }
+                    >
+                      {job.jobDetails.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+
+                  <td className="py-3 px-5 flex justify-center gap-4">
+                    <Eye
+                      className="text-blue-600 cursor-pointer hover:text-blue-800"
+                      onClick={() => handleJobDetailsClick(job._id)}
+                    />
+                    <Trash2
+                      className="text-red-500 cursor-pointer hover:text-red-700"
+                      onClick={() => {
+                        setJobId(job._id);
+                        setShowDeleteModal(true);
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="py-5 text-center text-gray-500" colSpan="6">
+                  No jobs found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-6 text-sm">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Delete Modal */}
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
-          onConfirm={onConfirmDelete}
-          onCancel={onCancelDelete}
+          onConfirm={() => deleteJob(jobId)}
+          onCancel={() => setShowDeleteModal(false)}
         />
       )}
-    </>
+    </div>
   );
 };
 
-export default RecruiterJob;
+export default RecruiterJobs;

@@ -1,4 +1,4 @@
-// Import necessary modules and dependencies a
+// Users.jsx
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye } from "lucide-react";
+import { Trash, Eye, Search, FileDown } from "lucide-react";
 import { Briefcase, FileText, CheckCircle } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
@@ -28,364 +28,396 @@ import {
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import CountUp from "react-countup";
 
+// ✅ Safe Date Formatter
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  if (!isNaN(dateString)) {
+    return new Date(Number(dateString)).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+  const parts = dateString.split("-");
+  if (parts.length === 3 && parts[0].length <= 2) {
+    const [day, month, year] = parts;
+    const parsed = new Date(`${year}-${month}-${day}`);
+    if (!isNaN(parsed)) {
+      return parsed.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    }
+  }
+  const parsed = new Date(dateString);
+  if (!isNaN(parsed)) {
+    return parsed.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+  return dateString;
+};
 
 const Users = () => {
-  // State for search input
   const [search, setSearch] = useState("");
-
-  // State for pagination
   const [page, setPage] = useState(1);
   const itemsPerPage = 20;
-  
-  // State to store the list of users
   const [usersList, setUsersList] = useState([]);
-  
-  // Hook for navigation
   const navigate = useNavigate();
-  
-  // Redux dispatch function
   const dispatch = useDispatch();
-
-  // State for tracking delete request loading status
   const [dloading, dsetLoading] = useState({});
-  
-  // Fetch user details from Redux store
   const { user } = useSelector((state) => state.auth);
-  
-  // Fetch job statistics from Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
-  
-  // Fetch application statistics from Redux store
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
   );
-  
-  // Fetch user statistics from Redux store
   const userStats = useSelector((state) => state.stats.userStatsData);
-  
-  // State to store selected user's email for deletion
   const [userEmail, setUserEmail] = useState(null);
-  
-  // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
-  // Function to fetch the user list from the API
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // Fetch user list
   const fetchUserList = async () => {
     try {
       const response = await axios.get(
         `${ADMIN_USER_DATA_API_END_POINT}/user-stats`,
         { withCredentials: true }
       );
-      if (response.data.success) {
-        setUsersList(response.data.data);
-      }
+      if (response.data.success) setUsersList(response.data.data);
     } catch (err) {
       console.log(`Error in fetching user list: ${err}`);
     }
   };
-  
-  // Function to handle account deletion
+
+  // Delete account
   const handleDeleteAccount = async (email) => {
     try {
-      // Show loading state for the specific user
-      dsetLoading((prevLoading) => ({ ...prevLoading, [email]: true }));
-      
-      // API request to delete user account
+      dsetLoading((prev) => ({ ...prev, [email]: true }));
       const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
         data: { email },
         withCredentials: true,
       });
-      
+
       if (response.data.success) {
-        // Remove deleted user from the user list
-        setUsersList((prevList) =>
-          prevList.filter((user) => user.email !== email)
-      );
-      
-      // Fetch updated user statistics
-      dispatch(fetchUserStats());
-      dispatch(fetchApplicationStats());
-      
-      // Show success notification
-      toast.success(response.data.message);
+        setUsersList((prev) => prev.filter((u) => u.email !== email));
+        dispatch(fetchUserStats());
+        dispatch(fetchApplicationStats());
+        toast.success(response.data.message);
+      }
+    } catch (err) {
+      console.error("Error deleting account: ", err.message);
+      toast.error("Error in deleting account");
+    } finally {
+      dsetLoading((prev) => ({ ...prev, [email]: false }));
     }
-  } catch (err) {
-    console.error("Error deleting account: ", err.message);
-    toast.error("Error in deleting account");
-  } finally {
-    // Hide loading state
-    dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
-  }
-};
+  };
 
-const [selectedUsers, setSelectedUsers] = useState([])
-
-
-const downloadCSV = () => {
-  const headers = ["Name", "Email", "Contact", "Join Date", "Applications", "Resume"];
-
-  // Filter selected users
-  const exportUsers = selectedUsers.length > 0
-    ? usersList.filter(user => selectedUsers.includes(user._id))
-    : filteredUsers;
-
-  const rows = exportUsers.map((user) => [
-    user.fullname,
-    user.email,
-    user.phoneNumber,
-    user.joined,
-    user.applicationCount,
-    user.resumeurl,
-  ]);
-
-  let csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers, ...rows]
-      .map((row) =>
-        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
-      )
-      .join("\n");
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "users_data.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-const toggleSelectAll = () => {
-  if (selectedUsers.length === paginatedUsers.length) {
-    setSelectedUsers([]);
-  } else {
-    const allUserIds = paginatedUsers.map((user) => user._id);
-    setSelectedUsers(allUserIds);
-  }
-};
-const toggleUserSelection = (userId) => {
-  setSelectedUsers((prevSelected) =>
-    prevSelected.includes(userId)
-      ? prevSelected.filter((id) => id !== userId)
-      : [...prevSelected, userId]
-  );
-};
-  // Function to confirm deletion and proceed with account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteAccount(userEmail);
   };
-  
-  // Function to cancel deletion
-  const onCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
-  
-  // Fetch user list on component mount or when user changes
+
+  const onCancelDelete = () => setShowDeleteModal(false);
+
   useEffect(() => {
     if (user) fetchUserList();
   }, [user]);
-  
+
+  // Stats Section
   const stats = [
     {
       title: "Total Users",
       count: userStats?.totalUsers || 0,
-      change: "+12.5%",
-      icon: <FaRegUser size={30} />,
-      color: "text-blue-500",
-      bg: "bg-blue-100",
+      icon: <FaRegUser size={36} className="text-blue-600" />,
+      color: "bg-blue-100",
     },
     {
       title: "Total Jobs",
       count: jobStats?.totalJobs || 0,
-      change: "+5.2%",
-      icon: <Briefcase size={30} />,
-      color: "text-orange-500",
-      bg: "bg-orange-100",
+      icon: <Briefcase size={36} className="text-orange-600" />,
+      color: "bg-orange-100",
     },
     {
       title: "Active Jobs",
       count: jobStats?.totalActiveJobs || 0,
-      change: "+5.2%",
-      icon: <CheckCircle size={30} />,
-      color: "text-green-500",
-      bg: "bg-green-100",
+      icon: <CheckCircle size={36} className="text-green-600" />,
+      color: "bg-green-100",
     },
     {
       title: "Applications",
       count: applicationStats?.totalApplications || 0,
-      change: "+15.3%",
-      icon: <FileText size={30} />,
-      color: "text-yellow-500",
-      bg: "bg-yellow-100",
+      icon: <FileText size={36} className="text-purple-600" />,
+      color: "bg-purple-100",
     },
   ];
-  
+
   const filteredUsers = usersList?.filter(
-    (user) =>
-    user.fullname.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase()) ||
-    user.phoneNumber.toLowerCase().includes(search.toLowerCase())||
-    (user.jobRole && user.jobRole.toLowerCase().includes(search.toLowerCase())) ||
-    (user.duration && user.duration.toLowerCase().includes(search.toLowerCase()))
+    (u) =>
+      u.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase()) ||
+      u.phoneNumber.toLowerCase().includes(search.toLowerCase()) ||
+      (u.jobRole && u.jobRole.toLowerCase().includes(search.toLowerCase())) ||
+      (u.duration && u.duration.toLowerCase().includes(search.toLowerCase()))
   );
-  
+
   const paginatedUsers = filteredUsers?.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
-  console.log(paginatedUsers.map(u => ({ name: u?.fullname, lastActiveAt: u?.lastActiveAt })));
-   // console.log("🧪 user.lastActiveAt:", user.fullname, user.lastActiveAt);
-  // console.log(user.lastActiveAt);
-  // const formattedDate = new Date(user.lastActiveAt).toLocaleString();
-  // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  // const visiblePages = 20;
-  // const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
-  // const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
-console.log(paginatedUsers)
+  const toggleSelectAll = () => {
+    if (selectedUsers.length === paginatedUsers.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(paginatedUsers.map((u) => u._id));
+    }
+  };
+
+  const toggleUserSelection = (id) => {
+    setSelectedUsers((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const downloadCSV = () => {
+    const headers = [
+      "Name",
+      "Email",
+      "Contact",
+      "Join Date",
+      "Applications",
+      "Resume",
+    ];
+    const exportUsers =
+      selectedUsers.length > 0
+        ? usersList.filter((u) => selectedUsers.includes(u._id))
+        : filteredUsers;
+
+    const rows = exportUsers.map((u) => [
+      u.fullname,
+      u.email,
+      u.phoneNumber,
+      u.joined,
+      u.applicationCount,
+      u.resumeurl,
+    ]);
+
+    let csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((r) => r.map((f) => `"${String(f).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "users_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <Navbar linkName={"Users"} />
-      {/* Stats Cards */}
-      <div className=" p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+
+      {/* Stat Cards */}
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
           <Card
-          key={index}
-          className="p-4 flex items-center justify-between bg-white shadow rounded-xl"
+            key={i}
+            className="flex items-center justify-between p-6 bg-white border border-gray-100 shadow-sm rounded-2xl hover:shadow-md transition"
           >
             <div>
-              <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
-              <p className="text-2xl font-bold text-left">{stat.count}</p>
-              {/* <span className="text-sm text-gray-500">
-                {stat.change} from last month
-                </span> */}
+              <p className="text-gray-500 text-sm font-medium">{stat.title}</p>
+              <p className="text-3xl font-semibold text-gray-900 mt-1">
+                <CountUp end={stat.count} duration={1.5} />
+              </p>
             </div>
-            <div className={`p-2 rounded-full ${stat.bg} ${stat.color}`}>
-              {stat.icon}
-            </div>
+            <div className={`p-3 rounded-lg ${stat.color}`}>{stat.icon}</div>
           </Card>
         ))}
       </div>
-      {/* -------------------------------------------------------------------------------------- */}
-      <div className="w-full overflow-x-auto px-4 m-4">
-  <div className="min-w-[1500px] bg-white shadow rounded-lg p-4">
-        <div className="flex justify-between items-center mb-4">
-          <Input
-            placeholder="Search users by name, email, contact, job role, experience"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-1/3"
-          />
-        </div>
-        <div className="overflow-x-auto w-full">
 
-        <Table className="table-auto min-w-[1500px] w-full text-center border border-gray-300 border-collapse">
-          <TableHeader>
-
-            <TableRow>
-
-            <TableHead>
-              <input
-                type="checkbox"
-                checked={selectedUsers.length === paginatedUsers.length}
-                onChange={toggleSelectAll}
-                />
-            </TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Last Active</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-
-            {paginatedUsers?.filter(Boolean).map((user) => (
-
-              <TableRow key={user._id}>
-          <TableHead>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user._id)}
-                    onChange={() => toggleUserSelection(user._id)}
-                    />
-                    </TableHead>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.fullname}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.email}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.phoneNumber}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.joined}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.applicationCount}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole|| "N/A"}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration|| "N/A"}</TableCell>
-                <TableCell className="whitespace-nowrap border border-gray-300">
-                  {user.lastActiveAt|| 'N/A'}
-                </TableCell>
-                                <TableCell className="flex gap-4 justify-center">
-                  <Eye
-                    className="text-blue-500 cursor-pointer"
-                    size={16}
-                    onClick={() => navigate(`/admin/users/details/${user._id}`)}
-                    />
-                  {dloading[user?.email] ? (
-                    "deleting..."
-                  ) : (
-                    <Trash
-                    className="text-red-500 cursor-pointer"
-                    size={16}
-                    onClick={() => {
-                      setUserEmail(user.email);
-                      setShowDeleteModal(true);
-                    }}
-                    />
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      {/* User Table */}
+      <div className="w-full overflow-x-auto px-6 mt-6">
+        <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-6">
+          {/* Search */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="relative w-full md:w-1/2">
+              <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+              <Input
+                placeholder="Search users..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 rounded-full border border-gray-200 bg-gray-50 focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-            </div>
-        <div className="flex gap-2">
-        <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-              Previous
-            </Button>
-
-            {(() => {
-              const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-              const visiblePages = 20;
-              const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
-              const endPage = Math.min(startPage + visiblePages - 1, totalPages);
-
-              return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
-                const pageNumber = startPage + i;
-                return (
-                  <Button
-                    key={pageNumber}
-                    onClick={() => setPage(pageNumber)}
-                    className={page === pageNumber ? "bg-blue-700 text-white" : ""}
-                  >
-                    {pageNumber}
-                  </Button>
-                );
-              });
-            })()}
-
-            <Button
-              disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </Button>
           </div>
 
+          {/* Table */}
+          <Table className="w-full border border-gray-200 rounded-xl">
+            <TableHeader className="bg-gray-50">
+              <TableRow>
+                <TableHead className="w-[5%] text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.length === paginatedUsers.length}
+                    onChange={toggleSelectAll}
+                  />
+                </TableHead>
+                <TableHead>User</TableHead>
+                <TableHead className="text-center">Contact</TableHead>
+                <TableHead className="text-center">Join Date</TableHead>
+                <TableHead className="text-center">Applications</TableHead>
+                <TableHead className="text-center">Job Role</TableHead>
+                <TableHead className="text-center">Experience</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedUsers?.map((u) => (
+                <TableRow
+                  key={u._id}
+                  className="hover:bg-gray-50 transition"
+                >
+                  <TableCell className="text-center">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(u._id)}
+                      onChange={() => toggleUserSelection(u._id)}
+                    />
+                  </TableCell>
+                  <TableCell className="flex items-center gap-3 text-left">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                      {u.fullname?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">
+                        {u.fullname}
+                      </p>
+                      <p className="text-xs text-gray-500">{u.email}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">{u.phoneNumber}</TableCell>
+                  <TableCell className="text-center">
+                    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium">
+                      {formatDate(u.joined)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        u.applicationCount > 0
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-100 text-gray-500"
+                      }`}
+                    >
+                      {u.applicationCount}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {u.jobRole || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {u.duration || "N/A"}
+                  </TableCell>
+                  <TableCell className="flex gap-3 justify-center">
+                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition">
+                      <Eye size={16} />
+                    </button>
+                    {dloading[u?.email] ? (
+                      <span className="text-gray-400 text-sm">Deleting...</span>
+                    ) : (
+                      <button
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition"
+                        onClick={() => {
+                          setUserEmail(u.email);
+                          setShowDeleteModal(true);
+                        }}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
-      
+      </div>
+
+      {/* Pagination */}
+      <div className="flex flex-wrap gap-2 justify-center mt-6">
+        <Button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+          className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+        >
+          Prev
+        </Button>
+        {(() => {
+          const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+          const pages = [];
+          pages.push(1);
+          if (page > 3) pages.push("...");
+          for (
+            let i = Math.max(2, page - 2);
+            i <= Math.min(totalPages - 1, page + 2);
+            i++
+          ) {
+            pages.push(i);
+          }
+          if (page < totalPages - 2) pages.push("...");
+          if (totalPages > 1) pages.push(totalPages);
+          return pages.map((p, idx) =>
+            p === "..." ? (
+              <span
+                key={idx}
+                className="px-3 py-1 text-gray-500 select-none"
+              >
+                ...
+              </span>
+            ) : (
+              <Button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`px-3 py-1 rounded-md ${
+                  page === p
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {p}
+              </Button>
+            )
+          );
+        })()}
+        <Button
+          disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
+          onClick={() => setPage(page + 1)}
+          className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+        >
+          Next
+        </Button>
+      </div>
+
+      {/* Floating CSV Download */}
+      <div className="fixed bottom-6 right-6">
+        <Button
+          onClick={downloadCSV}
+          className="bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg px-6 py-3 flex items-center gap-2"
+        >
+          <FileDown size={18} /> Download CSV
+        </Button>
+      </div>
+
+      {/* Delete Confirmation */}
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
@@ -393,12 +425,6 @@ console.log(paginatedUsers)
           onCancel={onCancelDelete}
         />
       )}
-      <div className="flex justify-end items-center mb-4">
-        <Button onClick={downloadCSV} className="bg-green-600 text-white">
-          Download CSV
-        </Button>
-      </div>
-
     </>
   );
 };

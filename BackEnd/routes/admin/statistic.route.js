@@ -8,7 +8,10 @@ import {
   getReportedJobList,
 } from "../../controllers/admin/statistic.controller.js";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
+import { exportCorporateCSV } from "../../controllers/admin/statistic.controller.js";
 
+
+router.get("/export-corporate-csv", exportCorporateCSV);
 router.get("/getState-in-range", isAuthenticated, getStatisticInRange);
 router.get("/applications", isAuthenticated, getApplicationsDataByYear);
 router.get("/recent-activity", isAuthenticated, getRecentActivity);

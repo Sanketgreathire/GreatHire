@@ -284,7 +284,7 @@ console.log(paginatedUsers)
           <TableHeader>
 
             <TableRow>
-
+    
             <TableHead>
               <input
                 type="checkbox"

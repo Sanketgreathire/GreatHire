@@ -167,13 +167,13 @@ const ChatInterface = () => {
 
   if (!activeConversation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
+      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-400">
         <div className="text-center">
           <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
             <User className="w-12 h-12 text-gray-400" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
-          <p className="text-gray-500">Choose a conversation from the sidebar to start messaging</p>
+          <p className="text-gray-500 dark:text-gray-800">Choose a conversation from the sidebar to start messaging</p>
         </div>
       </div>
     );

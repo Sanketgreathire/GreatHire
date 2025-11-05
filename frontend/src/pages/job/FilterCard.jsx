@@ -161,73 +161,76 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
   };
 
   return (
-    <div className="w-72 bg-white shadow-lg rounded-lg pr-8 pl-8 pb-8 sticky top-4 h-[90vh] overflow-y-auto relative filter-scrollbar font-sans">
+    <div className=" w-72 bg-white shadow-lg rounded-lg pr-8 pl-8 pb-8 sticky top-4 h-[90vh] overflow-y-auto relative filter-scrollbar font-sans  dark:bg-gray-700">
       {onClose && (
         <button
           onClick={onClose}
           title="Close filters"
-          className="absolute top-3 right-3 p-1 rounded hover:bg-gray-100 lg:hidden"
+          className="absolute top-3 right-3 p-1 rounded hover:bg-gray-100 lg:hidden "
         >
           <IoMdClose size={18} />
         </button>
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-start gap-2 pt-8 border-b border-gray-600 pb-3 mb-4 sticky top-0 bg-white z-10">
-        <FiFilter className="text-2xl text-blue-500" />
-        <h2 className="text-xl font-semibold text-blue-600">Filters</h2>
+      <div className=" flex items-center justify-start gap-2 pt-8 border-b border-gray-600 pb-3 mb-4 sticky top-0 bg-white z-10 dark:text-gray-100 dark:bg-gray-700">
+        <FiFilter className="text-2xl text-blue-500 " />
+        <h2 className="text-xl font-semibold text-blue-600 ">Filters</h2>
       </div>
 
       {/* Checkbox Filters */}
-      {["jobType", "datePosted", "salary", "workPlace"].map((category) => (
-        <div key={category} className="mb-6 border-b border-blue-300 pb-8 ">
-          <h3 className="font-semibold text-gray-700 text-lg tracking-wide mb-3">
-            {formatLabel(category)}
-          </h3>
-          <div className="space-y-2">
-            {filterOptions[category].map((opt, index) => {
-              const displayLabel =
-                category === "salary"
-                  ? opt.replace("-", " - ").replace("+", "+ ")
-                  : category === "jobType"
-                  ? opt.replace("-", " - ")
-                  : opt;
+      {["jobType", "datePosted", "salary", "workPlace"].map(
+        (category) => (
+          <div key={category} className="mb-6 border-b border-blue-300 pb-8 ">
+            <h3 className="font-semibold text-gray-700 text-lg tracking-wide mb-3 dark:text-white">
+              {formatLabel(category)}
+            </h3>
+            <div className="space-y-2">
+              {filterOptions[category].map((opt) => {
+                // ✅ Format salary labels for readability
+                const displayLabel =
+                  category === "salary"
+                    ? opt.replace("-", " - ").replace("+", "+ ")
+                    : category === "jobType"
+                      ? opt.replace("-", " - ")
+                      : opt;
 
-              return (
-                <label
-                  key={`${opt}-${index}`} // ✅ unique key
-                  className="flex items-center gap-3 text-base cursor-pointer group font-sans"
-                >
-                  <input
-                    type="checkbox"
-                    aria-label={displayLabel}
-                    checked={
-                      Array.isArray(filters[category]) &&
-                      filters[category].includes(
-                        category === "salary"
-                          ? opt.replace(/\s+/g, "")
-                          : opt
-                      )
-                    }
-                    onChange={() => handleCheckboxChange(category, opt)}
-                    className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition"
-                  />
-                  <span className="text-gray-700 group-hover:text-blue-600 transition select-none font-sans">
-                    {displayLabel}
-                  </span>
-                </label>
-              );
-            })}
+                return (
+                  <label
+                    key={opt}
+                    className="flex items-center gap-3 text-base cursor-pointer group font-sans "
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label={displayLabel}
+                      checked={
+                        Array.isArray(filters[category]) &&
+                        filters[category].includes(
+                          category === "salary"
+                            ? opt.replace(/\s+/g, "")
+                            : opt
+                        )
+                      }
+                      onChange={() => handleCheckboxChange(category, opt)}
+                      className="h-4 w-4 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer transition dark:text-white"
+                    />
+                    <span className="text-gray-700 group-hover:text-blue-600 transition select-none font-sans dark:text-white">
+                      {displayLabel}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
           </div>
-        </div>
+      
       ))}
 
       {/* Dropdown Filters */}
       {["location", "jobTitle", "company", "qualification"].map((category) => (
-        <div key={category} className="mb-6">
+        <div key={category} className="mb-6 ">
           <label
             htmlFor={category}
-            className="block text-gray-700 text-lg font-semibold tracking-wide mb-2"
+            className=" dark:text-white block text-gray-700 text-lg font-semibold tracking-wide mb-2 "
           >
             {formatLabel(category)}
           </label>
@@ -236,11 +239,11 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
             id={category}
             value={filters[category]}
             onChange={(e) => handleDropdownChange(category, e.target.value)}
-            className="w-full border border-blue-300 bg-white rounded-lg px-3 py-2 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+            className=" w-full border border-blue-300 bg-white rounded-lg px-3 py-2 text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition dark:text-black"
           >
             <option value="">All {formatLabel(category)}</option>
-            {filterOptions[category].map((opt, index) => (
-              <option key={`${opt}-${index}`} value={opt} className="text-base">
+            {filterOptions[category].map((opt) => (
+              <option key={opt} value={opt} className="text-base">
                 {opt}
               </option>
             ))}
@@ -252,12 +255,14 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       <div className="mt-4 flex gap-2 p-4">
         <button
           onClick={handleReset}
-          className="px-10 py-2 rounded-full border border-blue-500 text-blue-600 text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white transition"
+          className="px-10 py-2 rounded-full border border-blue-500 text-blue-600 text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white transition dark:bg-blue-600 dark:hover:bg-blue-800 dark:text-white "
         >
           Reset Filters
         </button>
       </div>
+  <div/>
     </div>
+  
   );
 };
 

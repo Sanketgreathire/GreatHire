@@ -173,13 +173,13 @@ const Jobs = () => {
   const totalPages = Math.max(1, Math.ceil(filteredJobs.length / jobsPerPage));
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col ">
       <Navbar />
-      <div className="flex-grow w-full mx-auto bg-gray-100 pt-20">
-        <div className="w-full px-2 lg:px-4">
-          <div className="flex gap-6">
+        <div className="w-full px-2 lg:px-4 dark:bg-gray-700">
+      <div className="flex-grow w-full mx-auto bg-gray-100 pt-20  dark:bg-gray-800 ">
+          <div className="flex gap-6 ">
             {/* Sidebar (Desktop only) */}
-            <div className="hidden lg:block lg:w-72">
+            <div className="hidden lg:block lg:w-72 dark:bg-gray-700">
               <FilterCard
                 onFilterChange={setFilters}
                 onReset={resetFilters}

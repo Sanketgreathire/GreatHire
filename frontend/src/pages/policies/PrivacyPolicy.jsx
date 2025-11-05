@@ -33,7 +33,7 @@ const Section = ({ icon: Icon, title, children, sectionKey, expandedSection, set
 
   return (
     <motion.div
-      className="border border-gray-200 rounded-xl shadow-sm bg-white"
+      className="border border-gray-200 rounded-xl shadow-sm  dark:bg-gray-600  "
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -41,24 +41,24 @@ const Section = ({ icon: Icon, title, children, sectionKey, expandedSection, set
     >
       <button
         onClick={() => setExpandedSection(isOpen ? null : sectionKey)}
-        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-all"
+        className="w-full flex items-center justify-between px-6 py-4 text-left  transition-all "
       >
-        <span className="flex items-center gap-3 text-lg font-semibold text-gray-900">
-          <Icon className="h-6 w-6 text-blue-600" />
+        <span className="flex items-center gap-3 text-lg font-semibold text-gray-900  dark:text-gray-100">
+          <Icon className="h-6 w-6 text-blue-600  dark:text-blue-400" />
           {title}
         </span>
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
         >
-          <ChevronDown className="text-gray-500 h-5 w-5" />
+          <ChevronDown className="text-gray-500 h-5 w-5 dark:text-gray-100 " />
         </motion.span>
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="px-6 pb-5 pt-1 text-gray-700 leading-relaxed"
+            className="px-6 pb-5 pt-1 text-gray-700 leading-relaxed "
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -76,39 +76,36 @@ function App() {
   const [expandedSection, setExpandedSection] = useState(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="  min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:bg-gray-800 ">
       <Navbar />
 
-      <header className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-inner pt-10">
-  <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center pt-20">
-    <h1 className="text-4xl font-bold text-gray-900 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <Shield className="h-9 w-9 text-blue-600" />
-      <span>Terms & Privacy Policy</span>
-    </h1>
-    <p className="text-gray-600 mt-2 text-lg">
-      Please read the following policies carefully for using our services.
-    </p>
-  </div>
-</header>
+      <header className="bg-gradient-to-r from-blue-100 to-blue-300 shadow-inner pt-10">
+        <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8 text-center pt-20 dark:bg-gradient-to-r from-blue-400 to-blue-600">
+          <h1 className="text-4xl font-bold text-gray-900 flex items-center justify-center gap-3 font-[oswald] dark:text-white">
+            <Shield className="h-9 w-9 text-blue-600 dark:text-white" />
+            Terms & Privacy Policy
+          </h1>
+          <p className="text-gray-600 mt-2 text-lg dark:text-white">Please read the following policies carefully for using our services.</p>
+        </div>
+      </header>
 
-
-      <main className="max-w-8xl mx-auto px-4 py-8 sm:px-6 lg:px-8 flex gap-6">
+      <main className="max-w-8xl mx-auto px-4 py-8 sm:px-6 lg:px-8 flex gap-6  dark:bg-gray-800">
         {/* Sidebar Table of Contents */}
-        <aside className="w-70 hidden md:block sticky top-20 h-fit bg-white border rounded shadow p-5">
-          <h3 className="text-xl font-bold mb-4">Table of Contents</h3>
-          <ul className="space-y-3 text-lg">
+        <aside className="w-70 hidden md:block sticky top-20 h-fit bg-white border rounded shadow p-5 dark:bg-gray-700">
+          <h3 className="text-xl font-bold mb-4 dark:text-gray-100">Table of Contents</h3>
+          <ul className="space-y-3 text-lg ">
             {sections.map(({ id, label, icon }) => (
               <li key={id}>
                 <button
                   onClick={() => setExpandedSection(id)}
-                  className={`flex items-center gap-2 w-full text-left transition ${
+                  className={`flex items-center gap-2 w-full text-left transition  dark:text-gray-100  ${
                     expandedSection === id
-                      ? "text-blue-600 font-semibold"
+                      ? "text-blue-600 font-semibold "
                       : "text-gray-700 hover:text-blue-600"
                   }`}
                 >
-                  {React.createElement(icon, { className: "h-4 w-4 text-blue-600" })}
-                  <span className="font-serif text-lg tracking-wide">{label}</span> {/* Updated font style */}
+                  {React.createElement(icon, { className: "h-4 w-4 text-blue-600 dark:text-blue-300 " })}
+                  <span className="font-serif text-lg tracking-wide ">{label}</span> {/* Updated font style */}
                 </button>
               </li>
             ))}
@@ -140,7 +137,7 @@ function App() {
 // Content for each section
 function getSectionContent(id) {
   const bullets = (items) => (
-    <ul className="list-disc list-inside space-y-1">
+    <ul className="list-disc list-inside space-y-1 ">
       {items.map((item, i) => <li key={i}>{item}</li>)}
     </ul>
   );
@@ -152,7 +149,7 @@ function getSectionContent(id) {
           <h2 className="text-2xl font-bold text-blue-600  mb-4">
             Welcome to GreatHire
           </h2>
-          <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+          <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
             This Privacy Policy outlines how we collect, use, and protect your personal information to connect job seekers with recruiters effectively and securely. <br></br>
             • At GreatHire, we prioritize your privacy and are committed to safeguarding your data while maintaining transparency and trust.<br></br>
             • Our platform facilitates seamless job matching and recruitment while adhering to strict data protection standards, including GDPR and CCPA compliance.<br></br>
@@ -162,13 +159,13 @@ function getSectionContent(id) {
             • Your data is collected to enhance user experience, optimize job matching, and support recruiters in hiring efficiently.<br></br>
             • We employ robust technical safeguards and strict access controls to ensure the security of your personal information.<br></br>
             • GreatHire does not sell or rent user data to third parties. Your trust remains our top priority.<br></br>
-            • For inquiries or concerns, please contact us at <a href="hr@babde.tech" className="text-blue-600 hover:text-blue-800">hr@babde.tech</a>.
+            • For inquiries or concerns, please contact us at <a href="hr@babde.tech" className="text-blue-700 hover:text-blue-500 dark:text-blue-300">hr@babde.tech</a>.
           </p>
         </div>
       );
     case "purpose":
       return (
-          <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+          <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100 ">
             The purpose of this Privacy Policy is to inform users of GreatHire about the collection, processing, storage, and sharing of their data. <br></br>
             • We ensure transparency about your data rights and maintain strict confidentiality throughout the hiring process. <br></br>
             • Personal data is collected to match job seekers with opportunities and assist recruiters in finding the best candidates. <br></br>
@@ -178,12 +175,12 @@ function getSectionContent(id) {
             • We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks. <br></br>
             • GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security. <br></br>
             <br></br>
-            For inquiries, contact us at <a href="privacy@greathire.com" className="text-blue-600 hover:text-blue-800">privacy@greathire.com</a>.
+            For inquiries, contact us at <a href="privacy@greathire.com" className="text-blue-400 hover:text-blue-500">privacy@greathire.com</a>.
           </p>
     
       );
     case "eligibility":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
         GreatHire is a professional job hiring platform designed for individuals meeting specific eligibility criteria to ensure a secure and compliant environment.<br></br>
 
         • Job seekers must be at least 16 years old or meet the legal working age in their jurisdiction.<br></br>
@@ -200,7 +197,7 @@ function getSectionContent(id) {
         For clarification or assistance, contact our support team. By adhering to these standards, we ensure a trusted and professional hiring experience for all participants.
       </p>;
     case "conditions-recruiters":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
         Recruiters using GreatHire must adhere to professional standards and comply with all legal and ethical requirements.<br></br>
 
         • Recruiter accounts must be linked to verified businesses or organizations.<br></br>
@@ -222,16 +219,16 @@ function getSectionContent(id) {
       </p>;
     case "conditions-jobseekers":
       return bullets([
-         <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+         <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
 
         "Provide accurate professional information",
-        "Maintain current availability status",
+        "Maintain current availability status", 
         "Respect confidentiality of employer information",
         "Attend scheduled interviews professionally"
         </p>
       ]);
     case "user-participation":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
         GreatHire fosters a transparent and collaborative platform where users are expected to contribute positively to the hiring ecosystem.<br></br>
 
         • Ensure the accuracy and integrity of shared information.<br></br>
@@ -249,7 +246,7 @@ function getSectionContent(id) {
         By adhering to these principles, users help maintain a fair and efficient hiring platform.
       </p>;
     case "usage-restrictions":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
         To maintain the integrity of the GreatHire platform, the following usage restrictions apply:<br></br>
 
         • Users must not disrupt platform operations or engage in unauthorized access.<br></br>
@@ -271,7 +268,7 @@ function getSectionContent(id) {
         Violations may result in account suspension, legal action, or permanent bans. By using GreatHire, you agree to these restrictions and any updates to the guidelines.
       </p>;
     case "ip-rights":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
 
         • All platform content, including logos, software, and designs, is owned or licensed by GreatHire.<br></br>
         • Users are granted limited rights to access and use services for personal or recruitment purposes.<br></br>
@@ -287,7 +284,7 @@ function getSectionContent(id) {
         By using GreatHire, users agree to respect all IP-related policies. For concerns, contact us with appropriate evidence.
       </p>;
     case "privacy":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
 
         • Personal data is collected solely for platform functionality and user benefit.<br></br>
         • Transparency is maintained in data collection, processing, and sharing.<br></br>
@@ -308,7 +305,7 @@ function getSectionContent(id) {
         For concerns or inquiries, users are encouraged to contact us. Privacy remains a core value at GreatHire.
       </p>;
     case "third-party":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxedm  dark:text-gray-100">
         GreatHire may include links to third-party websites, tools, or services to enhance your job-seeking or hiring experience.<br></br>
 
         • These links are provided for convenience and do not imply endorsement by GreatHire.<br></br>
@@ -325,7 +322,7 @@ function getSectionContent(id) {
         By using GreatHire, users agree to these terms. For concerns, contact our support team.
       </p>;
     case "security":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire is committed to protecting your account and data with robust security measures.<br></br>
 
         • Users must maintain the confidentiality of their login credentials.<br></br>
@@ -347,7 +344,7 @@ function getSectionContent(id) {
         Your account integrity is essential to our mission. For concerns, contact our support team.
       </p>;
     case "payment":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
         •Certain features or premium services on GreatHire may require payment.<br></br>
         •	All pricing is displayed clearly at the point of purchase, with applicable taxes included.<br></br>
         •	Payments are processed through secure, PCI-compliant third-party gateways.<br></br>
@@ -370,7 +367,7 @@ function getSectionContent(id) {
         •	All financial transactions are logged and available to users for review.<br></br>
       </p>;
     case "liability":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire strives to provide a secure, efficient, and reliable platform but cannot guarantee uninterrupted or error-free operation.<br></br>
 
         • We are not liable for delays, interruptions, or technical issues beyond our control, including internet outages or force majeure events.<br></br>
@@ -388,7 +385,7 @@ function getSectionContent(id) {
         These limitations apply to the maximum extent allowed by law. Certain jurisdictions may have exceptions to these terms.
       </p>;
     case "dispute":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire is committed to resolving disputes fairly, promptly, and in good faith.<br></br>
 
         • Users should first contact our support team for informal resolution of concerns.  <br></br>
@@ -408,7 +405,7 @@ function getSectionContent(id) {
         We encourage respectful and transparent communication to ensure timely resolution.
       </p>;
     case "termination":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire reserves the right to suspend or terminate user accounts for violations of our Terms, Privacy Policy, or community guidelines.<br></br>
 
         • Suspension may be temporary or permanent, based on the severity of violations.  <br></br>
@@ -427,7 +424,7 @@ function getSectionContent(id) {
         We aim to handle all suspension and termination actions fairly and transparently.
       </p>;
     case "compliance":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire complies with all applicable international, national, and regional laws and regulations.<br></br>
 
         • Users must ensure their platform usage aligns with the legal requirements of their location.  <br></br>
@@ -445,7 +442,7 @@ function getSectionContent(id) {
         • Breaches of legal obligations may result in account restrictions or termination.<br></br>
       </p>;
     case "amendments":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         GreatHire may update its Terms of Use and Privacy Policy periodically to reflect legal, technological, or service-related changes.<br></br>
 
         • Significant updates will be communicated via email, platform alerts, or announcements.  <br></br>
@@ -462,14 +459,14 @@ function getSectionContent(id) {
         By continuing to use GreatHire, users agree to the most current version of these terms.
       </p>;
     case "contact":
-      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed">
+      return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed  dark:text-gray-100">
         For any questions, concerns, or feedback regarding GreatHire’s Terms, Privacy Policy, or platform usage, please contact us:<br></br>
 
         <br></br>
         Phone: +91 8328192093 <br></br> 
         (Mon–Sat, 9am-7pm, local time)
-        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Email : </b>hr@babde.tech</a>
-        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2"><b>Privacy inquiries : </b> hr@babde.tech     </a>
+        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Email : </b>hr@babde.tech</a>
+        <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Privacy inquiries : </b> hr@babde.tech     </a>
         <br></br>
 
         Additional Information:<br></br>
@@ -483,8 +480,8 @@ function getSectionContent(id) {
         • For media or partnership inquiries, contact: media@greathire.com<br></br>
       <br></br>
         Visit us: <br></br>
-        <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2"><b>Website : </b> https://greathire.in</a>
-        <a href="mailto:hr@babde.tech" className="text-blue-600 hover:text-blue-800"><b>Email :</b> hr@babde.tech</a>
+        <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Website : </b> https://greathire.in</a>
+        <a href="mailto:hr@babde.tech" className="text-blue-600 hover:text-blue-800 dark:text-blue-300"><b>Email :</b> hr@babde.tech</a>
 
       </p>;
     default:

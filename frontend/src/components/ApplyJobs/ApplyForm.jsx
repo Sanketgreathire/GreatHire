@@ -414,9 +414,9 @@ const handleFileChange = (e) => {
                   className="cursor-pointer flex flex-col items-center justify-center space-y-2 text-blue-700 hover:text-blue-600"
                 >
                   <svg
-                    className="w-12 h-12 text-blue-700"
+                    className="w-12 h-12 text-blue-700 z-[999] relative"
                     fill="none"
-                    stroke="currentColor"
+                    stroke="r"
                     strokeWidth="2"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
@@ -682,3 +682,53 @@ const handleFileChange = (e) => {
 };
 
 export default ApplyForm;
+
+
+
+// const JobsForYou =({job})=>{
+// const handleApply= async(jobId)=>{
+//   const userId = localStorage.getItem("userId"); //it will define the user id
+//   try{
+//     const res = await fetch("https://localhost:5173/abc",{
+//       method:"POST",
+//       headers:{"Content-type": "application/json"},
+//       body:JSON.stringify({
+//         userId,
+//         JobId,
+//         recruiterEmail: job.recruiterEmail,  //har job ka recruiter Email 
+//       })
+
+//     })
+//   }
+//   const data = await res.json();
+//   alert(data.message);
+// }catch (err) {
+//   console.error(err);
+//   alert("Application failed")
+// }
+// }  
+
+// return(
+//    <div className="job-card"> 
+//    <h2>{job.title}</h2>
+//    <p>{job.company}</p>
+//    <button onClick={()=> handleApply(job.id)}>Apply Now</button>
+//    </div>
+// )
+
+
+// export default ApplyForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

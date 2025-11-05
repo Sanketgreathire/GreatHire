@@ -1,4 +1,6 @@
 import express from "express";
+
+
 import {
   applyJob,
   getApplicants,
@@ -8,10 +10,16 @@ import {
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
 import { validateJobApplication } from "../middlewares/jobValidator.js";
+// import { applyJobController } from "../controllers/application.controller.js";
 
 const router = express.Router();
+// Apply job route
+// router.post("/:jobId/apply", isAuthenticated, applyJob);
+router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplication, applyJob);
 
-router.route("/apply").post(
+
+// router.route("/apply").post
+(
   isAuthenticated,
   (req, res, next) => {
     singleUpload(req, res, (err) => {
@@ -27,5 +35,6 @@ router.route("/apply").post(
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
+
 
 export default router;

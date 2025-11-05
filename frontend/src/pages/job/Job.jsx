@@ -124,12 +124,12 @@ const Job = ({ job }) => {
 
 
   return (
-    <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
+    <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
       <div className="flex justify-between items-center mb-2 min-h-[28px]">
 
         {/* Urgent Hiring Label */}
         {job?.jobDetails?.urgentHiring === "Yes" && (
-          <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
+          <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white">
             Urgent Hiring
           </p>
         )}
@@ -172,24 +172,24 @@ const Job = ({ job }) => {
       </div>
 
 
-      <h3 className="text-lg font-semibold line-clamp-2 h-[48px]">{job?.jobDetails?.title}</h3>
-      <div className="flex items-center justify-between gap-2 my-2">
+      <h3 className="text-lg font-semibold line-clamp-2 h-[48px] ">{job?.jobDetails?.title}</h3>
+      <div className="flex items-center justify-between gap-2 my-2 ">
         <div>{job?.jobDetails?.companyName}</div>
         <div>
-          <p className="text-sm text-gray-500">{job?.jobDetails?.workPlaceFlexibility}</p>
-          <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.workPlaceFlexibility}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.location}</p>
         </div>
       </div>
-      <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md">
-        <div className="flex items-center gap-1">
+      <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md ">
+        <div className="flex items-center gap-1 ">
           <AiOutlineThunderbolt />
           <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
         </div>
       </div>
-      <div className="text-sm flex flex-col space-y-2">
-        <div className="flex gap-2 justify-between items-center">
+      <div className="text-sm flex flex-col space-y-2 ">
+        <div className="flex gap-2 justify-between items-center ">
           <div className="flex w-1/2">
-            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200">
+            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
               {job?.jobDetails?.salary
                 .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                 .split("-")
@@ -201,21 +201,21 @@ const Job = ({ job }) => {
                 ))}
             </p>
           </div>
-          <div className="flex w-1/2">
-            <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1">
+          <div className="flex w-1/2 ">
+            <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
               {job.jobDetails?.jobType}
             </p>
           </div>
         </div>
-        <div className="w-full">
-          <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200">
+        <div className="w-full ">
+          <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200 ">
             {job.jobDetails?.duration}
           </p>
         </div>
       </div>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-100">
             Active {calculateActiveDays(job?.createdAt)} days ago
           </p>
         </div>

@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        // sans: ["Inter", "sans-serif"],
+            geometric: ["Poppins", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -76,4 +77,18 @@ export default {
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],
+
+  
 };
+module.expots = {
+     darkMode : "class",
+     content : [
+      "./index.html",
+      "./src/**/*.{js, jsx ,ts , tsx}"
+     ],
+     theme:{
+      extend: {},
+
+     },
+     plugins: [],
+  }
