@@ -15,6 +15,7 @@ import Silk from "../../components/ui/Silk";
 
 
 
+
 //logos from assets folder
 import a1townshipImg from "../../assets/clientLogos/a1township.png";
 import accenflairImg from "../../assets/clientLogos/accenflair.webp";
@@ -86,9 +87,9 @@ import Gen18Img from "../../assets/user Photos/Gen18.jpg";
 import Gen19Img from "../../assets/user Photos/Gen19.jpg";
 import RashiImg from "../../assets/user Photos/Rashi.jpg";
 import NumberCounter from '@/components/ui/NumberCounter';
-import Pratibhaimg from '../../assets/User Photos/Pratibhaimg.jpg';
-import Jitendraimg from '../../assets/User Photos/Jitendraimg.jpg'
-import sakshiimg from '../../assets/User Photos/sakshiimg.jpg';
+import Pratibhaimg from '../../assets/user Photos/Pratibhaimg.jpg';
+import Jitendraimg from '../../assets/user Photos/Jitendraimg.jpg'
+import sakshiimg from '../../assets/user Photos/sakshiimg.jpg';
 
 
 function App() {
