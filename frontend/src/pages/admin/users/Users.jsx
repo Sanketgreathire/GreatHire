@@ -156,19 +156,40 @@ const Users = () => {
     },
   ];
 
-  const filteredUsers = usersList?.filter(
-    (u) =>
-      u.fullname.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()) ||
-      u.phoneNumber.toLowerCase().includes(search.toLowerCase()) ||
-      (u.jobRole && u.jobRole.toLowerCase().includes(search.toLowerCase())) ||
-      (u.duration && u.duration.toLowerCase().includes(search.toLowerCase()))
-  );
+  // const filteredUsers = usersList?.filter(
+  //   (u) =>
+  //     u.fullname.toLowerCase().includes(search.toLowerCase()) ||
+  //     u.email.toLowerCase().includes(search.toLowerCase()) ||
+  //     u.phoneNumber.toLowerCase().includes(search.toLowerCase()) ||
+  //     (u.jobRole && u.jobRole.toLowerCase().includes(search.toLowerCase())) ||
+  //     (u.duration && u.duration.toLowerCase().includes(search.toLowerCase()))
+  // );
+  const filteredUsers = usersList?.filter((u) => {
+  const name = u.fullname?.toLowerCase() || "";
+  const email = u.email?.toLowerCase() || "";
+  const phone = u.phoneNumber?.toLowerCase() || "";
+  const role = u.jobRole?.toLowerCase() || "";
+  const duration = u.duration?.toLowerCase() || "";
 
-  const paginatedUsers = filteredUsers?.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+  const searchText = search.toLowerCase();
+
+  return (
+    name.includes(searchText) ||
+    email.includes(searchText) ||
+    phone.includes(searchText) ||
+    role.includes(searchText) ||
+    duration.includes(searchText)
   );
+});
+
+  // const paginatedUsers = filteredUsers?.slice(
+  //   (page - 1) * itemsPerPage,
+  //   page * itemsPerPage
+  // );
+  const paginatedUsers = (filteredUsers || []).slice(
+  (page - 1) * itemsPerPage,
+  page * itemsPerPage
+);
 
   const toggleSelectAll = () => {
     if (selectedUsers.length === paginatedUsers.length) {
