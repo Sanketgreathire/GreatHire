@@ -164,6 +164,7 @@ const Users = () => {
   //     (u.jobRole && u.jobRole.toLowerCase().includes(search.toLowerCase())) ||
   //     (u.duration && u.duration.toLowerCase().includes(search.toLowerCase()))
   // );
+  // error solved
   const filteredUsers = usersList?.filter((u) => {
   const name = u.fullname?.toLowerCase() || "";
   const email = u.email?.toLowerCase() || "";
