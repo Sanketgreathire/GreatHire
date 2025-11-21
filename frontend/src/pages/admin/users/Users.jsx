@@ -168,7 +168,7 @@ const Users = () => {
   const filteredUsers = usersList?.filter((u) => {
   const name = u.fullname?.toLowerCase() || "";
   const email = u.email?.toLowerCase() || "";
-  const phone = u.phoneNumber?.toLowerCase() || "";
+  const phone = u.phoneNumber ? String(u.phoneNumber).toLowerCase() : "";
   const role = u.jobRole?.toLowerCase() || "";
   const duration = u.duration?.toLowerCase() || "";
 
@@ -350,9 +350,13 @@ const Users = () => {
                     {u.duration || "N/A"}
                   </TableCell>
                   <TableCell className="flex gap-3 justify-center">
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition">
+                    <button
+                      onClick={() => navigate(`/admin/user-details/${u._id}`)}
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition"
+                    >
                       <Eye size={16} />
                     </button>
+
                     {dloading[u?.email] ? (
                       <span className="text-gray-400 text-sm">Deleting...</span>
                     ) : (

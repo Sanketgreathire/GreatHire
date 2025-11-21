@@ -165,14 +165,14 @@ const PostJob = () => {
                 {steps[step].title}
               </h2>
             </h1>
-            <div className="mb-10 w-full hidden md:block dark:bg-gray-800 dark:text-gray-800">
+            {/* <div className="mb-10 w-full hidden md:block dark:bg-gray-800 dark:text-gray-800">
               <Stepper
                 steps={steps}
                 activeStep={step}
                 activeColor="blue"
                 completeColor="green"
               />
-            </div>
+            </div> */}
 
             <form onSubmit={formik.handleSubmit}>
               {step === 0 && (

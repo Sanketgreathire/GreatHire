@@ -11,8 +11,8 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 
-import Silk from "../../components/ui/Silk";
-
+import Silk from "../../components/ui/silk";
+//npm install @silkjs/react-silk for silk background
 
 
 
