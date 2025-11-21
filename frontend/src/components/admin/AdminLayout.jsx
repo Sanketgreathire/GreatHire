@@ -55,6 +55,9 @@ const AdminLayout = () => {
               <Route path="settings/admin-list" element={<AdminList />} />
               <Route path="settings/reported-job-list" element={<ReportedJobList />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="users" element={<Users />} />
+              <Route path="user-details/:userId" element={<UserDetails />} />
+
             </Routes>
           </Suspense>
         </div>
