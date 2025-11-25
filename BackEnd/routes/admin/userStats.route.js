@@ -7,6 +7,7 @@ import {
 } from "../../controllers/admin/userStats.controller.js";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
 // import updateLastActive from "../middlewares/updateLastActive.js";
+import { bulkDeleteUsers } from "../../controllers/admin/bulkDelete.controller.js";
 
 const router = express.Router();
 // Define routes
@@ -14,6 +15,7 @@ router.get("/get-stats", isAuthenticated, getUserStats);
 router.get("/user-stats", isAuthenticated, getUsersList);
 router.get("/getUser/:userId", isAuthenticated, getUser);
 router.get("/user-all-application/:userId", isAuthenticated, getAllApplication);
+router.delete("/bulk-delete", isAuthenticated, bulkDeleteUsers);
 router.get("/fix-missing-last-active", async (req, res) => {
   try {
     const result = await User.updateMany(

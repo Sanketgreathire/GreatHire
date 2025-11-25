@@ -93,6 +93,29 @@ const Users = () => {
       console.log(`Error in fetching user list: ${err}`);
     }
   };
+  //Bulk delete users
+  const handleBulkDelete = async () => {
+  if (selectedUsers.length === 0) return;
+
+  if (!window.confirm(`Delete ${selectedUsers.length} selected user(s)?`)) return;
+
+  try {
+    const response = await axios.delete(`${ADMIN_USER_DATA_API_END_POINT}/bulk-delete`, {
+      data: { userIds: selectedUsers },
+      withCredentials: true,
+    });
+
+    if (response.data.success) {
+      setUsersList(prev => prev.filter(u => !selectedUsers.includes(u._id)));
+      setSelectedUsers([]);
+      toast.success(response.data.message);
+      dispatch(fetchUserStats());
+      dispatch(fetchApplicationStats());
+    }
+  } catch (err) {
+    toast.error("Failed to delete selected users");
+  }
+};
 
   // Delete account
   const handleDeleteAccount = async (email) => {
@@ -171,15 +194,16 @@ const Users = () => {
   const phone = u.phoneNumber ? String(u.phoneNumber).toLowerCase() : "";
   const role = u.jobRole?.toLowerCase() || "";
   const duration = u.duration?.toLowerCase() || "";
+  const safe = (v) => String(v || "").toLowerCase();
 
   const searchText = search.toLowerCase();
 
   return (
-    name.includes(searchText) ||
-    email.includes(searchText) ||
-    phone.includes(searchText) ||
-    role.includes(searchText) ||
-    duration.includes(searchText)
+    safe(u.fullname).includes(search.toLowerCase()) ||
+    safe(u.email).includes(search.toLowerCase()) ||
+    safe(u.phoneNumber).includes(search.toLowerCase()) ||
+    safe(u.jobRole).includes(search.toLowerCase()) ||
+    safe(u.duration).includes(search.toLowerCase())
   );
 });
 
@@ -299,7 +323,10 @@ const Users = () => {
                 <TableHead className="text-center">Applications</TableHead>
                 <TableHead className="text-center">Job Role</TableHead>
                 <TableHead className="text-center">Experience</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
+                <TableHead className="text-center">Actions <span className="text-sm text-gray-500 ml-2">
+                  {selectedUsers.length > 0 && `(${selectedUsers.length} selected)`}
+                </span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -440,7 +467,16 @@ const Users = () => {
           className="bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg px-6 py-3 flex items-center gap-2"
         >
           <FileDown size={18} /> Download CSV
-        </Button>
+        </Button> 
+      
+        <Button
+            disabled={selectedUsers.length === 0}
+            onClick={handleBulkDelete}
+            className="bg-red-600 hover:bg-red-700 mt-2 text-white rounded-full shadow-lg px-6 py-3 flex items-center gap-2"
+          >
+            <Trash size={18} /> Delete Selected ({selectedUsers.length})
+          </Button>
+
       </div>
 
       {/* Delete Confirmation */}
