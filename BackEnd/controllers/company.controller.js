@@ -503,10 +503,7 @@ export const getCandidateData = async (req, res) => {
         ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&")
         : "";
 
-    const query = {
-      "profile.resume": { $exists: true, $ne: "" },
-    };
-
+    const query = {};
     // Job Title
     if (jobTitle?.trim()) {
       const sanitizedJobTitle = escapeRegex(jobTitle.trim());
