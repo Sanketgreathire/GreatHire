@@ -75,7 +75,7 @@ import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 
 import { Worker } from "@react-pdf-viewer/core";
-
+import CandidateInformation from "./pages/recruiter/candidate/CandidateInformation";
 
 
 const appRouter = createBrowserRouter([
@@ -137,6 +137,7 @@ const appRouter = createBrowserRouter([
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
+      { path: "candidate-information/:userId", element: <CandidateInformation /> },
   
       { index: true, element: <RecruiterHome /> },
       

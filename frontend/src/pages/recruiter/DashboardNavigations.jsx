@@ -559,14 +559,18 @@ const DashboardNavigations = () => {
                     <FiUsers size={25} className={iconClass(isActive)} />
                     <span>Recruiters</span>
                   </>
-                )}
+                )} 
               </NavLink>
               <NavLink
-                to="/recruiter/dashboard/free-plan"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
-              >
-                {({ isActive }) => (
+                      to={
+                        company?.maxPostJobs === 0
+                          ? "/recruiter/dashboard/upgrade-plans"
+                          : "/recruiter/dashboard/your-plans"
+                      }
+                      className={navLinkClass}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                   {({ isActive }) => (
                   <>
                     <GiUpgrade size={25} className={iconClass(isActive)} />
                     <span>

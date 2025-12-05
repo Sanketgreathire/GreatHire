@@ -158,8 +158,8 @@ const UserDetails = () => {
                   Skills
                 </h2>
                 <div className="mt-4 flex flex-wrap gap-3">
-                  {user?.profile?.skills?.length > 0 ? (
-                    user?.profile.skills.map((skill, index) => (
+                 {Array.isArray(user?.profile?.skills) && user.profile.skills.length > 0 ? (
+                  user.profile.skills.map((skill, index) => (
                       <Badge
                         key={index}
                         className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"

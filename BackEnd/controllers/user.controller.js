@@ -26,42 +26,42 @@ import { Application } from "../models/application.model.js";
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
-            // Validate fullname
-            if (!fullname || fullname.length < 3) {
-              return res.status(400).json({
-                success: false,
-                message: "Full name must be at least 3 characters long.",
-              });
-            }
 
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-              return res.status(400).json({
-                success: false,
-                message: "Invalid email format.",
-              });
-            }
+    // Validate fullname
+    if (!fullname || fullname.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: "Full name must be at least 3 characters long.",
+      });
+    }
 
-            // Validate phone number
-            const phoneRegex = /^[6-9]\d{9}$/;
-            if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-              return res.status(400).json({
-                success: false,
-                message: "Invalid phone number. It must be 10 digits starting with 6–9.",
-              });
-            }
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format.",
+      });
+    }
 
-            // Validate password
-            if (!password || password.length < 8) {
-              return res.status(400).json({
-                success: false,
-                message: "Password must be at least 8 characters long.",
-              });
-            }
+    // Validate phone number
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid phone number. It must be 10 digits starting with 6–9.",
+      });
+    }
 
+    // Validate password
+    if (!password || password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long.",
+      });
+    }
 
-    // 1. Check if email already exists
+    // Check existing email
     const existingEmail = await User.findOne({ "emailId.email": email });
     if (existingEmail) {
       return res.status(400).json({
@@ -70,8 +70,10 @@ export const register = async (req, res) => {
       });
     }
 
-    // 2. Check if phone number already exists
-    const existingPhone = await User.findOne({ "phoneNumber.number": phoneNumber });
+    // Check existing phone number
+    const existingPhone = await User.findOne({
+      "phoneNumber.number": phoneNumber,
+    });
     if (existingPhone) {
       return res.status(400).json({
         success: false,
@@ -79,10 +81,10 @@ export const register = async (req, res) => {
       });
     }
 
-    // 3. Hash password
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4. Create user
+    // Create new user
     const user = await User.create({
       fullname,
       emailId: { email },
@@ -90,29 +92,24 @@ export const register = async (req, res) => {
       password: hashedPassword,
       lastActiveAt: new Date(),
     });
-    newUser.lastActiveAt = new Date();
-    await newUser.save();
 
-    // Remove sensitive information before sending the response
-    const userWithoutPassword = await User.findById(newUser._id).select(
+    // Fetch user without password
+    const userWithoutPassword = await User.findById(user._id).select(
       "-password"
     );
 
-    // creating a token data by user id and creating a token by jwt sign in by token data and secret key
-    const tokenData = {
-      userId: userWithoutPassword._id,
-    };
-    // creating a token with expiry time 1 day
-    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+    // Create JWT token
+    const tokenData = { userId: userWithoutPassword._id };
+    const token = jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
 
-    // cookies strict used...
+    // Send cookie + response
     return res
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "strict",
       })
       .json({
@@ -123,10 +120,12 @@ export const register = async (req, res) => {
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
 };
+
 
 //login section...
 export const login = async (req, res) => {
