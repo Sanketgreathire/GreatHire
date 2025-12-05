@@ -29,6 +29,8 @@ import {
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import CountUp from "react-countup";
+import { useLocation } from "react-router-dom";
+
 
 // ✅ Safe Date Formatter
 const formatDate = (dateString) => {
@@ -147,6 +149,7 @@ const Users = () => {
 
   const onCancelDelete = () => setShowDeleteModal(false);
 
+const location = useLocation();
   useEffect(() => {
     if (user) fetchUserList();
   }, [user]);
@@ -193,7 +196,7 @@ const Users = () => {
   const email = u.email?.toLowerCase() || "";
   const phone = u.phoneNumber ? String(u.phoneNumber).toLowerCase() : "";
   const role = u.jobRole?.toLowerCase() || "";
-  const duration = u.duration?.toLowerCase() || "";
+  const duration = u.duration? String(u.duration).toLowerCase() : "";
   const safe = (v) => String(v || "").toLowerCase();
 
   const searchText = search.toLowerCase();

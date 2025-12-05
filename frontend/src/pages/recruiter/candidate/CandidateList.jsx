@@ -66,6 +66,27 @@ const CandidateList = () => {
       setIsLoading(false);
     }
   };
+  const handleViewInformation = async (candidate) => {
+  try {
+    // decrease credit API
+    // const response = await axios.get(
+    //   `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
+    //   { withCredentials: true }
+    // );
+
+    // // update redux
+    // if (response.data.success) {
+    //   dispatch(decreaseCandidateCredits(1));
+    // }
+
+    // navigate to candidate information page
+    navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
+  
+  } catch (error) {
+    toast.error("Failed to decrease credit");
+  }
+};
+
 
   const handleViewCandidate = async (candidate) => {
     if (!candidate?.profile?.resume) return toast.error("Resume not uploaded yet!");
@@ -191,7 +212,7 @@ const CandidateList = () => {
                     <div className="flex flex-wrap gap-2 mt-1">
                       {candidate?.profile?.skills?.length > 0 ? (
                         candidate.profile.skills.map((skill, i) => (
-                          <Badge key={i} className="bg-blue-100 text-blue-800">
+                          <Badge key={i} className="bg-blue-100 text-blue-800 hover:text-white hover:bg-blue-600  ">
                             {skill}
                           </Badge>
                         ))
@@ -203,7 +224,8 @@ const CandidateList = () => {
 
                   <Button
                     className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2"
-                    onClick={() => navigate(`/recruiter/candidate/${candidate._id}`)}
+                    onClick={() => handleViewInformation(candidate)}
+
                   >
                     View Information
                   </Button>

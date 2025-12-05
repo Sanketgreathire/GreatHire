@@ -255,8 +255,8 @@ const userSchema = new mongoose.Schema(
       },
       gender: {
         type: String,
-        enum: ["","Male","Female","Other"],
-        default: "Female",
+        enum: ["","Not Select","Male","Female","Other"],
+        default: "Not Select",
       },
       qualification: {
         type: String,

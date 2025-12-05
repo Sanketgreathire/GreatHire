@@ -13,6 +13,22 @@ import JobReport from "../models/jobReport.model.js";
 
 
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
+export const getCandidateInformation = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Candidate not found" });
+    }
+
+    return res.status(200).json({ success: true, candidate: user });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
 export const isUserAssociated = async (companyId, userId) => {
   try {
     // Find the company by its ID
