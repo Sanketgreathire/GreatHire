@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 
@@ -115,18 +115,6 @@ const filterOptions = {
   "Tata Steel", "JSW Steel", "Godrej", "Aditya Birla Group", "Bajaj Group", "Larsen & Toubro"
   ],
   datePosted: ["Last 24 hours", "Last 7 days", "Last 15 days", "Past Month"],
-  // salary: [
-  //   "0-10000", "10000-20000", "20000-40000", "40000-60000",
-  //   "60000-80000", "80000-100000", "100000+",
-  // ],
-  // qualification: [
-  //   "Master's Degree", "Bachelor's Degree", "Doctoral Degree", "B.Tech",
-  //   "M.Tech", "MBA", "BCA", "MCA", "B.Sc", "M.Sc", "Diploma", "10th", "12th",
-  //   "Bsc.Computer Science", "B.Sc. Information Technology", "ITI", "PhD", "BA", "MA",
-  //   "BBA", "MBBS", "BDS", "LLB", "CA", "ICWA", "B.Sc. Agriculture",
-  //   "M.Sc. Agriculture", "B.Arch", "M.Arch", "BFA", "MFA", "B.Pharm", "M.Pharm",
-  //   "D.Pharm", "B.Ed", "M.Ed", "BHM", "MHM", "BVoc", "MVoc",
-  // ],
 };
 
 const FilterCard = ({ onFilterChange, onReset, onClose }) => {
@@ -137,43 +125,46 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
     workPlace: [],
     company: "",
     datePosted: [], 
-   // salary: [],
-    //qualification: "",
   });
-
-  // Notify parent when filters change
-  useEffect(() => {
-    onFilterChange?.(filters);
-  }, [filters, onFilterChange]);
 
   const handleCheckboxChange = (category, value) => {
-  setFilters((prev) => {
-    const current = Array.isArray(prev[category]) ? prev[category] : [];
-    const updated = current.includes(value)
-      ? current.filter((item) => item !== value)
-      : [...current, value];
+    setFilters((prev) => {
+      const current = Array.isArray(prev[category]) ? prev[category] : [];
+      const updated = current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value];
 
-    return { ...prev, [category]: updated };
-  });
-};
-
+      const newFilters = { ...prev, [category]: updated };
+      
+      // Immediately notify parent
+      onFilterChange?.(newFilters);
+      
+      return newFilters;
+    });
+  };
 
   const handleDropdownChange = (category, value) => {
-    setFilters((prev) => ({ ...prev, [category]: value }));
+    setFilters((prev) => {
+      const newFilters = { ...prev, [category]: value };
+      
+      // Immediately notify parent
+      onFilterChange?.(newFilters);
+      
+      return newFilters;
+    });
   };
 
   const handleReset = () => {
     const resetFilters = {
       jobTitle: "",
-    location: "",
-    jobType: [],
-    workPlace: [],
-    company: "",
-    datePosted: [], 
-   // salary: [],
-    //qualification: "",
+      location: "",
+      jobType: [],
+      workPlace: [],
+      company: "",
+      datePosted: [], 
     };
     setFilters(resetFilters);
+    onFilterChange?.(resetFilters);
     onReset?.();
   };
 
@@ -190,7 +181,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-start gap-2 pt-8 px-8 border-b border-gray-600 pb-3 bg-white dark:text-gray-100 dark:bg-gray-700 flex-shrink-0">
+      <div className="flex items-center justify-start gap-2 pt-8 px-8 border-b border-gray-600 pb-3 bg-white dark:text-gray-100 dark:bg-gray-700 flex-shrink-0 rounded-t-lg">
         <FiFilter className="text-2xl text-blue-500" />
         <h2 className="text-xl font-semibold text-blue-600">Filters</h2>
       </div>
