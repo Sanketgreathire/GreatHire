@@ -3,9 +3,8 @@ import { User } from "../../models/user.model.js";
 import { Application } from "../../models/application.model.js";
 
 // ===============================
-// UPDATE USER (ADMIN) — full-profile update
+// UPDATE USER (ADMIN)
 // ===============================
-// UPDATE USER — accepts flat fields & nested fields
 export const updateUser = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -18,14 +17,13 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    // Build update object dynamically
     const updateData = {};
 
-    // BASIC fields (top-level)
+    // BASIC fields
     if (body.fullname !== undefined) updateData.fullname = body.fullname;
     if (body.contact !== undefined) updateData.contact = body.contact;
 
-    // PROFILE fields - accept full profile object or individual fields
+    // PROFILE fields
     if (body.profile) {
       const p = body.profile;
 
@@ -41,17 +39,8 @@ export const updateUser = async (req, res) => {
       if (p.resumeOriginalName !== undefined)
         updateData["profile.resumeOriginalName"] = p.resumeOriginalName;
 
-      // Arrays: ensure arrays are saved only when provided as arrays
-      if (Array.isArray(p.skills)) updateData["profile.skills"] = p.skills;
-      if (Array.isArray(p.category))
-        updateData["profile.category"] = p.category;
-      if (Array.isArray(p.language))
-        updateData["profile.language"] = p.language;
-      if (Array.isArray(p.documents))
-        updateData["profile.documents"] = p.documents;
+      // ✅ NORMALIZATION (single source of truth)
 
-      // ⭐⭐⭐ NORMALIZATION ADDED HERE ⭐⭐⭐
-      // SKILLS normalization → always array
       if (p.skills !== undefined) {
         updateData["profile.skills"] = Array.isArray(p.skills)
           ? p.skills
@@ -60,28 +49,27 @@ export const updateUser = async (req, res) => {
           : [];
       }
 
-      // CATEGORY normalization → always array
       if (p.category !== undefined) {
         updateData["profile.category"] = Array.isArray(p.category)
           ? p.category
           : [p.category];
       }
 
-      // LANGUAGE normalization → always array
       if (p.language !== undefined) {
         updateData["profile.language"] = Array.isArray(p.language)
           ? p.language
           : [p.language];
       }
-      // ⭐⭐⭐ END NORMALIZATION ⭐⭐⭐
 
-      // experiences: ensure valid array
+      if (Array.isArray(p.documents))
+        updateData["profile.documents"] = p.documents;
+
       if (Array.isArray(p.experiences))
         updateData["profile.experiences"] = p.experiences;
     }
 
-    // Update user's profile object with atomic operations
-    const updatedUser = await UserStats.findByIdAndUpdate(
+    // ✅ FIX: UserStats → User
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
       { new: true }
@@ -108,99 +96,78 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
-// Helper to support both old & new experience paths for list view
+// ===============================
+// EXPERIENCE SUPPORT
+// ===============================
 const addExperienceSupport = {
   jobRole: {
     $ifNull: [
       { $arrayElemAt: ["$profile.experiences.jobProfile", 0] },
-      "$profile.experience.jobProfile"
-    ]
+      "$profile.experience.jobProfile",
+    ],
   },
   duration: {
     $ifNull: [
       { $arrayElemAt: ["$profile.experiences.duration", 0] },
-      "$profile.experience.duration"
-    ]
+      "$profile.experience.duration",
+    ],
   },
 };
 
 // ===============================
-// GET USER STATS + LIST
+// GET USER STATS
 // ===============================
 export const getUserStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
 
     const users = await User.aggregate([
-
-      {
-        $lookup: {
-          from: "applications",
-          localField: "_id",
-          foreignField: "applicant",
-          as: "applications",
-        }
-      },
-
-      // 1️⃣ Convert dates to safe Date type
+      // 1️⃣ Convert dates FIRST
       {
         $addFields: {
           createdAtSafe: {
             $cond: [
               { $eq: ["$createdAt", null] },
               null,
-              { $toDate: "$createdAt" }
-            ]
+              { $toDate: "$createdAt" },
+            ],
           },
           lastActiveAtSafe: {
             $cond: [
               { $eq: ["$lastActiveAt", null] },
               null,
-              { $toDate: "$lastActiveAt" }
-            ]
-          }
-        }
+              { $toDate: "$lastActiveAt" },
+            ],
+          },
+        },
       },
 
-      // 2️⃣ Sort immediately — light document = fast sort
+      // 2️⃣ SORT BEFORE LOOKUP (FIX)
+      { $sort: { createdAtSafe: -1 } },
+
+      // 3️⃣ LOOKUP AFTER SORT
       {
-        $sort: { createdAtSafe: -1 }
+        $lookup: {
+          from: "applications",
+          localField: "_id",
+          foreignField: "applicant",
+          as: "applications",
+        },
       },
 
-      // 3️⃣ Heavy formatting AFTER sorting
+      // 4️⃣ Formatting
       {
         $addFields: {
           applicationCount: { $size: "$applications" },
           email: "$emailId.email",
           phoneNumber: "$phoneNumber.number",
-
           ...addExperienceSupport,
 
           joined: {
-            $concat: [
-              {
-                $switch: {
-                  branches: [
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 1] }, then: "Sun" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 2] }, then: "Mon" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 3] }, then: "Tue" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 4] }, then: "Wed" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 5] }, then: "Thu" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 6] }, then: "Fri" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 7] }, then: "Sat" },
-                  ],
-                  default: "N/A",
-                }
-              },
-              ", ",
-              {
-                $dateToString: {
-                  format: "%d, %Y",
-                  date: "$createdAtSafe",
-                },
-              }
-            ]
+            $dateToString: {
+              format: "%d %b, %Y",
+              date: "$createdAtSafe",
+            },
           },
 
           lastActiveAt: {
@@ -210,14 +177,14 @@ export const getUserStats = async (req, res) => {
               else: {
                 $dateToString: {
                   format: "%b %d, %Y",
-                  date: "$lastActiveAtSafe"
-                }
-              }
-            }
+                  date: "$lastActiveAtSafe",
+                },
+              },
+            },
           },
 
           resumeurl: "$profile.resume",
-        }
+        },
       },
 
       {
@@ -232,9 +199,8 @@ export const getUserStats = async (req, res) => {
           lastActiveAt: 1,
           applicationCount: 1,
           resumeurl: 1,
-        }
-      }
-
+        },
+      },
     ]).allowDiskUse(true);
 
     return res.status(200).json({
@@ -252,83 +218,56 @@ export const getUserStats = async (req, res) => {
   }
 };
 
-
-
 // ===============================
-// GET ALL USERS LIST (ADMIN)
+// GET USERS LIST
 // ===============================
 export const getUsersList = async (req, res) => {
   try {
-
     const users = await User.aggregate([
-
-      {
-        $lookup: {
-          from: "applications",
-          localField: "_id",
-          foreignField: "applicant",
-          as: "applications",
-        }
-      },
-
-      // 1️⃣ Convert date fields first (lightweight)
       {
         $addFields: {
           createdAtSafe: {
             $cond: [
               { $eq: ["$createdAt", null] },
               null,
-              { $toDate: "$createdAt" }
-            ]
+              { $toDate: "$createdAt" },
+            ],
           },
           lastActiveAtSafe: {
             $cond: [
               { $eq: ["$lastActiveAt", null] },
               null,
-              { $toDate: "$lastActiveAt" }
-            ]
-          }
-        }
+              { $toDate: "$lastActiveAt" },
+            ],
+          },
+        },
       },
 
-      // 2️⃣ Sort IMMEDIATELY — avoids memory overflow
+      // ✅ SORT FIRST
+      { $sort: { createdAtSafe: -1 } },
+
+      // ✅ LOOKUP AFTER SORT
       {
-        $sort: { createdAtSafe: -1 }
+        $lookup: {
+          from: "applications",
+          localField: "_id",
+          foreignField: "applicant",
+          as: "applications",
+        },
       },
 
-      // 3️⃣ Heavy formatting only AFTER sort
       {
         $addFields: {
           applicationCount: { $size: "$applications" },
           email: "$emailId.email",
           phoneNumber: "$phoneNumber.number",
-
           ...addExperienceSupport,
 
           joined: {
-            $concat: [
-              {
-                $switch: {
-                  branches: [
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 1] }, then: "Sun" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 2] }, then: "Mon" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 3] }, then: "Tue" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 4] }, then: "Wed" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 5] }, then: "Thu" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 6] }, then: "Fri" },
-                    { case: { $eq: [{ $dayOfWeek: "$createdAtSafe" }, 7] }, then: "Sat" },
-                  ],
-                  default: "N/A",
-                }
-              },
-              ", ",
-              {
-                $dateToString: {
-                  format: "%d, %Y",
-                  date: "$createdAtSafe"
-                }
-              }
-            ]
+            $dateToString: {
+              format: "%d %b, %Y",
+              date: "$createdAtSafe",
+            },
           },
 
           lastActiveAt: {
@@ -338,14 +277,14 @@ export const getUsersList = async (req, res) => {
               else: {
                 $dateToString: {
                   format: "%b %d, %Y",
-                  date: "$lastActiveAtSafe"
-                }
-              }
-            }
+                  date: "$lastActiveAtSafe",
+                },
+              },
+            },
           },
 
           resumeurl: "$profile.resume",
-        }
+        },
       },
 
       {
@@ -360,26 +299,22 @@ export const getUsersList = async (req, res) => {
           lastActiveAt: 1,
           applicationCount: 1,
           resumeurl: 1,
-        }
-      }
-
+        },
+      },
     ]).allowDiskUse(true);
 
     return res.status(200).json({
       success: true,
       data: users,
     });
-
   } catch (error) {
     console.error("Error fetching users list:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error"
+      message: "Server error",
     });
   }
 };
-
-
 
 // ===============================
 // GET ONE USER
@@ -389,12 +324,16 @@ export const getUser = async (req, res) => {
     const { userId } = req.params;
 
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ success: false, message: "Invalid user ID" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid user ID" });
     }
 
     const user = await User.findById(userId).select("-password").lean();
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     return res.status(200).json({
@@ -417,7 +356,9 @@ export const getAllApplication = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const applications = await Application.find({ applicant: userId }).populate({
+    const applications = await Application.find({
+      applicant: userId,
+    }).populate({
       path: "job",
       select: "jobDetails.title jobDetails.companyName",
     });
