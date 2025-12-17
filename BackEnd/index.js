@@ -287,6 +287,7 @@ import connectDB from "./utils/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import helmet from "helmet";
+import isAuthenticated from "./middlewares/isAuthenticated.js";
 
 
 // Import Routes
@@ -320,6 +321,8 @@ import Notification  from "./models/notification.model.js";
 import { setIO } from "./utils/socket.js";
 import notificationService from "./utils/notificationService.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 8000;
@@ -352,6 +355,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// ✅ Serve robots.txt & sitemap.xml from /public
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use("/socket.io/", (req, res, next) => next());
 
 // Rate Limiting
@@ -391,10 +398,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Static files and SPA fallback
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Serve frontend build
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
@@ -420,9 +426,12 @@ io.on("connection", (socket) => {
   });
 });
 
+// Initialize database connection
+connectDB();
+// handleReconnect();
+
 // Start Server & Connect to Database
 server.listen(PORT, async () => {
-  await connectDB();
   console.log(`🚀 Server running at port ${PORT}`);
 
   // Notification count emitter
@@ -443,38 +452,75 @@ server.listen(PORT, async () => {
     }
   };
 
-  // Change stream handlers
-  const setupChangeStream = (model, errorMsg) => {
-    const changeStream = model.watch();
-    
-    changeStream.on("change", async (change) => {
-      if (change.operationType === "insert") {
-        await emitUnseenNotificationCount();
-      }
-    });
-
-    changeStream.on("error", (error) => {
-      console.error(`${errorMsg}:`, error);
-      changeStream.close();
-      setTimeout(() => setupChangeStream(model, errorMsg), 5000);
-    });
+  // Check if running on replica set before setting up change streams
+  const isReplicaSet = async () => {
+    try {
+      const admin = mongoose.connection.db.admin();
+      const result = await admin.command({ isMaster: 1 });
+      return result.setName !== undefined;
+    } catch (error) {
+      return false;
+    }
   };
 
-  // Initialize change streams
-  setupChangeStream(JobReport, "JobReport ChangeStream error");
-  setupChangeStream(Contact, "Contact ChangeStream error");
-  
-  // Also set up for Notification model
-  const notificationChangeStream = Notification.watch();
-  notificationChangeStream.on("change", async (change) => {
-    if (change.operationType === "insert") {
-      await emitUnseenNotificationCount();
+  // Change stream handlers with better error handling
+  const setupChangeStream = (model, errorMsg) => {
+    try {
+      const changeStream = model.watch();
+      
+      changeStream.on("change", async (change) => {
+        try {
+          if (change.operationType === "insert") {
+            await emitUnseenNotificationCount();
+          }
+        } catch (error) {
+          console.error(`Error in change handler for ${errorMsg}:`, error);
+        }
+      });
+
+      changeStream.on("error", (error) => {
+        console.error(`${errorMsg}:`, error);
+        try {
+          changeStream.close();
+        } catch (closeError) {
+          console.error(`Error closing change stream:`, closeError);
+        }
+      });
+
+      return changeStream;
+    } catch (error) {
+      console.error(`Error setting up change stream for ${errorMsg}:`, error);
+    }
+  };
+
+  // Initialize change streams only when connected and on replica set
+  mongoose.connection.on('connected', async () => {
+    const replicaSet = await isReplicaSet();
+    if (replicaSet) {
+      console.log('Setting up change streams on replica set...');
+      setupChangeStream(JobReport, "JobReport ChangeStream error");
+      setupChangeStream(Contact, "Contact ChangeStream error");
+      setupChangeStream(Notification, "Notification ChangeStream error");
+    } else {
+      console.log('Standalone MongoDB detected - change streams disabled');
+      console.log('Real-time notifications will use polling instead');
     }
   });
 });
 
-// Cron Job to Check for Expired Plans
-cron.schedule("* * * * *", async () => {
+// Cron Job to Check for Expired Plans and emit notification counts (runs every 5 minutes)
+cron.schedule("*/5 * * * *", async () => {
+  // Emit notification count for real-time updates when change streams aren't available
+  await emitUnseenNotificationCount();
+  
+  // Check expired plans every hour (skip if not on the hour)
+  const now = new Date();
+  if (now.getMinutes() !== 0) return;
+  if (mongoose.connection.readyState !== 1) {
+    console.log("Skipping cron job - MongoDB not connected");
+    return;
+  }
+  
   console.log("Running cron job: Checking expired plans...");
   try {
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
@@ -484,37 +530,39 @@ cron.schedule("* * * * *", async () => {
 
     await Promise.all([
       ...jobSubscriptions.map(async (subscription) => {
-        if (await subscription.checkValidity()) {
-          // Create notification
-          const notification = new Notification({
-            recipient: subscription.company,
-            recipientModel: 'Company',
-            title: 'Plan Expired',
-            message: 'Your job plan has expired. Please renew to continue posting jobs.',
-            type: 'system',
-            metadata: { subscriptionId: subscription._id, type: 'job' }
-          });
-          await notification.save();
-          
-          // Emit to company
-          io.to(`user_${subscription.company}`).emit('newNotification', notification);
+        try {
+          if (await subscription.checkValidity()) {
+            const notification = new Notification({
+              recipient: subscription.company,
+              recipientModel: 'Company',
+              title: 'Plan Expired',
+              message: 'Your job plan has expired. Please renew to continue posting jobs.',
+              type: 'system',
+              metadata: { subscriptionId: subscription._id, type: 'job' }
+            });
+            await notification.save();
+            io.to(`user_${subscription.company}`).emit('newNotification', notification);
+          }
+        } catch (error) {
+          console.error("Error processing job subscription:", error);
         }
       }),
       ...candidateSubscriptions.map(async (subscription) => {
-        if (await subscription.checkValidity()) {
-          // Create notification
-          const notification = new Notification({
-            recipient: subscription.company,
-            recipientModel: 'Company',
-            title: 'Plan Expired',
-            message: 'Your candidate data plan has expired. Please renew to access candidate database.',
-            type: 'system',
-            metadata: { subscriptionId: subscription._id, type: 'candidate' }
-          });
-          await notification.save();
-          
-          // Emit to company
-          io.to(`user_${subscription.company}`).emit('newNotification', notification);
+        try {
+          if (await subscription.checkValidity()) {
+            const notification = new Notification({
+              recipient: subscription.company,
+              recipientModel: 'Company',
+              title: 'Plan Expired',
+              message: 'Your candidate data plan has expired. Please renew to access candidate database.',
+              type: 'system',
+              metadata: { subscriptionId: subscription._id, type: 'candidate' }
+            });
+            await notification.save();
+            io.to(`user_${subscription.company}`).emit('newNotification', notification);
+          }
+        } catch (error) {
+          console.error("Error processing candidate subscription:", error);
         }
       }),
     ]);
