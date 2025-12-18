@@ -222,7 +222,7 @@ export const getRecruitersList = async (req, res) => {
               },
               joined: {
                 $dateToString: {
-                  format: "%b %d, %Y",
+                  format: "%Y-%m-%d",   // ✅ VALID
                   date: "$createdAt",
                 },
               },

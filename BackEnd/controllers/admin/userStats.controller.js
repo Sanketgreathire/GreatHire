@@ -164,11 +164,11 @@ export const getUserStats = async (req, res) => {
           ...addExperienceSupport,
 
           joined: {
-            $dateToString: {
-              format: "%d %b, %Y",
-              date: "$createdAtSafe",
-            },
-          },
+                    $dateToString: {
+                      format: "%Y-%m-%d",   // ✅ VALID
+                      date: "$createdAtSafe",
+                    },
+                  },
 
           lastActiveAt: {
             $cond: {
@@ -176,7 +176,7 @@ export const getUserStats = async (req, res) => {
               then: null,
               else: {
                 $dateToString: {
-                  format: "%b %d, %Y",
+                  format: "%Y-%m-%d",   // ✅ VALID
                   date: "$lastActiveAtSafe",
                 },
               },
@@ -264,11 +264,11 @@ export const getUsersList = async (req, res) => {
           ...addExperienceSupport,
 
           joined: {
-            $dateToString: {
-              format: "%d %b, %Y",
-              date: "$createdAtSafe",
-            },
-          },
+                    $dateToString: {
+                      format: "%Y-%m-%d",   // ✅ MongoDB supported
+                      date: "$createdAtSafe",
+                    },
+                  },
 
           lastActiveAt: {
             $cond: {
@@ -276,12 +276,13 @@ export const getUsersList = async (req, res) => {
               then: null,
               else: {
                 $dateToString: {
-                  format: "%b %d, %Y",
+                  format: "%Y-%m-%d",   // ✅ MongoDB supported
                   date: "$lastActiveAtSafe",
                 },
               },
             },
           },
+
 
           resumeurl: "$profile.resume",
         },
