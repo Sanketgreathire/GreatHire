@@ -560,7 +560,7 @@ import { Server } from "socket.io";
 import connectDB from "./utils/db.js";
 
 // ===============================
-// Routes
+// ROUTES
 // ===============================
 import applicationRoute from "./routes/application.route.js";
 import companyRoute from "./routes/company.route.js";
@@ -582,22 +582,20 @@ import notificationRoute from "./routes/notification.route.js";
 import messageRoute from "./routes/message.route.js";
 
 // ===============================
-// Models
+// MODELS
 // ===============================
 import { JobSubscription } from "./models/jobSubscription.model.js";
-import JobReport from "./models/jobReport.model.js";
-import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 import Notification from "./models/notification.model.js";
 
 // ===============================
-// Socket Utils
+// SOCKET UTILS
 // ===============================
 import { setIO } from "./utils/socket.js";
 import notificationService from "./utils/notificationService.js";
 
 // ===============================
-// Setup
+// APP SETUP
 // ===============================
 const app = express();
 const server = createServer(app);
@@ -607,7 +605,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ===============================
-// Security
+// SECURITY
 // ===============================
 app.use(
   helmet({
@@ -617,7 +615,7 @@ app.use(
 app.disable("x-powered-by");
 
 // ===============================
-// Middleware
+// MIDDLEWARE
 // ===============================
 app.use(
   cors({
@@ -631,7 +629,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // ===============================
-// Rate Limiter
+// RATE LIMITER
 // ===============================
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -640,7 +638,7 @@ const apiLimiter = rateLimit({
 app.use("/api", apiLimiter);
 
 // ===============================
-// Socket.IO
+// SOCKET.IO
 // ===============================
 const io = new Server(server, {
   cors: {
@@ -653,7 +651,7 @@ setIO(io);
 notificationService.setIO(io);
 
 // ===============================
-// LOG REQUESTS
+// REQUEST LOGGER
 // ===============================
 app.use((req, res, next) => {
   console.log(`➡️ ${req.method} ${req.url}`);
@@ -661,11 +659,19 @@ app.use((req, res, next) => {
 });
 
 // ===============================
-// ✅ PUBLIC STATIC (SEO FILES)
+// ✅ PUBLIC SEO FILES
 // ===============================
-// public/sitemap.xml
-// public/robots.txt
 app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/sitemap.xml", (req, res) => {
+  res.set("Content-Type", "application/xml");
+  res.sendFile(path.join(__dirname, "public", "sitemap.xml"));
+});
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.sendFile(path.join(__dirname, "public", "robots.txt"));
+});
 
 // ===============================
 // API ROUTES
@@ -692,12 +698,12 @@ app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/messages", messageRoute);
 
 // ===============================
-// FRONTEND BUILD (React / Vite)
+// FRONTEND BUILD
 // ===============================
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 // ===============================
-// SPA FALLBACK (MUST BE LAST)
+// SPA FALLBACK (ALWAYS LAST)
 // ===============================
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
@@ -723,25 +729,24 @@ io.on("connection", (socket) => {
 });
 
 // ===============================
-// START SERVER
+// SERVER START
 // ===============================
 server.listen(PORT, async () => {
   await connectDB();
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // ===============================
-// CRON JOB
+// CRON JOB (PLAN EXPIRY)
 // ===============================
 cron.schedule("* * * * *", async () => {
-  console.log("⏰ Checking expired plans...");
   try {
     const [jobSubs, candidateSubs] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
       CandidateSubscription.find({ status: "Active" }),
     ]);
 
-    [...jobSubs, ...candidateSubs].forEach(async (sub) => {
+    for (const sub of [...jobSubs, ...candidateSubs]) {
       if (await sub.checkValidity()) {
         const notification = new Notification({
           recipient: sub.company,
@@ -750,12 +755,13 @@ cron.schedule("* * * * *", async () => {
           message: "Your plan has expired. Please renew.",
           type: "system",
         });
+
         await notification.save();
         io.to(`user_${sub.company}`).emit("newNotification", notification);
       }
-    });
-  } catch (err) {
-    console.error("Cron error:", err);
+    }
+  } catch (error) {
+    console.error("Cron error:", error);
   }
 });
 
@@ -763,7 +769,7 @@ cron.schedule("* * * * *", async () => {
 // GRACEFUL SHUTDOWN
 // ===============================
 process.on("SIGINT", async () => {
-  console.log("🛑 Server shutting down...");
+  console.log("🛑 Shutting down server...");
   await mongoose.connection.close();
   process.exit(0);
 });
