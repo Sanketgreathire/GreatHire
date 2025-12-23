@@ -1,7 +1,5 @@
 // import React, { useEffect, useState } from "react";
 
-
-
 // const JobsFeed = () => {
 //   const [jobs, setJobs] = useState([]);
 //   const [loading, setLoading] = useState(true);

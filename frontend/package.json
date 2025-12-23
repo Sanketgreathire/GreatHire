@@ -58,7 +58,7 @@
     "react-markdown": "^10.1.0",
     "react-pdf": "^10.2.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.5",
+    "react-router-dom": "^7.11.0",
     "react-slider": "^2.0.6",
     "react-step-progress-bar": "^1.0.3",
     "recharts": "^2.15.1",

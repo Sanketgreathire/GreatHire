@@ -411,9 +411,9 @@ const Jobs = () => {
       </div>
 
       {/* Jobs Listing Section - FIXED CONTAINER */}
-      <div className="w-full px-2 lg:px-4 dark:bg-gray-700 overflow-hidden">
+      <div className="w-full px-2 lg:px-4 dark:bg-gray-700">
         <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gray-100 pt-6 dark:bg-gray-800">
-          <div className="flex gap-6 overflow-hidden">
+          <div className="flex gap-6 ">
             {/* Sidebar (Desktop only) */}
             <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800">
               <FilterCard
@@ -423,7 +423,7 @@ const Jobs = () => {
             </div>
 
             {/* Main area - FIXED WIDTH */}
-            <div className="flex-1 min-w-0 overflow-hidden pr-2">
+            <div className="flex-1 min-w-0  pr-2">
               {/* Mobile toggle */}
               <div className="flex items-center justify-between mb-4 lg:hidden px-2">
                 <button
@@ -502,7 +502,6 @@ const Jobs = () => {
     </div>
   );
 };
-
 export default Jobs;
 
 // old code - without - search bar, latest job section with details and improved filtering & pagination
