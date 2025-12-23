@@ -129,13 +129,13 @@ const Job = ({ job }) => {
 
         {/* Urgent Hiring Label */}
         {job?.jobDetails?.urgentHiring === "Yes" && (
-          <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white">
+          <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white ">
             Urgent Hiring
           </p>
         )}
 
         {/* Right side icons */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex items-center gap-3 ml-auto ">
 
           {/* Share Icon (always visible) */}
           <div className="relative inline-block">
@@ -213,9 +213,9 @@ const Job = ({ job }) => {
           </p>
         </div>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between ">
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-100">
+          <p className="text-sm text-gray-500 dark:text-gray-100 ">
             Active {calculateActiveDays(job?.createdAt)} days ago
           </p>
         </div>

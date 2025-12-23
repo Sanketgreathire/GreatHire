@@ -201,15 +201,15 @@ const Navbar = () => {
           <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
             {/* Left side navigation */}
             <div className="flex items-center gap-6">
-              <ul className="flex items-center gap-6">
+              <ul className="flex items-center gap-6 ">
                 {primaryNavLinks.map(({ to, label }) => (
                   <li key={to}>
                     <Link
                       to={to}
-                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors  ${
                         location.pathname === to
-                          ? "text-blue-600 bg-blue-50"
-                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                          ? "text-blue-600 bg-blue-50 "
+                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 "
                       }`}
                     >
                       {label}
@@ -230,8 +230,8 @@ const Navbar = () => {
                         to={to}
                         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                           location.pathname === to
-                            ? "text-blue-600 bg-blue-50"
-                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                            ? "text-blue-600 bg-blue-50 "
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-white"
                         }`}
                       >
                         {label}
@@ -243,7 +243,7 @@ const Navbar = () => {
                   <li ref={moreMenuRef} className="relative">
                     <button
                       onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                      className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors dark:text-white"
                       aria-expanded={isMoreMenuOpen}
                       aria-haspopup="true"
                     >
