@@ -1,4 +1,3 @@
-// export default Signup;
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
@@ -7,37 +6,38 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import user_video from "../../../assets/videos/user_video.mp4"; // ✅ your local video
+import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+import recruiter_video from "../../../assets/videos/recruiter_video.mp4";
 
+// ✅ Slides for recruiter side (first image fixed)
 const slides = [
   {
     image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80",
-    title: "Find Your Dream Job",
+      "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=1000&q=80",
+    title: "Find Top Talent Fast",
     subtitle:
-      "Connect with top companies and discover opportunities that match your skills",
-    stats: "50,000+ Jobs Available",
+      "Post jobs, manage applications, and hire efficiently with GreatHire Recruiter.",
+    stats: "1,000+ Companies Hiring",
   },
   {
     image:
-      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1000&q=80",
-    title: "Build Your Career",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
+    title: "Streamline Recruitment",
     subtitle:
-      "Join thousands of professionals who found success through GreatHire",
-    stats: "95% Success Rate",
+      "Use intelligent tools to shortlist candidates and save valuable time.",
+    stats: "AI-Powered Matching",
   },
   {
     image:
-      "https://plus.unsplash.com/premium_photo-1661587727551-7f7aac005fe3?q=80&w=1000&auto=format&fit=crop",
-    title: "Network & Grow",
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1000&q=80",
+    title: "Grow Your Team",
     subtitle:
-      "Expand your professional network and accelerate your career growth",
-    stats: "100k+ Professionals",
+      "Connect with skilled professionals and build a strong workforce.",
+    stats: "50,000+ Job Seekers",
   },
 ];
 
-const Signup = () => {
+const RecruiterSignup = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Carousel autoplay
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -93,24 +94,28 @@ const Signup = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error("Please fix the errors in your form before submitting.");
+      toast.error("Please fix the errors before submitting.");
       return;
     }
 
     setLoading(true);
     try {
-     const response = await axios.post(
-  `${USER_API_END_POINT}/register`,
+      // const response = await axios.post(
+      //   ${RECRUITER_API_END_POINT}/register,
+      //   { ...formData },
+      //   { withCredentials: true }
+      // );
+ const response = await axios.post(
+  `${RECRUITER_API_END_POINT}/register`,
   { ...formData },
   { withCredentials: true }
 );
 
-
       if (response?.data?.success) {
-        toast.success("Account created successfully ✅");
+        toast.success("Recruiter account created successfully ✅");
         setFormData({ fullname: "", email: "", phoneNumber: "", password: "" });
         dispatch(setUser(response.data.user));
-        navigate("/profile");
+        navigate("/recruiter/dashboard/create-company");
       } else {
         toast.error(response?.data?.message || "Signup failed ❌");
       }
@@ -142,9 +147,10 @@ const Signup = () => {
                 <div className="relative w-[95%] h-full overflow-hidden shadow-md border border-gray-200 rounded-l-2xl rounded-r-[80px]">
                   <div
                     className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
-                    // style={{ transform: translateX(-${currentSlide * 100}%) }}
+                    // style={{ `transform: translateX(-${currentSlide * 100}%)` }}
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
 
+                    // style = {{transform: trans}}
                   >
                     {slides.map((slide, index) => (
                       <div key={index} className="min-w-full relative">
@@ -187,7 +193,7 @@ const Signup = () => {
                   </div>
                 </div>
 
-                {/* Floating Stats Cards */}
+                {/* Floating Stats Cards (added - same style as user page) */}
                 <div className="absolute -right-4 top-20 bg-white rounded-xl p-4 shadow-lg">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">98%</div>
@@ -212,15 +218,15 @@ const Signup = () => {
                     Great<span className="text-blue-600">Hire</span>
                   </h1>
                   <h2 className="text-xl font-semibold mt-2 text-gray-900">
-                    Create your account
+                    Create Recruiter Account
                   </h2>
                   <p className="text-sm text-gray-600">
-                    Join GreatHire and find opportunities!
+                    Hire smarter. Connect faster.
                   </p>
                   <p className="mt-3 text-sm text-blue-600">
                     Already have an account?{" "}
                     <span
-                      onClick={() => navigate("/login")}
+                      onClick={() => navigate("/recruiter-login")}
                       className="cursor-pointer underline font-semibold hover:text-blue-800 transition-colors"
                     >
                       Log In
@@ -242,7 +248,7 @@ const Signup = () => {
                         value={formData.fullname}
                         onChange={handleChange}
                         placeholder="Enter your full name"
-                        className="block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:text-black"
+                        className="block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         required
                       />
                       {errors.fullname && (
@@ -255,15 +261,15 @@ const Signup = () => {
                     {/* Email */}
                     <div>
                       <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                        Email Address
+                        Work Email
                       </label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="Enter your email"
-                        className=" dark:text-black block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Enter your work email"
+                        className="block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         required
                       />
                       {errors.email && (
@@ -276,15 +282,15 @@ const Signup = () => {
                     {/* Phone */}
                     <div>
                       <label className="block text-gray-700 text-sm font-medium mb-1.5">
-                        Mobile Number
+                        Company Contact Number
                       </label>
                       <input
                         type="text"
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleChange}
-                        placeholder="Contact number"
-                        className=" dark:text-black block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Company phone number"
+                        className="block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         required
                       />
                       {errors.phoneNumber && (
@@ -306,7 +312,7 @@ const Signup = () => {
                           value={formData.password}
                           onChange={handleChange}
                           placeholder="min 8 characters"
-                          className=" dark:text-black block w-full pl-3 pr-10 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="block w-full pl-3 pr-10 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                           required
                         />
                         <button
@@ -318,7 +324,7 @@ const Signup = () => {
                         </button>
                       </div>
                       {errors.password && (
-                        <p className=" dark:text-black text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-sm mt-1">
                           {errors.password}
                         </p>
                       )}
@@ -347,21 +353,21 @@ const Signup = () => {
         <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto gap-6 mb-12 px-4">
           <div className="lg:w-1/2">
             <video
-              src={user_video}
+              src={recruiter_video}
               controls
               className="w-full rounded-xl shadow-lg"
             />
           </div>
-          <div className="lg:w-1/2 flex flex-col justify-center space-y-4 ">
+          <div className="lg:w-1/2 flex flex-col justify-center space-y-4">
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
               How to Get Started
             </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2 dark:text-white">
-              <li>Create your account with accurate details.</li>
-              <li>Verify your email address to activate your profile.</li>
-              <li>Upload your resume and professional info.</li>
-              <li>Browse jobs and apply to the ones matching your skills.</li>
-              <li>Track applications and get interview updates.</li>
+            <ul className="list-disc list-inside text-gray-700 space-y-2  dark:text-white ">
+              <li>Create your recruiter account.</li>
+              <li>Set up your company profile.</li>
+              <li>Post job openings easily.</li>
+              <li>Review applications efficiently.</li>
+              <li>Hire top candidates quickly.</li>
             </ul>
           </div>
         </div>
@@ -372,4 +378,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default RecruiterSignup;
