@@ -1,51 +1,57 @@
 // Import necessary modules and dependencies
-// Import React and hooks for state and side effects
-import React, { useEffect, useState } from "react"; 
-
-// import JobsFeed from "@/components/JobsFeed";
+import React, { useEffect, useState } from "react";
 
 // Import navigation bar component
-import Navbar from "@/components/shared/Navbar"; 
+import Navbar from "@/components/shared/Navbar";
 
 // Import footer component
 import Footer from "@/components/shared/Footer";
 
 // Import Hero section component for the homepage
-import HeroSection from "../components/HeroSection"; 
+import HeroSection from "../components/HeroSection";
 
-// Import component displaying the latest job listings
-import LatestJobs from "./job/LatestJobs"; 
+// Import Latest job listings
+import LatestJobs from "./job/LatestJobs";
 
-// Import useSelector hook for accessing Redux state
-import { useSelector } from "react-redux"; 
+// Import Before Login and After Login pages
+import BeforeLogin from "../components/auth/user/beforelogin";
+import AfterLogin from "../components/auth/user/afterlogin";
 
-// Import useNavigate hook for navigation
-import { useNavigate } from "react-router-dom"; 
+// Import Redux for accessing user
+import { useSelector } from "react-redux";
 
- 
+// Import Navigation
+import { useNavigate } from "react-router-dom";
 
-// Home component - Main landing page
 const Home = () => {
-  // State variables for search filters
-  const [titleKeyword, setTitleKeyword] = useState(""); // State for storing job title keyword input
-  const [location, setLocation] = useState(""); // State for storing job location input
-  
-  // Get the authenticated user details from Redux store
-  const { user } = useSelector((state) => state.auth); 
+  const [titleKeyword, setTitleKeyword] = useState("");
+  const [location, setLocation] = useState("");
 
-  // Initialize navigation hook
-  const navigate = useNavigate(); 
+  const { user } = useSelector((state) => state.auth);
 
-  // Effect to check user role and redirect if not a student
+  const navigate = useNavigate();
+
+  // If user exists but is NOT a student → redirect to 404
   useEffect(() => {
-    if (user && user.role !== "student") navigate("/page/not/found");
+    if (user && user.role !== "student") {
+      navigate("/page/not/found");
+    }
   }, [user]);
 
+  // 🟦 Return Before Login Page if user is not logged in
+  if (!user) {
+    return (
+      <>
+        <BeforeLogin />
+      </>
+    );
+  }
+
+  // 🟩 After Login Page for student users
   return (
     <>
-      <Navbar /> {/* Display the navigation bar */}
+      <Navbar />
 
-      {/* Main content area with Hero section and latest job listings */}
       <div className="p-12 bg-white dark:bg-gray-800">
         <HeroSection
           searchInfo={{
@@ -55,20 +61,18 @@ const Home = () => {
             setLocation,
           }}
         />
-        {/* Centered jobs section */}
+
+        {/* Centered Latest Jobs */}
         <div className="flex justify-center">
           <div className="w-full max-w-6xl">
-            <LatestJobs /> {/* Display latest job postings */}
+            <LatestJobs />
           </div>
         </div>
       </div>
-             {/*<section className="my-12 px-4 md:px-8">
-                        <h2 className="text-2xl font-bold mb-6">Latest Jobs from Around the Web</h2>
-             <JobsFeed />
-            </section>*/}
-      <Footer /> {/* Display the footer */}
+
+      <Footer />
     </>
   );
 };
 
-export default Home; // Export the Home component
+export default Home;
