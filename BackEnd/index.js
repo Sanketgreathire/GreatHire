@@ -59,6 +59,8 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 8000;
 
+app.set('trust proxy', true);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -94,6 +96,7 @@ const apiLimiter = rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
 });
 app.use("/api", apiLimiter);
 
