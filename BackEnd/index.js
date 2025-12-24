@@ -18,6 +18,7 @@ import connectDB from "./utils/db.js";
 // ===============================
 // ROUTES
 // ===============================
+import blogRoute from "./routes/blog.route.js";
 import applicationRoute from "./routes/application.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -43,6 +44,7 @@ import messageRoute from "./routes/message.route.js";
 import { JobSubscription } from "./models/jobSubscription.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 import Notification from "./models/notification.model.js";
+import Blog from "./models/blog.model.js"; 
 
 // ===============================
 // SOCKET UTILS
@@ -119,7 +121,55 @@ app.use((req, res, next) => {
 // ===============================
 // ✅ PUBLIC SEO FILES
 // ===============================
-app.use(express.static(path.join(__dirname, "public")));
+app.get("/sitemap.xml", async (req, res) => {
+  try {
+    const baseUrl = "https://www.greathire.in";
+
+    const staticPages = [
+      "/",
+      "/blogs",
+      "/jobs",
+      "/about",
+      "/contact",
+    ];
+  app.use(
+    express.static(path.join(__dirname, "public"), {
+      index: false,
+    })
+  );
+    const blogs = await Blog.find({ status: "published" });
+
+    res.set("Content-Type", "application/xml");
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    staticPages.forEach((page) => {
+      xml += `
+        <url>
+          <loc>${baseUrl}${page}</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>`;
+    });
+
+    blogs.forEach((blog) => {
+      xml += `
+        <url>
+          <loc>${baseUrl}/blogs/${blog.slug}</loc>
+          <lastmod>${blog.updatedAt.toISOString()}</lastmod>
+          <changefreq>weekly</changefreq>
+          <priority>0.9</priority>
+        </url>`;
+    });
+
+    xml += `</urlset>`;
+    res.send(xml);
+  } catch (err) {
+    console.error("Sitemap error:", err);
+    res.status(500).send("Error generating sitemap");
+  }
+});
 
 app.get("/sitemap.xml", (req, res) => {
   res.set("Content-Type", "application/xml");
