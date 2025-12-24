@@ -7,8 +7,12 @@ import {
   Users, AlertTriangle, Cpu, Scale, Ban, DollarSign, HandshakeIcon, Building, ScrollText, ChevronDown
 } from 'lucide-react';
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
+
 const sections = [
-  { id: "introduction", label: "Introduction" , icon: UserCheck },
+  { id: "introduction", label: "Introduction", icon: UserCheck },
   { id: "purpose", label: "Purpose", icon: Target },
   { id: "eligibility", label: "Eligibility", icon: Users },
   { id: "conditions-recruiters", label: "Conditions for Recruiters", icon: Users },
@@ -32,43 +36,56 @@ const Section = ({ icon: Icon, title, children, sectionKey, expandedSection, set
   const isOpen = expandedSection === sectionKey;
 
   return (
-    <motion.div
-      className="border border-gray-200 rounded-xl shadow-sm  dark:bg-gray-600  "
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.9 }}
-    >
-      <button
-        onClick={() => setExpandedSection(isOpen ? null : sectionKey)}
-        className="w-full flex items-center justify-between px-6 py-4 text-left  transition-all "
-      >
-        <span className="flex items-center gap-3 text-lg font-semibold text-gray-900  dark:text-gray-100">
-          <Icon className="h-6 w-6 text-blue-600  dark:text-blue-400" />
-          {title}
-        </span>
-        <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ChevronDown className="text-gray-500 h-5 w-5 dark:text-gray-100 " />
-        </motion.span>
-      </button>
+    <>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="px-6 pb-5 pt-1 text-gray-700 leading-relaxed "
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+      <Helmet>
+        <title>Terms & Privacy Policy | User Rights, Data Protection & Platform Rules – GreatHire</title>
+        <meta
+          name="description"
+          content="Read GreatHire’s Terms of Service and Privacy Policy to understand how our platform operates, how user data is collected and protected, and what responsibilities apply to job seekers and recruiters. Based in Hyderabad State, India, GreatHire is committed to transparency, ethical hiring practices, and compliance with global data protection laws such as GDPR and CCPA."
+        />
+      </Helmet>
+
+
+
+      <motion.div
+        className="border border-gray-200 rounded-xl shadow-sm  dark:bg-gray-600  "
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.9 }}
+      >
+        <button
+          onClick={() => setExpandedSection(isOpen ? null : sectionKey)}
+          className="w-full flex items-center justify-between px-6 py-4 text-left  transition-all "
+        >
+          <span className="flex items-center gap-3 text-lg font-semibold text-gray-900  dark:text-gray-100">
+            <Icon className="h-6 w-6 text-blue-600  dark:text-blue-400" />
+            {title}
+          </span>
+          <motion.span
+            animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            <ChevronDown className="text-gray-500 h-5 w-5 dark:text-gray-100 " />
+          </motion.span>
+        </button>
+
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              className="px-6 pb-5 pt-1 text-gray-700 leading-relaxed "
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {children}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </>
   );
 };
 
@@ -98,11 +115,10 @@ function App() {
               <li key={id}>
                 <button
                   onClick={() => setExpandedSection(id)}
-                  className={`flex items-center gap-2 w-full text-left transition  dark:text-gray-100  ${
-                    expandedSection === id
+                  className={`flex items-center gap-2 w-full text-left transition  dark:text-gray-100  ${expandedSection === id
                       ? "text-blue-600 font-semibold "
                       : "text-gray-700 hover:text-blue-600"
-                  }`}
+                    }`}
                 >
                   {React.createElement(icon, { className: "h-4 w-4 text-blue-600 dark:text-blue-300 " })}
                   <span className="font-serif text-lg tracking-wide ">{label}</span> {/* Updated font style */}
@@ -165,19 +181,19 @@ function getSectionContent(id) {
       );
     case "purpose":
       return (
-          <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100 ">
-            The purpose of this Privacy Policy is to inform users of GreatHire about the collection, processing, storage, and sharing of their data. <br></br>
-            • We ensure transparency about your data rights and maintain strict confidentiality throughout the hiring process. <br></br>
-            • Personal data is collected to match job seekers with opportunities and assist recruiters in finding the best candidates. <br></br>
-            • This policy promotes informed decision-making and builds trust through ethical and lawful data usage. <br></br>
-            • We foster a privacy-first culture, empowering users while adhering to global data protection standards like GDPR and CCPA. <br></br>
-            • Data is used only for outlined purposes or with user consent, ensuring accountability and clarity. <br></br>
-            • We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks. <br></br>
-            • GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security. <br></br>
-            <br></br>
-            For inquiries, contact us at <a href="privacy@greathire.com" className="text-blue-400 hover:text-blue-500">privacy@greathire.com</a>.
-          </p>
-    
+        <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100 ">
+          The purpose of this Privacy Policy is to inform users of GreatHire about the collection, processing, storage, and sharing of their data. <br></br>
+          • We ensure transparency about your data rights and maintain strict confidentiality throughout the hiring process. <br></br>
+          • Personal data is collected to match job seekers with opportunities and assist recruiters in finding the best candidates. <br></br>
+          • This policy promotes informed decision-making and builds trust through ethical and lawful data usage. <br></br>
+          • We foster a privacy-first culture, empowering users while adhering to global data protection standards like GDPR and CCPA. <br></br>
+          • Data is used only for outlined purposes or with user consent, ensuring accountability and clarity. <br></br>
+          • We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks. <br></br>
+          • GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security. <br></br>
+          <br></br>
+          For inquiries, contact us at <a href="privacy@greathire.com" className="text-blue-400 hover:text-blue-500">privacy@greathire.com</a>.
+        </p>
+
       );
     case "eligibility":
       return <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
@@ -219,12 +235,12 @@ function getSectionContent(id) {
       </p>;
     case "conditions-jobseekers":
       return bullets([
-         <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
+        <p style={{ fontFamily: "Oswald" }} className="text-lg text-gray-700 leading-relaxed dark:text-gray-100">
 
-        "Provide accurate professional information",
-        "Maintain current availability status", 
-        "Respect confidentiality of employer information",
-        "Attend scheduled interviews professionally"
+          "Provide accurate professional information",
+          "Maintain current availability status",
+          "Respect confidentiality of employer information",
+          "Attend scheduled interviews professionally"
         </p>
       ]);
     case "user-participation":
@@ -463,7 +479,7 @@ function getSectionContent(id) {
         For any questions, concerns, or feedback regarding GreatHire’s Terms, Privacy Policy, or platform usage, please contact us:<br></br>
 
         <br></br>
-        Phone: +91 8328192093 <br></br> 
+        Phone: +91 8328192093 <br></br>
         (Mon–Sat, 9am-7pm, local time)
         <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Email : </b>hr@babde.tech</a>
         <a href=" hr@babde.tech " className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Privacy inquiries : </b> hr@babde.tech     </a>
@@ -478,7 +494,7 @@ function getSectionContent(id) {
         • Identity verification may be required for sensitive requests to protect user data.<br></br>
         • Suggestions and feedback to improve our services are always welcome.<br></br>
         • For media or partnership inquiries, contact: media@greathire.com<br></br>
-      <br></br>
+        <br></br>
         Visit us: <br></br>
         <a href="https://greathire.in" className="text-blue-600 hover:text-blue-800 block mt-2 dark:text-blue-300"><b>Website : </b> https://greathire.in</a>
         <a href="mailto:hr@babde.tech" className="text-blue-600 hover:text-blue-800 dark:text-blue-300"><b>Email :</b> hr@babde.tech</a>

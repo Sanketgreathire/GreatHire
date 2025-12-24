@@ -1,38 +1,52 @@
 // Importing React state management
-import { useState } from "react"; 
+import { useState } from "react";
 
 // Importing location icon
-import { FaLocationDot } from "react-icons/fa6"; 
+import { FaLocationDot } from "react-icons/fa6";
 // Importing clear icon
-import { MdClear } from "react-icons/md"; 
+import { MdClear } from "react-icons/md";
 // Importing job details context
-import { useJobDetails } from "@/context/JobDetailsContext"; 
- // Importing predefined list of locations
+import { useJobDetails } from "@/context/JobDetailsContext";
+// Importing predefined list of locations
 import { allLocations } from "@/utils/constant";
+
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
 
 // Component for displaying the location dropdown
 const Locations = ({ locations, onSelectLocation }) => {
   return (
-    <div className="absolute top-16 left-0 bg-white border border-gray-300 rounded-lg shadow-lg w-full max-h-64 overflow-auto z-20">
-      {/* Check if there are available locations */}
-      {locations.length > 0 ? (
-        locations.map((location, index) => (
-          <div
-            key={index}
-            className="flex items-center space-x-3 px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            onClick={() => onSelectLocation(location)} // Handle location selection
-          >
-            <FaLocationDot size={18} className="text-blue-500" />
-            <span className="text-gray-700 text-sm md:text-base">
-              {location}
-            </span>
-          </div>
-        ))
-      ) : (
-        // Display when no locations are found
-        <div className="px-4 py-2 text-gray-500">No locations found</div>
-      )}
-    </div>
+    <>
+
+      <Helmet>
+        <title>Search Jobs by Location | Find Jobs Near You – GreatHire</title>
+        <meta
+          name="description"
+          content="Find jobs easily by location using GreatHire’s smart location search feature. Instantly explore job opportunities across cities and regions by selecting or typing your preferred location, including metro and remote options. This location-based job search helps candidates narrow results quickly, discover nearby opportunities, and apply with confidence. Headquartered in Hyderabad State, India, GreatHire is a trusted hiring platform designed to connect job seekers with verified employers across multiple cities, industries, and experience levels."
+        />
+      </Helmet>
+
+      <div className="absolute top-16 left-0 bg-white border border-gray-300 rounded-lg shadow-lg w-full max-h-64 overflow-auto z-20">
+        {/* Check if there are available locations */}
+        {locations.length > 0 ? (
+          locations.map((location, index) => (
+            <div
+              key={index}
+              className="flex items-center space-x-3 px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              onClick={() => onSelectLocation(location)} // Handle location selection
+            >
+              <FaLocationDot size={18} className="text-blue-500" />
+              <span className="text-gray-700 text-sm md:text-base">
+                {location}
+              </span>
+            </div>
+          ))
+        ) : (
+          // Display when no locations are found
+          <div className="px-4 py-2 text-gray-500">No locations found</div>
+        )}
+      </div>
+    </>
   );
 };
 

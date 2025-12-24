@@ -20,6 +20,10 @@ import { Badge } from "@/components/ui/badge";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
+
 // Define status styles for different job application statuses
 const statusStyles = {
   Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
@@ -37,7 +41,7 @@ const AppliedJobTable = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 10;
-  
+
   // Navigation hook
   const navigate = useNavigate();
 
@@ -86,7 +90,7 @@ const AppliedJobTable = () => {
   //     setSelectedJob({ ...job, applicant });
   //     // navigate(`/description`);
   //      navigate(`/description/${job._id}`);
-      
+
   //   } else {
   //     console.error("Job ID not found for this application.");
   //   }
@@ -94,12 +98,12 @@ const AppliedJobTable = () => {
 
 
   const handleRowClick = (applicant, job) => {
-  if (job?._id) {
-    navigate(`/description/${job._id}`);   // ✅ id ke saath bhejo
-  } else {
-    console.error("Job ID not found for this application.");
-  }
-};
+    if (job?._id) {
+      navigate(`/description/${job._id}`);   // ✅ id ke saath bhejo
+    } else {
+      console.error("Job ID not found for this application.");
+    }
+  };
 
 
   return (
@@ -157,58 +161,66 @@ const AppliedJobTable = () => {
     //     </TableBody>
     //   </Table> 
 
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black">
-  {/* Job Applications Table */}
-  <Table className="w-full border-collapse border border-gray-200">
-    
-    {/* Table Header */}
-    <TableHeader className="bg-gray-50">
-      <TableRow>
-        <TableHead>Date</TableHead>
-        <TableHead>Job Role</TableHead>
-        <TableHead>Company</TableHead>
-        <TableHead className="text-right">Status</TableHead>
-      </TableRow>
-    </TableHeader>
+   <>
+    <Helmet>
+      <title>Applied Jobs Dashboard | Track Your Job Applications & Status</title>
+      <meta
+        name="description"
+        content="Manage and monitor all your job applications from one smart and organized dashboard. This page helps job seekers easily track applied dates, job roles, companies, and application statuses with complete clarity. Built for candidates actively exploring opportunities in Hyderabad State, it simplifies the job search experience by keeping everything in one place. Whether you are waiting for responses, shortlisted, or reviewing outcomes, stay informed and prepared at every step. Take control of your career journey, save time, and move forward with confidence in today’s competitive hiring landscape."
+      />
+    </Helmet>
 
-    {/* Table Body */}
-    <TableBody>
-      {currentJobs.length > 0 ? (
-        currentJobs.map((job, index) => (
-          <TableRow
-            key={index}
-            className="transition duration-150 cursor-pointer"
-            onClick={() => handleRowClick(job.applicant, job.job)}
-          >
-            <TableCell className="text-gray-700">
-              {new Date(job.createdAt).toLocaleDateString()}
-            </TableCell>
-            <TableCell className="text-gray-800 font-medium">
-              {job.job?.jobDetails?.title || "N/A"}
-            </TableCell>
-            <TableCell className="text-gray-800 font-medium">
-              {job.job?.company?.companyName || "N/A"}
-            </TableCell>
-            <TableCell className="text-right">
-              <Badge
-                className={`px-2 py-1 rounded-md ${
-                  statusStyles[job.status] || "bg-gray-200 text-gray-300"
-                }`}
-              >
-                {job.status || "Pending"}
-              </Badge>
-            </TableCell>
+    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black">
+      {/* Job Applications Table */}
+      <Table className="w-full border-collapse border border-gray-200">
+
+        {/* Table Header */}
+        <TableHeader className="bg-gray-50">
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Job Role</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead className="text-right">Status</TableHead>
           </TableRow>
-        ))
-      ) : (
-        <TableRow>
-          <TableCell colSpan={4} className="text-center text-gray-500">
-            No applications found.
-          </TableCell>
-        </TableRow>
-      )}
-    </TableBody>
-  </Table>
+        </TableHeader>
+
+        {/* Table Body */}
+        <TableBody>
+          {currentJobs.length > 0 ? (
+            currentJobs.map((job, index) => (
+              <TableRow
+                key={index}
+                className="transition duration-150 cursor-pointer"
+                onClick={() => handleRowClick(job.applicant, job.job)}
+              >
+                <TableCell className="text-gray-700">
+                  {new Date(job.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="text-gray-800 font-medium">
+                  {job.job?.jobDetails?.title || "N/A"}
+                </TableCell>
+                <TableCell className="text-gray-800 font-medium">
+                  {job.job?.company?.companyName || "N/A"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Badge
+                    className={`px-2 py-1 rounded-md ${statusStyles[job.status] || "bg-gray-200 text-gray-300"
+                      }`}
+                  >
+                    {job.status || "Pending"}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-gray-500">
+                No applications found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
 
       {/* Pagination Controls */}
@@ -216,11 +228,10 @@ const AppliedJobTable = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded ${
-            currentPage === 1
+          className={`px-4 py-2 rounded ${currentPage === 1
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-blue-700 text-gray-100 hover:bg-blue-800"
-          }`}
+            }`}
         >
           Previous
         </button>
@@ -232,16 +243,16 @@ const AppliedJobTable = () => {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded ${
-            currentPage === totalPages
+          className={`px-4 py-2 rounded ${currentPage === totalPages
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-blue-700 text-white hover:bg-blue-800"
-          }`}
+            }`}
         >
           Next
         </button>
       </div>
     </div>
+    </>
   );
 };
 

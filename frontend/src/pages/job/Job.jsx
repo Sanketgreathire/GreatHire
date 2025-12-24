@@ -35,6 +35,9 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import ShareCard from "./ShareJob";
 import { FiShare2 } from "react-icons/fi";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 
 // Job Component - Displays job details and handles bookmarking functionality
 const Job = ({ job }) => {
@@ -124,119 +127,131 @@ const Job = ({ job }) => {
 
 
   return (
-    <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
-      <div className="flex justify-between items-center mb-2 min-h-[28px]">
+    <>
 
-        {/* Urgent Hiring Label */}
-        {job?.jobDetails?.urgentHiring === "Yes" && (
-          <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white ">
-            Urgent Hiring
-          </p>
-        )}
+      <Helmet>
+        <title>Latest Job Openings | Apply, Save & Share Jobs Easily – GreatHire</title>
+        <meta
+          name="description"
+          content="Explore the latest verified job openings on GreatHire and take control of your career journey. Browse detailed job listings, check salary ranges, job type, workplace flexibility, response time, and apply with confidence. Save jobs for later, share opportunities instantly, and track application status in real time through a clean, modern interface. Operating from Hyderabad State, India, GreatHire is a fast-growing hiring platform connecting skilled professionals with trusted companies across multiple industries and locations. Whether you’re actively applying or exploring opportunities, GreatHire helps you discover relevant jobs faster and smarter."
+        />
+      </Helmet>
 
-        {/* Right side icons */}
-        <div className="flex items-center gap-3 ml-auto ">
 
-          {/* Share Icon (always visible) */}
-          <div className="relative inline-block">
-            <div onClick={handleShareClick} className="cursor-pointer">
-              <FiShare2 size={22} />
-            </div>
-            {showShareCard && (
-              <ShareCard
-                urlToShare={`${window.location.origin}/jobs/${job._id}`}
-                jobTitle={job?.jobDetails?.title}
-                jobLocation={job?.jobDetails?.location}
-                jobSalary={job?.jobDetails?.salary}
-                jobType={job?.jobDetails?.jobType}
-                jobDuration={job?.jobDetails?.duration}
-                onClose={() => setShowShareCard(false)}
-              />
-            )}
-          </div>
+      <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
+        <div className="flex justify-between items-center mb-2 min-h-[28px]">
 
-          {/* Bookmark Icon (only if logged in & not applied) */}
-          {user && !isApplied && (
-            <div
-              onClick={() => handleBookmark(job._id)}
-              className="cursor-pointer"
-            >
-              {isBookmarked ? (
-                <FaBookmark size={25} className="text-green-700" />
-              ) : (
-                <CiBookmark size={25} />
+          {/* Urgent Hiring Label */}
+          {job?.jobDetails?.urgentHiring === "Yes" && (
+            <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white ">
+              Urgent Hiring
+            </p>
+          )}
+
+          {/* Right side icons */}
+          <div className="flex items-center gap-3 ml-auto ">
+
+            {/* Share Icon (always visible) */}
+            <div className="relative inline-block">
+              <div onClick={handleShareClick} className="cursor-pointer">
+                <FiShare2 size={22} />
+              </div>
+              {showShareCard && (
+                <ShareCard
+                  urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                  jobTitle={job?.jobDetails?.title}
+                  jobLocation={job?.jobDetails?.location}
+                  jobSalary={job?.jobDetails?.salary}
+                  jobType={job?.jobDetails?.jobType}
+                  jobDuration={job?.jobDetails?.duration}
+                  onClose={() => setShowShareCard(false)}
+                />
               )}
             </div>
-          )}
-        </div>
-      </div>
 
-
-      <h3 className="text-lg font-semibold line-clamp-2 h-[48px] ">{job?.jobDetails?.title}</h3>
-      <div className="flex items-center justify-between gap-2 my-2 ">
-        <div>{job?.jobDetails?.companyName}</div>
-        <div>
-          <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.workPlaceFlexibility}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.location}</p>
-        </div>
-      </div>
-      <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md ">
-        <div className="flex items-center gap-1 ">
-          <AiOutlineThunderbolt />
-          <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
-        </div>
-      </div>
-      <div className="text-sm flex flex-col space-y-2 ">
-        <div className="flex gap-2 justify-between items-center ">
-          <div className="flex w-1/2">
-            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
-              {job?.jobDetails?.salary
-                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                .split("-")
-                .map((part, index) => (
-                  <span key={index}>
-                    ₹{part.trim()}
-                    {index === 0 ? " - " : ""}
-                  </span>
-                ))}
-            </p>
-          </div>
-          <div className="flex w-1/2 ">
-            <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
-              {job.jobDetails?.jobType}
-            </p>
+            {/* Bookmark Icon (only if logged in & not applied) */}
+            {user && !isApplied && (
+              <div
+                onClick={() => handleBookmark(job._id)}
+                className="cursor-pointer"
+              >
+                {isBookmarked ? (
+                  <FaBookmark size={25} className="text-green-700" />
+                ) : (
+                  <CiBookmark size={25} />
+                )}
+              </div>
+            )}
           </div>
         </div>
-        <div className="w-full ">
-          <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200 ">
-            {job.jobDetails?.duration}
-          </p>
+
+
+        <h3 className="text-lg font-semibold line-clamp-2 h-[48px] ">{job?.jobDetails?.title}</h3>
+        <div className="flex items-center justify-between gap-2 my-2 ">
+          <div>{job?.jobDetails?.companyName}</div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.workPlaceFlexibility}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.location}</p>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center justify-between ">
-        <div>
-          <p className="text-sm text-gray-500 dark:text-gray-100 ">
-            Active {calculateActiveDays(job?.createdAt)} days ago
-          </p>
+        <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md ">
+          <div className="flex items-center gap-1 ">
+            <AiOutlineThunderbolt />
+            <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
+          </div>
         </div>
-        <div className="flex items-center text-sm text-blue-700 gap-2">
-          {isApplied && <span className="text-green-600">Applied</span>}
+        <div className="text-sm flex flex-col space-y-2 ">
+          <div className="flex gap-2 justify-between items-center ">
+            <div className="flex w-1/2">
+              <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
+                {job?.jobDetails?.salary
+                  .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                  .split("-")
+                  .map((part, index) => (
+                    <span key={index}>
+                      ₹{part.trim()}
+                      {index === 0 ? " - " : ""}
+                    </span>
+                  ))}
+              </p>
+            </div>
+            <div className="flex w-1/2 ">
+              <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
+                {job.jobDetails?.jobType}
+              </p>
+            </div>
+          </div>
+          <div className="w-full ">
+            <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200 ">
+              {job.jobDetails?.duration}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex w-full items-center justify-between gap-4">
-        <Button
-          onClick={() => {
-            navigate(`/jobs/${job._id}`);
-          }}
-          variant="outline"
-          className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white"
-        >
-          Details
-        </Button>
+        <div className="flex items-center justify-between ">
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-100 ">
+              Active {calculateActiveDays(job?.createdAt)} days ago
+            </p>
+          </div>
+          <div className="flex items-center text-sm text-blue-700 gap-2">
+            {isApplied && <span className="text-green-600">Applied</span>}
+          </div>
+        </div>
+        <div className="flex w-full items-center justify-between gap-4">
+          <Button
+            onClick={() => {
+              navigate(`/jobs/${job._id}`);
+            }}
+            variant="outline"
+            className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white"
+          >
+            Details
+          </Button>
+
+        </div>
 
       </div>
-
-    </div>
+    </>
   );
 };
 

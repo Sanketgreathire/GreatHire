@@ -6,12 +6,15 @@ import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 const SavedJobs = () => {
   const { getSaveJobs, saveJobsList, error, jobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 9; 
+  const jobsPerPage = 9;
   useEffect(() => {
     if (user && jobs) {
       getSaveJobs(user?._id);
@@ -29,6 +32,17 @@ const SavedJobs = () => {
 
   return (
     <>
+
+      <Helmet>
+        <title>Saved Jobs | Track & Apply to Your Bookmarked Jobs – GreatHire</title>
+        <meta
+          name="description"
+          content="Manage all your bookmarked opportunities in one place with GreatHire’s Saved Jobs page. Easily revisit jobs you’ve saved, compare roles, review salaries, check application status, and apply when you’re ready. This page helps job seekers stay organized and never miss important opportunities while planning their next career move. Based in Hyderabad State, India, GreatHire is a trusted hiring platform designed to connect professionals with verified employers across multiple industries and locations."
+        />
+      </Helmet>
+
+
+
       <Navbar />
       <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 min-h-screen">
         {/* <div className="px-4 py-4">  */}
@@ -41,7 +55,7 @@ const SavedJobs = () => {
             Your Saved Jobs
             <span className="bg-blue-500 text-white text-md px-4 py-1 rounded-full shadow-md">
               {saveJobsList.length}
-            </span> 
+            </span>
             {/* <span className="text-blue-400 bg-white text-md px-4 py-1 rounded-full shadow-md">
     {saveJobsList.length}
   </span> */}
@@ -63,8 +77,8 @@ const SavedJobs = () => {
                   onClick={() => setCurrentPage((prev) => prev - 1)}
                   disabled={currentPage === 1}
                   className={`px-4 py-2 rounded-md font-medium ${currentPage === 1
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-700 hover:bg-blue-600 text-white"
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-700 hover:bg-blue-600 text-white"
                     }`}
                 >
                   Previous
@@ -78,8 +92,8 @@ const SavedJobs = () => {
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={indexOfLastJob >= saveJobsList.length}
                   className={`px-4 py-2 rounded-md font-medium ${indexOfLastJob >= saveJobsList.length
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-700 hover:bg-blue-600 text-white"
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-700 hover:bg-blue-600 text-white"
                     }`}
                 >
                   Next

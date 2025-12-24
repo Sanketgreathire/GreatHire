@@ -4,6 +4,9 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { useNavigate } from "react-router-dom";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 const OurService = () => {
   const navigate = useNavigate();
   const services = [
@@ -74,6 +77,16 @@ const OurService = () => {
 
   return (
     <>
+
+      <Helmet>
+        <title>Our Services | Expert Staffing, IT, and Business Solutions in Hyderabad State</title>
+        <meta
+          name="description"
+          content="Discover our comprehensive services in Hyderabad State designed to boost your business success. From job posting, staffing, and payroll management to web & mobile app development, digital marketing, AI & machine learning, cybersecurity, BPO, and cloud computing, we deliver tailored solutions for organizations of all sizes. Our expert team ensures your operations are streamlined, your online presence thrives, and your workforce performs at its best. Partner with us in Hyderabad State to transform your business processes, enhance efficiency, and stay ahead in a competitive market."
+        />
+      </Helmet>
+
+
       <Navbar />
       <div className="bg-gray-50">
         {/* Hero Section */}
