@@ -124,7 +124,7 @@ const OurService = () => {
         </section>
 
         {/* Call-to-Action Section */}
-        <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16 text-white py-16 ">
+        <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center ">
             <h2 className="text-3xl md:text-4xl font-bold font-[Oswald]">
               Let's Work Together
