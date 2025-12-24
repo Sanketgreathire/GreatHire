@@ -15,6 +15,7 @@ import { updateMaxPostJobs } from "@/redux/companySlice";
 import { addJobPlan } from "@/redux/jobPlanSlice";
 import { REVENUE_API_END_POINT } from "../../utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 function RecruiterPlans() {
   //Define available subscription plans
@@ -78,7 +79,7 @@ function RecruiterPlans() {
       icon: <Briefcase />,
       borderColor: "border-blue-300",
       selectedBorderColor: "ring-2 ring-blue-500",
-      
+
     },
     {
       title: "5 x Premium Jobs",
@@ -91,7 +92,7 @@ function RecruiterPlans() {
       icon: <Zap />,
       borderColor: "ring-indigo-300",
       selectedBorderColor: "ring-2 ring-indigo-600",
-      
+
     },
     {
       title: "10 x Premium Jobs",
@@ -110,7 +111,7 @@ function RecruiterPlans() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState(plans[1].title); 
+  const [selectedPlan, setSelectedPlan] = useState(plans[1].title);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
@@ -118,8 +119,8 @@ function RecruiterPlans() {
   const handleSelectPlan = (planTitle) => {
     setSelectedPlan(planTitle);
   };
-  
-  
+
+
 
   // const getCardClasses = (plan) => {
   //   const isSelected = selectedPlan === plan.name;
@@ -242,11 +243,22 @@ function RecruiterPlans() {
     handleSelectPlan(plan.title);
     try {
       initiatePayment(plan);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
     <>
+      <Helmet>
+        <title>
+          Premium Recruiter Plans | Buy Job Posting Credits & Hiring Solutions – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire Premium Recruiter Plans empower companies to scale hiring faster with flexible job posting and database credits. Designed for modern recruitment teams, our platform is proudly based in Hyderabad State, India, serving startups, enterprises, recruiters, and fast-growing technology companies. Choose cost-effective premium job plans, unlock powerful hiring tools, boost job visibility, and access verified candidate databases. With secure payments, transparent pricing, and instant activation, GreatHire helps you hire smarter, reduce costs, and stay ahead in competitive talent markets. Upgrade today and transform your recruitment strategy with confidence."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="min-h-screen  py-8 px-4 flex items-center justify-center pt-20">
           <div className="w-full max-w-6xl">
@@ -319,55 +331,54 @@ function RecruiterPlans() {
                 );
               })}
             </div> */}
-            
-        
+
+
             <div className="grid md:grid-cols-3 gap-6 justify-center">
               {plans.map((plan, index) => {
                 const isSelected = selectedPlan === plan.title;
-                
+
                 return (
-                
+
                   <div
                     key={index}
-                    className={`relative bg-white rounded-xl shadow-md p-6 border-2 transition-all duration-300 cursor-pointer ${
-                      isSelected ? plan.selectedBorderColor : plan.borderColor
-                    }`}
+                    className={`relative bg-white rounded-xl shadow-md p-6 border-2 transition-all duration-300 cursor-pointer ${isSelected ? plan.selectedBorderColor : plan.borderColor
+                      }`}
                     onClick={() => handleSelectPlan(plan.title)}
                   >
-                  {plan.recommended && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
-                      RECOMMENDED FOR YOU
-                    </div>
-                  )}
+                    {plan.recommended && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                        RECOMMENDED FOR YOU
+                      </div>
+                    )}
 
-                  {/* Icon */}
-                  <div className="flex justify-center mb-4 text-4xl">{plan.icon}</div>
+                    {/* Icon */}
+                    <div className="flex justify-center mb-4 text-4xl">{plan.icon}</div>
 
-                  <h3 className="text-lg font-semibold mb-2 text-center">{plan.title}</h3>
-                  <p className="text-sm text-gray-500 mb-1 text-center">🪙 {plan.creditsForJobs} Credits for Job Postings</p>
-                  <p className="text-sm text-gray-500 mb-1 text-center">🪙 {plan.creditsForCandidates} Credits for Database</p>
-                  <p className="text-2xl font-bold text-gray-800 mb-1 text-center">₹ {plan.price}</p>
+                    <h3 className="text-lg font-semibold mb-2 text-center">{plan.title}</h3>
+                    <p className="text-sm text-gray-500 mb-1 text-center">🪙 {plan.creditsForJobs} Credits for Job Postings</p>
+                    <p className="text-sm text-gray-500 mb-1 text-center">🪙 {plan.creditsForCandidates} Credits for Database</p>
+                    <p className="text-2xl font-bold text-gray-800 mb-1 text-center">₹ {plan.price}</p>
 
-                  {plan.originalPrice && (
-                    <p className="text-sm text-gray-400 line-through text-center">₹ {plan.originalPrice}</p>
-                  )}
+                    {plan.originalPrice && (
+                      <p className="text-sm text-gray-400 line-through text-center">₹ {plan.originalPrice}</p>
+                    )}
 
-                  <p className="text-sm mt-2 text-center">✨ ₹{plan.perJob} per job</p>
-                  {plan.discount && (
-                    <p className="text-green-600 text-sm mt-1 text-center">⬇ {plan.discount}</p>
-                  )}
+                    <p className="text-sm mt-2 text-center">✨ ₹{plan.perJob} per job</p>
+                    {plan.discount && (
+                      <p className="text-green-600 text-sm mt-1 text-center">⬇ {plan.discount}</p>
+                    )}
 
-                  <button
-                    className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition"
-                    onClick={() => purchasePlan(plan)}
+                    <button
+                      className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition"
+                      onClick={() => purchasePlan(plan)}
 
-                  >
-                    Buy Now
-                  </button>
+                    >
+                      Buy Now
+                    </button>
 
-                  <p className="text-xs text-gray-400 mt-2 text-center">To be used within 30 days</p>
-                </div>
-                
+                    <p className="text-xs text-gray-400 mt-2 text-center">To be used within 30 days</p>
+                  </div>
+
                 );
               })}
             </div>

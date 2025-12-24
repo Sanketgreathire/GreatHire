@@ -14,6 +14,7 @@ import { fetchRecruiters } from "@/redux/recruiterSlice";
 import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
 import { io } from "socket.io-client";
 import { BACKEND_URL } from "@/utils/ApiEndPoint";
+import { Helmet } from "react-helmet-async";
 
 const socket = io(BACKEND_URL, { transports: ["websocket"] }); // Use your backend URL
 
@@ -47,7 +48,7 @@ const RecruiterDashboard = () => {
     };
 
     if (user) fetchCompanyByUserId();
-  }, [user]); 
+  }, [user]);
 
   // Fetch recruiters and job plan if company exists
   useEffect(() => {
@@ -87,22 +88,36 @@ const RecruiterDashboard = () => {
   }, [company, dispatch]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navbar */}
-      <Navbar />
+    <>
+      <Helmet>
+        <title>
+          Dashboard | Jobs, Applicants & Hiring Analytics – GreatHire
+        </title>
 
-      {/* Main Content */}
-      <div className="flex flex-1">
-        <DashboardNavigations />
-        <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto">
-          {loading ? (
-            <div className="text-center text-gray-500 py-10">Loading...</div>
-          ) : (
-            <Outlet /> // Render nested routes
-          )}
+        <meta
+          name="description"
+          content="GreatHire’s recruiter dashboard empowers companies to manage hiring with confidence and speed, offering real-time insights and analytics. Headquartered in Hyderabad State, India, this platform helps track posted jobs, active and expired roles, applicants, shortlisted candidates, recruiters, and hiring credits from a single, centralized dashboard. Designed for modern recruiters, GreatHire delivers scalable hiring solutions, combining job performance metrics, applicant management, and recruiter oversight. Gain full visibility, smarter control, and faster decision-making to attract top talent, streamline recruitment processes, and grow high-performing teams with a trusted platform built for efficiency and recruitment success."
+        />
+      </Helmet>
+
+      <div className="flex flex-col min-h-screen">
+        {/* Navbar */}
+        <Navbar />
+
+        {/* Main Content */}
+        <div className="flex flex-1">
+          <DashboardNavigations />
+          <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto">
+            {loading ? (
+              <div className="text-center text-gray-500 py-10">Loading...</div>
+            ) : (
+              <Outlet /> // Render nested routes
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+    </>
   );
 };
 

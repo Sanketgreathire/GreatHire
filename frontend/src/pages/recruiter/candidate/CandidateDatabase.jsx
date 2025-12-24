@@ -28,6 +28,7 @@ import {
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import { Helmet } from "react-helmet-async";
 
 
 const CandidateDatabase = () => {
@@ -37,39 +38,39 @@ const CandidateDatabase = () => {
   // State for pagination
   const [page, setPage] = useState(1);
   const itemsPerPage = 20;
-  
+
   // State to store the list of users
   const [usersList, setUsersList] = useState([]);
-  
+
   // Hook for navigation
   const navigate = useNavigate();
-  
+
   // Redux dispatch function
   const dispatch = useDispatch();
 
   // State for tracking delete request loading status
   const [dloading, dsetLoading] = useState({});
-  
+
   // Fetch user details from Redux store
   const { user } = useSelector((state) => state.auth);
-  
+
   // Fetch job statistics from Redux store
   const jobStats = useSelector((state) => state.stats.jobStatsData);
-  
+
   // Fetch application statistics from Redux store
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
   );
-  
+
   // Fetch user statistics from Redux store
   const userStats = useSelector((state) => state.stats.userStatsData);
-  
+
   // State to store selected user's email for deletion
   const [userEmail, setUserEmail] = useState(null);
-  
+
   // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   // Function to fetch the user list from the API
   const fetchUserList = async () => {
     try {
@@ -84,109 +85,109 @@ const CandidateDatabase = () => {
       console.log(`Error in fetching user list: ${err}`);
     }
   };
-  
+
   // Function to handle account deletion
   const handleDeleteAccount = async (email) => {
     try {
       // Show loading state for the specific user
       dsetLoading((prevLoading) => ({ ...prevLoading, [email]: true }));
-      
+
       // API request to delete user account
       const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
         data: { email },
         withCredentials: true,
       });
-      
+
       if (response.data.success) {
         // Remove deleted user from the user list
         setUsersList((prevList) =>
           prevList.filter((user) => user.email !== email)
-      );
-      
-      // Fetch updated user statistics
-      dispatch(fetchUserStats());
-      dispatch(fetchApplicationStats());
-      
-      // Show success notification
-      toast.success(response.data.message);
+        );
+
+        // Fetch updated user statistics
+        dispatch(fetchUserStats());
+        dispatch(fetchApplicationStats());
+
+        // Show success notification
+        toast.success(response.data.message);
+      }
+    } catch (err) {
+      console.error("Error deleting account: ", err.message);
+      toast.error("Error in deleting account");
+    } finally {
+      // Hide loading state
+      dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
     }
-  } catch (err) {
-    console.error("Error deleting account: ", err.message);
-    toast.error("Error in deleting account");
-  } finally {
-    // Hide loading state
-    dsetLoading((prevLoading) => ({ ...prevLoading, [email]: false }));
-  }
-};
+  };
 
-const [selectedUsers, setSelectedUsers] = useState([])
+  const [selectedUsers, setSelectedUsers] = useState([])
 
 
-const downloadCSV = () => {
-  const headers = ["Name", "Email", "Contact", "Join Date", "Applications", "Resume"];
+  const downloadCSV = () => {
+    const headers = ["Name", "Email", "Contact", "Join Date", "Applications", "Resume"];
 
-  // Filter selected users
-  const exportUsers = selectedUsers.length > 0
-    ? usersList.filter(user => selectedUsers.includes(user._id))
-    : filteredUsers;
+    // Filter selected users
+    const exportUsers = selectedUsers.length > 0
+      ? usersList.filter(user => selectedUsers.includes(user._id))
+      : filteredUsers;
 
-  const rows = exportUsers.map((user) => [
-    user.fullname,
-    user.email,
-    user.phoneNumber,
-    user.joined,
-    user.applicationCount,
-    user.resumeurl,
-  ]);
+    const rows = exportUsers.map((user) => [
+      user.fullname,
+      user.email,
+      user.phoneNumber,
+      user.joined,
+      user.applicationCount,
+      user.resumeurl,
+    ]);
 
-  let csvContent =
-    "data:text/csv;charset=utf-8," +
-    [headers, ...rows]
-      .map((row) =>
-        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
-      )
-      .join("\n");
+    let csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows]
+        .map((row) =>
+          row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
+        )
+        .join("\n");
 
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "users_data.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "users_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-const toggleSelectAll = () => {
-  if (selectedUsers.length === paginatedUsers.length) {
-    setSelectedUsers([]);
-  } else {
-    const allUserIds = paginatedUsers.map((user) => user._id);
-    setSelectedUsers(allUserIds);
-  }
-};
-const toggleUserSelection = (userId) => {
-  setSelectedUsers((prevSelected) =>
-    prevSelected.includes(userId)
-      ? prevSelected.filter((id) => id !== userId)
-      : [...prevSelected, userId]
-  );
-};
+  const toggleSelectAll = () => {
+    if (selectedUsers.length === paginatedUsers.length) {
+      setSelectedUsers([]);
+    } else {
+      const allUserIds = paginatedUsers.map((user) => user._id);
+      setSelectedUsers(allUserIds);
+    }
+  };
+  const toggleUserSelection = (userId) => {
+    setSelectedUsers((prevSelected) =>
+      prevSelected.includes(userId)
+        ? prevSelected.filter((id) => id !== userId)
+        : [...prevSelected, userId]
+    );
+  };
   // Function to confirm deletion and proceed with account deletion
   const onConfirmDelete = () => {
     setShowDeleteModal(false);
     handleDeleteAccount(userEmail);
   };
-  
+
   // Function to cancel deletion
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
-  
+
   // Fetch user list on component mount or when user changes
   useEffect(() => {
     if (user) fetchUserList();
   }, [user]);
-  
+
   const stats = [
     {
       title: "Total Users",
@@ -221,22 +222,22 @@ const toggleUserSelection = (userId) => {
       bg: "bg-yellow-100",
     },
   ];
-  
+
   const filteredUsers = usersList?.filter(
     (user) =>
-    user.fullname.toLowerCase().includes(search.toLowerCase()) ||
-    user.email.toLowerCase().includes(search.toLowerCase()) ||
-    user.phoneNumber.toLowerCase().includes(search.toLowerCase())||
-    (user.jobRole && user.jobRole.toLowerCase().includes(search.toLowerCase())) ||
-    (user.duration && user.duration.toLowerCase().includes(search.toLowerCase()))
+      user.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase()) ||
+      user.phoneNumber.toLowerCase().includes(search.toLowerCase()) ||
+      (user.jobRole && user.jobRole.toLowerCase().includes(search.toLowerCase())) ||
+      (user.duration && user.duration.toLowerCase().includes(search.toLowerCase()))
   );
-  
+
   const paginatedUsers = filteredUsers?.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
   console.log(paginatedUsers.map(u => ({ name: u?.fullname, lastActiveAt: u?.lastActiveAt })));
-   // console.log("🧪 user.lastActiveAt:", user.fullname, user.lastActiveAt);
+  // console.log("🧪 user.lastActiveAt:", user.fullname, user.lastActiveAt);
   // console.log(user.lastActiveAt);
   // const formattedDate = new Date(user.lastActiveAt).toLocaleString();
   // const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
@@ -244,16 +245,28 @@ const toggleUserSelection = (userId) => {
   // const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
   // const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
-console.log(paginatedUsers)
+  console.log(paginatedUsers)
   return (
     <>
+
+      <Helmet>
+        <title>
+          Candidate Database Management | View, Track & Manage Users – GreatHire Admin
+        </title>
+
+        <meta
+          name="description"
+          content="The Candidate Database page in the GreatHire Admin Panel empowers administrators to monitor users, applications, and recruitment performance efficiently. Designed for scalability and accuracy, this platform is managed from Hyderabad State, India, supporting enterprises, startups, and hiring teams with centralized user insights. Admins can search candidates, track activity, export data, and manage accounts securely from one dashboard. With real-time analytics, clean UI, and advanced controls, GreatHire delivers powerful workforce intelligence, enabling smarter decisions, improved hiring outcomes, and seamless recruitment operations across growing organizations."
+        />
+      </Helmet>
+
 
       {/* Stats Cards */}
       <div className=" pt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card
-          key={index}
-          className="p-4 flex items-center justify-between bg-white shadow rounded-xl"
+            key={index}
+            className="p-4 flex items-center justify-between bg-white shadow rounded-xl"
           >
             <div>
               <h3 className="text-lg font-semibold mt-2">{stat.title}</h3>
@@ -270,121 +283,121 @@ console.log(paginatedUsers)
       </div>
       {/* -------------------------------------------------------------------------------------- */}
       <div className="w-full overflow-x-auto px-4 m-4">
-  <div className="min-w-[1900px] bg-white shadow rounded-lg p-4">
-        <div className="flex justify-between items-center mb-4">
-          <Input
-            placeholder="Search users by name, email, contact, job role, experience"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-1/3"
-          />
-        </div>
+        <div className="min-w-[1900px] bg-white shadow rounded-lg p-4">
+          <div className="flex justify-between items-center mb-4">
+            <Input
+              placeholder="Search users by name, email, contact, job role, experience"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-1/3"
+            />
+          </div>
 
-        <Table className="table-auto min-w-[1800px] w-full text-center border border-gray-300 ">
-          <TableHeader>
+          <Table className="table-auto min-w-[1800px] w-full text-center border border-gray-300 ">
+            <TableHeader>
 
-            <TableRow>
-    
-            <TableHead>
-              <input
-                type="checkbox"
-                checked={selectedUsers.length === paginatedUsers.length}
-                onChange={toggleSelectAll}
-                />
-            </TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Last Active</TableHead>
-              <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+              <TableRow>
 
-            {paginatedUsers?.filter(Boolean).map((user) => (
-
-              <TableRow key={user._id}>
-          <TableHead>
+                <TableHead>
                   <input
                     type="checkbox"
-                    checked={selectedUsers.includes(user._id)}
-                    onChange={() => toggleUserSelection(user._id)}
-                    />
-                    </TableHead>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.fullname}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.email}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.phoneNumber}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.joined}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.applicationCount}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole|| "N/A"}</TableCell>
-                <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration|| "N/A"}</TableCell>
-                <TableCell className="whitespace-nowrap border border-gray-300">
-                  {user.lastActiveAt|| 'N/A'}
-                </TableCell>
-                                <TableCell className="flex gap-4 justify-center">
-                  <Eye
-                    className="text-blue-500 cursor-pointer"
-                    size={16}
-                    onClick={() => navigate(`/admin/users/details/${user._id}`)}
-                    />
-                  {dloading[user?.email] ? (
-                    "deleting..."
-                  ) : (
-                    <Trash
-                    className="text-red-500 cursor-pointer"
-                    size={16}
-                    onClick={() => {
-                      setUserEmail(user.email);
-                      setShowDeleteModal(true);
-                    }}
-                    />
-                  )}
-                </TableCell>
+                    checked={selectedUsers.length === paginatedUsers.length}
+                    onChange={toggleSelectAll}
+                  />
+                </TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Name</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Email</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Contact</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Join Date</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Applications</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Job Role</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Experience</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Last Active</TableHead>
+                <TableHead className="border border-gray-300 text-center text-xl text-blue-700 font-bold font-[Oswald]">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-            </div>
-            </div>
+            </TableHeader>
+            <TableBody>
+
+              {paginatedUsers?.filter(Boolean).map((user) => (
+
+                <TableRow key={user._id}>
+                  <TableHead>
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user._id)}
+                      onChange={() => toggleUserSelection(user._id)}
+                    />
+                  </TableHead>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.fullname}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.email}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.phoneNumber}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.joined}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.applicationCount}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.jobRole || "N/A"}</TableCell>
+                  <TableCell className='whitespace-nowrap border border-gray-300' >{user.duration || "N/A"}</TableCell>
+                  <TableCell className="whitespace-nowrap border border-gray-300">
+                    {user.lastActiveAt || 'N/A'}
+                  </TableCell>
+                  <TableCell className="flex gap-4 justify-center">
+                    <Eye
+                      className="text-blue-500 cursor-pointer"
+                      size={16}
+                      onClick={() => navigate(`/admin/users/details/${user._id}`)}
+                    />
+                    {dloading[user?.email] ? (
+                      "deleting..."
+                    ) : (
+                      <Trash
+                        className="text-red-500 cursor-pointer"
+                        size={16}
+                        onClick={() => {
+                          setUserEmail(user.email);
+                          setShowDeleteModal(true);
+                        }}
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
 
 
-        <div className="flex gap-2">
+      <div className="flex gap-2">
         <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-              Previous
-            </Button>
+          Previous
+        </Button>
 
-            {(() => {
-              const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-              const visiblePages = 10;
-              const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
-              const endPage = Math.min(startPage + visiblePages - 1, totalPages);
+        {(() => {
+          const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+          const visiblePages = 10;
+          const startPage = Math.floor((page - 1) / visiblePages) * visiblePages + 1;
+          const endPage = Math.min(startPage + visiblePages - 1, totalPages);
 
-              return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
-                const pageNumber = startPage + i;
-                return (
-                  <Button
-                    key={pageNumber}
-                    onClick={() => setPage(pageNumber)}
-                    className={page === pageNumber ? "bg-blue-700 text-white" : ""}
-                  >
-                    {pageNumber}
-                  </Button>
-                );
-              });
-            })()}
+          return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+            const pageNumber = startPage + i;
+            return (
+              <Button
+                key={pageNumber}
+                onClick={() => setPage(pageNumber)}
+                className={page === pageNumber ? "bg-blue-700 text-white" : ""}
+              >
+                {pageNumber}
+              </Button>
+            );
+          });
+        })()}
 
-            <Button
-              disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
-              onClick={() => setPage(page + 1)}
-            >
-              Next
-            </Button>
-          </div>
-      
+        <Button
+          disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
+          onClick={() => setPage(page + 1)}
+        >
+          Next
+        </Button>
+      </div>
+
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}

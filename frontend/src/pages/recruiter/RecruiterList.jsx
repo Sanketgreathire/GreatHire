@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
-
+import { Helmet } from "react-helmet-async";
 const RecruiterList = () => {
   const { recruiters } = useSelector((state) => state.recruiters);
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ const RecruiterList = () => {
     }
   };
 
-   // Function to delete a recruiter
+  // Function to delete a recruiter
   const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
@@ -99,7 +99,7 @@ const RecruiterList = () => {
     if (!recruiter || typeof recruiter !== "object" || !recruiter.fullname) {
       return false;
     }
-    console.log("recruiter",recruiter);
+    console.log("recruiter", recruiter);
     const searchMatch =
       recruiter.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       recruiter.emailId.email
@@ -117,6 +117,17 @@ const RecruiterList = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Recruiter List | Manage Hiring Team & Access Controls – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="The GreatHire Recruiter List page helps companies efficiently manage their hiring teams with full control and visibility. Built for modern organizations, this platform is proudly operated from Hyderabad State, India, serving businesses across technology, staffing, startups, and enterprises. From this dashboard, admins can view recruiter profiles, search by name or contact details, activate or deactivate recruiter access, assign roles, and securely remove recruiters when needed. With a clean interface, role-based controls, and real-time updates, GreatHire empowers organizations to maintain an organized, accountable, and high-performing recruitment workforce."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="container mx-auto p-4 min-h-screen pt-20">
           <h2 className="text-2xl text-center underline font-semibold mb-4">Recruiter List</h2>
@@ -232,7 +243,7 @@ const RecruiterList = () => {
                                     event.stopPropagation();
                                     setSelectedRecruiter(recruiter);
                                     setShowDeleteModal(true);
-                                    
+
                                   }}
                                   className="text-red-500 hover:text-red-700"
                                 >

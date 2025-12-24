@@ -12,6 +12,7 @@ import axios from "axios";
 import { updateCandidateCredits } from "@/redux/companySlice";
 import { useNavigate } from "react-router-dom";
 import { REVENUE_API_END_POINT } from "../../../utils/ApiEndPoint";
+import { Helmet } from "react-helmet-async";
 
 function CandidatePlans() {
   // Define available plans for purchasing candidate credits
@@ -81,8 +82,8 @@ function CandidatePlans() {
     const borderClasses = isSelected
       ? plan.selectedBorderColor
       : plan.popular
-      ? `ring-2 ${plan.borderColor}`
-      : `border-2 ${plan.borderColor}`;
+        ? `ring-2 ${plan.borderColor}`
+        : `border-2 ${plan.borderColor}`;
     return `${baseClasses} ${borderClasses}`;
   };
 
@@ -185,11 +186,22 @@ function CandidatePlans() {
     handleSelectPlan(plan.name);
     try {
       initiatePayment(plan);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
     <>
+      <Helmet>
+        <title>
+          Candidate Credit Plans & Recruitment Pricing | Scale Hiring – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire offers flexible candidate credit plans designed to help recruiters scale hiring efficiently and confidently. Built for fast-growing companies operating from Hyderabad State, a rapidly expanding recruitment and technology ecosystem in India, our platform delivers unmatched hiring power. Choose from Basic, Standard, or Premium plans to unlock thousands of verified candidate profiles, priority support, and seamless resume access. With secure payments, transparent pricing, and instant credit boosts, GreatHire empowers recruitment teams to hire smarter, faster, and more effectively while maximizing return on investment."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="min-h-screen  py-8 px-4 flex items-center justify-center">
           <div className="w-full max-w-6xl">

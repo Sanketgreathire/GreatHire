@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const statusOptions = ["All", "Active", "Expired"];
 
@@ -139,6 +140,17 @@ const PostedJobList = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Posted Jobs Dashboard | Manage Job Listings & Applicants – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire empowers recruiters with a centralized dashboard to manage posted jobs efficiently across growing organizations in Hyderabad State, delivering real-time control, visibility, and hiring performance. This powerful recruiter-focused platform enables seamless tracking of active and expired jobs, quick access to applicant lists, smart status management, and streamlined hiring workflows. Designed for modern companies and HR teams, GreatHire helps reduce time-to-hire, improve recruitment decisions, and maintain complete control over job postings. Experience a secure, scalable, and intuitive hiring solution built to support business growth and professional recruitment success."
+        />
+      </Helmet>
+
       {company && user.isActive ? (
         <div className="p-5 bg-gray-50 shadow-md rounded-lg pt-20 ">
 
@@ -212,7 +224,7 @@ const PostedJobList = () => {
                           </TableCell>
                           <TableCell>{job.jobDetails.title}</TableCell>
                           {job?.created_by === user?._id ||
-                          user?.emailId.email === company?.adminEmail ? (
+                            user?.emailId.email === company?.adminEmail ? (
                             <TableCell className="place-items-center ">
                               {statusLoading[job._id] ? (
                                 "loading..."
@@ -286,11 +298,10 @@ const PostedJobList = () => {
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 border rounded ${
-                    currentPage === 1
+                  className={`px-4 py-2 border rounded ${currentPage === 1
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-blue-700 text-white hover:bg-blue-600"
-                  }`}
+                    }`}
                 >
                   Previous
                 </button>
@@ -300,11 +311,10 @@ const PostedJobList = () => {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 border rounded ${
-                    currentPage === totalPages
+                  className={`px-4 py-2 border rounded ${currentPage === totalPages
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-blue-700 text-white hover:bg-blue-600"
-                  }`}
+                    }`}
                 >
                   Next
                 </button>
@@ -319,7 +329,7 @@ const PostedJobList = () => {
       ) : (
         <p className="h-screen flex items-center justify-center">
           <span className="text-4xl text-gray-400">
-          GreatHire will verify your company soon.
+            GreatHire will verify your company soon.
           </span>
         </p>
       )}

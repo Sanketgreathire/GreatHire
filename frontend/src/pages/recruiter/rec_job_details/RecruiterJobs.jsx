@@ -7,6 +7,7 @@ import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
+import { Helmet } from "react-helmet-async";
 
 const RecruiterJobs = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
@@ -114,129 +115,141 @@ const RecruiterJobs = ({ recruiterId }) => {
   });
 
   return (
-    <div className="bg-white rounded-2xl border shadow-sm p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800">Job Listings</h2>
-          <p className="text-sm text-gray-500">All jobs created by this recruiter</p>
-        </div>
-      </div>
+    <>
+      <Helmet>
+        <title>
+          Manage Job Listings & Hiring Activity | Recruiter Dashboard – GreatHire
+        </title>
 
-      {/* Search + Filter */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search by title or company…"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-3 py-2 border rounded-md w-64 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+        <meta
+          name="description"
+          content="Manage and monitor all your job postings efficiently with GreatHire’s recruiter dashboard. Built for growing hiring teams in Hyderabad State, this centralized job management system gives recruiters full control over job visibility, status, and performance. View active and inactive roles, track job details, manage locations, and respond faster to hiring needs. With advanced filtering, instant status toggles, and secure job deletion, GreatHire helps recruiters stay organized, reduce hiring delays, and streamline recruitment operations while scaling talent acquisition with confidence."
         />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2 border rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
-        >
-          <option value="all">All Jobs</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
+      </Helmet>
 
-      {/* Corporate Table */}
-      <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full">
-          <thead className="bg-gray-100 text-gray-600 text-sm">
-            <tr>
-              <th className="py-3 px-5 text-left">Job Title</th>
-              <th className="py-3 px-5 text-left">Company</th>
-              <th className="py-3 px-5 text-left">Location</th>
-              <th className="py-3 px-5 text-left">Type</th>
-              <th className="py-3 px-5 text-center">Status</th>
-              <th className="py-3 px-5 text-center">Actions</th>
-            </tr>
-          </thead>
+      <div className="bg-white rounded-2xl border shadow-sm p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">Job Listings</h2>
+            <p className="text-sm text-gray-500">All jobs created by this recruiter</p>
+          </div>
+        </div>
 
-          <tbody className="text-sm text-gray-700">
-            {filteredJobs.length ? (
-              filteredJobs.map((job) => (
-                <tr key={job._id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-5">{job.jobDetails.title}</td>
-                  <td className="py-3 px-5">{job.jobDetails.companyName}</td>
-                  <td className="py-3 px-5">{job.jobDetails.location}</td>
-                  <td className="py-3 px-5">{job.jobDetails.jobType}</td>
+        {/* Search + Filter */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <input
+            type="text"
+            placeholder="Search by title or company…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-2 border rounded-md w-64 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 border rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
+          >
+            <option value="all">All Jobs</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
 
-                  <td className="py-3 px-5 text-center">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        job.jobDetails.isActive
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                      onClick={() =>
-                        toggleActive(job._id, !job.jobDetails.isActive)
-                      }
-                    >
-                      {job.jobDetails.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
+        {/* Corporate Table */}
+        <div className="overflow-x-auto rounded-lg border">
+          <table className="w-full">
+            <thead className="bg-gray-100 text-gray-600 text-sm">
+              <tr>
+                <th className="py-3 px-5 text-left">Job Title</th>
+                <th className="py-3 px-5 text-left">Company</th>
+                <th className="py-3 px-5 text-left">Location</th>
+                <th className="py-3 px-5 text-left">Type</th>
+                <th className="py-3 px-5 text-center">Status</th>
+                <th className="py-3 px-5 text-center">Actions</th>
+              </tr>
+            </thead>
 
-                  <td className="py-3 px-5 flex justify-center gap-4">
-                    <Eye
-                      className="text-blue-600 cursor-pointer hover:text-blue-800"
-                      onClick={() => handleJobDetailsClick(job._id)}
-                    />
-                    <Trash2
-                      className="text-red-500 cursor-pointer hover:text-red-700"
-                      onClick={() => {
-                        setJobId(job._id);
-                        setShowDeleteModal(true);
-                      }}
-                    />
+            <tbody className="text-sm text-gray-700">
+              {filteredJobs.length ? (
+                filteredJobs.map((job) => (
+                  <tr key={job._id} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-5">{job.jobDetails.title}</td>
+                    <td className="py-3 px-5">{job.jobDetails.companyName}</td>
+                    <td className="py-3 px-5">{job.jobDetails.location}</td>
+                    <td className="py-3 px-5">{job.jobDetails.jobType}</td>
+
+                    <td className="py-3 px-5 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${job.jobDetails.isActive
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                          }`}
+                        onClick={() =>
+                          toggleActive(job._id, !job.jobDetails.isActive)
+                        }
+                      >
+                        {job.jobDetails.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-5 flex justify-center gap-4">
+                      <Eye
+                        className="text-blue-600 cursor-pointer hover:text-blue-800"
+                        onClick={() => handleJobDetailsClick(job._id)}
+                      />
+                      <Trash2
+                        className="text-red-500 cursor-pointer hover:text-red-700"
+                        onClick={() => {
+                          setJobId(job._id);
+                          setShowDeleteModal(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="py-5 text-center text-gray-500" colSpan="6">
+                    No jobs found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td className="py-5 text-center text-gray-500" colSpan="6">
-                  No jobs found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-6 text-sm">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((p) => p - 1)}
-          className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
-        >
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((p) => p + 1)}
-          className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
-        >
-          Next
-        </button>
-      </div>
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-6 text-sm">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="px-4 py-2 border rounded-md bg-gray-50 hover:bg-gray-100 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
 
-      {/* Delete Modal */}
-      {showDeleteModal && (
-        <DeleteConfirmation
-          isOpen={showDeleteModal}
-          onConfirm={() => deleteJob(jobId)}
-          onCancel={() => setShowDeleteModal(false)}
-        />
-      )}
-    </div>
+        {/* Delete Modal */}
+        {showDeleteModal && (
+          <DeleteConfirmation
+            isOpen={showDeleteModal}
+            onConfirm={() => deleteJob(jobId)}
+            onCancel={() => setShowDeleteModal(false)}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

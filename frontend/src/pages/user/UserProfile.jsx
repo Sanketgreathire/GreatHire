@@ -59,7 +59,12 @@ import VerifyNumber from "@/components/VerifyNumber";
 import { FiStar } from "react-icons/fi";
 
 // Import delete confirmation modal for user account or data deletion
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";  
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+
+
+// Import Helmet for customized meta tag on head
+import { Helmet } from "react-helmet-async";
+
 
 
 const handleFileChange = async (e) => {
@@ -70,27 +75,28 @@ const handleFileChange = async (e) => {
       return;
     }
     const formData = new FormData();
-  formData.append("resume", file);
+    formData.append("resume", file);
 
-  try {
-    const response = await axios.put(
-      `${USER_API_END_POINT}/profile/update`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
+    try {
+      const response = await axios.put(
+        `${USER_API_END_POINT}/profile/update`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        dispatch(setUser(response.data.user));
+        toast.success("Resume uploaded successfully!");
       }
-    );
-
-    if (response.data.success) {
-      dispatch(setUser(response.data.user)); 
-      toast.success("Resume uploaded successfully!");
+    } catch (err) {
+      console.error("Resume Upload Error:", err);
+      toast.error(err.response?.data?.message || "Failed to upload resume.");
     }
-  } catch (err) {
-    console.error("Resume Upload Error:", err);
-    toast.error(err.response?.data?.message || "Failed to upload resume.");
   }
-}};
+};
 
 import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
 import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
@@ -230,6 +236,17 @@ const UserProfile = () => {
 
   return (
     <>
+      <Helmet>
+        {/* Meta Title */}
+        <title>Profile Dashboard | Resume, Skills & Job Applications – GreatHire</title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="Build and manage your professional profile on GreatHire, a trusted job platform operating from Hyderabad State, India, connecting skilled talent with top employers. This powerful user profile dashboard lets you upload resumes, showcase skills, add experience, qualifications, and track applied jobs in one place. Verify contact details, manage documents, and create a recruiter-ready profile that stands out in today’s competitive job market."
+        />
+      </Helmet>
+      
       <div className="flex flex-col min-h-screen ">
         <Navbar />
         <div className="flex-grow">
@@ -547,7 +564,7 @@ const UserProfile = () => {
                   >
                     View Resume
                   </a>
-                  ) : (
+                ) : (
                   <span className="text-gray-600">
                     No resume uploaded.{" "}
                     {/* Trigger file input instead of navigation */}

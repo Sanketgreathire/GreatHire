@@ -332,7 +332,7 @@
 //               </ul>
 //             )}
 //           </div>
-          
+
 //           <div>
 //               <h4 className="font-semibold text-gray-700">Work Place Flexibility</h4>
 //               {editMode ? (
@@ -596,7 +596,7 @@ import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import { useJobDetails } from "@/context/JobDetailsContext";
 // import jobbackg from "../../assets/jobbackg.svg";
 import jobbackg from '../../assets/jobbackg.svg?url';
-
+import { Helmet } from "react-helmet-async";
 
 
 
@@ -741,7 +741,7 @@ const JobDetail = () => {
     setEditedJob(jobDetails);
     setEditMode(true);
   };
-  
+
   // --- UI CHANGE START: Loading, Error, and No Data states ko better banaya hai ---
   if (loading)
     return (
@@ -767,16 +767,30 @@ const JobDetail = () => {
 
   return (
     <>
+      <Helmet>
+        {/* Meta Title */}
+        <title>
+          Job Details | View Requirements, Skills & Benefits – GreatHire
+        </title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="Explore detailed job information on GreatHire including role responsibilities, required skills, qualifications, benefits, salary range, and workplace flexibility. Hyderabad State India based platform helps recruiters and candidates make confident hiring and career decisions with clarity and transparency. GreatHire supports companies, startups, recruiters, and professionals with reliable job management tools, scalable recruitment solutions, and seamless talent connections. Review openings thoroughly, manage postings efficiently, and connect with the right candidates through a trusted platform designed for modern hiring success, productivity, and growth."
+        />
+      </Helmet>
       {/* {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />} */}
-      
+
       {/* --- UI CHANGE START: Main page container with a professional background color and centered layout --- */}
       <div className=" bg-[#404] min-h-screen font-sans "
-      style={{ backgroundImage: `url(${jobbackg})`,
-      backgroundSize: "cover" ,
-      backgroundRepeat:"no-repeat",
-      backgroundPosition:"center" }}>
+        style={{
+          backgroundImage: `url(${jobbackg})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center"
+        }}>
         <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 ">
-          
+
           {/* Back Button and action buttons header */}
           <div className="flex justify-between items-center mb-6">
             <Button variant="ghost" onClick={() => navigate(-1)} className=" bg-green-500 text-slate-700 hover:bg-green-800 hover:text-white">
@@ -807,28 +821,28 @@ const JobDetail = () => {
               </div>
             </div>
             <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
-               {editMode ? (
-                 <div className="flex items-center gap-2">
-                    {/* <DollarSign className="h-5 w-5 text-slate-500" /> */}
-                    <input
-                      type="text"
-                      name="salary"
-                      value={editedJob.salary || ""}
-                      onChange={handleInputChange}
-                      className="w-full p-2 rounded border border-slate-300"
-                      placeholder="e.g., 50000 - 70000"
-                    />
-                 </div>
-                ) : (
-                  <p className="text-xl font-semibold text-green-600 dark:text-green-400 flex items-center gap-2">
-                    {/* <DollarSign className="h-6 w-6"/> */}
-                    <span>
+              {editMode ? (
+                <div className="flex items-center gap-2">
+                  {/* <DollarSign className="h-5 w-5 text-slate-500" /> */}
+                  <input
+                    type="text"
+                    name="salary"
+                    value={editedJob.salary || ""}
+                    onChange={handleInputChange}
+                    className="w-full p-2 rounded border border-slate-300"
+                    placeholder="e.g., 50000 - 70000"
+                  />
+                </div>
+              ) : (
+                <p className="text-xl font-semibold text-green-600 dark:text-green-400 flex items-center gap-2">
+                  {/* <DollarSign className="h-6 w-6"/> */}
+                  <span>
                     {jobDetails?.salary
                       ? `₹${jobDetails.salary.replace(/\s/g, "")} monthly`
                       : "Salary Not Specified"}
-                    </span>
-                  </p>
-                )}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
 
@@ -850,10 +864,10 @@ const JobDetail = () => {
                   />
                 ) : (
                   <div className="prose prose-slate max-w-none dark:prose-invert text-slate-600 dark:text-slate-300 text-base leading-relaxed font-">
-                    {jobDetails?.details 
+                    {jobDetails?.details
                       ? jobDetails.details.split("\n").map((line, index) => (
-                          <p key={index}>{line}</p>
-                        )) 
+                        <p key={index}>{line}</p>
+                      ))
                       : <p>No description provided.</p>}
                   </div>
                 )}
@@ -886,41 +900,41 @@ const JobDetail = () => {
                   </ul>
                 )}
               </div>
-              
-               {/* Job Requirements Card */}
+
+              {/* Job Requirements Card */}
               <div className="bg-white dark:bg-slate-800 shadow-lg rounded-xl p-6 md:p-8">
                 <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Job Requirements</h2>
                 <div className="space-y-6">
                   {/* Qualifications */}
                   <div className="flex items-start gap-4">
                     <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
-                       <GraduationCap className="h-6 w-6 text-slate-600 dark:text-slate-300"/>
+                      <GraduationCap className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
                     <div>
-                        <h4 className="font-semibold text-slate-700 dark:text-slate-200">Qualifications</h4>
-                        {editMode ? <input type="text" name="qualifications" value={editedJob.qualifications || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-200">Qualifications</h4>
+                      {editMode ? <input type="text" name="qualifications" value={editedJob.qualifications || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.qualifications?.join(", ") || "Not specified"}</p>}
                     </div>
                   </div>
-                   {/* Experience */}
+                  {/* Experience */}
                   <div className="flex items-start gap-4">
                     <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
-                       <Award className="h-6 w-6 text-slate-600 dark:text-slate-300"/>
+                      <Award className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
                     <div>
-                        <h4 className="font-semibold text-slate-700 dark:text-slate-200">Experience</h4>
-                        {editMode ? <input type="text" name="experience" value={editedJob.experience || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-200">Experience</h4>
+                      {editMode ? <input type="text" name="experience" value={editedJob.experience || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.experience || "Not specified"}</p>}
                     </div>
                   </div>
                   {/* Skills */}
                   <div className="flex items-start gap-4">
                     <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
-                       <Wrench className="h-6 w-6 text-slate-600 dark:text-slate-300"/>
+                      <Wrench className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
                     <div className="w-full">
-                        <h4 className="font-semibold text-slate-700 dark:text-slate-200">Skills Required</h4>
-                        {editMode ? <textarea name="skills" value={editedJob.skills ? editedJob.skills.join("\n") : ""} onChange={(e) => setEditedJob({...editedJob, skills: e.target.value.split('\n')})} className="w-full p-2 mt-1 rounded border border-slate-300" rows={3}/>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-200">Skills Required</h4>
+                      {editMode ? <textarea name="skills" value={editedJob.skills ? editedJob.skills.join("\n") : ""} onChange={(e) => setEditedJob({ ...editedJob, skills: e.target.value.split('\n') })} className="w-full p-2 mt-1 rounded border border-slate-300" rows={3} />
                         : <div className="flex flex-wrap gap-2 mt-2">
                           {jobDetails?.skills?.length > 0 ? jobDetails.skills.map((skill, index) => (
                             <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">{skill}</span>
@@ -937,49 +951,49 @@ const JobDetail = () => {
               <div className=" bg-gray-100  dark:bg-slate-800 shadow-lg rounded-xl p-6 md:p-8 sticky top-10">
                 <h3 className=" text-xl font-bold text-slate-800 dark:text-white mb-6">Job Overview</h3>
                 <ul className="space-y-5">
-                    {/* Job Type */}
-                    <li className="flex items-center gap-4">
-                        <Briefcase className="h-6 w-6 text-slate-500"/>
-                        <div>
-                            <span className="text-sm text-slate-500 dark:text-slate-400">Job Type</span>
-                            {editMode ? <input type="text" name="jobType" value={editedJob.jobType || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
-                            : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.jobType || "Not specified"}</p>}
-                        </div>
-                    </li>
-                     {/* Openings */}
-                    <li className="flex items-center gap-4">
-                        <Users className="h-6 w-6 text-slate-500"/>
-                        <div>
-                            <span className="text-sm text-slate-500 dark:text-slate-400">No. of Openings</span>
-                            {editMode ? <input type="number" name="numberOfOpening" value={editedJob.numberOfOpening || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
-                            : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.numberOfOpening || "Not specified"}</p>}
-                        </div>
-                    </li>
-                     {/* Working Days */}
-                    <li className="flex items-center gap-4">
-                        <Hourglass className="h-6 w-6 text-slate-500"/>
-                        <div>
-                            <span className="text-sm text-slate-500 dark:text-slate-400">Working Days</span>
-                            {editMode ? <input type="text" name="duration" value={editedJob.duration || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
-                            : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.duration || "Not specified"}</p>}
-                        </div>
-                    </li>
-                     {/* Flexibility */}
-                    <li className="flex items-center gap-4">
-                        <Sparkles className="h-6 w-6 text-slate-500"/>
-                        <div>
-                            <span className="text-sm text-slate-500 dark:text-slate-400">Work Place Flexibility</span>
-                             {editMode ? <input type="text" name="workPlaceFlexibility" value={editedJob.workPlaceFlexibility || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300"/>
-                            : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.workPlaceFlexibility || "Not specified"}</p>}
-                        </div>
-                    </li>
+                  {/* Job Type */}
+                  <li className="flex items-center gap-4">
+                    <Briefcase className="h-6 w-6 text-slate-500" />
+                    <div>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">Job Type</span>
+                      {editMode ? <input type="text" name="jobType" value={editedJob.jobType || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                        : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.jobType || "Not specified"}</p>}
+                    </div>
+                  </li>
+                  {/* Openings */}
+                  <li className="flex items-center gap-4">
+                    <Users className="h-6 w-6 text-slate-500" />
+                    <div>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">No. of Openings</span>
+                      {editMode ? <input type="number" name="numberOfOpening" value={editedJob.numberOfOpening || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                        : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.numberOfOpening || "Not specified"}</p>}
+                    </div>
+                  </li>
+                  {/* Working Days */}
+                  <li className="flex items-center gap-4">
+                    <Hourglass className="h-6 w-6 text-slate-500" />
+                    <div>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">Working Days</span>
+                      {editMode ? <input type="text" name="duration" value={editedJob.duration || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                        : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.duration || "Not specified"}</p>}
+                    </div>
+                  </li>
+                  {/* Flexibility */}
+                  <li className="flex items-center gap-4">
+                    <Sparkles className="h-6 w-6 text-slate-500" />
+                    <div>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">Work Place Flexibility</span>
+                      {editMode ? <input type="text" name="workPlaceFlexibility" value={editedJob.workPlaceFlexibility || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                        : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.workPlaceFlexibility || "Not specified"}</p>}
+                    </div>
+                  </li>
                 </ul>
-                
+
                 {/* --- UI CHANGE: Action buttons yahan move kar diye for better access --- */}
                 <div className="mt-8 border-t border-slate-200 dark:border-slate-700 pt-6">
-                 {!editMode ? (
-                  <div className="space-y-3">
-                    {/* <Button
+                  {!editMode ? (
+                    <div className="space-y-3">
+                      {/* <Button
                       size="lg"
                       className="w-full bg-blue-600 hover:bg-blue-700"
                       onClick={() => {
@@ -990,21 +1004,21 @@ const JobDetail = () => {
                     >
                       View Applicants List
                     </Button> */}
-                    {(user?._id === jobOwner ||
-                      user?.emailId?.email === company?.adminEmail ||
-                      user?.role === "admin" ||
-                      user?.role === "Owner") && (
-                        <Button
-                          size="lg"
-                          variant="destructive"
-                          className="w-full"
-                          onClick={() => setShowDeleteModal(true)}
-                          disabled={dloading}
-                        >
-                          {dloading ? "Deleting..." : "Delete Job"}
-                        </Button>
-                    )}
-                  </div>
+                      {(user?._id === jobOwner ||
+                        user?.emailId?.email === company?.adminEmail ||
+                        user?.role === "admin" ||
+                        user?.role === "Owner") && (
+                          <Button
+                            size="lg"
+                            variant="destructive"
+                            className="w-full"
+                            onClick={() => setShowDeleteModal(true)}
+                            disabled={dloading}
+                          >
+                            {dloading ? "Deleting..." : "Delete Job"}
+                          </Button>
+                        )}
+                    </div>
                   ) : (
                     <div className="flex space-x-4">
                       <Button

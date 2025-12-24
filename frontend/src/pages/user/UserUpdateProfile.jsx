@@ -36,6 +36,9 @@ import Job from "../job/Job";
 import { Trash2, Plus } from "lucide-react"; // Dustbin & Add icons
 import { jsPDF } from "jspdf"; //run in cmd 'npm install jspdf'
 
+// import helmet for customized meta tag on head
+import { Helmet } from "react-helmet-async";
+
 const UserUpdateProfile = ({ open, setOpen }) => {
   // State for managing loading state, resume URL, and previous resume name
 
@@ -718,6 +721,18 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   if (!open) return null;
 
   return (
+    <>
+     <Helmet>
+      <title>
+        Update Profile | Resume, Experience & Career Details – GreatHire
+      </title>
+
+      <meta
+        name="description"
+        content="Update and strengthen your professional profile on GreatHire, a trusted job platform based in Hyderabad State, India, built to connect skilled talent with top employers. This profile update page allows job seekers to edit personal details, upload resumes, add experience, skills, qualifications, languages, and verified documents with ease. Showcase your career journey and maintain a recruiter-ready profile that boosts visibility."
+      />
+    </Helmet>
+    
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       onClick={() => setOpen(false)}
@@ -1371,6 +1386,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 export default UserUpdateProfile;

@@ -9,6 +9,7 @@ import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import { removeCompany } from "@/redux/companySlice";
 import { logOut } from "@/redux/authSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import { Helmet } from "react-helmet-async";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
@@ -127,6 +128,14 @@ const CompanyDetails = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Company Details | View & Manage Business Profile – GreatHire</title>
+        <meta
+          name="description"
+          content="GreatHire provides a secure and comprehensive company details management experience for modern businesses and recruiters. Trusted by organizations operating from Hyderabad State, India, this page allows company admins to view, edit, and manage official business information, addresses, industry details, and contact records with ease. Designed for transparency and operational control, GreatHire ensures accurate company profiling, seamless updates, and secure verification workflows. Strengthen your employer brand, maintain compliance, and empower your recruitment operations through a reliable, scalable, and professional company management system built for growing enterprises."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="max-w-6xl mx-auto p-10 mt-20 bg-white rounded-2xl shadow-lg">
           <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -67,25 +68,25 @@ const CandidateList = () => {
     }
   };
   const handleViewInformation = async (candidate) => {
-  try {
-    // decrease credit API
-    // const response = await axios.get(
-    //   `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
-    //   { withCredentials: true }
-    // );
+    try {
+      // decrease credit API
+      // const response = await axios.get(
+      //   `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
+      //   { withCredentials: true }
+      // );
 
-    // // update redux
-    // if (response.data.success) {
-    //   dispatch(decreaseCandidateCredits(1));
-    // }
+      // // update redux
+      // if (response.data.success) {
+      //   dispatch(decreaseCandidateCredits(1));
+      // }
 
-    // navigate to candidate information page
-    navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
-  
-  } catch (error) {
-    toast.error("Failed to decrease credit");
-  }
-};
+      // navigate to candidate information page
+      navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
+
+    } catch (error) {
+      toast.error("Failed to decrease credit");
+    }
+  };
 
 
   const handleViewCandidate = async (candidate) => {
@@ -115,6 +116,17 @@ const CandidateList = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Find & Hire Top Candidates | Search Skilled Talent Efficiently – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire’s Candidate List page empowers recruiters to search, filter, and manage qualified job seekers with precision. Designed for fast-growing hiring teams operating from Hyderabad State, India’s leading technology and recruitment hub, this platform enables seamless talent discovery. Recruiters can filter candidates by skills, experience, location, salary expectations, and activity status to make smarter hiring decisions. With real-time insights, credit-based access, and secure candidate profiles, GreatHire simplifies recruitment workflows, saves time, and helps companies build strong teams faster with confidence."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20">
 
@@ -142,7 +154,7 @@ const CandidateList = () => {
                 { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
                 {
                   label: "Qualification", name: "qualification", type: "select",
-                  options: ["", "Post Graduation","Under Graduation","B.Tech", "Diploma", "MBA", "Others"]
+                  options: ["", "Post Graduation", "Under Graduation", "B.Tech", "Diploma", "MBA", "Others"]
                 },
                 { label: "Last Active", name: "lastActive", placeholder: "Days e.g. 3" },
                 { label: "Location", name: "location", placeholder: "Bangalore" },

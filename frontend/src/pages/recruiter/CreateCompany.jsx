@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
 import { setRecruiterIsCompanyCreated } from "@/redux/authSlice";
+import { Helmet } from "react-helmet-async";
 
 const CreateCompany = () => {
   // State for loading indicator
@@ -138,13 +139,13 @@ const CreateCompany = () => {
         toast.success("GreatHire will active company soon!");
         navigate("/recruiter/dashboard/home");
       } else {
-        toast.error(res.data.message||"Error creating company");
+        toast.error(res.data.message || "Error creating company");
       }
     } catch (err) {
       console.log(`error in submitting company details ${err}`);
       toast.error(
-      err?.response?.data?.message || "Something went wrong. Please try again."
-    );
+        err?.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -152,6 +153,17 @@ const CreateCompany = () => {
 
   return (
     <>
+      <Helmet>
+        {/* Meta Title */}
+        <title>Create Company Profile | Register & Verify Your Business – GreatHire</title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="Create and register your company profile seamlessly on GreatHire to unlock powerful recruitment tools and hire top talent faster. Our secure company registration process helps recruiters verify business details, upload legal documents, and manage hiring operations with confidence. GreatHire operates from Hyderabad State India supporting recruiters employers startups enterprises and fast growing companies across diverse industries nationwide. Start building your verified company presence today and scale hiring with trust efficiency and professional credibility."
+        />
+      </Helmet>
+
       <Navbar />
       {/* Show form only if user exists and hasn't created a company */}
       {user && !user?.isCompanyCreated ? (
@@ -331,11 +343,10 @@ const CreateCompany = () => {
                   </label>
                   <div
                     {...getRootProps()}
-                    className={`relative border-2 border-dashed border-blue-500 p-4 rounded-lg h-48 flex items-center justify-center cursor-pointer transition-all ${
-                      isDragActive
-                        ? "bg-blue-100 border-blue-400"
-                        : "bg-gray-50"
-                    } hover:bg-blue-50`}
+                    className={`relative border-2 border-dashed border-blue-500 p-4 rounded-lg h-48 flex items-center justify-center cursor-pointer transition-all ${isDragActive
+                      ? "bg-blue-100 border-blue-400"
+                      : "bg-gray-50"
+                      } hover:bg-blue-50`}
                   >
                     <input
                       {...getInputProps({
@@ -424,9 +435,8 @@ const CreateCompany = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className={`w-full bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 ${
-                  loading ? "cursor-not-allowed bg-blue-400" : ""
-                }`}
+                className={`w-full bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 ${loading ? "cursor-not-allowed bg-blue-400" : ""
+                  }`}
               >
                 {loading ? "Creating..." : "Create Company"}
               </button>
