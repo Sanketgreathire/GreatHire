@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { Briefcase, Zap, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { FaRocket,FaStar } from "react-icons/fa";
+import { FaRocket, FaStar } from "react-icons/fa";
 import Navbar from "../../components/shared/Navbar";
 import Footer from "../../components/shared/Footer";
+
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
+
 function Packges() {
   const plans = [
     {
-        title: "Free 1 Job Posting",
-        creditsForJobs: 0,
-        creditsForCandidates: 0,
-        price: 0,
-        originalPrice: 500,
-        perJob: 0,
-        discount: "Flat 100% Off",
-        icon: <FaRocket />,
-        borderColor: "border-blue-300",
-        selectedBorderColor: "ring-2 ring-blue-500",
-        
-      },
+      title: "Free 1 Job Posting",
+      creditsForJobs: 0,
+      creditsForCandidates: 0,
+      price: 0,
+      originalPrice: 500,
+      perJob: 0,
+      discount: "Flat 100% Off",
+      icon: <FaRocket />,
+      borderColor: "border-blue-300",
+      selectedBorderColor: "ring-2 ring-blue-500",
+
+    },
     {
       title: "1 x Premium Job",
       creditsForJobs: 500,
@@ -30,7 +35,7 @@ function Packges() {
       icon: <Briefcase />,
       borderColor: "border-blue-300",
       selectedBorderColor: "ring-2 ring-blue-500",
-      
+
     },
     {
       title: "5 x Premium Jobs",
@@ -43,7 +48,7 @@ function Packges() {
       icon: <Zap />,
       borderColor: "ring-indigo-300",
       selectedBorderColor: "ring-2 ring-indigo-600",
-      
+
     },
     {
       title: "10 x Premium Jobs",
@@ -60,9 +65,9 @@ function Packges() {
     },
   ];
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState(plans[1].title); 
+  const [selectedPlan, setSelectedPlan] = useState(plans[1].title);
 
-  
+
 
   // Handles plan selection by updating state
   const handleSelectPlan = (planTitle) => {
@@ -74,38 +79,47 @@ function Packges() {
     handleSelectPlan(plan.title);
     try {
       initiatePayment(plan);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
     <>
-        <Navbar />
-        <div className="min-h-screen  py-8 px-4 flex items-center justify-center pt-20">
-          <div className="w-full max-w-6xl">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-3">
-                Select Your Recruitment Solution
-              </h1>
-              <p className="text-gray-600 text-sm mb-6">
-                Scale your hiring process with our industry-leading platform
-              </p>
-              <h2 className="text-center text-2xl font-bold mb-6">💎 Premium Job Plans</h2>
-            </div>
-            
-        
-            <div className="grid md:grid-cols-3 gap-6 justify-center">
-              {plans.map((plan, index) => {
-                const isSelected = selectedPlan === plan.title;
-                
-                return (
-                
-                  <div
-                    key={index}
-                    className={`relative bg-white rounded-xl shadow-md p-6 border-2 transition-all duration-300 cursor-pointer ${
-                      isSelected ? plan.selectedBorderColor : plan.borderColor
+
+      <Helmet>
+        <title>Affordable Premium Job Posting Packages | Recruit Faster in Hyderabad</title>
+        <meta
+          name="description"
+          content="Choose flexible and cost-effective premium job posting packages designed to accelerate your hiring success. Our recruitment platform helps employers post jobs, access verified candidate databases, and hire faster with transparent pricing and maximum ROI. Trusted by thousands of recruiters, we offer scalable plans for startups, SMEs, and enterprises looking to grow their teams efficiently. Based in Hyderabad State, India, our recruitment solutions support local businesses and nationwide hiring needs with reliable technology, expert support, and industry-ready talent. Start recruiting smarter today with premium job credits that deliver real results."
+        />
+      </Helmet>
+
+
+      <Navbar />
+      <div className="min-h-screen  py-8 px-4 flex items-center justify-center pt-20">
+        <div className="w-full max-w-6xl">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+              Select Your Recruitment Solution
+            </h1>
+            <p className="text-gray-600 text-sm mb-6">
+              Scale your hiring process with our industry-leading platform
+            </p>
+            <h2 className="text-center text-2xl font-bold mb-6">💎 Premium Job Plans</h2>
+          </div>
+
+
+          <div className="grid md:grid-cols-3 gap-6 justify-center">
+            {plans.map((plan, index) => {
+              const isSelected = selectedPlan === plan.title;
+
+              return (
+
+                <div
+                  key={index}
+                  className={`relative bg-white rounded-xl shadow-md p-6 border-2 transition-all duration-300 cursor-pointer ${isSelected ? plan.selectedBorderColor : plan.borderColor
                     }`}
-                    onClick={() => handleSelectPlan(plan.title)}
-                  >
+                  onClick={() => handleSelectPlan(plan.title)}
+                >
                   {plan.recommended && (
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
                       RECOMMENDED FOR YOU
@@ -139,23 +153,23 @@ function Packges() {
 
                   <p className="text-xs text-gray-400 mt-2 text-center">To be used within 30 days</p>
                 </div>
-                
-                );
-              })}
-            </div>
-            <div className="mt-8 text-center">
-              <div className="inline-flex items-center space-x-4 bg-white rounded-full px-6 py-2 shadow-sm">
-                <FaStar className="h-4 w-4 text-yellow-400" />
-                <span className="text-sm text-gray-600">
-                  Trusted by 10,000+ recruitment teams worldwide
-                </span>
-              </div>
+
+              );
+            })}
+          </div>
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center space-x-4 bg-white rounded-full px-6 py-2 shadow-sm">
+              <FaStar className="h-4 w-4 text-yellow-400" />
+              <span className="text-sm text-gray-600">
+                Trusted by 10,000+ recruitment teams worldwide
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        <Footer />
-      
+      <Footer />
+
     </>
   );
 }

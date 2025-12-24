@@ -116,7 +116,7 @@
 //     description: "Continuous learning is essential for career advancement, with in-demand skills shifting toward AI, cloud computing, and data analytics. Investing in online courses, certifications.", 
 //     animation: Career
 //   },  
-  
+
 // ];  
 
 
@@ -240,7 +240,7 @@
 //         description: "Sending a thank-you email within 24 hours shows professionalism and reinforces interest in the role. A follow-up message can also be used to restate key qualifications and inquire about the hiring timeline.", 
 //         animation: Post_Interview 
 //       }, 
-   
+
 //       { 
 //         title: "Common Interview Questions", 
 //         description: "Preparing for frequently asked questions like Tell me about yourself, Why do you want to work here? and What are your strengths and weaknesses? helps candidates answer confidently. ", 
@@ -275,7 +275,7 @@
 //     <>
 //       <Navbar />
 //         <div className="min-h-screen flex flex-col w-screen">
-      
+
 //         <div className="py-2 text-center flex-grow w-screen pt-10">
 //           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold mt-6 font-[Oswald]">
 //             <span style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)" }}>
@@ -309,7 +309,7 @@
 // {/* ------------------------------------------------------------------------------------------------------------------------------------------------ */}
 
 //           {/* Blog Section */}
-                  
+
 //           <div
 //   className="mb-2 w-full flex justify-center items-center px-4"
 //   style={{
@@ -428,39 +428,42 @@ import { Sparkles, TrendingUp, Users, Briefcase, FileText, MessageSquare, Buildi
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 const Blogs = () => {
   const blogPosts = [
-    { 
+    {
       title: "Mastering Remote Work",
       description: "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
       icon: "🏠",
       gradient: "from-purple-500 to-pink-500"
     },
-    { 
+    {
       title: "AI Recruitment",
       description: "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
       icon: "🤖",
       gradient: "from-blue-500 to-cyan-500"
     },
-    { 
+    {
       title: "Build Winning Resumes",
       description: "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.",
       icon: "📄",
       gradient: "from-green-500 to-emerald-500"
     },
-    { 
+    {
       title: "Interview Preparations",
       description: "Research the company, practice questions, and present yourself professionally. GreatHire.in provides expert tips and top job opportunities to help you succeed and make a lasting impression.",
       icon: "💼",
       gradient: "from-orange-500 to-red-500"
     },
-    { 
+    {
       title: "The Future Of Work",
       description: "AI-driven hiring, remote work, and flexible roles are reshaping the workplace, making upskilling crucial. GreatHire.in keeps you informed on trends and connects you to top career opportunities.",
       icon: "🚀",
       gradient: "from-indigo-500 to-purple-500"
     },
-    { 
+    {
       title: "Upskilling for Career Growth",
       description: "Continuous learning is essential for career advancement, with in-demand skills shifting toward AI, cloud computing, and data analytics. Investing in online courses, certifications.",
       icon: "📚",
@@ -469,161 +472,161 @@ const Blogs = () => {
   ];
 
   const categories = [
-    { 
-      id: "career-advice", 
+    {
+      id: "career-advice",
       title: "Career Advice",
       icon: <TrendingUp className="w-6 h-6" />,
       color: "blue",
       posts: [
-        { 
+        {
           title: "Advance Your Career in Tech",
           description: "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.",
           icon: "💻"
         },
-        { 
+        {
           title: "Work-Life Balance Tips",
           description: "Balancing work and personal life is essential for success. Set realistic boundaries, take breaks, and manage time to reduce stress. GreatHire.in offers flexible job opportunities for a healthy work-life balance.",
           icon: "⚖️"
         },
-        { 
+        {
           title: "Networking For Career Growth",
           description: "Networking opens doors to career growth engage on LinkedIn, attend events, and build meaningful connections. GreatHire.in helps you find the right opportunities and insights to advance your career.",
           icon: "🤝"
         }
       ]
     },
-    { 
-      id: "hiring-advice", 
+    {
+      id: "hiring-advice",
       title: "Hiring Advice",
       icon: <Users className="w-6 h-6" />,
       color: "green",
       posts: [
-        { 
+        {
           title: "Mastering Remote Work",
           description: "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
           icon: "🌐"
         },
-        { 
+        {
           title: "AI in Recruitment",
           description: "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
           icon: "🤖"
         },
-        { 
+        {
           title: "Industry-Specific Hiring",
           description: "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
           icon: "🏭"
         }
       ]
     },
-    { 
-      id: "resume-tips", 
+    {
+      id: "resume-tips",
       title: "Resume Tips",
       icon: <FileText className="w-6 h-6" />,
       color: "purple",
       posts: [
-        { 
+        {
           title: "Building a Winning Resume",
           description: "A strong resume showcases skills, achievements, and experience with clear formatting and relevant keywords. GreatHire.in helps you find top talent with ATS-friendly resumes for faster, smarter hiring.",
           icon: "✍️"
         },
-        { 
+        {
           title: "ATS Optimization",
           description: "In today's job market, an ATS-friendly resume is crucial to get noticed. Applicant Tracking Systems scan resumes for key criteria before they reach recruiters.",
           icon: "🎯"
         },
-        { 
+        {
           title: "Using Keywords",
           description: "Using industry-specific keywords boosts your resume's visibility to ATS. Review job descriptions to spot and include common terms and phrases.",
           icon: "🔑"
         }
       ]
     },
-    { 
-      id: "news", 
+    {
+      id: "news",
       title: "Trending Topics",
       icon: <Sparkles className="w-6 h-6" />,
       color: "pink",
       posts: [
-        { 
+        {
           title: "The Future of Work",
           description: "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.",
           icon: "🔮"
         },
-        { 
+        {
           title: "Future Skills for Job Seekers",
           description: "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.",
           icon: "🎓"
         },
-        { 
+        {
           title: "Impact of Global Events on Workforce",
           description: "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
           icon: "🌍"
         }
       ]
     },
-    { 
-      id: "hr-insights", 
+    {
+      id: "hr-insights",
       title: "HR Insights",
       icon: <Briefcase className="w-6 h-6" />,
       color: "orange",
       posts: [
-        { 
+        {
           title: "Interview Preparation",
           description: "A structured interview process helps assess candidates through behavioral questions, cultural fit, and problem-solving skills. GreatHire.in offers expert insights and AI-driven tools to streamline hiring and find the best talent.",
           icon: "📋"
         },
-        { 
+        {
           title: "Behavioral Interview Techniques",
           description: "Behavioral interviewing is a technique used to assess candidates based on their past experiences and actions in specific situations. It operates on the principle that past behavior is a strong predictor of future performance.",
           icon: "🎭"
         },
-        { 
+        {
           title: "Cultural Fit Assessment",
           description: "Cultural fit assessment evaluates how well a candidate aligns with a company's values, work environment, and team dynamics. It ensures the candidate's personality and work style complement the organization's mission and culture.",
           icon: "🏢"
         }
       ]
     },
-    { 
-      id: "interview-tips", 
+    {
+      id: "interview-tips",
       title: "Interview Tips",
       icon: <MessageSquare className="w-6 h-6" />,
       color: "cyan",
       posts: [
-        { 
+        {
           title: "Effective Job Interview Strategies",
           description: "Research the company, practice answers, and use the STAR method to showcase your skills. GreatHire.in provides expert tips and job opportunities to help you ace your interview and land your dream job.",
           icon: "💡"
         },
-        { 
+        {
           title: "Post-Interview Follow-Up",
           description: "Sending a thank-you email within 24 hours shows professionalism and reinforces interest in the role. A follow-up message can also be used to restate key qualifications and inquire about the hiring timeline.",
           icon: "📧"
         },
-        { 
+        {
           title: "Common Interview Questions",
           description: "Preparing for frequently asked questions like Tell me about yourself, Why do you want to work here? and What are your strengths and weaknesses? helps candidates answer confidently.",
           icon: "❓"
         }
       ]
     },
-    { 
-      id: "company-insights", 
+    {
+      id: "company-insights",
       title: "Company Insights",
       icon: <Building2 className="w-6 h-6" />,
       color: "emerald",
       posts: [
-        { 
+        {
           title: "Top Companies Hiring in 2025",
           description: "In 2025, top companies like Amazon, Google, and GE Aerospace are expanding, offering diverse job opportunities. GreatHire.in helps you stay updated on the latest openings, including remote and flexible roles.",
           icon: "🏆"
         },
-        { 
+        {
           title: "Industry Trends",
           description: "Emerging trends across industries include AI-driven automation, sustainable business practices, and the rise of remote/hybrid work models. Companies are also focusing on digital transformation and cybersecurity to stay competitive.",
           icon: "📈"
         },
-        { 
+        {
           title: "Development Programs",
           description: "Leading companies invest in training, mentorship, and upskilling to boost employee growth. Programs like leadership development, technical certifications, and continuous learning enhance productivity and retention.",
           icon: "🎯"
@@ -634,6 +637,19 @@ const Blogs = () => {
 
   return (
     <>
+
+      <Helmet>
+        <title>
+          GreatHire Blog | Career Advice, Hiring Trends & Future of Work Insights
+        </title>
+
+        <meta
+          name="description"
+          content="Discover expert career advice, hiring strategies, interview tips, resume optimization, and the future of work with the GreatHire Blog. From AI-driven recruitment and remote work trends to interview preparation and upskilling, our insights help job seekers and employers stay ahead in a competitive market. GreatHire is proudly based in Hyderabad State, India, serving businesses, recruiters, and professionals across the Hyderabad State region with innovative hiring solutions and career guidance."
+        />
+      </Helmet>
+
+
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
         {/* Hero Section - Reduced Padding */}
@@ -644,14 +660,14 @@ const Blogs = () => {
             <div className="absolute bottom-5 right-10 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-700"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-1000"></div>
           </div>
-          
+
           <div className="relative container mx-auto px-6 py-16 text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full mb-6 shadow-lg border border-white/30">
               <Star className="w-4 h-4 text-yellow-300" />
               <span className="text-sm font-semibold">Your Career Hub</span>
               <Star className="w-4 h-4 text-yellow-300" />
             </div>
-            
+
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               Unlock Your Potential with
               <br />
@@ -659,7 +675,7 @@ const Blogs = () => {
                 GreatHire
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto font-light">
               Your all-in-one platform for job applications, recruitment, and career growth.
               <br />
@@ -730,7 +746,7 @@ const Blogs = () => {
                 className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-3 border border-gray-100"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
-                
+
                 <div className="p-8">
                   <div className="relative mb-6">
                     <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} rounded-2xl blur-lg opacity-50`}></div>
@@ -738,21 +754,21 @@ const Blogs = () => {
                       {post.icon}
                     </div>
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold mb-4 text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 transition-all">
                     {post.title}
                   </h3>
-                  
+
                   <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4">
                     {post.description}
                   </p>
-                  
+
                   <div className="flex items-center text-blue-600 font-bold group-hover:gap-2 transition-all cursor-pointer">
                     Read More
                     <ChevronRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
                   </div>
                 </div>
-                
+
                 <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Star className="w-5 h-5 text-yellow-500" />
                 </div>
@@ -797,11 +813,11 @@ const Blogs = () => {
                           {post.title}
                         </h3>
                       </div>
-                      
+
                       <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4">
                         {post.description}
                       </p>
-                      
+
                       <div className={`flex items-center text-${category.color}-600 font-bold group-hover:gap-2 transition-all cursor-pointer`}>
                         Learn More
                         <ChevronRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
@@ -820,13 +836,13 @@ const Blogs = () => {
             <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-700"></div>
           </div>
-          
+
           <div className="relative container mx-auto px-6 text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full mb-6 shadow-lg border border-white/30">
               <Sparkles className="w-4 h-4 text-yellow-300" />
               <span className="text-sm font-semibold">Join Now</span>
             </div>
-            
+
             <h2 className="text-4xl md:text-6xl font-bold mb-6">
               Ready to Transform Your Career?
             </h2>

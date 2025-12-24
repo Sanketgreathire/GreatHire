@@ -27,6 +27,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "./redux/store.js"; 
 // import { ThemeProvider } from "next-themes";
 import { ThemeProvider } from "./context/ThemeContext"; 
+import { HelmetProvider } from "react-helmet-async";
 
 
 // Rendering the application into the root element
@@ -50,6 +51,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider>
   <React.StrictMode>
+    <HelmetProvider>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         {/* Wrap the entire app with NotificationProvider */}
@@ -70,6 +72,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </NotificationProvider>
       </PersistGate>
     </Provider>
+    </HelmetProvider>
   </React.StrictMode>
   </ThemeProvider>
 );

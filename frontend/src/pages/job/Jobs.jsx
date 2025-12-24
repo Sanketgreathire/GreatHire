@@ -8,13 +8,16 @@ import LatestJobs from "./LatestJobs";
 import JobSearch from "@/pages/job/JobSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 const Jobs = () => {
   const { jobs, resetFilter, error } = useJobDetails();
 
   // ========== STATE MANAGEMENT ==========
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
+
   // Filter & Search state
   const [filters, setFilters] = useState({
     jobTitle: "",
@@ -45,14 +48,14 @@ const Jobs = () => {
       ...prev,
       ...updates,
     }));
-    
+
     // filter update by search
     setFilters((prev) => ({
       ...prev,
       jobTitle: updates.titleKeyword !== undefined ? updates.titleKeyword : prev.jobTitle,
       location: updates.location !== undefined ? updates.location : prev.location,
     }));
-    
+
     setCurrentPage(1); // Page reset 
   };
 
@@ -68,7 +71,7 @@ const Jobs = () => {
 
     // ✅ STEP 1: Apply all filters
     const filteredJobs = jobs.filter((job) => {
-      
+
       // Filter 1: Location
       if (filters.location) {
         const jobLocation = (job?.jobDetails?.location || job?.location || "").toLowerCase();
@@ -139,7 +142,7 @@ const Jobs = () => {
         const today = new Date();
         const matchesDateFilter = filters.datePosted.some((selectedDate) => {
           let daysLimit = 0;
-          
+
           switch (selectedDate) {
             case "Last 24 hours":
               daysLimit = 1;
@@ -156,7 +159,7 @@ const Jobs = () => {
             default:
               daysLimit = 0;
           }
-          
+
           const diffDays = (today - jobDate) / (1000 * 60 * 60 * 24);
           return diffDays <= daysLimit;
         });
@@ -262,7 +265,7 @@ const Jobs = () => {
     // Paginate the filtered jobs
     const indexOfLastJob = currentPage * jobsPerPage;
     const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-    
+
     return filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   };
 
@@ -381,125 +384,139 @@ const Jobs = () => {
 
   // ========== RENDER ==========
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
 
-      {/* Hero Section */}
-      <div className="pt-24 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800">
-        <div className="flex flex-col gap-5 my-10">
-          <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce">
-            No. 1 Job Hunt Website
-          </span>
+    <>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold dark:text-white">
-            <span className="block">Search Job</span>
-            <span className="block mt-4">
-              Or Hire Staff{" "}
-              <span className="text-blue-700 dark:text-blue-500">Smarter, Faster, Risk Free</span>
+      <Helmet>
+        <title>Find Latest Jobs & Hire Talent Faster | Smart Job Search – GreatHire</title>
+        <meta
+          name="description"
+          content="Search and apply for the latest verified job openings on GreatHire using powerful filters for job title, location, company, job type, workplace flexibility, and date posted. Our advanced job search helps candidates find relevant opportunities faster while enabling employers to hire smarter and risk-free. With real-time filtering, pagination, and clean job listings, GreatHire delivers a smooth hiring experience. Based in Hyderabad State, India, GreatHire operates as a modern recruitment platform supporting job seekers and recruiters across multiple industries, cities, and career levels."
+        />
+      </Helmet>
+
+
+
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+
+        {/* Hero Section */}
+        <div className="pt-24 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800">
+          <div className="flex flex-col gap-5 my-10">
+            <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce">
+              No. 1 Job Hunt Website
             </span>
-          </h1>
 
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-full max-w-[900px]">
-              <JobSearch
-                searchInfo={searchInfo}
-                onSearchUpdate={handleSearchUpdate}
-              />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold dark:text-white">
+              <span className="block">Search Job</span>
+              <span className="block mt-4">
+                Or Hire Staff{" "}
+                <span className="text-blue-700 dark:text-blue-500">Smarter, Faster, Risk Free</span>
+              </span>
+            </h1>
+
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-full max-w-[900px]">
+                <JobSearch
+                  searchInfo={searchInfo}
+                  onSearchUpdate={handleSearchUpdate}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Jobs Listing Section - FIXED CONTAINER */}
-      <div className="w-full px-2 lg:px-4 dark:bg-gray-700">
-        <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gray-100 pt-6 dark:bg-gray-800">
-          <div className="flex gap-6 ">
-            {/* Sidebar (Desktop only) */}
-            <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800">
+        {/* Jobs Listing Section - FIXED CONTAINER */}
+        <div className="w-full px-2 lg:px-4 dark:bg-gray-700">
+          <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gray-100 pt-6 dark:bg-gray-800">
+            <div className="flex gap-6 ">
+              {/* Sidebar (Desktop only) */}
+              <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800">
+                <FilterCard
+                  onFilterChange={handleFilterChange}
+                  onReset={handleResetFilters}
+                />
+              </div>
+
+              {/* Main area - FIXED WIDTH */}
+              <div className="flex-1 min-w-0  pr-2">
+                {/* Mobile toggle */}
+                <div className="flex items-center justify-between mb-4 lg:hidden px-2">
+                  <button
+                    onClick={() => setIsFilterOpen(true)}
+                    className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-md"
+                  >
+                    <FiFilter /> Filters
+                  </button>
+                  <div className="text-sm text-gray-600">
+                    {totalFilteredJobs} jobs
+                  </div>
+                </div>
+
+                {/* Loading State */}
+                {isLoading ? (
+                  <div className="flex justify-center items-center h-40">
+                    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+                  </div>
+                ) : displayedJobs.length > 0 ? (
+                  <>
+                    {/* ✅ Pass ONLY paginated & filtered jobs to LatestJobs */}
+                    <LatestJobs jobs={displayedJobs} />
+
+                    {/* Pagination Controls */}
+                    <div className="w-full flex justify-center items-center gap-4 mt-8 mb-10">
+                      <button
+                        className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                      >
+                        Prev
+                      </button>
+
+                      <span className="text-lg font-semibold">
+                        Page {currentPage} of {totalPages}
+                      </span>
+
+                      <button
+                        className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-center items-center h-40">
+                    <span className="text-gray-500 text-lg">Job not found</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Sidebar Overlay */}
+        {isFilterOpen && (
+          <div className="fixed inset-0 z-50 flex lg:hidden">
+            <div
+              className="absolute inset-0 bg-black bg-opacity-50"
+              onClick={() => setIsFilterOpen(false)}
+            ></div>
+
+            <div className="relative bg-white w-72 h-full shadow-lg transform transition-transform duration-300 translate-x-0 overflow-y-auto">
               <FilterCard
                 onFilterChange={handleFilterChange}
                 onReset={handleResetFilters}
+                onClose={() => setIsFilterOpen(false)}
               />
             </div>
-
-            {/* Main area - FIXED WIDTH */}
-            <div className="flex-1 min-w-0  pr-2">
-              {/* Mobile toggle */}
-              <div className="flex items-center justify-between mb-4 lg:hidden px-2">
-                <button
-                  onClick={() => setIsFilterOpen(true)}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-md"
-                >
-                  <FiFilter /> Filters
-                </button>
-                <div className="text-sm text-gray-600">
-                  {totalFilteredJobs} jobs
-                </div>
-              </div>
-
-              {/* Loading State */}
-              {isLoading ? (
-                <div className="flex justify-center items-center h-40">
-                  <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
-                </div>
-              ) : displayedJobs.length > 0 ? (
-                <>
-                  {/* ✅ Pass ONLY paginated & filtered jobs to LatestJobs */}
-                  <LatestJobs jobs={displayedJobs} />
-
-                  {/* Pagination Controls */}
-                  <div className="w-full flex justify-center items-center gap-4 mt-8 mb-10">
-                    <button
-                      className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
-                      disabled={currentPage === 1}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                      Prev
-                    </button>
-
-                    <span className="text-lg font-semibold">
-                      Page {currentPage} of {totalPages}
-                    </span>
-
-                    <button
-                      className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
-                      disabled={currentPage === totalPages}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                      Next
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="flex justify-center items-center h-40">
-                  <span className="text-gray-500 text-lg">Job not found</span>
-                </div>
-              )}
-            </div>
           </div>
-        </div>
+        )}
+
+        <Footer />
       </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {isFilterOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden">
-          <div
-            className="absolute inset-0 bg-black bg-opacity-50"
-            onClick={() => setIsFilterOpen(false)}
-          ></div>
-
-          <div className="relative bg-white w-72 h-full shadow-lg transform transition-transform duration-300 translate-x-0 overflow-y-auto">
-            <FilterCard
-              onFilterChange={handleFilterChange}
-              onReset={handleResetFilters}
-              onClose={() => setIsFilterOpen(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      <Footer />
-    </div>
+    </>
   );
 };
 export default Jobs;

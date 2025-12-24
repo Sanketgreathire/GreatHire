@@ -9,6 +9,9 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 
+// imported to customize the meta tag 
+import { Helmet } from "react-helmet-async";
+
 import Silk from "../../components/ui/silk";
 
 //logos from assets folder
@@ -573,427 +576,441 @@ function App() {
   const [isCenter, setIsCenter] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:bg-gray-800 dark:text-white transition-colors duration-300">
-      <Navbar />
 
-{/* Hero Section - Enhanced */}
-<div className="relative w-full h-[300px] overflow-hidden">
-  <div className="absolute inset-0">
-    <Silk
-      speed={5}
-      scale={1}
-      color="#6366f1ff"
-      noiseIntensity={1.5}
-      rotation={0}
-    />
-  </div>
+    <>
 
-  {/* Enhanced Decorative elements */}
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <div className="absolute top-10 left-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl"></div>
-    <div className="absolute bottom-10 right-10 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl"></div>
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-3xl"></div>
-  </div>
+      <Helmet>
+        <title>About GreatHire | AI-Driven Recruitment & IT Staffing Company in Hyderabad</title>
 
-  <div className="relative z-10 text-white h-full flex items-center">
-    <div className="container mx-auto px-6 lg:px-12">
-      <div className="max-w-4xl mx-auto text-center space-y-5">
-        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-2 animate-fade-in">
-          <Sparkles className="w-4 h-4" />
-          <span className="text-sm font-medium">About Our Journey</span>
-        </div>
-        <h1 className="text-4xl md:text-6xl font-bold font-[Oswald] tracking-tight">
-          About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">GreatHire</span>
-        </h1>
-        <p className="text-lg md:text-xl font-serif text-blue-50 leading-relaxed px-4">
-          GreatHire Business Solutions provides strategic staffing and
-          workforce solutions tailored to meet diverse business needs. We
-          specialize in connecting companies with top-tier talent, driving
-          efficiency, productivity, and long-term success through our expert
-          recruitment services.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+        <meta
+          name="description"
+          content="GreatHire is a leading AI-driven recruitment, IT staffing, and workforce solutions company delivering high-impact hiring results for businesses and professionals. Headquartered in Hyderabad, Telangana State, GreatHire empowers organizations with smart talent acquisition, digital transformation, and scalable staffing strategies. Our expert team combines advanced technology with human insight to connect top-tier talent with innovative companies across industries."
+        />
+      </Helmet>
 
-{/* Our Mission Section - Enhanced */}
-      <div className="py-20 bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:bg-gray-900 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
-                <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Our Purpose</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 font-[Oswald] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Our Mission
-              </h2>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 border border-blue-100 dark:border-gray-700 hover:shadow-3xl transition-all duration-500 group">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed relative z-10">
-                At GreatHire, our mission is to revolutionize the recruitment landscape by bridging the gap between exceptional talent and innovative companies. We believe in creating meaningful connections that drive career growth and business success through cutting-edge technology and human-centric approaches.
-              </p>
-              <div className="mt-6 flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-4 transition-all duration-300">
-                <span>Driving excellence in recruitment</span>
-                <ChevronRight className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Leadership Section - Enhanced */}
-      <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-0 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-0 w-72 h-72 bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"></div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-4">
-              <Award className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">Leadership Excellence</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Our Leadership
-            </h2>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:bg-gray-800 dark:text-white transition-colors duration-300">
+        <Navbar />
+
+        {/* Hero Section - Enhanced */}
+        <div className="relative w-full h-[300px] overflow-hidden">
+          <div className="absolute inset-0">
+            <Silk
+              speed={5}
+              scale={1}
+              color="#6366f1ff"
+              noiseIntensity={1.5}
+              rotation={0}
+            />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-            {leadership.map((leader, index) => (
-              <div
-                key={index}
-                className="group relative bg-white dark:bg-gray-900 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700"
-              >
-                {/* Gradient overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Enhanced page curl */}
-                <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 via-purple-100 to-white dark:from-blue-900 dark:via-purple-900 dark:to-gray-800 [clip-path:polygon(100%_0,0_0,100%_100%)] shadow-lg"></div>
+          {/* Enhanced Decorative elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-10 left-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-3xl"></div>
+          </div>
+
+          <div className="relative z-10 text-white h-full flex items-center">
+            <div className="container mx-auto px-6 lg:px-12">
+              <div className="max-w-4xl mx-auto text-center space-y-5">
+                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-2 animate-fade-in">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-sm font-medium">About Our Journey</span>
                 </div>
+                <h1 className="text-4xl md:text-6xl font-bold font-[Oswald] tracking-tight">
+                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">GreatHire</span>
+                </h1>
+                <p className="text-lg md:text-xl font-serif text-blue-50 leading-relaxed px-4">
+                  GreatHire Business Solutions provides strategic staffing and
+                  workforce solutions tailored to meet diverse business needs. We
+                  specialize in connecting companies with top-tier talent, driving
+                  efficiency, productivity, and long-term success through our expert
+                  recruitment services.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <div className="relative z-10 p-10">
-                  {/* Leader initial badge */}
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/30 group-hover:scale-110 transition-transform duration-300">
-                    {leader.name.charAt(0)}
-                  </div>
+        {/* Our Mission Section - Enhanced */}
+        <div className="py-20 bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:bg-gray-900 relative overflow-hidden">
+          {/* Decorative background elements */}
+          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
-                  <h3 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    {leader.name}
-                  </h3>
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
+                  <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Our Purpose</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 font-[Oswald] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Our Mission
+                </h2>
+              </div>
 
-                  <div className="text-center mb-6">
-                    <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-2 rounded-full">
-                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                        {Array.isArray(leader.title)
-                          ? leader.title.map((t, i) => <div key={i}>{t}</div>)
-                          : leader.title}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto mb-8"></div>
-
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-8 text-center">
-                    {leader.description}
-                  </p>
-
-                  {/* Achievements */}
-                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 mb-6">
-                    <h4 className="text-lg font-bold mb-4 text-blue-800 dark:text-blue-300 font-[Oswald] flex items-center gap-2">
-                      <Award className="w-5 h-5" />
-                      Key Achievements
-                    </h4>
-                    <ul className="space-y-3">
-                      {leader.achievements.map((achievement, i) => (
-                        <li key={i} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 flex-shrink-0"></div>
-                          <span className="text-sm leading-relaxed">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Vision */}
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6">
-                    <h4 className="text-lg font-bold mb-3 text-purple-800 dark:text-purple-300 font-[Oswald] flex items-center gap-2">
-                      <Sparkles className="w-5 h-5" />
-                      Vision
-                    </h4>
-                    <p className="text-gray-700 dark:text-gray-300 italic text-sm leading-relaxed">
-                      {leader.vision}
-                    </p>
-                  </div>
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 border border-blue-100 dark:border-gray-700 hover:shadow-3xl transition-all duration-500 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed relative z-10">
+                  At GreatHire, our mission is to revolutionize the recruitment landscape by bridging the gap between exceptional talent and innovative companies. We believe in creating meaningful connections that drive career growth and business success through cutting-edge technology and human-centric approaches.
+                </p>
+                <div className="mt-6 flex items-center justify-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-4 transition-all duration-300">
+                  <span>Driving excellence in recruitment</span>
+                  <ChevronRight className="w-5 h-5" />
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Our Story Section - Enhanced */}
-      <div className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
-                <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Our Journey</span>
+        {/* Leadership Section - Enhanced */}
+        <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute top-20 right-0 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-0 w-72 h-72 bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"></div>
+
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-4">
+                <Award className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">Leadership Excellence</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Our Story
+              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Our Leadership
               </h2>
             </div>
-            
-            <div className="space-y-8">
-              {[
-                "Founded in 2016, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.",
-                "Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.",
-                "Today, we're proud to be one of India's fastest-growing recruitment platforms, but our mission remains the same: to create meaningful connections that drive careers and businesses forward."
-              ].map((text, index) => (
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+              {leadership.map((leader, index) => (
                 <div
                   key={index}
-                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50 dark:border-gray-700/50 group"
+                  className="group relative bg-white dark:bg-gray-900 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      {index + 1}
+                  {/* Gradient overlay on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  {/* Enhanced page curl */}
+                  <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 via-purple-100 to-white dark:from-blue-900 dark:via-purple-900 dark:to-gray-800 [clip-path:polygon(100%_0,0_0,100%_100%)] shadow-lg"></div>
+                  </div>
+
+                  <div className="relative z-10 p-10">
+                    {/* Leader initial badge */}
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/30 group-hover:scale-110 transition-transform duration-300">
+                      {leader.name.charAt(0)}
                     </div>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed flex-1 pt-2">
-                      {text}
+
+                    <h3 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      {leader.name}
+                    </h3>
+
+                    <div className="text-center mb-6">
+                      <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-2 rounded-full">
+                        <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                          {Array.isArray(leader.title)
+                            ? leader.title.map((t, i) => <div key={i}>{t}</div>)
+                            : leader.title}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto mb-8"></div>
+
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-8 text-center">
+                      {leader.description}
                     </p>
+
+                    {/* Achievements */}
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 mb-6">
+                      <h4 className="text-lg font-bold mb-4 text-blue-800 dark:text-blue-300 font-[Oswald] flex items-center gap-2">
+                        <Award className="w-5 h-5" />
+                        Key Achievements
+                      </h4>
+                      <ul className="space-y-3">
+                        {leader.achievements.map((achievement, i) => (
+                          <li key={i} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 flex-shrink-0"></div>
+                            <span className="text-sm leading-relaxed">{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Vision */}
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6">
+                      <h4 className="text-lg font-bold mb-3 text-purple-800 dark:text-purple-300 font-[Oswald] flex items-center gap-2">
+                        <Sparkles className="w-5 h-5" />
+                        Vision
+                      </h4>
+                      <p className="text-gray-700 dark:text-gray-300 italic text-sm leading-relaxed">
+                        {leader.vision}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Achievements Section - Enhanced */}
-      <div className="py-20 bg-white dark:bg-gray-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent dark:via-blue-900/10"></div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
-              <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Milestones</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Our Achievements
-            </h2>
+        {/* Our Story Section - Enhanced */}
+        <div className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-gray-900 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {achievements.map((a, index) => (
-              <div
-                key={index}
-                className="group relative bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-gray-700 overflow-hidden"
-              >
-                {/* Animated background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                <div className="relative z-10">
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                      {a.icon}
+
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                  <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Our Journey</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Our Story
+                </h2>
+              </div>
+
+              <div className="space-y-8">
+                {[
+                  "Founded in 2016, GreatHire emerged from a simple yet powerful vision: to transform how companies and talent connect in the digital age. What began as a startup with a handful of passionate individuals has grown into a dynamic platform serving thousands of businesses and job seekers across India.",
+                  "Our journey has been marked by continuous innovation, from developing AI-powered matching algorithms to creating comprehensive assessment tools that look beyond just technical skills. We helped over 10,000 professionals find their dream jobs and assisted countless companies in building strong, diverse teams.",
+                  "Today, we're proud to be one of India's fastest-growing recruitment platforms, but our mission remains the same: to create meaningful connections that drive careers and businesses forward."
+                ].map((text, index) => (
+                  <div
+                    key={index}
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50 dark:border-gray-700/50 group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        {index + 1}
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed flex-1 pt-2">
+                        {text}
+                      </p>
                     </div>
                   </div>
-
-                  <h3 className="text-4xl font-bold text-center mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    <NumberCounter end={a.value} duration={a.duration} suffix={a.suffix} />
-                  </h3>
-
-                  <p className="text-gray-600 dark:text-gray-400 text-center font-medium">
-                    {a.description}
-                  </p>
-                </div>
-
-                {/* Decorative corner */}
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-transparent rounded-bl-3xl"></div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Client Logo Carousel - Enhanced */}
-      <div className="py-20 bg-gradient-to-b from-gray-50 to-white dark:bg-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-4">
-              <Building2 className="w-4 h-4 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-semibold text-green-600 dark:text-green-400">Our Partners</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">
-              Trusted By Leading Companies
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Partnering with industry leaders to deliver exceptional talent solutions
-            </p>
-          </div>
+        {/* Achievements Section - Enhanced */}
+        <div className="py-20 bg-white dark:bg-gray-800 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent dark:via-blue-900/10"></div>
 
-          <Swiper
-            modules={[Autoplay]}
-            spaceBetween={30}
-            slidesPerView={2}
-            loop={true}
-            speed={8000}
-            autoplay={{
-              delay: 0,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              0: { slidesPerView: 2 },
-              640: { slidesPerView: 3 },
-              768: { slidesPerView: 6 },
-              1024: { slidesPerView: 8 },
-            }}
-            className="py-4"
-          >
-            {clientLogos.map((client, index) => (
-              <SwiperSlide key={index}>
-                <div className="group flex items-center justify-center h-28 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl p-6 transition-all duration-300 border border-gray-100 dark:border-gray-700">
-                  <img
-                    src={client.logo}
-                    alt={client.name}
-                    className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-      </div>
-
-
-      {/* Team Section - Enhanced */}
-      <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-4">
-              <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-              <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">Our People</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Dedicated professionals committed to your success
-            </p>
-          </div>
-          
-          {departments.map((department, dIndex) => (
-            <div key={dIndex} className="mb-20 last:mb-0">
-              <div className="flex items-center gap-4 mb-10">
-                <div className="h-1 flex-grow bg-gradient-to-r from-transparent via-blue-500 to-purple-500 rounded-full"></div>
-                <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {department.name}
-                </h3>
-                <div className="h-1 flex-grow bg-gradient-to-r from-purple-500 via-blue-500 to-transparent rounded-full"></div>
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
+                <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Milestones</span>
               </div>
-              
-              <Swiper
-                modules={[FreeMode, Autoplay]}
-                spaceBetween={24}
-                slidesPerView={1}
-                freeMode={{
-                  enabled: true,
-                  sticky: false,
-                  momentumRatio: 0.25,
-                  momentumVelocityRatio: 0.5,
-                }}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: true,
-                }}
-                breakpoints={{
-                  640: { slidesPerView: 2 },
-                  768: { slidesPerView: 3 },
-                  1024: { slidesPerView: 4 },
-                  1280: { slidesPerView: 5 },
-                }}
-                className="team-swiper"
-              >
-                {department.members.map((member, mIndex) => (
-                  <SwiperSlide key={mIndex} className="h-auto">
-                    <div className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col border border-gray-100 dark:border-gray-700">
-                      {/* Card header with gradient */}
-                      <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-                      
-                      <div className="p-6 flex flex-col flex-grow">
-                        {/* Profile image with enhanced styling */}
-                        <div className="relative w-28 h-28 mx-auto mb-6">
-                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                          <div className="relative w-full h-full rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-300">
-                            <img
-                              src={member.image}
-                              alt={member.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </div>
+              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Our Achievements
+              </h2>
+            </div>
 
-                        <div className="text-center flex-grow">
-                          <h4 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {member.name}
-                          </h4>
-                          
-                          <div className="mb-4">
-                            {Array.isArray(member.role) ? (
-                              member.role.map((r, i) => (
-                                <div key={i} className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full m-1">
-                                  {r}
-                                </div>
-                              ))
-                            ) : (
-                              <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full">
-                                {member.role}
-                              </div>
-                            )}
-                          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {achievements.map((a, index) => (
+                <div
+                  key={index}
+                  className="group relative bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-gray-700 overflow-hidden"
+                >
+                  {/* Animated background gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                          <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 mb-4">
-                            <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">Expertise</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                              {member.expertise}
-                            </p>
-                          </div>
-
-                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                            {member.about}
-                          </p>
-                        </div>
+                  <div className="relative z-10">
+                    <div className="flex justify-center mb-6">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        {a.icon}
                       </div>
                     </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <Footer />
-    </div>
+                    <h3 className="text-4xl font-bold text-center mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      <NumberCounter end={a.value} duration={a.duration} suffix={a.suffix} />
+                    </h3>
+
+                    <p className="text-gray-600 dark:text-gray-400 text-center font-medium">
+                      {a.description}
+                    </p>
+                  </div>
+
+                  {/* Decorative corner */}
+                  <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-transparent rounded-bl-3xl"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Client Logo Carousel - Enhanced */}
+        <div className="py-20 bg-gradient-to-b from-gray-50 to-white dark:bg-gray-900 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-4">
+                <Building2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <span className="text-sm font-semibold text-green-600 dark:text-green-400">Our Partners</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4">
+                Trusted By Leading Companies
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Partnering with industry leaders to deliver exceptional talent solutions
+              </p>
+            </div>
+
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={30}
+              slidesPerView={2}
+              loop={true}
+              speed={8000}
+              autoplay={{
+                delay: 0,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                0: { slidesPerView: 2 },
+                640: { slidesPerView: 3 },
+                768: { slidesPerView: 6 },
+                1024: { slidesPerView: 8 },
+              }}
+              className="py-4"
+            >
+              {clientLogos.map((client, index) => (
+                <SwiperSlide key={index}>
+                  <div className="group flex items-center justify-center h-28 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl p-6 transition-all duration-300 border border-gray-100 dark:border-gray-700">
+                    <img
+                      src={client.logo}
+                      alt={client.name}
+                      className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+
+
+        {/* Team Section - Enhanced */}
+        <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+
+          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-4">
+                <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">Our People</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                Meet Our Team
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Dedicated professionals committed to your success
+              </p>
+            </div>
+
+            {departments.map((department, dIndex) => (
+              <div key={dIndex} className="mb-20 last:mb-0">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="h-1 flex-grow bg-gradient-to-r from-transparent via-blue-500 to-purple-500 rounded-full"></div>
+                  <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {department.name}
+                  </h3>
+                  <div className="h-1 flex-grow bg-gradient-to-r from-purple-500 via-blue-500 to-transparent rounded-full"></div>
+                </div>
+
+                <Swiper
+                  modules={[FreeMode, Autoplay]}
+                  spaceBetween={24}
+                  slidesPerView={1}
+                  freeMode={{
+                    enabled: true,
+                    sticky: false,
+                    momentumRatio: 0.25,
+                    momentumVelocityRatio: 0.5,
+                  }}
+                  autoplay={{
+                    delay: 3000,
+                    disableOnInteraction: true,
+                  }}
+                  breakpoints={{
+                    640: { slidesPerView: 2 },
+                    768: { slidesPerView: 3 },
+                    1024: { slidesPerView: 4 },
+                    1280: { slidesPerView: 5 },
+                  }}
+                  className="team-swiper"
+                >
+                  {department.members.map((member, mIndex) => (
+                    <SwiperSlide key={mIndex} className="h-auto">
+                      <div className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col border border-gray-100 dark:border-gray-700">
+                        {/* Card header with gradient */}
+                        <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
+                        <div className="p-6 flex flex-col flex-grow">
+                          {/* Profile image with enhanced styling */}
+                          <div className="relative w-28 h-28 mx-auto mb-6">
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                            <div className="relative w-full h-full rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                              <img
+                                src={member.image}
+                                alt={member.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="text-center flex-grow">
+                            <h4 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              {member.name}
+                            </h4>
+
+                            <div className="mb-4">
+                              {Array.isArray(member.role) ? (
+                                member.role.map((r, i) => (
+                                  <div key={i} className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full m-1">
+                                    {r}
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full">
+                                  {member.role}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 mb-4">
+                              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">Expertise</p>
+                              <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                                {member.expertise}
+                              </p>
+                            </div>
+
+                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                              {member.about}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    </>
   );
 }
 

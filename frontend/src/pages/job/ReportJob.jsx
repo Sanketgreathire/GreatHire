@@ -1,17 +1,20 @@
 // Importing React and useState for state management
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 // Importing an info icon for UI
 import { BsFillInfoCircleFill } from "react-icons/bs";
 // Importing useNavigate for navigation 
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 // Importing toast notifications for user feedback
 import { toast } from "react-hot-toast";
 // Importing job details context 
 import { useJobDetails } from "@/context/JobDetailsContext";
 // Importing axios for making API requests 
-import axios from "axios"; 
+import axios from "axios";
 // Importing API endpoint for job reports
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint"; 
+import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
 
 const ReportJob = () => {
   const { selectedJob } = useJobDetails(); // Getting selected job details from context
@@ -75,88 +78,100 @@ const ReportJob = () => {
 
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
-      <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-col">
-        <div className="flex justify-between items-center border-b pb-2">
-          <h2 className="text-lg font-semibold">Report a Job</h2>
+    <>
+
+      <Helmet>
+        <title>Report a Job Listing | Safe & Trusted Hiring – GreatHire</title>
+        <meta
+          name="description"
+          content="Report suspicious or inappropriate job listings on GreatHire to help keep the hiring platform safe and reliable for everyone. This page allows users to flag fake jobs, incorrect company details, offensive content, or misleading postings with ease and confidentiality. Every report is reviewed to maintain high hiring standards and protect job seekers from fraud or misuse. Based in Hyderabad State, India, GreatHire is committed to providing a secure, transparent, and verified recruitment environment for professionals and employers across industries."
+        />
+      </Helmet>
+
+
+
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+        <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-col">
+          <div className="flex justify-between items-center border-b pb-2">
+            <h2 className="text-lg font-semibold">Report a Job</h2>
+            <button
+              onClick={() => navigate(-1)}
+              className="text-gray-500 hover:text-gray-800"
+            >
+              ✖
+            </button>
+          </div>
+
+          <div className="mt-4">
+            <p className="font-semibold text-gray-800">
+              {selectedJob?.jobDetails?.title}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {selectedJob?.jobDetails?.companyName}
+            </p>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2">
+            {problems.map((problem, index) => (
+              <label
+                key={index}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="problem"
+                  value={problem}
+                  checked={selectedProblem === problem}
+                  onChange={(e) => setSelectedProblem(e.target.value)}
+                  className="hidden"
+                />
+                <span
+                  className={`w-5 h-5 flex items-center justify-center border rounded-full ${selectedProblem === problem
+                      ? "bg-blue-600 border-blue-600"
+                      : "border-gray-400"
+                    }`}
+                >
+                  {selectedProblem === problem && (
+                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                  )}
+                </span>
+                <span className="text-gray-600">{problem}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <label className="block text-gray-700 font-medium">
+              Describe your problem:
+            </label>
+            <textarea
+              value={description}
+              onChange={handleDescriptionChange}
+              maxLength={maxChars}
+              rows={4}
+              className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+            <p className="text-right text-sm text-gray-500">
+              {description.length}/{maxChars} characters
+            </p>
+          </div>
+
+          <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
+            <BsFillInfoCircleFill size={20} className="text-blue-600" />
+            <span>
+              Do not disclose personal details like your name or phone number.
+            </span>
+          </div>
+
           <button
-            onClick={() => navigate(-1)}
-            className="text-gray-500 hover:text-gray-800"
+            onClick={handleSubmit}
+            className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
-            ✖
+            Report to Great Hire
           </button>
         </div>
-
-        <div className="mt-4">
-          <p className="font-semibold text-gray-800">
-            {selectedJob?.jobDetails?.title}
-          </p>
-          <p className="text-gray-500 text-sm">
-            {selectedJob?.jobDetails?.companyName}
-          </p>
-        </div>
-
-        <div className="mt-4 flex flex-col gap-2">
-          {problems.map((problem, index) => (
-            <label
-              key={index}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="problem"
-                value={problem}
-                checked={selectedProblem === problem}
-                onChange={(e) => setSelectedProblem(e.target.value)}
-                className="hidden"
-              />
-              <span
-                className={`w-5 h-5 flex items-center justify-center border rounded-full ${
-                  selectedProblem === problem
-                    ? "bg-blue-600 border-blue-600"
-                    : "border-gray-400"
-                }`}
-              >
-                {selectedProblem === problem && (
-                  <span className="w-2 h-2 bg-white rounded-full"></span>
-                )}
-              </span>
-              <span className="text-gray-600">{problem}</span>
-            </label>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <label className="block text-gray-700 font-medium">
-            Describe your problem:
-          </label>
-          <textarea
-            value={description}
-            onChange={handleDescriptionChange}
-            maxLength={maxChars}
-            rows={4}
-            className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-          <p className="text-right text-sm text-gray-500">
-            {description.length}/{maxChars} characters
-          </p>
-        </div>
-
-        <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
-          <BsFillInfoCircleFill size={20} className="text-blue-600" />
-          <span>
-            Do not disclose personal details like your name or phone number.
-          </span>
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-        >
-          Report to Great Hire
-        </button>
       </div>
-    </div>
+    </>
   );
 };
 

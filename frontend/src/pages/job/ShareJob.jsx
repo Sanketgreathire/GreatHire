@@ -10,6 +10,9 @@ import {
   FaLink,
 } from "react-icons/fa";
 
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
 
 const ShareCard = ({ urlToShare, jobTitle, jobLocation, jobSalary, jobDuration, jobType, onClose }) => {
   const encodedURL = encodeURIComponent(urlToShare);
@@ -60,67 +63,79 @@ const ShareCard = ({ urlToShare, jobTitle, jobLocation, jobSalary, jobDuration, 
   ];
 
   return (
-    <div className="absolute z-50 -top-2 -right-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4">
-      {/* Close Button (top-right) */}
-      <div className="flex justify-end mb-2">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onClose();
-          }}
-          className="text-gray-400 hover:text-black text-sm font-semibold"
-        >
-          ✕
-        </button>
-      </div>
+    <>
 
-      {/* Grid of Icons */}
-      <div className="grid grid-cols-3 gap-4">
-        {shareOptions.map((option, index) =>
-          option.url ? (
-            <a
-              key={index}
-              href={option.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={option.name}
-              onClick={(e) => e.stopPropagation()}
-              className="flex flex-col items-center justify-center hover:opacity-80 transition"
-            >
-              {option.icon}
-            </a>
-          ) : (
-            <button
-              key={index}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                option.action();
-              }}
-              title={option.name}
-              className="flex flex-col items-center justify-center hover:opacity-80 transition"
-            >
-              {option.icon}
-            </button>
-          )
-        )}
+      <Helmet>
+        <title>Share Job Openings Instantly | Easy Social Job Sharing – GreatHire</title>
+        <meta
+          name="description"
+          content="Share job opportunities instantly with GreatHire’s smart job sharing feature. Easily send job details—including role, location, salary, job type, and duration—across WhatsApp, LinkedIn, Twitter, Facebook, Instagram, or by copying a direct link. Based in Hyderabad State, India, GreatHire is a modern hiring platform focused on making job discovery, referrals, and applications simple, transparent, and reliable across industries."
+        />
+      </Helmet>
 
-        {/* Copy Link Option */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            navigator.clipboard.writeText(urlToShare);
-            toast.success("Link copied to clipboard!");
-          }}
-          title="Copy Link"
-          className="flex flex-col items-center justify-center hover:opacity-80 transition"
-        >
-          <FaLink size={24} className="text-gray-600" />
-        </button>
+
+      <div className="absolute z-50 -top-2 -right-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4">
+        {/* Close Button (top-right) */}
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }}
+            className="text-gray-400 hover:text-black text-sm font-semibold"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Grid of Icons */}
+        <div className="grid grid-cols-3 gap-4">
+          {shareOptions.map((option, index) =>
+            option.url ? (
+              <a
+                key={index}
+                href={option.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={option.name}
+                onClick={(e) => e.stopPropagation()}
+                className="flex flex-col items-center justify-center hover:opacity-80 transition"
+              >
+                {option.icon}
+              </a>
+            ) : (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  option.action();
+                }}
+                title={option.name}
+                className="flex flex-col items-center justify-center hover:opacity-80 transition"
+              >
+                {option.icon}
+              </button>
+            )
+          )}
+
+          {/* Copy Link Option */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigator.clipboard.writeText(urlToShare);
+              toast.success("Link copied to clipboard!");
+            }}
+            title="Copy Link"
+            className="flex flex-col items-center justify-center hover:opacity-80 transition"
+          >
+            <FaLink size={24} className="text-gray-600" />
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
