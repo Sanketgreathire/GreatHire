@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
+import { Helmet } from "react-helmet-async";
 
 const CurrentPlans = () => {
   const navigate = useNavigate();
@@ -16,7 +17,19 @@ const CurrentPlans = () => {
 
   return (
     <>
-    {/* Check if the company exists and the user is active */}
+      <Helmet>
+        {/* Meta Title */}
+        <title>
+          Current Subscription Plan | Manage Hiring Credits & Benefits – GreatHire
+        </title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="View and manage your current subscription plan on GreatHire with complete transparency and control. Hyderabad State, India based recruitment platform empowers recruiters startups enterprises and hiring teams with trusted hiring solutions, flexible plans, real-time credit tracking, job posting benefits, pricing visibility, expiry alerts, and seamless upgrades to scale recruitment faster and smarter."
+        />
+      </Helmet>
+      {/* Check if the company exists and the user is active */}
       {company && user?.isActive ? (
         <div className="min-h-screen flex items-center justify-center p-4 pt-20">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
@@ -82,11 +95,10 @@ const CurrentPlans = () => {
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Expiry Date:</span>
                       <span
-                        className={`font-semibold ${
-                          new Date(jobPlan.expiryDate) < new Date()
+                        className={`font-semibold ${new Date(jobPlan.expiryDate) < new Date()
                             ? "text-red-500"
                             : "text-green-600"
-                        }`}
+                          }`}
                       >
                         {format(new Date(jobPlan.expiryDate), "dd MMM yyyy")}
                       </span>

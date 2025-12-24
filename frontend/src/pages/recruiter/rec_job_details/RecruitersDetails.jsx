@@ -8,6 +8,7 @@ import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Helmet } from "react-helmet-async";
 
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,17 @@ const RecruitersDetails = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Recruiter Profile & Job Postings Management | Admin Dashboard – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="View and manage detailed recruiter profiles with complete hiring insights across Hyderabad State through GreatHire’s advanced admin dashboard. This powerful interface enables administrators to review recruiter credentials, verification status, company associations, and active job postings from a centralized platform. Track recruiter performance, monitor job activity, validate contact details, and ensure hiring compliance with ease. Designed for scalability and transparency, GreatHire helps organizations streamline recruitment operations, improve decision-making, and maintain full control over recruiter-driven hiring workflows."
+        />
+      </Helmet>
+
       {user?.role !== "recruiter" && <Navbar linkName="Recruiter Details" />}
 
       <div className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-10">

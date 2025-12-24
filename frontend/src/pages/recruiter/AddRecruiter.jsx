@@ -4,6 +4,7 @@ import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector, useDispatch } from "react-redux";
 import { addRecruiter } from "@/redux/recruiterSlice";
+import { Helmet } from "react-helmet-async";
 
 const AddRecruiter = () => {
   const dispatch = useDispatch();
@@ -74,6 +75,19 @@ const AddRecruiter = () => {
 
   return (
     <>
+      <Helmet>
+        {/* Meta Title */}
+        <title>
+          Add Recruiter | Build Your Hiring Team & Manage Recruiters – GreatHire
+        </title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="Add and manage recruiters effortlessly on GreatHire, a trusted recruitment platform operating from Hyderabad State, India, empowering companies to build strong and efficient hiring teams. This Add Recruiter page allows organizations to onboard recruiters securely by capturing essential details such as name, work email, role, and contact information. Strengthen your recruitment process, assign hiring responsibilities, and scale faster with a centralized recruiter management system. Designed for growing companies and HR teams, GreatHire helps you create a smart, professional, and verified recruiter network that accelerates hiring success."
+        />
+      </Helmet>
+      
       {company && user?.isActive ? (
         <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100">
           <form
@@ -143,9 +157,8 @@ const AddRecruiter = () => {
             </div>
             <button
               type="submit"
-              className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                loading ? "cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 ${loading ? "cursor-not-allowed" : ""
+                }`}
               disabled={loading}
             >
               {loading ? "Adding..." : "Add Recruiter"}

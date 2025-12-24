@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
 import { addCompany } from "@/redux/companySlice";
+import { Helmet } from "react-helmet-async";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
@@ -143,6 +144,19 @@ const RecruiterHome = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Home | Hiring Analytics, Jobs & Applicants – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire’s Recruiter Home is a powerful hiring control platform for modern recruiters, located in Hyderabad State, India, supporting startups, enterprises, IT firms, and fast-growing companies across multiple industries. This advanced dashboard allows you to post and manage jobs, track active and expired listings, monitor applicants, shortlist top candidates, manage recruiters, and control job and database credits with ease. With real-time analytics, clean insights, and streamlined workflows, GreatHire empowers organizations to hire faster, smarter, and more efficiently while building a strong employer brand."
+        />
+      </Helmet>
+
+
+
       {company && user?.isActive ? (
         <div className="min-h-screen p-8 pt-20 bg-gray-50">
           {/* Header Section */}
@@ -158,7 +172,7 @@ const RecruiterHome = () => {
                 Here’s an overview of your recruitment activity.
               </p>
             </div>
-            
+
           </header>
 
           {/* Stats Cards */}

@@ -16,6 +16,7 @@ import Navbar from "@/components/admin/Navbar";
 import { useSelector } from "react-redux";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 // Define available status options for filtering applicants
 const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
@@ -97,11 +98,23 @@ const AppliedCandidatesList = () => {
 
   return (
     <>
+
+      <Helmet>
+        <title>
+          Applied Candidates List | Track & Manage Job Applications – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="GreatHire delivers a high-performance applied candidates list built for efficient and data-driven hiring across modern organizations. Trusted by growing teams in Hyderabad State, India, this powerful recruitment page enables recruiters to review applicant profiles, analyze resumes, track application statuses, and manage candidates seamlessly from one dashboard. Designed to reduce hiring friction and improve decision-making, GreatHire enhances recruiter productivity, accelerates shortlisting, and strengthens collaboration. Gain complete visibility into your hiring pipeline with a secure, scalable, and recruiter-first applicant management system that helps you hire smarter and faster."
+        />
+      </Helmet>
+
+
       {user?.role !== "recruiter" && <Navbar linkName={"Applicants List"} />}
       <div
-        className={`${
-          user?.role !== "recruiter" ? "bg-white m-4" : ""
-        } p-5 h-screen`}
+        className={`${user?.role !== "recruiter" ? "bg-white m-4" : ""
+          } p-5 h-screen`}
       >
         {!applicantDetailsModal ? (
           <>
@@ -191,9 +204,8 @@ const AppliedCandidatesList = () => {
                       </TableCell>
                       <TableCell>
                         <div
-                          className={`px-3 py-1 rounded-md text-sm text-center ${
-                            statusStyles[data.status]
-                          }`}
+                          className={`px-3 py-1 rounded-md text-sm text-center ${statusStyles[data.status]
+                            }`}
                         >
                           {data.status}
                         </div>
@@ -218,11 +230,10 @@ const AppliedCandidatesList = () => {
             {totalPages >= 1 && (
               <div className="flex justify-between items-center mt-4">
                 <button
-                  className={`px-4 py-2 text-white rounded-md ${
-                    currentPage === 1
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 text-white rounded-md ${currentPage === 1
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                    }`}
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
@@ -236,11 +247,10 @@ const AppliedCandidatesList = () => {
                 </span>
 
                 <button
-                  className={`px-4 py-2 text-white rounded-md ${
-                    currentPage === totalPages
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
-                  }`}
+                  className={`px-4 py-2 text-white rounded-md ${currentPage === totalPages
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                    }`}
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }

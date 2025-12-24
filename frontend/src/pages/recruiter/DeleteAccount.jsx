@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import { removeCompany } from "@/redux/companySlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import { Helmet } from "react-helmet-async";
 
 const DeleteAccount = () => {
   const dispatch = useDispatch();
@@ -106,7 +107,20 @@ const DeleteAccount = () => {
 
   return (
     <>
-    {/* Check if the company exists and user is active */}
+      <Helmet>
+        {/* Meta Title */}
+        <title>
+          Delete Recruiter Account | Transfer Admin & Secure Exit – GreatHire
+        </title>
+
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="Safely delete your recruiter account on GreatHire with full control and transparency. Hyderabad State India based platform allows admins to transfer ownership securely before exiting, ensuring uninterrupted hiring operations and complete data protection. GreatHire is a trusted recruitment solution serving startups, enterprises, HR teams, staffing agencies, and fast-growing companies with reliable hiring workflows, secure account management, seamless recruiter collaboration, and compliance-driven processes designed to protect your organization’s data, reputation, and employer brand."
+        />
+      </Helmet>
+
+      {/* Check if the company exists and user is active */}
       {company && user?.isActive ? (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
           <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md mx-4 sm:mx-0">
@@ -153,30 +167,28 @@ const DeleteAccount = () => {
                 onMouseEnter={() => setPromoteTooltip(true)}
                 onMouseLeave={() => setPromoteTooltip(false)}
                 onClick={changeAdmin}
-                className={`w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all ease-in-out ${
-                  ploading && "cursor-not-allowed"
-                }`}
+                className={`w-full bg-blue-600 text-white py-3 px-6 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all ease-in-out ${ploading && "cursor-not-allowed"
+                  }`}
               >
                 {ploading
                   ? "Promoting..."
                   : promoteTooltip
-                  ? " You will lose admin rights"
-                  : "Promote to Admin"}
+                    ? " You will lose admin rights"
+                    : "Promote to Admin"}
               </button>
 
               <button
                 onMouseEnter={() => setDeleteTooltip(true)}
                 onMouseLeave={() => setDeleteTooltip(false)}
                 onClick={() => setShowDeleteModal(true)}
-                className={`w-full bg-red-600 text-white py-3 px-6 rounded-lg text-sm font-semibold hover:bg-red-500 transition-all ease-in-out ${
-                  dloading && "cursor-not-allowed"
-                }`}
+                className={`w-full bg-red-600 text-white py-3 px-6 rounded-lg text-sm font-semibold hover:bg-red-500 transition-all ease-in-out ${dloading && "cursor-not-allowed"
+                  }`}
               >
                 {dloading
                   ? "Deleting..."
                   : deleteTooltip
-                  ? " Account Deletion will lose company and job!"
-                  : "Delete Account"}
+                    ? " Account Deletion will lose company and job!"
+                    : "Delete Account"}
               </button>
             </div>
           </div>

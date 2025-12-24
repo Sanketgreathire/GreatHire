@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations } from "@/utils/constant";
+import { Helmet } from "react-helmet-async";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
@@ -21,19 +22,19 @@ const PostJob = () => {
 
   const handleChange = (e) => {
     const lines = e.target.value.split("\n");
-  
+
     // Ensure each new line starts with a single bullet point, avoiding duplicate bullets
-  //    formattedText = lines.map(line => {
-  //     return line.startsWith("• ") ? line : `• ${line.trim()}`;
-  //   }).join("\n");
-  // const
-  //   formik.setFieldValue("details", formattedText);
+    //    formattedText = lines.map(line => {
+    //     return line.startsWith("• ") ? line : `• ${line.trim()}`;
+    //   }).join("\n");
+    // const
+    //   formik.setFieldValue("details", formattedText);
   };
-  
+
   useEffect(() => {
     if (company && company?.maxJobPosts === 0 && company?.creditedForJobs < 500)
       navigate("/recruiter/dashboard/your-plans");
-  },[]);
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -56,7 +57,7 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
-      anyAmount:"",
+      anyAmount: "",
     },
     validationSchema: Yup.object({
       urgentHiring: Yup.string().required("This field is required"),
@@ -92,12 +93,12 @@ const PostJob = () => {
           }
         );
         if (response.data.success) {
-          if (company?.maxJobPosts !== null ){
-               dispatch(decreaseMaxPostJobs(1));
+          if (company?.maxJobPosts !== null) {
+            dispatch(decreaseMaxPostJobs(1));
           }//else if(company?.creditedForJobs !== null ){
           //   dispatch(decreaseJobCredits(500));
           // }
-          
+
           toast.success("Job post successfully");
           // Redirect to the dashboard after 2 seconds
           setTimeout(() => {
@@ -118,8 +119,8 @@ const PostJob = () => {
     const currentStepFields = [
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
-      ["experience", "salary", "jobType","workPlaceFlexibility","location"], // Step 2
-      ["numberOfOpening", "respondTime","duration","anyAmount"], // Step 3
+      ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
+      ["numberOfOpening", "respondTime", "duration", "anyAmount"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -156,6 +157,17 @@ const PostJob = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Post a Job & Hire Faster | Recruit Top Talent with GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="Post jobs effortlessly on GreatHire and reach qualified candidates faster with our powerful recruitment tools. Designed for modern hiring teams operating from Hyderabad State, one of India’s fastest-growing employment and technology hubs, this platform streamlines job posting end to end. Add job details, skills, salary, benefits, and location with ease while ensuring compliance and transparency. Whether you’re hiring urgently or planning long-term growth, GreatHire helps companies attract the right talent, reduce hiring time, and scale recruitment with confidence and speed."
+        />
+      </Helmet>
+
       {company && user?.isActive ? (
         <div className="px-2 py-4 pt-20 dark:bg-gray-800">
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg dark:bg-gray-800">
@@ -261,11 +273,10 @@ const PostJob = () => {
                       type="button"
                       onClick={handlePrevious}
                       disabled={step === 0} // Disable button if step is 0
-                      className={`p-2 rounded ${
-                        step === 0
+                      className={`p-2 rounded ${step === 0
                           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                           : "bg-gray-500 text-white"
-                      }`}
+                        }`}
                     >
                       Previous
                     </button>
@@ -301,7 +312,7 @@ const PostJob = () => {
                       Skills<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <textarea
-                      id = "skills"
+                      id="skills"
                       name="skills"
                       placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
                       className="w-full p-3 border border-gray-300 rounded"
@@ -317,66 +328,66 @@ const PostJob = () => {
 
                   {/* Benefits */}
                   <div className="mb-6">
-                  <Label htmlFor="benefits" className="block text-gray-700 mb-1">
-                  Benefits<span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <div className="grid grid-cols-2 gap-2 mb-2">
-                  {[
-                    "Health Insurance",
-                    "Provident Fund",
-                    "Cell Phone Reimbursement",
-                    "Paid Sick Time",
-                    "Work From Home",
-                    "Paid time Off",
-                    "Food Provided",
-                    "Life Insurance",
-                    "Internet Reimbursement",
-                    "Commuter Assistance",
-                    "Leave Encashment",
-                    "Flexible Schedule",
-                    "Others",
-                  ].map((benefit) => {
-                // Ensure benefits is always a string before splitting
-                const selectedBenefits = String(formik.values.benefits || "").split("\n");
+                    <Label htmlFor="benefits" className="block text-gray-700 mb-1">
+                      Benefits<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      {[
+                        "Health Insurance",
+                        "Provident Fund",
+                        "Cell Phone Reimbursement",
+                        "Paid Sick Time",
+                        "Work From Home",
+                        "Paid time Off",
+                        "Food Provided",
+                        "Life Insurance",
+                        "Internet Reimbursement",
+                        "Commuter Assistance",
+                        "Leave Encashment",
+                        "Flexible Schedule",
+                        "Others",
+                      ].map((benefit) => {
+                        // Ensure benefits is always a string before splitting
+                        const selectedBenefits = String(formik.values.benefits || "").split("\n");
 
-               return (
-                 <label key={benefit} className="flex items-center space-x-2">
-               <input
-                  type="checkbox"
-                  name="benefitsCheckbox"
-                  value={benefit}
-                  className="w-4 h-4"
-                  checked={selectedBenefits.includes(benefit)}
-                  onChange={(e) => {
-                  let updatedBenefits = [...selectedBenefits].filter(Boolean); // Remove empty values
+                        return (
+                          <label key={benefit} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              name="benefitsCheckbox"
+                              value={benefit}
+                              className="w-4 h-4"
+                              checked={selectedBenefits.includes(benefit)}
+                              onChange={(e) => {
+                                let updatedBenefits = [...selectedBenefits].filter(Boolean); // Remove empty values
 
-                  if (e.target.checked) {
-                  updatedBenefits.push(benefit);
-              } else {
-                updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
-              }
+                                if (e.target.checked) {
+                                  updatedBenefits.push(benefit);
+                                } else {
+                                  updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
+                                }
 
-                formik.setFieldValue("benefits", updatedBenefits.join("\n")); // Store as a string
-              }}
-             />
-              <span className="text-gray-600">{benefit}</span>
-               </label>
-              );
-             })}
-           </div>
+                                formik.setFieldValue("benefits", updatedBenefits.join("\n")); // Store as a string
+                              }}
+                            />
+                            <span className="text-gray-600">{benefit}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
 
-            <textarea
-              id="benefits"
-              name="benefits"
-              placeholder="Enter additional benefits..."
-              className="w-full p-2 border border-gray-300 rounded h-24"
-              onChange={formik.handleChange}
-              value={String(formik.values.benefits || "")} // Ensure it's always a string
-            />
-              {formik.touched.benefits && formik.errors.benefits && (
-           <div className="text-red-500 text-sm">{formik.errors.benefits}</div>
-             )}
-          </div>
+                    <textarea
+                      id="benefits"
+                      name="benefits"
+                      placeholder="Enter additional benefits..."
+                      className="w-full p-2 border border-gray-300 rounded h-24"
+                      onChange={formik.handleChange}
+                      value={String(formik.values.benefits || "")} // Ensure it's always a string
+                    />
+                    {formik.touched.benefits && formik.errors.benefits && (
+                      <div className="text-red-500 text-sm">{formik.errors.benefits}</div>
+                    )}
+                  </div>
                   {/* Qualifications */}
                   <div className="mb-6">
                     <Label
@@ -459,70 +470,70 @@ const PostJob = () => {
                 <div>
                   {/* Experience */}
                   <div className="mb-6">
-                  <Label htmlFor="experience" className="block text-gray-700 mb-1">
-                  Experience<span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <div className="grid grid-cols-2 gap-2">
-                   {[
-                    "Fresher",
-                    "6 months-1 year",
-                    "1-2 years",
-                    "2-3 years",
-                    "3-4 years",
-                    "More than 5 years",
-                   ].map((option) => {
-                  // Convert the current string value into an array for easier handling
-                    const selectedOptions = formik.values.experience
-                    ? formik.values.experience.split(", ")
-                    : [];
-                  return (
-                    <label key={option} className="flex items-center space-x-2">
-                    {/* Changed input type from radio to checkbox */}
-                    <input
-                      type="checkbox"
-                      name="experience"
-                      value={option}
-                     // Updated to check if the option exists in the array derived from the string
-                      checked={selectedOptions.includes(option)}
-                      onChange={(e) => {
-                    // Create a mutable copy of the current selections from the string value
-                    let updatedOptions = [...selectedOptions];
-                     if (e.target.checked) {
-                    // Add the option if checked
-                      updatedOptions.push(option);
-                     } else {
-                    // Remove the option if unchecked
-                      updatedOptions = updatedOptions.filter((opt) => opt !== option);
-                     }
-                    // Join the array back into a string (comma separated) to meet the expected type
-                      formik.setFieldValue("experience", updatedOptions.join(", "));
-                     }}
-                      className="peer hidden"
-                    />
-                  <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
-                    {selectedOptions.includes(option) && (
-                      <svg
-                       className="w-4 h-4 text-white"
-                       viewBox="0 0 24 24"
-                       fill="none"
-                       stroke="currentColor"
-                       strokeWidth="4"
-                       strokeLinecap="butt"
-                       strokeLinejoin="miter"
-                      >
-                       <polyline points="4 12 10 18 20 5" />
-                      </svg>
+                    <Label htmlFor="experience" className="block text-gray-700 mb-1">
+                      Experience<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        "Fresher",
+                        "6 months-1 year",
+                        "1-2 years",
+                        "2-3 years",
+                        "3-4 years",
+                        "More than 5 years",
+                      ].map((option) => {
+                        // Convert the current string value into an array for easier handling
+                        const selectedOptions = formik.values.experience
+                          ? formik.values.experience.split(", ")
+                          : [];
+                        return (
+                          <label key={option} className="flex items-center space-x-2">
+                            {/* Changed input type from radio to checkbox */}
+                            <input
+                              type="checkbox"
+                              name="experience"
+                              value={option}
+                              // Updated to check if the option exists in the array derived from the string
+                              checked={selectedOptions.includes(option)}
+                              onChange={(e) => {
+                                // Create a mutable copy of the current selections from the string value
+                                let updatedOptions = [...selectedOptions];
+                                if (e.target.checked) {
+                                  // Add the option if checked
+                                  updatedOptions.push(option);
+                                } else {
+                                  // Remove the option if unchecked
+                                  updatedOptions = updatedOptions.filter((opt) => opt !== option);
+                                }
+                                // Join the array back into a string (comma separated) to meet the expected type
+                                formik.setFieldValue("experience", updatedOptions.join(", "));
+                              }}
+                              className="peer hidden"
+                            />
+                            <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
+                              {selectedOptions.includes(option) && (
+                                <svg
+                                  className="w-4 h-4 text-white"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                  strokeLinecap="butt"
+                                  strokeLinejoin="miter"
+                                >
+                                  <polyline points="4 12 10 18 20 5" />
+                                </svg>
+                              )}
+                            </div>
+                            <span className="text-gray-700">{option}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {formik.touched.experience && formik.errors.experience && (
+                      <div className="text-red-500 text-sm">{formik.errors.experience}</div>
                     )}
                   </div>
-                    <span className="text-gray-700">{option}</span>
-                 </label>
-                   );
-                  })}
-               </div>
-                  {formik.touched.experience && formik.errors.experience && (
-               <div className="text-red-500 text-sm">{formik.errors.experience}</div>
-                 )}
-             </div>
 
                   {/* Salary */}
                   <div className="mb-6">
@@ -533,29 +544,29 @@ const PostJob = () => {
                       Salary<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <div className="flex items-center space-x-2">
-                    <input
-                      id="salary"
-                      name="salary"
-                      type="text"
-                      placeholder="Enter salary (e.g., 45000-50000)"
-                      className="w-full p-2 border border-gray-300 rounded h-10"
-                      onChange={formik.handleChange}
-                      value={formik.values.salary}
-                    />
-                    <select
-                      id="salaryType"
-                      name="salaryType"
-                      className="p-2 border border-gray-300 rounded bg-white h-10 w-32 text-gray-700"
-                      onChange={formik.handleChange}
-                      value={formik.values.salaryType || ""}
-                    >
-                      <option value="" disabled>Rate</option>
-                      <option value="per year">per year</option>
-                      <option value="per month">per month</option>
-                      <option value="per week">per week</option>
-                      <option value="per day">per day</option>
-                      <option value="per hour">per hour</option>
-                    </select>
+                      <input
+                        id="salary"
+                        name="salary"
+                        type="text"
+                        placeholder="Enter salary (e.g., 45000-50000)"
+                        className="w-full p-2 border border-gray-300 rounded h-10"
+                        onChange={formik.handleChange}
+                        value={formik.values.salary}
+                      />
+                      <select
+                        id="salaryType"
+                        name="salaryType"
+                        className="p-2 border border-gray-300 rounded bg-white h-10 w-32 text-gray-700"
+                        onChange={formik.handleChange}
+                        value={formik.values.salaryType || ""}
+                      >
+                        <option value="" disabled>Rate</option>
+                        <option value="per year">per year</option>
+                        <option value="per month">per month</option>
+                        <option value="per week">per week</option>
+                        <option value="per day">per day</option>
+                        <option value="per hour">per hour</option>
+                      </select>
                     </div>
                     {formik.touched.salary && formik.errors.salary && (
                       <div className="text-red-500 text-sm">
@@ -579,15 +590,15 @@ const PostJob = () => {
                       className="w-full p-2 border border-gray-300 rounded"
                       onChange={formik.handleChange}
                       value={formik.values.jobType}
-                      >
-                        <option value="">Select a job type</option>
-                        <option value="Full-Time">Full-Time</option>
-                        <option value="Part-Time">Part-Time</option>
-                        <option value="Contract/Temporary">Contract/Temporary</option>
-                        <option value="Freelance">Freelance</option>
-                        <option value="Internship">Internship</option>
-                        <option value="Volunteer">Volunteer</option>
-                        <option value="Fresher">Fresher</option>
+                    >
+                      <option value="">Select a job type</option>
+                      <option value="Full-Time">Full-Time</option>
+                      <option value="Part-Time">Part-Time</option>
+                      <option value="Contract/Temporary">Contract/Temporary</option>
+                      <option value="Freelance">Freelance</option>
+                      <option value="Internship">Internship</option>
+                      <option value="Volunteer">Volunteer</option>
+                      <option value="Fresher">Fresher</option>
                     </select>
                     {formik.touched.jobType && formik.errors.jobType && (
                       <div className="text-red-500 text-sm">
@@ -595,7 +606,7 @@ const PostJob = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="mb-6">
                     <Label className="block text-gray-700 mb-1">
                       Work Place Flexibility <span className="text-red-500 ml-1">*</span>
@@ -621,53 +632,53 @@ const PostJob = () => {
 
                   {/* Location */}
                   <div className="mb-6 relative">
-                  <Label htmlFor="location" className="block text-gray-700 mb-1">
-                  Location<span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    className="w-full p-2 border border-gray-300 rounded bg-white"
-                    placeholder="Enter location manually or select from dropdown"
-                    value={formik.values.location}
-                    onChange={(e) => {
-                      formik.handleChange(e);
-                      e.target.nextSibling.classList.remove("hidden");
-                    }}
+                    <Label htmlFor="location" className="block text-gray-700 mb-1">
+                      Location<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      className="w-full p-2 border border-gray-300 rounded bg-white"
+                      placeholder="Enter location manually or select from dropdown"
+                      value={formik.values.location}
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        e.target.nextSibling.classList.remove("hidden");
+                      }}
                       onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
                       onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
                     />
                     <div className="absolute w-full bg-white border border-gray-300 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden">
-                    {[
-                      ...Object.values(allLocations)
-                      .flat()
-                      .filter((location) =>
-                       location.toLowerCase().includes(formik.values.location.toLowerCase())
-                     ),
-                      ...Object.values(allLocations)
-                      .flat()
-                      .filter(
-                     (location) =>
-                      !location.toLowerCase().includes(formik.values.location.toLowerCase())
-                     ),
-                 ].map((location) => (
-              <div
-                 key={location}
-                 className="p-2 hover:bg-gray-200 cursor-pointer"
-                 onMouseDown={(e) => {
-                 formik.setFieldValue("location", location);
-                e.target.parentNode.classList.add("hidden");
-               }}
-                >
-               {location}
-             </div>
-              ))}
-           </div>
-               {formik.touched.location && formik.errors.location && (
-            <div className="text-red-500 text-sm">{formik.errors.location}</div>
-               )}
-          </div>
+                      {[
+                        ...Object.values(allLocations)
+                          .flat()
+                          .filter((location) =>
+                            location.toLowerCase().includes(formik.values.location.toLowerCase())
+                          ),
+                        ...Object.values(allLocations)
+                          .flat()
+                          .filter(
+                            (location) =>
+                              !location.toLowerCase().includes(formik.values.location.toLowerCase())
+                          ),
+                      ].map((location) => (
+                        <div
+                          key={location}
+                          className="p-2 hover:bg-gray-200 cursor-pointer"
+                          onMouseDown={(e) => {
+                            formik.setFieldValue("location", location);
+                            e.target.parentNode.classList.add("hidden");
+                          }}
+                        >
+                          {location}
+                        </div>
+                      ))}
+                    </div>
+                    {formik.touched.location && formik.errors.location && (
+                      <div className="text-red-500 text-sm">{formik.errors.location}</div>
+                    )}
+                  </div>
 
                   {/* Navigation Buttons */}
                   <div className="flex justify-between">
@@ -765,7 +776,7 @@ const PostJob = () => {
 
                   <div className="mb-6">
                     <Label className="block text-gray-700 mb-1">
-                    Applicants need to  pay any charges?<span className="text-red-500 ml-1">*</span>
+                      Applicants need to  pay any charges?<span className="text-red-500 ml-1">*</span>
                     </Label>
                     <select
                       name="anyAmount"
@@ -784,10 +795,10 @@ const PostJob = () => {
                         </div>
                       )}
 
-                      {/* Note about GreatHire policy */}
-                      <p className="text-sm text-gray-600 mt-2">
-                        <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
-                      </p>
+                    {/* Note about GreatHire policy */}
+                    <p className="text-sm text-gray-600 mt-2">
+                      <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
+                    </p>
                   </div>
 
 
@@ -842,15 +853,15 @@ const PostJob = () => {
                       <strong>Skills:</strong>{" "}
                       {formik.values.skills.length > 0
                         ? formik.values.skills
-                            .split(",")
-                            .map((skill, index) => (
-                              <span
-                                key={index}
-                                className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-2"
-                              >
-                                {skill.trim()}
-                              </span>
-                            ))
+                          .split(",")
+                          .map((skill, index) => (
+                            <span
+                              key={index}
+                              className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-2"
+                            >
+                              {skill.trim()}
+                            </span>
+                          ))
                         : "N/A"}
                     </div>
                     <div className="mb-2 dark:text-gray-100">
@@ -860,15 +871,15 @@ const PostJob = () => {
                     <div className="mb-2 dark:text-gray-100">
                       <strong>Benefits:</strong>{" "}
                       {formik.values.benefits
-                        ? formik.values.benefits.split("\n").join(", "): "N/A"}
+                        ? formik.values.benefits.split("\n").join(", ") : "N/A"}
                     </div>
                     <div className="mb-2 dark:text-gray-100">
                       <strong>Qualification:</strong>{" "}
                       {formik.values.qualifications || "N/A"}
                     </div>
                     <div className="mb-2 dark:text-gray-100">
-                      <strong>Salary:</strong>{" "} 
-                      {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim(): "N/A"}
+                      <strong>Salary:</strong>{" "}
+                      {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim() : "N/A"}
                     </div>
                     <div className="mb-2 dark:text-gray-100">
                       <strong>Job Type:</strong>{" "}
@@ -890,7 +901,7 @@ const PostJob = () => {
                       <strong>Response Time:</strong>{" "}
                       {formik.values.respondTime + " days" || "N/A"}
                     </div>
-                    
+
                     <div className="mb-2">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}
@@ -944,9 +955,8 @@ const PostJob = () => {
                     </button>
                     <button
                       type="submit"
-                      className={`bg-blue-700 text-white p-2 rounded ${
-                        loading && "cursor-not-allowed"
-                      }`}
+                      className={`bg-blue-700 text-white p-2 rounded ${loading && "cursor-not-allowed"
+                        }`}
                       disabled={loading}
                     >
                       {loading ? "Posting..." : "Post"}

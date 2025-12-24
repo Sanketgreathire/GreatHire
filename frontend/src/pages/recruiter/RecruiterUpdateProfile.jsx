@@ -8,6 +8,7 @@ import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -88,138 +89,150 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={() => setOpen(false)}
-    >
+    <>
+      <Helmet>
+        <title>
+          Update Profile | Manage Personal & Professional Details – GreatHire
+        </title>
+
+        <meta
+          name="description"
+          content="The Recruiter Update Profile page on GreatHire allows professionals to securely update personal information, role details, and profile images with ease. Built for modern hiring workflows, our platform is operated from Hyderabad State, India, delivering reliable recruitment technology to companies, HR teams, and fast-growing startups. Keep your recruiter identity accurate, verified, and professional while strengthening trust with candidates. With a smooth interface, secure updates, and real-time profile management, GreatHire empowers recruiters to present credibility, enhance visibility, and stay competitive in today’s evolving job market."
+        />
+      </Helmet>
       <div
-        className="relative bg-white sm:max-w-[500px] w-full p-6 rounded-lg shadow-lg"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={() => setOpen(false)}
       >
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-          aria-label="Close"
+        <div
+          className="relative bg-white sm:max-w-[500px] w-full p-6 rounded-lg shadow-lg"
+          onClick={(e) => e.stopPropagation()}
         >
-          ✖
-        </button>
-        <h2 className="text-lg text-center font-semibold">Update Profile</h2>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            aria-label="Close"
+          >
+            ✖
+          </button>
+          <h2 className="text-lg text-center font-semibold">Update Profile</h2>
 
-        {/* Profile Image on the Right */}
-        <div className="relative flex flex-col items-center">
-                <div className="relative w-24 h-24">
-                  {previewImage ? (
-                    <img
-                      src={previewImage}
-                      alt="Profile Preview"
-                      className="w-full h-full rounded-full object-cover border"
+          {/* Profile Image on the Right */}
+          <div className="relative flex flex-col items-center">
+            <div className="relative w-24 h-24">
+              {previewImage ? (
+                <img
+                  src={previewImage}
+                  alt="Profile Preview"
+                  className="w-full h-full rounded-full object-cover border"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
+                  <p>No Image</p>
+                </div>
+              )}
+
+              {/* Pencil Icon */}
+              <label
+                htmlFor="profilePhoto"
+                className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-lg cursor-pointer"
+              >
+                <Pencil className="w-5 h-5 text-gray-700" />
+              </label>
+            </div>
+
+            {/* Hidden file input */}
+            <input
+              type="file"
+              id="profilePhoto"
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </div>
+
+          <form onSubmit={submitHandler} className="space-y-4 mt-4">
+            <div className="grid gap-4 py-2">
+              <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
+                {/* Name and Email Fields*/}
+                <div className="col-span-2 grid gap-4">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="fullname" className="w-16">
+                      Name
+                    </Label>
+                    <Input
+                      id="fullname"
+                      name="fullname"
+                      value={input.fullname}
+                      onChange={changeEventHandler}
                     />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
-                      <p>No Image</p>
-                    </div>
-                  )}
-
-                  {/* Pencil Icon */}
-                  <label
-                    htmlFor="profilePhoto"
-                    className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-lg cursor-pointer"
-                  >
-                    <Pencil className="w-5 h-5 text-gray-700" />
-                  </label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="email" className="w-16">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      value={input.email}
+                      onChange={changeEventHandler}
+                      readOnly
+                    />
+                  </div>
                 </div>
-
-                {/* Hidden file input */}
-                <input
-                  type="file"
-                  id="profilePhoto"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
               </div>
 
-        <form onSubmit={submitHandler} className="space-y-4 mt-4">
-          <div className="grid gap-4 py-2">
-            <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
-              {/* Name and Email Fields*/}
-              <div className="col-span-2 grid gap-4">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="fullname" className="w-16">
-                    Name
+              {/* Phone and Position Fields in a Single Row */}
+              <div className="grid grid-cols-1 gap-4 items-center">
+                {/* Phone Field */}
+                <div className="flex items-center gap-6">
+                  <Label htmlFor="phoneNumber" className="whitespace-nowrap">
+                    Phone
                   </Label>
                   <Input
-                    id="fullname"
-                    name="fullname"
-                    value={input.fullname}
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={input.phoneNumber}
                     onChange={changeEventHandler}
+                    className="w-full"
+                    placeholder="Enter your phone number"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="email" className="w-16">
-                    Email
+
+                {/* Position Field */}
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="position" className="whitespace-nowrap">
+                    Position
                   </Label>
                   <Input
-                    id="email"
-                    name="email"
-                    value={input.email}
+                    id="position"
+                    name="position"
+                    value={input.position}
                     onChange={changeEventHandler}
-                    readOnly
+                    className="w-full"
+                    placeholder="Enter Your Position"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Phone and Position Fields in a Single Row */}
-            <div className="grid grid-cols-1 gap-4 items-center">
-              {/* Phone Field */}
-              <div className="flex items-center gap-6">
-                <Label htmlFor="phoneNumber" className="whitespace-nowrap">
-                  Phone
-                </Label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={input.phoneNumber}
-                  onChange={changeEventHandler}
-                  className="w-full"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-
-              {/* Position Field */}
-              <div className="flex items-center gap-4">
-                <Label htmlFor="position" className="whitespace-nowrap">
-                  Position
-                </Label>
-                <Input
-                  id="position"
-                  name="position"
-                  value={input.position}
-                  onChange={changeEventHandler}
-                  className="w-full"
-                  placeholder="Enter Your Position"
-                />
-              </div>
+            {/* Submit Button */}
+            <div>
+              {loading ? (
+                <Button className="w-full my-4" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full my-4">
+                  Update
+                </Button>
+              )}
             </div>
-          </div>
-
-          {/* Submit Button */}
-          <div>
-            {loading ? (
-              <Button className="w-full my-4" disabled>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-              </Button>
-            ) : (
-              <Button type="submit" className="w-full my-4">
-                Update
-              </Button>
-            )}
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

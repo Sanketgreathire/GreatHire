@@ -324,6 +324,7 @@ import { FiUsers } from "react-icons/fi";
 import { CiMenuBurger } from "react-icons/ci";
 import { FaDatabase } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { Helmet } from "react-helmet-async";
 
 const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
@@ -344,6 +345,18 @@ const DashboardNavigations = () => {
 
   return (
     <>
+    <Helmet>
+  {/* Meta Title */}
+  <title>
+    Dashboard Navigation | Manage Hiring, Jobs & Teams – GreatHire
+  </title>
+
+  {/* Meta Description */}
+  <meta
+    name="description"
+    content="Hyderabad State powered dashboard by GreatHire enables modern companies to manage recruitment efficiently from one centralized platform. This intuitive dashboard helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. Built for startups, enterprises, HR teams, and staffing agencies, GreatHire simplifies complex hiring workflows while offering speed, security, and scalability. With smart navigation, real-time insights, and role-based access, recruiters can make faster decisions, streamline candidate management, and scale their hiring operations confidently across India."
+  />
+</Helmet>
       {/*  Hamburger Button (Visible on Small Screens) */}
       <button
         className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm"
