@@ -31,11 +31,18 @@ const LatestJobs = ({ jobs = [] }) => {
       </Helmet>
 
 
-      <div className="max-w-7xl mx-auto my-4 dark:text-gray-100 pl-4 ">
+      <div className="max-w-7xl mx-auto my-4 dark:text-gray-100 ">
         {/* Section Title */}
-        <h1 className="ml-6 text-4xl font-bold dark:text-gray-100">
-          <span className="text-[#384ac2] dark:text-gray-100">Latest & Top</span> Job Openings
+        <h1 className="ml-2 sm:ml-4 lg:ml-6 font-bold lg:tracking-wide text-2xl sm:text-3xl lg:text-4xl dark:text-gray-100">
+          <span className="text-[#384ac2] lg:tracking-wider">
+            Latest&nbsp;&amp;&nbsp;Top
+          </span>
+          &nbsp;Job&nbsp;Openings
         </h1>
+
+        {/* <h1 className="ml-6 text-4xl font-bold dark:text-gray-100">
+          <span className="text-[#384ac2] dark:text-gray-100">Latest  &  Top</span> Job Openings
+        </h1> */}
 
         {/* Display loading animation while fetching jobs */}
         {loading ? (

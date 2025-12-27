@@ -140,7 +140,7 @@ const Navbar = () => {
 
   // Right side navigation links
   const rightNavLinks = [
-    ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
+    // ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
     ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
   ];
 
