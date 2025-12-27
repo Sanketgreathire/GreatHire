@@ -173,19 +173,19 @@ export default function ReviewsSection() {
       <ReviewsCarousel
         reviews={clientReviews}
         title={
-          <span className="text-white text-4xl font-[oswald] font-bold">
-            Our Client Reviews
-          </span>
-        }
+  <span className="text-blue-600 text-4xl font-[oswald] font-bold">
+    Our Client Reviews
+  </span>
+}
         speed={120}
       />
       <ReviewsCarousel
         reviews={candidateReviews}
         title={
-          <span className="text-white text-4xl font-[oswald] font-bold">
-            Our Employee Reviews
-          </span>
-        }
+  <span className="text-blue-600 text-4xl font-[oswald] font-bold">
+    Our Employee Reviews
+  </span>
+}
         speed={120}
       />
     </div>
