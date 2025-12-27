@@ -226,7 +226,7 @@ const RecruiterSignup = () => {
                   <p className="mt-3 text-sm text-blue-600">
                     Already have an account?{" "}
                     <span
-                      onClick={() => navigate("/recruiter-login")}
+                      onClick={() => navigate("/login")}
                       className="cursor-pointer underline font-semibold hover:text-blue-800 transition-colors"
                     >
                       Log In
