@@ -176,7 +176,7 @@ const JobMajorDetails = ({ selectedJob }) => {
 
         <div className="p-4 mb-14 flex">
           <button
-            className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
+            className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer dark:bg-white-900 dark:text-gray-900"
             onClick={() => navigate(`/report-job`)}
             disabled={!user}
           >

@@ -286,6 +286,7 @@ import { Worker } from "@react-pdf-viewer/core";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
+  { path: "/blogs", element: <Blogs /> },
   { path: "/blogs/:slug", element: <Blogs /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },

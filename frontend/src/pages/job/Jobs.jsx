@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+// import Footer from "@/components/shared/Footer";
 import { FiFilter } from "react-icons/fi";
 
 import FilterCard from "@/pages/job/FilterCard";
@@ -397,7 +397,7 @@ const Jobs = () => {
 
 
 
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col pb-4">
         <Navbar />
 
         {/* Hero Section */}
@@ -427,11 +427,18 @@ const Jobs = () => {
         </div>
 
         {/* Jobs Listing Section - FIXED CONTAINER */}
-        <div className="w-full px-2 lg:px-4 dark:bg-gray-700">
-          <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gray-100 pt-6 dark:bg-gray-800">
-            <div className="flex gap-6 ">
+        <div className="w-full px-0 lg:px-0 dark:bg-gray-900">
+          <div className="
+  flex-grow w-full max-w-[1600px] mx-auto pt-6
+  bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50
+  dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
+">
+
+          {/* <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-6 dark:bg-gray-100"> */}
+          {/* <div className="flex-grow w-full max-w-full bg-gray-100 pt-6 px-0 dark:bg-gray-800"> */}
+            <div className="flex">
               {/* Sidebar (Desktop only) */}
-              <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800">
+              <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800 pb-4">
                 <FilterCard
                   onFilterChange={handleFilterChange}
                   onReset={handleResetFilters}
@@ -439,7 +446,7 @@ const Jobs = () => {
               </div>
 
               {/* Main area - FIXED WIDTH */}
-              <div className="flex-1 min-w-0  pr-2">
+              <div className="flex-1 min-w-0 ">
                 {/* Mobile toggle */}
                 <div className="flex items-center justify-between mb-4 lg:hidden px-2">
                   <button
@@ -464,16 +471,16 @@ const Jobs = () => {
                     <LatestJobs jobs={displayedJobs} />
 
                     {/* Pagination Controls */}
-                    <div className="w-full flex justify-center items-center gap-4 mt-8 mb-10">
+                    <div className="w-full flex justify-center lg:justify-end items-center gap-4 mt-0 mb-0 px-4">
                       <button
-                        className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
+                        className="px-4 py-2 border rounded disabled:opacity-50 hover:bg-gray-200 transition"
                         disabled={currentPage === 1}
                         onClick={() => handlePageChange(currentPage - 1)}
                       >
                         Prev
                       </button>
 
-                      <span className="text-lg font-semibold">
+                      <span className="text-base sm:text-lg font-semibold text-center">
                         Page {currentPage} of {totalPages}
                       </span>
 
@@ -485,6 +492,7 @@ const Jobs = () => {
                         Next
                       </button>
                     </div>
+
                   </>
                 ) : (
                   <div className="flex justify-center items-center h-40">
@@ -504,7 +512,7 @@ const Jobs = () => {
               onClick={() => setIsFilterOpen(false)}
             ></div>
 
-            <div className="relative bg-white w-72 h-full shadow-lg transform transition-transform duration-300 translate-x-0 overflow-y-auto">
+            <div className="relative bg-white w-64 sm:w-72 h-full shadow-lg transform transition-transform duration-300 translate-x-0 overflow-y-auto">
               <FilterCard
                 onFilterChange={handleFilterChange}
                 onReset={handleResetFilters}
@@ -514,7 +522,7 @@ const Jobs = () => {
           </div>
         )}
 
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   );

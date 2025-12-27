@@ -282,12 +282,12 @@ const JobsForYou = ({ jobs = [] }) => {
       </Helmet>
 
 
-      <div className="w-full mt-4 md:px-6 ">
+      <div className="w-full mt-4 ">
         {/* Job List Container - FIXED OVERFLOW */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-6">
 
           {/* Left: Job Cards List - FIXED WIDTH & OVERFLOW */}
-          <div className="flex flex-col gap-2 w-full md:w-1/3 md:max-w-[600px] m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(100vh-80px)]">
+          <div className="flex flex-col gap-4 w-full md:w-1/3 md:max-w-[600px] m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(152vh-80px)]">
             {jobs?.map((job) => (
               <div
                 key={job._id}
@@ -432,10 +432,11 @@ const JobsForYou = ({ jobs = [] }) => {
 
           {/* Right: Job Details Panel (Desktop only) - FIXED WIDTH & OVERFLOW */}
           {selectedJob && (
-            <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-2/3 md:max-w-[700px] hidden h-[calc(100vh-80px)] dark:text-pink-800">
+            <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-2/3 md:max-w-[700px] hidden h-[calc(150vh-80px)] dark:text-pink-800">
 
-              {/* Header (Sticky) */}
-              <div className="flex-shrink-0 bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50 z-10 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative">
+              {/* Header (Sticky) */} 
+              {/* <div className="flex-shrink-0 bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50 z-10 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative"> */}
+              <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative">
                 {/* Bookmark Icon - Top Right Corner */}
                 {!isApplied && user && (
                   <div className="absolute top-5 right-6">
@@ -456,20 +457,20 @@ const JobsForYou = ({ jobs = [] }) => {
                 )}
 
                 {/* Job Title */}
-                <h3 className="text-2xl font-bold text-sky-900 truncate pr-12 tracking-tight">
+                <h3 className="text-2xl font-bold text-sky-900 truncate pr-12  tracking-wide">
                   {selectedJob?.jobDetails?.title}
                 </h3>
 
                 {/* Company Name and Location Row */}
                 <div className="flex justify-between items-center gap-4 pr-12">
                   {/* Company Name - Left Side */}
-                  <p className="text-base font-semibold text-cyan-700 truncate">
+                  <p className="lg:text-lg md:text-md  font-semibold text-cyan-900 truncate">
                     {selectedJob?.jobDetails?.companyName}
                   </p>
 
                   {/* Location - Right Side */}
-                  <p className="text-md text-sky-600 flex items-center gap-1.5 flex-shrink-0">
-                    <span className="text-base">📍</span>
+                  <p className="lg:text-lg md:text-md text-sky-900 flex items-center gap-1.5 flex-shrink-0">
+                    <span className="lg:text-xl md:text-md">📍</span>
                     <span className="whitespace-nowrap">{selectedJob?.jobDetails?.location}</span>
                   </p>
                 </div>
@@ -477,10 +478,10 @@ const JobsForYou = ({ jobs = [] }) => {
                 {/* Salary & Response Time Row */}
                 <div className="flex justify-between items-center gap-3 pt-1">
                   {/* Salary - Left Side */}
-                  <div className="flex-1 px-3 py-1.5 font-bold text-sky-900 rounded-xl bg-gradient-to-r from-sky-100 to-cyan-100 border-2 border-sky-300 flex items-center justify-center shadow-sm">
+                  <div className="flex-1 px-3 py-1.5 font-bold text-sky-900 rounded-xl bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-300 flex items-center justify-center shadow-sm">
                     {selectedJob?.jobDetails?.salary
                       .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                      .split("-")
+                      .split(" - ")
                       .map((part, index) => (
                         <span key={index}>
                           ₹{part.trim()}
@@ -490,7 +491,7 @@ const JobsForYou = ({ jobs = [] }) => {
                   </div>
 
                   {/* Response Time - Right Side */}
-                  <div className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold text-cyan-800 bg-gradient-to-r from-cyan-100 to-blue-100 border-2 border-cyan-300 rounded-xl shadow-sm">
+                  <div className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold text-cyan-900 bg-gradient-to-r from-cyan-90 to-blue-10 border-2 border-cyan-500 rounded-xl shadow-sm dark:bg-gradient-to-r dark:from-cyan-50 dark:to-blue-50">
                     <AiOutlineThunderbolt className="flex-shrink-0 text-cyan-600" size={18} />
                     <span className="truncate">
                       Typically Responds in {selectedJob?.jobDetails?.respondTime} day(s)
