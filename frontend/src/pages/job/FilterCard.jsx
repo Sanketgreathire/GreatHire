@@ -184,7 +184,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       </Helmet>
 
 
-      <div className="w-72 bg-white shadow-lg rounded-lg sticky top-4 h-[96vh] relative filter-scrollbar font-sans dark:bg-gray-700 flex flex-col">
+      <div className="w-[250px] bg-white shadow-lg rounded-lg top-4 h-[155vh] relative filter-scrollbar font-sans dark:bg-gray-700 flex flex-col">
         {onClose && (
           <button
             onClick={onClose}
