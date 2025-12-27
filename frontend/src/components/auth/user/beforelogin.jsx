@@ -6,6 +6,7 @@ import Blogs from "@/pages/services/Blogs";
 import Contact from "@/pages/services/Contact";
 import Footer from "@/components/shared/Footer";
 import { useNavigate } from "react-router-dom";
+import JobsHiringSlider from "./JobSlider";
 
 const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -276,8 +277,13 @@ const GreatHireLanding = () => {
               </div>
             </div>
 
+            {/* Job Slider */}
+            <div className="mt-2 mb-0">
+              <JobsHiringSlider />
+            </div>
+
             {/* Premium Features Grid */}
-            <div className="mt-28 mb-20">
+            <div className="mt-20 mb-20">
               <div className="text-center mb-16">
                 <h2 className="text-5xl font-black text-gray-900 mb-4">
                   Why Choose <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">GreatHire</span>?
@@ -310,7 +316,7 @@ const GreatHireLanding = () => {
             </div>
 
             {/* Premium Trusted Companies */}
-            <div className="mt-28 mb-20">
+            {/* <div className="mt-28 mb-20">
               <div className="bg-white rounded-[2.5rem] p-12 shadow-2xl border-2 border-gray-100">
                 <div className="text-center mb-10">
                   <p className="text-gray-500 font-semibold text-lg mb-2">Trusted by India's leading companies</p>
@@ -326,10 +332,10 @@ const GreatHireLanding = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Ultra Premium CTA Section */}
-            <div className="mt-28">
+            <div className="mt-10">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] blur-2xl opacity-30"></div>
                 <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-16 shadow-2xl overflow-hidden">

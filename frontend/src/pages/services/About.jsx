@@ -40,7 +40,7 @@ import eeshanyaImg from "../../assets/clientLogos/eeshanya.png";
 import tataImg from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
-import SujithImg from "../../assets/user Photos/G.Sujith.jpeg";
+import SujithImg from "../../assets/user Photos/G-Sujith.jpeg";
 import NazirImg from "../../assets/user Photos/Nazir.jpeg";
 import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
 import DhanshreeImg from "../../assets/user Photos/Dhanshree.jpeg";
@@ -121,7 +121,7 @@ function App() {
       name: "Software Developers",
       members: [
         {
-          name: "G Sujith",
+          name: "G-Sujith",
           image: SujithImg,
           role: ["ChatGPT Developer"],
           expertise: "ChatGPT, AI, Machine Learning",
