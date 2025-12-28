@@ -17,7 +17,7 @@ const Footer = () => {
             <span className="text-black dark:text-white">Great</span>
             <span className="text-blue-600">Hire</span>
           </h2>
-          <p className="text-sm text-gray-900 dark: text-gray-100 ">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             © 2025 GreatHire. All rights reserved.
           </p>
         </div>

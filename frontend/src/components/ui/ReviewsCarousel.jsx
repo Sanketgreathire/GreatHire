@@ -166,6 +166,12 @@ export default function ReviewsSection() {
       name: "Vikram Roy",
       author: "DevOps Engineer",
     },
+    {
+    text: "My experience at Great Hire was truly enriching. The mentorship and exposure I received helped me gain real-world HR insights. I feel confident stepping into my professional journey.",
+    name: "Aishwarya Patel",
+    author: "Human Resource",
+  },
+
   ];
 
   return (
