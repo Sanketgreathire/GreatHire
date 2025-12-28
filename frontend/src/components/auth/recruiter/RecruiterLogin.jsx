@@ -362,7 +362,7 @@ const RecruiterLogin = () => {
                       value={otpData.otp}
                       onChange={handleChange}
                       placeholder="Enter 6-digit OTP"
-                      className="block w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                       maxLength={6}
                       required
                     />

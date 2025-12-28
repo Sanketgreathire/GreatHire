@@ -175,7 +175,7 @@ const GreatHireLanding = () => {
                 </p>
 
                 {/* Premium Search Box */}
-                <div className="bg-white rounded-3xl shadow-2xl p-4 flex flex-col lg:flex-row gap-4 border-2 border-blue-100 hover:border-blue-300 transition-all">
+                {/* <div className="bg-white rounded-3xl shadow-2xl p-4 flex flex-col lg:flex-row gap-4 border-2 border-blue-100 hover:border-blue-300 transition-all">
                   <div className="flex-1 flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
                     <Search className="w-6 h-6 text-blue-600" />
                     <input
@@ -196,7 +196,7 @@ const GreatHireLanding = () => {
                     <Search className="w-5 h-5" />
                     Search Jobs
                   </button>
-                </div>
+                </div> */}
 
                 {/* Premium Stats */}
                 <div className="flex gap-8 pt-6">

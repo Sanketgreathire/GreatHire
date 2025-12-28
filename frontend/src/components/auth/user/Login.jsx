@@ -1253,7 +1253,7 @@ const Login = ({ role = "user" }) => {
                           value={otpData.otp}
                           onChange={handleChange}
                           placeholder="Enter 6-digit OTP"
-                          className="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="block w-full px-4 py-2.5 border border-gray-300 rounded-lg text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                           maxLength={6}
                           required
                         />

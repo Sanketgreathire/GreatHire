@@ -265,7 +265,7 @@ const Navbar = () => {
                       </svg>
                     </button>
                     {isMoreMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:text-gray-800 dark:absolute right-0 mt-2 w-60 bg-gray/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1">
+                      <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:text-gray-800 dark:bg-gray-800/80 dark:backdrop-blur-sm dark:rounded-xl dark:shadow-lg dark:border-white/40 dark:p-1">
                         {secondaryNavLinks.map(({ to, label }) => (
                           <Link
                             key={to}
