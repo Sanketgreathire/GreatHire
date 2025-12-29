@@ -1,5 +1,5 @@
 // all Api points 
-export const USER_API_END_POINT = "http://localhost:8000/api/v1/user";
+/*export const USER_API_END_POINT = "http://localhost:8000/api/v1/user";
 export const RECRUITER_API_END_POINT = "http://localhost:8000/api/v1/recruiter";
 export const DIGITAL_MARKETER_API_END_POINT = "http://localhost:8000/api/v1/digitalmarketer";
 export const ADMIN_API_END_POINT = "http://localhost:8000/api/v1/admin";
@@ -25,4 +25,26 @@ export const APPLICATION_API_END_POINT =
 export const REVENUE_API_END_POINT = "http://localhost:8000/api/v1/revenue";
 export const NOTIFICATION_API_END_POINT =
   "http://localhost:8000/api/v1/notifications";
-export const BACKEND_URL = "http://localhost:8000";
+export const BACKEND_URL = "http://localhost:8000";*/
+
+const BASE_API = import.meta.env.VITE_API_URL + "/api/v1";
+
+export const USER_API_END_POINT = `${BASE_API}/user`;
+export const RECRUITER_API_END_POINT = `${BASE_API}/recruiter`;
+export const DIGITAL_MARKETER_API_END_POINT = `${BASE_API}/digitalmarketer`;
+export const ADMIN_API_END_POINT = `${BASE_API}/admin`;
+export const ADMIN_STAT_API_END_POINT = `${BASE_API}/admin/stat`;
+export const ADMIN_USER_DATA_API_END_POINT = `${BASE_API}/admin/user/data`;
+export const ADMIN_COMPANY_DATA_API_END_POINT = `${BASE_API}/admin/company/data`;
+export const ADMIN_RECRUITER_DATA_API_END_POINT = `${BASE_API}/admin/recruiter/data`;
+export const ADMIN_JOB_DATA_API_END_POINT = `${BASE_API}/admin/job/data`;
+export const ADMIN_APPLICATION_DATA_API_END_POINT = `${BASE_API}/admin/application/data`;
+export const COMPANY_API_END_POINT = `${BASE_API}/company`;
+export const VERIFICATION_API_END_POINT = `${BASE_API}/verification`;
+export const JOB_API_END_POINT = `${BASE_API}/job`;
+export const ORDER_API_END_POINT = `${BASE_API}/order`;
+export const APPLICATION_API_END_POINT = `${BASE_API}/application`;
+export const REVENUE_API_END_POINT = `${BASE_API}/revenue`;
+export const NOTIFICATION_API_END_POINT = `${BASE_API}/notifications`;
+
+export const BACKEND_URL = import.meta.env.VITE_API_URL;
