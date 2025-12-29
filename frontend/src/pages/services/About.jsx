@@ -40,54 +40,54 @@ import eeshanyaImg from "../../assets/clientLogos/eeshanya.png";
 import tataImg from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
-import SujithImg from "../../assets/user Photos/G-Sujith.jpeg";
-import NazirImg from "../../assets/user Photos/Nazir.jpeg";
-import SujeethImg from "../../assets/user Photos/Sujeeth.jpeg";
-import DhanshreeImg from "../../assets/user Photos/Dhanshree.jpeg";
-import KOIImg from "../../assets/user Photos/KOI.jpeg";
-import MaheshImg from "../../assets/user Photos/Mahesh.jpg";
-import MoizImg from "../../assets/user Photos/MoizImg.jpg";
-import AmanImg from "../../assets/user Photos/Aman.jpeg";
-import eswarImg from "../../assets/user Photos/Eswar.jpeg";
-import CharanImg from "../../assets/user Photos/Charan.jpeg";
-import nabhayImg from "../../assets/user Photos/Nabhay.jpeg";
-import NavaneethImg from "../../assets/user Photos/Navaneeth.jpeg";
-import VirendarImg from "../../assets/user Photos/Virendar.jpeg";
-import santhoshImg from "../../assets/user Photos/Santhosh.jpeg";
-import MounikaImg from "../../assets/user Photos/Mounika.jpeg";
-import lahariImg from "../../assets/user Photos/Lahari.jpeg";
-import riyaImg from "../../assets/user Photos/Riya.jpeg";
-import sushmaImg from "../../assets/user Photos/Sushma.jpeg";
-import janakiImg from "../../assets/user Photos/Janki.jpeg";
-import madhuImg from "../../assets/user Photos/madhu.jpeg";
-import mansiImg from "../../assets/user Photos/Mansi.jpeg";
-import tanmaiImg from "../../assets/user Photos/Tanmai.jpeg";
-import BlankImg from "../../assets/user Photos/Blank.jpg";
-import Gen1Img from "../../assets/user Photos/Gen1.jpeg";
-import Gen2Img from "../../assets/user Photos/Gen2.jpeg";
-import Gen3Img from "../../assets/user Photos/Gen3.jpeg";
-import Gen4Img from "../../assets/user Photos/Gen4.jpeg";
-import Gen5Img from "../../assets/user Photos/Gen5.jpeg";
-import Gen6Img from "../../assets/user Photos/Gen6.jpeg";
-import Gen7Img from "../../assets/user Photos/Gen7.jpeg";
-import Gen8Img from "../../assets/user Photos/Gen8.jpeg";
-import Gen9Img from "../../assets/user Photos/Gen9.jpeg";
-import Gen10Img from "../../assets/user Photos/Gen10.jpeg";
-import Gen11Img from "../../assets/user Photos/Gen11.jpeg";
-import Gen12Img from "../../assets/user Photos/Gen12.jpeg";
-import Gen13Img from "../../assets/user Photos/Gen13.jpeg";
-import Gen14Img from "../../assets/user Photos/Gen14.jpeg";
-import Gen15Img from "../../assets/user Photos/Gen15.jpg";
-import Gen16Img from "../../assets/user Photos/Gen16.jpg";
-import Gen17Img from "../../assets/user Photos/Gen17.jpg";
-import Gen18Img from "../../assets/user Photos/Gen18.jpg";
-import Gen19Img from "../../assets/user Photos/Gen19.jpg";
-import RashiImg from "../../assets/user Photos/Rashi.jpg";
+//import SujithImg from "../../assets/user_photos/G-Sujith.jpeg";
+import NazirImg from "../../assets/user_photos/Nazir.jpeg";
+import SujeethImg from "../../assets/user_photos/Sujeeth.jpeg";
+import DhanshreeImg from "../../assets/user_photos/Dhanshree.jpeg";
+import KOIImg from "../../assets/user_photos/KOI.jpeg";
+import MaheshImg from "../../assets/user_photos/Mahesh.jpg";
+import MoizImg from "../../assets/user_photos/MoizImg.jpg";
+import AmanImg from "../../assets/user_photos/Aman.jpeg";
+import eswarImg from "../../assets/user_photos/Eswar.jpeg";
+import CharanImg from "../../assets/user_photos/Charan.jpeg";
+import nabhayImg from "../../assets/user_photos/Nabhay.jpeg";
+import NavaneethImg from "../../assets/user_photos/Navaneeth.jpeg";
+import VirendarImg from "../../assets/user_photos/Virendar.jpeg";
+import santhoshImg from "../../assets/user_photos/Santhosh.jpeg";
+import MounikaImg from "../../assets/user_photos/Mounika.jpeg";
+import lahariImg from "../../assets/user_photos/Lahari.jpeg";
+import riyaImg from "../../assets/user_photos/Riya.jpeg";
+import sushmaImg from "../../assets/user_photos/Sushma.jpeg";
+import janakiImg from "../../assets/user_photos/Janki.jpeg";
+import madhuImg from "../../assets/user_photos/madhu.jpeg";
+import mansiImg from "../../assets/user_photos/Mansi.jpeg";
+import tanmaiImg from "../../assets/user_photos/Tanmai.jpeg";
+import BlankImg from "../../assets/user_photos/Blank.jpg";
+import Gen1Img from "../../assets/user_photos/Gen1.jpeg";
+import Gen2Img from "../../assets/user_photos/Gen2.jpeg";
+import Gen3Img from "../../assets/user_photos/Gen3.jpeg";
+import Gen4Img from "../../assets/user_photos/Gen4.jpeg";
+import Gen5Img from "../../assets/user_photos/Gen5.jpeg";
+import Gen6Img from "../../assets/user_photos/Gen6.jpeg";
+import Gen7Img from "../../assets/user_photos/Gen7.jpeg";
+import Gen8Img from "../../assets/user_photos/Gen8.jpeg";
+import Gen9Img from "../../assets/user_photos/Gen9.jpeg";
+import Gen10Img from "../../assets/user_photos/Gen10.jpeg";
+import Gen11Img from "../../assets/user_photos/Gen11.jpeg";
+import Gen12Img from "../../assets/user_photos/Gen12.jpeg";
+import Gen13Img from "../../assets/user_photos/Gen13.jpeg";
+import Gen14Img from "../../assets/user_photos/Gen14.jpeg";
+import Gen15Img from "../../assets/user_photos/Gen15.jpg";
+import Gen16Img from "../../assets/user_photos/Gen16.jpg";
+import Gen17Img from "../../assets/user_photos/Gen17.jpg";
+import Gen18Img from "../../assets/user_photos/Gen18.jpg";
+import Gen19Img from "../../assets/user_photos/Gen19.jpg";
+import RashiImg from "../../assets/user_photos/Rashi.jpg";
 import NumberCounter from '@/components/ui/NumberCounter';
-import Pratibhaimg from '../../assets/user Photos/Pratibhaimg.jpg';
-import Saumya from '../../assets/user Photos/Saumya.jpg';
-import Jitendraimg from '../../assets/user Photos/Jitendraimg.jpg'
-import sakshiimg from '../../assets/user Photos/sakshiimg.jpg';
+import Pratibhaimg from '../../assets/user_photos/Pratibhaimg.jpg';
+import Saumya from '../../assets/user_photos/Saumya.jpg';
+import Jitendraimg from '../../assets/user_photos/Jitendraimg.jpg'
+import sakshiimg from '../../assets/user_photos/sakshiimg.jpg';
 
 function App() {
   const clientLogos = [
@@ -120,13 +120,7 @@ function App() {
     {
       name: "Software Developers",
       members: [
-        {
-          name: "G-Sujith",
-          image: SujithImg,
-          role: ["ChatGPT Developer"],
-          expertise: "ChatGPT, AI, Machine Learning",
-          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
-        },
+
         {
           name: "Charan Sai",
           image: CharanImg,
