@@ -169,7 +169,7 @@ const SignupPage = () => {
 
         {/* Reviews Section */}
         {/* Reviews Section */}
-        <div className="py-16">
+        <div className="py-7">
           <ReviewsSection />
         </div>
 
