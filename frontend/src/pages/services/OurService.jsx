@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { useNavigate } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
@@ -88,10 +89,10 @@ const OurService = () => {
 
 
       <Navbar />
-      <div className="bg-gray-50">
+      <div className="bg-blue-50 dark:bg-gray-800">
         {/* Hero Section */}
         {/* <header className="bg-gradient-to-tr from-blue-900 via-indigo-800 to-blue-500 text-white py-16"> */}
-        <header className="bg-gradient-to-b from-indigo-800 from-[50%] to-blue-500 to-[100%] text-white py-16">
+        {/* <header className="bg-gradient-to-b from-indigo-800 from-[50%] to-blue-500 to-[100%] text-white py-16">
 
 
 
@@ -105,12 +106,28 @@ const OurService = () => {
               business needs.
             </p>
           </div>
+        </header> */}
+        <header className="text-white py-10 flex justify-center mt-6">
+          {/* Small card container */}
+          <div className="relative bg-gradient-to-b from-[#4361ee]/25 via-[#4361ee]/100 to-[#4361ee] shadow-2xl text-center px-80 py-10">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 animate-fade-in">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">Our Services</span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold font-black">
+              Our Services Tailored for Your Success
+            </h1>
+            <p className="mt-3 text-base md:text-lg font-serif">
+              Explore our diverse range of services designed to meet your
+              business needs.
+            </p>
+          </div>
         </header>
 
         {/* Services Section */}
-        <section className="py-16 bg-blue-50 dark:bg-gray-800 ">
+        <section className="py-10 bg-blue-50 dark:bg-gray-800 "> {/* changed padding from 16 to 10*/}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-            <h2 className="  text-2xl md:text-4xl font-bold text-center mb-12 text-blue-700 animate-bounce font-[Oswald] dark:text-white">
+            <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent text-center mb-16"> {/* Removed animation-bounce*/}
               What We Offer
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3
@@ -137,7 +154,8 @@ const OurService = () => {
         </section>
 
         {/* Call-to-Action Section */}
-        <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16">
+        {/* <section className="bg-gradient-to-b from-blue-500 from-[0%] to-indigo-900 to-[80%] text-white py-16"> */}
+        {/* <section className="bg-gradient-to-tr from-pink-600 via-purple-600 to-blue-600 text-white py-16 rounded-3xl  shadow-2xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center ">
             <h2 className="text-3xl md:text-4xl font-bold font-[Oswald]">
               Let's Work Together
@@ -153,7 +171,7 @@ const OurService = () => {
               Contact Us
             </button>
           </div>
-        </section>
+        </section> */}
       </div>
       <Footer />
     </>

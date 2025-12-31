@@ -87,7 +87,15 @@ import NumberCounter from '@/components/ui/NumberCounter';
 import Pratibhaimg from '../../assets/user_photos/Pratibhaimg.jpg';
 import Saumya from '../../assets/user_photos/Saumya.jpg';
 import Jitendraimg from '../../assets/user_photos/Jitendraimg.jpg'
-import sakshiimg from '../../assets/user_photos/sakshiimg.jpg';
+import sakshiimg from '../../assets/user_photos/sakshi.jpeg';
+import swapnil from "../../assets/user_photos/Swapnil.jpeg";
+import sam from "../../assets/user_photos/sam.jpeg";
+import prasad from "../../assets/user_photos/Prasad.jpeg";
+import moin from "../../assets/user_photos/Moins.jpeg";
+import krishna from "../../assets/user_photos/Krishna.jpeg";
+import afraimg from "../../assets/user_photos/afraimg.jpeg";
+import sadaabimg from "../../assets/user_photos/sadaabimg.jpeg";
+
 
 function App() {
   const clientLogos = [
@@ -199,11 +207,11 @@ function App() {
           about: "Full Stack Developer focused on building scalable web applications with clean UI, efficient backend architecture, and real-world problem solving.",
         },
         {
-          name: "Sakshi ",
+          name: "Sakshi Juwar",
           image: sakshiimg,
           role: "Full Stack Developer",
-          expertise: "Frontend",
-          about: "Crafts engaging digital journeys that connect and convert audiences",
+          expertise: "React.js, Node.js, Express.js, MongoDB, Python, AWS, JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
+          about: "Passionate Full Stack Developer dedicated to creating efficient and user-friendly web applications that solve real-world problems.",
         },
         {
           name: "Jitendra",
@@ -211,7 +219,47 @@ function App() {
           role: "Full Stack developer",
           expertise: "Frontend",
           about: "Crafts engaging digital journeys that connect and convert audiences",
-        }
+        },
+        {
+          name: "Swapnil Marke",
+          image: swapnil,
+          role: ["Full Stack Developer"],
+          expertise: "Java, SpringBoot , HTML, CSS, JavaScript, React, Node.js, Express, MongoDB",
+          about:
+            "Full Stack Developer focused on building scalable web applications with clean UI, efficient backend architecture, and real-world problem solving.",
+        },
+        {
+          name: "Krishna Gupta",
+          image: krishna,
+          role: ["Full Stack Developer"],
+          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+          about:
+            "Architecting Scalable Full-Stack Web Solutions with Java Backend and Modern Frontend Technologies",
+        },
+        {
+          name: "Prasad Margaj",
+          image: prasad,
+          role: ["Full Stack Developer"],
+          expertise: "React.js, MySQL, HTML, CSS, JavaScript, Bootstrap, Java, SpringBoot",
+          about:
+            "Full stack developer skilled in java, spring boot, MySQL, and React.js",
+        },
+        {
+          name: "Moin Shaikh",
+          image: moin,
+          role: ["Full Stack Developer"],
+          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+          about:
+            "Turning ideas into High-Performance Full-Stack Applications",
+        },
+        {
+          name: "Samdaniel Nadar",
+          image: sam,
+          role: ["Full Stack Developer"],
+          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+          about:
+            "Crafting Robust Full-Stack Application with Java & React",
+        },
       ],
     },
     {
@@ -272,6 +320,20 @@ function App() {
           role: "Hiring Specialist",
           expertise: "Hiring, Team Management",
           about: "Responsible for managing the hiring process and team.",
+        },
+        {
+          name: "Sadaab Hassan",
+          image: sadaabimg,
+          role: "Human Resource",
+          expertise: "Recruitment, Employee Relations",
+          about: "Oversees recruitment and employee relations.",
+        },
+        {
+          name: "Afra Tabassum",
+          image: afraimg,
+          role: "Human Resource",
+          expertise: "Recruitment, Employee Relations",
+          about: "Oversees recruitment and employee relations.",
         },
       ],
     },
@@ -493,28 +555,28 @@ function App() {
 
   const achievements = [
     {
-      icon: <Users className="w-8 h-8 text-blue-600" />,
+      icon: <Users className="w-8 h-8 text-white" />,
       value: 500,
       suffix: "+",
       description: "Successful Placements",
       duration: 1500,
     },
     {
-      icon: <Target className="w-8 h-8 text-blue-600" />,
+      icon: <Target className="w-8 h-8 text-white" />,
       value: 98,
       suffix: "%",
       description: "Client Satisfaction",
       duration: 1500,
     },
     {
-      icon: <Award className="w-8 h-8 text-blue-600" />,
+      icon: <Award className="w-8 h-8 text-white" />,
       value: 28,
       suffix: "+",
       description: "Industry Awards",
       duration: 1500,
     },
     {
-      icon: <Building2 className="w-8 h-8 text-blue-600" />,
+      icon: <Building2 className="w-8 h-8 text-white" />,
       value: 573,
       suffix: "+",
       description: "Partner Companies",
@@ -544,6 +606,7 @@ function App() {
     {
       name: "BABDE SANKET",
       title: "Founder & CEO",
+      image: "Sanketsir.jpeg",
       description: "Sanket Babde has been the driving force behind greathire.in and Babde Private Limited since 2017, With a vision to revolutionize IT services. Under his leadership, the company has grown into a trusted platform for AI-driven recruitment, software development, digital marketing, and IT staffing solutions.",
       achievements: [
         "Simplified Hiring for Businesses – Developed a recruitment platform that helps companies streamline their hiring process efficiently.",
@@ -555,6 +618,7 @@ function App() {
     },
     {
       name: "BABDE SONIKA",
+      image: "Sonikamam.jpeg",
       title: "Director of Human Resources Operations",
       description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
@@ -568,6 +632,15 @@ function App() {
   ];
 
   const [isCenter, setIsCenter] = useState(false);
+
+  const allTeamMembers = departments.flatMap((dept) =>
+    dept.members.map((member) => ({
+      ...member,
+      department: dept.name,
+    }))
+  );
+
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
 
@@ -583,12 +656,12 @@ function App() {
       </Helmet>
 
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:bg-gray-800 dark:text-white transition-colors duration-300">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:bg-gray-800 dark:text-white transition-colors duration-300 mt-16"> {/* added margin*/}
         <Navbar />
 
         {/* Hero Section - Enhanced */}
-        <div className="relative w-full h-[300px] overflow-hidden">
-          <div className="absolute inset-0">
+        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-[#4361ee]/50 via-[#4361ee]/100 to-[#4361ee] shadow-2xl">
+          {/* <div className="absolute inset-0">
             <Silk
               speed={5}
               scale={1}
@@ -596,7 +669,7 @@ function App() {
               noiseIntensity={1.5}
               rotation={0}
             />
-          </div>
+          </div> */}
 
           {/* Enhanced Decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -613,7 +686,7 @@ function App() {
                   <span className="text-sm font-medium">About Our Journey</span>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-bold font-[Oswald] tracking-tight">
-                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">GreatHire</span>
+                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 bg-clip-text text-transparent">GreatHire</span>
                 </h1>
                 <p className="text-lg md:text-xl font-serif text-blue-50 leading-relaxed px-4">
                   GreatHire Business Solutions provides strategic staffing and
@@ -627,13 +700,44 @@ function App() {
           </div>
         </div>
 
+        {/* <section className="max-w-7xl mx-auto px-6 py-16"> */}
+        {/* Heading */}
+
+        {/* <div className=" mb-10">
+            <h1 className="text-4xl md:text-4xl font-bold text-gray-900 leading-tight">
+              <span className="text-6xl">Great</span>
+              <span className="text-blue-500 text-6xl">Hire </span>
+              is Business Solutions connects companies with top talent, driving
+              efficiency, productivity, and long-term success.
+            </h1>
+          </div> */}
+
+        {/* Image */}
+        {/* <div className="rounded-2xl overflow-hidden mb-10">
+            <img
+              src="AboutusBanner.png"
+              alt="Real estate team meeting"
+              className="w-full h-[500px] object-cover"
+            />
+          </div> */}
+
+        {/* Content */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-14">
+            <h2 className="text-3xl font-semibold text-gray-900">
+              “The right job won’t just hire your skills—
+              <br />
+              it will value your potential.”
+            </h2>
+          </div> */}
+        {/* </section> */}
+
         {/* Our Mission Section - Enhanced */}
-        <div className="py-20 bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:bg-gray-900 relative overflow-hidden">
+        <div className="">
           {/* Decorative background elements */}
           <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          {/* <div className="container mx-auto px-6 lg:px-12 relative z-10">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
@@ -656,17 +760,17 @@ function App() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Leadership Section - Enhanced */}
-        <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
+        <div className="">
           {/* Decorative elements */}
-          <div className="absolute top-20 right-0 w-72 h-72 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-0 w-72 h-72 bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"></div>
+          <div className=""></div>
+          <div className=""></div>
 
           <div className="container mx-auto px-6 lg:px-12 relative z-10">
-            <div className="text-center mb-16">
+            <div className="text-center mb-16 mt-16">
               <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-4">
                 <Award className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                 <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">Leadership Excellence</span>
@@ -693,7 +797,12 @@ function App() {
                   <div className="relative z-10 p-10">
                     {/* Leader initial badge */}
                     <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/30 group-hover:scale-110 transition-transform duration-300">
-                      {leader.name.charAt(0)}
+                      {/* Profile Image */}
+                      <img
+                        src={leader.image} // path relative to public folder
+                        alt={leader.name}
+                        className="relative w-full h-full rounded-full object-cover ring-4 ring-blue-100 dark:ring-blue-900/30 shadow-lg"
+                      />
                     </div>
 
                     <h3 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -794,7 +903,7 @@ function App() {
         </div>
 
         {/* Achievements Section - Enhanced */}
-        <div className="py-20 bg-white dark:bg-gray-800 relative overflow-hidden">
+        <div className="py-10 bg-white dark:bg-gray-800 relative overflow-hidden"> {/* py-20 to py-10 */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent dark:via-blue-900/10"></div>
 
           <div className="container mx-auto px-6 lg:px-12 relative z-10">
@@ -842,7 +951,7 @@ function App() {
         </div>
 
         {/* Client Logo Carousel - Enhanced */}
-        <div className="py-20 bg-gradient-to-b from-gray-50 to-white dark:bg-gray-900 relative overflow-hidden">
+        <div className="py-10 bg-gradient-to-b from-gray-50 to-white dark:bg-gray-900 relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
           <div className="container mx-auto px-6 lg:px-12 relative z-10">
@@ -864,10 +973,11 @@ function App() {
               spaceBetween={30}
               slidesPerView={2}
               loop={true}
-              speed={8000}
+              speed={2000}
               autoplay={{
                 delay: 0,
                 disableOnInteraction: false,
+                reverseDirection: true,
               }}
               breakpoints={{
                 0: { slidesPerView: 2 },
@@ -883,7 +993,7 @@ function App() {
                     <img
                       src={client.logo}
                       alt={client.name}
-                      className="max-h-full max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
+                      className="max-h-full max-w-full object-contain transition-all duration-300 group-hover:scale-110"
                     />
                   </div>
                 </SwiperSlide>
@@ -894,111 +1004,102 @@ function App() {
 
 
         {/* Team Section - Enhanced */}
-        <div className="py-20 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 relative overflow-hidden">
+        {/* Team Section - Single Fast Continuous Carousel */}
+        <div className="relative py-8 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 ">
+          {/* Background grid */}
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-4">
+          <div className="relative z-10   ">
+            {/* HEADER */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-6">
                 <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">Our People</span>
+                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">
+                  Our People
+                </span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-4">
+
+              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-br from-yellow-800 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-4">
                 Meet Our Team
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto ">
                 Dedicated professionals committed to your success
               </p>
             </div>
 
-            {departments.map((department, dIndex) => (
-              <div key={dIndex} className="mb-20 last:mb-0">
-                <div className="flex items-center gap-4 mb-10">
-                  <div className="h-1 flex-grow bg-gradient-to-r from-transparent via-blue-500 to-purple-500 rounded-full"></div>
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    {department.name}
-                  </h3>
-                  <div className="h-1 flex-grow bg-gradient-to-r from-purple-500 via-blue-500 to-transparent rounded-full"></div>
-                </div>
+            {/* CAROUSEL WRAPPER */}
+            <div className="relative w-full ">
+              <div className="flex items-center w-full">
+                <div className=" [&_.swiper-wrapper]:!transition-linear w-full">
+                  <Swiper
+                  className="h-[400px] mt-2"
+                    modules={[Autoplay]}
+                    loop
+                    centeredSlides
+                    slidesPerView="auto"
+                    spaceBetween={60}
+                    speed={1500}
+                    autoplay={{
+                      delay: 0,
+                      disableOnInteraction: false,
+                    }}
+                    allowTouchMove={false}
+                    onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+                  >
+                    {allTeamMembers.map((member, index) => {
+                      const isActive = index === activeIndex;
 
-                <Swiper
-                  modules={[FreeMode, Autoplay]}
-                  spaceBetween={24}
-                  slidesPerView={1}
-                  freeMode={{
-                    enabled: true,
-                    sticky: false,
-                    momentumRatio: 0.25,
-                    momentumVelocityRatio: 0.5,
-                  }}
-                  autoplay={{
-                    delay: 3000,
-                    disableOnInteraction: true,
-                  }}
-                  breakpoints={{
-                    640: { slidesPerView: 2 },
-                    768: { slidesPerView: 3 },
-                    1024: { slidesPerView: 4 },
-                    1280: { slidesPerView: 5 },
-                  }}
-                  className="team-swiper"
-                >
-                  {department.members.map((member, mIndex) => (
-                    <SwiperSlide key={mIndex} className="h-auto">
-                      <div className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 h-full flex flex-col border border-gray-100 dark:border-gray-700">
-                        {/* Card header with gradient */}
-                        <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-
-                        <div className="p-6 flex flex-col flex-grow">
-                          {/* Profile image with enhanced styling */}
-                          <div className="relative w-28 h-28 mx-auto mb-6">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                            <div className="relative w-full h-full rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800 shadow-xl group-hover:scale-110 transition-transform duration-300">
-                              <img
-                                src={member.image}
-                                alt={member.name}
-                                className="w-full h-full object-cover"
-                              />
+                      return (
+                        <SwiperSlide
+                          key={index}
+                          className="!w-[260px] flex justify-center"
+                        >
+                          <div
+                            className={`flex flex-col items-center text-center transition-all duration-500
+                  ${isActive ? "scale-103" : "scale-90 opacity-75"}
+                `}
+                          >
+                            {/* IMAGE WITH ARC */}
+                            <div className="relative mb-6">
+                              <div
+                                className={`w-40 h-40 rounded-full p-2 transition-all duration-500
+                      ${
+                        isActive
+                          ? "bg-[conic-gradient(#f59e0b_0deg,transparent_120deg,#f59e0b_360deg)]"
+                          : "bg-[conic-gradient(#2563eb_0deg,transparent_120deg,#2563eb_360deg)]"
+                      }
+                    `}
+                              >
+                                <img
+                                  src={member.image}
+                                  alt={member.name}
+                                  className="w-full h-full rounded-full object-cover bg-white"
+                                />
+                              </div>
                             </div>
-                          </div>
 
-                          <div className="text-center flex-grow">
-                            <h4 className="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {/* TEXT */}
+                            <h4 className="text-xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                               {member.name}
                             </h4>
-
-                            <div className="mb-4">
-                              {Array.isArray(member.role) ? (
-                                member.role.map((r, i) => (
-                                  <div key={i} className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full m-1">
-                                    {r}
-                                  </div>
-                                ))
-                              ) : (
-                                <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full">
-                                  {member.role}
-                                </div>
-                              )}
+                            <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-1 rounded-full">
+                            <p className="text-sm font-semibold text-blue-600 ">
+                              {member.role}
+                            </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 mb-4">
-                              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">Expertise</p>
-                              <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                                {member.expertise}
-                              </p>
-                            </div>
-
-                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                            <p className="text-xs text-black-300 mt-2 max-w-[200px] dark:text-black">
                               {member.about}
                             </p>
                           </div>
-                        </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
