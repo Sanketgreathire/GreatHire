@@ -28,7 +28,7 @@ export default function JobsHiringSection() {
                     return prevIndex + 1;
                 }
             });
-        }, 500);
+        }, 1000); {/* changed scrolling time from 500 to 1000*/}
     };
 
     const stopAutoScroll = () => {
@@ -46,7 +46,7 @@ export default function JobsHiringSection() {
     };
 
     return (
-        <div className="w-full bg-50 py-8">
+        <div className="w-full bg-50">
             {/* Jobs Hiring Section */}
             <div className="max-w-7xl mx-auto px-4">
                 <div className="relative">
@@ -59,7 +59,7 @@ export default function JobsHiringSection() {
 
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-4 overflow-x-hidden scroll-smooth"
+                        className="flex gap-4 overflow-x-hidden scroll-smooth py-6"
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >

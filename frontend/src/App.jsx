@@ -292,6 +292,11 @@ const appRouter = createBrowserRouter([
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },
   { path: "/signup", element: <AuthPage /> },
+  { path: "/great-hire/services", element: <OurService /> },
+  { path: "/contact", element: <Contact /> },
+  { path: "/packages", element: <Packges /> },
+  { path: "*", element: <div>Page Not Found</div> },
+
 
   // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)
   { path: "/jobseeker-login", element: <JobseekerLogin /> },
