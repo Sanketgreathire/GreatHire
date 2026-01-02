@@ -1,78 +1,39 @@
-import React from 'react';
-
-import { NotificationProvider } from './context/NotificationContext.jsx';
-
-// React DOM for rendering components
-import ReactDOM from "react-dom/client"; 
-
-// Main application component
-import App from "./App.jsx"; 
-
-// Global CSS styles
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { HelmetProvider } from "react-helmet-async";
+import { ThemeProvider } from "./context/ThemeContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import store, { persistor } from "./redux/store";
+import { Toaster } from "react-hot-toast";
 import "./index.css";
 
-
-
-// Toast notifications for user feedback
-import { Toaster } from "react-hot-toast"; 
-
-// Redux for state management
-// Redux provider for global state management
-import { Provider } from "react-redux"; 
-
-// PersistGate to persist Redux store
-import { PersistGate } from "redux-persist/integration/react"; 
-
-// Redux store and persistor configuration
-import store, { persistor } from "./redux/store.js"; 
-// import { ThemeProvider } from "next-themes";
-import { ThemeProvider } from "./context/ThemeContext"; 
-import { HelmetProvider } from "react-helmet-async";
-
-
-// Rendering the application into the root element
-// ReactDOM.createRoot(document.getElementById("root")).render(
-//   <ThemeProvider>
-//   <Provider store={store}> {/* Provides Redux store to the application */}
-//     <PersistGate loading={null} persistor={persistor}> {/* Ensures persisted state is loaded before rendering */}
-//       <App /> {/* Main App component */}
-//       <Toaster
-//         position="bottom-right" // Positioning toast notifications at the bottom-right
-//         reverseOrder={false} // Toasts appear in the order they are triggered
-//         toastOptions={{
-//           duration: 3000, // Toast disappears after 3 seconds
-//         }}
-//       />
-//     </PersistGate>
-//   </Provider>
-//   </ThemeProvider>
-// );
-// Create root and render the application
-ReactDOM.createRoot(document.getElementById('root')).render(
-    <ThemeProvider>
-  <React.StrictMode>
-    <HelmetProvider>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        {/* Wrap the entire app with NotificationProvider */}
-        <NotificationProvider>
-          <App />
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
-            toastOptions={{
-              duration: 3000,
-              style: {
-                borderRadius: '10px',
-                background: '#333',
-                color: '#fff',
-              },
-            }}
-          />
-        </NotificationProvider>
-      </PersistGate>
-    </Provider>
-    </HelmetProvider>
-  </React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ThemeProvider>
+    <React.StrictMode>
+      <HelmetProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <NotificationProvider>
+              <App />
+              <Toaster
+                position="bottom-right"
+                reverseOrder={false}
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                  },
+                }}
+              />
+            </NotificationProvider>
+          </PersistGate>
+        </Provider>
+      </HelmetProvider>
+    </React.StrictMode>
   </ThemeProvider>
 );
