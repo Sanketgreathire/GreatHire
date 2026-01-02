@@ -191,7 +191,8 @@ const Recruiters = () => {
     setIsFetching(true);
     try {
       const response = await axios.get(
-        `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats/${companyId}`
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/recruiter-stats/${companyId}`,
+        { withCredentials: true }
       );
       if (response.data.success) {
         setRecruiterList(response.data.recruiters || []);

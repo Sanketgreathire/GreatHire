@@ -60,7 +60,7 @@ const JobSearch = ({ searchInfo, onSearchUpdate }) => {
             <input
               type="text"
               placeholder="Job title, keywords, or company"
-              className="py-3 px-2 outline-none flex-1 bg-transparent text-sm sm:text-base w-full md:w-72"
+              className="py-3 px-2 dark:text-gray-700 outline-none flex-1 bg-transparent text-sm sm:text-base w-full md:w-72"
               value={searchInfo.titleKeyword}
               onChange={(e) => handleTitleChange(e.target.value)}
             />
