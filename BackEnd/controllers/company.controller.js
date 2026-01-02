@@ -315,23 +315,61 @@ export const registerCompany = async (req, res) => {
 
 
 //get  company by company id ...
+// export const getCompanyById = async (req, res) => {
+//   try {
+//     const { companyId } = req.body;
+//     // find company by company id
+//     const company = await Company.findById(companyId);
+//     if (!company) {
+//       return res.status(404).json({
+//         message: "Company not found.",
+//         Success: false,
+//       });
+//     }
+//     company.hasSubscription = true;
+//     await company.save();
+
+//     res.status(200).json({ message: "Subscription activated successfully" });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
 export const getCompanyById = async (req, res) => {
   try {
     const { companyId } = req.body;
-    // find company by company id
+    
+    // Validate companyId
+    if (!companyId) {
+      return res.status(400).json({
+        message: "Company ID is required.",
+        success: false,
+      });
+    }
+
+    // Find company by ID
     const company = await Company.findById(companyId);
+    
     if (!company) {
       return res.status(404).json({
         message: "Company not found.",
-        Success: false,
+        success: false,
       });
     }
-    company.hasSubscription = true;
-    await company.save();
 
-    res.status(200).json({ message: "Subscription activated successfully" });
+    // Return company details
+    return res.status(200).json({ 
+      success: true,
+      company: company,
+      message: "Company details fetched successfully"
+    });
+    
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching company by ID:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
 };
 

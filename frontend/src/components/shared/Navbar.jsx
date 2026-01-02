@@ -15,14 +15,8 @@ import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import joinBg from "@/assets/img121.jpeg";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
-
 import ThemeToggle from "../ThemeToggle";
 
-
-
-
-
-// Accept showJobDetails and setShowJobDetails props
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const isRecruiter = user?.role?.includes("recruiter");
@@ -99,7 +93,6 @@ const Navbar = () => {
       //     return;
       //   }
       // }
-
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
       });
@@ -141,12 +134,12 @@ const Navbar = () => {
   // Right side navigation links
   const rightNavLinks = [
     // ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
-    { to: "/", label: "Home" },
+    // { to: "/", label: "Home" },
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/blogs", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
-    ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+    ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
   ];
 
   // Secondary navigation links (in dropdown)
@@ -166,13 +159,10 @@ const Navbar = () => {
     // { to: "/policy/terms-and-conditions", label: "Terms and Conditions" },
   ];
 
-
-
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300">
-
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2 ">
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
           {/* Logo */}
           {/* <img src={GreatHire} alt="Greathirelogo" className="w-[180px] h-auto cursor-pointer "
             onClick={() => {
@@ -193,12 +183,10 @@ const Navbar = () => {
                 <span className="text-black dark:text-white">Great</span>
                 <span className="text-blue-600">Hire</span>
               </h2>
-
             </div>
           </Link>
+
           <div>
-
-
             {/* Mobile Notifications */}
             <div className="lg:hidden">
               {user && <NotificationDropdown />}
@@ -208,14 +196,14 @@ const Navbar = () => {
             <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
               {/* Left side navigation */}
               <div className="flex items-center gap-6">
-                <ul className="flex items-center gap-6 ">
+                <ul className="flex items-center gap-6">
                   {primaryNavLinks.map(({ to, label }) => (
                     <li key={to}>
                       <Link
                         to={to}
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors  ${location.pathname === to
-                            ? "text-blue-600 bg-blue-50 "
-                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 "
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === to
+                            ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:text-blue-400 dark:hover:bg-gray-700"
                           }`}
                       >
                         {label}
@@ -235,8 +223,8 @@ const Navbar = () => {
                         <Link
                           to={to}
                           className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === to
-                              ? "text-blue-600 bg-blue-50 "
-                              : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-white"
+                              ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
+                              : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:text-blue-400 dark:hover:bg-gray-700"
                             }`}
                         >
                           {label}
@@ -281,8 +269,8 @@ const Navbar = () => {
                             </Link>
                           ))} */}
 
-                          {/* Policy submenu */}
-                          {/* <div className="border-t border-gray-100 mt-1 pt-1">
+                    {/* Policy submenu */}
+                    {/* <div className="border-t border-gray-100 mt-1 pt-1">
                             <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Policies</div>
                             {policyLinks.map(({ to, label }) => (
                               <Link
@@ -306,9 +294,6 @@ const Navbar = () => {
                   <ThemeToggle />
                   {user && (
                     <>
-                      {/* Messages
-                    <MessageButton /> */}
-
                       {/* Notifications */}
                       <NotificationDropdown />
 
@@ -316,10 +301,10 @@ const Navbar = () => {
                       {!isRecruiter && (
                         <Link
                           to="/saved-jobs"
-                          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                           title="Saved Jobs"
                         >
-                          <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
                         </Link>
@@ -328,7 +313,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {!user ? (
+               {!user ? (
                   <Link
                     to="/login"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
@@ -339,7 +324,7 @@ const Navbar = () => {
                   <div ref={profileMenuRef} className="relative">
                     <button
                       onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                      className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       aria-expanded={isProfileMenuOpen}
                       aria-haspopup="true"
                     >
@@ -349,18 +334,18 @@ const Navbar = () => {
                           "https://github.com/shadcn.png"
                         }
                         alt={`${user.fullname || "User"}'s avatar`}
-                        className="h-8 w-8 rounded-md border border-gray-300 object-cover"
+                        className="h-8 w-8 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                       />
-                      <span className="font-medium text-gray-700 text-sm hidden xl:block">{user?.fullname}</span>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <span className="font-medium text-gray-700 dark:text-gray-200 text-sm hidden xl:block">{user?.fullname}</span>
+                      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
                     {isProfileMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-20">
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 py-1 z-20">
                         <Link
                           to={isRecruiter ? "/recruiter/profile" : "/profile"}
-                          className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -369,19 +354,22 @@ const Navbar = () => {
                           {isRecruiter ? "Recruiter" : "User"} Profile
                         </Link>
 
-                        {!isRecruiter && (
+                       {!isRecruiter && (
                           <Link
                             to="/saved-jobs"
-                            className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors dark:text-gray-800"
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
                             onClick={() => setIsProfileMenuOpen(false)}
                           >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                            </svg>
                             Saved Jobs
                           </Link>
                         )}
 
                         <button
                           onClick={handleLogout}
-                          className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          className="flex items-center gap-2 w-full text-left px-4 py-2 text-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -397,7 +385,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
@@ -410,13 +398,13 @@ const Navbar = () => {
                       "https://github.com/shadcn.png"
                     }
                     alt={`${user?.fullname || "User"}'s avatar`}
-                    className="h-6 w-6 rounded-md border border-gray-300 object-cover"
+                    className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
                 ) : (
-                  <CiMenuBurger size={20} className="text-gray-700" />
+                  <CiMenuBurger size={20} className="text-gray-700 dark:text-gray-300" />
                 )
               ) : (
-                <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               )}
@@ -429,16 +417,15 @@ const Navbar = () => {
               }`}
             onClick={() => setIsMenuOpen(false)}
           >
-
             {/* Mobile Menu Panel */}
             <div
               ref={mobileMenuRef}
-              className={`fixed top-0 right-0 h-full w-72 z-20 bg-white shadow-lg transform transition-transform ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+              className={`fixed top-0 right-0 h-full w-72 z-20 bg-white dark:bg-gray-800 shadow-lg transform transition-transform ${isMenuOpen ? "translate-x-0" : "translate-x-full"
                 }`}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Mobile User Section */}
-              <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                 {user ? (
                   <div className="flex items-center gap-3">
                     <img
@@ -447,17 +434,17 @@ const Navbar = () => {
                         "https://github.com/shadcn.png"
                       }
                       alt="Profile"
-                      className="h-12 w-12 rounded-md border border-gray-300 object-cover"
+                      className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                     />
                     <div>
-                      <p className="font-semibold text-gray-800">{user.fullname || "User"}</p>
-                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <p className="font-semibold text-gray-800 dark:text-gray-200">{user.fullname || "User"}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1">Welcome to GreatHire</h3>
-                    <p className="text-gray-600 text-sm">Sign in to access all features</p>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">Welcome to GreatHire</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Sign in to access all features</p>
                   </div>
                 )}
               </div>
@@ -469,7 +456,7 @@ const Navbar = () => {
                   <Link
                     key={to}
                     to={to}
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors font-bold"
+                    className="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-bold text-gray-800 dark:text-gray-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {label}
@@ -477,15 +464,15 @@ const Navbar = () => {
                 ))}
 
                 {/* Mobile Policy Section */}
-                <div className="mt-4 border-t dark:text-gray-800">
-                  <div className="px-4 py-2dark:text-gray-800 ">
-                    <p className="text-lg font-medium dark:text-gray-800 ">Policies</p>
+                <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="px-4 py-2">
+                    <p className="text-lg font-medium text-gray-800 dark:text-gray-200">Policies</p>
                   </div>
                   {policyLinks.map(({ to, label }) => (
                     <Link
                       key={to}
                       to={to}
-                      className="block px-4 py-2.5 hover:bg-gray-50 transition-colors dark:text-gray-800"
+                      className="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-800 dark:text-gray-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {label}
@@ -493,26 +480,9 @@ const Navbar = () => {
                   ))}
                 </div>
 
-                {/* Mobile Policy Section */}
-                <div className="border-t border-gray-200">
-                  <div className="py-2">
-                    <p className="px-4 py-2 text-sm font-semibold text-gray-500 uppercase">Policies</p>
-                    {policyLinks.map(({ to, label }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        className="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-600"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Mobile User Actions */}
                 {!user ? (
-                  <div className="border-t border-gray-200 p-4 space-y-3">
+                  <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
                     <Link
                       to="/login"
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block"
@@ -531,51 +501,45 @@ const Navbar = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="border-t border-gray-200 py-2">
-                    {/* Messages */}
-                    {/* <MobileMessageButton /> */}
-
+                  <div className="border-t border-gray-200 dark:border-gray-700 py-2">
                     {/* Saved Jobs - only for students */}
                     {!isRecruiter && (
                       <Link
                         to="/saved-jobs"
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                         </svg>
-                        <span className="text-gray-700">Saved Jobs</span>
+                        <span className="text-gray-700 dark:text-gray-200">Saved Jobs</span>
                       </Link>
                     )}
 
                     {/* Profile link */}
                     <Link
                       to={user.role === "student" ? "/profile" : "/recruiter/profile"}
-                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      <span className="text-gray-700">View Profile</span>
+                      <span className="text-gray-700 dark:text-gray-200">View Profile</span>
                     </Link>
 
                     <button
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                      className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                     >
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
                       Logout
                     </button>
-
                   </div>
-
                 )}
               </div>
-
             </div>
           </div>
         </div>

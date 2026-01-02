@@ -2,20 +2,20 @@
 import React, { useEffect, useState } from "react";
 
 // Redux hooks for state management
-import { useSelector, useDispatch } from "react-redux"; 
+import { useSelector, useDispatch } from "react-redux";
 
 // Axios for making API requests
-import axios from "axios"; 
+import axios from "axios";
 import {
   COMPANY_API_END_POINT,
   RECRUITER_API_END_POINT,
 } from "@/utils/ApiEndPoint"; // API endpoints
 
 // Toast notifications for user feedback
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
 
 // React Router hooks for navigation and parameters
-import { useParams, useNavigate } from "react-router-dom"; 
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar"; // Navbar component
 
 // Importing actions to fetch updated statistics
@@ -27,35 +27,54 @@ import {
 } from "@/redux/admin/statsSlice";
 
 // Delete confirmation modal component
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation"; 
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 // CompanyDetails Component - Displays and manages a company's details
 const CompanyDetails = () => {
 
   // Get authenticated user details from Redux store
-  const { user } = useSelector((state) => state.auth); 
+  const { user } = useSelector((state) => state.auth);
 
   // Get company ID from the route parameters
-  const { companyId } = useParams(); 
+  const { companyId } = useParams();
 
   // Hook for programmatic navigation
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // Hook to dispatch Redux actions
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   // Loading state for deletion process
   const [dloading, dSetLoading] = useState(false);
-  
+
   // State to store company details
-  const [company, setCompany] = useState(null); 
+  const [company, setCompany] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // State to manage delete confirmation modal visibility
-  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Function to fetch company details from the backend
+  // const fetchCompanyDetails = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `${COMPANY_API_END_POINT}/company-by-id`,
+  //       { companyId },
+  //       { withCredentials: true }
+  //     );
+
+  //     if (response.data.success) {
+  //       // Store retrieved company details in state
+  //       setCompany(response.data.company); 
+  //     }
+  //   } catch (err) {
+  //     console.log(`Error in fetching company details: ${err}`);
+  //   }
+  // };
+
   const fetchCompanyDetails = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `${COMPANY_API_END_POINT}/company-by-id`,
         { companyId },
@@ -63,11 +82,15 @@ const CompanyDetails = () => {
       );
 
       if (response.data.success) {
-        // Store retrieved company details in state
-        setCompany(response.data.company); 
+        setCompany(response.data.company);
+      } else {
+        toast.error(response.data.message || "Failed to fetch company details");
       }
     } catch (err) {
-      console.log(`Error in fetching company details: ${err}`);
+      console.error(`Error in fetching company details:`, err);
+      toast.error("Failed to load company details. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,7 +103,7 @@ const CompanyDetails = () => {
   const handleDeleteCompany = async () => {
     try {
       // Set loading state to true while processing deletion
-      dSetLoading(true); 
+      dSetLoading(true);
 
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: {
@@ -137,128 +160,149 @@ const CompanyDetails = () => {
       return "#"; // Return safe default if URL parsing fails
     }
   };
+  // Add loading and error checks here, before the main return
+  if (loading) {
+    return (
+      <>
+        <Navbar linkName={"Company Details"} />
+        <div className="max-w-6xl mx-auto p-8 m-4 bg-white rounded-lg">
+          <div className="text-center p-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading company details...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!company) {
+    return (
+      <><Navbar linkName={"Company Details"} />
+        <div className="max-w-6xl mx-auto p-8 m-4 bg-white rounded-lg">
+          <div className="text-center p-8">
+            <p className="text-xl text-gray-600">Company not found</p>
+            <button
+              onClick={() => navigate("/admin/companies")}
+              className="mt-4 px-6 py-2 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition"
+            >
+              Back to Companies
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Navbar linkName={"Company Details"} />
-      <div className="max-w-6xl mx-auto p-8 m-4 bg-white rounded-lg">
+      <div className="max-w-6xl mx-auto p-10 mt-20 bg-white rounded-2xl shadow-lg">
         <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
           Company Details
         </h1>
         <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Company Name</p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.companyName}
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Company Info */}
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Company Name</p>
+              <p className="text-lg text-gray-900 font-semibold">{company?.companyName}</p>
+
+              <p className="text-sm text-gray-500 font-medium mb-1 mt-6">Industry</p>
+              <p className="text-lg text-gray-900 font-semibold">{company?.industry}</p>
             </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">
-                Company Address
-              </p>
-              <p className="text-xl text-gray-500 font-semibold">
-                Street Address:{" "}
-                <span className="text-gray-800">
-                  {company?.address.streetAddress}
-                </span>
-              </p>
-              <p className="text-xl text-gray-500 font-semibold">
-                City:{" "}
-                <span className="text-gray-800">{company?.address.city}</span>
-              </p>
-              <p className="text-xl text-gray-500 font-semibold">
-                Postal Code:{" "}
-                <span className="text-gray-800">
-                  {company?.address.postalCode}
-                </span>
-              </p>
-              <p className="text-xl text-gray-500 font-semibold">
-                State:{" "}
-                <span className="text-gray-800">{company?.address.state}</span>
-              </p>
-              <p className="text-xl text-gray-500 font-semibold">
-                Country:{" "}
-                <span className="text-gray-800">
-                  {company?.address.country}
-                </span>
-              </p>
+            {/* Address */}
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors col-span-full lg:col-span-2">
+              <p className="text-sm text-gray-500 font-medium mb-4">Company Address</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Street Address</p>
+                  <p className="text-gray-900 font-semibold">{company?.address?.streetAddress}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">City</p>
+                  <p className="text-gray-900 font-semibold">{company?.address?.city}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">State</p>
+                  <p className="text-gray-900 font-semibold">{company?.address?.state}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Postal Code</p>
+                  <p className="text-gray-900 font-semibold">{company?.address?.postalCode}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Country</p>
+                  <p className="text-gray-900 font-semibold">{company?.address?.country}</p>
+                </div>
+              </div>
             </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Website</p>
-              {company?.companyWebsite && (
-                <a
-                  href={getSafeUrl(company.companyWebsite)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline text-xl font-semibold"
+
+            {/* Other Info */}
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Phone</p>
+              <p className="text-lg text-gray-900 font-semibold">{company?.phone}</p>
+            </div>
+
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Business Email</p>
+              <p className="text-lg text-gray-900 font-semibold break-all">{company?.email}</p>
+            </div>
+
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Admin Email</p>
+              <p className="text-lg text-gray-900 font-semibold break-all">{company?.adminEmail}</p>
+            </div>
+
+
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Website</p>
+              <a
+                href={company?.companyWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-700 font-semibold break-all"
+              >
+                {company?.companyWebsite}
+              </a>
+            </div>
+
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">CIN Number</p>
+              <p className="text-md text-gray-900 font-semibold">{company?.CIN}</p>
+            </div>
+
+            <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
+              <p className="text-sm text-gray-500 font-medium mb-1">Business File</p>
+              <a
+                href={company?.businessFile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-700 font-semibold"
+              >
+                View Business File
+              </a>
+            </div>
+            {/* Buttons (col-span-full for alignment) */}
+            <div className="col-span-full">
+              <div className="flex justify-end space-x-6 mt-8">
+                <button
+                  onClick={() => navigate(`/admin/recruiters/${companyId}`)}
+                  // className="px-6 py-3 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition"
+                  className="px-6 py-3 text-white bg-blue-700 border-2 border-transparent rounded-md hover:bg-gray-100 hover:text-blue-700 hover:border-blue-700 hover:font-bold transition-all duration-200"
                 >
-                  {company.companyWebsite}
-                </a>
-              )}
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Industry</p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.industry}
-              </p>
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">
-                Business Email
-              </p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.email}
-              </p>
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Admin Email</p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.adminEmail}
-              </p>
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Phone</p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.phone}
-              </p>
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">CIN Number</p>
-              <p className="text-xl text-gray-800 font-semibold">
-                {company?.CIN}
-              </p>
-            </div>
-            <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Business File</p>
-              {company?.businessFile && (
-                <a
-                  href={getSafeUrl(company.businessFile)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline text-xl font-semibold"
+                  Recruiters List
+                </button>
+                <button
+                  onClick={onConfirmDelete}
+                  className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${dloading && "cursor-not-allowed"
+                    }`}
+                  disabled={dloading}
                 >
-                  View Business File
-                </a>
-              )}
+                  {dloading ? "Deleting..." : "Delete Company"}
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-end space-x-6 mt-8">
-            <button
-              onClick={() => navigate(`/admin/recruiters/${companyId}`)}
-              className="px-6 py-3 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition"
-            >
-              Recruiters List
-            </button>
-            <button
-              onClick={onConfirmDelete}
-              className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${
-                dloading && "cursor-not-allowed"
-              }`}
-              disabled={dloading}
-            >
-              {dloading ? "Deleting..." : "Delete Company"}
-            </button>
           </div>
         </div>
       </div>
