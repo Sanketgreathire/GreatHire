@@ -109,7 +109,7 @@ const OurService = () => {
         </header> */}
         <header className="text-white py-10 flex justify-center mt-6">
           {/* Small card container */}
-          <div className="relative bg-gradient-to-b from-[#4361ee]/25 via-[#4361ee]/100 to-[#4361ee] shadow-2xl text-center px-80 py-10">
+          <div className="w-full relative bg-gradient-to-b from-blue-300 to-blue-600 shadow-2xl text-center px-80 py-10">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">Our Services</span>
