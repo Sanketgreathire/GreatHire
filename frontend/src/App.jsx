@@ -278,11 +278,7 @@ import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 
 import { Worker } from "@react-pdf-viewer/core";
-
-
-// ----------------------------------------------------
-// ROUTER
-// ----------------------------------------------------
+import usePageTracking from "./usePageTracking";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -292,11 +288,8 @@ const appRouter = createBrowserRouter([
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },
   { path: "/signup", element: <AuthPage /> },
-
-  // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)
   { path: "/jobseeker-login", element: <JobseekerLogin /> },
   { path: "/recruiter-login", element: <RecruiterLogin /> },
-
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
@@ -318,11 +311,9 @@ const appRouter = createBrowserRouter([
   { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
   { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
-
   { path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   { path: "/description/:id", element: <JobDetail /> },
-
   {
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,
@@ -344,11 +335,9 @@ const appRouter = createBrowserRouter([
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
-
       { index: true, element: <RecruiterHome /> },
     ]
   },
-
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },
   { path: "/recruiter/add-user", element: <ProtectedRecruiterRoute><AddRecruiter /></ProtectedRecruiterRoute> },
   { path: "/digitalmarketer/login", element: <DigitalMarketerLogin /> },

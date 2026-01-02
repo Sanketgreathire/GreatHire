@@ -2,25 +2,59 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- ✅ Google Search Console Verification -->
-    <meta name="google-site-verification" content="fS0mOhChnGxScD3yYAyEhrdC5tW8XPLZUnY3EeM_UtM" />
-    <link rel="manifest" href="/manifest.json" />
-    <!-- <link id="WebsiteIcon" rel="icon" type="" href="src/assets/GreatHireLogo.png" /> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- ✅ Google Search Console Verification -->
+    <meta
+      name="google-site-verification"
+      content="fS0mOhChnGxScD3yYAyEhrdC5tW8XPLZUnY3EeM_UtM"
+    />
+
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <title>Great Hire</title>
-    <script type="module" src="/src/main.jsx"></script>
 
-    <link rel="stylesheet" crossorigin href="/assets/index-BLTX3Dye.css">
+    <!-- ✅ Google Analytics 4 (GA4) — Only ONE Copy -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HF6ZHEW1PV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-HF6ZHEW1PV', { debug_mode: true });
+    </script>
+    <!-- ✅ End GA4 -->
+
+    <!-- ⚠️ KEEP THIS SCRIPT FIRST (VITE REQUIREMENT) -->
+    <script type="module" src="/src/main.jsx"></script>
   </head>
+
   <body>
     <div id="root"></div>
-    
-    <!-- Main React Script -->
-    
+
     <!-- Razorpay Integration -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
+
+    <!-- ✅ Microsoft Clarity -->
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "uu36ks7vrm");
+    </script>
+    <!-- ✅ End Microsoft Clarity -->
   </body>
 </html>

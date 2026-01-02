@@ -242,8 +242,8 @@ function App() {
           name: "Tanmai",
           image: tanmaiImg,
           role: "Hiring Manager",
-          expertise: "Recruitment, Team Management",
-          about: "A cross-functional Team Lead, aligns talent with team dynamics and performance goals.",
+          expertise: "Recruitment Strategy, Team Leadership, Software Development",
+          about: "A strategically driven Hiring Manager who effectively balances technical expertise in software development with recruitment leadership, enabling informed hiring decisions, strong team alignment, and seamless collaboration between technical and non-technical stakeholders. Known for building high-performing teams through structured leadership strategies, talent optimization, and a deep understanding of both business and technology requirements.",
         },
         {
           name: "Lahari",
