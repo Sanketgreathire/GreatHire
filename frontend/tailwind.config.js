@@ -4,6 +4,15 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      keyframes: {
+        slide: {
+          "0%": { opacity: "0", transform: "translateX(40px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+      },
+      animation: {
+        slide: "slide 0.5s ease-out",
+      },
       fontFamily: {
         // sans: ["Inter", "sans-serif"],
             geometric: ["Poppins", "sans-serif"],
