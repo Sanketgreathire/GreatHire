@@ -98,6 +98,8 @@ import sadaabimg from "../../assets/user_photos/sadaabimg.jpeg";
 
 
 function App() {
+  const [teamSwiper, setTeamSwiper] = useState(null);
+
   const clientLogos = [
     { name: "Tata", logo: tataImg },
     { name: "Tech Mahindra", logo: techmahindraImg },
@@ -1033,7 +1035,7 @@ function App() {
               <div className="flex items-center w-full">
                 <div className=" [&_.swiper-wrapper]:!transition-linear w-full">
                   <Swiper
-                  className="h-[400px] mt-2"
+                    className="h-[400px] mt-2"
                     modules={[Autoplay]}
                     loop
                     centeredSlides
@@ -1045,6 +1047,7 @@ function App() {
                       disableOnInteraction: false,
                     }}
                     allowTouchMove={false}
+                    onSwiper={setTeamSwiper}
                     onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
                   >
                     {allTeamMembers.map((member, index) => {
@@ -1056,6 +1059,8 @@ function App() {
                           className="!w-[260px] flex justify-center"
                         >
                           <div
+                            onMouseEnter={() => teamSwiper?.autoplay.stop()}
+                            onMouseLeave={() => teamSwiper?.autoplay.start()}
                             className={`flex flex-col items-center text-center transition-all duration-500
                   ${isActive ? "scale-103" : "scale-90 opacity-75"}
                 `}
@@ -1064,11 +1069,10 @@ function App() {
                             <div className="relative mb-6">
                               <div
                                 className={`w-40 h-40 rounded-full p-2 transition-all duration-500
-                      ${
-                        isActive
-                          ? "bg-[conic-gradient(#f59e0b_0deg,transparent_120deg,#f59e0b_360deg)]"
-                          : "bg-[conic-gradient(#2563eb_0deg,transparent_120deg,#2563eb_360deg)]"
-                      }
+                      ${isActive
+                                    ? "bg-[conic-gradient(#f59e0b_0deg,transparent_120deg,#f59e0b_360deg)]"
+                                    : "bg-[conic-gradient(#2563eb_0deg,transparent_120deg,#2563eb_360deg)]"
+                                  }
                     `}
                               >
                                 <img
@@ -1084,9 +1088,9 @@ function App() {
                               {member.name}
                             </h4>
                             <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-1 rounded-full">
-                            <p className="text-sm font-semibold text-blue-600 ">
-                              {member.role}
-                            </p>
+                              <p className="text-sm font-semibold text-blue-600 ">
+                                {member.role}
+                              </p>
                             </div>
 
                             <p className="text-xs text-black-300 mt-2 max-w-[200px] dark:text-black">
