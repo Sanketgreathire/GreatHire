@@ -5,58 +5,77 @@ import About from "@/pages/services/About";
 import Blogs from "@/pages/services/Blogs";
 import Contact from "@/pages/services/Contact";
 import Footer from "@/components/shared/Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink, Link } from "react-router-dom";
 import JobsHiringSlider from "./JobSlider";
+import Lottie from "lottie-react";
+
+import service from "../../../assets/Animation/services.json";
+import about from "../../../assets/Animation/about-s.json";
+import blog from "../../../assets/Animation/blog.json";
+import contact from "../../../assets/Animation/contact-us.json";
+
 
 const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
   const navigate = useNavigate();
-
-  // Smooth scroll to section
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setMobileMenuOpen(false);
-    }
-  };
-
-  // Track active section on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "services", "about", "blogs", "contact"];
-
-      let current = "home";
-
-      for (let id of sections) {
-        const section = document.getElementById(id);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-
-          // When section is in middle of screen → mark active
-          if (rect.top <= 200 && rect.bottom >= 200) {
-            current = id;
-          }
-        }
-      }
-
-      setActiveSection(current);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Call once on mount
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  const [index, setIndex] = useState(0);
 
   const navLinks = [
-    { id: 'home', label: 'Home'  },
-    { id: 'services', label: 'Our Services' },
-    { id: 'about', label: 'About Us' },
-    { id: 'blogs', label: 'Blogs' },
-    { id: 'contact', label: 'Contact Us' },
+    { id: 'home', label: 'Home', path: '/' },
+    { id: 'services', label: 'Our Services', path: '/great-hire/services' },
+    { id: 'about', label: 'About Us', path: '/about' },
+    { id: 'blogs', label: 'Blogs', path: '/blogs' },
+    { id: 'contact', label: 'Contact Us', path: '/contact' },
   ];
+
+  const tabs = [
+    {
+      id: "service",
+      title: "Our Services",
+      animation: service,
+      path: "/great-hire/services",
+      content:
+        "We provide end-to-end business solutions to help you grow and succeed. Our services include job posting and staffing, accounts and payroll management, digital marketing, and web and mobile app development. We also offer BPO, cybersecurity, and cloud computing services to improve efficiency and security. With AI and machine learning solutions, we help automate processes and drive innovation for your business.",
+    },
+    {
+      id: "support",
+      title: "About Us",
+      animation: about,
+      path: "/about",
+      content:
+        "GreatHire Business Solutions is a technology-driven recruitment and workforce solutions company connecting top talent with growing businesses. We specialize in AI-powered hiring, IT staffing, and strategic workforce solutions focused on efficiency and cultural fit. With strong leadership and a people-first approach, we help companies build reliable teams and professionals grow their careers across India.",
+    },
+    {
+      id: "implementation",
+      title: "Blogs",
+      animation: blog,
+      path: "/blogs",
+      content:
+        "GreatHire is your all-in-one career hub designed to connect talent with the right opportunities. With AI-powered matching, expert career insights, and hiring guidance, we help job seekers grow and employers hire smarter. From resume building and interview preparation to industry trends and future skills, we support every stage of your career journey. Trusted by thousands of users, GreatHire makes career growth simple, smart, and accessible.",
+    },
+    {
+      id: "scalable",
+      title: "Contact Us",
+      animation: contact,
+      path: "/contact",
+      content:
+        "Have questions or want to collaborate with us? Reach out to GreatHire through our FAQs, support phone number, or email for quick assistance. You can also fill out the contact form, and our team will get back to you within 24 hours. We’re here to help and look forward to",
+    },
+  ];
+
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+
+  // Auto slide
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % tabs.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const next = () => setIndex((index + 1) % tabs.length);
+  const prev = () => setIndex((index - 1 + tabs.length) % tabs.length);
 
   return (
     <div className="[&_.hide-section]:hidden">
@@ -67,17 +86,24 @@ const GreatHireLanding = () => {
             <div className="flex items-center justify-between w-full">
 
               {/* LEFT SIDE – LOGO */}
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <h1 className="text-4xl font-bold text-black whitespace-nowrap">
                   Great<span className="text-blue-600">Hire</span>
                 </h1>
-              </div>
+              </div> */}
+              <Link to="/" className="cursor-pointer">
+                <div className="flex items-center">
+                  <h1 className="text-4xl font-bold text-black whitespace-nowrap">
+                    Great<span className="text-blue-600">Hire</span>
+                  </h1>
+                </div>
+              </Link>
 
               {/* RIGHT SIDE – NAV LINKS + LOGIN BUTTONS */}
-              <div className="hidden lg:flex items-center gap-10">
+              {/* <div className="hidden lg:flex items-center gap-10">
 
                 {/* Desktop Navigation */}
-                <div className="flex items-center gap-6">
+              {/* <div className="flex items-center gap-6">
                   {navLinks.map((link) => (
                     <button
                       key={link.id}
@@ -90,10 +116,10 @@ const GreatHireLanding = () => {
                       {link.label}
                     </button>
                   ))}
-                </div>
+                </div> */}
 
-                {/* Login Buttons */}
-                <div className="flex items-center gap-3">
+              {/* Login Buttons */}
+              {/* <div className="flex items-center gap-3">
                   <button
                     onClick={() => window.location.href = '/recruiter-login'}
                     className="px-5 py-2.5 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all text-sm font-semibold"
@@ -108,6 +134,38 @@ const GreatHireLanding = () => {
                   </button>
                 </div>
 
+              </div> */}
+
+              {/* RIGHT SIDE – NAV LINKS + LOGIN BUTTONS */}
+              <div className="hidden lg:flex items-center gap-10">
+                {/* Desktop Navigation */}
+                <div className="flex items-center gap-6">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.id}
+                      onClick={() => { navigate(link.path); window.scrollTo(0, 0) }}
+                      className="text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg text-black hover:text-blue-600 hover:bg-blue-50"
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Login Buttons */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => navigate("/recruiter-login")}
+                    className="px-5 py-2.5 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all text-sm font-semibold"
+                  >
+                    Recruiter Login
+                  </button>
+                  <button
+                    onClick={() => navigate("/jobseeker-login")}
+                    className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-xl transition-all text-sm font-semibold"
+                  >
+                    Jobseeker Login
+                  </button>
+                </div>
               </div>
 
               {/* MOBILE MENU BUTTON */}
@@ -127,19 +185,19 @@ const GreatHireLanding = () => {
                   {navLinks.map((link) => (
                     <button
                       key={link.id}
-                      onClick={() => scrollToSection(link.id)}
-                      className={`text-left py-2 px-3 rounded ${activeSection === link.id
-                        ? "text-blue-600 bg-blue-50 font-medium"
-                        : "text-gray-700"
-                        }`}
+                      onClick={() => {
+                        navigate(link.path);
+                        window.scrollTo(0, 0);
+                      }}
+                      className="text-left py-2 px-3 rounded text-gray-700 hover:text-blue-600"
                     >
                       {link.label}
                     </button>
                   ))}
-                  <button className="mt-3 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg" onClick={() => window.location.href = '/recruiter-login'}>
+                  <button className="mt-3 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg" onClick={() => navigate('/recruiter-login')}>
                     Recruiter Login
                   </button>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold" onClick={() => window.location.href = '/jobseeker-login'}>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold" onClick={() => navigate('/jobseeker-login')}>
                     Jobseeker Login
                   </button>
                 </div>
@@ -160,7 +218,7 @@ const GreatHireLanding = () => {
 
           <div className="container mx-auto px-4 py-8 relative z-10">
             {/* Hero Section with Two Columns */}
-            <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+            <div className="grid lg:grid-cols-2 gap-12 items-center mb-8">
               {/* Left Column - Text */}
               <div className="space-y-6 animate-fade-in-up">
 
@@ -283,7 +341,7 @@ const GreatHireLanding = () => {
             </div>
 
             {/* Premium Features Grid */}
-            <div className="mt-20 mb-20">
+            <div className="mb-10"> {/* Removed mt-20 and updated mb-20 to mb-10*/}
               <div className="text-center mb-16">
                 <h2 className="text-5xl font-black text-gray-900 mb-4">
                   Why Choose <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">GreatHire</span>?
@@ -334,8 +392,88 @@ const GreatHireLanding = () => {
               </div>
             </div> */}
 
+            {/* the cards and carousel */}
+            <div className="max-w-7xl mx-auto px-6 py-4 mt-4">
+              {/* Tabs Header */}
+              <div className="flex flex-wrap justify-center gap-8 mb-8">
+                {tabs.map((tab, i) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setIndex(i)}
+                    className={`px-8 py-3 rounded-full font-semibold transition-all duration-300
+          ${index === i
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
+                        : "text-gray-700 hover:text-slate-900"
+                      }`}
+                  >
+                    {tab.title}
+                  </button>
+                ))}
+              </div>
+
+              {/* Carousel */}
+              <div className="relative overflow-hidden py-8">
+                <div
+                  className="flex transition-transform duration-700 ease-in-out"
+                  style={{ transform: `translateX(-${index * 100}%)` }}
+                >
+                  {tabs.map((tab) => (
+                    <div key={tab.id} className="min-w-full px-6">
+                      {/* CARD */}
+                      <div className="relative bg-gradient-to-r from-purple-300 to-purple-350 rounded-3xl shadow-xl p-10 h-72 flex flex-col md:flex-row items-center gap-10">
+
+                        {/* Image */}
+                        <div className="flex-shrink-0">
+                          <Lottie
+                            animationData={tab.animation}
+                            loop
+                            autoplay
+                            className="w-64 h-64"
+                          />
+                        </div>
+
+                        {/* Text */}
+                        <div className="flex-1">
+                          <p className="text-lg text-black-900 leading-relaxed">
+                            {tab.content}
+                          </p>
+                        </div>
+
+                        {/* Know More Button - Bottom Right */}
+                        <button
+                          onClick={() => {
+                            navigate(tab.path);
+                            window.scrollTo(0, 0);
+                          }}
+                          className="absolute bottom-6 right-6 px-5 py-2.5
+                bg-gradient-to-r from-purple-500 to-purple-600
+                text-white rounded-lg text-sm font-semibold
+                hover:shadow-xl hover:-translate-y-1
+                transition-all duration-300"
+                        >
+                          Know More
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-3 mt-4 mb-4">
+                {tabs.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setIndex(i)}
+                    className={`w-3 h-3 rounded-full transition-all
+          ${index === i ? "bg-blue-600" : "bg-gray-300"}`}
+                  />
+                ))}
+              </div>
+            </div>
+
             {/* Ultra Premium CTA Section */}
-            <div className="mt-10">
+            <div className="mt-3">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] blur-2xl opacity-30"></div>
                 <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-16 shadow-2xl overflow-hidden">
@@ -389,11 +527,11 @@ const GreatHireLanding = () => {
             </div>
 
             {/* Scroll Indicator */}
-            <div className="mt-20 flex justify-center pb-20">
-              <div className="animate-bounce bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full shadow-xl">
+            {/* <div className="mt-10 flex justify-center"> Removed Padding p-20 and changed mt-20 to mt-10 */}
+            {/* <div className="animate-bounce bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full shadow-xl">
                 <ChevronDown className="w-6 h-6 text-white" />
               </div>
-            </div>
+            </div> */}
           </div>
 
           <style jsx>{`
@@ -464,36 +602,39 @@ const GreatHireLanding = () => {
             animation: bounce 2s infinite;
           }
         `}</style>
+
+
         </section>
 
+
+
         {/* SERVICES SECTION */}
-        <section id="services">
+        {/* <section id="services">
           <div className="[&_footer]:hidden">
             <OurService />
           </div>
-        </section>
-
+        </section> */}
 
         {/* ABOUT US SECTION */}
-        <section id="about">
+        {/* <section id="about">
           <div className="[&_footer]:hidden">
             <About />
           </div>
-        </section>
+        </section> */}
 
         {/* BLOGS SECTION */}
-        <section id="blogs">
+        {/* <section id="blogs">
           <div className="[&_footer]:hidden">
             <Blogs />
           </div>
-        </section>
+        </section> */}
 
         {/* CONTACT SECTION */}
-        <section id="contact">
+        {/* <section id="contact">
           <div className="[&_footer]:hidden">
             <Contact />
           </div>
-        </section>
+        </section> */}
 
 
         {/* Footer - Sirf end me */}
