@@ -660,7 +660,7 @@ function App() {
         <Navbar />
 
         {/* Hero Section - Enhanced */}
-        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-[#4361ee]/50 via-[#4361ee]/100 to-[#4361ee] shadow-2xl">
+        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-blue-300 to-blue-600 shadow-2xl">
           {/* <div className="absolute inset-0">
             <Silk
               speed={5}
