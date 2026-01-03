@@ -14,10 +14,12 @@ const Home = () => {
 
   // If user is logged in, redirect to /jobs
   useEffect(() => {
-    if (user) {
-      navigate("/jobs", { replace: true });
-    }
-  }, [user, navigate]);
+    if (
+      (user.role === "student" || user.role === "candidate") && user.role !== "recruiter")
+      {
+        navigate("/jobs", { replace: true });
+      }
+    }, [user, navigate]);
 
   // 🟦 If user is NOT logged in → Show Before Login Page
   if (!user) {

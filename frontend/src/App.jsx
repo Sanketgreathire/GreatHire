@@ -258,6 +258,7 @@ import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
+import CandidateInformation from "./pages/recruiter/candidate/CandidateInformation";
 import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
@@ -300,7 +301,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
-  { path: "/jobs", element: <Jobs /> },
+  { path: "/jobs", element:<ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
@@ -333,6 +334,7 @@ const appRouter = createBrowserRouter([
       { path: "company-details", element: <CompanyDetails /> },
       { path: "applicants-list", element: <AllApplicantsList /> },
       { path: "candidate-list", element: <CandidateList /> },
+      { path: "candidate-information/:id", element: <CandidateInformation />},
       { path: "candidate-database", element: <CandidateDatabase /> },
       { path: "candidate-plans", element: <CandidatePlans /> },
       { path: "your-plans", element: <CurrentPlans /> },
