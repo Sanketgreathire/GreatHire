@@ -38,7 +38,7 @@ const PostJob = () => {
 
   const formik = useFormik({
     initialValues: {
-      companyName: company?.companyName,
+      companyName: company?.companyName || "",
       urgentHiring: "",
       title: "",
       details: "",
@@ -155,6 +155,9 @@ const PostJob = () => {
     { title: "Review & Submit" },
   ];
 
+  const isGreatHire =
+    company?.companyName?.trim().toLowerCase() === "greathire";
+
   return (
     <>
       <Helmet>
@@ -197,9 +200,12 @@ const PostJob = () => {
                       name="companyName"
                       type="text"
                       placeholder="Enter company name"
-                      className="w-full p-2 border border-gray-300 rounded dark:text-black"
+                      // className="w-full p-2 border border-gray-300 rounded dark:text-black"
+                      className={`w-full p-2 border border-gray-300 rounded ${!isGreatHire ? "bg-gray-100 cursor-not-allowed" : ""
+                        }`}
                       value={formik.values.companyName}
-                      readOnly
+                      onChange={formik.handleChange}
+                      readOnly={!isGreatHire}
                     />
                     {formik.touched.companyName &&
                       formik.errors.companyName && (
@@ -274,8 +280,8 @@ const PostJob = () => {
                       onClick={handlePrevious}
                       disabled={step === 0} // Disable button if step is 0
                       className={`p-2 rounded ${step === 0
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gray-500 text-white"
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-500 text-white"
                         }`}
                     >
                       Previous

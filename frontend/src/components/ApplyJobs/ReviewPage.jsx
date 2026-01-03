@@ -52,6 +52,14 @@ const ReviewPage = ({ handleReview1, input, fileURL,fileType,user,filename }) =>
       );
 
       if (response.data.success) {
+        // Google Analytics event tracking
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'apply_job', {
+            debug_mode: true,
+            job_id: jobId
+          });
+        }
+        
         toast.success(response.data.message); // Show success notification
         dispatch(setUser(response.data.user)); // Update Redux user state
         addApplicationToJob(jobId, response.data.newApplication); // Add application to job context
