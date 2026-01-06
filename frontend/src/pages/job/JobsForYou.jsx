@@ -335,7 +335,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 {shareJobId === job._id && (
                   <div ref={shareCardRef} onClick={(e) => e.stopPropagation()} className="relative">
                     <ShareCard
-                      urlToShare={`${window.location.origin}/job/${job._id}`}
+                      urlToShare={`${window.location.origin}/jobs/${job._id}`}
                       jobTitle={job.jobDetails?.title}
                       jobLocation={job.jobDetails?.location}
                       jobSalary={job.jobDetails?.salary}
