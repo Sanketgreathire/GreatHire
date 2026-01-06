@@ -255,6 +255,52 @@ const GreatHireLanding = () => {
                     Search Jobs
                   </button>
                 </div> */}
+                {/* Get Started Button */}
+      {/* <div className="pt-4">
+        <button 
+          onClick={() => window.location.href = '/signup'}
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center gap-3"
+        >
+          Get Started
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div> */}
+      {/* Two Cards - Mobile Only */}
+      <div className="pt-4 grid grid-cols-2 gap-4 lg:hidden">
+        {/* Candidate Card */}
+        <button
+          onClick={() => navigate('/signup')}
+          className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+        >
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div className="text-center">
+            <h3 className="font-bold text-lg text-gray-800">I'm a Candidate</h3>
+            <p className="text-sm text-gray-600 mt-1">Find Jobs</p>
+          </div>
+        </button>
+
+        {/* Recruiter Card */}
+        <button
+          onClick={() => navigate('/recruiter/signup')}
+          className="bg-gradient-to-br from-purple-50 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+        >
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div className="text-center">
+            <h3 className="font-bold text-lg text-gray-800">I'm a Recruiter</h3>
+            <p className="text-sm text-gray-600 mt-1">Post Jobs</p>
+          </div>
+        </button>
+      </div>
 
                 {/* Premium Stats */}
                 <div className="flex gap-8 pt-6">
