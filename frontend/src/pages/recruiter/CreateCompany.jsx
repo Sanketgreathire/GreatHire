@@ -155,12 +155,12 @@ const CreateCompany = () => {
     <>
       <Helmet>
         {/* Meta Title */}
-        <title>Create Company Profile | Register & Verify Your Business – GreatHire</title>
+        <title>Make a Company Profile | Sign Up & Confirm Your Enterprise with GreatHire</title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Create and register your company profile seamlessly on GreatHire to unlock powerful recruitment tools and hire top talent faster. Our secure company registration process helps recruiters verify business details, upload legal documents, and manage hiring operations with confidence. GreatHire operates from Hyderabad State India supporting recruiters employers startups enterprises and fast growing companies across diverse industries nationwide. Start building your verified company presence today and scale hiring with trust efficiency and professional credibility."
+          content="Register your company profile smoothly on GreatHire, a trusted recruitment platform Hyderabad, India. Our company registration system has a secure method that helps the recruiter verify the authenticity of a company and upload the company documents for a smooth recruitment process. GreatHire operates within the Maharashtra State of India, providing services to recruiters, employers, start-ups, and small businesses"
         />
       </Helmet>
 

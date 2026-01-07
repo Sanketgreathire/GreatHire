@@ -52,12 +52,12 @@ const RecruitersDetails = () => {
     <>
       <Helmet>
         <title>
-          Recruiter Profile & Job Postings Management | Admin Dashboard – GreatHire
+          Manage Recruiter Profiles and Job Postings | GreatHire Admin Dashboard
         </title>
 
         <meta
           name="description"
-          content="View and manage detailed recruiter profiles with complete hiring insights across Hyderabad State through GreatHire’s advanced admin dashboard. This powerful interface enables administrators to review recruiter credentials, verification status, company associations, and active job postings from a centralized platform. Track recruiter performance, monitor job activity, validate contact details, and ensure hiring compliance with ease. Designed for scalability and transparency, GreatHire helps organizations streamline recruitment operations, improve decision-making, and maintain full control over recruiter-driven hiring workflows."
+          content="View recruiter's comprehensive profile details with total hiring insight throughout Hyderabad State via an advanced GreatHire Admin dashboard. This dynamic admin interface gives administrators the ability to create, review recruiter credentials, verification status, companies with which they are associated, and active job postings within one single platform. Admins can track recruiter performance and the activity of job openings, validate contact information, and ensure that the hiring process is within the compliance standards. Built for scalability and transparency, GreatHire helps organizations streamline their recruitment operations, be more informed in decision-making, and retain full control throughout recruiter-driven hiring workflows."
         />
       </Helmet>
 

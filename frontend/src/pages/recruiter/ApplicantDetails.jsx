@@ -65,13 +65,13 @@ const applicantDetails = ({
       <Helmet>
         {/* Meta Title */}
         <title>
-          Applicant Details | Candidate Profile Review & Hiring Insights – GreatHire
+          Applicant Details | GreatHire's Candidate Profile Review, and Hiring Insights
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Review complete applicant profiles on GreatHire, a smart recruitment platform operating from Hyderabad State, India, helping companies make confident hiring decisions. The Applicant Details page provides in-depth candidate information including personal details, contact data, job application status, and profile insights in one organized view. Recruiters can evaluate candidates faster, track progress, and align talent with job requirements efficiently. Built for accuracy, speed, and clarity, GreatHire empowers hiring teams to shortlist the right candidates, reduce hiring time, and build stronger workforces with confidence."
+          content="Assess the full information of applicants on the recruitment platform, GreatHire, a smart recruitment system functioning in the region of Hyderabad, the India State. The “Applicant Details” interface gives a full briefing on the candidates, comprising their personal information, contacts, application status in a job, and analysis of their profiles. With a focus on exactness, speed, and ease of understanding, GreatHire is designed to give the hiring team the ability to shortlist the most appropriate candidates, decrease the time span for recruiting, and create a better workforce."
         />
       </Helmet>
       <div className="flex items-center justify-center my-4">

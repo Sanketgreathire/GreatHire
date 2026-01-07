@@ -250,12 +250,12 @@ function RecruiterPlans() {
     <>
       <Helmet>
         <title>
-          Premium Recruiter Plans | Buy Job Posting Credits & Hiring Solutions – GreatHire
+          Premium Recruiter Plans | Purchase Hiring Solutions & Job Posting Credits - GreatHire
         </title>
 
         <meta
           name="description"
-          content="GreatHire Premium Recruiter Plans empower companies to scale hiring faster with flexible job posting and database credits. Designed for modern recruitment teams, our platform is proudly based in Hyderabad State, India, serving startups, enterprises, recruiters, and fast-growing technology companies. Choose cost-effective premium job plans, unlock powerful hiring tools, boost job visibility, and access verified candidate databases. With secure payments, transparent pricing, and instant activation, GreatHire helps you hire smarter, reduce costs, and stay ahead in competitive talent markets. Upgrade today and transform your recruitment strategy with confidence."
+          content="GreatHire Premium Recruiter Plans allow firms to accelerate their hiring process through malleable job posting plans and database credits. GreatHire offers startups, corporations, recruiters, or rapidly growing tech firms cutting-edge hiring solutions, as our hiring solution tool is built on the foundation of the state of Hyderabad, India. Select affordable premium hiring plans, leverage advanced hiring solutions, increase your job postings, and gain access to qualified candidate databases. With GreatHire, you can hire intelligently, save money, and lead the competition as you search for the best candidates."
         />
       </Helmet>
 

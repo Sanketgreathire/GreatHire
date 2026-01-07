@@ -238,12 +238,12 @@ const UserProfile = () => {
     <>
       <Helmet>
         {/* Meta Title */}
-        <title>Profile Dashboard | Resume, Skills & Job Applications – GreatHire</title>
+        <title>Profile Dashboard | GreatHire Job Applications, Skills, and Resume</title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Build and manage your professional profile on GreatHire, a trusted job platform operating from Hyderabad State, India, connecting skilled talent with top employers. This powerful user profile dashboard lets you upload resumes, showcase skills, add experience, qualifications, and track applied jobs in one place. Verify contact details, manage documents, and create a recruiter-ready profile that stands out in today’s competitive job market."
+          content="Establish and organize your professional profile on GreatHire, an authentic job portal functioning in the Hyderabad State of India. The malleable user profile management page enables individuals to upload resumes, highlight their skill sets, include their experiences, and monitor job applications all through this single dashboard. Validate contact information and organize various documents to produce a recruiter-friendly profile in today’s competitive job environment."
         />
       </Helmet>
       

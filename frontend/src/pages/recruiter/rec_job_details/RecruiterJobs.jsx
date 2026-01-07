@@ -118,12 +118,12 @@ const RecruiterJobs = ({ recruiterId }) => {
     <>
       <Helmet>
         <title>
-          Manage Job Listings & Hiring Activity | Recruiter Dashboard – GreatHire
+          Handle Job Postings & Hiring Activity | GreatHire Recruiter Dashboard
         </title>
 
         <meta
           name="description"
-          content="Manage and monitor all your job postings efficiently with GreatHire’s recruiter dashboard. Built for growing hiring teams in Hyderabad State, this centralized job management system gives recruiters full control over job visibility, status, and performance. View active and inactive roles, track job details, manage locations, and respond faster to hiring needs. With advanced filtering, instant status toggles, and secure job deletion, GreatHire helps recruiters stay organized, reduce hiring delays, and streamline recruitment operations while scaling talent acquisition with confidence."
+          content="All your job postings can be efficiently managed and controlled using the recruiter dashboard from GreatHire. This system has been developed to meet the needs of expanding hiring teams in Hyderabad State and allows hiring teams to control all job postings. There are features that enable you to view active and inactive jobs, monitor job details, manage locations, and react quickly to hiring needs. This facilitates recruiters to work in an organized manner, avoid hiring time constraints, and manage hiring operations effectively."
         />
       </Helmet>
 

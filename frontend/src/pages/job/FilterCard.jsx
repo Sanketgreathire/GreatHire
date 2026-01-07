@@ -176,10 +176,10 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
     <>
 
       <Helmet>
-        <title>Advanced Job Search Filters | Find Jobs by Role, Company & Location – GreatHire</title>
+        <title>Advanced Job Search Filters | Locate Jobs by Role, Company, and Location - GreatHire</title>
         <meta
           name="description"
-          content="Discover smarter job searching with GreatHire’s advanced job filters designed for precision and speed. Filter jobs by role, company, location, job type, workplace mode, and date posted to find opportunities that truly match your career goals. Based in Hyderabad State, India, GreatHire connects talented professionals with top companies through a modern, user-friendly hiring platform built for today’s competitive job market. Whether you’re a fresher or an experienced professional, our intelligent filtering system helps you uncover relevant openings faster, reduce noise, and focus only on roles that matter."
+          content="Smarter job searching, powered by GreatHire's advanced job filters for precision and speed, helps you in finding opportunities that truly match your career goals. GreatHire, based in Hyderabad State, India, connects talented professionals with top companies through a user-friendly, modern hiring platform built for today’s competitive job market. Be it a fresher or an experienced professional; our intelligent filtering system is here to help you uncover relevant openings faster, reduce noise, and focus only on the roles that matter."
         />
       </Helmet>
 

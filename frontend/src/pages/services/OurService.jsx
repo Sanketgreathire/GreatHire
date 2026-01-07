@@ -80,10 +80,10 @@ const OurService = () => {
     <>
 
       <Helmet>
-        <title>Our Services | Expert Staffing, IT, and Business Solutions in Hyderabad State</title>
+        <title>GreatHire Services | Professional IT, Business Solutions, and Staffing</title>
         <meta
           name="description"
-          content="Discover our comprehensive services in Hyderabad State designed to boost your business success. From job posting, staffing, and payroll management to web & mobile app development, digital marketing, AI & machine learning, cybersecurity, BPO, and cloud computing, we deliver tailored solutions for organizations of all sizes. Our expert team ensures your operations are streamlined, your online presence thrives, and your workforce performs at its best. Partner with us in Hyderabad State to transform your business processes, enhance efficiency, and stay ahead in a competitive market."
+          content="Find the array of services offered by our company in the state of Hyderabad to optimize your business achievements. Starting from the posting of jobs and the development of websites and mobile applications to the development of AI & machine learning and cybersecurity services, each and every service offered by our company has the ability to optimize your business processes and enable your employees to work at optimal levels. Allow us to assist your business in the state of Hyderabad and stay ahead of the tough competition."
         />
       </Helmet>
 

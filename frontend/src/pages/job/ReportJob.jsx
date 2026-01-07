@@ -81,10 +81,10 @@ const ReportJob = () => {
     <>
 
       <Helmet>
-        <title>Report a Job Listing | Safe & Trusted Hiring – GreatHire</title>
+        <title>Report a Job Posting | GreatHire's Safe & Reliable Hiring</title>
         <meta
           name="description"
-          content="Report suspicious or inappropriate job listings on GreatHire to help keep the hiring platform safe and reliable for everyone. This page allows users to flag fake jobs, incorrect company details, offensive content, or misleading postings with ease and confidentiality. Every report is reviewed to maintain high hiring standards and protect job seekers from fraud or misuse. Based in Hyderabad State, India, GreatHire is committed to providing a secure, transparent, and verified recruitment environment for professionals and employers across industries."
+          content="GreatHire is an employment solutions facilitator, which is currently operational from the state of Hyderabad, India, with the aim of providing a secure and authenticated employment environment for the professionals of the state of Hyderabad only. When you find such employment opportunities, you can report them on GreatHire to ensure the employment platform is safe and sound for all. This page is made to help users to complain about misleading ads, misleading information about companies, offending ads, and misleading ads in a very easy and confidential manner."
         />
       </Helmet>
 

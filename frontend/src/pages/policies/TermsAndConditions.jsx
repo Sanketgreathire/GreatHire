@@ -11,10 +11,10 @@ const TermsAndConditions = () => {
     <>
 
       <Helmet>
-        <title>Terms & Conditions | Legal Policies, User Rights & Platform Rules – GreatHire</title>
+        <title>Terms and Conditions | GreatHire's Legal Policies, User Rights, and Platform Rules</title>
         <meta
           name="description"
-          content="Read GreatHire’s Terms and Conditions covering legal policies, user responsibilities, intellectual property, cookies, disclaimers, and platform usage rules. GreatHire operates from Hyderabad State, India, delivering secure, compliant, and trusted hiring solutions for job seekers and recruiters. Understand your rights, obligations, and protections while using our platform. These terms ensure transparency, lawful operations, and a safe professional hiring environment."
+          content="Go through GreatHire's Terms and Conditions regarding legal policies, user responsibilities, intellectual property, cookies, disclaimers, and rules of using the platform. GreatHire operates from Hyderabad State, India, and helps deliver secured, compliant, and trusted hiring solutions for job seekers and recruiters alike. Understand your rights, obligations, and protection while using our platform. These terms ensure transparency, lawful operations, and safe professional hiring."
         />
       </Helmet>
 

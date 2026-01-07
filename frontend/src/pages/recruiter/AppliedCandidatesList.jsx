@@ -101,12 +101,12 @@ const AppliedCandidatesList = () => {
 
       <Helmet>
         <title>
-          Applied Candidates List | Track & Manage Job Applications – GreatHire
+          List of Applied Candidates | Monitor & Handle Job Applications - GreatHire
         </title>
 
         <meta
           name="description"
-          content="GreatHire delivers a high-performance applied candidates list built for efficient and data-driven hiring across modern organizations. Trusted by growing teams in Hyderabad State, India, this powerful recruitment page enables recruiters to review applicant profiles, analyze resumes, track application statuses, and manage candidates seamlessly from one dashboard. Designed to reduce hiring friction and improve decision-making, GreatHire enhances recruiter productivity, accelerates shortlisting, and strengthens collaboration. Gain complete visibility into your hiring pipeline with a secure, scalable, and recruiter-first applicant management system that helps you hire smarter and faster."
+          content="GreatHire offers an optimized applied candidate list with great performance capabilities that makes finding the right candidates easy. Known as the recruitment page of great power in teams growing in the state of Hyderabad in India, it allows the recruiter to view applications from applicants as well as access resumes. The recruitment page aims at creating ease of recruitment by streamlining recruiter work with functionalities that increase recruiter productivity while ensuring quick short-listing and easy collaboration. Get the entire visibility of your recruitment process as a recruiter with our secure and scalable applicant management solution."
         />
       </Helmet>
 

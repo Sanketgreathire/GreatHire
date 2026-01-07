@@ -649,11 +649,11 @@ function App() {
     <>
 
       <Helmet>
-        <title>About GreatHire | AI-Driven Recruitment & IT Staffing Company in Hyderabad</title>
+        <title>About GreatHire | Hyderabad's AI-Powered Hiring & IT Staffing Company</title>
 
         <meta
           name="description"
-          content="GreatHire is a leading AI-driven recruitment, IT staffing, and workforce solutions company delivering high-impact hiring results for businesses and professionals. Headquartered in Hyderabad, Telangana State, GreatHire empowers organizations with smart talent acquisition, digital transformation, and scalable staffing strategies. Our expert team combines advanced technology with human insight to connect top-tier talent with innovative companies across industries."
+          content="GreatHire is a prominent AI-based recruitment and IT talent solutions company that provides exceptional recruitment outcomes for organizations and professionals alike. With its headquarters based in Hyderabad, Telangana, GreatHire enables organizations to tap into smart recruitment solutions and technological transformations. Our talented and experienced professionals at GreatHire use their astute understanding of human psychology combined with our innovative recruitment solutions for top talent to partner with innovative companies."
         />
       </Helmet>
 

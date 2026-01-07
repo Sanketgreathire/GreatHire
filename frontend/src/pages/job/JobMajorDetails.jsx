@@ -17,11 +17,19 @@ const JobMajorDetails = ({ selectedJob }) => {
   return (
     <>
 
-      <Helmet>
-        <title>Detailed Job Overview | Salary, Skills & Requirements – GreatHire</title>
+      {/* <Helmet>
+        <title>Comprehensive Job Description | Compensation, Qualifications, and Requirements - GreatHire</title>
         <meta
           name="description"
-          content="Get a complete job overview on GreatHire with clear insights into salary, experience level, job type, required skills, qualifications, benefits, and full role description. This page helps job seekers quickly understand whether a position matches their profile before applying. Designed for clarity and transparency, GreatHire ensures every job listing provides meaningful details that support informed career decisions. Based in Hyderabad State, India, GreatHire serves as a trusted hiring platform connecting professionals with verified employers across multiple industries and roles."
+          content="Get complete-job overview on GreatHire with crystal-clear insights into salary, Hyderabad State, India, experience level, job type, required skills, qualifications, benefits, and full role description. This page helps job seekers get a quick view of whether the position fits their profile before applying. Built for clarity and transparency, GreatHire ensures every job provides meaningful detail to inform career decisions. GreatHire is the go-to trusted hiring platform that connects professionals with verified employers across various industries for different roles."
+        />
+      </Helmet> */}
+
+      <Helmet>
+        <title>Current Job Openings & Job Descriptions | View Requirements, Save, Share, and Apply - GreatHire</title>
+        <meta
+          name="description"
+          content="Manage your job search with simplicity by finding the most recent and genuine job ads on GreatHire. Viewing thorough job descriptions, applying with confidence, saving positions for later, and instantaneously sharing ads are all available to candidates. GreatHire, a quickly expanding job platform with its headquarters in Hyderabad, India, links qualified professionals with certified employers in a variety of industries. Every job posting provides a comprehensive summary that includes the salary, location, experience level, job kind, necessary skills, credentials, perks, and full position details. GreatHire, which was created with openness and clarity in mind, assists job searchers in swiftly assessing prospects and making well-informed career decisions while confidently navigating the competitive recruitment landscape of today."
         />
       </Helmet>
 

@@ -274,10 +274,10 @@ const JobsForYou = ({ jobs = [] }) => {
     <>
 
       <Helmet>
-        <title>Jobs Recommended for You | Apply Faster with Smart Matching – GreatHire</title>
+        <title>Jobs Recommended for You | Easily Apply Using Smart Matching - GreatHire</title>
         <meta
           name="description"
-          content="Discover jobs tailored just for you on GreatHire with smart recommendations based on your profile, skills, and preferences. View matched job opportunities, compare salaries, explore job details instantly, bookmark favorites, and apply seamlessly from one powerful interface. This page is designed to reduce job search effort while increasing accuracy and response rates. Based in Hyderabad State, India, GreatHire is a modern hiring platform built to connect skilled professionals with verified employers across technology, business, healthcare, and emerging industries."
+          content="GreatHire is a contemporary recruitment portal where talented individuals are paired with authentic organizations for the sectors of technology, business, healthcare, and new sectors within the boundaries of the state of Hyderabad. GreatHire will provide intelligent suggestions for jobs based on your profile, skills, and preferences. Search job openings, compare salaries, explore job details with a one-click functionality, bookmark jobs you like, and apply to jobs without switching screens. The purpose of this webpage is to reduce job searching efforts where more accuracy and response rates can be obtained."
         />
       </Helmet>
 

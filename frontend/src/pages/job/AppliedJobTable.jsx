@@ -162,11 +162,19 @@ const AppliedJobTable = () => {
     //   </Table> 
 
    <>
-    <Helmet>
-      <title>Applied Jobs Dashboard | Track Your Job Applications & Status</title>
+    {/* <Helmet>
+      <title>Applied Jobs Dashboard | Monitor the Status of Your Job Applications - GreatHire</title>
       <meta
         name="description"
-        content="Manage and monitor all your job applications from one smart and organized dashboard. This page helps job seekers easily track applied dates, job roles, companies, and application statuses with complete clarity. Built for candidates actively exploring opportunities in Hyderabad State, it simplifies the job search experience by keeping everything in one place. Whether you are waiting for responses, shortlisted, or reviewing outcomes, stay informed and prepared at every step. Take control of your career journey, save time, and move forward with confidence in today’s competitive hiring landscape."
+        content="Track and manage all your applications in a single, intelligent, and tailored dashboard. This page provides an opportunity to the candidates to manage their application dates, roles, companies, and statuses with utmost clarity. Designed for the candidates who are in the search of various opportunities in the state of Hyderabad, it provides you the opportunity to manage everything in a single place. If you are awaiting the response, already short-listed, or even analyzing the results, you are always ready with the required information in the challenging recruitment scenario of the current era."
+      />
+    </Helmet> */}
+
+    <Helmet>
+      <title>User Profile & Applied Jobs Dashboard | Monitor Resumes, Skills, and Applications - GreatHire</title>
+      <meta
+        name="description"
+        content="Create and organize your professional profile on GreatHire, a respectable job site with its headquarters located in Hyderabad, India. To create a profile that is appealing to recruiters, users can upload resumes, highlight talents, add work experience, confirm contact details, and maintain crucial documents using the single profile dashboard. Candidates can use a single, sophisticated dashboard to monitor and manage all job applications in addition to managing their profiles. Easily keep track of jobs you've applied for, firms you've applied to, application dates, and current statuses like pending or shortlisted. This all-in-one platform keeps candidates informed, organized, and confident in today's competitive and quickly changing recruitment scene, whether they are actively applying, waiting for responses, or assessing results."
       />
     </Helmet>
 

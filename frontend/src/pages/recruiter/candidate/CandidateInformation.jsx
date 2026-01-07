@@ -94,12 +94,12 @@ const CandidateInformation = () => {
     <>
       <Helmet>
         <title>
-          Candidate Profile & Resume Details | Review, Shortlist & Contact Talent – GreatHire
+          Candidate Profile & Resume Information | Examine, Shortlist, & Get in Touch with Talent - GreatHire
         </title>
 
         <meta
           name="description"
-          content="The Candidate Information page on GreatHire enables recruiters to deeply review applicant profiles, experience, skills, and resumes with ease. Built for modern hiring teams operating from Hyderabad State, India, this platform supports recruiters in evaluating talent accuracy, contacting candidates instantly, and managing shortlists efficiently. With a clean interface, real-time data, and secure access, recruiters can make confident hiring decisions faster. GreatHire streamlines candidate assessment, improves recruiter productivity, and ensures every hiring action is data-driven, transparent, and aligned with business growth goals."
+          content="GreatHire's Candidate Information page lets recruiters deeply review applicant profiles, experience, and skills with ease. This is a cutting-edge, full-stack solution for modern hiring teams operating from Hyderabad State, India. It will help recruiters to assess the accuracy of talent, get in touch with them instantly, and manage their shortlists better. This clean interface means recruiters can make confident hiring decisions faster because real-time data will be available at their fingertips through secure access. GreatHire makes candidate evaluation more organized, Boosts recruiter productivity, and ensures every hiring move is data-driven, transparent, and aligned to business growth objectives."
         />
       </Helmet>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-4 sm:px-6 lg:px-8">

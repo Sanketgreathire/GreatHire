@@ -109,10 +109,10 @@ const JobDescription = () => {
     <>
 
       <Helmet>
-        <title>Job Description & Apply Online | Verified Hiring Opportunities – GreatHire</title>
+        <title>Job Description & Online Application | GreatHire's Verified Hiring Opportunities</title>
         <meta
           name="description"
-          content="View complete job descriptions on GreatHire and apply with confidence. Get in-depth details including role responsibilities, required skills, salary range, benefits, job type, experience level, and application status in one place. Our platform ensures transparent and verified hiring so candidates can make informed career decisions without confusion. Headquartered in Hyderabad State, India, GreatHire is built to connect skilled job seekers with trusted employers across technology, business, healthcare, and multiple industries through a secure and modern hiring experience."
+          content="The entire job details are to be found on the GreatHire website, and application is to be made from there, Hyderabad State, India, with confidence. The entire details regarding job, skills required for that job, nature and pay scales, experience level, and application status are to be found on that particular website. Therefore, with the transparent recruitment system available on our website, it is sure that the job seekers will take correct decisions regarding their career, with no possibility of confusion among the seekers."
         />
       </Helmet>
 

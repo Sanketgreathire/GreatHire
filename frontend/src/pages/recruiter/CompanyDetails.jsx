@@ -129,10 +129,10 @@ const CompanyDetails = () => {
   return (
     <>
       <Helmet>
-        <title>Company Details | View & Manage Business Profile – GreatHire</title>
+        <title>Company Information | View & Manage Company Profile - GreatHire</title>
         <meta
           name="description"
-          content="GreatHire provides a secure and comprehensive company details management experience for modern businesses and recruiters. Trusted by organizations operating from Hyderabad State, India, this page allows company admins to view, edit, and manage official business information, addresses, industry details, and contact records with ease. Designed for transparency and operational control, GreatHire ensures accurate company profiling, seamless updates, and secure verification workflows. Strengthen your employer brand, maintain compliance, and empower your recruitment operations through a reliable, scalable, and professional company management system built for growing enterprises."
+          content="GreatHire offers a safe and holistic experience for management of company details. Trusted and used by companies based out of Hyderabad State, India, this page enables company administrators to easily check, modify, and manage their official company details, addresses, industry information, and contact details. GreatHire is designed to ensure a transparent and manageable experience related to accurate company profiling and processing of verification. Boost your corporate identity and ensure you are in compliance while you power up your hiring process with a safe and scalable company management system."
         />
       </Helmet>
 

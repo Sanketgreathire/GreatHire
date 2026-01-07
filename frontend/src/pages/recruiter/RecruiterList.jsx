@@ -119,12 +119,12 @@ const RecruiterList = () => {
     <>
       <Helmet>
         <title>
-          Recruiter List | Manage Hiring Team & Access Controls – GreatHire
+          GreatHire's Recruiter List | Hiring Team Management & Access Controls
         </title>
 
         <meta
           name="description"
-          content="The GreatHire Recruiter List page helps companies efficiently manage their hiring teams with full control and visibility. Built for modern organizations, this platform is proudly operated from Hyderabad State, India, serving businesses across technology, staffing, startups, and enterprises. From this dashboard, admins can view recruiter profiles, search by name or contact details, activate or deactivate recruiter access, assign roles, and securely remove recruiters when needed. With a clean interface, role-based controls, and real-time updates, GreatHire empowers organizations to maintain an organized, accountable, and high-performing recruitment workforce."
+          content="The GreatHire Recruiter List page enables companies to manage recruitment teams efficiently with total control and insight. Designed specifically to meet contemporary business needs, this tool is, with pride, longingly running from Hyderabad State, India, serving its purpose to technology, staffing, startup, and enterprise companies. Using this page, administrators have the ability to check recruiter details, search through names or contact information, activate/deactivate recruitment privileges, or delete recruiters if necessary with total security. GreatHire allows companies to manage recruitment personnel efficiently, keeping them well-organized, accountable, and highly productive with total ease."
         />
       </Helmet>
 

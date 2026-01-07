@@ -193,12 +193,12 @@ function CandidatePlans() {
     <>
       <Helmet>
         <title>
-          Candidate Credit Plans & Recruitment Pricing | Scale Hiring – GreatHire
+          Candidate Credit Plans & Recruitment Costs | GreatHire's Scale Hiring
         </title>
 
         <meta
           name="description"
-          content="GreatHire offers flexible candidate credit plans designed to help recruiters scale hiring efficiently and confidently. Built for fast-growing companies operating from Hyderabad State, a rapidly expanding recruitment and technology ecosystem in India, our platform delivers unmatched hiring power. Choose from Basic, Standard, or Premium plans to unlock thousands of verified candidate profiles, priority support, and seamless resume access. With secure payments, transparent pricing, and instant credit boosts, GreatHire empowers recruitment teams to hire smarter, faster, and more effectively while maximizing return on investment."
+          content="At GreatHire, flexible candidate credit plans help recruiters scale their hiring efficiently and confidently. Our platform gives unmatched hiring power to fast-growing companies operating from Hyderabad State, one of the fastest-growing recruitment and technology ecosystems in India. Unlock thousands of verified candidate profiles, priority support, and seamless resume access with Basic, Standard, or Premium plans. Secure payments, transparent pricing, and instant credit boosts-that's how GreatHire ensures recruitment teams hire smarter, faster, and more effectively while maximizing return on investment."
         />
       </Helmet>
 

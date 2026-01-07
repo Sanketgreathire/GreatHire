@@ -142,12 +142,12 @@ const PostedJobList = () => {
     <>
       <Helmet>
         <title>
-          Posted Jobs Dashboard | Manage Job Listings & Applicants – GreatHire
+          Dashboard for Posted Jobs | Manage Job Easily
         </title>
 
         <meta
           name="description"
-          content="GreatHire empowers recruiters with a centralized dashboard to manage posted jobs efficiently across growing organizations in Hyderabad State, delivering real-time control, visibility, and hiring performance. This powerful recruiter-focused platform enables seamless tracking of active and expired jobs, quick access to applicant lists, smart status management, and streamlined hiring workflows. Designed for modern companies and HR teams, GreatHire helps reduce time-to-hire, improve recruitment decisions, and maintain complete control over job postings. Experience a secure, scalable, and intuitive hiring solution built to support business growth and professional recruitment success."
+          content="GreatHire enables recruiters to have a central viewing platform on which they can manage their listed jobs in an effective way in growing organizations in Hyderabad State, providing real-time control and visibility on hiring. The feature-rich and recruiter-centric platform allows effortless viewing of ongoing and lapsed jobs, easy viewing of applicants, effective status management, and smooth hiring process operations. The platform is built with today’s business organization in mind, helping in minimizing the time to hire, enabling better hiring outcomes, and retaining full control over the listed jobs. Get equipped with the secure, scalable, and user-friendly hiring platform."
         />
       </Helmet>
 

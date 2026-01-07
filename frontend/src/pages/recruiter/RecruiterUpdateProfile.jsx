@@ -92,12 +92,12 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     <>
       <Helmet>
         <title>
-          Update Profile | Manage Personal & Professional Details – GreatHire
+          Update Your Profile | Manage Your Personal and Professional Information at GreatHire
         </title>
 
         <meta
           name="description"
-          content="The Recruiter Update Profile page on GreatHire allows professionals to securely update personal information, role details, and profile images with ease. Built for modern hiring workflows, our platform is operated from Hyderabad State, India, delivering reliable recruitment technology to companies, HR teams, and fast-growing startups. Keep your recruiter identity accurate, verified, and professional while strengthening trust with candidates. With a smooth interface, secure updates, and real-time profile management, GreatHire empowers recruiters to present credibility, enhance visibility, and stay competitive in today’s evolving job market."
+          content="The Recruiter Update Profile Page on GreatHire enables professionals to safely and easily update personal and professional information as well as the images displayed on the profile page. Designed to meet the requirements of the current hiring and recruitment process, our system runs from the state of Hyderabad, India, providing trusted recruitment solutions to businesses and start-ups expanding rapidly. Thus, maintain your recruiters’ presence on the platform as a trusted and professional entity and enhance trust between your recruiters and job candidates."
         />
       </Helmet>
       <div

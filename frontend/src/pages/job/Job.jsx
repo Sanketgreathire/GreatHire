@@ -130,10 +130,10 @@ const Job = ({ job }) => {
     <>
 
       <Helmet>
-        <title>Latest Job Openings | Apply, Save & Share Jobs Easily – GreatHire</title>
+        <title>Current Job Openings | Easily Apply, Save, and Share Jobs - GreatHire</title>
         <meta
           name="description"
-          content="Explore the latest verified job openings on GreatHire and take control of your career journey. Browse detailed job listings, check salary ranges, job type, workplace flexibility, response time, and apply with confidence. Save jobs for later, share opportunities instantly, and track application status in real time through a clean, modern interface. Operating from Hyderabad State, India, GreatHire is a fast-growing hiring platform connecting skilled professionals with trusted companies across multiple industries and locations. Whether you’re actively applying or exploring opportunities, GreatHire helps you discover relevant jobs faster and smarter."
+          content="Find the most updated authentic job listings on GreatHire and manage your job search experience. View the entire job description on GreatHire and then apply to jobs confidently. You can save the jobs for later and share job listings with others instantly. GreatHire operates from the state of Hyderabad, India, and is rapidly expanding as a job portal bringing qualified job seekers and reliable companies together from various business segments and locations. It might be that you are looking for a job or applying to various job postings; GreatHire will enable you to find the most suitable jobs quicker and smarter"
         />
       </Helmet>
 

@@ -770,13 +770,13 @@ const JobDetail = () => {
       <Helmet>
         {/* Meta Title */}
         <title>
-          Job Details | View Requirements, Skills & Benefits – GreatHire
+          Job Details | View Benefits, Skills, and Requirements - GreatHire
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Explore detailed job information on GreatHire including role responsibilities, required skills, qualifications, benefits, salary range, and workplace flexibility. Hyderabad State India based platform helps recruiters and candidates make confident hiring and career decisions with clarity and transparency. GreatHire supports companies, startups, recruiters, and professionals with reliable job management tools, scalable recruitment solutions, and seamless talent connections. Review openings thoroughly, manage postings efficiently, and connect with the right candidates through a trusted platform designed for modern hiring success, productivity, and growth."
+          content="Detailed descriptions entailing job responsibilities, skills and qualifications required, benefits, salary range, and workplace flexibility can be found on GreatHire. Hyderabad State India-based job platform for recruiters and candidates to make confident hiring and career decisions based on clarity and transparency. GreatHire supports companies, startups, recruiters, and professionals with reliable job management tools, scalable recruitment solutions, and seamless talent connections. Take a closer look at openings, manage postings with ease, and connect with the right candidates through a trusted platform built for modern hiring success, productivity, and growth."
         />
       </Helmet>
       {/* {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />} */}

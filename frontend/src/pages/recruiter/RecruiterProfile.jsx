@@ -32,12 +32,12 @@ const RecruiterProfile = () => {
     <>
       <Helmet>
         <title>
-          Profile Dashboard | Manage Account, Company & Verification – GreatHire
+          Profile Dashboard | Control Company, Account, and Verification - GreatHire
         </title>
 
         <meta
           name="description"
-          content="The GreatHire Recruiter Profile Dashboard helps hiring professionals manage their profile, company details, and contact verification with ease. Built for efficiency and trust, our platform is proudly based in Hyderabad State, India, supporting recruiters, HR teams, and growing organizations across multiple industries. Update personal information, verify email credentials, showcase your role, and maintain a professional hiring presence in one secure place. With a clean interface, real-time updates, and enterprise-grade reliability, GreatHire empowers recruiters to build credibility, streamline communication, and attract top talent faster. Take control of your recruiter identity and strengthen your hiring success today."
+          content="The GreatHire Recruiter Profile Dashboard provides recruiters with a streamlined way to manage their own profile, company information, and verified contact. The GreatHire system is designed to work efficiently and effectively to maintain reliability. Currently, our system is situated in Hyderabad State, India. Recruiters and organizations can update their personal information, check their email addresses, highlight their job position, and establish a professional hiring identity all under one safe and efficient platform. The user-friendly and real-time responsive platform provides recruiters with everything they need to establish their authority and successfully hire top talent. Use our system to take charge of your recruiter profile and boost your hiring success."
         />
       </Helmet>
 

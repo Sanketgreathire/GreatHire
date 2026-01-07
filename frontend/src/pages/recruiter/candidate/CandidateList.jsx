@@ -118,12 +118,12 @@ const CandidateList = () => {
     <>
       <Helmet>
         <title>
-          Find & Hire Top Candidates | Search Skilled Talent Efficiently – GreatHire
+          Locate and Employ Top Candidates | Effectively Find Skilled Talent with GreatHire
         </title>
 
         <meta
           name="description"
-          content="GreatHire’s Candidate List page empowers recruiters to search, filter, and manage qualified job seekers with precision. Designed for fast-growing hiring teams operating from Hyderabad State, India’s leading technology and recruitment hub, this platform enables seamless talent discovery. Recruiters can filter candidates by skills, experience, location, salary expectations, and activity status to make smarter hiring decisions. With real-time insights, credit-based access, and secure candidate profiles, GreatHire simplifies recruitment workflows, saves time, and helps companies build strong teams faster with confidence."
+          content="The Candidates List page of GreatHire’s website gives recruiters the power to search, filter, and manage the shortlisted candidates accurately. The website has been designed specifically for the fast-growing recruitment teams in Hyderabad State, as India’s technical and recruitment hub, with the aim of facilitating effortless candidate search. The recruiters are able to filter the candidates on the basis of their skills, experience, location, expected salaries, and activity level, allowing companies to hire the best candidate. GreatHire provides enhanced candidate information with real-time analysis, credit-based access, and secure candidate data."
         />
       </Helmet>
 

@@ -3,37 +3,39 @@
 import React, { useState } from "react";
 
 // Hook for programmatic navigation
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 // Import background image for the page
-import img4 from "../assets/img4.png"; 
+import img4 from "../assets/img4.png";
 
 // Import navigation bar component
-import Navbar from "@/components/shared/Navbar"; 
+import Navbar from "@/components/shared/Navbar";
 
 // Import footer component
 import Footer from "@/components/shared/Footer";
 
 // Import Axios for making API requests
-import axios from "axios"; 
+import axios from "axios";
 
 // Import toast notifications for user feedback
 import { toast } from "react-hot-toast";
 
 // Import API endpoint for user operations
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint"; 
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+
+import { Helmet } from "react-helmet-async";
 
 // ForgotPassword component allows users to request a password reset link
 const ForgotPassword = () => {
 
   // Initialize navigation hook
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // State for storing user email input
-  const [email, setEmail] = useState(""); 
+  const [email, setEmail] = useState("");
 
   // State for tracking loading status
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   // Function to handle form submission and send reset link request
   const handleSubmit = async (e) => {
@@ -62,11 +64,22 @@ const ForgotPassword = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Forget Password | Safely Reset Your GreatHire Account
+        </title>
+
+        <meta
+          name="description"
+          content="Our forgotten password site makes it simple to secure your GreatHire account. With its headquarters located in Hyderabad, the platform facilitates hassle-free access restoration for customers throughout India. By entering their registered email address and promptly obtaining a secure reset link, this page is intended to assist applicants in safely changing their passwords. To guarantee a reliable job search experience, GreatHire places a high priority on user data protection, privacy, and seamless authentication. Our password recovery procedure is easy, quick, and dependable whether you are actively looking for jobs, maintaining your profile, or monitoring applications. Professionals, recent graduates, and recruiters across the country may have a smooth experience with the platform, which is geared for both desktop and mobile users. GreatHire ensures that every account is secure at every stage by adhering to contemporary security procedures and compliance regulations."
+        />
+      </Helmet>
+
       <Navbar /> {/* Display the navigation bar */}
 
       {/* Main container for the forgot password page */}
       <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-white to-blue-100 h-screen">
-        
+
         {/* Left Side - Background Image */}
         <div className="hidden md:block w-full md:w-2/3">
           <img
@@ -114,9 +127,8 @@ const ForgotPassword = () => {
             {/* Submit button with loading state */}
             <button
               type="submit"
-              className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>

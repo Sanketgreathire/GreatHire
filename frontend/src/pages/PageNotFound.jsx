@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const PageNotFound = () => {
   const navigate = useNavigate();
@@ -21,30 +22,43 @@ const PageNotFound = () => {
   }, [user, navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <p className="text-xl text-gray-900 mt-4 text-center">
-        Oops! The page you are looking for does not exist.
-      </p>
+    <>
+      <Helmet>
+        <title>
+          Page Not Found 404 | GreatHire Employment Search Engine
+        </title>
 
-      <button
-        onClick={() => navigate("/")}
-        className="mt-6 px-6 py-2 text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-all duration-200"
-      >
-        Go Back Home
-      </button>
-    </div>
+        <meta
+          name="description"
+          content="The site you are attempting to view on GreatHire is not accessible. The platform, which has its headquarters in Hyderabad state, guarantees smooth redirection for a continuous user experience. When an invalid or out-of-date URL is encountered, this 404 page is intended to ensure seamless navigation. New visitors are brought to the homepage, job seekers are led to pertinent job postings, and recruiters who are logged in are redirected to their dashboard. To minimize confusion and avoid drop-offs, GreatHire places a strong emphasis on performance optimization, intelligent routing, and user-friendly design. The platform keeps recruiting, career advancement, and job searches going even when pages are unavailable. GreatHire provides a dependable and expert experience throughout India with safe routing and role-based navigation."
+        />
+      </Helmet>
+
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+        <p className="text-xl text-gray-900 mt-4 text-center">
+          Oops! The page you are looking for does not exist.
+        </p>
+
+        <button
+          onClick={() => navigate("/")}
+          className="mt-6 px-6 py-2 text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-all duration-200"
+        >
+          Go Back Home
+        </button>
+      </div>
+    </>
   );
 };
 
 export default PageNotFound;
 
 // // Import React library
-// import React from 'react'; 
+// import React from 'react';
 // import { useSelector } from "react-redux"; // Import useSelector to get user data from Redux
 // import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 // // Import Link component for navigation
-// import { Link } from 'react-router-dom'; 
+// import { Link } from 'react-router-dom';
 
 // // PageNotFound Component - Displays a 404 error page when a user visits an invalid route
 // const PageNotFound = () => {
