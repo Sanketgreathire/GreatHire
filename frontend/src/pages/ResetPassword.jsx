@@ -25,6 +25,8 @@ import Loading from "@/components/Loading";
 // Import pageNotFound component
 import PageNotFound from "./PageNotFound";
 
+import { Helmet } from "react-helmet-async";
+
 // ResetPassword Component - Allows users to reset their password using a token
 const ResetPassword = () => {
   // State to track page status
@@ -106,6 +108,17 @@ const ResetPassword = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Reset Password | GreatHire's Secure Account Recovery
+        </title>
+
+        <meta
+          name="description"
+          content="With the platform's headquarters located in Hyderabad state and constructed on contemporary security standards, you can safely reset your GreatHire account password using our verified recovery process. With the help of a secure token-based verification system, users can establish a new password on this reset password page, guaranteeing the highest level of account security and data protection. To verify reset links, stop illegal access, and provide a seamless recovery process, GreatHire adheres to stringent authentication procedures. This procedure guarantees continuous platform utilization, whether you are a recruiter viewing dashboards or a job seeker managing applications. Account recovery is quick and easy because to the interface's optimization for speed, clarity, and mobile responsiveness. GreatHire upholds performance, privacy, and confidence at every stage with secured workflows and dependable redirection."
+        />
+      </Helmet>
+
       {/* Show loading indicator while verifying token */}
       {status === "loading" && <Loading color="blue-600" />}
 
@@ -181,9 +194,8 @@ const ResetPassword = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                    loading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${loading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 >
                   {loading ? "Resetting..." : "Reset Password"}
                 </button>

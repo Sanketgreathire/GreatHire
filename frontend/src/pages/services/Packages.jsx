@@ -86,10 +86,10 @@ function Packges() {
     <>
 
       <Helmet>
-        <title>Affordable Premium Job Posting Packages | Recruit Faster in Hyderabad</title>
+        <title>Premium Job Posting Packages at Reasonable Prices | Hire More Quickly - GreatHire</title>
         <meta
           name="description"
-          content="Choose flexible and cost-effective premium job posting packages designed to accelerate your hiring success. Our recruitment platform helps employers post jobs, access verified candidate databases, and hire faster with transparent pricing and maximum ROI. Trusted by thousands of recruiters, we offer scalable plans for startups, SMEs, and enterprises looking to grow their teams efficiently. Based in Hyderabad State, India, our recruitment solutions support local businesses and nationwide hiring needs with reliable technology, expert support, and industry-ready talent. Start recruiting smarter today with premium job credits that deliver real results."
+          content="Select flexible and economical premium job posting packages to expedite your success in recruitment. Our recruitment solutions assist organizations in posting jobs, looking up authentic candidate databases, and recruiting quickly with optimum ROI and clarity on prices. Counted on by thousands of HR professionals, we provide scalable recruitment solutions for startups, SMEs, and corporate entities to grow their employee base effectively. Operating from Hyderabad State in India, our recruitment services and solutions address the recruitment challenges of local firms as well as organizations across the nation with our innovative solutions and qualified talent pool ready for recruitment."
         />
       </Helmet>
 

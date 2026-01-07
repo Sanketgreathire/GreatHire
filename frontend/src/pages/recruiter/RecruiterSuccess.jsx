@@ -9,12 +9,12 @@ export const RecruiterSuccess = () => {
     <>
       <Helmet>
         <title>
-          Registration Successful | Email Confirmation Sent – GreatHire
+          Sucessful Registration | Email Confirmation Sent - GreatHire
         </title>
 
         <meta
           name="description"
-          content="Your recruiter registration on GreatHire has been completed successfully, and a confirmation email has been sent to your registered address. Operating from Hyderabad State, India, GreatHire is designed to ensure trust, security, and seamless onboarding, empowering recruiters to start hiring with confidence. Serving fast-growing companies, HR professionals, and startups, the platform offers reliable hiring solutions, intuitive dashboard access, and powerful recruiter tools built for speed and simplicity. Take the next step in your hiring journey, return to your dashboard, and connect with top talent through a trusted, efficient recruitment ecosystem."
+          content="The process of registering as a recruiter on GreatHire has been successfully completed, and an alert email has been sent to your registered mail. Founded in the state of Hyderabad, in India, GreatHire is made to provide assurance, security, and smooth onboarding, so recruiters feel encouraged to start hiring immediately. With a focus on quickly expanding companies, HR professionals, and startups, the website provides a genuine hiring solution along with easy access to a recruiter dashboard. Move ahead in your hiring process and go back to your dashboard to connect with the brightest talent via a genuine hiring platform."
         />
       </Helmet>
 

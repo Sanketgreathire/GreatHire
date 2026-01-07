@@ -33,10 +33,10 @@ const SavedJobs = () => {
   return (
     <>
       <Helmet>
-        <title>Saved Jobs | Track & Apply to Your Bookmarked Jobs – GreatHire</title>
+        <title>Jobs You've Saved | Monitor & Apply to Jobs You've Bookmarked - GreatHire</title>
         <meta
           name="description"
-          content="Manage all your bookmarked opportunities in one place with GreatHire's Saved Jobs page. Easily revisit jobs you've saved, compare roles, review salaries, check application status, and apply when you're ready. This page helps job seekers stay organized and never miss important opportunities while planning their next career move. Based in Hyderabad State, India, GreatHire is a trusted hiring platform designed to connect professionals with verified employers across multiple industries and locations."
+          content="Now, all your bookmarked jobs are available on one page. The Saved Jobs page on GreatHire makes it convenient to go back to the jobs that are marked as favorites and apply for them later. This page is useful in helping a job seeker organize his/her future and not miss an opportunity. Started in the region of Hyderabad, India, GreatHire is a reputable hiring platform developed to help professionals connect with authentic employers."
         />
       </Helmet>
 

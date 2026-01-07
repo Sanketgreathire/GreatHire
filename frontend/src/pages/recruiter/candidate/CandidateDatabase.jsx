@@ -251,12 +251,12 @@ const CandidateDatabase = () => {
 
       <Helmet>
         <title>
-          Candidate Database Management | View, Track & Manage Users – GreatHire Admin
+          Candidate Database Management | View, Monitor, and Control Users - GreatHire
         </title>
 
         <meta
           name="description"
-          content="The Candidate Database page in the GreatHire Admin Panel empowers administrators to monitor users, applications, and recruitment performance efficiently. Designed for scalability and accuracy, this platform is managed from Hyderabad State, India, supporting enterprises, startups, and hiring teams with centralized user insights. Admins can search candidates, track activity, export data, and manage accounts securely from one dashboard. With real-time analytics, clean UI, and advanced controls, GreatHire delivers powerful workforce intelligence, enabling smarter decisions, improved hiring outcomes, and seamless recruitment operations across growing organizations."
+          content="Candidate Database, which is found on the GreatHire Admin Panel, is a powerful tool that allows the administrator to track users, applications, and their hiring performance effectively. This is a highly accurate and scalable tool, and it is operated from Hyderabad State, India, and it is useful for startups, large-scale business concerns, and hiring teams. The use of real-time analytics and powerful tools allows GreatHire to offer highly accurate work force intelligence to their clients."
         />
       </Helmet>
 

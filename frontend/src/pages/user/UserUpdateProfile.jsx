@@ -177,7 +177,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
-    phoneNumber: user?.phoneNumber.number || "",
+    phoneNumber: user?.phoneNumber?.number || "",  //changed phoneNumber: user?.phoneNumber.number
     alternatePhone: user?.alternatePhone?.number || "",
 
     bio: user?.profile?.bio || "",
@@ -724,12 +724,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     <>
      <Helmet>
       <title>
-        Update Profile | Resume, Experience & Career Details – GreatHire
+        Update Your Profile | Resume, Experience, and Career Information - GreatHire
       </title>
 
       <meta
         name="description"
-        content="Update and strengthen your professional profile on GreatHire, a trusted job platform based in Hyderabad State, India, built to connect skilled talent with top employers. This profile update page allows job seekers to edit personal details, upload resumes, add experience, skills, qualifications, languages, and verified documents with ease. Showcase your career journey and maintain a recruiter-ready profile that boosts visibility."
+        content="Update and enhance your professional profile on GreatHire, one of the most trustworthy and popular job portals, conceptualized and developed in Hyderabad State, India, to bring qualified candidates and top companies together. The profile updating page will enable candidates to edit their personal information, upload resumes, create work experience, skills, qualifications, languages, and valid documents quickly."
       />
     </Helmet>
     

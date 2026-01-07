@@ -66,10 +66,10 @@ const ShareCard = ({ urlToShare, jobTitle, jobLocation, jobSalary, jobDuration, 
     <>
 
       <Helmet>
-        <title>Share Job Openings Instantly | Easy Social Job Sharing – GreatHire</title>
+        <title>Instantaneously Share Job Openings | Simple Social Job Sharing - GreatHire</title>
         <meta
           name="description"
-          content="Share job opportunities instantly with GreatHire’s smart job sharing feature. Easily send job details—including role, location, salary, job type, and duration—across WhatsApp, LinkedIn, Twitter, Facebook, Instagram, or by copying a direct link. Based in Hyderabad State, India, GreatHire is a modern hiring platform focused on making job discovery, referrals, and applications simple, transparent, and reliable across industries."
+          content="Share job opportunities in an instant with GreatHire’s intelligent job sharing feature. Share job information such as job, location, salary, type of job, and job duration via WhatsApp, LinkedIn, Twitter, Facebook, and Instagram, and even via copying and pasting the direct link. GreatHire is founded in Hyderabad State, India, and is one of the most contemporary hiring platforms, working on providing easy and efficient job discovery, sharing, and application."
         />
       </Helmet>
 

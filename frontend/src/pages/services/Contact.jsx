@@ -68,10 +68,10 @@ const ContactSection = () => {
     <>
 
       <Helmet>
-        <title>Contact Great Hire | Connect with Our Expert Team in Hyderabad State</title>
+        <title>Contact GreatHire | Get in Touch with Our Skilled Staff</title>
         <meta
           name="description"
-          content="Get in touch with Great Hire in Hyderabad State for professional recruitment, support, and collaboration. Our dedicated team is ready to answer your questions, assist with inquiries, and provide expert guidance to help you find the perfect talent. Whether you have a question about our services, need support, or want to discuss partnership opportunities, contacting us is simple and quick. Fill out the contact form or reach us via phone or email today, and experience seamless communication with one of Hyderabad State’s leading recruitment and HR solution providers."
+          content="Get in touch with Great Hire in the Hyderabad State for expert recruitment and collaboration. Our expert staff is all set to answer your queries and provide extraordinary guidance so that the best and the brightest are found for you. With a query related to our services or collaboration requirements to related queries and more, getting into touch with us is extremely simple and quite effortless. Just fill the form or meet us through the contact number or email and enjoy the smoothest form of communication with the best recruitment solutions provider in the Hyderabad State."
         />
       </Helmet>
 

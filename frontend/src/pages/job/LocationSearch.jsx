@@ -19,10 +19,10 @@ const Locations = ({ locations, onSelectLocation }) => {
     <>
 
       <Helmet>
-        <title>Search Jobs by Location | Find Jobs Near You – GreatHire</title>
+        <title>Search Jobs by Location | Locate Jobs in Your Area - GreatHire</title>
         <meta
           name="description"
-          content="Find jobs easily by location using GreatHire’s smart location search feature. Instantly explore job opportunities across cities and regions by selecting or typing your preferred location, including metro and remote options. This location-based job search helps candidates narrow results quickly, discover nearby opportunities, and apply with confidence. Headquartered in Hyderabad State, India, GreatHire is a trusted hiring platform designed to connect job seekers with verified employers across multiple cities, industries, and experience levels."
+          content="Find a job quickly using the location search functionality that is too good to miss and available on GreatHire’s platform, named Hyderabad State, India. Search for a job immediately by selecting your desired job location even without searching. Employing the location search functionality on the job search platform enables job seekers to limit job search results immediately and quickly find a job. GreatHire is a reliable job portal that helps link job seekers with employers on the job platform."
         />
       </Helmet>
 

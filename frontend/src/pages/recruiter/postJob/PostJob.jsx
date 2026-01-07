@@ -162,12 +162,12 @@ const PostJob = () => {
     <>
       <Helmet>
         <title>
-          Post a Job & Hire Faster | Recruit Top Talent with GreatHire
+          Post a Job and Hire More Quickly | Use GreatHire to Find Top Talent
         </title>
 
         <meta
           name="description"
-          content="Post jobs effortlessly on GreatHire and reach qualified candidates faster with our powerful recruitment tools. Designed for modern hiring teams operating from Hyderabad State, one of India’s fastest-growing employment and technology hubs, this platform streamlines job posting end to end. Add job details, skills, salary, benefits, and location with ease while ensuring compliance and transparency. Whether you’re hiring urgently or planning long-term growth, GreatHire helps companies attract the right talent, reduce hiring time, and scale recruitment with confidence and speed."
+          content="Posting jobs on GreatHire requires no effort, and we help you find the best talent in the least amount of time. GreatHire is designed for today’s hiring teams in the Hyderabad State, which is one of the fastest-growing employment and technological corridors of India. You can add job description, requirements, salary, benefits, and location to the job posting in a hassle-free manner while sustaining complete transparency and compliance. Whether a hiring is short-term or for future expansion, GreatHire assists clients in successfully acquiring the best talent."
         />
       </Helmet>
 

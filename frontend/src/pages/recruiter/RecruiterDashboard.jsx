@@ -91,12 +91,12 @@ const RecruiterDashboard = () => {
     <>
       <Helmet>
         <title>
-          Dashboard | Jobs, Applicants & Hiring Analytics – GreatHire
+          Recruiter's Dashboard | GreatHire Jobs, Applicants, & Hiring Analytics
         </title>
 
         <meta
           name="description"
-          content="GreatHire’s recruiter dashboard empowers companies to manage hiring with confidence and speed, offering real-time insights and analytics. Headquartered in Hyderabad State, India, this platform helps track posted jobs, active and expired roles, applicants, shortlisted candidates, recruiters, and hiring credits from a single, centralized dashboard. Designed for modern recruiters, GreatHire delivers scalable hiring solutions, combining job performance metrics, applicant management, and recruiter oversight. Gain full visibility, smarter control, and faster decision-making to attract top talent, streamline recruitment processes, and grow high-performing teams with a trusted platform built for efficiency and recruitment success."
+          content="The recruiter dashboard provided by GreatHire enables organizations to conduct recruitment with confidence and agility. The organization is based in the state of Hyderabad in India. It assists in monitoring jobs that are posted, as well as active and expired ones. It also helps in monitoring applicants, short-listed individuals, recruiters, as well as recruitment credits. The modern recruiter dashboard offered by GreatHire assists in providing scalable recruitment solutions. This includes job performance analytics, management of applicants, as well as recruiter management. The company helps organizations acquire complete visibility, informed control, as well as rapid decision-making. It assists in acquiring the best human capital."
         />
       </Helmet>
 

@@ -114,13 +114,13 @@ const AllApplicantsList = () => {
       <Helmet>
         {/* Meta Title */}
         <title>
-          All Applicants | Manage Job Candidates & Hiring Pipeline – GreatHire
+          Every Applicant | Oversee Employees & Hiring Process - GreatHire
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Manage and review all job applicants efficiently on GreatHire, a powerful recruitment platform operating from Hyderabad State, India, designed to support modern hiring teams. This All Applicants page enables recruiters and employers to search, filter, shortlist, or reject candidates with ease while tracking application status in real time. View applicant details, access job information, and streamline your hiring workflow from a single dashboard. Built for speed, clarity, and control, GreatHire helps companies make smarter hiring decisions, improve recruiter productivity, and secure top talent faster."
+          content="GreatHire is a robust recruitment platform working out of Hyderabad State in India, helping modern hiring teams manage and review all job applicants with efficiency. This page displays all applicants and thus allows recruiters or employers to easily search, filter, shortlist, or reject candidates while keeping track of the status of applications in real time. Get insights into applicant details, job information, and power your hiring workflow from one single dashboard. Built for speed, clarity, and control, GreatHire supports smart hiring decisions, productivity among recruiters, and faster closures of top talent for companies."
         />
       </Helmet>
 

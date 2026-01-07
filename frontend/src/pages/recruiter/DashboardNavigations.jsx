@@ -348,13 +348,13 @@ const DashboardNavigations = () => {
     <Helmet>
   {/* Meta Title */}
   <title>
-    Dashboard Navigation | Manage Hiring, Jobs & Teams – GreatHire
+    Dashboard Navigation | GreatHire's Hiring, Jobs, and Teams Management
   </title>
 
   {/* Meta Description */}
   <meta
     name="description"
-    content="Hyderabad State powered dashboard by GreatHire enables modern companies to manage recruitment efficiently from one centralized platform. This intuitive dashboard helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. Built for startups, enterprises, HR teams, and staffing agencies, GreatHire simplifies complex hiring workflows while offering speed, security, and scalability. With smart navigation, real-time insights, and role-based access, recruiters can make faster decisions, streamline candidate management, and scale their hiring operations confidently across India."
+    content="This intuitive Hyderabad State-powered dashboard by GreatHire allows modern companies to manage recruitment effectively from a single centralized platform. It helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. GreatHire is purpose-built for startups, enterprises, HR teams, and staffing agencies to simplify complex hiring workflows with the assurance of speed, security, and scalability. The smart navigation, real-time insights, and role-based access enable recruiters to make quicker decisions, manage candidates more smoothly, and scale up their hiring confidently across India."
   />
 </Helmet>
       {/*  Hamburger Button (Visible on Small Screens) */}

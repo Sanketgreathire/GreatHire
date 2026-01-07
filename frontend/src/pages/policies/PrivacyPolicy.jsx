@@ -39,10 +39,10 @@ const Section = ({ icon: Icon, title, children, sectionKey, expandedSection, set
     <>
 
       <Helmet>
-        <title>Terms & Privacy Policy | User Rights, Data Protection & Platform Rules – GreatHire</title>
+        <title>Terms & Privacy Policy | GreatHire's Platform Rules, Data Protection, and User Rights - GreatHire</title>
         <meta
           name="description"
-          content="Read GreatHire’s Terms of Service and Privacy Policy to understand how our platform operates, how user data is collected and protected, and what responsibilities apply to job seekers and recruiters. Based in Hyderabad State, India, GreatHire is committed to transparency, ethical hiring practices, and compliance with global data protection laws such as GDPR and CCPA."
+          content="Our website’s Terms of Service and Privacy Policy should be read to understand the workings of the GreatHire platform. Being a Hyderabad, Telangana, India-based platform, the GreatHire website details the treatment of the information of job-seekers, their responsibilities, as well as the responsibility of job providers. We, at GreatHire, conform to the highest standards of transparency, ethical recruitment, and GDPR, CCPA, among other data protection regulations."
         />
       </Helmet>
 

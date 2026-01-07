@@ -640,12 +640,12 @@ const Blogs = () => {
 
       <Helmet>
         <title>
-          GreatHire Blog | Career Advice, Hiring Trends & Future of Work Insights
+          GreatHire Blog | Career Guidance, Employment Patterns, and Perspectives on the Future of Work
         </title>
 
         <meta
           name="description"
-          content="Discover expert career advice, hiring strategies, interview tips, resume optimization, and the future of work with the GreatHire Blog. From AI-driven recruitment and remote work trends to interview preparation and upskilling, our insights help job seekers and employers stay ahead in a competitive market. GreatHire is proudly based in Hyderabad State, India, serving businesses, recruiters, and professionals across the Hyderabad State region with innovative hiring solutions and career guidance."
+          content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
         />
       </Helmet>
 

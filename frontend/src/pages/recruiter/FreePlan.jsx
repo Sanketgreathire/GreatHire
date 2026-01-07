@@ -10,13 +10,13 @@ function FreePlan() {
             <Helmet>
                 {/* Meta Title */}
                 <title>
-                    Free Hiring Plan | Post Jobs & Access Candidates at No Cost – GreatHire
+                    Free Hiring Plan | Post Positions & Get Candidates for Free - GreatHire
                 </title>
 
                 {/* Meta Description */}
                 <meta
                     name="description"
-                    content="Explore the GreatHire Free Plan designed for startups and recruiters who want to hire smarter. Hyderabad State India based platform offers 15 free job postings and access to 150 candidate profiles per job, helping you evaluate talent efficiently and confidently. GreatHire empowers employers, recruiters, and HR teams across growing business ecosystems with reliable hiring tools, transparent recruitment workflows, and scalable solutions. Start your hiring journey today with a risk-free plan built to deliver real value, measurable results, and trusted recruitment performance."
+                    content="Unfold the GreatHire Free Plan, crafted specifically for startups as well as recruiters who are looking to hire smarter. The Hyderabad State India-based platform provides 15 free job listings with 150 candidate profiles per recruitment, thereby allowing you to assess candidates effectively. GreatHire enables entrepreneurs, recruiters, and HR professionals in a proliferating business environment with the help of efficient recruitment solutions. Start your recruitment experience with arisk-free plan designed specifically to provide utmost value."
                 />
             </Helmet>
 

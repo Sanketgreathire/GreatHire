@@ -43,10 +43,10 @@ const JobSearch = ({ searchInfo, onSearchUpdate }) => {
     <>
 
       <Helmet>
-        <title>Search Jobs by Title & Location | Fast Job Finder – GreatHire</title>
+        <title>Search Jobs by Title & Location | Fast Job Finder - GreatHire</title>
         <meta
           name="description"
-          content="Search jobs instantly on GreatHire using smart keyword and location-based job search. Find relevant openings by job title, company name, skills, and preferred location with a clean and responsive search experience across all devices. Designed for speed and accuracy, GreatHire helps job seekers reduce noise and focus only on roles that match their career goals. Operating from Hyderabad State, India, GreatHire supports professionals and employers by delivering location-aware job discovery across cities, industries, and experience levels through a trusted hiring platform."
+          content="Jobs can now be searched instantly on GreatHire, a smart job-search engine, Hyderabad State, India. Candidates searching for jobs on a hiring portal are provided relevant job listings based on their job title, company name, skills, and desired location. The purpose behind designing GreatHire is to aid job-seeking individuals and employers in searching jobs accurately and smartly. The objectives are fulfilled by providing location-aware job searching facilities on GreatHire. It caters to professionals and employers by providing location-aware job searching facilities."
         />
       </Helmet>
 

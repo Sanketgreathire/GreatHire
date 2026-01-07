@@ -20,13 +20,13 @@ const CurrentPlans = () => {
       <Helmet>
         {/* Meta Title */}
         <title>
-          Current Subscription Plan | Manage Hiring Credits & Benefits – GreatHire
+          Current Subscription Plan | GreatHire's Hiring Credits & Benefits Management
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="View and manage your current subscription plan on GreatHire with complete transparency and control. Hyderabad State, India based recruitment platform empowers recruiters startups enterprises and hiring teams with trusted hiring solutions, flexible plans, real-time credit tracking, job posting benefits, pricing visibility, expiry alerts, and seamless upgrades to scale recruitment faster and smarter."
+          content="View and manage your existing subscription plan on GreatHire in a completely transparent and controlled manner. Hyderabad State, India based hiring platform enables recruiters, startups, enterprises to empower trusted hiring solutions. It provides innovative hiring tools, viewing of existing plans, real-time tracking of credits, advantages of posting jobs, viewing or knowing about pricing, viewing or knowing about expiry, and upgrades."
         />
       </Helmet>
       {/* Check if the company exists and the user is active */}

@@ -146,12 +146,12 @@ const RecruiterHome = () => {
     <>
       <Helmet>
         <title>
-          Home | Hiring Analytics, Jobs & Applicants – GreatHire
+          Recruiter's Home | GreatHire's Jobs, Applications, and Hiring Analytics
         </title>
 
         <meta
           name="description"
-          content="GreatHire’s Recruiter Home is a powerful hiring control platform for modern recruiters, located in Hyderabad State, India, supporting startups, enterprises, IT firms, and fast-growing companies across multiple industries. This advanced dashboard allows you to post and manage jobs, track active and expired listings, monitor applicants, shortlist top candidates, manage recruiters, and control job and database credits with ease. With real-time analytics, clean insights, and streamlined workflows, GreatHire empowers organizations to hire faster, smarter, and more efficiently while building a strong employer brand."
+          content="GreatHire’s Recruiter Home is a comprehensive hiring management system for today’s recruiters, based in Hyderabad State, India, serving startups, corporates, IT companies, and rapidly growing businesses in different sectors. With this state-of-the-art dashboard, you can publish and maintain jobs, view active and expired postings, view application status, shortlist qualified candidates, maintain recruiters, and regulate job and database credits conveniently. GreatHire enables hiring entities to recruit quickly, intelligently, and effectively while, at the same time, enhancing their corporate brands."
         />
       </Helmet>
 

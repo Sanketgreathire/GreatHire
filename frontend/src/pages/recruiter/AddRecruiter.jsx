@@ -78,13 +78,13 @@ const AddRecruiter = () => {
       <Helmet>
         {/* Meta Title */}
         <title>
-          Add Recruiter | Build Your Hiring Team & Manage Recruiters – GreatHire
+          Add Recruiter | Create Your Hiring Team, Manage Recruiters, and Add Recruiters with GreatHire
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Add and manage recruiters effortlessly on GreatHire, a trusted recruitment platform operating from Hyderabad State, India, empowering companies to build strong and efficient hiring teams. This Add Recruiter page allows organizations to onboard recruiters securely by capturing essential details such as name, work email, role, and contact information. Strengthen your recruitment process, assign hiring responsibilities, and scale faster with a centralized recruiter management system. Designed for growing companies and HR teams, GreatHire helps you create a smart, professional, and verified recruiter network that accelerates hiring success."
+          content="Add and manage recruiters with ease on GreatHire-a trusted recruitment platform operating from Hyderabad State, India-empowering companies to build strong and efficient hiring teams. This Add Recruiter page gives organizations a scope to onboard recruiters in a secure manner by capturing the essential details like name, work email, role, and contact information. Strengthen your hiring, assign responsibilities, and scale up faster by managing your recruiters from a single window. GreatHire is designed for growing companies and their HR teams to create an intelligent, professional, and verified recruiter network, ultimately accelerating hiring success."
         />
       </Helmet>
       

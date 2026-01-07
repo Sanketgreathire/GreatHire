@@ -388,10 +388,10 @@ const Jobs = () => {
     <>
 
       <Helmet>
-        <title>Find Latest Jobs & Hire Talent Faster | Smart Job Search – GreatHire</title>
+        <title>Find Latest Jobs & Hire Talent Faster | Smart Job Search - GreatHire</title>
         <meta
           name="description"
-          content="Search and apply for the latest verified job openings on GreatHire using powerful filters for job title, location, company, job type, workplace flexibility, and date posted. Our advanced job search helps candidates find relevant opportunities faster while enabling employers to hire smarter and risk-free. With real-time filtering, pagination, and clean job listings, GreatHire delivers a smooth hiring experience. Based in Hyderabad State, India, GreatHire operates as a modern recruitment platform supporting job seekers and recruiters across multiple industries, cities, and career levels."
+          content="Use advanced search and apply features on GreatHire to search and apply for the latest genuine job listings based on various search criteria, Hyderabad State, India, job title, location, company, job type, flexibility of the workplace, and the date of posting. The search engine of GreatHire assists the candidate in searching for various suitable openings in a shorter period of time, while it also provides a smarter and risk-free way of hiring employees to the company. GreatHire works as an advanced recruitment tool catering to various sectors, cities, and levels of employment."
         />
       </Helmet>
 

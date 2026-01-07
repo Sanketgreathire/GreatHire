@@ -110,13 +110,13 @@ const DeleteAccount = () => {
       <Helmet>
         {/* Meta Title */}
         <title>
-          Delete Recruiter Account | Transfer Admin & Secure Exit – GreatHire
+          Recruiter Account Delete | Admin Transfer & Safe Exit - GreatHire
         </title>
 
         {/* Meta Description */}
         <meta
           name="description"
-          content="Safely delete your recruiter account on GreatHire with full control and transparency. Hyderabad State India based platform allows admins to transfer ownership securely before exiting, ensuring uninterrupted hiring operations and complete data protection. GreatHire is a trusted recruitment solution serving startups, enterprises, HR teams, staffing agencies, and fast-growing companies with reliable hiring workflows, secure account management, seamless recruiter collaboration, and compliance-driven processes designed to protect your organization’s data, reputation, and employer brand."
+          content="Easily delete your recruiter account on GreatHire. With the Hyderabad State India-based GreatHire, once you decide to leave, you can transfer the ownership of your account, which helps ensure that hiring processes continue uninterrupted. GreatHire offers safe and reliable hiring practices, which eliminates any concerns related to your company information while using their service, as they ensure maximum security and hiring efficiency through reliable hiring processes. GreatHire offers hiring solutions for startups, companies, as well as hiring agencies."
         />
       </Helmet>
 
