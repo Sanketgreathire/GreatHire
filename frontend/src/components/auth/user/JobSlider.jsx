@@ -8,7 +8,7 @@ export default function JobsHiringSection() {
     const autoScrollInterval = useRef(null);
     const navigate = useNavigate();
 
-   const jobs = [ { id: 1, title: 'Software Developer', company: 'TCS', location: 'Bangalore', salary: '₹5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 2, title: 'HR Manager', company: 'Infosys', location: 'Mumbai', salary: '₹4-6 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 3, title: 'Marketing Lead', company: 'Flipkart', location: 'Delhi', salary: '₹5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 4, title: 'Data Analyst', company: 'Wipro', location: 'Hyderabad', salary: '₹6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 5, title: 'Frontend Developer', company: 'Amazon', location: 'Pune', salary: '₹4.5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 6, title: 'Product Manager', company: 'Google', location: 'Bangalore', salary: '₹5-10 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }, { id: 7, title: 'Backend Developer', company: 'Microsoft', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 8, title: 'UI/UX Designer', company: 'Adobe', location: 'Bangalore', salary: '₹3.8-9 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 9, title: 'DevOps Engineer', company: 'IBM', location: 'Chennai', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 10, title: 'Software Developer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 11, title: 'Frontend Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 12, title: 'Backend Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹5-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 13, title: 'Full Stack Developer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹12-15 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 14, title: 'Java Developer', company: 'GreatHire (On behalf of a Client)', location: 'Chennai', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' },{ id: 15, title: 'Python Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹5-7 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 16, title: 'React Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' },{ id: 17, title: 'Node.js Developer', company: 'GreatHire (On behalf of a Client)', location: 'Gurgaon', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 18, title: 'DevOps Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 19, title: 'Cloud Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹12-18 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 20, title: 'Data Analyst', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 21, title: 'Data Science', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹5-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 22, title: 'AI Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 23, title: 'ML Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹8-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 24, title: 'QA Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Chennai', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 25, title: 'Automation Tester', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' },{ id: 26, title: 'HR Executive', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹4-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 27, title: 'HR Manager', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹4-10 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' },{ id: 28, title: 'Recruiter', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹6-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 29, title: 'Talent Acquisition Specialist', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' },{ id: 30, title: 'Payroll Executive', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 31, title: 'Product Manager', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹5-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' },{ id: 32, title: 'Project Manager', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹3-11 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 33, title: 'Program Manager', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹7-13 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 34, title: 'Scrum Master', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹9-11 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 35, title: 'UI/UX Designer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' },{ id: 36, title: 'Graphic Designer', company: 'GreatHire (On behalf of a Client)', location: 'Delhi', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' },{ id: 37, title: 'Digital Marketing Executive', company: 'GreatHire (On behalf of a Client)', location: 'Noida', salary: '₹5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' },{ id: 38, title: 'SEO Specialist', company: 'GreatHire (On behalf of a Client)', location: 'Gurgaon', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-green-100', iconColor: 'text-green-600' },{ id: 39, title: 'Content Writer', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹4-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' },{ id: 40, title: 'Social Media Manager', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }];
+    const jobs = [{ id: 1, title: 'Software Developer', company: 'TCS', location: 'Bangalore', salary: '₹5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 2, title: 'HR Manager', company: 'Infosys', location: 'Mumbai', salary: '₹4-6 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 3, title: 'Marketing Lead', company: 'Flipkart', location: 'Delhi', salary: '₹5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 4, title: 'Data Analyst', company: 'Wipro', location: 'Hyderabad', salary: '₹6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 5, title: 'Frontend Developer', company: 'Amazon', location: 'Pune', salary: '₹4.5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 6, title: 'Product Manager', company: 'Google', location: 'Bangalore', salary: '₹5-10 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }, { id: 7, title: 'Backend Developer', company: 'Microsoft', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 8, title: 'UI/UX Designer', company: 'Adobe', location: 'Bangalore', salary: '₹3.8-9 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 9, title: 'DevOps Engineer', company: 'IBM', location: 'Chennai', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 10, title: 'Software Developer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 11, title: 'Frontend Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 12, title: 'Backend Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹5-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 13, title: 'Full Stack Developer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹12-15 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 14, title: 'Java Developer', company: 'GreatHire (On behalf of a Client)', location: 'Chennai', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }, { id: 15, title: 'Python Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹5-7 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 16, title: 'React Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 17, title: 'Node.js Developer', company: 'GreatHire (On behalf of a Client)', location: 'Gurgaon', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 18, title: 'DevOps Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 19, title: 'Cloud Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹12-18 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 20, title: 'Data Analyst', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 21, title: 'Data Science', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹5-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 22, title: 'AI Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: BarChart3, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 23, title: 'ML Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹8-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: BarChart3, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 24, title: 'QA Engineer', company: 'GreatHire (On behalf of a Client)', location: 'Chennai', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Briefcase, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 25, title: 'Automation Tester', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Briefcase, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 26, title: 'HR Executive', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹4-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 27, title: 'HR Manager', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹4-10 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }, { id: 28, title: 'Recruiter', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹6-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 29, title: 'Talent Acquisition Specialist', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 30, title: 'Payroll Executive', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 31, title: 'Product Manager', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹5-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }, { id: 32, title: 'Project Manager', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '₹3-11 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 33, title: 'Program Manager', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹7-13 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Users, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 34, title: 'Scrum Master', company: 'GreatHire (On behalf of a Client)', location: 'Pune', salary: '₹9-11 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Users, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 35, title: 'UI/UX Designer', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 36, title: 'Graphic Designer', company: 'GreatHire (On behalf of a Client)', location: 'Delhi', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-purple-100', iconColor: 'text-purple-600' }, { id: 37, title: 'Digital Marketing Executive', company: 'GreatHire (On behalf of a Client)', location: 'Noida', salary: '₹5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-blue-100', iconColor: 'text-blue-600' }, { id: 38, title: 'SEO Specialist', company: 'GreatHire (On behalf of a Client)', location: 'Gurgaon', salary: '₹6-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-green-100', iconColor: 'text-green-600' }, { id: 39, title: 'Content Writer', company: 'GreatHire (On behalf of a Client)', location: 'Mumbai', salary: '₹4-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600', icon: Megaphone, iconBg: 'bg-pink-100', iconColor: 'text-pink-600' }, { id: 40, title: 'Social Media Manager', company: 'GreatHire (On behalf of a Client)', location: 'Bangalore', salary: '₹8-10 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800', icon: Megaphone, iconBg: 'bg-indigo-100', iconColor: 'text-indigo-600' }];
 
     // Auto scroll functionality
     useEffect(() => {
@@ -19,16 +19,23 @@ export default function JobsHiringSection() {
     const startAutoScroll = () => {
         stopAutoScroll();
         autoScrollInterval.current = setInterval(() => {
+            if (!scrollContainerRef.current) return;
+            const container = scrollContainerRef.current;
+            const firstCard = container.children[0];
+
+            if (!firstCard) return;
+
+            const cardWidth = firstCard.getBoundingClientRect().width + 16; // gap-4 = 16px
             setCurrentIndex((prevIndex) => {
-                if (prevIndex >= jobs.length - 4) {
-                    scrollContainerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+                if (prevIndex >= jobs.length - 1) {
+                    container.scrollTo({ left: 0, behavior: "smooth" });
                     return 0;
                 } else {
-                    scrollContainerRef.current?.scrollBy({ left: 295, behavior: 'smooth' });
+                    container.scrollBy({ left: cardWidth, behavior: "smooth" });
                     return prevIndex + 1;
                 }
             });
-        }, 1000); {/* changed scrolling time from 500 to 1000*/}
+        }, 1500); {/* changed scrolling time from 500 to 1000*/ }
     };
 
     const stopAutoScroll = () => {
@@ -48,18 +55,18 @@ export default function JobsHiringSection() {
     return (
         <div className="w-full bg-50">
             {/* Jobs Hiring Section */}
-            <div className="max-w-7xl mx-auto px-4">
+            <div className="w-full md:max-w-7xl mx-auto px-3 sm:px-4">
                 <div className="relative">
                     {/* Jobs Container */}
                     <div className="mb-6">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
                             Jobs Hiring Right Now
                         </h2>
                     </div>
 
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-4 overflow-x-hidden scroll-smooth py-6"
+                        className="flex gap-4 overflow-x-auto md:overflow-x-hidden scroll-smooth py-4 sm:py-6 snap-x snap-mandatory scrollbar-hide"
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
@@ -68,12 +75,12 @@ export default function JobsHiringSection() {
                             return (
                                 <div
                                     key={job.id}
-                                    className="min-w-[310px] bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 flex flex-col"
+                                    className=" w-[85vw] sm:w-[280px] md:w-[310px] flex-shrink-0 snap-start bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-4 sm:p-5 border border-gray-100 flex flex-col"
                                 >
                                     {/* Top Section */}
                                     <div className="flex-1">
                                         {/* Top Row: Icon - Title & Company - Badge */}
-                                        <div className="flex items-start justify-between gap-3 mb-4">
+                                        <div className="flex items-start gap-3 mb-3 sm:mb-4">
                                             {/* Icon */}
                                             <div className={`${job.iconBg} p-3 rounded-lg flex-shrink-0`}>
                                                 <IconComponent className={`${job.iconColor} w-6 h-6`} />
@@ -87,7 +94,7 @@ export default function JobsHiringSection() {
                                                 <p className="text-sm text-gray-600 line-clamp-1">
                                                     {job.company} · {job.location}
                                                 </p>
-                                                <p className="text-base font-semibold text-green-600">
+                                                <p className="text-sm sm:text-base font-semibold text-green-600">
                                                     {job.salary}
                                                 </p>
                                             </div>
@@ -105,7 +112,7 @@ export default function JobsHiringSection() {
                                     <div className="flex justify-end">
                                         <button
                                             onClick={() => navigate("/login")}
-                                            className="w-[140px] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors duration-200"
+                                            className="w-full sm:w-[140px] bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-lg transition-colors duration-200"
                                         >
                                             Apply &nbsp; <span>&gt;</span>
                                         </button>
@@ -114,27 +121,18 @@ export default function JobsHiringSection() {
                             );
                         })}
                     </div>
-
-                    {/* Dots Indicator */}
-                    {/* <div className="flex justify-center gap-2 mt-6">
-                        {Array.from({ length: jobs.length - 3 }).map((_, index) => (
-                            <div
-                                key={index}
-                                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
-                                    ? 'w-8 bg-blue-600'
-                                    : 'w-2 bg-gray-300'
-                                    }`}
-                            />
-                        ))}
-                    </div> */}
                 </div>
 
                 {/* Trust Badges Section */}
                 <div className="bg-blue-50 py-8 px-4">
                     <div className="max-w-7xl mx-auto">
-                        <div className="flex items-center justify-center gap-8 flex-wrap">
+                        <div className="flex flex-col sm:flex-row
+                    items-start sm:items-center
+                    justify-start sm:justify-center
+                    gap-4 sm:gap-8">
+
                             {/* Trusted by 6 Crore+ Users */}
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-2.5 w-full sm:w-auto">
                                 <div className="bg-blue-500 rounded-full p-1.5">
                                     <ShieldCheck className="w-4 h-4 text-white" />
                                 </div>
@@ -144,7 +142,7 @@ export default function JobsHiringSection() {
                             </div>
 
                             {/* ISO Secure Platform */}
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-2.5 w-full sm:w-auto">
                                 <div className="bg-blue-500 rounded-full p-1.5">
                                     <Lock className="w-4 h-4 text-white" />
                                 </div>
@@ -154,7 +152,7 @@ export default function JobsHiringSection() {
                             </div>
 
                             {/* Zero Placement Fees */}
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-2.5 w-full sm:w-auto">
                                 <div className="bg-blue-500 rounded-full p-1.5">
                                     <DollarSign className="w-4 h-4 text-white" />
                                 </div>
@@ -162,6 +160,7 @@ export default function JobsHiringSection() {
                                     Zero Placement Fees
                                 </span>
                             </div>
+
                         </div>
                     </div>
                 </div>
