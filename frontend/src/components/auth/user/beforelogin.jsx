@@ -267,8 +267,8 @@ const GreatHireLanding = () => {
                     Search Jobs
                   </button>
                 </div> */}
-                {/* Get Started Button */}
-      {/* <div className="pt-4">
+                  {/* Get Started Button */}
+                  {/* <div className="pt-4">
         <button 
           onClick={() => window.location.href = '/signup'}
           className="px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-2xl font-bold text-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center gap-3"
@@ -279,40 +279,40 @@ const GreatHireLanding = () => {
           </svg>
         </button>
       </div> */}
-      {/* Two Cards - Mobile Only */}
-      <div className="pt-4 grid grid-cols-2 gap-4 lg:hidden">
-        {/* Candidate Card */}
-        <button
-          onClick={() => navigate('/signup')}
-          className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
-        >
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <div className="text-center">
-            <h3 className="font-bold text-lg text-gray-800">I'm a Candidate</h3>
-            <p className="text-sm text-gray-600 mt-1">Find Jobs</p>
-          </div>
-        </button>
+                  {/* Two Cards - Mobile Only */}
+                  <div className="pt-4 grid grid-cols-2 gap-4 lg:hidden">
+                    {/* Candidate Card */}
+                    <button
+                      onClick={() => navigate('/signup')}
+                      className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="font-bold text-lg text-gray-800">I'm a Candidate</h3>
+                        <p className="text-sm text-gray-600 mt-1">Find Jobs</p>
+                      </div>
+                    </button>
 
-        {/* Recruiter Card */}
-        <button
-          onClick={() => navigate('/recruiter/signup')}
-          className="bg-gradient-to-br from-purple-50 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
-        >
-          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div className="text-center">
-            <h3 className="font-bold text-lg text-gray-800">I'm a Recruiter</h3>
-            <p className="text-sm text-gray-600 mt-1">Post Jobs</p>
-          </div>
-        </button>
-      </div>
+                    {/* Recruiter Card */}
+                    <button
+                      onClick={() => navigate('/recruiter/signup')}
+                      className="bg-gradient-to-br from-purple-50 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="font-bold text-lg text-gray-800">I'm a Recruiter</h3>
+                        <p className="text-sm text-gray-600 mt-1">Post Jobs</p>
+                      </div>
+                    </button>
+                  </div>
 
                   {/* Premium Stats */}
                   <div className="flex gap-8 pt-6">
@@ -400,8 +400,9 @@ const GreatHireLanding = () => {
 
               {/* Premium Features Grid */}
               <div className="mb-10"> {/* Removed mt-20 and updated mb-20 to mb-10*/}
-                <div className="text-center mb-16">
-                  <h2 className="text-5xl font-black text-gray-900 mb-4">
+                {/* <div className="text-center mb-16"> */}
+                <div className="text-center mb-8 md:mb-16 px-4 md:px-0">
+                  <h2 className="text-3xl lg:text-5xl font-black text-gray-900 mb-4">
                     Why Choose <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">GreatHire</span>?
                   </h2>
                   <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -417,14 +418,39 @@ const GreatHireLanding = () => {
                   ].map((feature, i) => (
                     <div key={i} className="group relative">
                       <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-3xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300`}></div>
+
+                      {/* CARD */}
                       <div className={`relative bg-gradient-to-br ${feature.bg} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-white hover:-translate-y-3`}>
-                        <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg`}>
-                          <div className="text-white">
-                            {feature.icon}
+
+                        {/* MOBILE VIEW */}
+                        <div className="flex md:hidden items-start gap-4">
+                          <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
+                            <div className="text-white">{feature.icon}</div>
+                          </div>
+
+                          <div>
+                            <h3 className="text-base font-bold text-gray-900 mb-1">
+                              {feature.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {feature.desc}
+                            </p>
                           </div>
                         </div>
-                        <h3 className="text-xl font-bold mb-3 text-gray-900">{feature.title}</h3>
-                        <p className="text-sm text-gray-600 leading-relaxed">{feature.desc}</p>
+
+                        {/* LAPTOP VIEW (UNCHANGED) */}
+                        <div className="hidden md:block">
+                          <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg`}>
+                            <div className="text-white">{feature.icon}</div>
+                          </div>
+                          <h3 className="text-xl font-bold mb-3 text-gray-900">
+                            {feature.title}
+                          </h3>
+                          <p className="text-sm text-gray-600 leading-relaxed">
+                            {feature.desc}
+                          </p>
+                        </div>
+
                       </div>
                     </div>
                   ))}
@@ -453,7 +479,7 @@ const GreatHireLanding = () => {
               {/* the cards and carousel */}
               <div className="max-w-7xl mx-auto px-6 py-4 mt-4">
                 {/* Tabs Header */}
-                <div className="flex flex-wrap justify-center gap-8 mb-8">
+                <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-4 sm:mb-8">
                   {tabs.map((tab, i) => (
                     <button
                       key={tab.id}
@@ -534,15 +560,15 @@ const GreatHireLanding = () => {
               <div className="mt-3">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] blur-2xl opacity-30"></div>
-                  <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-16 shadow-2xl overflow-hidden">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full opacity-10 -mr-48 -mt-48"></div>
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full opacity-10 -ml-48 -mb-48"></div>
+                  <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-6 sm:p-10 md:p-16 shadow-2xl overflow-hidden">
+                    <div className="absolute top-0 right-0  w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10 -mr-24 -mt-24 sm:-mr-36 sm:-mt-36 md:-mr-48 md:-mt-48"></div>
+                    <div className="absolute bottom-0 left-0  w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10  -ml-24 -mb-24 sm:-ml-36 sm:-mb-36 md:-ml-48 md:-mb-48"></div>
 
                     <div className="relative z-10 text-center">
-                      <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
+                     <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6">
                         Ready to Start Your Journey?
                       </h2>
-                      <p className="text-blue-100 text-xl mb-10 max-w-3xl mx-auto font-light">
+                      <p className="text-blue-100 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-3xl mx-auto font-light">
                         Join 6 crore+ job seekers and discover your perfect career match with AI-powered recommendations
                       </p>
                       {/* <div className="flex flex-col sm:flex-row gap-5 justify-center">
@@ -555,13 +581,13 @@ const GreatHireLanding = () => {
                       <span>Browse Jobs</span>
                     </button>
                   </div> */}
-                      <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                      <div className="flex flex-col sm:flex-row gap-5 sm:gap-5 justify-center">
                         <button
                           onClick={() => {
                             navigate("/signup-choice");
                             window.scrollTo(0, 0);
                           }}
-                          className="group px-10 py-5 bg-white text-blue-600 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                          className="group px-6 py-4 sm:px-10 sm:py-5  bg-white text-blue-600 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                         >
                           <span>Create Free Account</span>
                           <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

@@ -815,7 +815,7 @@ const JobDetail = () => {
                 <Building2 className="h-5 w-5 text-slate-500" />
                 <span>{jobDetails?.companyName || "Company not specified"}</span>
               </div>
-              <div className="items-center">
+              <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-slate-500" />
                 <span>{jobDetails?.location || "Location Not Available"}</span>
               </div>

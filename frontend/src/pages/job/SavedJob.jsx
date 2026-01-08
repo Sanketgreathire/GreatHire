@@ -41,32 +41,46 @@ const SavedJobs = () => {
       </Helmet>
 
       <Navbar />
-      <div className="w-full mx-auto min-h-screen
-                      bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100
-                      dark:bg-gradient-to-br dark:from-gray-950 dark:via-slate-900 dark:to-blue-950">
+      <div
+  className="w-full mx-auto min-h-screen
+             pt-12 sm:pt-0
+             bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100
+             dark:bg-gradient-to-br dark:from-gray-950 dark:via-slate-900 dark:to-blue-950"
+>
 
-        <div className="px-4 py-20">
-          {/* Header Section with enhanced styling */}
-          <div className="mb-8 p-6 rounded-2xl 
-                         bg-white/60 backdrop-blur-sm
-                         dark:bg-gray-800/40 dark:backdrop-blur-sm
-                         shadow-lg border border-blue-200/50
-                         dark:border-blue-800/30">
-            <h1 className="text-3xl md:text-4xl p-2 flex flex-wrap items-center gap-4 
-                          font-extrabold
-                          bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700
-                          dark:from-blue-400 dark:via-indigo-400 dark:to-purple-500
-                          text-transparent bg-clip-text">
+
+        <div className="px-4 py-8 sm:py-20">
+          {/* Header Section */}
+          <div
+            className="mb-4 p-4 rounded-2xl
+             bg-white/60 backdrop-blur-sm
+             dark:bg-gray-800/40
+             shadow-lg border border-blue-200/50
+             dark:border-blue-800/30"
+          >
+            <h1
+              className="text-lg sm:text-xl md:text-2xl lg:text-3xl
+               p-2 flex flex-wrap items-center gap-4
+               leading-tight font-extrabold
+               bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700
+               dark:from-blue-400 dark:via-indigo-400 dark:to-purple-500
+               text-transparent bg-clip-text"
+            >
               Your Saved Jobs
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600
-                             dark:from-blue-500 dark:to-indigo-500
-                             text-white text-lg font-bold px-5 py-2 
-                             rounded-full shadow-lg
-                             hover:shadow-xl transition-shadow duration-300">
+
+              <span
+                className="bg-gradient-to-r from-blue-600 to-indigo-600
+                 dark:from-blue-500 dark:to-indigo-500
+                 text-white text-sm sm:text-base md:text-lg
+                 font-bold px-4 py-2 rounded-full
+                 shadow-lg hover:shadow-xl
+                 transition-shadow duration-300"
+              >
                 {saveJobsList.length}
               </span>
             </h1>
-            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-2 ml-2">
+
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-2 pl-2">
               Keep track of opportunities that interest you
             </p>
           </div>
@@ -81,24 +95,23 @@ const SavedJobs = () => {
               </div>
 
               {/* Pagination Controls with enhanced design */}
-              <div className="flex justify-between items-center mt-8 p-6 rounded-xl
+              <div className="flex justify-between items-center mt-8  md:mt-8 p-3 md:p-6 rounded-xl
                             bg-white/70 backdrop-blur-sm
                             dark:bg-gray-800/50 dark:backdrop-blur-sm
                             shadow-md border border-blue-100/50
-                            dark:border-blue-900/30">
+                            dark:border-blue-900/30 gap-2">
                 <button
                   onClick={() => setCurrentPage((prev) => prev - 1)}
                   disabled={currentPage === 1}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                    currentPage === 1
-                      ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
-                      : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600"
-                  }`}
+                  className={`px-3 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${currentPage === 1
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg dark:from-blue-500 dark:to-indigo-500"
+                    }`}
                 >
                   Previous
                 </button>
 
-                <span className="text-lg font-bold 
+                <span className="text-sm md:text-lg font-bold text-center whitespace-nowrap
                                text-gray-700 dark:text-gray-200
                                bg-gradient-to-r from-blue-600 to-indigo-600
                                dark:from-blue-400 dark:to-indigo-400
@@ -109,11 +122,10 @@ const SavedJobs = () => {
                 <button
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={indexOfLastJob >= saveJobsList.length}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                    indexOfLastJob >= saveJobsList.length
-                      ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
-                      : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600"
-                  }`}
+                  className={`px-3 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${indexOfLastJob >= saveJobsList.length
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600"
+                    }`}
                 >
                   Next
                 </button>

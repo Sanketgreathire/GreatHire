@@ -67,39 +67,39 @@ import { Helmet } from "react-helmet-async";
 
 
 
-const handleFileChange = async (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("Resume size should be less than 10 MB.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("resume", file);
+// const handleFileChange = async (e) => {
+//   const file = e.target.files[0];
+//   if (file) {
+//     if (file.size > 10 * 1024 * 1024) {
+//       toast.error("Resume size should be less than 10 MB.");
+//       return;
+//     }
+//     const formData = new FormData();
+//     formData.append("resume", file);
 
-    try {
-      const response = await axios.put(
-        `${USER_API_END_POINT}/profile/update`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+//     try {
+//       const response = await axios.put(
+//         `${USER_API_END_POINT}/profile/update`,
+//         formData,
+//         {
+//           headers: { "Content-Type": "multipart/form-data" },
+//           withCredentials: true,
+//         }
+//       );
 
-      if (response.data.success) {
-        dispatch(setUser(response.data.user));
-        toast.success("Resume uploaded successfully!");
-      }
-    } catch (err) {
-      console.error("Resume Upload Error:", err);
-      toast.error(err.response?.data?.message || "Failed to upload resume.");
-    }
-  }
-};
+//       if (response.data.success) {
+//         dispatch(setUser(response.data.user));
+//         toast.success("Resume uploaded successfully!");
+//       }
+//     } catch (err) {
+//       console.error("Resume Upload Error:", err);
+//       toast.error(err.response?.data?.message || "Failed to upload resume.");
+//     }
+//   }
+// };
 
-import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
-import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
+// import SelectedCategoryPreview from "@/components/ui/SelectedCategoryPreview";
+// import SelectedLanguagePreview from "@/components/ui/SelectedLanguagePreview";
 
 const UserProfile = () => {
   // State variables for managing modals and UI state
@@ -568,7 +568,7 @@ const UserProfile = () => {
                   <span className="text-gray-600">
                     No resume uploaded.{" "}
                     {/* Trigger file input instead of navigation */}
-                    <label
+                    {/* <label
                       htmlFor="resumeUpload"
                       className="text-blue-600 underline cursor-pointer"
                     >
@@ -580,7 +580,7 @@ const UserProfile = () => {
                       accept=".pdf, .doc, .docx"
                       onChange={handleFileChange}
                       className="hidden"
-                    />
+                    /> */}
                   </span>
                 )}
               </div>

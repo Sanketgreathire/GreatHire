@@ -172,16 +172,26 @@ const Navbar = () => {
 
   // All nav links for mobile menu
   // const navLinks = [...primaryNavLinks, ...secondaryNavLinks];
-  const navLinks = user
-    ? [
-        ...primaryNavLinks,
-        ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
-      ]
-    : [
-        ...primaryNavLinks,
-        ...secondaryNavLinks,
-        { to: "/jobs", label: "Jobs" },
-      ];
+  // const navLinks = user
+  //   ? [
+  //       ...primaryNavLinks,
+  //       ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+  //     ]
+  //   : [
+  //       ...primaryNavLinks,
+  //       ...secondaryNavLinks,
+  //       { to: "/jobs", label: "Jobs" },
+  //     ];
+  const navLinks = [
+  ...primaryNavLinks,
+
+  // Show Jobs only to logged-in job seekers
+  ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+
+  // Public pages should always be visible (mobile fix)
+  ...secondaryNavLinks,
+];
+
 
   const policyLinks = [
     { to: "/policy/privacy-policy", label: "Privacy Policy" },
@@ -225,9 +235,9 @@ const Navbar = () => {
 
           <div>
             {/* Mobile Notifications */}
-            <div className="lg:hidden">
+            {/* <div className="lg:hidden">
               {user && <NotificationDropdown />}
-            </div>
+            </div> */}
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
@@ -274,7 +284,7 @@ const Navbar = () => {
                       <li ref={moreMenuRef} className="relative">
                         <button
                           onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                          className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors dark:text-white"
+                          className="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors dark:text-white dark:hover:text-blue-400 dark:hover:bg-gray-800"
                           aria-expanded={isMoreMenuOpen}
                           aria-haspopup="true"
                         >
@@ -295,12 +305,12 @@ const Navbar = () => {
                           </svg>
                         </button>
                         {isMoreMenuOpen && (
-                          <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:text-gray-800 dark:bg-gray-800/80 dark:backdrop-blur-sm dark:rounded-xl dark:shadow-lg dark:border-white/40 dark:p-1">
+                          <div className="absolute right-0 mt-2 w-60 bg-white/60 backdrop-blur-sm rounded-xl shadow-lg border border-white/40 p-1 z-20 dark:bg-gray-800/80 dark:border-gray-700/40">
                             {secondaryNavLinks.map(({ to, label }) => (
                               <Link
                                 key={to}
                                 to={to}
-                                className="block px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                                className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-200 transition-colors dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-white"
                                 onClick={() => setIsMoreMenuOpen(false)}
                               >
                                 {label}
@@ -355,7 +365,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-               {!user ? (
+                {!user ? (
                   // <Link
                   //   to="/login"
                   //   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
@@ -438,10 +448,16 @@ const Navbar = () => {
                 )}
               </div>
             </div>
+           
+             {/* Mobile Right Icons */}
+            <div className="flex items-center gap-3 lg:hidden">
 
-            {/* Mobile Menu Button */}
-            <button
-              className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+              {/* Notification */}
+              {user && <NotificationDropdown />}
+
+              {/* Profile / Menu Toggle */}
+              <button
+              className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
@@ -465,6 +481,34 @@ const Navbar = () => {
                 </svg>
               )}
             </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            {/* <button
+              className="flex items-center gap-3 lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-expanded={isMenuOpen}
+              aria-label="Toggle navigation menu"
+            >
+              {!isMenuOpen ? (
+                user ? (
+                  <img
+                    src={
+                      user?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
+                    alt={`${user?.fullname || "User"}'s avatar`}
+                    className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
+                  />
+                ) : (
+                  <CiMenuBurger size={20} className="text-gray-700 dark:text-gray-300" />
+                )
+              ) : (
+                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </button> */}
           </div>
 
           {/* Mobile Navigation Overlay */}
