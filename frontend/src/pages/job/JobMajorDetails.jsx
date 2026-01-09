@@ -11,19 +11,14 @@ import { useSelector } from "react-redux";
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
 
+// import dompurify to display the formatted description
+import DOMPurify from "dompurify";
+
 const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   return (
     <>
-
-      {/* <Helmet>
-        <title>Comprehensive Job Description | Compensation, Qualifications, and Requirements - GreatHire</title>
-        <meta
-          name="description"
-          content="Get complete-job overview on GreatHire with crystal-clear insights into salary, Hyderabad State, India, experience level, job type, required skills, qualifications, benefits, and full role description. This page helps job seekers get a quick view of whether the position fits their profile before applying. Built for clarity and transparency, GreatHire ensures every job provides meaningful detail to inform career decisions. GreatHire is the go-to trusted hiring platform that connects professionals with verified employers across various industries for different roles."
-        />
-      </Helmet> */}
 
       <Helmet>
         <title>Current Job Openings & Job Descriptions | View Requirements, Save, Share, and Apply - GreatHire</title>
@@ -34,20 +29,21 @@ const JobMajorDetails = ({ selectedJob }) => {
       </Helmet>
 
 
-      <div>
+      <div className="max-w-5xl mx-auto space-y-6">
         {/* Job details */}
-        <div className="p-4  flex flex-col justify-center gap-4 border-b-2 border-gray-200">
-          <div>
-            <h1 className="text-xl font-bold dark:text-gray-300">Job details</h1>
-          </div>
+        <div className="p-6 flex flex-col gap-6 border-b border-gray-200">
+          <h1 className="text-xl font-bold dark:text-gray-300">
+            Job details
+          </h1>
 
           {/* Pay Section */}
-          <div className="mt-2  ">
-            <h3 className="text-xl text-gray-500 flex items-center gap-2 dark:text-gray-100">
+          <div className="space-y-2">
+            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <PiMoneyWavyFill />
-              <span className="text-xl font-bold text-black dark:text-gray-100">Pay</span>
+              <span className="font-bold text-black dark:text-gray-100">Pay</span>
             </h3>
-            <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 ">
+
+            <div className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
               {selectedJob?.jobDetails?.salary
                 .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                 .split("-")
@@ -59,100 +55,235 @@ const JobMajorDetails = ({ selectedJob }) => {
                 ))}
             </div>
           </div>
-          {/* ---------------------------------------------------------------------------------------------------- */}
-          {/* ------------------------------------------------------------------------------------------------------------ */}
+
           {/* Experience Section */}
-          <div className="mt-2">
-            <h3 className="text-xl text-gray-500 flex items-center gap-2 dark:text-gray-100">
+          <div className="space-y-2">
+            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <BsPersonWorkspace />
-              <span className="text-xl font-bold text-black dark:text-gray-100">Experience</span>
+              <span className="font-bold text-black dark:text-gray-100">
+                Experience
+              </span>
             </h3>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <div className="flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
-                <span className="">
-                  {selectedJob?.jobDetails?.experience}{" "}
-                  {selectedJob?.jobDetails?.experience !== "Fresher" &&
-                    selectedJob?.jobDetails?.experience !== "fresher" &&
-                    ""}
-                </span>
-              </div>
+
+            <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
+              {selectedJob?.jobDetails?.experience}
             </div>
           </div>
 
-          {/* Job Type section */}
-          <div className="mt-4">
-            <h3 className="text-xl text-gray-500 flex items-center gap-2 dark:text-gray-100">
+          {/* Job Type Section */}
+          <div className="space-y-2">
+            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <FaToolbox />
-              <span className="text-xl font-bold text-black dark:text-gray-100">Job type</span>
+              <span className="font-bold text-black dark:text-gray-100">
+                Job type
+              </span>
             </h3>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <div
-                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
-              >
-                <span className="">
-                  {selectedJob?.jobDetails?.jobType}
-                </span>
-              </div>
+
+            <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
+              {selectedJob?.jobDetails?.jobType}
             </div>
           </div>
         </div>
-        {/* -------------------------------------------------------------------------------------------------------------- */}
-        {/* profile insight */}
-        <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 text-gray-800 dark:text-gray-800 dark:text-gray-100 ">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800  dark:text-gray-100  ">Profile Insight</h1>
-          </div>
+
+        {/* Profile Insight */}
+        <div className="p-6 flex flex-col gap-6 border-b border-gray-200">
+          <h1 className="text-xl font-bold dark:text-gray-100">
+            Profile Insight
+          </h1>
 
           {/* Skills Section */}
-          <div className="mt-2">
-            <h3 className="text-xl text-gray-500 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+          <div className="space-y-3">
+            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <HiLightBulb />
-              <span className="text-xl font-bold text-black text-gray-800 dark:text-gray-100">Skills</span>
+              <span className="font-bold text-black dark:text-gray-100">
+                Skills
+              </span>
             </h3>
 
-            <div className="flex flex-wrap gap-2 mt-2 text-gray-800 dark:text-gray-800">
-              {selectedJob?.jobDetails?.skills.map((skill, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800 text-gray-800 dark:text-gray-800`}
-                >
-                  <span className="">{skill}</span>
-                </div>
-              ))}
+            <div className="flex flex-wrap gap-2">
+              {(() => {
+                const rawSkills = selectedJob?.jobDetails?.skills || [];
+
+                const similarity = (a, b) => {
+                  a = a.toLowerCase();
+                  b = b.toLowerCase();
+                  if (a === b) return 1;
+
+                  const dp = Array.from({ length: b.length + 1 }, () =>
+                    Array(a.length + 1).fill(0)
+                  );
+
+                  for (let i = 0; i <= b.length; i++) dp[i][0] = i;
+                  for (let j = 0; j <= a.length; j++) dp[0][j] = j;
+
+                  for (let i = 1; i <= b.length; i++) {
+                    for (let j = 1; j <= a.length; j++) {
+                      dp[i][j] =
+                        b[i - 1] === a[j - 1]
+                          ? dp[i - 1][j - 1]
+                          : Math.min(
+                            dp[i - 1][j - 1] + 1,
+                            dp[i][j - 1] + 1,
+                            dp[i - 1][j] + 1
+                          );
+                    }
+                  }
+
+                  return 1 - dp[b.length][a.length] / Math.max(a.length, b.length);
+                };
+
+                const splitSkills = rawSkills.flatMap((skill) => {
+                  return skill
+                    .split(/\n+/) // ✅ NEW: split by new lines
+                    .flatMap((line) => {
+                      const cleaned = line
+                        .replace(/proficient in/i, "")
+                        .replace(/architecture/i, "")
+                        .replace(/concepts?/i, "concepts")
+                        .trim();
+
+                      let depth = 0;
+                      let buffer = "";
+                      const result = [];
+
+                      for (const char of cleaned) {
+                        if (char === "(") depth++;
+                        if (char === ")") depth--;
+
+                        if ((char === "," || char === "&") && depth === 0) {
+                          result.push(buffer.trim());
+                          buffer = "";
+                        } else {
+                          buffer += char;
+                        }
+                      }
+                      if (buffer) result.push(buffer.trim());
+
+                      return result
+                        .flatMap((r) => r.split(/\s*(?:\band\b|\bor\b)\s*/i))
+                        .map((r) => r.trim())
+                        .filter(Boolean);
+                    });
+                });
+
+                let unique = [];
+
+                splitSkills.forEach((skill) => {
+                  const idx = unique.findIndex(
+                    (u) => similarity(u, skill) >= 0.85
+                  );
+
+                  if (idx === -1) unique.push(skill);
+                  else if (skill.length > unique[idx].length) unique[idx] = skill;
+                });
+
+                unique = unique.filter((skill, i) =>
+                  !unique.some(
+                    (other, j) =>
+                      i !== j &&
+                      other.toLowerCase().includes(skill.toLowerCase()) &&
+                      other.length > skill.length
+                  )
+                );
+
+                return unique.map((skill, index) => (
+                  <span
+                    key={index}
+                    className="
+            px-3 py-1 text-sm rounded-full
+            bg-gradient-to-r from-slate-200 to-slate-300
+            border border-slate-300 text-gray-800
+            shadow-sm transition-all duration-200
+            hover:-translate-y-0.5 hover:shadow-md
+            dark:from-slate-700 dark:to-slate-600
+            dark:text-gray-100 dark:border-slate-600
+          "
+                  >
+                    {skill}
+                  </span>
+                ));
+              })()}
             </div>
           </div>
+
         </div>
 
-        {/* Full Job Description */}
-        <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 dark:text-gray-100">
-          <h1 className="text-xl font-bold dark:text-gray-100">Full Job Description</h1>
-          <p className=" text-justify dark:text-gray-100">
-            {selectedJob?.jobDetails?.details
-              ? selectedJob.jobDetails.details.split("\n").map((line, index) => (
-                <span key={index}>
-                  {line}
-                  <br />
-                </span>
-              ))
-              : "No description provided ."}
-          </p>
+        {/* Full Job Description (✅ FIXED) */}
+        <div className="p-6 flex flex-col gap-4 border-b border-gray-200">
+          <h1 className="text-xl font-bold dark:text-gray-100">
+            Full Job Description
+          </h1>
+
+          <div
+            className="
+      prose prose-sm max-w-none
+      dark:prose-invert
+
+      [&_ul]:list-disc [&_ul]:ml-6
+      [&_ol]:list-decimal [&_ol]:ml-6
+      [&_li]:ml-1 [&_li]:mb-1
+
+      [&_ul_ul]:list-[circle]
+      [&_ul_ul_ul]:list-[square]
+      [&_ol_ol]:list-[lower-alpha]
+      [&_ol_ol_ol]:list-[lower-roman]
+
+      [&_ol[type='a']]:list-[lower-alpha]
+      [&_ol[type='A']]:list-[upper-alpha]
+      [&_ol[type='i']]:list-[lower-roman]
+      [&_ol[type='I']]:list-[upper-roman]
+    "
+            dangerouslySetInnerHTML={{
+              __html: selectedJob?.jobDetails?.details
+                ? DOMPurify.sanitize(selectedJob.jobDetails.details)
+                : "<p>No description provided.</p>",
+            }}
+          />
         </div>
 
 
-        {/* Benifits */}
-        <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 dark:text-gray-100">
-          <h1 className="text-xl font-bold">Benifits</h1>
-          <ul
-            className="ml-6 text-sm text-gray-600 mt-2 dark:text-gray-100"
-            style={{ listStyleType: "circle" }}
-          >
+        {/* Benefits */}
+        <div className="p-6 flex flex-col gap-3 border-b border-gray-200">
+          <h1 className="text-xl font-bold dark:text-gray-100">
+            Benifits
+          </h1>
+
+          <ul className="ml-6 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
             {selectedJob?.jobDetails?.benefits?.map((benifit, index) => (
               <li key={index}>{benifit}</li>
             ))}
           </ul>
         </div>
 
-        {/* Responsibilities
+        {/* Qualifications */}
+        <div className="p-6 flex flex-col gap-3 border-b border-gray-200">
+          <h1 className="text-xl font-bold dark:text-gray-200">
+            Qualifications
+          </h1>
+
+          <ul className="ml-6 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
+            {selectedJob?.jobDetails?.qualifications?.map((qualification, index) => (
+              <li key={index}>{qualification}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Report Button */}
+        <div className="p-6 flex justify-end">
+          <button
+            className="flex items-center gap-2 bg-gray-400 px-4 py-2 rounded-lg font-semibold cursor-pointer dark:bg-white dark:text-gray-900 disabled:opacity-50"
+            onClick={() => navigate(`/report-job`)}
+            disabled={!user}
+          >
+            <BsFlagFill />
+            Report Job
+          </button>
+        </div>
+      </div>
+
+
+
+      {/* Responsibilities
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <h1 className="text-xl font-bold">Responsibilities</h1>
         <ul
@@ -166,32 +297,6 @@ const JobMajorDetails = ({ selectedJob }) => {
           )}
         </ul>
       </div> */}
-
-        {/* qualifications */}
-        <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
-          <h1 className="text-xl font-bold dark:text-gray-200">Qualifications</h1>
-          <ul
-            className="ml-6 text-sm text-gray-600 mt-2 dark:text-gray-100"
-            style={{ listStyleType: "circle" }}
-          >
-            {selectedJob?.jobDetails?.qualifications?.map(
-              (qualification, index) => (
-                <li key={index}>{qualification}</li>
-              )
-            )}
-          </ul>
-        </div>
-
-        <div className="p-4 mb-14 flex">
-          <button
-            className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer dark:bg-white-900 dark:text-gray-900"
-            onClick={() => navigate(`/report-job`)}
-            disabled={!user}
-          >
-            <BsFlagFill /> <span className="font-semibold">Report Job</span>
-          </button>
-        </div>
-      </div>
     </>
   );
 };
