@@ -584,7 +584,7 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Button } from "@/components/ui/button";
@@ -597,6 +597,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 // import jobbackg from "../../assets/jobbackg.svg";
 import jobbackg from '../../assets/jobbackg.svg?url';
 import { Helmet } from "react-helmet-async";
+import DOMPurify from "dompurify";
 
 
 
@@ -636,6 +637,11 @@ const JobDetail = () => {
   const [dloading, dsetLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { selectedJob } = useJobDetails();
+
+  const editorRef = useRef(null);
+  const [boldMode, setBoldMode] = useState(false);
+  const [italicMode, setItalicMode] = useState(false);
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -742,6 +748,74 @@ const JobDetail = () => {
     setEditMode(true);
   };
 
+  // Set editor content when entering edit mode
+  useEffect(() => {
+    if (editMode && editorRef.current && jobDetails?.details) {
+      editorRef.current.innerHTML = jobDetails.details;
+    }
+  }, [editMode, jobDetails?.details]);
+
+  const toggleBold = () => {
+    document.execCommand("bold");
+    setBoldMode(!boldMode);
+  };
+
+  const toggleItalic = () => {
+    document.execCommand("italic");
+    setItalicMode(!italicMode);
+  };
+
+  const bulletList = () => {
+    document.execCommand("insertUnorderedList");
+  };
+
+  const numberList = () => {
+    document.execCommand("insertOrderedList");
+  };
+
+  const alphaList = () => {
+    document.execCommand("insertOrderedList");
+
+    setTimeout(() => {
+      const sel = window.getSelection();
+      let node = sel.anchorNode;
+      while (node && node.nodeName !== "OL") node = node.parentNode;
+      if (node) node.style.listStyleType = "lower-alpha";
+    }, 0);
+  };
+
+
+  const handleKeyDown = (e) => {
+    // Handle Tab for nested lists
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        let listItem = range.startContainer;
+        
+        // Find the closest li element
+        while (listItem && listItem.nodeName !== 'LI') {
+          listItem = listItem.parentNode;
+        }
+        
+        if (listItem) {
+          if (e.shiftKey) {
+            // Shift+Tab: Outdent
+            document.execCommand('outdent');
+          } else {
+            // Tab: Indent
+            document.execCommand('indent');
+          }
+        }
+      }
+      return;
+    }
+
+    // Let browser handle Enter and Backspace naturally
+  };
+
+
   // --- UI CHANGE START: Loading, Error, and No Data states ko better banaya hai ---
   if (loading)
     return (
@@ -789,7 +863,7 @@ const JobDetail = () => {
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center"
         }}>
-        <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 ">
+        <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 mt-16">
 
           {/* Back Button and action buttons header */}
           <div className="flex justify-between items-center mb-6">
@@ -855,21 +929,137 @@ const JobDetail = () => {
               <div className="bg-white dark:bg-slate-800 shadow-lg rounded-xl p-6 md:p-8 font-geometric">
                 <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">Job Description</h2>
                 {editMode ? (
-                  <textarea
-                    name="details"
-                    value={editedJob.details || ""}
-                    onChange={handleInputChange}
-                    className="w-full p-2 rounded border border-slate-300 text-slate-600"
-                    rows={5}
-                  />
-                ) : (
-                  <div className="prose prose-slate max-w-none dark:prose-invert text-slate-600 dark:text-slate-300 text-base leading-relaxed font-">
-                    {jobDetails?.details
-                      ? jobDetails.details.split("\n").map((line, index) => (
-                        <p key={index}>{line}</p>
-                      ))
-                      : <p>No description provided.</p>}
+
+                  // <textarea
+                  //   name="details"
+                  //   value={editedJob.details || ""}
+                  //   onChange={handleInputChange}
+                  //   className="w-full p-2 rounded border border-slate-300 text-slate-600"
+                  //   rows={5}
+                  // />
+
+                  <div className="w-full">
+                    {/* Toolbar */}
+                    <div className="flex items-center gap-2 border border-gray-300 rounded-t px-3 py-2 bg-gray-50">
+
+                      <button
+                        type="button"
+                        onClick={toggleBold}
+                        className={`p-2 rounded font-bold ${boldMode ? "bg-gray-200" : "hover:bg-gray-200"
+                          }`}
+                      >
+                        B
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={toggleItalic}
+                        className={`p-2 rounded italic ${italicMode ? "bg-gray-200" : "hover:bg-gray-200"
+                          }`}
+                      >
+                        i
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={bulletList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Bullet List"
+                      >
+                        ●
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={numberList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Numbered List"
+                      >
+                        123
+                      </button>
+
+                      {/* <button
+                        type="button"
+                        onClick={alphaList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Alphabet List"
+                      >
+                        abc
+                      </button> */}
+                    </div>
+
+                    {/* Editor */}
+                    <div
+                      ref={editorRef}
+                      contentEditable
+                      className="
+  w-full min-h-[150px] p-3
+  border border-t-0 border-gray-300 rounded-b
+  focus:outline-none
+  text-slate-600
+
+  [&_ul]:list-disc
+  [&_ul]:pl-6
+
+  [&_ol]:list-decimal
+  [&_ol]:pl-6
+
+  [&_ul_ul]:list-[circle]
+  [&_ul_ul_ul]:list-[square]
+  [&_ol_ol]:list-[lower-alpha]
+  [&_ol_ol_ol]:list-[lower-roman]
+
+  [&_ol[style*='alpha']]:list-[lower-alpha]
+  [&_ol[style*='roman']]:list-[lower-roman]
+
+  [&_li]:list-item
+"
+                      onKeyDown={handleKeyDown}
+                      onInput={(e) =>
+                        setEditedJob({
+                          ...editedJob,
+                          details: e.currentTarget.innerHTML,
+                        })
+                      }
+                    />
                   </div>
+
+                ) : (
+                  // <div className="prose prose-slate max-w-none dark:prose-invert text-slate-600 dark:text-slate-300 text-base leading-relaxed font-">
+                  //   {jobDetails?.details
+                  //     ? jobDetails.details.split("\n").map((line, index) => (
+                  //       <p key={index}>{line}</p>
+                  //     ))
+                  //     : <p>No description provided.</p>}
+                  // </div>
+                  <div
+                    className="
+    prose prose-slate max-w-none
+    dark:prose-invert
+    text-slate-600 dark:text-slate-300
+    text-base leading-relaxed
+
+    [&_ul]:list-disc [&_ul]:ml-6
+    [&_ol]:list-decimal [&_ol]:ml-6
+    [&_li]:mb-1
+
+    [&_ul_ul]:list-[circle]
+    [&_ul_ul_ul]:list-[square]
+    [&_ol_ol]:list-[lower-alpha]
+    [&_ol_ol_ol]:list-[lower-roman]
+
+    [&_ol[type='a']]:list-[lower-alpha]
+    [&_ol[type='A']]:list-[upper-alpha]
+    [&_ol[type='i']]:list-[lower-roman]
+    [&_ol[type='I']]:list-[upper-roman]
+  "
+                    dangerouslySetInnerHTML={{
+                      __html: jobDetails?.details
+                        ? DOMPurify.sanitize(jobDetails.details)
+                        : "<p>No description provided.</p>",
+                    }}
+                  />
+
                 )}
               </div>
 
@@ -932,7 +1122,7 @@ const JobDetail = () => {
                     <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
                       <Wrench className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <div className="w-full">
+                    {/* <div className="w-full">
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">Skills Required</h4>
                       {editMode ? <textarea name="skills" value={editedJob.skills ? editedJob.skills.join("\n") : ""} onChange={(e) => setEditedJob({ ...editedJob, skills: e.target.value.split('\n') })} className="w-full p-2 mt-1 rounded border border-slate-300" rows={3} />
                         : <div className="flex flex-wrap gap-2 mt-2">
@@ -940,7 +1130,127 @@ const JobDetail = () => {
                             <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">{skill}</span>
                           )) : <p className="text-slate-500">Not specified</p>}
                         </div>}
+                    </div> */}
+                    <div className="w-full">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-200">
+                        Skills Required
+                      </h4>
+
+                      {editMode ? (
+                        <textarea
+                          name="skills"
+                          value={editedJob.skills ? editedJob.skills.join("\n") : ""}
+                          onChange={(e) =>
+                            setEditedJob({
+                              ...editedJob,
+                              skills: e.target.value.split("\n"),
+                            })
+                          }
+                          className="w-full p-2 mt-1 rounded border border-slate-300"
+                          rows={3}
+                        />
+                      ) : (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {(() => {
+                            const rawSkills = jobDetails?.skills || [];
+
+                            const similarity = (a, b) => {
+                              a = a.toLowerCase();
+                              b = b.toLowerCase();
+                              if (a === b) return 1;
+
+                              const dp = Array.from({ length: b.length + 1 }, () =>
+                                Array(a.length + 1).fill(0)
+                              );
+
+                              for (let i = 0; i <= b.length; i++) dp[i][0] = i;
+                              for (let j = 0; j <= a.length; j++) dp[0][j] = j;
+
+                              for (let i = 1; i <= b.length; i++) {
+                                for (let j = 1; j <= a.length; j++) {
+                                  dp[i][j] =
+                                    b[i - 1] === a[j - 1]
+                                      ? dp[i - 1][j - 1]
+                                      : Math.min(
+                                        dp[i - 1][j - 1] + 1,
+                                        dp[i][j - 1] + 1,
+                                        dp[i - 1][j] + 1
+                                      );
+                                }
+                              }
+
+                              return 1 - dp[b.length][a.length] / Math.max(a.length, b.length);
+                            };
+
+                            const splitSkills = rawSkills.flatMap((skill) =>
+                              skill
+                                .split(/\n+/) // split ONLY by new lines
+                                .flatMap((line) => {
+                                  const cleaned = line
+                                    .replace(/proficient in/i, "")
+                                    .replace(/architecture/i, "")
+                                    .replace(/concepts?/i, "concepts")
+                                    .trim();
+
+                                  let depth = 0;
+                                  let buffer = "";
+                                  const result = [];
+
+                                  for (const char of cleaned) {
+                                    if (char === "(") depth++;
+                                    if (char === ")") depth--;
+
+                                    if ((char === "," || char === "&") && depth === 0) {
+                                      result.push(buffer.trim());
+                                      buffer = "";
+                                    } else {
+                                      buffer += char;
+                                    }
+                                  }
+                                  if (buffer) result.push(buffer.trim());
+
+                                  return result;
+                                })
+                            );
+
+                            let unique = [];
+
+                            splitSkills.forEach((skill) => {
+                              const idx = unique.findIndex(
+                                (u) => similarity(u, skill) >= 0.85
+                              );
+
+                              if (idx === -1) unique.push(skill);
+                              else if (skill.length > unique[idx].length)
+                                unique[idx] = skill;
+                            });
+
+                            unique = unique.filter((skill, i) =>
+                              !unique.some(
+                                (other, j) =>
+                                  i !== j &&
+                                  other.toLowerCase().includes(skill.toLowerCase()) &&
+                                  other.length > skill.length
+                              )
+                            );
+
+                            return unique.length > 0 ? (
+                              unique.map((skill, index) => (
+                                <span
+                                  key={index}
+                                  className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
+                                >
+                                  {skill}
+                                </span>
+                              ))
+                            ) : (
+                              <p className="text-slate-500">Not specified</p>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
+
                   </div>
                 </div>
               </div>

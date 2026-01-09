@@ -11,6 +11,8 @@ import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
+import { useRef } from "react";
+import DOMPurify from "dompurify";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
@@ -35,6 +37,150 @@ const PostJob = () => {
     if (company && company?.maxJobPosts === 0 && company?.creditedForJobs < 500)
       navigate("/recruiter/dashboard/your-plans");
   }, []);
+
+
+
+
+
+  const editorRef = useRef(null);
+
+  // Formatting modes (controlled by React, NOT browser)
+  const [boldMode, setBoldMode] = useState(false);
+  const [italicMode, setItalicMode] = useState(false);
+
+
+  const isInsideList = () => {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+
+    let node = selection.anchorNode;
+
+    while (node) {
+      if (node.nodeName === "LI") return true;
+      node = node.parentElement;
+    }
+
+    return false;
+  };
+
+
+  const applyListPadding = () => {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    let node = selection.anchorNode;
+    while (node && node.nodeName !== "UL" && node.nodeName !== "OL") {
+      node = node.parentElement;
+    }
+
+    if (node) {
+      node.style.paddingLeft = "1.5rem";
+    }
+  };
+
+
+
+  // Keep formatting active while typing
+  const handleKeyDown = (e) => {
+    // Handle Tab for nested lists
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        let listItem = range.startContainer;
+        
+        // Find the closest li element
+        while (listItem && listItem.nodeName !== 'LI') {
+          listItem = listItem.parentNode;
+        }
+        
+        if (listItem) {
+          if (e.shiftKey) {
+            // Shift+Tab: Outdent
+            document.execCommand('outdent');
+          } else {
+            // Tab: Indent
+            document.execCommand('indent');
+          }
+        }
+      }
+      return;
+    }
+
+    // 🚫 Do NOT interfere when inside a list
+    if (isInsideList()) return;
+
+    editorRef.current.focus();
+
+    if (boldMode && !document.queryCommandState("bold")) {
+      document.execCommand("bold");
+    }
+
+    if (italicMode && !document.queryCommandState("italic")) {
+      document.execCommand("italic");
+    }
+  };
+
+
+  // Toolbar actions
+  const toggleBold = () => {
+    editorRef.current.focus();
+    document.execCommand("bold");
+    setBoldMode((prev) => !prev);
+  };
+
+  const toggleItalic = () => {
+    editorRef.current.focus();
+    document.execCommand("italic");
+    setItalicMode((prev) => !prev);
+  };
+
+  // Lists
+  const bulletList = () => {
+    editorRef.current.focus();
+    document.execCommand("insertUnorderedList");
+    applyListPadding();
+  };
+
+  const numberList = () => {
+    editorRef.current.focus();
+    document.execCommand("insertOrderedList");
+    applyListPadding();
+  };
+
+
+  const alphaList = () => {
+    editorRef.current.focus();
+    document.execCommand("insertOrderedList");
+
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    let node = selection.anchorNode;
+    while (node && node.nodeName !== "OL") {
+      node = node.parentElement;
+    }
+
+    if (node) {
+      node.style.listStyleType = "lower-alpha";
+      node.style.paddingLeft = "1.5rem"; // 👈 alignment fix
+    }
+  };
+
+
+
+  // Load value (edit / update mode)
+  useEffect(() => {
+    if (editorRef.current && formik.values.details) {
+      editorRef.current.innerHTML = formik.values.details;
+    }
+  }, []);
+
+
+
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -256,23 +402,89 @@ const PostJob = () => {
                     )}
                   </div>
 
+
+
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
+                    <Label className="block text-gray-700 mb-2">
                       Job Details<span className="text-red-500 ml-1">*</span>
                     </Label>
-                    <textarea
-                      name="details"
-                      placeholder="Enter job details"
-                      className="w-full p-3 border border-gray-300 rounded"
-                      onChange={formik.handleChange}
-                      value={formik.values.details}
+
+                    {/* Toolbar */}
+                    <div className="flex items-center gap-2 border border-gray-300 rounded-t px-3 py-2 bg-gray-50">
+                      {/* Bold */}
+                      <button
+                        type="button"
+                        onClick={toggleBold}
+                        className={`p-2 rounded font-bold ${boldMode ? "bg-gray-200 " : "hover:bg-gray-200"
+                          }`}
+                      >
+                        B
+                      </button>
+
+                      {/* Italic */}
+                      <button
+                        type="button"
+                        onClick={toggleItalic}
+                        className={`p-2 rounded italic ${italicMode ? "bg-gray-200" : "hover:bg-gray-200"
+                          }`}
+                      >
+                        <i>i</i>
+                      </button>
+
+                      {/* Lists */}
+                      {/* Bullet */}
+                      <button
+                        type="button"
+                        onClick={bulletList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Bullet List"
+                      >
+                        ●
+                      </button>
+
+                      {/* Number */}
+                      <button
+                        type="button"
+                        onClick={numberList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Numbered List"
+                      >
+                        123
+                      </button>
+
+                      {/* Alphabet */}
+                      {/* <button
+                        type="button"
+                        onClick={alphaList}
+                        className="p-2 rounded hover:bg-gray-200"
+                        title="Alphabet List"
+                      >
+                        abc
+                      </button> */}
+
+                    </div>
+
+                    {/* Editor */}
+                    <div
+                      ref={editorRef}
+                      contentEditable
+                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 rounded-b focus:outline-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman]"
+                      onKeyDown={handleKeyDown}
+                      onInput={(e) =>
+                        formik.setFieldValue("details", e.currentTarget.innerHTML)
+                      }
                     />
+
+                    {/* Error */}
                     {formik.touched.details && formik.errors.details && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 text-sm mt-1">
                         {formik.errors.details}
                       </div>
                     )}
                   </div>
+
+
+
                   {/* Buttons */}
                   <div className="flex justify-between">
                     <button
@@ -853,7 +1065,25 @@ const PostJob = () => {
                     </div>
                     <div className="mb-2">
                       <strong>Job Details:</strong>{" "}
-                      <div className="whitespace-pre-wrap text-justify">{formik.values.details || "N/A"}</div>
+                      {/* <div className="whitespace-pre-wrap text-justify">{formik.values.details || "N/A"}</div> */}
+                      <div
+                        className="
+    text-justify text-sm
+    [&_ul]:list-disc [&_ul]:ml-6
+    [&_ol]:list-decimal [&_ol]:ml-6
+    [&_li]:mb-1
+    [&_ol[type='a']]:list-[lower-alpha]
+    [&_ol[type='A']]:list-[upper-alpha]
+    [&_ol[type='i']]:list-[lower-roman]
+    [&_ol[type='I']]:list-[upper-roman]
+  "
+                        dangerouslySetInnerHTML={{
+                          __html: formik.values.details
+                            ? DOMPurify.sanitize(formik.values.details)
+                            : "<p>N/A</p>",
+                        }}
+                      />
+
                     </div>
                     <div className="mb-2">
                       <strong>Skills:</strong>{" "}

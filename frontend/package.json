@@ -40,6 +40,7 @@
     "clsx": "^2.1.1",
     "country-state-city": "^3.2.1",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.3.1",
     "embla-carousel-react": "^8.5.1",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.12",
