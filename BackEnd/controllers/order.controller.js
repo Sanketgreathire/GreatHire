@@ -1,6 +1,6 @@
 import Razorpay from "razorpay";
-import { JobSubscription } from "../models/jobSubscription.model.js";
-import { CandidateSubscription } from "../models/candidateSubscription.model.js";
+// import { JobSubscription } from "../models/jobSubscription.model.js";
+// import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
 
 // creating razorpay object or instance

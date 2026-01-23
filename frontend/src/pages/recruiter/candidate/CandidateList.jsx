@@ -128,13 +128,14 @@ const CandidateList = () => {
       </Helmet>
 
       {company && user?.isActive ? (
-        <div className="p-4 md:p-6 min-h-[80vh] container bg-gray-100 mx-auto pb-20">
+        <div className="min-h-screen px-4 sm:px-6 lg:px-8 pt-24 pb-20 bg-gray-100 dark:bg-gray-900 transition-colors">
 
           {/* Header */}
-          <div className="flex md:flex-row w-full justify-between border-b-2 border-gray-300 py-2 items-center pt-20">
-            <h1 className="text-2xl md:text-3xl font-bold">Find Candidates</h1>
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center border-b border-gray-300 dark:border-gray-700 pb-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Find Candidates </h1>
+
             <div className="flex flex-col sm:flex-row gap-2 items-center">
-              <p className="text-xl">
+              <p className="text-lg text-gray-700 dark:text-gray-300">
                 Remaining Credits: <strong>{company?.creditedForCandidates}</strong>
               </p>
               {company?.creditedForCandidates === 0 && (
@@ -146,8 +147,8 @@ const CandidateList = () => {
           </div>
 
           {/* Filters */}
-          <div className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 md:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
                 { label: "Experience", name: "experience", placeholder: "e.g. 1,2,3" },
@@ -162,13 +163,13 @@ const CandidateList = () => {
                 { label: "Expected CTC", name: "salaryBudget", placeholder: "50000" }
               ].map((field, idx) => (
                 <div key={idx}>
-                  <label>{field.label}</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">{field.label}</label>
                   {field.type === "select" ? (
                     <select
                       value={filters[field.name]}
                       onChange={(e) => setFilters({ ...filters, [field.name]: e.target.value })}
-                      className="p-2 border rounded"
-                    >
+                      className="w-full p-2.5 rounded-md border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700
+                         text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                       {field.options.map((opt) => (
                         <option key={opt} value={opt}>
                           {opt || `Select ${field.label}`}
@@ -177,7 +178,8 @@ const CandidateList = () => {
                     </select>
                   ) : (
                     <input
-                      className="p-2 border rounded"
+                      className="w-full p-2.5 rounded-md border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700
+                                 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={field.placeholder}
                       value={filters[field.name]}
                       onChange={(e) => setFilters({ ...filters, [field.name]: e.target.value })}
@@ -188,19 +190,27 @@ const CandidateList = () => {
             </div>
           </div>
 
-          <Button onClick={fetchCandidates} disabled={isLoading} className="mt-4 w-full md:w-40">
-            {isLoading ? "Loading..." : "Find Candidates"}
-          </Button>
+          <div className="mt-6 flex justify-center md:justify-start">
+            <Button
+              onClick={fetchCandidates}
+              disabled={isLoading}
+              className="w-full sm:w-48 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
+              {isLoading && (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+              {isLoading ? "Finding Candidates..." : "Find Candidates"}
+            </Button>
+          </div>
 
           {/* Candidates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
             {isLoading ? (
               <p className="text-center text-xl">Loading...</p>
             ) : currentCandidates.length === 0 ? (
               <p className="text-center text-2xl text-gray-400">{message}</p>
             ) : (
               currentCandidates.map((candidate) => (
-                <div key={candidate._id} className="p-4 border rounded shadow bg-white">
+                <div key={candidate._id} className="p-5 rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition hover:shadow-lg">
                   <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20">
                       <AvatarImage
@@ -208,8 +218,8 @@ const CandidateList = () => {
                       />
                     </Avatar>
                     <div>
-                      <h1 className="font-bold">{candidate?.fullname ?? "User"}</h1>
-                      <p>{candidate?.profile?.experience?.jobProfile ?? "Not Updated"}</p>
+                      <h1 className="text-lg font-semibold text-gray-800 dark:text-white">{candidate?.fullname ?? "User"}</h1>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{candidate?.profile?.experience?.jobProfile ?? "Not Updated"}</p>
                     </div>
                   </div>
 
@@ -224,7 +234,7 @@ const CandidateList = () => {
                     <div className="flex flex-wrap gap-2 mt-1">
                       {candidate?.profile?.skills?.length > 0 ? (
                         candidate.profile.skills.map((skill, i) => (
-                          <Badge key={i} className="bg-blue-100 text-blue-800 hover:text-white hover:bg-blue-600  ">
+                          <Badge key={i} className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-600 hover:text-white transition">
                             {skill}
                           </Badge>
                         ))
@@ -235,7 +245,7 @@ const CandidateList = () => {
                   </div>
 
                   <Button
-                    className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2"
+                    className="mt-4 w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
                     onClick={() => handleViewInformation(candidate)}
 
                   >
@@ -248,7 +258,7 @@ const CandidateList = () => {
 
           {/* Pagination */}
           {candidates.length > 0 && (
-            <div className="mt-6 flex justify-center gap-4">
+            <div className="mt-10 flex flex-wrap gap-4 justify-center items-center text-gray-700 dark:text-gray-300">
               <Button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
                 Previous
               </Button>

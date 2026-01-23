@@ -1,5 +1,5 @@
-import { User } from "../../models/user.model.js";
-import { Application } from "../../models/application.model.js";
+// import { User } from "../../models/user.model.js";
+// import { Application } from "../../models/application.model.js";
 
 export const bulkDeleteUsers = async (req, res) => {
   try {

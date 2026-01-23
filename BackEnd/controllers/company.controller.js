@@ -1,15 +1,15 @@
 // this file help to perform operation upon company
-import { Company } from "../models/company.model.js";
-import { User } from "../models/user.model.js";
-import { Recruiter } from "../models/recruiter.model.js";
-import { Job } from "../models/job.model.js";
-import { Application } from "../models/application.model.js";
+// import { Company } from "../models/company.model.js";
+// import { User } from "../models/user.model.js";
+// import { Recruiter } from "../models/recruiter.model.js";
+// import { Job } from "../models/job.model.js";
+// import { Application } from "../models/application.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
-import mongoose from "mongoose";
-import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-import { JobSubscription } from "../models/jobSubscription.model.js";
-import JobReport from "../models/jobReport.model.js";
+// import mongoose from "mongoose";
+// import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+// import { JobSubscription } from "../models/jobSubscription.model.js";
+// import JobReport from "../models/jobReport.model.js";
 
 
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company

@@ -165,6 +165,7 @@ const Navbar = () => {
   // Secondary navigation links (in dropdown)
   const secondaryNavLinks = [
     { to: "/great-hire/services", label: "Our Services" },
+    // { to: "/feed", label: "Feed"},
     { to: "/blogs", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },

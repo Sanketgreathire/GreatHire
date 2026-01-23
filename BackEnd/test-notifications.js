@@ -1,5 +1,5 @@
 import notificationService from './utils/notificationService.js';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import connectDB from './utils/db.js';
 
@@ -80,7 +80,7 @@ async function testNotifications() {
   } catch (error) {
     console.error('❌ Test failed:', error);
   } finally {
-    await mongoose.connection.close();
+    // await mongoose.connection.close();
     console.log('🔌 Database connection closed');
     process.exit(0);
   }

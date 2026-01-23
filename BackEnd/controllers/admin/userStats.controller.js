@@ -1,6 +1,6 @@
 // controllers/admin/userStats.controller.js
-import { User } from "../../models/user.model.js";
-import { Application } from "../../models/application.model.js";
+// import { User } from "../../models/user.model.js";
+// import { Application } from "../../models/application.model.js";
 
 // ===============================
 // UPDATE USER (ADMIN)

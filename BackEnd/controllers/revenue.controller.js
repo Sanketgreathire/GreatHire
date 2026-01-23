@@ -1,4 +1,4 @@
-import Revenue from "../models/revenue.model.js";
+// import Revenue from "../models/revenue.model.js";
 
 // this controller store revenue create by job posting plan or candidate database plan
 export const storeRevenue = async (req, res) => {

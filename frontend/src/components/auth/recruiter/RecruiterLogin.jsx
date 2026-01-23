@@ -6,6 +6,7 @@ import { setUser } from "@/redux/authSlice";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Building2 } from "lucide-react";
+import { supabase } from "@/utils/supabase";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -88,100 +89,117 @@ const RecruiterLogin = () => {
   };
 
   const handleSendOtp = async () => {
-    if (!formData.email) {
-      toast.error("Please enter your email first");
-      return;
-    }
+  if (!formData.email) {
+    toast.error("Please enter your email first");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const res = await axios.post(`${USER_API_END_POINT}/send-otp`, { email: formData.email });
-      
-      if (res.data.success) {
-        toast.success("OTP sent to email");
-        setOtpSent(true);
-        setResendTimer(300);
-        const interval = setInterval(() => {
-          setResendTimer((prev) => {
-            if (prev <= 1) {
-              clearInterval(interval);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err) {
-      console.error("OTP Error:", err);
-      toast.error(err?.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: formData.email,
+    });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    if (error) throw error;
 
-    try {
-      let response;
+    toast.success("OTP sent to email");
+    setOtpSent(true);
+    setResendTimer(300);
 
-      if (showOtpInput) {
-        response = await axios.post(
-          `${USER_API_END_POINT}/verify-otp`,
-          {
-            email: formData.email,
-            otp: otpData.otp,
-          },
-          { withCredentials: true }
-        );
-      } else {
-        response = await axios.post(
-          `${USER_API_END_POINT}/login`,
-          { ...formData },
-          { withCredentials: true }
-        );
-      }
-
-      if (response?.data?.success) {
-        toast.success(response.data.message);
-        dispatch(setUser(response.data.user));
-
-        const passwordToSave = showOtpInput ? otpData.otp : formData.password;
-        if (rememberMe) {
-          localStorage.setItem('rememberedRecruiterEmail', formData.email);
-          localStorage.setItem('rememberedRecruiterPassword', passwordToSave);
-        } else {
-          localStorage.removeItem('rememberedRecruiterEmail');
-          localStorage.removeItem('rememberedRecruiterPassword');
+    const interval = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
         }
+        return prev - 1;
+      });
+    }, 1000);
 
-        const user = response.data.user;
-        if (user.role === "student" || user.role === "candidate") {
-          if (user.isFirstLogin) {
-            navigate("/profile");
-          } else {
-            navigate("/");
-          }
-        } else if (user.role === "recruiter") {
-          navigate("/recruiter/dashboard");
-        } else if (user.role === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/");
-        }
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (err) {
-      console.error("Error in login:", err);
-      toast.error(err?.response?.data?.message || "An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+  } catch (err) {
+    toast.error(err.message || "Failed to send OTP");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    let authResponse;
+
+    // OTP Login
+    if (showOtpInput) {
+      authResponse = await supabase.auth.verifyOtp({
+        email: formData.email,
+        token: otpData.otp,
+        type: "email",
+      });
+    } 
+    // Password Login
+    else {
+      authResponse = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
     }
-  };
+
+    if (authResponse.error) throw authResponse.error;
+
+    const user = authResponse.data.user;
+
+    toast.success("Login successful");
+    dispatch(setUser(user));
+
+    // Remember Me
+    const passwordToSave = showOtpInput ? otpData.otp : formData.password;
+
+    if (rememberMe) {
+      localStorage.setItem("rememberedRecruiterEmail", formData.email);
+      localStorage.setItem("rememberedRecruiterPassword", passwordToSave);
+    } else {
+      localStorage.removeItem("rememberedRecruiterEmail");
+      localStorage.removeItem("rememberedRecruiterPassword");
+    }
+
+    // Fetch role from Supabase DB
+    const { data: profile, error: profileError } = await supabase
+  .from("users")
+  .select("role, isFirstLogin")
+  .eq("id", user.id)
+  .single();
+
+console.log("User:", user);
+console.log("Profile:", profile);
+console.log("Profile Error:", profileError);
+
+
+    // Redirect by role
+    if (profileError || !profile) {
+  console.warn("No profile found — sending to home");
+  navigate("/");
+  return;
+}
+
+if (profile.role === "recruiter") {
+  navigate("/recruiter/dashboard");
+} 
+else if (profile.role === "admin") {
+  navigate("/admin/dashboard");
+} 
+else {
+  navigate("/");
+}
+
+
+  } catch (err) {
+    toast.error(err.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-emerald-100">

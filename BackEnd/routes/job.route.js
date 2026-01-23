@@ -52,7 +52,7 @@
 
 
 import express from "express";
-import { Application }from "../models/application.model.js"; //thisssssssss
+// import { Application }from "../models/application.model.js"; //thisssssssss
 // import { getJobById } from "../controllers/job.controller.js";
 import {
   postJob,
