@@ -218,12 +218,12 @@
 
 // this is an applicaton controller to perform action related to application
 
-import { User } from "../models/user.model.js";
-import { Job } from "../models/job.model.js";
-import {Application} from "../models/application.model.js";
+// import { User } from "../models/user.model.js";
+// import { Job } from "../models/job.model.js";
+// import {Application} from "../models/application.model.js";
 
 
-import Notification from "../models/notification.model.js";  
+// import Notification from "../models/notification.model.js";  
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";

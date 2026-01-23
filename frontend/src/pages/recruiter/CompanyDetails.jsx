@@ -137,68 +137,69 @@ const CompanyDetails = () => {
       </Helmet>
 
       {company && user?.isActive ? (
-        <div className="max-w-6xl mx-auto p-10 mt-20 bg-white rounded-2xl shadow-lg">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+       <div className="min-h-screen px-4 sm:px-6 lg:px-8 pt-24 pb-20 bg-gray-100 dark:bg-gray-900 transition-colors">
+
+          <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-400 mb-8 text-center">
             Company Details
           </h1>
 
           {!isEditing ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Company Info */}
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Company Name</p>
-                <p className="text-lg text-gray-900 font-semibold">{company?.companyName}</p>
+              <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Company Name</p>
+                <p className="text-lg text-gray-900 dark:text-gray-400 font-semibold">{company?.companyName}</p>
 
-                <p className="text-sm text-gray-500 font-medium mb-1 mt-6">Industry</p>
-                <p className="text-lg text-gray-900 font-semibold">{company?.industry}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1 mt-6">Industry</p>
+                <p className="text-lg text-gray-900 dark:text-gray-400 font-semibold">{company?.industry}</p>
               </div>
 
               {/* Address */}
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors col-span-full lg:col-span-2">
-                <p className="text-sm text-gray-500 font-medium mb-4">Company Address</p>
+              <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors lg:col-span-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-4">Company Address</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Street Address</p>
-                    <p className="text-gray-900 font-semibold">{company?.address?.streetAddress}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Street Address</p>
+                    <p className="text-gray-900 dark:text-gray-400 font-semibold">{company?.address?.streetAddress}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">City</p>
-                    <p className="text-gray-900 font-semibold">{company?.address?.city}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">City</p>
+                    <p className="text-gray-900 dark:text-gray-400 font-semibold">{company?.address?.city}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">State</p>
-                    <p className="text-gray-900 font-semibold">{company?.address?.state}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">State</p>
+                    <p className="text-gray-900 dark:text-gray-400 font-semibold">{company?.address?.state}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Postal Code</p>
-                    <p className="text-gray-900 font-semibold">{company?.address?.postalCode}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Postal Code</p>
+                    <p className="text-gray-900 dark:text-gray-400 font-semibold">{company?.address?.postalCode}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Country</p>
-                    <p className="text-gray-900 font-semibold">{company?.address?.country}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Country</p>
+                    <p className="text-gray-900 dark:text-gray-400 font-semibold">{company?.address?.country}</p>
                   </div>
                 </div>
               </div>
 
               {/* Other Info */}
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Phone</p>
-                <p className="text-lg text-gray-900 font-semibold">{company?.phone}</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Phone</p>
+                <p className="text-lg text-gray-900 dark:text-gray-400 font-semibold">{company?.phone}</p>
               </div>
 
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Business Email</p>
-                <p className="text-lg text-gray-900 font-semibold break-all">{company?.email}</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Business Email</p>
+                <p className="text-lg text-gray-900 dark:text-gray-400 font-semibold break-all">{company?.email}</p>
               </div>
 
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Admin Email</p>
-                <p className="text-lg text-gray-900 font-semibold break-all">{company?.adminEmail}</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Admin Email</p>
+                <p className="text-lg text-gray-900 dark:text-gray-400 font-semibold break-all">{company?.adminEmail}</p>
               </div>
 
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Website</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Website</p>
                 <a
                   href={company?.companyWebsite}
                   target="_blank"
@@ -209,18 +210,19 @@ const CompanyDetails = () => {
                 </a>
               </div>
 
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">CIN Number</p>
-                <p className="text-md text-gray-900 font-semibold">{company?.CIN}</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">CIN Number</p>
+                <p className="text-md text-gray-900 dark:text-gray-400 font-semibold">{company?.CIN}</p>
               </div>
 
-              <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-                <p className="text-sm text-gray-500 font-medium mb-1">Business File</p>
+               <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Business File</p>
                 <a
                   href={company?.businessFile}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold break-all
+                  "
                 >
                   View Business File
                 </a>
@@ -260,7 +262,7 @@ const CompanyDetails = () => {
             <form onSubmit={handleFormSubmit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Website
                   </label>
                   <input
@@ -268,12 +270,12 @@ const CompanyDetails = () => {
                     name="companyWebsite"
                     value={formData?.companyWebsite}
                     onChange={handleInputChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Street Address
                   </label>
                   <input
@@ -281,12 +283,12 @@ const CompanyDetails = () => {
                     name="streetAddress"
                     value={formData.address.streetAddress}
                     onChange={handleAddressChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     City
                   </label>
                   <input
@@ -294,12 +296,12 @@ const CompanyDetails = () => {
                     name="city"
                     value={formData.address.city}
                     onChange={handleAddressChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Postal Code
                   </label>
                   <input
@@ -307,12 +309,12 @@ const CompanyDetails = () => {
                     name="postalCode"
                     value={formData?.address.postalCode}
                     onChange={handleAddressChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     State
                   </label>
                   <input
@@ -320,12 +322,12 @@ const CompanyDetails = () => {
                     name="state"
                     value={formData?.address.state}
                     onChange={handleAddressChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Country
                   </label>
                   <input
@@ -333,12 +335,12 @@ const CompanyDetails = () => {
                     name="country"
                     value={formData?.address.country}
                     onChange={handleAddressChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Industry
                   </label>
                   <input
@@ -346,12 +348,12 @@ const CompanyDetails = () => {
                     name="industry"
                     value={formData.industry}
                     onChange={handleInputChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Business Email
                   </label>
                   <input
@@ -359,12 +361,12 @@ const CompanyDetails = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="input-card">
-                  <label className="text-sm text-gray-600 font-medium">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Phone
                   </label>
                   <input
@@ -372,7 +374,7 @@ const CompanyDetails = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full p-3 mt-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>

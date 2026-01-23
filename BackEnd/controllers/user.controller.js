@@ -3,13 +3,13 @@
 import bcrypt from "bcryptjs";
 // this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
-
-import { User } from "../models/user.model.js";
-import { Recruiter } from "../models/recruiter.model.js";
-import { Admin } from "../models/admin/admin.model.js";
-import { Contact } from "../models/contact.model.js";
+import { supabase } from "../utils/supabase.js";
+// import { User } from "../models/user.model.js";
+// import { Recruiter } from "../models/recruiter.model.js";
+// import { Admin } from "../models/admin/admin.model.js";
+// import { Contact } from "../models/contact.model.js";
 // this model help to blacklist recent logout token
-import { BlacklistToken } from "../models/blacklistedtoken.model.js";
+// import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
@@ -20,12 +20,33 @@ import axios from "axios";
 import { validationResult } from "express-validator";
 // help in send email
 import nodemailer from "nodemailer";
-import { Application } from "../models/application.model.js";
+// import { Application } from "../models/application.model.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password } = req.body;
+
+    const formattedPhone = `+91${phoneNumber}`;
+    // Insert user into Supabase table
+const { data: authUser, error } = await supabase.auth.admin.createUser({
+  email: email,
+  password: password,
+  phone: formattedPhone, // ✅ REQUIRED
+  email_confirm: true,
+  phone_confirm: true,   // ✅ IMPORTANT
+  user_metadata: {
+    full_name: fullname,
+    role: "candidate"
+  }
+});
+
+if (error) {
+  return res.status(400).json({ success: false, message: error.message });
+}
+
+// authUser will look like the object you pasted
+console.log(authUser.id, authUser.raw_user_meta_data);
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {

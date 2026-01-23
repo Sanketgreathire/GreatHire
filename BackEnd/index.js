@@ -6,14 +6,14 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cron from "node-cron";
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { Server } from "socket.io";
 
-import connectDB from "./utils/db.js";
+// import connectDB from "./utils/db.js";
 
 // ================= ROUTES =================
 import applicationRoute from "./routes/application.route.js";
@@ -35,9 +35,9 @@ import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js"
 import notificationRoute from "./routes/notification.route.js";
 
 // ================= MODELS =================
-import Blog from "./models/blog.model.js";
-import { JobSubscription } from "./models/jobSubscription.model.js";
-import { CandidateSubscription } from "./models/candidateSubscription.model.js";
+// import Blog from "./models/blog.model.js";
+// import { JobSubscription } from "./models/jobSubscription.model.js";
+// import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
 // ================= APP SETUP =================
 const app = express();
@@ -187,8 +187,8 @@ io.on("connection", (socket) => {
 cron.schedule("* * * * *", async () => {
   try {
     const subs = await Promise.all([
-      JobSubscription.find({ status: "Active" }),
-      CandidateSubscription.find({ status: "Active" }),
+      // JobSubscription.find({ status: "Active" }),
+      // CandidateSubscription.find({ status: "Active" }),
     ]);
 
     [...subs[0], ...subs[1]].forEach(async (sub) => {
@@ -206,13 +206,13 @@ cron.schedule("* * * * *", async () => {
 
 // ================= START SERVER =================
 server.listen(PORT, "0.0.0.0", async () => {
-  await connectDB();
+  // await connectDB();
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // ================= SHUTDOWN =================
 process.on("SIGINT", async () => {
   console.log("🛑 Shutting down...");
-  await mongoose.connection.close();
+  // await mongoose.connection.close();
   process.exit(0);
 });

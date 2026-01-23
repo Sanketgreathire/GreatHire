@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { DigitalMarketer } from "../models/digitalmarketer.model.js";
-import { User } from "../models/user.model.js";
-import { Recruiter } from "../models/recruiter.model.js";
-import { Admin } from "../models/admin/admin.model.js";
+// import { DigitalMarketer } from "../models/digitalmarketer.model.js";
+// import { User } from "../models/user.model.js";
+// import { Recruiter } from "../models/recruiter.model.js";
+// import { Admin } from "../models/admin/admin.model.js";
 import { validationResult } from "express-validator";
 import nodemailer from "nodemailer";
 

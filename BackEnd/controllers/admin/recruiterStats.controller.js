@@ -1,5 +1,5 @@
-import { Company } from "../../models/company.model.js";
-import { Recruiter } from "../../models/recruiter.model.js";
+// import { Company } from "../../models/company.model.js";
+// import { Recruiter } from "../../models/recruiter.model.js";
 import nodemailer from "nodemailer";
 
 // returning total number of recruiter, total active recruiters, total deactive recruiters
