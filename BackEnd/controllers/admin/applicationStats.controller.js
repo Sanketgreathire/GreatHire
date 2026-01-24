@@ -1,4 +1,4 @@
-// import {Application} from "../../models/application.model.js";
+import {Application} from "../../models/application.model.js";
 
 // returning total applications
 export const applicationStats = async (req, res) => {

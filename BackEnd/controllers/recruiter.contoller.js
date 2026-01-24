@@ -1,17 +1,17 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// import { Recruiter } from "../models/recruiter.model.js";
-// import { User } from "../models/user.model.js";
-// import { Admin } from "../models/admin/admin.model.js";
-// import { Company } from "../models/company.model.js";
-// import { Job } from "../models/job.model.js";
-// import  { Application } from "../models/application.model.js";
-// import { JobSubscription } from "../models/jobSubscription.model.js";
-// import { CandidateSubscription } from "../models/candidateSubscription.model.js";
-// import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
+import { User } from "../models/user.model.js";
+import { Admin } from "../models/admin/admin.model.js";
+import { Company } from "../models/company.model.js";
+import { Job } from "../models/job.model.js";
+import  { Application } from "../models/application.model.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
+import { CandidateSubscription } from "../models/candidateSubscription.model.js";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { check, validationResult } from "express-validator";
-// import { deletedCompany } from "../models/deletedCompany.model.js";
+import { deletedCompany } from "../models/deletedCompany.model.js";
 
 
 import { oauth2Client } from "../utils/googleConfig.js";

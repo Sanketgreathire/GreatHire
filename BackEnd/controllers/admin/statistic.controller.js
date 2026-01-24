@@ -368,13 +368,13 @@ export const getReportedJobList = async (req, res) => {
   }
 };*/
 
-// import { Job } from "../../models/job.model.js";
-// import { User } from "../../models/user.model.js";
-// import { Recruiter } from "../../models/recruiter.model.js";
-// import { Application } from "../../models/application.model.js";
-// import { Company } from "../../models/company.model.js";
-// import Revenue from "../../models/revenue.model.js";
-// import JobReport from "../../models/jobReport.model.js";
+import { Job } from "../../models/job.model.js";
+import { User } from "../../models/user.model.js";
+import { Recruiter } from "../../models/recruiter.model.js";
+import { Application } from "../../models/application.model.js";
+import { Company } from "../../models/company.model.js";
+import Revenue from "../../models/revenue.model.js";
+import JobReport from "../../models/jobReport.model.js";
 import fs from "fs";
 import path from "path";
 import { Parser } from "json2csv";

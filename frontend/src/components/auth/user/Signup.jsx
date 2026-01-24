@@ -1,15 +1,14 @@
 // export default Signup;
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-// import axios from "axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-// import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import user_video from "../../../assets/videos/user_video.mp4"; // ✅ your local video
-import { supabase } from "@/utils/supabase";
 
 const slides = [
   {
@@ -91,55 +90,38 @@ const Signup = () => {
   };
 
   const handleCreateAccount = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!validateForm()) {
-    toast.error("Please fix the errors in your form before submitting.");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    // 1️⃣ Supabase Auth Signup
-    const { data, error } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          full_name: formData.fullname,
-          phone: formData.phoneNumber,
-          role: "candidate", // 👈 important
-        },
-      },
-    });
-
-    if (error) {
-      toast.error(error.message);
+    if (!validateForm()) {
+      toast.error("Please fix the errors in your form before submitting.");
       return;
     }
 
-    // 2️⃣ User created successfully
-    toast.success("Account created successfully ✅");
+    setLoading(true);
+    try {
+     const response = await axios.post(
+  `${USER_API_END_POINT}/register`,
+  { ...formData },
+  { withCredentials: true }
+);
 
-    // 3️⃣ Store user in Redux
-    dispatch(setUser(data.user));
 
-    setFormData({
-      fullname: "",
-      email: "",
-      phoneNumber: "",
-      password: "",
-    });
-
-    navigate("/login");
-  } catch (err) {
-    toast.error("Something went wrong ❌");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      if (response?.data?.success) {
+        toast.success("Account created successfully ✅");
+        setFormData({ fullname: "", email: "", phoneNumber: "", password: "" });
+        dispatch(setUser(response.data.user));
+        navigate("/profile");
+      } else {
+        toast.error(response?.data?.message || "Signup failed ❌");
+      }
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Network error, please try again ❌"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex flex-col">

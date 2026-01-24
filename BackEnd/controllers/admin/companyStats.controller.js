@@ -1,5 +1,5 @@
-// import { Company } from "../../models/company.model.js";
-// import { deletedCompany } from "../../models/deletedCompany.model.js";
+import { Company } from "../../models/company.model.js";
+import { deletedCompany } from "../../models/deletedCompany.model.js";
 
 // returning total number of company, active company, deactive company
 export const companyStats = async (req, res) => {
