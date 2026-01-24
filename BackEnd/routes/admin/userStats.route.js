@@ -9,7 +9,7 @@ import {
 } from "../../controllers/admin/userStats.controller.js";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
 import { bulkDeleteUsers } from "../../controllers/admin/bulkDelete.controller.js";
-// import { User } from "../../models/user.model.js";
+import { User } from "../../models/user.model.js";
 
 const router = express.Router();
 

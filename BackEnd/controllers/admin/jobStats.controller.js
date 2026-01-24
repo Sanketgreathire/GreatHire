@@ -1,4 +1,4 @@
-// import { Job } from "../../models/job.model.js";
+import { Job } from "../../models/job.model.js";
 
 // returing total jobs, total active jobs, total deactive jobs
 export const getJobStats = async (req, res) => {

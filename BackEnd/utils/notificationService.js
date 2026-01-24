@@ -1,4 +1,4 @@
-// import Notification from "../models/notification.model.js";
+import Notification from "../models/notification.model.js";
 import { getIO } from "./socket.js";
 
 class NotificationService {

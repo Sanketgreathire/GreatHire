@@ -1,14 +1,14 @@
 
-// import { Job } from "../models/job.model.js";
-// import  {Application } from "../models/application.model.js";
-// import { Company } from "../models/company.model.js";
-// import { JobSubscription } from "../models/jobSubscription.model.js";
+import { Job } from "../models/job.model.js";
+import  {Application } from "../models/application.model.js";
+import { Company } from "../models/company.model.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
-// import { Admin } from "../models/admin/admin.model.js";
+import { Admin } from "../models/admin/admin.model.js";
 import { check, validationResult } from "express-validator";
-// import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-// import { Recruiter } from "../models/recruiter.model.js";
-// import { User } from "../models/user.model.js";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
+import { User } from "../models/user.model.js";
 import notificationService from "../utils/notificationService.js";
 import axios from "axios";
 

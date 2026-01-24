@@ -1,7 +1,7 @@
 
 
 import jwt from "jsonwebtoken";
-// import { BlacklistToken } from "../models/blacklistedtoken.model.js";
+import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 const isAuthenticated = async (req, res, next) => {
   try {

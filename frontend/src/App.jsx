@@ -218,7 +218,6 @@ import AuthPage from './components/auth/user/AuthPage';
 import JobseekerLogin from '@/components/auth/user/JobseekerLogin';
 import RecruiterLogin from '@/components/auth/recruiter/RecruiterLogin';
 
-
 // Pages
 import SignupPage from "./components/shared/SignupPage";
 import Home from "./pages/Home";
@@ -236,8 +235,6 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import About from "./pages/services/About";
-// import DemoPost from "@/components/shared/demoPosts";
-import Feed from "@/components/shared/Feed";
 
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
@@ -285,8 +282,6 @@ import { Worker } from "@react-pdf-viewer/core";
 import usePageTracking from "./usePageTracking";
 
 const appRouter = createBrowserRouter([
-  // { path: "/demopost", element: <DemoPost /> },
-  { path: "/feed", element: <Feed /> },
   { path: "/", element: <Home /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/blogs/:slug", element: <Blogs /> },
