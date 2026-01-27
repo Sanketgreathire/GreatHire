@@ -129,7 +129,14 @@ export const getUserStats = async (req, res) => {
             $cond: [
               { $eq: ["$createdAt", null] },
               null,
-              { $toDate: "$createdAt" },
+              {
+                $convert: {
+                  input: "$createdAt",
+                  to: "date",
+                  onError: null,   // ✅ ignores bad dates
+                  onNull: null
+                }
+              },
             ],
           },
           lastActiveAtSafe: {
@@ -230,7 +237,14 @@ export const getUsersList = async (req, res) => {
             $cond: [
               { $eq: ["$createdAt", null] },
               null,
-              { $toDate: "$createdAt" },
+              {
+                $convert: {
+                  input: "$createdAt",
+                  to: "date",
+                  onError: null,   // ✅ ignores bad dates
+                  onNull: null
+                }
+              },
             ],
           },
           lastActiveAtSafe: {
