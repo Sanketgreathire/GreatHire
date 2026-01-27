@@ -165,7 +165,7 @@ export const login = async (req, res) => {
       });
     }
 
-await user.save();
+// await user.save();
 
     const tokenData = {
       userId: user._id,
@@ -258,11 +258,17 @@ export const googleLogin = async (req, res) => {
       }
 
       // Update lastActiveAt and set isFirstLogin to false for existing users
-      user.lastActiveAt = new Date();
-      if (user.isFirstLogin) {
-        user.isFirstLogin = false;
-      }
-      await user.save();
+      await User.findByIdAndUpdate(
+        user._id,
+        {
+          $set: {
+            lastActiveAt: new Date(),
+            isFirstLogin: false,
+          },
+        },
+        { new: true }
+      );
+
 
       const tokenData = {
         userId: user._id,
