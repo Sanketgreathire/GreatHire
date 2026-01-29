@@ -6,8 +6,8 @@ const experienceSchema = new mongoose.Schema({
   duration: { type: String },
   experienceDetails: { type: String },
   currentlyWorking: { type: Boolean, default: false },
-  currentCTC: { type: String, default: ""}, // only relevant if currentlyWorking = true
-  noticePeriod: { type: String, default: ""},
+  currentCTC: { type: String, default: "" },
+  noticePeriod: { type: String, default: "" },
 });
 
 const userSchema = new mongoose.Schema(
@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     emailId: {
       email: {
         type: String,
@@ -27,13 +28,16 @@ const userSchema = new mongoose.Schema(
         type: Boolean,
         default: false,
       },
-      otp: { 
+      otp: {
         type: String,
-        default: null },        
-      otpExpiry: { 
-        type: Date, 
-        default: null },    
+        default: null,
+      },
+      otpExpiry: {
+        type: Date,
+        default: null,
+      },
     },
+
     phoneNumber: {
       number: {
         type: String,
@@ -42,6 +46,7 @@ const userSchema = new mongoose.Schema(
         type: Boolean,
       },
     },
+
     alternatePhone: {
       number: {
         type: String,
@@ -54,10 +59,12 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+
     role: {
       type: String,
       default: "student",
     },
+
     address: {
       city: {
         type: String,
@@ -70,19 +77,22 @@ const userSchema = new mongoose.Schema(
       },
       pincode: {
         type: Number,
-        min: 100000,   // minimum 6-digit pincode in India
+        min: 100000,
         max: 999999,
         required: false,
-      }
+      },
     },
+
     lastActiveAt: {
       type: Date,
       default: Date.now,
     },
+
     isFirstLogin: {
       type: Boolean,
       default: true,
     },
+
     profile: {
       language: {
         type: [String],
@@ -95,46 +105,83 @@ const userSchema = new mongoose.Schema(
       coverLetter: {
         type: String,
       },
-      bio: { type: String },
+      bio: {
+        type: String,
+      },
 
-       // ✅ New field for fresher vs experience
       hasExperience: {
         type: Boolean,
         default: false,
       },
-      experiences: [experienceSchema], // if fresher → keep this []
+
+      experiences: [experienceSchema],
 
       skills: [{ type: String }],
-      resume: { type: String }, // URL for the resume
+
+      resume: { type: String },
       resumeOriginalName: { type: String },
+
       profilePhoto: {
         type: String,
         default: "",
       },
+
       gender: {
         type: String,
-        enum: ["","Not Select","Male","Female","Other"],
+        enum: ["", "Not Select", "Male", "Female", "Other"],
         default: "Not Select",
       },
+
       qualification: {
         type: String,
         enum: [
-         "","Post Graduation", "Under Graduation", "M.Sc. Computer Science","B.Sc. Computer Science", "M.Sc. Information Technology", "B.Sc. Information Technology", "B.Tech", "M.Tech", "MBA", "MCA", "B.Sc", "M.Sc", "B.Com", "M.Com",
-          "Diploma", "12th Pass", "10th Pass", "Others"
+          "",
+          "Post Graduation",
+          "Under Graduation",
+          "M.Sc. Computer Science",
+          "B.Sc. Computer Science",
+          "M.Sc. Information Technology",
+          "B.Sc. Information Technology",
+          "B.Tech",
+          "M.Tech",
+          "MBA",
+          "MCA",
+          "B.Sc",
+          "M.Sc",
+          "B.Com",
+          "M.Com",
+          "Diploma",
+          "12th Pass",
+          "10th Pass",
+          "Others",
         ],
-        default: "", 
+        default: "",
       },
+
       otherQualification: {
         type: String,
-        default: ""
+        default: "",
       },
+
       documents: {
-      type: [String],   // e.g. ["PAN Card", "Aadhar Card", "Passport"]
-      default: [],
-    },
+        type: [String],
+        default: [],
+      },
     },
   },
   { timestamps: true }
 );
+
+/* ============================
+   ✅ ADDED – DO NOT REMOVE
+   ============================ */
+
+// ✅ Index for correct email lookup
+userSchema.index({ "emailId.email": 1 }, { unique: true });
+
+// ✅ Virtual field so `user.email` works safely
+userSchema.virtual("email").get(function () {
+  return this.emailId?.email;
+});
 
 export const User = mongoose.model("User", userSchema);
