@@ -156,7 +156,7 @@ const Navbar = () => {
         // BEFORE LOGIN → full public navbar
         { to: "/", label: "Home" },
         { to: "/great-hire/services", label: "Our Services" },
-        { to: "/blogs", label: "Blogs" },
+        { to: "/Main_blog_page", label: "Blogs" },
         { to: "/about", label: "About Us" },
         { to: "/contact", label: "Contact Us" },
         // { to: "/jobs", label: "Jobs" },
@@ -165,8 +165,7 @@ const Navbar = () => {
   // Secondary navigation links (in dropdown)
   const secondaryNavLinks = [
     { to: "/great-hire/services", label: "Our Services" },
-    // { to: "/feed", label: "Feed"},
-    { to: "/blogs", label: "Blogs" },
+    { to: "/Main_blog_page", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
   ];
