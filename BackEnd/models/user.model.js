@@ -177,7 +177,7 @@ const userSchema = new mongoose.Schema(
    ============================ */
 
 // ✅ Index for correct email lookup
-userSchema.index({ "emailId.email": 1 }, { unique: true });
+//userSchema.index({ "emailId.email": 1 }, { unique: true });
 
 // ✅ Virtual field so `user.email` works safely
 userSchema.virtual("email").get(function () {
