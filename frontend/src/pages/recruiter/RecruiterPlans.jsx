@@ -417,7 +417,8 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import RecruiterFAQ from "../components/RecruiterFAQ";
+import RecruiterFAQ from "../../components/RecruiterFAQ";
+
 
 
 import {
