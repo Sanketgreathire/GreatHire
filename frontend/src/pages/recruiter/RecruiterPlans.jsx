@@ -111,7 +111,7 @@
 
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
-//   const [selectedPlan, setSelectedPlan] = useState(plans[1].title);
+//   const [selectedPlan, setSelectedPlan] = useState(plans[2].title);
 //   const { user } = useSelector((state) => state.auth);
 //   const { company } = useSelector((state) => state.company);
 
@@ -341,8 +341,11 @@
 
 //                   <div
 //                     key={index}
-//                     className={`relative bg-white rounded-xl shadow-md p-6 border-2 transition-all duration-300 cursor-pointer ${isSelected ? plan.selectedBorderColor : plan.borderColor
-//                       }`}
+//                     className={`plan-card border rounded-xl p-6 bg-white shadow transition-all duration-300 cursor-pointer hover:shadow-lg ${
+//                       isSelected
+//                         ? "border-2 border-blue-500 ring-2 ring-blue-500 scale-[1.02]"
+//                         : ""
+//                     }`}
 //                     onClick={() => handleSelectPlan(plan.title)}
 //                   >
 //                     {plan.recommended && (
@@ -409,7 +412,7 @@
 
 // export default RecruiterPlans;
 
-import React from "react";
+import React, { useState } from "react";
 import { Briefcase, Zap, Crown, Check } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -419,8 +422,6 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import RecruiterFAQ from "../../components/RecruiterFAQ";
 
-
-
 import {
   ORDER_API_END_POINT,
   VERIFICATION_API_END_POINT,
@@ -428,7 +429,7 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { addJobPlan } from "@/redux/jobPlanSlice";
 
-/* ================= FINAL SUBSCRIPTION PACKAGES ================= */
+/* ================= SUBSCRIPTION PACKAGES ================= */
 const subscriptionPlans = [
   {
     id: "launchpad",
@@ -464,7 +465,7 @@ const subscriptionPlans = [
     cta: "Upgrade Now",
   },
   {
-    id: "growth-engine ",
+    id: "growth-engine",
     title: "Premium (Most Popular)",
     price: 2999,
     billing: "Monthly",
@@ -500,44 +501,18 @@ const subscriptionPlans = [
   },
 ];
 
-/* ================= CREDIT PLANS (UNCHANGED) ================= */
-const creditPlans = [
-  {
-    title: "1 x Premium Job",
-    creditsForJobs: 500,
-    creditsForCandidates: 15,
-    price: 250,
-    originalPrice: 500,
-    perJob: 250,
-    icon: <Briefcase />,
-  },
-  {
-    title: "5 x Premium Jobs",
-    creditsForJobs: 2500,
-    creditsForCandidates: 50,
-    price: 925,
-    originalPrice: 2500,
-    perJob: 185,
-    icon: <Zap />,
-  },
-  {
-    title: "10 x Premium Jobs",
-    creditsForJobs: 5000,
-    creditsForCandidates: 100,
-    price: 1500,
-    originalPrice: 5000,
-    perJob: 150,
-    icon: <Crown />,
-  },
-];
-
 function RecruiterPlans() {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* ============== CREDIT PAYMENT (OLD FLOW) ============== */
+  // ⭐ Premium selected by default
+  const [selectedPlanId, setSelectedPlanId] = useState(
+    subscriptionPlans.find((p) => p.popular)?.id
+  );
+
+  /* ============== PAYMENT FLOW ============== */
   const initiateCreditPayment = async (plan) => {
     try {
       const res = await axios.post(
@@ -568,9 +543,9 @@ function RecruiterPlans() {
             `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
             {
               ...response,
+              companyId: company._id,
               creditsForJobs: plan.creditsForJobs,
               creditsForCandidates: plan.creditsForCandidates,
-              companyId: company._id,
             },
             { withCredentials: true }
           );
@@ -589,27 +564,25 @@ function RecruiterPlans() {
     }
   };
 
-  /* ============== SUBSCRIPTION CTA ============== */
+  /* ============== CTA HANDLER ============== */
   const handleSubscription = (plan) => {
-  if (plan.isFree) {
-    navigate("/recruiter/dashboard/post-job");
-    return;
-  }
+    if (plan.isFree) {
+      navigate("/recruiter/dashboard/post-job");
+      return;
+    }
 
-  if (plan.enterprise) {
-    navigate("/contact-sales");
-    return;
-  }
+    if (plan.enterprise) {
+      navigate("/contact-sales");
+      return;
+    }
 
-  // 🔥 Use Razorpay instead of fake route
-  initiateCreditPayment({
-    title: plan.title,
-    price: plan.price,
-    creditsForJobs: plan.jobs === "Unlimited" ? 999999 : 1000,
-    creditsForCandidates: 100,
-  });
-};
-
+    initiateCreditPayment({
+      title: plan.title,
+      price: plan.price,
+      creditsForJobs: plan.jobs === "Unlimited" ? 999999 : 1000,
+      creditsForCandidates: 100,
+    });
+  };
 
   return (
     <>
@@ -619,94 +592,86 @@ function RecruiterPlans() {
 
       {company && user?.isActive && (
         <div className="max-w-7xl mx-auto px-4 py-20">
-          {/* SUBSCRIPTIONS */}
           <h2 className="text-3xl font-bold text-center mb-10">
             Recruiter Subscription Plans
           </h2>
 
           <div className="grid md:grid-cols-4 gap-6 mb-20">
-            {subscriptionPlans.map((plan) => (
-              <div
-                key={plan.id}
-                className={`border rounded-xl p-6 bg-white shadow ${
-                  plan.popular && "ring-2 ring-blue-500"
-                }`}
-              >
-                {plan.popular && (
-                  <span className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full">
-                    MOST POPULAR
-                  </span>
-                )}
+            {subscriptionPlans.map((plan) => {
+              const isSelected = selectedPlanId === plan.id;
 
-                <h3 className="text-xl font-semibold mt-3">{plan.title}</h3>
+              return (
+                <div
+                  key={plan.id}
+                  onClick={() => setSelectedPlanId(plan.id)}
+                  className={`border rounded-xl p-6 bg-white shadow cursor-pointer transition-all duration-300
+                    ${
+                      isSelected
+                        ? "border-blue-500 ring-2 ring-blue-500 scale-[1.02]"
+                        : "hover:shadow-lg"
+                    }
+                  `}
+                >
+                  {plan.popular && (
+                    <span className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full">
+                      MOST POPULAR
+                    </span>
+                  )}
 
-                <p className="text-3xl font-bold">
-                  ₹{plan.price}
-                  <span className="text-sm text-gray-500">
-                    {" "}
-                    / {plan.billing}
-                  </span>
-                </p>
+                  <h3 className="text-xl font-semibold mt-3">{plan.title}</h3>
 
-                <p className="mt-3 font-medium">
-                  {plan.jobs} • {plan.resumes}
-                </p>
+                  <p className="text-3xl font-bold">
+                    ₹{plan.price}
+                    <span className="text-sm text-gray-500">
+                      {" "}
+                      / {plan.billing}
+                    </span>
+                  </p>
 
-                <ul className="mt-4 space-y-2 text-sm">
-                  {plan.features.map((f, idx) => (
-                    <li key={idx} className="flex gap-2">
-                      <Check size={16} className="text-green-500" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                  <p className="mt-3 font-medium">
+                    {plan.jobs} • {plan.resumes}
+                  </p>
 
-                {plan.enterprise ? (
-                  <div className="mt-6 flex flex-col gap-3">
-                    {/* Contact Sales */}
-                    <button
-                      onClick={() => navigate("/contact")}
-                      className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50"
-                    >
-                      Contact Sales
-                    </button>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    {plan.features.map((f, idx) => (
+                      <li key={idx} className="flex gap-2">
+                        <Check size={16} className="text-green-500" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
 
-                    {/* Buy Now */}
-                    <button
-                      onClick={() =>
-                        initiateCreditPayment({
-                          title: plan.title,
-                          price: plan.price,
-                          creditsForJobs: 999999,
-                          creditsForCandidates: 1500,
-                        })
-                      }
-                      className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      Buy Now
-                    </button>
-                  </div>
-                ) : (
                   <button
-                    onClick={() => handleSubscription(plan)}
-                    className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSubscription(plan);
+                    }}
+                    className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                   >
                     {plan.cta}
                   </button>
-                )}
-
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-10 flex justify-center">
             <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-full shadow">
               <FaStar className="text-yellow-400" />
-              <span className="text-sm">
-                Trusted by 10,000+ recruiters
-              </span>
+              <span className="text-sm">Trusted by 10,000+ recruiters</span>
             </div>
           </div>
+          {/* FAQ section */}
+          <div className="mt-2">
+            <RecruiterFAQ />
+          </div>
+        </div>
+      )}
+      {/* Fallback: show FAQ and help section even if company/user not ready */}
+      {!(company && user?.isActive) && (
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <RecruiterFAQ />
+          {/* UpgradeHelpSection removed */}
         </div>
       )}
     </>
@@ -714,3 +679,4 @@ function RecruiterPlans() {
 }
 
 export default RecruiterPlans;
+  
