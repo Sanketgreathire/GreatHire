@@ -588,16 +588,25 @@ function RecruiterPlans() {
 
   /* ============== SUBSCRIPTION CTA ============== */
   const handleSubscription = (plan) => {
-    if (plan.isFree) {
-      navigate("/recruiter/dashboard/post-job");
-      return;
-    }
-    if (plan.enterprise) {
-      navigate("/contact-sales");
-      return;
-    }
-    navigate(`/checkout/subscription/${encodeURIComponent(plan.id)}`);
-  };
+  if (plan.isFree) {
+    navigate("/recruiter/dashboard/post-job");
+    return;
+  }
+
+  if (plan.enterprise) {
+    navigate("/contact-sales");
+    return;
+  }
+
+  // 🔥 Use Razorpay instead of fake route
+  initiateCreditPayment({
+    title: plan.title,
+    price: plan.price,
+    creditsForJobs: plan.jobs === "Unlimited" ? 999999 : 1000,
+    creditsForCandidates: 100,
+  });
+};
+
 
   return (
     <>
@@ -649,12 +658,40 @@ function RecruiterPlans() {
                   ))}
                 </ul>
 
-                <button
-                  onClick={() => handleSubscription(plan)}
-                  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg"
-                >
-                  {plan.cta}
-                </button>
+                {plan.enterprise ? (
+                  <div className="mt-6 flex flex-col gap-3">
+                    {/* Contact Sales */}
+                    <button
+                      onClick={() => navigate("/contact")}
+                      className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50"
+                    >
+                      Contact Sales
+                    </button>
+
+                    {/* Buy Now */}
+                    <button
+                      onClick={() =>
+                        initiateCreditPayment({
+                          title: plan.title,
+                          price: plan.price,
+                          creditsForJobs: 999999,
+                          creditsForCandidates: 1500,
+                        })
+                      }
+                      className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleSubscription(plan)}
+                    className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg"
+                  >
+                    {plan.cta}
+                  </button>
+                )}
+
               </div>
             ))}
           </div>
