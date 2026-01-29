@@ -417,6 +417,8 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import RecruiterFAQ from "../components/RecruiterFAQ";
+
 
 import {
   ORDER_API_END_POINT,
@@ -437,7 +439,7 @@ const subscriptionPlans = [
     resumes: "5 Downloads / month",
     isFree: true,
     features: [
-      "3 Job Postings per month",
+      "2 Job Postings per month",
       "30 Job Credits per month",
       "Basic ATS",
       "5 Resume Views / month",
@@ -447,7 +449,7 @@ const subscriptionPlans = [
   },
   {
     id: "swift-hire",
-    title: "Standerd",
+    title: "Standard",
     price: 999,
     billing: "Monthly",
     jobs: "5 Jobs",
@@ -462,7 +464,7 @@ const subscriptionPlans = [
   },
   {
     id: "growth-engine ",
-    title: "Premium",
+    title: "Premium (Most Popular)",
     price: 2999,
     billing: "Monthly",
     jobs: "15 Jobs",
