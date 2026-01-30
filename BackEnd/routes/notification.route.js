@@ -5,7 +5,8 @@ import {
   markAllAsRead,
   getAdminNotifications,
   markAdminNotificationAsRead,
-  getUnreadCount
+  getUnreadCount,
+  testNotification
 } from "../controllers/notification.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 
@@ -16,6 +17,7 @@ router.get("/", isAuthenticated, getNotifications);                  // Get logg
 router.get("/unread-count", isAuthenticated, getUnreadCount);        // Get unread count
 router.put("/:id/read", isAuthenticated, markAsRead);                // Mark one notification as read
 router.put("/mark-all-read", isAuthenticated, markAllAsRead);        // Mark all as read
+router.post("/test", isAuthenticated, testNotification);             // Test notification endpoint
 
 // 🔹 Admin Routes
 router.get("/admin", isAuthenticated, getAdminNotifications);        // Get all admin notifications

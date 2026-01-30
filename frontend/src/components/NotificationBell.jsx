@@ -1,63 +1,27 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount } from "../service/notificationservice";
+import { useNotifications } from "../context/NotificationContext";
 import { Bell, X, Check, Briefcase, Users, FileText, Star } from "lucide-react";
 
 const Notifications = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
-
-  const loadNotifications = async () => {
-    setLoading(true);
-    try {
-      const [notificationsData, countData] = await Promise.all([
-        fetchNotifications(),
-        getUnreadCount()
-      ]);
-      setNotifications(notificationsData.slice(0, 5)); // Show only 5 recent notifications
-      setUnreadCount(countData);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    }
-    setLoading(false);
-  };
+  const { notifications, unreadCount, markAsRead, markAllAsRead, loadNotifications } = useNotifications();
 
   useEffect(() => {
-    loadNotifications();
-    
-    // Refresh notifications every 30 seconds
-    const interval = setInterval(loadNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (user) {
+      console.log('🔔 Loading notifications for user:', user._id, 'role:', user.role);
+      loadNotifications();
+    }
+  }, [user, loadNotifications]);
 
   const handleMarkAsRead = async (id) => {
-    try {
-      await markAsRead(id);
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif._id === id ? { ...notif, isRead: true, readAt: new Date() } : notif
-        )
-      );
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (err) {
-      console.error("Error marking notification as read:", err);
-    }
+    await markAsRead(id);
   };
 
   const handleMarkAllAsRead = async () => {
-    try {
-      await markAllAsRead();
-      setNotifications(prev => 
-        prev.map(notif => ({ ...notif, isRead: true, readAt: new Date() }))
-      );
-      setUnreadCount(0);
-    } catch (err) {
-      console.error("Error marking all notifications as read:", err);
-    }
+    await markAllAsRead();
   };
 
   const getNotificationTypeIcon = (type) => {
@@ -112,7 +76,7 @@ const Notifications = () => {
           />
           
           {/* Dropdown Panel */}
-          <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
+          <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-20 flex flex-col" style={{maxHeight: '500px'}}>
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <div className="flex items-center gap-2">
@@ -120,22 +84,15 @@ const Notifications = () => {
                 <h3 className="text-lg font-semibold text-gray-900">
                   Notifications
                 </h3>
-                {user?.role === 'recruiter' && (
-                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                    Recruiter
-                  </span>
-                )}
               </div>
-              <div className="flex items-center gap-2">
-                {unreadCount > 0 && (
-                  <button
-                    onClick={handleMarkAllAsRead}
-                    className="text-xs text-blue-600 hover:text-blue-800"
-                    title="Mark all as read"
-                  >
-                    <Check className="w-4 h-4" />
-                  </button>
-                )}
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/notifications"
+                  className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  View All
+                </Link>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -146,13 +103,8 @@ const Notifications = () => {
             </div>
 
             {/* Notifications List */}
-            <div className="max-h-96 overflow-y-auto">
-              {loading ? (
-                <div className="p-4 text-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                  <p className="text-sm text-gray-500">Loading...</p>
-                </div>
-              ) : notifications.length === 0 ? (
+            <div className="flex-1 overflow-y-auto min-h-0">
+              {notifications.length === 0 ? (
                 <div className="p-6 text-center">
                   <Bell className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                   <p className="text-gray-500 text-sm">No notifications yet</p>
@@ -171,7 +123,11 @@ const Notifications = () => {
                       className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
                         !notification.isRead ? 'bg-blue-50' : ''
                       }`}
-                      onClick={() => !notification.isRead && handleMarkAsRead(notification._id)}
+                      onClick={() => {
+                        if (!notification.isRead) {
+                          handleMarkAsRead(notification._id);
+                        }
+                      }}
                     >
                       <div className="flex items-start gap-3">
                         {/* Icon */}
@@ -221,18 +177,21 @@ const Notifications = () => {
               )}
             </div>
 
-            {/* Footer */}
-            {notifications.length > 0 && (
-              <div className="p-3 border-t border-gray-200 bg-gray-50">
-                <Link
-                  to="/notifications"
-                  className="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
-                  onClick={() => setIsOpen(false)}
-                >
-                  View all notifications
-                </Link>
-              </div>
-            )}
+            {/* Footer - Always visible */}
+            <div className="flex-shrink-0 p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+              {notifications.length > 0 && (
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                  <span>Showing {notifications.length} notifications</span>
+                </div>
+              )}
+              <Link
+                to="/notifications"
+                className="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium py-1"
+                onClick={() => setIsOpen(false)}
+              >
+                View All Notifications
+              </Link>
+            </div>
           </div>
         </>
       )}

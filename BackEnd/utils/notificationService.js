@@ -8,17 +8,41 @@ class NotificationService {
 
   setIO(ioInstance) {
     this.io = ioInstance;
+    console.log("✅ NotificationService: Socket.IO initialized");
   }
 
   // Create and emit notification
   async createAndEmit(notificationData) {
     try {
+      console.log('📨 Creating notification:', {
+        recipient: notificationData.recipient,
+        type: notificationData.type,
+        title: notificationData.title
+      });
+      
       const notification = new Notification(notificationData);
       await notification.save();
+      
+      console.log('✅ Notification saved to database:', notification._id);
 
-      // Emit to specific user room
+      // Emit to specific user room with error handling
       if (this.io) {
-        this.io.to(`user_${notificationData.recipient}`).emit('newNotification', notification);
+        const room = `user_${notificationData.recipient}`;
+        const notificationPayload = {
+          _id: notification._id,
+          type: notification.type,
+          title: notification.title,
+          message: notification.message,
+          priority: notification.priority,
+          createdAt: notification.createdAt,
+          isRead: notification.isRead,
+          actionUrl: notification.actionUrl
+        };
+        
+        this.io.to(room).emit('newNotification', notificationPayload);
+        console.log(`🔔 Real-time notification sent to room: ${room}`);
+      } else {
+        console.warn("⚠️ Socket.IO not available - notification saved but not sent in real-time");
       }
 
       return notification;
@@ -104,6 +128,10 @@ class NotificationService {
   async notifyJobMatch(matchData) {
     const { userId, jobId, jobTitle, companyName, matchScore, location, salary } = matchData;
 
+    console.log(`🎯 Creating job match notification for user ${userId}:`, {
+      jobTitle, companyName, matchScore
+    });
+
     await this.createAndEmit({
       recipient: userId,
       recipientModel: 'User',
@@ -112,7 +140,7 @@ class NotificationService {
       message: `${jobTitle} at ${companyName} matches your profile (${matchScore}% match)`,
       relatedEntity: jobId,
       relatedEntityModel: 'Job',
-      priority: 'medium',
+      priority: matchScore >= 70 ? 'high' : 'medium',
       actionUrl: `/jobs/${jobId}`,
       metadata: { jobTitle, companyName, matchScore, location, salary }
     });
