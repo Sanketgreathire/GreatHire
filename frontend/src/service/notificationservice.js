@@ -1,28 +1,47 @@
-
 import API from "../utils/api";
 
 // Fetch all notifications
 export const fetchNotifications = async () => {
-  const res = await API.get("/notifications");
-  return res.data.notifications || [];
+  try {
+    const res = await API.get("/v1/notifications");
+    return res.data.notifications || [];
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    throw error;
+  }
 };
 
 // Get unread notification count
 export const getUnreadCount = async () => {
-  const res = await API.get("/notifications/unread-count");
-  return res.data.count || 0;
+  try {
+    const res = await API.get("/v1/notifications/unread-count");
+    return res.data.count || 0;
+  } catch (error) {
+    console.error("Error fetching unread count:", error);
+    throw error;
+  }
 };
 
 // Mark one as read
 export const markAsRead = async (id) => {
-  const res = await API.put(`/notifications/${id}/read`);
-  return res.data;
+  try {
+    const res = await API.put(`/v1/notifications/${id}/read`);
+    return res.data;
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    throw error;
+  }
 };
 
 // Mark all as read
 export const markAllAsRead = async () => {
-  const res = await API.put("/notifications/mark-all-read");
-  return res.data;
+  try {
+    const res = await API.put("/v1/notifications/mark-all-read");
+    return res.data;
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    throw error;
+  }
 };
 
 // Get notification icon based on type
