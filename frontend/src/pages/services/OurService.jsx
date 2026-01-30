@@ -114,7 +114,7 @@ const OurService = () => {
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">Our Services</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold font-black">
+            <h1 className="text-3xl md:text-5xl font-black">
               Our Services Tailored for Your Success
             </h1>
             <p className="mt-3 text-base md:text-lg font-serif">

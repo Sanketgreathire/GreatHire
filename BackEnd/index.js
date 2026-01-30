@@ -42,11 +42,13 @@ import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 // ================= APP SETUP =================
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === "production"
-      ? ["https://greathire.in"]
-      : ["http://localhost:5173", "http://localhost:5174"],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://greathire.in"]
+        : ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   },
 });
@@ -68,9 +70,10 @@ app.disable("x-powered-by");
 // ================= CORS =================
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production"
-      ? ["https://greathire.in"]
-      : ["http://localhost:5173", "http://localhost:5174"],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://greathire.in"]
+        : ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   })
 );
@@ -80,7 +83,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ================= RATE LIMIT (IPv6 SAFE) =================
+// ================= RATE LIMIT =================
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
@@ -100,9 +103,10 @@ app.use((req, res, next) => {
 app.get("/sitemap.xml", async (req, res) => {
   try {
     const baseUrl = "https://www.greathire.in";
-
     const staticPages = ["/", "/jobs", "/blogs", "/about", "/contact"];
-    const blogs = await Blog.find({ status: "published" }).select("slug updatedAt");
+    const blogs = await Blog.find({ status: "published" }).select(
+      "slug updatedAt"
+    );
 
     res.set("Content-Type", "application/xml");
 
@@ -138,12 +142,10 @@ app.get("/sitemap.xml", async (req, res) => {
 
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
-  res.send(
-    `User-agent: *
+  res.send(`User-agent: *
 Allow: /
 
-Sitemap: https://www.greathire.in/sitemap.xml`
-  );
+Sitemap: https://www.greathire.in/sitemap.xml`);
 });
 
 // ================= API ROUTES =================
@@ -163,21 +165,27 @@ app.use("/api/v1/admin/user/data", adminUserDataRoute);
 app.use("/api/v1/admin/company/data", adminCompanyDataRoute);
 app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
-app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
+app.use(
+  "/api/v1/admin/application/data",
+  adminApplicationDataRoute
+);
 
 app.use("/api/v1/notifications", notificationRoute);
 
 // ================= FRONTEND =================
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// ================= SPA FALLBACK (LAST) =================
+// ================= SPA FALLBACK =================
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(
+    path.join(__dirname, "../frontend/dist/index.html")
+  );
 });
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
   console.log("🔌 Socket connected:", socket.id);
+
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected:", socket.id);
   });
@@ -204,9 +212,10 @@ cron.schedule("* * * * *", async () => {
   }
 });
 
-// ================= START SERVER =================
-server.listen(PORT, "0.0.0.0", async () => {
-  await connectDB();
+// ================= START SERVER (FIXED) =================
+await connectDB();
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
