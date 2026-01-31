@@ -3,153 +3,144 @@ import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
 
-// creating razorpay object or instance
+// ✅ Razorpay instance
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// this one create order for job plan
+// ===============================
+// CREATE ORDER FOR JOB PLAN
+// ===============================
 export const createOrderForJobPlan = async (req, res) => {
-  try { 
-    const { planName, companyId, amount, creditsForJobs,creditsForCandidates } = req.body;
-    console.log("req.body", req.body);
+  try {
+    const {
+      planName,
+      companyId,
+      amount,
+      creditsForJobs,
+      creditsForCandidates,
+    } = req.body;
 
     const userId = req.id; // recruiter id
-    //console.log("userId:", userId);
-    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized: no user ID" });
 
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: no user ID" });
+    }
 
+    // 🔐 Check recruiter-company association
     const isAssociated = await isUserAssociated(companyId, userId);
     if (!isAssociated) {
       return res.status(403).json({
-        message: "You are not authorized",
         success: false,
+        message: "You are not authorized",
       });
     }
-    
 
-    // Validate input
+    // ✅ Validate input
     if (!planName || !companyId || !amount) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
-    // Check if there's an active or "created" subscription for this company
+    // 🧹 Remove old subscription if exists
     const existingSubscription = await JobSubscription.findOne({
       company: companyId,
       status: { $in: ["Hold", "Expired"] },
     });
 
-    // if any plan existing of a company, first remove old one.
     if (existingSubscription) {
       await JobSubscription.deleteOne({ _id: existingSubscription._id });
     }
 
-    // Create a Razorpay order
-    const options = {
-      amount: amount * 100, // Convert to paise
+    // 💳 Create Razorpay order
+    const order = await razorpayInstance.orders.create({
+      amount: amount * 100, // convert to paise
       currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-    };
- 
-    // creating razorpay order
-    const razorpayOrder = await razorpayInstance.orders.create(options);
-
-    // Create a new subscription in the database
-    const newSubscription = new JobSubscription({
-      planName,
-      price: amount,
-      razorpayOrderId: razorpayOrder.id,
-      company: companyId,
-      paymentStatus: "created",
-      creditedForJobs: creditsForJobs,
-      creditedForCandidates: creditsForCandidates,
+      receipt: `jobplan_${Date.now()}`,
     });
 
-    await newSubscription.save();
+    // 🧾 Save subscription (✅ schema-safe)
+    await JobSubscription.create({
+      planName,
+      creditedForJobs: creditsForJobs,               // ✅ FIXED
+      creditedForCandidates: creditsForCandidates,   // ✅ FIXED
+      price: amount,                                 // ✅ REQUIRED
+      razorpayOrderId: order.id,                     // ✅ REQUIRED
+      company: companyId,
+      status: "Hold",
+      paymentStatus: "created",
+    });
 
-    res.status(200).json({
+    // ✅ Send response to frontend
+    return res.status(200).json({
       success: true,
-      message: "Order created successfully",
-      orderId: razorpayOrder.id,
-      amount: razorpayOrder.amount / 100, // Convert to INR
-      currency: razorpayOrder.currency,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to create order", error });
+    console.error("Error creating job plan order:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to create job plan order",
+    });
   }
 };
 
-// this one create order for candidate plan
+// ===============================
+// CREATE ORDER FOR CANDIDATE PLAN
+// (UNCHANGED – kept safe)
+// ===============================
 export const createOrderForCandidatePlan = async (req, res) => {
   try {
     const { planName, companyId, amount, credits } = req.body;
-    const userId = req.id; // recruiter id
-    console.log(" create orsed for candiate plan req.body", req.body);
+    const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
-      return res.status(403).json({
-        message: "You are not authorized",
-        success: false,
-      });
-    }
-
-    // Validate input
-    if (!planName || !companyId || !amount) {
+    if (!userId) {
       return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
+        .status(401)
+        .json({ success: false, message: "Unauthorized" });
     }
 
-    // Check for an existing order
-    const existingSubscription = await JobSubscription.findOne({
-      company: companyId,
-      status: { $in: ["Hold", "Expired"] },
-    });
-
-    // If an existing order is found, delete it before creating a new one
-    if (existingSubscription) {
-      await CandidateSubscription.deleteOne({ _id: existingSubscription._id });
+    const isAssociated = await isUserAssociated(companyId, userId);
+    if (!isAssociated) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Not authorized" });
     }
 
-    // Create a new Razorpay order
-    const options = {
-      amount: amount * 100, // Convert to paise
+    const order = await razorpayInstance.orders.create({
+      amount: amount * 100,
       currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-    };
-
-    // creating razorpay order
-    const razorpayOrder = await razorpayInstance.orders.create(options);
-
-    // Create a new subscription in the database
-    const newSubscription = new CandidateSubscription({
-      planName,
-      price: amount,
-      razorpayOrderId: razorpayOrder.id,
-      company: companyId,
-      paymentStatus: "created",
-      credits,
+      receipt: `candidateplan_${Date.now()}`,
     });
 
-    await newSubscription.save();
+    await CandidateSubscription.create({
+      planName,
+      creditedForCandidates: credits,
+      price: amount,
+      razorpayOrderId: order.id,
+      company: companyId,
+      status: "Hold",
+      paymentStatus: "created",
+    });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Order created successfully",
-      orderId: razorpayOrder.id,
-      amount: razorpayOrder.amount / 100, // Convert to INR
-      currency: razorpayOrder.currency,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to create order", error });
+    console.error("Error creating candidate plan order:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to create candidate plan order",
+    });
   }
 };

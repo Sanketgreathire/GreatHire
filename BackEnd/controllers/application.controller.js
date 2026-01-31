@@ -419,6 +419,7 @@ export const updateStatus = async (req, res) => {
     application.status = status;
     await application.save();
     
+    // ✅ Send notification to applicant about status change
     await notificationService.notifyApplicationStatusChanged({
       applicantId: application.applicant._id,
       jobId: application.job._id,
@@ -426,12 +427,12 @@ export const updateStatus = async (req, res) => {
       companyName: application.job.jobDetails.companyName,
       status: status,
       previousStatus: previousStatus,
-      recruiterId: req.user._id
+      recruiterId: req.id // Fix: use req.id instead of req.user._id
     });
 
     return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };

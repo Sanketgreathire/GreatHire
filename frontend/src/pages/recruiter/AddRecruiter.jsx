@@ -89,69 +89,69 @@ const AddRecruiter = () => {
       </Helmet>
       
       {company && user?.isActive ? (
-        <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100 dark:bg-gray-950">
           <form
-            className="w-full p-4 md:w-1/2 space-y-4"
+            className="w-full p-4 md:w-1/2 space-y-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg"
             onSubmit={handleSubmit}
           >
-            <h1 className="text-3xl font-bold text-center text-blue-700">
+            <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400">
               {company?.companyName}
             </h1>
-            <h1 className="text-3xl font-bold text-center">
+            <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
               Give Recruiter Details
             </h1>
-            <h1 className="text-md font-semibold text-gray-500 text-center">
+            <h1 className="text-md font-semibold text-gray-500 text-center text-gray-500 dark:text-gray-400">
               Build your smart and powerful recruiter team
             </h1>
             <div className="flex flex-col space-y-2">
-              <label className="font-bold">Full Name</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300">Full Name</label>
               <input
                 type="text"
                 name="fullname" // Updated name
                 placeholder="Full Name"
                 value={formData.fullName} // Updated value
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
-              <label className="font-bold">Work Email</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300">Work Email</label>
               <input
                 type="email"
                 name="email"
                 placeholder="mail@domain.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
-              <label className="font-bold">Mobile Number</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300">Mobile Number</label>
               <input
                 type="text"
                 name="phoneNumber" // Updated name
                 placeholder="Contact number"
                 value={formData.phoneNumber} // Updated value
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
-              <label className="font-bold">Position In Company</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300">Position In Company</label>
               <input
                 type="text"
                 name="position"
                 placeholder="Hiring manager, consultant ..."
                 value={formData.position}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
-              <label className="font-bold">Password</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300">Password</label>
               <input
                 type="password"
                 name="password"
                 placeholder="min 8 characters"
                 value={formData.password}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
             </div>
@@ -167,7 +167,7 @@ const AddRecruiter = () => {
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">Company not created</span>
+          <span className="text-4xl text-gray-400 dark:text-gray-500">Company not created</span>
         </p>
       ) : (
         <p className="h-screen flex items-center justify-center">

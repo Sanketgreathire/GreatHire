@@ -1,0 +1,285 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAllApprovedInsights, getTrendingInsights, getInsightsByRegion } from "../data/insightsData";
+import { Briefcase, User, BarChart3, TrendingUp, Globe, Flame, Sparkles, TrendingDown } from "lucide-react";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+
+// imported helmet to apply customized meta tags 
+import { Helmet } from "react-helmet-async";
+
+export default function HiringInsights() {
+  const [filter, setFilter] = useState("All");
+  const [region, setRegion] = useState("ALL");
+  const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+
+  // Animated counter
+  useEffect(() => {
+    let start = 0;
+    const end = 45;
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start === end) clearInterval(timer);
+    }, 20);
+    return () => clearInterval(timer);
+  }, []);
+
+  const allInsights = getAllApprovedInsights();
+  
+  const filteredInsights = region === "ALL"
+    ? allInsights
+    : getInsightsByRegion(region);
+
+  const categoryFiltered = filter === "All"
+    ? filteredInsights
+    : filteredInsights.filter(i => i.category === filter);
+
+  const trendingInsights = getTrendingInsights(3);
+
+  const getBadgeIcon = (insight) => {
+    if (insight.trendingScore > 90) return <Flame className="text-red-500" size={14} />;
+    if (insight.trendingScore > 80) return <TrendingUp className="text-orange-500" size={14} />;
+    if (new Date(insight.publishedDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
+      return <Sparkles className="text-blue-500" size={14} />;
+    }
+    return null;
+  };
+
+  const getBadgeText = (insight) => {
+    if (insight.trendingScore > 90) return "🔥 Hot";
+    if (insight.trendingScore > 80) return "📈 Rising";
+    if (new Date(insight.publishedDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
+      return "✨ New";
+    }
+    return null;
+  };
+
+  return (
+    <>
+    <Helmet>
+            <title>
+              GreatHire Blog | Career Guidance, Employment Patterns, and Perspectives on the Future of Work
+            </title>
+    
+            <meta
+              name="description"
+              content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
+            />
+          </Helmet>
+    
+    
+          <Navbar />
+    <div className="min-h-screen bg-white px-6 py-20">
+
+      {/* HERO */}
+      <div className="max-w-6xl mx-auto text-center mb-16 mt-10">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Global Hiring Insights Hub
+        </h1>
+        <p className="text-gray-600 max-w-3xl mx-auto mb-4">
+          Provide organizations and candidates with industry data and strategic insights to help them navigate the changing recruitment landscape across regions. Stakeholders may make wise judgments and maintain an advantage in the cutthroat personnel market by comprehending workforce dynamics, developing practices, and global hiring trends.
+        </p>
+        <div className="text-sm text-gray-500">
+          {allInsights.length} insights • Updated weekly • AI-powered analysis
+        </div>
+      </div>
+
+      {/* REGION SELECTOR */}
+      <div className="max-w-6xl mx-auto mb-12">
+        <div className="flex items-center gap-2 mb-4">
+          <Globe className="text-blue-600" size={20} />
+          <h3 className="font-semibold text-gray-900">Select Region</h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {["ALL", "GLOBAL", "INDIA", "US", "EUROPE"].map(r => {
+            const regionCount = r === "ALL" ? allInsights.length : getInsightsByRegion(r).length;
+            return (
+              <button
+                key={r}
+                onClick={() => setRegion(r)}
+                className={`px-4 py-2 rounded-full text-sm transition flex items-center gap-2 ${
+                  region === r
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {r === "ALL" ? "All Regions" : r}
+                <span className="text-xs opacity-75">({regionCount})</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* TRENDING SECTION */}
+      <div className="max-w-6xl mx-auto mb-20">
+        <div className="flex items-center gap-2 mb-6">
+          <TrendingUp className="text-red-500" size={20} />
+          <h2 className="text-2xl font-bold text-gray-900">
+            Trending Hiring Topics
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {trendingInsights.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => navigate(`/hiring-insights/${item.id}`)}
+              className="border rounded-xl p-6 hover:shadow-md transition cursor-pointer bg-gradient-to-br from-red-50 to-orange-50 border-red-200"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-red-600 font-medium flex items-center gap-1">
+                  🔥 Trending #{item.trendingScore}
+                </span>
+                <div className="flex gap-1">
+                  <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                    {item.region}
+                  </span>
+                  {item.isAI && (
+                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                      AI
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <h3 className="font-semibold text-lg mb-2">
+                {item.title}
+              </h3>
+
+              <p className="text-sm text-gray-600 mb-3">
+                {item.summary}
+              </p>
+
+              <div className="flex flex-wrap gap-1">
+                {item.tags.slice(0, 2).map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-1 bg-red-100 rounded-full text-red-700"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* METRICS */}
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center mb-20">
+        <div>
+          <BarChart3 className="mx-auto text-blue-600 mb-2" />
+          <h3 className="text-3xl font-bold text-blue-600">{count}%</h3>
+          <p className="text-sm text-gray-600">Faster Hiring</p>
+        </div>
+        <div>
+          <Briefcase className="mx-auto text-blue-600 mb-2" />
+          <h3 className="text-3xl font-bold text-blue-600">30%</h3>
+          <p className="text-sm text-gray-600">Lower Attrition</p>
+        </div>
+        <div>
+          <User className="mx-auto text-blue-600 mb-2" />
+          <h3 className="text-3xl font-bold text-blue-600">2×</h3>
+          <p className="text-sm text-gray-600">Role Fit</p>
+        </div>
+        <div>
+          <BarChart3 className="mx-auto text-blue-600 mb-2" />
+          <h3 className="text-3xl font-bold text-blue-600">{allInsights.length}</h3>
+          <p className="text-sm text-gray-600">Total Insights</p>
+        </div>
+      </div>
+
+      {/* FILTER TABS */}
+      <div className="flex justify-center gap-4 mb-12">
+        {["All", "Employer", "Candidate"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setFilter(tab)}
+            className={`px-6 py-2 rounded-full border transition ${
+              filter === tab
+                ? "bg-blue-600 text-white"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* ALL INSIGHTS */}
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          {region === "ALL" ? "All Insights" : `${region} Insights`} ({categoryFiltered.length})
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {categoryFiltered.map((item) => {
+            const badgeIcon = getBadgeIcon(item);
+            const badgeText = getBadgeText(item);
+            
+            return (
+              <div
+                key={item.id}
+                onClick={() => navigate(`/hiring-insights/${item.id}`)}
+                className="border rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-pointer bg-white"
+              >
+
+                {/* Meta */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-blue-600 font-medium">
+                    {item.category}
+                  </span>
+                  <div className="flex gap-1">
+                    {badgeText && (
+                      <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full flex items-center gap-1">
+                        {badgeIcon}
+                        {badgeText}
+                      </span>
+                    )}
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                      {item.region}
+                    </span>
+                    {item.isAI && (
+                      <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                        AI
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <h3 className="font-semibold text-lg mb-2">
+                  {item.title}
+                </h3>
+
+                <p className="text-sm text-gray-600 mb-4">
+                  {item.summary}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>{item.author} • {new Date(item.publishedDate).toDateString()}</span>
+                  <span className="font-medium">Score: {item.trendingScore}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </>);
+}

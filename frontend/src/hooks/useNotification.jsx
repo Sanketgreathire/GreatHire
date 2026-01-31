@@ -1,46 +1,89 @@
 // Import necessary modules and dependencies
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import { BACKEND_URL, NOTIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector } from "react-redux";
 import axios from "axios";
-const useNotification = () => {
-  const [notifications, setNotifications] = useState();
-  const [messages, setMessages] = useState([]);
-  const { user } = useSelector((state) => state.auth);
 
-  // Create a ref to hold the audio instance (make sure you have /notification.mp3 in your public folder)
+const useNotification = () => {
+  const [notifications, setNotifications] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  
+  // Create refs to prevent memory leaks
   const audioRef = useRef(null);
+  const socketRef = useRef(null);
+  const mountedRef = useRef(true);
 
   // Setup the audio instance only once
   useEffect(() => {
     audioRef.current = new Audio("/notification.mp3");
+    audioRef.current.volume = 0.5; // Set reasonable volume
+    
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
-  // fetch real time notification
+  // Fetch real time notification
   useEffect(() => {
-    const socket = io(BACKEND_URL);
+    if (!user) {
+      // Clean up socket if user logs out
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+        setIsConnected(false);
+      }
+      return;
+    }
+
+    // Initialize socket connection
+    const socket = io(BACKEND_URL, {
+      withCredentials: true,
+      transports: ['websocket', 'polling']
+    });
+    
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      if (mountedRef.current) {
+        setIsConnected(true);
+        socket.emit('join', user._id);
+        console.log('🔌 Socket connected and joined user room');
+      }
+    });
+
+    socket.on('disconnect', () => {
+      if (mountedRef.current) {
+        setIsConnected(false);
+        console.log('❌ Socket disconnected');
+      }
+    });
 
     socket.on("newNotificationCount", async ({ totalUnseenNotifications }) => {
+      if (!mountedRef.current) return;
+      
       // Update notifications and play sound only if the new count is greater than the previous one
       setNotifications((prevCount) => {
         if (totalUnseenNotifications > prevCount) {
-          // Play the notification sound
+          // Play the notification sound for admin/owner
           if (user && (user?.role === "Owner" || user?.role === "admin")) {
-            audioRef.current.play().catch((err) => {
-              console.error("Failed to play audio:", err);
+            audioRef.current?.play().catch((err) => {
+              console.log("Audio play failed:", err.message);
             });
           }
         }
         return totalUnseenNotifications;
       });
-      // Call API to fetch unseen messages from JobReport and Contact models
+      
+      // Fetch unseen messages
       try {
         const response = await axios.get(
           `${NOTIFICATION_API_END_POINT}/unseen/messages`,
           { withCredentials: true }
         );
-        if (response.data.success) {
+        if (response.data.success && mountedRef.current) {
           setMessages((prevMessages) => [
             ...response.data.messages,
             ...prevMessages,
@@ -51,52 +94,74 @@ const useNotification = () => {
       }
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+    socket.on('error', (error) => {
+      console.error('Socket error:', error);
+    });
 
-  // fetch all message
-  const fetchMessages = async () => {
+    return () => {
+      if (socket) {
+        socket.emit('leave', user._id);
+        socket.disconnect();
+      }
+      socketRef.current = null;
+      setIsConnected(false);
+    };
+  }, [user]);
+
+  // Fetch all messages
+  const fetchMessages = useCallback(async () => {
+    if (!user) return;
+    
     try {
       const { data } = await axios.get(
         `${NOTIFICATION_API_END_POINT}/getAll-messages`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
-      if (data.success) {
+      if (data.success && mountedRef.current) {
         setMessages(data.messages);
       }
     } catch (error) {
-      console.error("Error fetching notifications:", error);
+      console.error("Error fetching messages:", error);
     }
-  };
+  }, [user]);
 
-  // fetch all notification
-  const fetchNotifications = async () => {
+  // Fetch all notifications
+  const fetchNotifications = useCallback(async () => {
+    if (!user) return;
+    
     try {
       const { data } = await axios.get(`${NOTIFICATION_API_END_POINT}/unseen`, {
         withCredentials: true,
       });
-      if (data.success) {
+      if (data.success && mountedRef.current) {
         setNotifications(data.totalUnseenNotifications);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  };
-
-  // fetch unseen notification
-  useEffect(() => {
-    if (user) {
-      // this function help to fetch notification and message after user login
-      fetchMessages();
-      fetchNotifications();
-    }
   }, [user]);
 
-  return { notifications, setNotifications, messages, setMessages };
+  // Initial data fetch
+  useEffect(() => {
+    if (user) {
+      fetchMessages();
+      fetchNotifications();
+    } else {
+      // Reset state when user logs out
+      setNotifications(0);
+      setMessages([]);
+    }
+  }, [user, fetchMessages, fetchNotifications]);
+
+  return { 
+    notifications, 
+    setNotifications, 
+    messages, 
+    setMessages,
+    isConnected,
+    fetchMessages,
+    fetchNotifications
+  };
 };
 
 export default useNotification;

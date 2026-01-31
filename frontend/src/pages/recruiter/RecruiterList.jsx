@@ -129,47 +129,47 @@ const RecruiterList = () => {
       </Helmet>
 
       {company && user?.isActive ? (
-        <div className="container mx-auto p-4 min-h-screen pt-20">
-          <h2 className="text-2xl text-center underline font-semibold mb-4">Recruiter List</h2>
+        <div className="container mx-auto p-4 min-h-screen pt-20 bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl text-center underline font-semibold mb-4  text-gray-800 dark:text-gray-100">Recruiter List</h2>
           <div className="mb-4 flex justify-between px-2">
             <input
               type="text"
               placeholder="Search by name, email, or phone"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-2 w-64 border border-gray-400 rounded-sm"
+              className="p-2 w-64 rounded-sm border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400"
             />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 border border-gray-400 rounded"
+              className="p-2 rounded border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
             >
               <option value="all">All</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
           </div>
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+          <table className="min-w-full rounded-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
             <thead className="text-center">
               <tr>
-                <th className="py-3 px-6 bg-gray-200  text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                   Full Name
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                   Email
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                   Phone
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                   Position
                 </th>
                 {user?.emailId.email === company?.adminEmail && (
                   <>
-                    <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                       Active
                     </th>
-                    <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                       Actions
                     </th>
                   </>
@@ -182,34 +182,32 @@ const RecruiterList = () => {
                 filteredRecruiters.map((recruiter) => (
                   <tr
                     key={recruiter?._id}
-                    className="border-b cursor-pointer"
+                    className="border-b cursor-pointer border-gray-200 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
                     onClick={() =>
                       navigate(
                         `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
                       )
                     }
                   >
-                    <td className="py-3 px-6">{recruiter?.fullname || " "}</td>
-                    <td className="py-3 px-6">{recruiter.emailId.email}</td>
-                    <td className="py-3 px-6">
-                      {recruiter.phoneNumber?.number || "N/A"}
-                    </td>
-                    <td className="py-3 px-6">{recruiter.position}</td>
+                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter?.fullname || " "}</td>
+                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.emailId.email}</td>
+                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.phoneNumber?.number || "N/A"}</td>
+                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.position}</td>
                     {user?.emailId.email === company?.adminEmail && (
                       <>
                         {recruiter?.emailId.email === company?.adminEmail ? (
                           <>
-                            <td className="py-3 px-6">-----</td>
-                            <td className="py-3 px-6">-----</td>
+                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
+                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
                           </>
                         ) : (
                           <>
-                            <td className="flex justify-center py-3 px-6">
+                            <td className="flex justify-center py-3 px-6 text-gray-800 dark:text-gray-100">
                               {loading[recruiter._id] ? (
                                 "loading..."
                               ) : recruiter.isActive ? (
                                 <FaToggleOn
-                                  className="text-green-500 cursor-pointer"
+                                  className="text-green-500 dark:text-green-400 cursor-pointer"
                                   onClick={(event) =>
                                     toggleActive(
                                       event,
@@ -221,7 +219,7 @@ const RecruiterList = () => {
                                 />
                               ) : (
                                 <FaToggleOff
-                                  className="text-red-500 cursor-pointer"
+                                  className="text-red-500 dark:text-red-400 cursor-pointer"
                                   onClick={(event) =>
                                     toggleActive(
                                       event,
@@ -234,7 +232,7 @@ const RecruiterList = () => {
                               )}
                             </td>
 
-                            <td className="py-3 px-6">
+                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">
                               {loading[recruiter._id] ? (
                                 "loading..."
                               ) : (
@@ -245,7 +243,7 @@ const RecruiterList = () => {
                                     setShowDeleteModal(true);
 
                                   }}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                                 >
                                   <FaTrash size={20} />
                                 </button>
@@ -259,7 +257,7 @@ const RecruiterList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="py-3 px-6 text-center">
+                  <td colSpan="6" className="py-3 px-6 text-center text-gray-500 dark:text-gray-400">
                     No Recruiter Data found
                   </td>
                 </tr>
@@ -268,11 +266,11 @@ const RecruiterList = () => {
           </table>
         </div>
       ) : !company ? (
-        <p className="h-screen flex items-center justify-center">
+        <p className="h-screen flex items-center justify-center text-gray-400 dark:text-gray-500">
           <span className="text-4xl text-gray-400">Company not created</span>
         </p>
       ) : (
-        <p className="h-screen flex items-center justify-center">
+        <p className="h-screen flex items-center justify-center text-gray-400 dark:text-gray-500">
           <span className="text-4xl text-gray-400">
             GreatHire will verify your company soon.
           </span>

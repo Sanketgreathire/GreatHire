@@ -79,7 +79,11 @@ import {
   resetPassword,
   deleteAccount,
   sendOtp,  
-  verifyOtp 
+  verifyOtp,
+  jobseekerLogin,
+  recruiterLogin,
+  verifyJobseekerOtp,
+  verifyRecruiterOtp
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -93,6 +97,8 @@ const router = express.Router();
 
 router.route("/register").post(validateUser, updateLastActive, register);
 router.route("/login").post(validateLogin, updateLastActive, login);
+router.route("/jobseeker-login").post(validateLogin, updateLastActive, jobseekerLogin);
+router.route("/recruiter-login").post(validateLogin, updateLastActive, recruiterLogin);
 router.route("/googleLogin").post(updateLastActive, googleLogin);
 
 
@@ -124,6 +130,8 @@ router.route("/delete").delete(isAuthenticated, updateLastActive, deleteAccount)
 // add after existing login route
 router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
+router.route("/verify-jobseeker-otp").post(verifyJobseekerOtp);
+router.route("/verify-recruiter-otp").post(verifyRecruiterOtp);
 
 
 

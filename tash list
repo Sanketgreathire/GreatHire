@@ -1,0 +1,176 @@
+[1mdiff --git a/BackEnd/package-lock.json b/BackEnd/package-lock.json[m
+[1mindex ab69c15f..fe9129e4 100644[m
+[1m--- a/BackEnd/package-lock.json[m
+[1m+++ b/BackEnd/package-lock.json[m
+[36m@@ -1820,86 +1820,6 @@[m
+         "url": "https://opencollective.com/mongoose"[m
+       }[m
+     },[m
+[31m-    "node_modules/mongoose/node_modules/agent-base": {[m
+[31m-      "version": "6.0.2",[m
+[31m-      "resolved": "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz",[m
+[31m-      "integrity": "sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==",[m
+[31m-      "license": "MIT",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "debug": "4"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": ">= 6.0.0"[m
+[31m-      }[m
+[31m-    },[m
+[31m-    "node_modules/mongoose/node_modules/debug": {[m
+[31m-      "version": "4.4.3",[m
+[31m-      "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",[m
+[31m-      "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",[m
+[31m-      "license": "MIT",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "ms": "^2.1.3"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": ">=6.0"[m
+[31m-      },[m
+[31m-      "peerDependenciesMeta": {[m
+[31m-        "supports-color": {[m
+[31m-          "optional": true[m
+[31m-        }[m
+[31m-      }[m
+[31m-    },[m
+[31m-    "node_modules/mongoose/node_modules/gaxios": {[m
+[31m-      "version": "5.1.3",[m
+[31m-      "resolved": "https://registry.npmjs.org/gaxios/-/gaxios-5.1.3.tgz",[m
+[31m-      "integrity": "sha512-95hVgBRgEIRQQQHIbnxBXeHbW4TqFk4ZDJW7wmVtvYar72FdhRIo1UGOLS2eRAKCPEdPBWu+M7+A33D9CdX9rA==",[m
+[31m-      "license": "Apache-2.0",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "extend": "^3.0.2",[m
+[31m-        "https-proxy-agent": "^5.0.0",[m
+[31m-        "is-stream": "^2.0.0",[m
+[31m-        "node-fetch": "^2.6.9"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": ">=12"[m
+[31m-      }[m
+[31m-    },[m
+[31m-    "node_modules/mongoose/node_modules/gcp-metadata": {[m
+[31m-      "version": "5.3.0",[m
+[31m-      "resolved": "https://registry.npmjs.org/gcp-metadata/-/gcp-metadata-5.3.0.tgz",[m
+[31m-      "integrity": "sha512-FNTkdNEnBdlqF2oatizolQqNANMrcqJt6AAYt99B3y1aLLC8Hc5IOBb+ZnnzllodEEf6xMBp6wRcBbc16fa65w==",[m
+[31m-      "license": "Apache-2.0",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "gaxios": "^5.0.0",[m
+[31m-        "json-bigint": "^1.0.0"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": ">=12"[m
+[31m-      }[m
+[31m-    },[m
+[31m-    "node_modules/mongoose/node_modules/https-proxy-agent": {[m
+[31m-      "version": "5.0.1",[m
+[31m-      "resolved": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz",[m
+[31m-      "integrity": "sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==",[m
+[31m-      "license": "MIT",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "agent-base": "6",[m
+[31m-        "debug": "4"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": ">= 6"[m
+[31m-      }[m
+[31m-    },[m
+     "node_modules/mongoose/node_modules/mongodb": {[m
+       "version": "6.18.0",[m
+       "resolved": "https://registry.npmjs.org/mongodb/-/mongodb-6.18.0.tgz",[m
+[36m@@ -1952,28 +1872,6 @@[m
+       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",[m
+       "license": "MIT"[m
+     },[m
+[31m-    "node_modules/mongoose/node_modules/node-fetch": {[m
+[31m-      "version": "2.7.0",[m
+[31m-      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.7.0.tgz",[m
+[31m-      "integrity": "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==",[m
+[31m-      "license": "MIT",[m
+[31m-      "optional": true,[m
+[31m-      "peer": true,[m
+[31m-      "dependencies": {[m
+[31m-        "whatwg-url": "^5.0.0"[m
+[31m-      },[m
+[31m-      "engines": {[m
+[31m-        "node": "4.x || >=6.0.0"[m
+[31m-      },[m
+[31m-      "peerDependencies": {[m
+[31m-        "encoding": "^0.1.0"[m
+[31m-      },[m
+[31m-      "peerDependenciesMeta": {[m
+[31m-        "encoding": {[m
+[31m-          "optional": true[m
+[31m-        }[m
+[31m-      }[m
+[31m-    },[m
+     "node_modules/mpath": {[m
+       "version": "0.9.0",[m
+       "resolved": "https://registry.npmjs.org/mpath/-/mpath-0.9.0.tgz",[m
+[1mdiff --git a/frontend/src/App.jsx b/frontend/src/App.jsx[m
+[1mindex 580c495e..ac03e490 100644[m
+[1m--- a/frontend/src/App.jsx[m
+[1m+++ b/frontend/src/App.jsx[m
+[36m@@ -230,7 +230,7 @@[m [mimport Success from "./pages/job/Success";[m
+ import SavedJobs from "./pages/job/SavedJob";[m
+ import Contact from "./pages/services/Contact";[m
+ import OurService from "./pages/services/OurService";[m
+[31m-import Blogs from "./pages/services/Blogs";[m
+[32m+[m[32mimport Blogs from "./components/Main_blog_page";[m
+ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";[m
+ import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";[m
+ import TermsAndConditions from "./pages/policies/TermsAndConditions";[m
+[36m@@ -263,7 +263,12 @@[m [mimport CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";[m
+ import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";[m
+ import AllApplicantsList from "./pages/recruiter/AllApplicantsList";[m
+ import DeleteAccount from "./pages/recruiter/DeleteAccount";[m
+[31m-[m
+[32m+[m[32mimport HowWeHire from "./components/HowWeHire";[m
+[32m+[m[32mimport TheFutureTechnology from "./components/TheFutureTechnology";[m
+[32m+[m[32mimport HiringInsights from "./pages/HiringInsights";[m
+[32m+[m[32mimport InsightDetail from "./pages/InsightDetail";[m
+[32m+[m[32mimport InsightsDashboard from "./pages/InsightsDashboard";[m
+[32m+[m[32mimport InsightApproval from "./pages/InsightApproval";[m
+ // Other Roles[m
+ import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";[m
+ import AdminLogin from "./components/auth/admin/AdminLogin";[m
+[36m@@ -283,7 +288,7 @@[m [mimport usePageTracking from "./usePageTracking";[m
+ [m
+ const appRouter = createBrowserRouter([[m
+   { path: "/", element: <Home /> },[m
+[31m-  { path: "/blogs", element: <Blogs /> },[m
+[32m+[m[32m  { path: "/Main_blog_page", element: <Blogs /> },[m
+   { path: "/blogs/:slug", element: <Blogs /> },[m
+   { path: "/about", element: <About /> },[m
+   { path: "/auth", element: <AuthPage /> },[m
+[36m@@ -293,6 +298,15 @@[m [mconst appRouter = createBrowserRouter([[m
+   { path: "/contact", element: <Contact /> },[m
+   { path: "/packages", element: <Packges /> },[m
+   { path: "*", element: <div>Page Not Found</div> },[m
+[32m+[m[32m  {path : "/HowWeHire", element:<HowWeHire/>},[m
+[32m+[m[32m  {path : "/TheFutureTechnology", element : <TheFutureTechnology/>},[m
+[32m+[m[32m  {path : "/HiringInsights", element : <HiringInsights/>},[m
+[32m+[m[32m  {path : "/InsightDetail/:id", element : <InsightDetail/>},[m
+[32m+[m[32m  {path : "/InsightsDashboard", element : <InsightsDashboard/>},[m
+[32m+[m[32m  {path: "/InsightApproval", element:<InsightApproval/>},[m
+[32m+[m[32m  {path:"/hiring-insights/:id", element : <InsightDetail />},[m
+[32m+[m
+[32m+[m[41m  [m
+ [m
+ [m
+   // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)[m
+[1mdiff --git a/frontend/src/components/auth/user/beforelogin.jsx b/frontend/src/components/auth/user/beforelogin.jsx[m
+[1mindex d680fa2b..687b172a 100644[m
+[1m--- a/frontend/src/components/auth/user/beforelogin.jsx[m
+[1m
