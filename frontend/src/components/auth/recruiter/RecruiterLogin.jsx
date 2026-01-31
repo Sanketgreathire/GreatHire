@@ -189,7 +189,7 @@ const RecruiterLogin = () => {
       <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
         <div className="w-full px-6 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-black">
+            <h1 className="text-4xl font-bold text-black">
               Great<span className="text-green-600">Hire</span>
             </h1>
             <button 
