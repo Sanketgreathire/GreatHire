@@ -130,7 +130,7 @@ const RecruiterLogin = () => {
 
       if (showOtpInput) {
         response = await axios.post(
-          `${USER_API_END_POINT}/verify-otp`,
+          `${USER_API_END_POINT}/verify-recruiter-otp`,
           {
             email: formData.email,
             otp: otpData.otp,
@@ -139,7 +139,7 @@ const RecruiterLogin = () => {
         );
       } else {
         response = await axios.post(
-          `${USER_API_END_POINT}/login`,
+          `${USER_API_END_POINT}/recruiter-login`,
           { ...formData },
           { withCredentials: true }
         );

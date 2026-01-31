@@ -122,15 +122,39 @@ export const postJob = [
       await newJob.save();
 
       // ✅ Notify recruiter about successful job posting
-      await notificationService.notifyNewJobPosted({
-        recruiterId: userId,
-        jobId: newJob._id,
-        jobTitle: title,
-        companyName: companyName
-      });
+      try {
+        console.log('📨 Sending job posting notification...', {
+          recruiterId: userId,
+          jobId: newJob._id,
+          jobTitle: title,
+          companyName: companyName
+        });
+        
+        await notificationService.notifyNewJobPosted({
+          recruiterId: userId,
+          jobId: newJob._id,
+          jobTitle: title,
+          companyName: companyName
+        });
+        
+        console.log('✅ Job posting notification sent successfully');
+      } catch (notificationError) {
+        console.error('❌ Error sending job posting notification:', notificationError);
+        // Don't fail the job posting if notification fails
+      }
 
       // ✅ Find and notify matching candidates
-      await findAndNotifyMatchingCandidates(newJob);
+      try {
+        console.log('🔍 Finding matching candidates for job:', title);
+        await findAndNotifyMatchingCandidates(newJob);
+        
+        // ✅ Also send general job alert to recent active users
+        await sendGeneralJobAlert(newJob);
+        
+        console.log('✅ Matching candidates notified successfully');
+      } catch (matchingError) {
+        console.error('❌ Error notifying matching candidates:', matchingError);
+      }
 
       if (company.maxJobPosts > 0) {
         const updatedCompany = await Company.findOneAndUpdate(
@@ -199,14 +223,19 @@ export const applyJob = async (req, res) => {
     const userId = req.id;  // <-- isAuthenticated middleware se aa raha hai
 
     // Job exist check karo
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate('company');
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
 
+    // Check if job is active
+    if (!job.jobDetails.isActive) {
+      return res.status(400).json({ success: false, message: "This job is not active" });
+    }
+
     // User exist check karo
     const user = await User.findById(userId);
-    console.log("Applying job user chexk kro :", user);
+    console.log("Applying job user check kro :", user);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
@@ -234,6 +263,35 @@ export const applyJob = async (req, res) => {
     });
 
     await newApplication.save();
+
+    // Add application to job
+    job.application.push(newApplication._id);
+    await job.save();
+
+  // ✅ Send notifications
+  try {
+    console.log('📨 Sending application notification...', {
+      applicantId: userId,
+      jobId: jobId,
+      jobTitle: job.jobDetails.title,
+      companyName: job.jobDetails.companyName,
+      recruiterId: job.created_by
+    });
+    
+    await notificationService.notifyApplicationSubmitted({
+      applicantId: userId,
+      jobId: jobId,
+      jobTitle: job.jobDetails.title,
+      companyName: job.jobDetails.companyName,
+      recruiterId: job.created_by,
+      applicationId: newApplication._id
+    });
+    
+    console.log('✅ Application notification sent successfully');
+  } catch (notificationError) {
+    console.error('❌ Error sending application notification:', notificationError);
+    // Don't fail the application if notification fails
+  }
 
     return res.status(201).json({
       success: true,
@@ -696,46 +754,125 @@ export const getJobsStatistics = async (req, res) => {
 // Helper function to find and notify matching candidates
 async function findAndNotifyMatchingCandidates(job) {
   try {
+    console.log('🔍 Finding matching candidates for job:', job.jobDetails.title);
+    
     const jobSkills = job.jobDetails.skills || [];
     const jobLocation = job.jobDetails.location;
     const jobType = job.jobDetails.jobType;
     
-    // Find users with matching skills or location preferences
+    console.log('Job criteria:', { jobSkills, jobLocation, jobType });
+    
+    // Find users with matching skills, location, or category preferences
     const matchingUsers = await User.find({
       $or: [
         { "profile.skills": { $in: jobSkills } },
         { "address.city": { $regex: jobLocation, $options: 'i' } },
-        { "profile.jobPreferences.jobType": jobType }
+        { "profile.category": { $in: jobSkills } }
       ]
-    }).select('_id fullname profile.skills address.city');
+    }).select('_id fullname profile.skills profile.category address.city');
 
-    // Calculate match scores and send notifications
-    for (const user of matchingUsers) {
-      const userSkills = user.profile?.skills || [];
-      const matchingSkills = jobSkills.filter(skill => 
-        userSkills.some(userSkill => 
-          userSkill.toLowerCase().includes(skill.toLowerCase())
-        )
-      );
+    console.log(`Found ${matchingUsers.length} potential matching candidates`);
+
+    // If no skill-based matches, notify users in the same location
+    if (matchingUsers.length === 0) {
+      const locationUsers = await User.find({
+        "address.city": { $regex: jobLocation, $options: 'i' }
+      }).limit(10).select('_id fullname address.city');
       
-      const matchScore = Math.min(
-        Math.round((matchingSkills.length / Math.max(jobSkills.length, 1)) * 100),
-        95
-      );
-
-      if (matchScore >= 30) { // Only notify if match score is 30% or higher
-        await notificationService.notifyJobMatch({
+      console.log(`Found ${locationUsers.length} location-based candidates`);
+      
+      const locationNotificationPromises = locationUsers.map(user => 
+        notificationService.notifyJobMatch({
           userId: user._id,
           jobId: job._id,
           jobTitle: job.jobDetails.title,
           companyName: job.jobDetails.companyName,
-          matchScore: matchScore,
+          matchScore: 40, // Location match
           location: job.jobDetails.location,
           salary: job.jobDetails.salary
-        });
-      }
+        })
+      );
+      
+      await Promise.all(locationNotificationPromises);
+      return;
     }
+
+    // Calculate match scores and prepare notifications
+    const notificationPromises = matchingUsers.map(async (user) => {
+      const userSkills = user.profile?.skills || [];
+      const userCategories = user.profile?.category || [];
+      
+      // Check skill matches
+      const matchingSkills = jobSkills.filter(skill => 
+        userSkills.some(userSkill => 
+          userSkill.toLowerCase().includes(skill.toLowerCase())
+        ) || userCategories.some(category =>
+          category.toLowerCase().includes(skill.toLowerCase())
+        )
+      );
+      
+      let matchScore = 30; // Base score
+      
+      if (matchingSkills.length > 0) {
+        matchScore = Math.min(
+          Math.round((matchingSkills.length / Math.max(jobSkills.length, 1)) * 100),
+          95
+        );
+      }
+      
+      // Location bonus
+      if (user.address?.city && 
+          user.address.city.toLowerCase().includes(jobLocation.toLowerCase())) {
+        matchScore += 10;
+      }
+
+      console.log(`Notifying user ${user.fullname} with ${matchScore}% match`);
+      
+      return notificationService.notifyJobMatch({
+        userId: user._id,
+        jobId: job._id,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        matchScore: Math.min(matchScore, 95),
+        location: job.jobDetails.location,
+        salary: job.jobDetails.salary
+      });
+    });
+    
+    // Send all notifications in parallel
+    await Promise.all(notificationPromises);
+    
+    console.log(`✅ Notified ${matchingUsers.length} matching candidates`);
   } catch (error) {
     console.error("Error finding matching candidates:", error);
+  }
+}
+
+// Helper function to send general job alerts to recent active users
+async function sendGeneralJobAlert(job) {
+  try {
+    // Find users who were active in the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const recentActiveUsers = await User.find({
+      lastActiveAt: { $gte: sevenDaysAgo }
+    }).limit(20).select('_id fullname lastActiveAt');
+    
+    console.log(`Sending general job alert to ${recentActiveUsers.length} recent active users`);
+    
+    for (const user of recentActiveUsers) {
+      await notificationService.notifyJobMatch({
+        userId: user._id,
+        jobId: job._id,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        matchScore: 50, // General match score
+        location: job.jobDetails.location,
+        salary: job.jobDetails.salary
+      });
+    }
+  } catch (error) {
+    console.error("Error sending general job alert:", error);
   }
 }

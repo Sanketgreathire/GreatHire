@@ -230,7 +230,7 @@ import Success from "./pages/job/Success";
 import SavedJobs from "./pages/job/SavedJob";
 import Contact from "./pages/services/Contact";
 import OurService from "./pages/services/OurService";
-import Blogs from "./pages/services/Blogs";
+import Blogs from "./components/Main_blog_page";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
@@ -263,7 +263,12 @@ import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
-
+import HowWeHire from "./components/HowWeHire";
+import TheFutureTechnology from "./components/TheFutureTechnology";
+import HiringInsights from "./pages/HiringInsights";
+import InsightDetail from "./pages/InsightDetail";
+import InsightsDashboard from "./pages/InsightsDashboard";
+import InsightApproval from "./pages/InsightApproval";
 // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
@@ -283,7 +288,7 @@ import usePageTracking from "./usePageTracking";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/blogs", element: <Blogs /> },
+  { path: "/Main_blog_page", element: <Blogs /> },
   { path: "/blogs/:slug", element: <Blogs /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
@@ -293,6 +298,15 @@ const appRouter = createBrowserRouter([
   { path: "/contact", element: <Contact /> },
   { path: "/packages", element: <Packges /> },
   { path: "*", element: <div>Page Not Found</div> },
+  {path : "/HowWeHire", element:<HowWeHire/>},
+  {path : "/TheFutureTechnology", element : <TheFutureTechnology/>},
+  {path : "/HiringInsights", element : <HiringInsights/>},
+  {path : "/InsightDetail/:id", element : <InsightDetail/>},
+  {path : "/InsightsDashboard", element : <InsightsDashboard/>},
+  {path: "/InsightApproval", element:<InsightApproval/>},
+  {path:"/hiring-insights/:id", element : <InsightDetail />},
+
+  
 
 
   // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)
@@ -316,7 +330,7 @@ const appRouter = createBrowserRouter([
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/packages", element: <Packges /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
+  { path: "/notifications", element: <NotificationPage /> },
   { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/signup", element: <JobSeekerSignup /> },

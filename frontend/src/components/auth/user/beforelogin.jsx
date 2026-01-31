@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Users, Target, Award, Building2, Briefcase, Menu, X, ChevronDown, MapPin, Bell, Search, Newspaper, Calendar, Phone, Mail, ExternalLink, Star, TrendingUp, Zap, Shield } from 'lucide-react';
 import OurService from "@/pages/services/OurService";
 import About from "@/pages/services/About";
-import Blogs from "@/pages/services/Blogs";
+import Blogs from "@/components/Main_blog_page";
 import Contact from "@/pages/services/Contact";
 import Footer from "@/components/shared/Footer";
 import { useNavigate, NavLink, Link } from "react-router-dom";
@@ -24,7 +24,7 @@ const GreatHireLanding = () => {
     { id: 'home', label: 'Home', path: '/' },
     { id: 'services', label: 'Our Services', path: '/great-hire/services' },
     { id: 'about', label: 'About Us', path: '/about' },
-    { id: 'blogs', label: 'Blogs', path: '/blogs' },
+    { id: 'blogs', label: 'Blogs', path: '/Main_blog_page' },
     { id: 'contact', label: 'Contact Us', path: '/contact' },
   ];
 
@@ -49,7 +49,7 @@ const GreatHireLanding = () => {
       id: "implementation",
       title: "Blogs",
       animation: blog,
-      path: "/blogs",
+      path: "/Main_blog_page",
       content:
         "GreatHire is your all-in-one career hub designed to connect talent with the right opportunities. With AI-powered matching, expert career insights, and hiring guidance, we help job seekers grow and employers hire smarter. From resume building and interview preparation to industry trends and future skills, we support every stage of your career journey. Trusted by thousands of users, GreatHire makes career growth simple, smart, and accessible.",
     },
@@ -492,7 +492,7 @@ const GreatHireLanding = () => {
                     >
                       {tab.title}
                     </button>
-                  ))}
+                  ))} 
                 </div>
 
                 {/* Carousel */}

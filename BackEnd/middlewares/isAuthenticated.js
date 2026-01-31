@@ -1,7 +1,8 @@
-
-
 import jwt from "jsonwebtoken";
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
+import { User } from "../models/user.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
+import { Admin } from "../models/admin/admin.model.js";
 
 const isAuthenticated = async (req, res, next) => {
   try {
@@ -28,8 +29,17 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
 
-    // ✅ Correct field
-    req.id = decode.id || decode.userId;
+    const userId = decode.id || decode.userId;
+    req.id = userId;
+
+    // Find user and set req.user for notification controller
+    let user = await User.findById(userId) || 
+               await Recruiter.findById(userId) || 
+               await Admin.findById(userId);
+    
+    if (user) {
+      req.user = user;
+    }
 
     next();
   } catch (error) {

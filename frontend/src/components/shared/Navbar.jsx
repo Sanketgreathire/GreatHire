@@ -88,20 +88,11 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // if (user.role === "recruiter") {
-      //   // Check if the recruiter has created a company
-      //   const checkRes = await axios.get(`${RECRUITER_API_END_POINT}/has-company`, {
-      //     withCredentials: true,
-      //   });
-
-      //   if (!checkRes.data.companyExists) {
-      //     toast.error("Please create a company before logging out.");
-      //     return;
-      //   }
-      // }
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
+        timeout: 10000, // 10 second timeout
       });
+      
       if (response.data.success) {
         dispatch(logOut());
         if (user.role === "recruiter") {
@@ -115,10 +106,21 @@ const Navbar = () => {
         toast.success(response.data.message);
         navigate("/");
       } else {
-        toast.error("error in logout");
+        toast.error("Error in logout");
       }
     } catch (err) {
-      toast.error(`error in logout ${err}`);
+      console.error("Logout error:", err);
+      // Force logout even if API call fails
+      dispatch(logOut());
+      if (user.role === "recruiter") {
+        dispatch(removeCompany());
+        dispatch(cleanRecruiterRedux());
+        dispatch(removeJobPlan());
+      }
+      setIsProfileMenuOpen(false);
+      setIsMenuOpen(false);
+      toast.success("Logged out successfully");
+      navigate("/");
     }
   };
 
@@ -156,7 +158,7 @@ const Navbar = () => {
         // BEFORE LOGIN → full public navbar
         { to: "/", label: "Home" },
         { to: "/great-hire/services", label: "Our Services" },
-        { to: "/blogs", label: "Blogs" },
+        { to: "/Main_blog_page", label: "Blogs" },
         { to: "/about", label: "About Us" },
         { to: "/contact", label: "Contact Us" },
         // { to: "/jobs", label: "Jobs" },
@@ -165,7 +167,7 @@ const Navbar = () => {
   // Secondary navigation links (in dropdown)
   const secondaryNavLinks = [
     { to: "/great-hire/services", label: "Our Services" },
-    { to: "/blogs", label: "Blogs" },
+    { to: "/Main_blog_page", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
   ];

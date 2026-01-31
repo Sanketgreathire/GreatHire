@@ -123,9 +123,10 @@ const CandidateInformation = () => {
                       src={
                         isValidImageURL(candidate?.profile?.profilePhoto)
                           ? encodeURI(candidate.profile.profilePhoto)
-                          : "/default-profile.png"
+                          : "https://github.com/shadcn.png"
                       }
                     />
+
                   </Avatar>
 
                   <h2 className="mt-4 text-2xl font-bold text-center text-gray-900 dark:text-gray-100">
@@ -280,21 +281,31 @@ const CandidateInformation = () => {
                 <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Skills</h3>
                   <div className="flex flex-wrap gap-2">
-                    {candidate?.profile?.skills ? (
-                      candidate.profile.skills
-                        .split(",")
-                        .map((skill, i) => (
-                          <Badge
-                            key={i}
-                            className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
-                          >
-                            {skill.trim()}
-                          </Badge>
-                        ))
+                    {Array.isArray(candidate?.profile?.skills) ? (
+                      candidate.profile.skills.map((skill, i) => (
+                        <Badge
+                          key={i}
+                          className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
+                        >
+                          {String(skill).trim()}
+                        </Badge>
+                      ))
+                    ) : typeof candidate?.profile?.skills === "string" ? (
+                      candidate.profile.skills.split(",").map((skill, i) => (
+                        <Badge
+                          key={i}
+                          className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-700"
+                        >
+                          {skill.trim()}
+                        </Badge>
+                      ))
                     ) : (
-                      <span className="text-gray-600 dark:text-gray-400">No skills listed</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        No skills listed
+                      </span>
                     )}
                   </div>
+
                 </div>
 
                 <div className="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg">

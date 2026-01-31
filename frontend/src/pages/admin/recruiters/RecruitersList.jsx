@@ -386,7 +386,7 @@ const RecruitersList = () => {
       (r.fullname || "").toLowerCase().includes(q) ||
       (r.companyName || "").toLowerCase().includes(q) ||
       (r.email || "").toLowerCase().includes(q) ||
-      (r.phone || "").toLowerCase().includes(q);
+      (String(r.phone ?? "")).toLowerCase().includes(q);
     const matchesStatus = status === "All" ? true : r.isActive === (status === true);
     return matchesSearch && matchesStatus;
   });
