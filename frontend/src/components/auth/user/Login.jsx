@@ -1083,7 +1083,7 @@ const Login = ({ role = "user" }) => {
       <div className="relative z-10 flex-1 flex flex-col">
         <Navbar/>
 
-        <div className="flex justify-center w-full py-8 sm:py-16">
+        <div className="flex justify-center w-full py-8 sm:py-16 sm:mt-16 mt-10">
           <div className="flex w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
             
             {/* Left Side - Image Carousel (UI from beautiful component) */}

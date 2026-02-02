@@ -330,7 +330,7 @@ const appRouter = createBrowserRouter([
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/packages", element: <Packges /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/notifications", element: <ProtectedUserRoute><NotificationPage /></ProtectedUserRoute> },
+  { path: "/notifications", element: <NotificationPage /> },
   { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/signup", element: <JobSeekerSignup /> },
