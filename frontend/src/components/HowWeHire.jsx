@@ -380,7 +380,7 @@ const HowWeHirePage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/About"
+              to="/jobs"
               className="bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 text-base inline-block"
             >
               View Available Positions

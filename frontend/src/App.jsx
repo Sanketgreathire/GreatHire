@@ -269,6 +269,8 @@ import HiringInsights from "./pages/HiringInsights";
 import InsightDetail from "./pages/InsightDetail";
 import InsightsDashboard from "./pages/InsightsDashboard";
 import InsightApproval from "./pages/InsightApproval";
+import CareerAdvice from "./components/CareerAdvice";
+import TheFuture from "./components/TheFuture";
 // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
@@ -276,6 +278,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import Notifications from "./components/NotificationBell";
 import NotificationPage from "./components/notifications/NotificationPage";
 import MessagingPage from "./components/messaging/MessagingPage";
+import ProductDetailPage from "./components/ProductDetailPage";
 
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -305,6 +308,10 @@ const appRouter = createBrowserRouter([
   {path : "/InsightsDashboard", element : <InsightsDashboard/>},
   {path: "/InsightApproval", element:<InsightApproval/>},
   {path:"/hiring-insights/:id", element : <InsightDetail />},
+  {path:"/CareerAdvice", element :<CareerAdvice/>},
+  {path:"/CareerAdvice/:id", element :<CareerAdvice/>},
+  {path :"/TheFuture", element:<TheFuture/>},
+  {path :"/TheFuture/:id", element:<TheFuture/>},
 
   
 
@@ -336,6 +343,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup", element: <JobSeekerSignup /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   { path: "/description/:id", element: <JobDetail /> },
+  { path: "/ProductDetailPage/:id", element: <ProductDetailPage /> },
   {
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,

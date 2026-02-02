@@ -224,7 +224,7 @@ export default function HiringInsights() {
               <div
                 key={item.id}
                 onClick={() => navigate(`/hiring-insights/${item.id}`)}
-                className="border rounded-xl p-6 shadow-sm hover:shadow-md transition cursor-pointer bg-white"
+                className="border rounded-xl p-6 shadow-xl hover:shadow-md transition cursor-pointer bg-white bg-gradient-to-br from-purple-50 to-pink-50"
               >
 
                 {/* Meta */}
