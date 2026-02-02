@@ -6,6 +6,7 @@ import {
   getApplicants,
   getAppliedJobs,
   updateStatus,
+  getApplicationDetails,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -35,6 +36,8 @@ router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplicati
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
+// New route for getting individual application details
+router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
 
 
 export default router;
