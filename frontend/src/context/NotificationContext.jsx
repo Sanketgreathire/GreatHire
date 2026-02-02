@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { io } from 'socket.io-client';
-import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount } from '../service/notificationservice';
 
 const NotificationContext = createContext();
 
@@ -8,89 +9,136 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [socket, setSocket] = useState(null);
+  const { user } = useSelector((state) => state.auth);
 
   // Initialize Socket.IO connection
   useEffect(() => {
+    if (!user) return;
+
     const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
-      path: '/socket.io',
       withCredentials: true,
+      transports: ['websocket', 'polling']
     });
 
+    // Join user's notification room
+    socketInstance.emit('join', user._id);
+    
     setSocket(socketInstance);
 
     return () => {
+      if (user?._id) {
+        socketInstance.emit('leave', user._id);
+      }
       socketInstance.disconnect();
     };
-  }, []);
+  }, [user]);
 
-  // Fetch notifications from API
-  const fetchNotifications = async () => {
+  // Fetch notifications from API with better error handling
+  const loadNotifications = useCallback(async () => {
+    if (!user) return;
+    
+    console.log('📨 Loading notifications for user:', user._id, 'role:', user.role);
+    
     try {
-      const response = await axios.get('/api/notifications', {
-        withCredentials: true,
-      });
-      setNotifications(response.data);
-      setUnreadCount(response.data.filter(n => !n.isRead).length);
+      const notificationsData = await fetchNotifications();
+      console.log('✅ Notifications loaded:', notificationsData.length, 'notifications');
+      setNotifications(notificationsData);
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
     }
-  };
+
+    try {
+      const countData = await getUnreadCount();
+      console.log('🔔 Unread count:', countData);
+      setUnreadCount(countData);
+    } catch (err) {
+      console.error('Failed to fetch unread count:', err);
+    }
+  }, [user]);
 
   // Setup Socket.IO listeners
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user) return;
 
     socket.on('newNotification', (newNotification) => {
+      console.log('📨 New notification received:', newNotification);
       setNotifications(prev => [newNotification, ...prev]);
       setUnreadCount(prev => prev + 1);
+      
+      // Play notification sound if available
+      try {
+        const audio = new Audio('/notification.mp3');
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      } catch (e) {
+        console.log('Audio not available');
+      }
+    });
+
+    socket.on('connect', () => {
+      console.log('🔌 Socket connected');
+      socket.emit('join', user._id);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('❌ Socket disconnected');
     });
 
     return () => {
       socket.off('newNotification');
+      socket.off('connect');
+      socket.off('disconnect');
     };
-  }, [socket]);
+  }, [socket, user]);
+
+  // Load notifications on mount
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
 
   // Mark notification as read
-  const markAsRead = async (notificationId) => {
+  const handleMarkAsRead = useCallback(async (notificationId) => {
     try {
-      await axios.put(`/api/notifications/${notificationId}/read`, {}, {
-        withCredentials: true,
-      });
+      await markAsRead(notificationId);
       setNotifications(prev =>
-        prev.map(n => (n._id === notificationId ? { ...n, isRead: true } : n))
+        prev.map(n => (n._id === notificationId ? { ...n, isRead: true, readAt: new Date() } : n))
       );
-      setUnreadCount(prev => prev - 1);
+      setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       console.error('Failed to mark as read:', err);
     }
-  };
+  }, []);
 
   // Mark all notifications as read
-  const markAllAsRead = async () => {
+  const handleMarkAllAsRead = useCallback(async () => {
     try {
-      await axios.put('/api/notifications/mark-all-read', {}, {
-        withCredentials: true,
-      });
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      await markAllAsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true, readAt: new Date() })));
       setUnreadCount(0);
     } catch (err) {
       console.error('Failed to mark all as read:', err);
     }
-  };
+  }, []);
+
+  const contextValue = useMemo(() => ({
+    notifications,
+    unreadCount,
+    loadNotifications,
+    markAsRead: handleMarkAsRead,
+    markAllAsRead: handleMarkAllAsRead,
+    socket
+  }), [notifications, unreadCount, loadNotifications, handleMarkAsRead, handleMarkAllAsRead, socket]);
 
   return (
-    <NotificationContext.Provider
-      value={{
-        notifications,
-        unreadCount,
-        fetchNotifications,
-        markAsRead,
-        markAllAsRead,
-      }}
-    >
+    <NotificationContext.Provider value={contextValue}>
       {children}
     </NotificationContext.Provider>
   );
 };
 
-export const useNotifications = () => useContext(NotificationContext);
+export const useNotifications = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error('useNotifications must be used within NotificationProvider');
+  }
+  return context;
+};

@@ -139,7 +139,7 @@ const RecruiterSignup = () => {
       <div className="relative z-10 flex-1 flex flex-col">
         <Navbar />
 
-        <div className="flex justify-center w-full py-8 sm:py-16">
+        <div className="flex justify-center w-full py-8 sm:py-16 mt-6">
           <div className="flex w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
             {/* LEFT SIDE - Carousel */}
             <div className="hidden lg:flex lg:w-1/2 relative bg-white p-4">

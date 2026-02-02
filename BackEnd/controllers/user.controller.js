@@ -21,6 +21,7 @@ import { validationResult } from "express-validator";
 // help in send email
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
+import notificationService from "../utils/notificationService.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -165,7 +166,18 @@ export const login = async (req, res) => {
       });
     }
 
-// await user.save();
+    await user.save();
+
+    // ✅ Send welcome notification on login
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
 
     const tokenData = {
       userId: user._id,
@@ -196,6 +208,162 @@ export const login = async (req, res) => {
     };
 
     // sending cookies from server to client with response
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome ${user.fullname}`,
+        user,
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Job seeker specific login
+export const jobseekerLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Something is missing",
+        success: false,
+      });
+    }
+
+    // Only search in User collection for job seekers
+    let user = await User.findOne({ "emailId.email": email });
+
+    if (!user) {
+      return res.status(200).json({
+        message: "Job seeker account not found.",
+        success: false,
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(200).json({
+        message: "Incorrect email or password.",
+        success: false,
+      });
+    }
+
+    await user.save();
+
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
+
+    const tokenData = { userId: user._id };
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    user = {
+      _id: user._id,
+      fullname: user.fullname,
+      emailId: user.emailId,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+      address: user.address,
+      lastActiveAt: user.lastActiveAt,
+      isFirstLogin: user.isFirstLogin,
+    };
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome ${user.fullname}`,
+        user,
+        success: true,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Recruiter specific login
+export const recruiterLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Something is missing",
+        success: false,
+      });
+    }
+
+    // Only search in Recruiter collection for recruiters
+    let user = await Recruiter.findOne({ "emailId.email": email });
+
+    if (!user) {
+      return res.status(200).json({
+        message: "Recruiter account not found.",
+        success: false,
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(200).json({
+        message: "Incorrect email or password.",
+        success: false,
+      });
+    }
+
+    await user.save();
+
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
+
+    const tokenData = { userId: user._id };
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    const isCompanyCreated = user.isCompanyCreated || false;
+    const position = user.position || "";
+    const isActive = user.isActive || null;
+
+    user = {
+      _id: user._id,
+      fullname: user.fullname,
+      emailId: user.emailId,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+      profile: user.profile,
+      lastActiveAt: user.lastActiveAt,
+      isFirstLogin: user.isFirstLogin,
+      isCompanyCreated,
+      position,
+      isActive,
+    };
+
     return res
       .status(200)
       .cookie("token", token, {
@@ -351,16 +519,17 @@ export const logout = async (req, res) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
     if (token) {
-      // Decode the token to get user ID (assuming your token includes `id`)
+      // Decode the token to get user ID
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
-      const userId = decoded.userId; // ✅ declare userId here
+      const userId = decoded.userId;
 
-      // ✅ Update lastActiveAt
-      await User.findByIdAndUpdate(userId, {
-        $set: { lastActiveAt: new Date() },
-      });
+      // Update lastActiveAt for both User and Recruiter collections
+      await Promise.all([
+        User.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }),
+        Recruiter.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } })
+      ]);
 
-      // ✅ Blacklist the token
+      // Blacklist the token
       await BlacklistToken.create({ token });
     }
 
@@ -368,7 +537,7 @@ export const logout = async (req, res) => {
       .status(200)
       .cookie("token", "", {
         maxAge: 0,
-        httpOnly: true,  // Ensuring security by keeping it HTTP only
+        httpOnly: true,
         sameSite: "strict",
       })
       .json({
@@ -991,7 +1160,7 @@ export const sendOtp = async (req, res) => {
 };
 
 
-// Step 2: Verify OTP
+// Step 2: Verify OTP (Original function - kept for backward compatibility)
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -1012,15 +1181,139 @@ export const verifyOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
     }
 
+    // Clear OTP
+    user.emailId.otp = null;
+    user.emailId.otpExpiry = null;
+    await user.save();
+
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        success: true,
+        message: `Welcome ${user.fullname}`,
+        user: {
+          _id: user._id,
+          fullname: user.fullname,
+          emailId: user.emailId,
+          role: user.role,
+        },
+      });
+  } catch (err) {
+    console.error("Verify OTP Error:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// Step 2: Verify OTP for Job Seekers
+export const verifyJobseekerOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
+
+    // Only search in User collection
+    let user = await User.findOne({ "emailId.email": email });
+
+    if (!user || !user.emailId.otp) {
+      return res.status(400).json({ success: false, message: "Invalid request" });
+    }
+
+    if (user.emailId.otp !== otp || Date.now() > user.emailId.otpExpiry) {
+      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+    }
 
     // Clear OTP
     user.emailId.otp = null;
     user.emailId.otpExpiry = null;
     await user.save();
 
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
 
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
-    // Generate JWT
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        success: true,
+        message: `Welcome ${user.fullname}`,
+        user: {
+          _id: user._id,
+          fullname: user.fullname,
+          emailId: user.emailId,
+          role: user.role,
+        },
+      });
+  } catch (err) {
+    console.error("Verify OTP Error:", err);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// Step 2: Verify OTP for Recruiters
+export const verifyRecruiterOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
+
+    // Only search in Recruiter collection
+    let user = await Recruiter.findOne({ "emailId.email": email });
+
+    if (!user || !user.emailId.otp) {
+      return res.status(400).json({ success: false, message: "Invalid request" });
+    }
+
+    if (user.emailId.otp !== otp || Date.now() > user.emailId.otpExpiry) {
+      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+    }
+
+    // Clear OTP
+    user.emailId.otp = null;
+    user.emailId.otpExpiry = null;
+    await user.save();
+
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: user.role,
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
+
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
     return res

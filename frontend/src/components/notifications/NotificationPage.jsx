@@ -1,52 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Bell, Search, Check, Briefcase, Users, FileText, Star } from 'lucide-react';
-import { fetchNotifications, markAsRead, markAllAsRead, getNotificationIcon, getNotificationColor } from '../../service/notificationservice';
+import { useNotifications } from '../../context/NotificationContext';
 
 const NotificationPage = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useSelector((state) => state.auth);
+  const { notifications, unreadCount, markAsRead, markAllAsRead, loadNotifications } = useNotifications();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [loading, setLoading] = useState(true);
 
-  const loadNotifications = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchNotifications();
-      setNotifications(data);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    }
-    setLoading(false);
-  };
+  // Redirect if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Bell className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Please log in</h3>
+          <p className="text-gray-500">You need to be logged in to view notifications.</p>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
-    loadNotifications();
-  }, []);
+    const loadData = async () => {
+      setLoading(true);
+      await loadNotifications();
+      setLoading(false);
+    };
+    loadData();
+  }, [loadNotifications]);
 
   const handleMarkAsRead = async (id) => {
-    try {
-      await markAsRead(id);
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif._id === id ? { ...notif, isRead: true, readAt: new Date() } : notif
-        )
-      );
-    } catch (err) {
-      console.error("Error marking notification as read:", err);
-    }
+    await markAsRead(id);
   };
 
   const handleMarkAllAsRead = async () => {
-    try {
-      await markAllAsRead();
-      setNotifications(prev => 
-        prev.map(notif => ({ ...notif, isRead: true, readAt: new Date() }))
-      );
-    } catch (err) {
-      console.error("Error marking all notifications as read:", err);
-    }
+    await markAllAsRead();
   };
 
   // Get filter options based on user role
@@ -88,7 +79,7 @@ const NotificationPage = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadNotificationCount = notifications.filter(n => !n.isRead).length;
 
   const getTimeAgo = (date) => {
     const now = new Date();
@@ -145,10 +136,10 @@ const NotificationPage = () => {
                 )}
               </h1>
               <p className="text-gray-600 mt-2">
-                {unreadCount > 0 ? `${unreadCount} unread notifications` : 'All caught up!'}
+                {unreadNotificationCount > 0 ? `${unreadNotificationCount} unread notifications` : 'All caught up!'}
               </p>
             </div>
-            {unreadCount > 0 && (
+            {unreadNotificationCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

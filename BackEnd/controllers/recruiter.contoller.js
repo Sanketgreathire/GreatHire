@@ -20,6 +20,7 @@ import nodemailer from "nodemailer";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
+import notificationService from "../utils/notificationService.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -85,6 +86,17 @@ export const register = async (req, res) => {
       },
       password: hashedPassword,
     });
+
+    // ✅ Send welcome notification for new recruiter registration
+    try {
+      await notificationService.notifyWelcome({
+        userId: newUser._id,
+        userType: 'recruiter',
+        name: newUser.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
 
     // Remove sensitive information before sending the response
     const userWithoutPassword = await Recruiter.findById(newUser._id).select(
@@ -200,6 +212,17 @@ export const googleLogin = async (req, res) => {
     });
 
     await user.save();
+
+    // ✅ Send welcome notification for new Google recruiter
+    try {
+      await notificationService.notifyWelcome({
+        userId: user._id,
+        userType: 'recruiter',
+        name: user.fullname
+      });
+    } catch (notificationError) {
+      console.error('Error sending welcome notification:', notificationError);
+    }
 
     const tokenData = {
       userId: user._id,

@@ -130,7 +130,7 @@ const JobseekerLogin = () => {
 
       if (showOtpInput) {
         response = await axios.post(
-          `${USER_API_END_POINT}/verify-otp`,
+          `${USER_API_END_POINT}/verify-jobseeker-otp`,
           {
             email: formData.email,
             otp: otpData.otp,
@@ -139,7 +139,7 @@ const JobseekerLogin = () => {
         );
       } else {
         response = await axios.post(
-          `${USER_API_END_POINT}/login`,
+          `${USER_API_END_POINT}/jobseeker-login`,
           { ...formData },
           { withCredentials: true }
         );
@@ -189,7 +189,7 @@ const JobseekerLogin = () => {
       <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
         <div className="w-full px-6 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-black">
+            <h1 className="text-4xl font-bold text-black">
               Great<span className="text-blue-600">Hire</span>
             </h1>
             <button 
