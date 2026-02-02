@@ -24,6 +24,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
 
+
 const Dashboard = () => {
   const companyStats = useSelector((state) => state.stats.companyStatsData);
   const { user } = useSelector((state) => state.auth);
@@ -153,6 +154,16 @@ const Dashboard = () => {
     <>
       <Navbar linkName={"Dashboard"} />
       <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 min-h-screen transition-colors">
+        {/* Welcome Section with Badge */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              👋 Welcome, Admin
+            </h1>
+            <VerifiedRecruiterBadges plan="ENTERPRISE" />
+          </div>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (

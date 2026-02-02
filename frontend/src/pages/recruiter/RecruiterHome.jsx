@@ -11,6 +11,8 @@ import {
 import { BsCoin } from "react-icons/bs";
 import { addCompany } from "@/redux/companySlice";
 import { Helmet } from "react-helmet-async";
+import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
+
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
@@ -142,6 +144,11 @@ const RecruiterHome = () => {
     },
   ];
 
+  const recruiterPlan = company?.plan ?? user?.plan ?? "PREMIUM";
+  console.log("Company plan:", company?.plan);
+  console.log("User plan:", user?.plan);
+  console.log("Final recruiterPlan:", recruiterPlan);
+
   return (
     <>
       <Helmet>
@@ -160,8 +167,8 @@ const RecruiterHome = () => {
       {company && user?.isActive ? (
         <div className="min-h-screen p-8 pt-20 bg-gray-50">
           {/* Header Section */}
-          <header className="mb-10 flex flex-col items-center md:flex-row md:justify-between md:items-center">
-            <div>
+          <header className="mb-10 flex flex-col gap-6 md:flex-row md:justify-between md:items-start">
+            <div className="flex-1">
               <h1 className="text-4xl font-extrabold text-gray-800">
                 👋 Welcome,{" "}
                 <span className="text-blue-600">
@@ -169,10 +176,14 @@ const RecruiterHome = () => {
                 </span>
               </h1>
               <p className="text-gray-500 mt-2">
-                Here’s an overview of your recruitment activity.
+                Here's an overview of your recruitment activity.
               </p>
             </div>
-
+            
+            {/* Badge on the right */}
+            <div className="flex items-start">
+              <VerifiedRecruiterBadges plan={recruiterPlan} />
+            </div>
           </header>
 
           {/* Stats Cards */}
