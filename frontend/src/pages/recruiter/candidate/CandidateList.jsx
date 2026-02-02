@@ -118,7 +118,7 @@ const CandidateList = () => {
     <>
       <Helmet>
         <title>
-          Locate and Employ Top Candidates | Effectively Find Skilled Talent with GreatHire
+          Find, Hire & Recruit Top Talent | Skilled Candidates Search - GreatHire
         </title>
 
         <meta
