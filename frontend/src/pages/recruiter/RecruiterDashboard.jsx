@@ -15,6 +15,7 @@ import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
 import { io } from "socket.io-client";
 import { BACKEND_URL } from "@/utils/ApiEndPoint";
 import { Helmet } from "react-helmet-async";
+import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
 const socket = io(BACKEND_URL, { transports: ["websocket"] }); // Use your backend URL
 
@@ -66,6 +67,7 @@ const RecruiterDashboard = () => {
         dispatch(fetchCurrentPlan(company?._id));
       }
     }
+    console.log("jobPlan:", jobPlan); // Debug log
   }, [company, user, recruiters, jobPlan, dispatch]);
 
   //  Socket.IO for Real-time Plan Expiration Updates
@@ -103,6 +105,13 @@ const RecruiterDashboard = () => {
       <div className="flex flex-col min-h-screen">
         {/* Navbar */}
         <Navbar />
+
+        {/* Verified Recruiter Badge */}
+        {jobPlan && (
+          <div className="mt-10">
+            <VerifiedRecruiterBadges plan={jobPlan?.title || jobPlan?.planName || jobPlan?.name} />
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="flex flex-1">

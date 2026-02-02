@@ -2,29 +2,23 @@
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+
   theme: {
     extend: {
-      keyframes: {
-        slide: {
-          "0%": { opacity: "0", transform: "translateX(40px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-      },
-      animation: {
-        slide: "slide 0.5s ease-out",
-      },
       fontFamily: {
-        // sans: ["Inter", "sans-serif"],
-            geometric: ["Poppins", "sans-serif"],
+        geometric: ["Poppins", "sans-serif"],
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -56,15 +50,13 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        chart: {
-          1: "hsl(var(--chart-1))",
-          2: "hsl(var(--chart-2))",
-          3: "hsl(var(--chart-3))",
-          4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))",
-        },
       },
+
       keyframes: {
+        slide: {
+          "0%": { opacity: "0", transform: "translateX(40px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
         slideInRight: {
           "0%": { transform: "translateX(10%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
@@ -78,26 +70,15 @@ export default {
           "100%": { transform: "translateX(-50%)" },
         },
       },
+
       animation: {
+        slide: "slide 0.5s ease-out",
         "slide-in-right": "slideInRight 0.5s ease-out",
-        "wave-bounce": "wave 1s infinite ease-in-out", // Custom animation name
+        "wave-bounce": "wave 1s infinite ease-in-out",
         "scroll-infinite": "scroll 15s linear infinite",
       },
     },
   },
+
   plugins: [require("tailwind-scrollbar-hide")],
-
-  
 };
-module.expots = {
-     darkMode : "class",
-     content : [
-      "./index.html",
-      "./src/**/*.{js, jsx ,ts , tsx}"
-     ],
-     theme:{
-      extend: {},
-
-     },
-     plugins: [],
-  }
