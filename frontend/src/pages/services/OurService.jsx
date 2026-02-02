@@ -107,22 +107,33 @@ const OurService = () => {
             </p>
           </div>
         </header> */}
-        <header className="text-white py-10 flex justify-center mt-6">
-          {/* Small card container */}
-          <div className="w-full relative bg-gradient-to-b from-blue-300 to-blue-600 shadow-2xl text-center px-80 py-10">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 animate-fade-in">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Our Services</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-black">
-              Our Services Tailored for Your Success
-            </h1>
-            <p className="mt-3 text-base md:text-lg font-serif">
-              Explore our diverse range of services designed to meet your
-              business needs.
-            </p>
-          </div>
-        </header>
+        <header className="text-white py-8 md:py-10 flex justify-center mt-6">
+  {/* Responsive card container */}
+  <div className="
+    w-full
+    relative
+    bg-gradient-to-b from-blue-300 to-blue-600
+    shadow-2xl
+    text-center
+    px-4 sm:px-8 md:px-16 lg:px-32 xl:px-80
+    py-8 md:py-10
+    rounded-none md:rounded-xl
+  ">
+    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-5 md:mb-6 animate-fade-in">
+      <Sparkles className="w-4 h-4" />
+      <span className="text-sm font-medium">Our Services</span>
+    </div>
+
+    <h1 className="text-2xl sm:text-3xl md:text-5xl font-black leading-tight">
+      Our Services Tailored for Your Success
+    </h1>
+
+    <p className="mt-3 text-sm sm:text-base md:text-lg font-serif max-w-3xl mx-auto">
+      Explore our diverse range of services designed to meet your business needs.
+    </p>
+  </div>
+</header>
+
 
         {/* Services Section */}
         <section className="py-10 bg-blue-50 dark:bg-gray-800 "> {/* changed padding from 16 to 10*/}

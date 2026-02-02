@@ -359,6 +359,11 @@ const appRouter = createBrowserRouter([
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
       { index: true, element: <RecruiterHome /> },
+      {
+      path: "applications/:jobId/:candidateId",
+      element: <CandidateInformation />
+    },
+    { index: true, element: <RecruiterHome /> },
     ]
   },
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },

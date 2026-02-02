@@ -397,6 +397,49 @@ export const getApplicants = async (req, res) => {
   }
 };
 
+// Get individual application details for recruiter
+export const getApplicationDetails = async (req, res) => {
+  try {
+    const { jobId, candidateId } = req.params;
+    console.log('🔍 Getting application details for jobId:', jobId, 'candidateId:', candidateId);
+    
+    const application = await Application.findOne({
+      job: jobId,
+      applicant: candidateId
+    }).populate({
+      path: "applicant",
+      select: "fullname emailId phoneNumber profile address"
+    }).populate({
+      path: "job",
+      select: "jobDetails"
+    });
+
+    console.log('📋 Found application:', application ? 'Yes' : 'No');
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found.", success: false });
+    }
+
+    // Format candidate data for frontend
+    const candidateData = {
+      name: application.applicant.fullname,
+      email: application.applicant.emailId?.email,
+      phone: application.applicant.phoneNumber?.number,
+      experience: application.applicant.profile?.experience?.experienceDetails,
+      skills: application.applicant.profile?.skills || [],
+      resumeUrl: application.applicant.profile?.resume,
+      status: application.status,
+      appliedAt: application.createdAt
+    };
+
+    console.log('✅ Sending candidate data:', candidateData);
+    return res.status(200).json({ success: true, data: candidateData });
+  } catch (error) {
+    console.error("❌ Error fetching application details:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
 // This recruiter update the status of application of user 
 export const updateStatus = async (req, res) => {
   try {

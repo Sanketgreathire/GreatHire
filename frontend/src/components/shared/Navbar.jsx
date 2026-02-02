@@ -203,7 +203,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300 px-6 py-3">
+      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300 px-6 py-3 ms-4">
         {/* <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2"> */}
         <div className="flex items-center justify-between w-full">
           {/* Logo */}

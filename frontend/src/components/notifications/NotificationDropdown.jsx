@@ -20,7 +20,6 @@ const NotificationDropdown = () => {
     loadNotifications
   } = notificationContext || {};
 
-  // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -34,7 +33,6 @@ const NotificationDropdown = () => {
     }
   }, [isOpen]);
 
-  // Load notifications
   useEffect(() => {
     if (isOpen && user && loadNotifications) {
       setLoading(true);
@@ -56,6 +54,25 @@ const NotificationDropdown = () => {
     await markAllAsRead();
     setLoading(false);
   }, [markAllAsRead]);
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification) return;
+
+    if (!notification.isRead) {
+      await handleMarkAsRead(notification._id);
+    }
+
+    if (
+      notification.type === 'application-submitted' &&
+      notification.metadata?.applicationId
+    ) {
+      setIsOpen(false);
+      const jobId = notification.relatedEntity;
+      const candidateId = notification.sender;
+
+      navigate(`/recruiter/dashboard/applications/${jobId}/${candidateId}`);
+    }
+  };
 
   const getTimeAgo = (date) => {
     if (!date) return '';
@@ -88,28 +105,51 @@ const NotificationDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border z-50 flex flex-col max-h-[450px]">
-          
+        <div
+          className="
+            absolute right-0 mt-2 
+            w-90
+            sm:w-80 
+            max-sm:fixed max-sm:left-2 max-sm:right-2 max-sm:top-16
+            bg-white 
+            rounded-lg 
+            max-sm:rounded-xl 
+            shadow-xl 
+            border 
+            z-50 
+            flex flex-col 
+            max-h-[450px] 
+            max-sm:max-h-[75vh]
+            overflow-hidden
+          "
+        >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="text-lg font-semibold">Notifications</h3>
+          <div className="flex items-center justify-between px-4 py-3 border-b">
+            <h3 className="text-base font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-xs text-blue-600 hover:text-blue-800"
                 >
                   Mark all read
                 </button>
               )}
               <button onClick={() => setIsOpen(false)}>
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Scrollable list */}
-          <div className="flex-1 overflow-y-auto">
+          {/* List */}
+          <div
+            className="
+              overflow-y-auto 
+              max-h-[300px] 
+              max-sm:max-h-[45vh]
+              relative
+            "
+          >
             {loading ? (
               <div className="p-6 text-center text-gray-500">
                 Loading notifications...
@@ -122,17 +162,14 @@ const NotificationDropdown = () => {
               displayNotifications.map((notification) => (
                 <div
                   key={notification._id}
-                  onClick={() =>
-                    !notification.isRead &&
-                    handleMarkAsRead(notification._id)
-                  }
-                  className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
+                  onClick={() => handleNotificationClick(notification)}
+                  className={`px-4 py-3 border-b cursor-pointer hover:bg-gray-50 ${
                     !notification.isRead
                       ? 'bg-blue-50 border-l-4 border-blue-500'
                       : ''
                   }`}
                 >
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 leading-snug">
                     {notification.message}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
@@ -141,15 +178,20 @@ const NotificationDropdown = () => {
                 </div>
               ))
             )}
+
+            {/* Blue scroll hint line */}
+            {displayNotifications.length > 2 && (
+              <div className="sticky bottom-0 h-1 bg-blue-500 opacity-80" />
+            )}
           </div>
 
-          {/* Footer – ALWAYS visible */}
+          {/* Footer */}
           {displayNotifications.length > 0 && (
-            <div className="p-3 border-t bg-gray-50">
+            <div className="border-t bg-gray-50 px-4 py-2">
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  navigate('/notifications'); // ✅ FIXED PATH
+                  navigate('/notifications');
                 }}
                 className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
