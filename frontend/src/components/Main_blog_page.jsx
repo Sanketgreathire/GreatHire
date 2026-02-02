@@ -7,9 +7,12 @@ import hiring from "../assets/Human-Resources-Approval-Animation.json";
 import resume from "../assets/Recolored job proposal review animation.json";
 import remoteWork from "../assets/Work from Home.json";
 import { Link, useNavigate } from "react-router-dom"; //npm install react-router-dom
+import ProductDetailPage from "@/components/ProductDetailPage";
+import CareerAdvice from "@/components/CareerAdvice";
 
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import TheFuture from "@/components/TheFuture";
 
 // imported helmet to apply customized meta tags
 import { Helmet } from "react-helmet-async";
@@ -17,24 +20,28 @@ import { Helmet } from "react-helmet-async";
 // Slides data outside component to prevent recreation
 const slides = [
   {
+    id: 1,
     title: "The future technology",
     description:
       "The future of technology begins with bold ideas. At Capgemini, we bring those ideas to life – as intended.",
     image: "./3320008.jpg",
   },
   {
+    id: 2,
     title: "Innovation drives growth",
     description:
       "We transform businesses through cutting-edge technology solutions and innovative approaches.",
     image: "./innovation-bg.png",
   },
   {
+    id: 3,
     title: "Digital transformation",
     description:
       "Empowering organizations to thrive in the digital age with our expertise and solutions.",
     image: "./digital_bg.jpg",
   },
   {
+    id: 4,
     title: "Technology solutions",
     description:
       "Building the future with scalable, secure, and sustainable technology platforms.",
@@ -1429,6 +1436,8 @@ function Moin_blog_page() {
           /* Carousel Container Styling */
           .hr-carousel-wrapper {
             position: relative;
+             z-index: 0;          /* 👈 ADD */
+  overflow: visible; 
             background: linear-gradient(135deg, 
               rgba(59, 130, 246, 0.03) 0%, 
               rgba(168, 85, 247, 0.03) 50%, 
@@ -1444,7 +1453,8 @@ function Moin_blog_page() {
             background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ec4899 100%);
             border-radius: inherit;
             opacity: 0;
-            z-index: -1;
+            z-index: -2;
+            pointer-events: none; 
             transition: opacity 0.5s ease-in-out;
           }
 
@@ -1493,12 +1503,28 @@ function Moin_blog_page() {
             transition: all 0.4s ease;
           }
 
-          .hr-carousel-wrapper:hover .carousel-main-title {
-            background: linear-gradient(135deg, #3b82f6, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
+          .carousel-main-title {
+  position: relative;
+  z-index: 3;
+}
+
+
+   .hr-carousel-wrapper:hover .carousel-main-title {
+  background: linear-gradient(135deg, #3b82f6, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  /* Fallback color (VERY IMPORTANT) */
+color: rgb(160, 67, 246);
+-webkit-text-fill-color: transparent;
+
+  /* Visibility insurance */
+  
+  color: rgba(233, 46, 239, 0.92);                 /* solid color fallback */
+  -webkit-text-fill-color: #d34ef0;
+}
+
+
 
           /* Category Tag Transform */
           .carousel-tag-wrapper {
@@ -1566,6 +1592,11 @@ function Moin_blog_page() {
           .btn-arrow-icon {
             transition: transform 0.4s ease;
           }
+
+          .carousel-content-slide {
+  position: relative;
+  z-index: 2;
+}
 
           .carousel-action-btn:hover .btn-arrow-icon {
             transform: translateX(8px);
@@ -1984,21 +2015,27 @@ function Moin_blog_page() {
         <div
           className="slider-background"
           style={{
-            backgroundImage: `url(${slides[currentSlide].image})`,
+            backgroundImage: `url(${slides[currentSlide]?.image || ""})`,
           }}
         ></div>
 
         <div className="slider-content">
           <div className="content-box">
-            <h1 className="slide-title">{slides[currentSlide].title}</h1>
+            <div className="mb-2 text-sm text-blue-300 font-semibold">
+              Slide {currentSlide + 1} of {slides.length}
+            </div>
+            <h1 className="slide-title">{slides[currentSlide]?.title}</h1>
             <p className="slide-description">
-              {slides[currentSlide].description}
+              {slides[currentSlide]?.description}
             </p>
 
-            <Link className="read-more-btn" to="/TheFutureTechnology">
-              Read more
-              <span className="arrow">→</span>
-            </Link>
+            <Link
+  className="read-more-btn"
+  to={`/TheFuture/${slides[currentSlide]?.id}`}
+>
+  Read more
+  <span className="arrow">→</span>
+</Link>
           </div>
         </div>
 
@@ -2286,7 +2323,7 @@ function Moin_blog_page() {
 
                   {/* Read More Link */}
                   <Link
-                    to="/HiringInsights"
+                    to={`/CareerAdvice/${article.id}`}
                     className="read-more-link text-green-600 font-semibold text-base flex items-center gap-2 hover:text-green-700 transition-colors duration-300"
                   >
                     Read More
@@ -2438,7 +2475,7 @@ function Moin_blog_page() {
       </section>
 
       {/* ==================== Resume Tips and HR Insight ================== */}
-      <section className="w-full py-6 sm:py-10 md:py-12 lg:py-16 xl:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-transparent">
+      <section className="w-full overflow-visible py-6 sm:py-10 md:py-12 lg:py-16 xl:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-transparent">
         <div className="max-w-screen-2xl mx-auto">
           {/* Main Heading */}
           <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
@@ -2451,15 +2488,15 @@ function Moin_blog_page() {
           </div>
 
           {/* Carousel Box */}
-          <div className="hr-carousel-wrapper rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[3rem] px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-9 lg:px-12 lg:py-12 xl:px-16 xl:py-16 shadow-[0_25px_50px_rgba(0,0,0,0.12)]">
+          <div className="hr-carousel-wrapper rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[3rem] px-4 py-8 sm:px-6 sm:py-7 md:px-8 md:py-9 lg:px-12 lg:py-12 xl:px-16 xl:py-16 shadow-[0_25px_50px_rgba(0,0,0,0.12)]">
             {/* Slides Container */}
-            <div className="relative min-h-[500px] sm:min-h-[450px] md:min-h-[400px] lg:min-h-[350px]">
+            <div className="relative overflow-visible">
               {carouselItems.map((item, idx) => (
                 <div
                   key={item.id}
                   className={`carousel-content-slide ${
                     currentIndex === idx ? "visible" : "hidden"
-                  } grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 md:gap-7 lg:gap-9 xl:gap-11 items-center`}
+                  } grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 md:gap-7 lg:gap-9 xl:gap-11 items-center overflow`}
                 >
                   {/* Image Column */}
                   <div className="lg:col-span-5 xl:col-span-4">
@@ -2609,7 +2646,7 @@ function Moin_blog_page() {
 
                     {/* Add to Cart Button */}
                     <Link
-                      to="/HiringInsights"
+                      to={`/ProductDetailPage/${product.id}`} // <-- include the ID dynamically
                       className="cart-action-btn w-full bg-red-500 text-white font-bold text-sm sm:text-base md:text-lg py-3 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl shadow-lg relative z-10 flex items-center justify-center"
                     >
                       Read More
@@ -2643,8 +2680,8 @@ function Moin_blog_page() {
         </div>
       </section>
       {/* ================= FUTURE OF HIRING SECTION ================= */}
-      <section className="w-full bg-white py-20 px-6" id="future-of-hiring">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="w-full  py-20 px-6 " id="future-of-hiring ">
+        <div className="max-w-6xl mx-auto text-center ">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Creating the Future of Employment
           </h2>
@@ -2655,8 +2692,8 @@ function Moin_blog_page() {
             intelligent technology."
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition">
+          <div className="grid  grid-cols-1 shadow-lg md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            <div className="rounded-2xl bg-blue-100 border  shadow-xl p-6 hover:shadow-sm transition">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Making Wise Hiring Choices
               </h3>
@@ -2667,7 +2704,7 @@ function Moin_blog_page() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition">
+            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Data-Driven Recruitment
               </h3>
@@ -2679,7 +2716,7 @@ function Moin_blog_page() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition">
+            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Human + AI Collaboration
               </h3>
@@ -2690,7 +2727,7 @@ function Moin_blog_page() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition">
+            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Solutions for Scalable Talent
               </h3>
@@ -2710,7 +2747,7 @@ function Moin_blog_page() {
               Explore Hiring Insights
             </button>
           </div> */}
-          <div className="mt-16">
+          <div className="mt-10">
             <Link
               to="/HiringInsights"
               className="px-8 py-3 inline-block rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition"
