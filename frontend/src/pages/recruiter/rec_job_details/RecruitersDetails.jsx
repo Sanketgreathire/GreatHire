@@ -63,13 +63,13 @@ const RecruitersDetails = () => {
 
       {user?.role !== "recruiter" && <Navbar linkName="Recruiter Details" />}
 
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-12">
         {loading ? (
           <div className="text-2xl font-semibold text-gray-600">Loading...</div>
         ) : recruiterDetails ? (
           <div className="w-full max-w-6xl space-y-8">
             {/* Profile Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg text-white p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg text-white p-9 flex flex-col md:flex-row items-center md:items-start gap-8">
               <img
                 src={getSafeImageUrl(recruiterDetails?.profile?.profilePhoto)}
                 alt="Recruiter"

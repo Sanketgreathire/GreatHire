@@ -128,7 +128,7 @@ const AllApplicantsList = () => {
         !applicantDetailsModal ? (
           <div className="min-h-screen bg-gray-50 p-6 sm:p-12 pt-28">
             {/* Page Wrapper */}
-            <div className="bg-white shadow-2xl rounded-3xl p-10">
+            <div className="bg-white shadow-2xl rounded-3xl p-12">
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
