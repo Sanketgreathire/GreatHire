@@ -114,7 +114,7 @@ const AppliedCandidatesList = () => {
       {user?.role !== "recruiter" && <Navbar linkName={"Applicants List"} />}
       <div
         className={`${user?.role !== "recruiter" ? "bg-white m-4" : ""
-          } p-5 h-screen`}
+          } p-10 h-screen`}
       >
         {!applicantDetailsModal ? (
           <>
