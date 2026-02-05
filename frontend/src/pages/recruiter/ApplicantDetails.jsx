@@ -75,7 +75,7 @@ const applicantDetails = ({
         />
       </Helmet>
       <div className="flex items-center justify-center my-4">
-        <div className="w-11/12 max-w-4xl bg-white shadow-lg rounded-2xl p-6">
+        <div className="w-11/12 max-w-4xl bg-white shadow-lg rounded-2xl p-14">
           {/* Header */}
           <div className="flex items-center justify-between border-b pb-4 mb-6">
             <IoArrowBackSharp
