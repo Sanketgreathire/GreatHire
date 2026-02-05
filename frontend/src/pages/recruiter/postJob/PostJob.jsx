@@ -778,6 +778,7 @@ const PostJob = () => {
                         <option value="per week">per week</option>
                         <option value="per day">per day</option>
                         <option value="per hour">per hour</option>
+                        <option value="Unpaid">Unpaid</option>
                       </select>
                     </div>
                     {formik.touched.salary && formik.errors.salary && (
