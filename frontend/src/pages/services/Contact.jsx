@@ -10,12 +10,12 @@ import {
   FaLinkedin,
   FaInstagram,
   FaFacebook,
-  FaThreads,
   FaRocket,
   FaUsers,
   FaShieldAlt,
   FaStar,
 } from "react-icons/fa";
+import { FaThreads } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
