@@ -216,23 +216,35 @@ const JobMajorDetails = ({ selectedJob }) => {
 
           <div
             className="
-      prose prose-sm max-w-none
-      dark:prose-invert
-
-      [&_ul]:list-disc [&_ul]:ml-6
-      [&_ol]:list-decimal [&_ol]:ml-6
-      [&_li]:ml-1 [&_li]:mb-1
-
-      [&_ul_ul]:list-[circle]
-      [&_ul_ul_ul]:list-[square]
-      [&_ol_ol]:list-[lower-alpha]
-      [&_ol_ol_ol]:list-[lower-roman]
-
-      [&_ol[type='a']]:list-[lower-alpha]
-      [&_ol[type='A']]:list-[upper-alpha]
-      [&_ol[type='i']]:list-[lower-roman]
-      [&_ol[type='I']]:list-[upper-roman]
-    "
+    prose prose-sm max-w-none
+    dark:prose-invert
+    text-gray-800
+    dark:text-gray-200
+    prose-headings:text-gray-900
+    dark:prose-headings:text-gray-100
+    prose-p:text-gray-700
+    dark:prose-p:text-gray-200
+    [&_ul]:list-disc [&_ul]:ml-6
+    [&_ol]:list-decimal [&_ol]:ml-6
+    [&_li]:ml-1 [&_li]:mb-1
+    prose-li:text-gray-700
+    dark:prose-li:text-gray-200
+    [&_*]:dark:!text-gray-200
+    [&_strong]:dark:!text-gray-100
+    [&_h1]:dark:!text-gray-100
+    [&_h2]:dark:!text-gray-100
+    [&_h3]:dark:!text-gray-100
+    [&_h4]:dark:!text-gray-100
+    [&_a]:dark:!text-blue-400
+    [&_ul_ul]:list-[circle]
+    [&_ul_ul_ul]:list-[square]
+    [&_ol_ol]:list-[lower-alpha]
+    [&_ol_ol_ol]:list-[lower-roman]
+    [&_ol[type='a']]:list-[lower-alpha]
+    [&_ol[type='A']]:list-[upper-alpha]
+    [&_ol[type='i']]:list-[lower-roman]
+    [&_ol[type='I']]:list-[upper-roman]
+  "
             dangerouslySetInnerHTML={{
               __html: selectedJob?.jobDetails?.details
                 ? DOMPurify.sanitize(selectedJob.jobDetails.details)
