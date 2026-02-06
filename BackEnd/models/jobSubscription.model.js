@@ -126,6 +126,22 @@ const jobSubscriptionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+jobSubscriptionSchema.methods.checkValidity = async function () {
+  const now = new Date();
+  if (this.expiryDate < now) {
+    this.status = "Expired";
+    await this.save();
+
+    const company = await mongoose.model("Company").findById(this.company);
+    if (company) {
+      company.maxJobPosts = 0;
+      await company.save();
+    }
+    return true;
+  }
+  return false;
+};
+
 export const JobSubscription = mongoose.model(
   "JobSubscription",
   jobSubscriptionSchema

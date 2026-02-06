@@ -272,6 +272,59 @@ export const getUnreadCount = async (req, res) => {
   }
 };
 
+// ==============================
+// Delete a notification
+// ==============================
+export const deleteNotification = async (req, res) => {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Authentication required" 
+      });
+    }
+
+    const { id } = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid notification ID" 
+      });
+    }
+
+    const role = getUserRoleModel(req.user.role);
+
+    const notification = await Notification.findOneAndDelete({
+      _id: id,
+      recipient: req.user._id,
+      recipientModel: role
+    });
+
+    if (!notification) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Notification not found or access denied" 
+      });
+    }
+
+    res.status(200).json({ success: true, message: "Notification deleted" });
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid notification ID format" 
+      });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to delete notification" 
+    });
+  }
+};
+
 // Test notification endpoint
 export const testNotification = async (req, res) => {
   try {
