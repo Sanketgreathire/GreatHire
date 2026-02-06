@@ -33,6 +33,7 @@ import adminRecruiterDataRoute from "./routes/admin/recruiterStats.route.js";
 import adminJobDataRoute from "./routes/admin/jobStats.route.js";
 import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
 import notificationRoute from "./routes/notification.route.js";
+import contactMessageRoute from "./routes/contactMessage.route.js"; // NEW ROUTE
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -158,6 +159,7 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
+app.use("/api", contactMessageRoute); // NEW ROUTE - Handles /api/sendMessage
 
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
