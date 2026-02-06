@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { io } from 'socket.io-client';
 import { useSelector } from 'react-redux';
-import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount } from '../service/notificationservice';
+import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount, deleteNotification } from '../service/notificationservice';
 
 const NotificationContext = createContext();
 
@@ -119,14 +119,29 @@ export const NotificationProvider = ({ children }) => {
     }
   }, []);
 
+  // Delete a notification
+  const handleDeleteNotification = useCallback(async (notificationId) => {
+    try {
+      await deleteNotification(notificationId);
+      setNotifications(prev => prev.filter(n => n._id !== notificationId));
+      setUnreadCount(prev => {
+        const notification = notifications.find(n => n._id === notificationId);
+        return notification && !notification.isRead ? Math.max(0, prev - 1) : prev;
+      });
+    } catch (err) {
+      console.error('Failed to delete notification:', err);
+    }
+  }, [notifications]);
+
   const contextValue = useMemo(() => ({
     notifications,
     unreadCount,
     loadNotifications,
     markAsRead: handleMarkAsRead,
     markAllAsRead: handleMarkAllAsRead,
+    deleteNotification: handleDeleteNotification,
     socket
-  }), [notifications, unreadCount, loadNotifications, handleMarkAsRead, handleMarkAllAsRead, socket]);
+  }), [notifications, unreadCount, loadNotifications, handleMarkAsRead, handleMarkAllAsRead, handleDeleteNotification, socket]);
 
   return (
     <NotificationContext.Provider value={contextValue}>

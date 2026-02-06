@@ -44,6 +44,17 @@ export const markAllAsRead = async () => {
   }
 };
 
+// Delete a notification
+export const deleteNotification = async (id) => {
+  try {
+    const res = await API.delete(`/v1/notifications/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    throw error;
+  }
+};
+
 // Get notification icon based on type
 export const getNotificationIcon = (type) => {
   const iconMap = {

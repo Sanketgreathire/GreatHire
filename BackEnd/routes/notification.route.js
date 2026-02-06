@@ -6,7 +6,8 @@ import {
   getAdminNotifications,
   markAdminNotificationAsRead,
   getUnreadCount,
-  testNotification
+  testNotification,
+  deleteNotification
 } from "../controllers/notification.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 
@@ -17,6 +18,7 @@ router.get("/", isAuthenticated, getNotifications);                  // Get logg
 router.get("/unread-count", isAuthenticated, getUnreadCount);        // Get unread count
 router.put("/:id/read", isAuthenticated, markAsRead);                // Mark one notification as read
 router.put("/mark-all-read", isAuthenticated, markAllAsRead);        // Mark all as read
+router.delete("/:id", isAuthenticated, deleteNotification);          // Delete a notification
 router.post("/test", isAuthenticated, testNotification);             // Test notification endpoint
 
 // 🔹 Admin Routes
