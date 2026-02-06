@@ -338,7 +338,7 @@ const subscriptionPlans = [
   {
     id: "swift-hire",
     title: "Standard",
-    price: 1,
+    price: 999,
     billing: "Monthly",
     jobs: "5 Jobs",
     resumes: "50 Credits",
@@ -420,22 +420,6 @@ const subscriptionPlans = [
     ],
     extraInfo: ["₹10,000 per month", "1 month advance required"],
     cta: "Talk to RPO Expert",
-  },
-  {
-    id: "partnership",
-    title: "Partnership Program",
-    price: "Custom",
-    billing: "Flexible",
-    jobs: "Custom Solutions",
-    resumes: "Unlimited",
-    features: [
-      "White-label solutions",
-      "Custom integrations",
-      "Revenue sharing models",
-      "Co-branded services",
-    ],
-    extraInfo: ["Tailored to your needs"],
-    cta: "Start Partnership",
   },
 ];
 
