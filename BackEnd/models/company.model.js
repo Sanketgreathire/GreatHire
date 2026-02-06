@@ -79,12 +79,4 @@ const companySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-companySchema.pre("save", function (next) {
-  if (this.hasSubscription) {
-    this.maxJobPosts = -1; // unlimited job
-    
-  }
-  next();
-});
-
 export const Company = mongoose.model("Company", companySchema);

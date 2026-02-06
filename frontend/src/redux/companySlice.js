@@ -37,19 +37,24 @@ const companySlice = createSlice({
       state.company.maxJobPosts = state.company.maxJobPosts + action.payload;
     },
 
-    // reducer function to update maxJobpost data
-    updateCandidateCredits: (state, action) => {
-      state.company.creditedForCandidates =
-        state.company.creditedForCandidates + action.payload;
-    },
+    // reducer function to decrease max job posts
     decreaseMaxPostJobs: (state, action) => {
       state.company.maxJobPosts = state.company.maxJobPosts - action.payload;
     },
+
+    // reducer function to update candidate credits (set to specific value)
+    updateCandidateCredits: (state, action) => {
+      state.company.creditedForCandidates = action.payload;
+    },
+    
+    // reducer function to decrease candidate credits
     decreaseCandidateCredits: (state, action) => {
       state.company.creditedForCandidates =
         state.company.creditedForCandidates - action.payload;
     },
-    decreaseCandidateCredits: (state, action) => {
+    
+    // reducer function to decrease job credits
+    decreaseJobCredits: (state, action) => {
       state.company.creditedForJobs =
         state.company.creditedForJobs - action.payload;
     },
@@ -66,6 +71,7 @@ export const {
   decreaseMaxPostJobs,
   updateCandidateCredits,
   decreaseCandidateCredits,
+  decreaseJobCredits,
 } = companySlice.actions;
 
 export default companySlice.reducer;

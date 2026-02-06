@@ -69,22 +69,29 @@ const CandidateList = () => {
   };
   const handleViewInformation = async (candidate) => {
     try {
-      // decrease credit API
-      // const response = await axios.get(
-      //   `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
-      //   { withCredentials: true }
-      // );
+      // Check if company has credits
+      if (company?.creditedForCandidates <= 0) {
+        toast.error("Insufficient credits. Please purchase a plan.");
+        navigate("/recruiter/dashboard/your-plans");
+        return;
+      }
 
-      // // update redux
-      // if (response.data.success) {
-      //   dispatch(decreaseCandidateCredits(1));
-      // }
+      // Deduct credit
+      const response = await axios.get(
+        `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
+        { withCredentials: true }
+      );
 
-      // navigate to candidate information page
+      // Update redux
+      if (response.data.success) {
+        dispatch(decreaseCandidateCredits(1));
+      }
+
+      // Navigate to candidate information page
       navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
 
     } catch (error) {
-      toast.error("Failed to decrease credit");
+      toast.error("Failed to view candidate information");
     }
   };
 

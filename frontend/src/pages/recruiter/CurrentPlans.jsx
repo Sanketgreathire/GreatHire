@@ -89,18 +89,24 @@ const CurrentPlans = () => {
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Purchase Date:</span>
                       <span className="font-semibold">
-                        {format(new Date(jobPlan.purchaseDate), "dd MMM yyyy")}
+                        {jobPlan.purchaseDate 
+                          ? format(new Date(jobPlan.purchaseDate), "dd MMM yyyy")
+                          : "N/A"
+                        }
                       </span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Expiry Date:</span>
                       <span
-                        className={`font-semibold ${new Date(jobPlan.expiryDate) < new Date()
+                        className={`font-semibold ${jobPlan.expiryDate && new Date(jobPlan.expiryDate) < new Date()
                             ? "text-red-500"
                             : "text-green-600"
                           }`}
                       >
-                        {format(new Date(jobPlan.expiryDate), "dd MMM yyyy")}
+                        {jobPlan.expiryDate
+                          ? format(new Date(jobPlan.expiryDate), "dd MMM yyyy")
+                          : "N/A"
+                        }
                       </span>
                     </div>
                   </div>

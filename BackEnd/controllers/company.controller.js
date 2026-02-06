@@ -723,31 +723,98 @@ export const getCandidateData = async (req, res) => {
 };
 
 
+// if recruiter viewing applicant details, deduct 1 credit
+export const deductCandidateCredit = async (req, res) => {
+  try {
+    const { companyId } = req.body;
+    const userId = req.id;
+
+    if (!(await isUserAssociated(companyId, userId))) {
+      return res.status(403).json({ 
+        message: "You are not authorized", 
+        success: false 
+      });
+    }
+
+    const company = await Company.findById(companyId);
+    
+    if (!company) {
+      return res.status(404).json({ 
+        message: "Company not found", 
+        success: false 
+      });
+    }
+
+    // Check if company has credits
+    if (company.creditedForCandidates <= 0) {
+      return res.status(400).json({ 
+        message: "Insufficient candidate credits. Please purchase a plan.", 
+        success: false 
+      });
+    }
+
+    // Deduct 1 credit
+    company.creditedForCandidates -= 1;
+    await company.save();
+
+    return res.status(200).json({
+      success: true,
+      remainingCredits: company.creditedForCandidates,
+      message: "Credit deducted successfully"
+    });
+  } catch (error) {
+    console.error("Error deducting candidate credit:", error);
+    res.status(500).json({ 
+      message: "Internal Server Error", 
+      success: false 
+    });
+  }
+};
+
 // if recruiter finding the candidate and if they view the resume of candidate then one credit decrease 1 Resume === 1 credit
 export const decreaseCandidateCredits = async (req, res) => {
   try {
     const companyId = req.params.id;
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
     }
+    
     const company = await Company.findById(companyId);
-    // If creditedForCandidates is null, no need to decrease
-    if (company.creditedForCandidates !== null) {
-      if (company.creditedForCandidates > 0) {
-        company.creditedForCandidates -= 1;
-        await company.save();
-      }
+    
+    if (!company) {
+      return res.status(404).json({ 
+        message: "Company not found", 
+        success: false 
+      });
     }
+    
+    // Check if company has credits
+    if (company.creditedForCandidates <= 0) {
+      return res.status(400).json({ 
+        message: "Insufficient credits", 
+        success: false 
+      });
+    }
+    
+    // Deduct 1 credit
+    company.creditedForCandidates -= 1;
+    await company.save();
+    
     return res.status(200).json({
       success: true,
+      remainingCredits: company.creditedForCandidates
     });
   } catch (error) {
     console.error("Error decreasing candidate credits:", error);
-    res.status(500).json({ message: "Internal Server Error", error });
+    res.status(500).json({ 
+      message: "Internal Server Error", 
+      success: false,
+      error: error.message 
+    });
   }
 };
 
