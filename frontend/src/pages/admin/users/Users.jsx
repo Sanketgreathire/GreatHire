@@ -195,7 +195,7 @@ const location = useLocation();
   const name = u.fullname?.toLowerCase() || "";
   const email = u.email?.toLowerCase() || "";
   const phone = u.phoneNumber ? String(u.phoneNumber).toLowerCase() : "";
-  const role = u.jobRole?.toLowerCase() || "";
+  const role = u.jobRole? String(u.jobRole).toLowerCase() :"";
   const duration = u.duration? String(u.duration).toLowerCase() : "";
   const safe = (v) => String(v || "").toLowerCase();
 
