@@ -8,8 +8,9 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaLinkedin,
-  FaTwitter,
+  FaInstagram,
   FaFacebook,
+  FaThreads,
   FaRocket,
   FaUsers,
   FaShieldAlt,
@@ -306,25 +307,33 @@ const ContactSection = () => {
                       <h4 className="font-semibold mb-4 text-lg">Connect With Us</h4>
                       <div className="flex gap-4">
                         <a
-                          href="#"
+                          href="https://www.linkedin.com/company/greathire/"
                           className="w-12 h-12 bg-white/10 dark:bg-white/5 hover:bg-blue-600 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all hover:scale-110 group"
                         >
                           <FaLinkedin className="text-blue-400 group-hover:text-white text-xl transition-colors" />
                         </a>
 
                         <a
-                          href="#"
-                          className="w-12 h-12 bg-white/10 dark:bg-white/5 hover:bg-sky-500 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all hover:scale-110 group"
+                          href="https://www.instagram.com/great_hire?igsh=YnQ1a3g2a3Bhc25p"
+                          className="w-12 h-12 bg-white/10 dark:bg-white/5 hover:bg-pink-500 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all hover:scale-110 group"
                         >
-                          <FaTwitter className="text-sky-400 group-hover:text-white text-xl transition-colors" />
+                          <FaInstagram className="text-pink-400 group-hover:text-white text-xl transition-colors" />
                         </a>
 
                         <a
-                          href="#"
+                          href="https://www.facebook.com/share/15WGT743qv/"
                           className="w-12 h-12 bg-white/10 dark:bg-white/5 hover:bg-blue-700 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all hover:scale-110 group"
                         >
                           <FaFacebook className="text-blue-500 group-hover:text-white text-xl transition-colors" />
                         </a>
+
+                        <a
+                          href="https://www.threads.net/@great_hire"
+                          className="w-12 h-12 bg-white/10 dark:bg-white/5 hover:bg-black backdrop-blur-sm rounded-xl flex items-center justify-center transition-all hover:scale-110 group"
+                        >
+                          <FaThreads className="text-gray-300 group-hover:text-white text-xl transition-colors" />
+                        </a>
+
                       </div>
                     </div>
                   </div>
