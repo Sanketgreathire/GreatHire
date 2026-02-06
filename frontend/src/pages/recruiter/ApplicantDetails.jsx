@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { Badge } from "@/components/ui/badge";
 import { MdOutlineVerified } from "react-icons/md";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
+import { useSelector, useDispatch } from "react-redux";
+import { updateCandidateCredits } from "@/redux/companySlice";
 import {
   APPLICATION_API_END_POINT,
   VERIFICATION_API_END_POINT,
+  COMPANY_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 
 const applicantDetails = ({
@@ -18,7 +21,37 @@ const applicantDetails = ({
   user,
   setApplicants,
 }) => {
-  const [loading, setLoading] = useState(0); // State to track loading status when updating applicant status
+  const [loading, setLoading] = useState(0);
+  const [creditDeducted, setCreditDeducted] = useState(false);
+  const { company } = useSelector((state) => state.company);
+  const dispatch = useDispatch();
+
+  // Deduct credit when viewing applicant details
+  useEffect(() => {
+    const deductCredit = async () => {
+      if (creditDeducted || !company?._id) return;
+      
+      try {
+        const response = await axios.post(
+          `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
+          { companyId: company._id },
+          { withCredentials: true }
+        );
+        
+        if (response.data.success) {
+          dispatch(updateCandidateCredits(response.data.remainingCredits));
+          setCreditDeducted(true);
+        }
+      } catch (error) {
+        if (error.response?.status === 400) {
+          toast.error(error.response.data.message);
+          setTimeout(() => setApplicantDetailsModal(false), 2000);
+        }
+      }
+    };
+
+    deductCredit();
+  }, [company, creditDeducted, dispatch, setApplicantDetailsModal]);
 
   // Function to update the application status (Shortlisted or Rejected)
   const updateStatus = async (status) => {

@@ -219,6 +219,8 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= CRON =================
+// Disabled: Using credit-based system instead of subscription expiry
+/*
 cron.schedule("* * * * *", async () => {
   try {
     const subs = await Promise.all([
@@ -238,6 +240,7 @@ cron.schedule("* * * * *", async () => {
     console.error("Cron error:", err);
   }
 });
+*/
 
 // ================= START SERVER (FIXED) =================
 await connectDB();

@@ -8,6 +8,7 @@ import {
   getCurrentPlan,
   getCandidateData,
   decreaseCandidateCredits,
+  deductCandidateCredit,
   getCompanyApplicants,
   reportJob,
   getCandidateInformation,
@@ -43,6 +44,9 @@ router.route("/current-plan/:id").get(isAuthenticated, getCurrentPlan);
 router
   .route("/decrease-credit/:id")
   .get(isAuthenticated, decreaseCandidateCredits);
+router
+  .route("/deduct-candidate-credit")
+  .post(isAuthenticated, deductCandidateCredit);
 
 router.route("/report-job").post(isAuthenticated, reportJob);
 export default router;

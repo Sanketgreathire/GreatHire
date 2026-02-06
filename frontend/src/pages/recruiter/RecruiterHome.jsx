@@ -88,7 +88,9 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: <span className="text-green-600 text-2xl">Infinity</span>,
+      count: company?.creditedForJobs >= 500 
+        ? Math.floor(company.creditedForJobs / 500) 
+        : 0,
       icon: (
         <FaClipboardList className="text-4xl text-pink-600 bg-pink-100 rounded-lg p-2" />
       ),

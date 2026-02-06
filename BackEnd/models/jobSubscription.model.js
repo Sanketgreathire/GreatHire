@@ -102,7 +102,20 @@ const jobSubscriptionSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Hold", "Active", "Expired"],
-      default: "Active",
+      default: "Hold",
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["created", "paid", "failed"],
+      default: "created",
+    },
+    razorpayOrderId: { 
+      type: String, 
+      required: true 
+    },
+    paymentDetails: {
+      paymentId: { type: String },
+      signature: { type: String },
     },
     expiryDate: {
       type: Date,
