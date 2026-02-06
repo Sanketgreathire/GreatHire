@@ -23,6 +23,7 @@ import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { motion } from "framer-motion";
 import CountUp from "react-countup";
+import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
 
 const Dashboard = () => {
