@@ -8,6 +8,9 @@ import { Sparkles } from "lucide-react";
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
 
+
+import ServicesHeroBg from "./ServicesHeroBg.png";
+
 const OurService = () => {
   const navigate = useNavigate();
   const services = [
@@ -108,31 +111,49 @@ const OurService = () => {
           </div>
         </header> */}
         <header className="text-white py-8 md:py-10 flex justify-center mt-6">
-  {/* Responsive card container */}
-  <div className="
-    w-full
-    relative
-    bg-gradient-to-b from-blue-300 to-blue-600
-    shadow-2xl
-    text-center
-    px-4 sm:px-8 md:px-16 lg:px-32 xl:px-80
-    py-8 md:py-10
-    rounded-none md:rounded-xl
-  ">
+  {/* Hero Card */}
+  <div
+    className="
+      w-full
+      relative
+      shadow-2xl
+      text-center
+      px-4 sm:px-8 md:px-16 lg:px-32 xl:px-80
+      py-8 md:py-10
+      rounded-none md:rounded-xl
+      bg-cover bg-center
+      overflow-hidden
+    "
+    style={{
+      backgroundImage: `
+        linear-gradient(
+          90deg,
+          rgba(96,165,250,0.85),
+          rgba(167,139,250,0.85),
+          rgba(244,114,182,0.85)
+        ),
+        url(${ServicesHeroBg})
+      `
+    }}
+  >
+    {/* Badge */}
     <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-5 md:mb-6 animate-fade-in">
       <Sparkles className="w-4 h-4" />
       <span className="text-sm font-medium">Our Services</span>
     </div>
 
+    {/* Heading */}
     <h1 className="text-2xl sm:text-3xl md:text-5xl font-black leading-tight">
       Our Services Tailored for Your Success
     </h1>
 
+    {/* Description */}
     <p className="mt-3 text-sm sm:text-base md:text-lg font-serif max-w-3xl mx-auto">
       Explore our diverse range of services designed to meet your business needs.
     </p>
   </div>
 </header>
+
 
 
         {/* Services Section */}
