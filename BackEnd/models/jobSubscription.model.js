@@ -131,12 +131,21 @@ const jobSubscriptionSchema = new mongoose.Schema(
 
 jobSubscriptionSchema.methods.checkValidity = async function () {
   const now = new Date();
+  console.log(`  checkValidity called for ${this._id}: expiryDate=${this.expiryDate}, now=${now}, status=${this.status}`);
+  
   if (this.expiryDate < now && this.status !== "Expired") {
+    console.log(`  ✅ Expiring subscription ${this._id}`);
+    
+    // Use updateOne to bypass validation for old records
+    await mongoose.model("JobSubscription").updateOne(
+      { _id: this._id },
+      { $set: { status: "Expired" } }
+    );
     this.status = "Expired";
-    await this.save();
 
     const company = await mongoose.model("Company").findById(this.company);
     if (company) {
+      console.log(`  ✅ Resetting company ${company.companyName} to free plan`);
       // Reset to free plan credits after paid plan expires
       company.creditedForJobs = 1000; // 2 free job posts
       company.creditedForCandidates = 5; // 5 free candidate views

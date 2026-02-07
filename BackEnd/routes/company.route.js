@@ -49,4 +49,26 @@ router
   .post(isAuthenticated, deductCandidateCredit);
 
 router.route("/report-job").post(isAuthenticated, reportJob);
+
+// Test route to manually expire plans
+router.route("/test-expire-plans").get(async (req, res) => {
+  try {
+    const { JobSubscription } = await import("../models/jobSubscription.model.js");
+    const subs = await JobSubscription.find({ status: "Active" });
+    
+    let expiredCount = 0;
+    for (const sub of subs) {
+      console.log(`Checking sub ${sub._id}, expiry: ${sub.expiryDate}`);
+      if (await sub.checkValidity()) {
+        expiredCount++;
+        console.log(`Expired: ${sub._id}`);
+      }
+    }
+    
+    res.json({ success: true, checked: subs.length, expired: expiredCount });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 export default router;

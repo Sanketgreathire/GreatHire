@@ -118,24 +118,22 @@ notificationSchema.index({ createdAt: -1 });
 notificationSchema.index({ type: 1 });
 
 // Add validation middleware
-notificationSchema.pre('save', function(next) {
+notificationSchema.pre('save', function() {
   // Ensure sender and senderModel are consistent
   if (this.sender && !this.senderModel) {
-    return next(new Error('senderModel is required when sender is provided'));
+    throw new Error('senderModel is required when sender is provided');
   }
   if (!this.sender && this.senderModel) {
-    return next(new Error('sender is required when senderModel is provided'));
+    throw new Error('sender is required when senderModel is provided');
   }
   
   // Ensure relatedEntity and relatedEntityModel are consistent
   if (this.relatedEntity && !this.relatedEntityModel) {
-    return next(new Error('relatedEntityModel is required when relatedEntity is provided'));
+    throw new Error('relatedEntityModel is required when relatedEntity is provided');
   }
   if (!this.relatedEntity && this.relatedEntityModel) {
-    return next(new Error('relatedEntity is required when relatedEntityModel is provided'));
+    throw new Error('relatedEntity is required when relatedEntityModel is provided');
   }
-  
-  next();
 });
 
 // ✅ Prevent OverwriteModelError
