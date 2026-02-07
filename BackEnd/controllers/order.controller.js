@@ -74,6 +74,7 @@ export const createOrderForJobPlan = async (req, res) => {
       company: companyId,
       status: "Hold",
       paymentStatus: "created",
+      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // ✅ Set to 1 month from now
     });
 
     // ✅ Send response to frontend
