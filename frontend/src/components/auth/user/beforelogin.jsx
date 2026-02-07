@@ -5,6 +5,7 @@ import About from "@/pages/services/About";
 import Blogs from "@/components/Main_blog_page";
 import Contact from "@/pages/services/Contact";
 import Footer from "@/components/shared/Footer";
+import RecruiterPlansHome from "@/components/RecruiterPlansHome";
 import { useNavigate, NavLink, Link } from "react-router-dom";
 import JobsHiringSlider from "./JobSlider";
 import Lottie from "lottie-react";
@@ -555,6 +556,9 @@ const GreatHireLanding = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Recruiter Plans Section */}
+              <RecruiterPlansHome />
 
               {/* Ultra Premium CTA Section */}
               <div className="mt-3">

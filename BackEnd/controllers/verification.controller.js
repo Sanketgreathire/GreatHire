@@ -405,8 +405,9 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           .json({ success: false, message: "Company not found" });
       }
       
-      company.creditedForCandidates = company.creditedForCandidates + creditsForCandidates; // Add the creditings to existing credits
-      company.creditedForJobs = company.creditedForJobs + creditsForJobs; // Add the creditings to existing credits
+      // Set credits (not add) - replace old credits with new plan credits
+      company.creditedForCandidates = creditsForCandidates;
+      company.creditedForJobs = creditsForJobs;
       await company.save();
 
       res.status(200).json({

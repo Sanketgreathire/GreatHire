@@ -52,11 +52,15 @@ const companySchema = new mongoose.Schema(
     },
     creditedForJobs: {
       type: Number,
-      default: 0, // Default for Free plan
+      default: 1000, // 2 free job posts (500 credits each)
     },
     creditedForCandidates: {
       type: Number,
-      default: 0, // Default for Free plan
+      default: 5, // 5 free candidate views
+    },
+    hasUsedFreePlan: {
+      type: Boolean,
+      default: false, // Track if user has used free plan
     },
     hasSubscription: { 
       type: Boolean, 

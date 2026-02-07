@@ -6,7 +6,7 @@ import {
   FaUsers,
   FaBriefcase,
   FaClipboardList,
-  FaCoins,
+  FaTrophy,
 } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
 import { addCompany } from "@/redux/companySlice";
@@ -129,12 +129,14 @@ const RecruiterHome = () => {
       description: "Candidates who have been shortlisted.",
     },
     {
-      title: "Credits For Job Post",
-      count: company?.creditedForJobs || 0,
+      title: "Hiring Success Rate",
+      count: jobsStatistics?.selectedCandidates && jobsStatistics?.totalApplicants
+        ? `${Math.round((jobsStatistics.selectedCandidates / jobsStatistics.totalApplicants) * 100)}%`
+        : "0%",
       icon: (
-        <FaCoins className="text-4xl text-yellow-500 bg-yellow-100 rounded-lg p-2" />
+        <FaTrophy className="text-4xl text-amber-600 bg-amber-100 rounded-lg p-2" />
       ),
-      description: "Credits available for job postings.",
+      description: "Percentage of shortlisted candidates.",
     },
     {
       title: "Credits For Database",
