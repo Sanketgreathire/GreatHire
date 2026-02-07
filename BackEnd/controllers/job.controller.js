@@ -23,6 +23,7 @@ export const postJob = [
   check("location").notEmpty().withMessage("Location is required"),
   check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
   check("duration").notEmpty().withMessage("Duration is required"),
+  check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
   check("companyId").notEmpty().withMessage("Company ID is required"),
 
   async (req, res) => {
@@ -57,10 +58,14 @@ export const postJob = [
 
       const company = await Company.findById(companyId);
 
-      if (company.maxJobPosts === 0 &&  company.creditedForJobs < 500) {
+      // Debug log
+      console.log("anyAmount value received:", anyAmount, "Type:", typeof anyAmount);
+
+      if (company.creditedForJobs < 500) {
         return res.status(400).json({
           success: false,
-          message: "Company needs  credits to post jobs.",
+          message: "Insufficient credits to post jobs. Please purchase a plan.",
+          redirectTo: "/recruiter/dashboard/upgrade-plans"
         });
       }
 
@@ -68,31 +73,6 @@ export const postJob = [
       const splitQualifications = (typeof qualifications === 'string') ? qualifications.split("\n").map(q => q.trim()) : [];
       const splitBenefits = (typeof benefits === 'string') ? benefits.split("\n").map(b => b.trim()) : [];
       const splitResponsibilities = (typeof responsibilities === 'string') ? responsibilities.split("\n").map(r => r.trim()) : [];
-
-      if (anyAmount === "Yes") {
-        const blacklistedData = {
-          companyName: company.companyName,
-          email: company.email,
-          adminEmail: company.adminEmail,
-          CIN: company.CIN,
-        };
-
-        const existingBlacklist = await BlacklistedCompany.findOne({ CIN: company.CIN });
-
-        if (!existingBlacklist) {
-          await BlacklistedCompany.create(blacklistedData);
-        }
-
-        await Recruiter.updateOne(
-          { _id: userId },
-          { $set: { isActive: false, isBlocked: true } }
-        );
-
-        return res.status(403).json({
-          success: false,
-          message: "Your company has been blacklisted. Please contact the admin.",
-        });
-      }
 
       const newJob = new Job({
         jobDetails: {
@@ -157,30 +137,30 @@ export const postJob = [
       }
 
       if (company.maxJobPosts > 0) {
-        const updatedCompany = await Company.findOneAndUpdate(
-          { _id: company._id },
-          { $inc: { maxJobPosts: -1 } },
-          { new: true }
-        );
-
-        if (updatedCompany && updatedCompany.maxJobPosts === 0) {
-          const activeSubscription = await JobSubscription.findOne({
-            company: company._id,
-            status: "Active",
-          });
-
-          if (activeSubscription && activeSubscription.planName !== "Free") {
-            activeSubscription.status = "Expired";
-            await activeSubscription.save();
-          }
+        company.maxJobPosts -= 1;
+      } else {
+        company.creditedForJobs -= 500;
+        
+        // Mark free plan as used when credits reach 0
+        if (company.creditedForJobs === 0 && !company.hasUsedFreePlan) {
+          company.hasUsedFreePlan = true;
         }
       }
+      
+      await company.save();
 
-      if(company.maxJobPosts===0)
-      {
-        company.creditedForJobs = company.creditedForJobs - 500;
-        await company.save();
-      } // Deduct 500 credits for job posting
+      // Check if subscription should expire
+      if (company.maxJobPosts === 0) {
+        const activeSubscription = await JobSubscription.findOne({
+          company: company._id,
+          status: "Active",
+        });
+
+        if (activeSubscription && activeSubscription.planName !== "Free") {
+          activeSubscription.status = "Expired";
+          await activeSubscription.save();
+        }
+      }
 
       return res.status(201).json({
         success: true,

@@ -33,14 +33,6 @@ const PostJob = () => {
     //   formik.setFieldValue("details", formattedText);
   };
 
-  useEffect(() => {
-    if (company && company?.maxJobPosts === 0 && company?.creditedForJobs < 500)
-      navigate("/recruiter/dashboard/your-plans");
-  }, []);
-
-
-
-
 
   const editorRef = useRef(null);
 
@@ -203,7 +195,7 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
-      anyAmount: "",
+      anyAmount: "No",
     },
     validationSchema: Yup.object({
       urgentHiring: Yup.string().required("This field is required"),
@@ -227,6 +219,8 @@ const PostJob = () => {
 
     onSubmit: async (values) => {
       setLoading(true);
+      console.log("Form values being submitted:", values);
+      console.log("anyAmount value:", values.anyAmount);
       try {
         const response = await axios.post(
           `${JOB_API_END_POINT}/post-job`,
@@ -255,6 +249,14 @@ const PostJob = () => {
         }
       } catch (error) {
         console.error("Error posting job:", error);
+        if (error.response?.data?.redirectTo) {
+          toast.error(error.response.data.message);
+          setTimeout(() => {
+            navigate(error.response.data.redirectTo);
+          }, 1500);
+        } else {
+          toast.error("Job post failed");
+        }
       } finally {
         setLoading(false);
       }
@@ -316,6 +318,20 @@ const PostJob = () => {
 
       {company && user?.isActive ? (
         <div className="px-2 py-4 pt-20 dark:bg-gray-800">
+          {/* Credit Status Banner */}
+          <div className="max-w-3xl mx-auto mb-4 px-4">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 shadow-lg">
+              <div className="flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-sm font-medium">Remaining Job Posts</p>
+                  <p className="text-3xl font-bold">
+                    {company?.creditedForJobs >= 500 ? Math.floor(company.creditedForJobs / 500) : 0} Jobs
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg dark:bg-gray-800">
             <h1>
               {/* Display only the title of the current step */}

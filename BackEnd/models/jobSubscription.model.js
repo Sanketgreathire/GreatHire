@@ -119,8 +119,11 @@ const jobSubscriptionSchema = new mongoose.Schema(
     },
     expiryDate: {
       type: Date,
-      default: () =>
-        new Date(new Date().setMonth(new Date().getMonth() + 1)),
+      required: true,
+    },
+    purchaseDate: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }
@@ -128,12 +131,14 @@ const jobSubscriptionSchema = new mongoose.Schema(
 
 jobSubscriptionSchema.methods.checkValidity = async function () {
   const now = new Date();
-  if (this.expiryDate < now) {
+  if (this.expiryDate < now && this.status !== "Expired") {
     this.status = "Expired";
     await this.save();
 
     const company = await mongoose.model("Company").findById(this.company);
     if (company) {
+      company.creditedForJobs = 0;
+      company.creditedForCandidates = 0;
       company.maxJobPosts = 0;
       await company.save();
     }

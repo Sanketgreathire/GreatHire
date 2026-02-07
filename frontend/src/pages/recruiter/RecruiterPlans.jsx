@@ -312,9 +312,11 @@ import RecruiterFAQ from "../../components/RecruiterFAQ";
 import {
   ORDER_API_END_POINT,
   VERIFICATION_API_END_POINT,
+  COMPANY_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { addJobPlan } from "@/redux/jobPlanSlice";
+import { addCompany } from "@/redux/companySlice";
 
 /* ================= SUBSCRIPTION PLANS ================= */
 const subscriptionPlans = [
@@ -328,7 +330,6 @@ const subscriptionPlans = [
     isFree: true,
     features: [
       "2 Job Postings per month",
-      "5 Job Credits per month",
       "Basic ATS",
       "5 Resume Views / month",
       "AI-generated Job Descriptions",
@@ -491,8 +492,35 @@ function RecruiterPlans() {
   };
 
   /* ============== CTA HANDLER ================= */
-  const handleSubscription = (plan) => {
+  const handleSubscription = async (plan) => {
     if (plan.isFree) {
+      // Check if user has already used free plan
+      if (company.hasUsedFreePlan) {
+        toast.error("You have already used the free plan. Please purchase a paid plan.");
+        return;
+      }
+      
+      // If they have 0 credits and haven't posted jobs, give them free plan credits
+      if (company.creditedForJobs === 0 && company.creditedForCandidates === 0) {
+        // Fetch updated company data to refresh Redux state
+        try {
+          const response = await axios.post(
+            `${COMPANY_API_END_POINT}/company-by-userid`,
+            { userId: user._id },
+            { withCredentials: true }
+          );
+          if (response?.data.success) {
+            dispatch(addCompany(response?.data.company));
+            toast.success("Free plan activated! You now have 2 job posts and 5 candidate views.");
+            navigate("/recruiter/dashboard/post-job");
+          }
+        } catch (err) {
+          console.error("Error fetching company:", err);
+          toast.error("Failed to activate free plan. Please try again.");
+        }
+        return;
+      }
+      
       if (company.creditedForJobs < 500) {
         toast.error("Insufficient credits. Please purchase a plan to post jobs.");
         return;
@@ -543,7 +571,9 @@ function RecruiterPlans() {
           </h2>
 
           <div className="grid md:grid-cols-4 gap-6 mb-20">
-            {subscriptionPlans.map((plan) => (
+            {subscriptionPlans
+              .filter(plan => !(plan.isFree && company.hasUsedFreePlan)) // Hide free plan if already used
+              .map((plan) => (
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlanId(plan.id)}
