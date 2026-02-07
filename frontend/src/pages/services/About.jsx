@@ -664,17 +664,7 @@ function App() {
         <Navbar />
 
         {/* Hero Section - Enhanced */}
-        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-blue-300 to-blue-600 shadow-2xl">
-          {/* <div className="absolute inset-0">
-            <Silk
-              speed={5}
-              scale={1}
-              color="#6366f1ff"
-              noiseIntensity={1.5}
-              rotation={0}
-            />
-          </div> */}
-
+        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-emerald-300 to-emerald-600 shadow-2xl">
           {/* Enhanced Decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-10 left-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl"></div>
@@ -683,31 +673,23 @@ function App() {
           </div>
 
           <div
-  className="relative z-10 text-white h-full flex items-center bg-cover bg-center"
-  style={{ backgroundImage: `url(${AboutHeroBg})` }}
->
-
+            className="relative z-10 text-white h-full flex items-center bg-cover bg-center"
+            style={{ backgroundImage: `url(${AboutHeroBg})` }}
+          >
             <div className="container mx-auto px-4 sm:px-6 lg:px-12">
               <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-5">
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full mb-2 animate-fade-in">
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="text-xs sm:text-sm font-medium">About Our Journey</span>
                 </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2 text-white">
-  About{" "}
-  <span
-    className="
-      relative
-      font-extrabold
-      text-white
-      
-    "
-  >
-    GreatHire
-  </span>
-</h1>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2 text-white">
+                  About{" "}
+                  <span className="relative font-extrabold text-white">
+                    GreatHire
+                  </span>
+                </h1>
 
-<p className="
+                <p className="
   text-base sm:text-lg md:text-xl
   font-serif
   text-white
@@ -718,15 +700,12 @@ function App() {
   mx-auto
   drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
 ">
-  GreatHire Business Solutions provides strategic staffing and
-  workforce solutions tailored to meet diverse business needs. We
-  specialize in connecting companies with top-tier talent, driving
-  efficiency, productivity, and long-term success through our expert
-  recruitment services.
-</p>
-
-
-
+                  GreatHire Business Solutions provides strategic staffing and
+                  workforce solutions tailored to meet diverse business needs. We
+                  specialize in connecting companies with top-tier talent, driving
+                  efficiency, productivity, and long-term success through our expert
+                  recruitment services.
+                </p>
               </div>
             </div>
           </div>
