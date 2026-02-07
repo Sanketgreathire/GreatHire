@@ -14,6 +14,8 @@ import { Helmet } from "react-helmet-async";
 
 import Silk from "../../components/ui/silk";
 
+import AboutHeroBg from "./AboutHeroBg.png";
+
 //logos from assets folder
 import a1townshipImg from "../../assets/clientLogos/a1township.png";
 import accenflairImg from "../../assets/clientLogos/accenflair.webp";
@@ -680,23 +682,51 @@ function App() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-3xl"></div>
           </div>
 
-          <div className="relative z-10 text-white h-full flex items-center">
+          <div
+  className="relative z-10 text-white h-full flex items-center bg-cover bg-center"
+  style={{ backgroundImage: `url(${AboutHeroBg})` }}
+>
+
             <div className="container mx-auto px-4 sm:px-6 lg:px-12">
               <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-5">
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full mb-2 animate-fade-in">
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="text-xs sm:text-sm font-medium">About Our Journey</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2">
-                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 bg-clip-text text-transparent">GreatHire</span>
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl font-serif text-blue-50 leading-relaxed px-2 sm:px-4">
-                  GreatHire Business Solutions provides strategic staffing and
-                  workforce solutions tailored to meet diverse business needs. We
-                  specialize in connecting companies with top-tier talent, driving
-                  efficiency, productivity, and long-term success through our expert
-                  recruitment services.
-                </p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2 text-white">
+  About{" "}
+  <span
+    className="
+      relative
+      font-extrabold
+      text-white
+      
+    "
+  >
+    GreatHire
+  </span>
+</h1>
+
+<p className="
+  text-base sm:text-lg md:text-xl
+  font-serif
+  text-white
+  leading-relaxed
+  px-2 sm:px-4
+  mt-3
+  max-w-3xl
+  mx-auto
+  drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
+">
+  GreatHire Business Solutions provides strategic staffing and
+  workforce solutions tailored to meet diverse business needs. We
+  specialize in connecting companies with top-tier talent, driving
+  efficiency, productivity, and long-term success through our expert
+  recruitment services.
+</p>
+
+
+
               </div>
             </div>
           </div>
