@@ -62,6 +62,10 @@ const companySchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Track if user has used free plan
     },
+    lastFreePlanRenewal: {
+      type: Date,
+      default: Date.now, // Track when free plan was last renewed
+    },
     hasSubscription: { 
       type: Boolean, 
       default: false 

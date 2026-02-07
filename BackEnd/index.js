@@ -186,6 +186,7 @@ app.get("*", (req, res) => {
 
 import { setIO } from "./utils/socket.js";
 import notificationService from "./utils/notificationService.js";
+import { startMonthlyFreePlanRenewal } from "./utils/monthlyFreePlanRenewal.js";
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
@@ -246,6 +247,9 @@ cron.schedule("* * * * *", async () => {
 
 // ================= START SERVER (FIXED) =================
 await connectDB();
+
+// Start monthly free plan renewal cron job
+startMonthlyFreePlanRenewal();
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);

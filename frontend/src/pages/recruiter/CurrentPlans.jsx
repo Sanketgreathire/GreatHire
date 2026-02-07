@@ -79,8 +79,8 @@ const CurrentPlans = () => {
                       </span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
-                      <span className="font-medium">Credits For Job Posting:</span>
-                      <span className="font-semibold">{company.creditedForJobs}</span>
+                      <span className="font-medium">Max Job Posts Remaining:</span>
+                      <span className="font-semibold">{Math.floor(company.creditedForJobs / 500)}</span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded-lg shadow">
                       <span className="font-medium">Credits For Database:</span>
