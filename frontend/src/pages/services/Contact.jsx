@@ -203,12 +203,20 @@ const ContactSection = () => {
                       Drop us an email and expect a response within 24 hours.
                     </p>
                   </div>
-                  <div className="mt-auto">
+                  <div className="mt-auto space-y-2">
                     <a
-                      href="mailto:hr@babde.tech"
+                      href="mailto:sanketbabde@greathire.in"
                       className="inline-flex items-center gap-2 text-pink-600 dark:text-pink-300 hover:text-pink-700 dark:hover:text-white font-semibold transition-colors group/link break-all"
                     >
-                      hr@babde.tech
+                      sanketbabde@greathire.in
+                      <span className="group-hover/link:translate-x-2 transition-transform duration-300">→</span>
+                    </a>
+                    <br />
+                    <a
+                      href="mailto:tanmai.dev077@greathire.in"
+                      className="inline-flex items-center gap-2 text-pink-600 dark:text-pink-300 hover:text-pink-700 dark:hover:text-white font-semibold transition-colors group/link break-all"
+                    >
+                      tanmai.dev077@greathire.in
                       <span className="group-hover/link:translate-x-2 transition-transform duration-300">→</span>
                     </a>
                   </div>
@@ -608,7 +616,7 @@ const ContactSection = () => {
                       How can I get support if I need help?
                     </h3>
                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                      Our support team is available Mon-Fri, 9 AM - 6 PM. Contact us via email at hr@babde.tech or call +91-8328192093 for immediate assistance.
+                      Our support team is available Mon-Fri, 9 AM - 6 PM. Contact us via email at sanketbabde@greathire.in or tanmai.dev077@greathire.in or call +91-8328192093 for immediate assistance.
                     </p>
                   </div>
                 </div>
