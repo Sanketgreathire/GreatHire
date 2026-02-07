@@ -118,20 +118,19 @@ const CurrentPlans = () => {
                 </p>
               )}
 
-              {/* Upgrade Button (if no active plan) */}
-              {user?.emailId?.email === company?.adminEmail &&
-                (company?.maxJobPosts === 0 || !jobPlan) && (
-                  <div className="text-center mt-4">
-                    <Button
-                      onClick={() =>
-                        navigate("/recruiter/dashboard/upgrade-plans")
-                      }
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-lg"
-                    >
-                      Upgrade Plan
-                    </Button>
-                  </div>
-                )}
+              {/* Upgrade Button - Always show for admin */}
+              {user?.emailId?.email === company?.adminEmail && (
+                <div className="text-center mt-4">
+                  <Button
+                    onClick={() =>
+                      navigate("/recruiter/dashboard/upgrade-plans")
+                    }
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-lg"
+                  >
+                    {jobPlan && company?.maxJobPosts > 0 ? "Get Started" : "Upgrade Plan"}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

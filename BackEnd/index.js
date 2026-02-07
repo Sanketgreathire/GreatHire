@@ -222,28 +222,64 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= CRON =================
-// Disabled: Using credit-based system instead of subscription expiry
-/*
-cron.schedule("* * * * *", async () => {
+// PRODUCTION: Check plan expiry daily at midnight (change to "* * * * *" for testing - every minute)
+cron.schedule("0 0 * * *", async () => {
   try {
+    console.log("⏰ Checking plan expiry...");
+    
+    // Get all subscriptions (including old ones)
     const subs = await Promise.all([
-      JobSubscription.find({ status: "Active" }),
-      CandidateSubscription.find({ status: "Active" }),
+      JobSubscription.find({ status: { $in: ["Active", "Hold"] } }),
+      CandidateSubscription.find({ status: { $in: ["Active", "Hold"] } }),
     ]);
 
-    [...subs[0], ...subs[1]].forEach(async (sub) => {
+    console.log(`📊 Found ${subs[0].length} job subscriptions and ${subs[1].length} candidate subscriptions`);
+
+    const now = new Date();
+    const oneMonthFromNow = new Date(now.setMonth(now.getMonth() + 1));
+
+    // Fix ALL subscriptions to expire in 1 month (for old subscriptions without expiry)
+    for (const sub of [...subs[0], ...subs[1]]) {
+      // If no expiry date, set it to 1 month from now
+      if (!sub.expiryDate) {
+        console.log(`⚠️ Setting expiry for old subscription ${sub._id} to 1 month from now`);
+        // Use updateOne to bypass validation for old records
+        await JobSubscription.updateOne(
+          { _id: sub._id },
+          { 
+            $set: { 
+              expiryDate: oneMonthFromNow,
+              status: "Active"
+            }
+          }
+        );
+        // Update the in-memory object
+        sub.expiryDate = oneMonthFromNow;
+        sub.status = "Active";
+      }
+    }
+
+    // Now check expiry for all Active subscriptions
+    const activeSubs = [...subs[0], ...subs[1]].filter(s => s.status === "Active");
+    console.log(`🔍 Checking ${activeSubs.length} active subscriptions for expiry`);
+
+    for (const sub of activeSubs) {
+      console.log(`🔍 Checking subscription ${sub._id} for company: ${sub.company}`);
+      console.log(`   Expiry: ${sub.expiryDate}, Now: ${now}, Expired: ${sub.expiryDate < now}`);
       if (await sub.checkValidity()) {
+        console.log(`❌ Plan expired for company: ${sub.company}`);
         io.emit("planExpired", {
           companyId: sub.company,
           message: "Plan expired. Please renew.",
         });
+      } else {
+        console.log(`✅ Plan still active for company: ${sub.company}`);
       }
-    });
+    }
   } catch (err) {
     console.error("Cron error:", err);
   }
 });
-*/
 
 // ================= START SERVER (FIXED) =================
 await connectDB();

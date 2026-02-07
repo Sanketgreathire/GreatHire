@@ -72,14 +72,23 @@ const RecruiterDashboard = () => {
 
   //  Socket.IO for Real-time Plan Expiration Updates
   useEffect(() => {
-    socket.on("planExpired", ({ companyId, type }) => {
-
+    socket.on("planExpired", async ({ companyId }) => {
       // Check if the expired plan belongs to the current company
       if (company && companyId === company?._id) {
-        if (type === "job") {
-          dispatch(updateMaxPostJobs(0)); // Set max job posts to zero
-        } else if (type === "candidate") {
-          dispatch(updateCandidateCredits(0)); // Set candidate credits to zero
+        // Refresh company data from backend
+        try {
+          const response = await axios.post(
+            `${COMPANY_API_END_POINT}/company-by-userid`,
+            { userId: user?._id },
+            { withCredentials: true }
+          );
+          if (response?.data.success) {
+            dispatch(addCompany(response?.data.company));
+          }
+          // Refresh job plan
+          dispatch(fetchCurrentPlan(companyId));
+        } catch (err) {
+          console.error("Error refreshing company data:", err);
         }
       }
     });
@@ -87,7 +96,7 @@ const RecruiterDashboard = () => {
     return () => {
       socket.off("planExpired");
     };
-  }, [company, dispatch]);
+  }, [company, dispatch, user]);
 
   return (
     <>
