@@ -347,7 +347,6 @@ const subscriptionPlans = [
       "5 Job Postings (30 days)",
       "50 Resume Credits",
       "WhatsApp & Email Invites",
-      "Verified Recruiter Badge",
     ],
     cta: "Upgrade Now",
   },

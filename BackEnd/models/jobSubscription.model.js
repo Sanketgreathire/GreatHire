@@ -137,9 +137,11 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
 
     const company = await mongoose.model("Company").findById(this.company);
     if (company) {
-      company.creditedForJobs = 0;
-      company.creditedForCandidates = 0;
+      // Reset to free plan credits after paid plan expires
+      company.creditedForJobs = 1000; // 2 free job posts
+      company.creditedForCandidates = 5; // 5 free candidate views
       company.maxJobPosts = 0;
+      company.lastFreePlanRenewal = new Date(); // Reset renewal date
       await company.save();
     }
     return true;
