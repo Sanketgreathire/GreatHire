@@ -260,14 +260,20 @@ cron.schedule("0 0 * * *", async () => {
     console.log(`🔍 Checking ${activeSubs.length} active subscriptions for expiry`);
 
     for (const sub of activeSubs) {
-      if (sub.checkValidity && typeof sub.checkValidity === 'function') {
-        if (await sub.checkValidity()) {
-          console.log(`❌ Plan expired for company: ${sub.company}`);
-          io.emit("planExpired", {
-            companyId: sub.company,
-            message: "Plan expired. Please renew.",
-          });
+      try {
+        if (sub.checkValidity && typeof sub.checkValidity === 'function') {
+          if (await sub.checkValidity()) {
+            console.log(`❌ Plan expired for company: ${sub.company}`);
+            io.emit("planExpired", {
+              companyId: sub.company,
+              message: "Plan expired. Please renew.",
+            });
+          }
+        } else {
+          console.warn(`⚠️ Subscription ${sub._id} does not have checkValidity method`);
         }
+      } catch (subError) {
+        console.error(`❌ Error checking validity for subscription ${sub._id}:`, subError.message);
       }
     }
   } catch (err) {
