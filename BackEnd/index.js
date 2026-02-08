@@ -223,39 +223,32 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= CRON =================
-// PRODUCTION: Check plan expiry daily at midnight (change to "* * * * *" for testing - every minute)
+// DISABLED TEMPORARILY - Will be enabled after proper deployment
+// PRODUCTION: Check plan expiry daily at midnight
+/*
 cron.schedule("0 0 * * *", async () => {
   try {
     console.log("⏰ Checking plan expiry...");
     
-    // Get job subscriptions only (they have checkValidity method)
     const jobSubs = await JobSubscription.find({ status: { $in: ["Active", "Hold"] } });
-
     console.log(`📊 Found ${jobSubs.length} job subscriptions`);
 
     const now = new Date();
     const oneMonthFromNow = new Date();
     oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
-    // Fix old subscriptions without expiry date
     for (const sub of jobSubs) {
       if (!sub.expiryDate) {
         console.log(`⚠️ Setting expiry for old subscription ${sub._id} to 1 month from now`);
         await JobSubscription.updateOne(
           { _id: sub._id },
-          { 
-            $set: { 
-              expiryDate: oneMonthFromNow,
-              status: "Active"
-            }
-          }
+          { $set: { expiryDate: oneMonthFromNow, status: "Active" } }
         );
         sub.expiryDate = oneMonthFromNow;
         sub.status = "Active";
       }
     }
 
-    // Check expiry for Active subscriptions
     const activeSubs = jobSubs.filter(s => s.status === "Active");
     console.log(`🔍 Checking ${activeSubs.length} active subscriptions for expiry`);
 
@@ -264,10 +257,7 @@ cron.schedule("0 0 * * *", async () => {
         if (sub.checkValidity && typeof sub.checkValidity === 'function') {
           if (await sub.checkValidity()) {
             console.log(`❌ Plan expired for company: ${sub.company}`);
-            io.emit("planExpired", {
-              companyId: sub.company,
-              message: "Plan expired. Please renew.",
-            });
+            io.emit("planExpired", { companyId: sub.company, message: "Plan expired. Please renew." });
           }
         } else {
           console.warn(`⚠️ Subscription ${sub._id} does not have checkValidity method`);
@@ -280,6 +270,8 @@ cron.schedule("0 0 * * *", async () => {
     console.error("Cron error:", err);
   }
 });
+*/
+console.log("⚠️ Plan expiry cron is temporarily disabled");
 
 // ================= START SERVER (FIXED) =================
 await connectDB();
