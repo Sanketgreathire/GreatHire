@@ -4,10 +4,18 @@ import { CandidateSubscription } from "../models/candidateSubscription.model.js"
 import { isUserAssociated } from "./company.controller.js";
 
 // ✅ Razorpay instance
+if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+  console.error("❌ RAZORPAY credentials missing in environment variables");
+  console.error("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID ? "Present" : "Missing");
+  console.error("RAZORPAY_KEY_SECRET:", process.env.RAZORPAY_KEY_SECRET ? "Present" : "Missing");
+}
+
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
+
+console.log("✅ Razorpay initialized with key:", process.env.RAZORPAY_KEY_ID);
 
 // ===============================
 // CREATE ORDER FOR JOB PLAN
