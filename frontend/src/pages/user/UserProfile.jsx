@@ -247,11 +247,11 @@ const UserProfile = () => {
         />
       </Helmet>
       
-      <div className="flex flex-col min-h-screen ">
+      <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <Navbar />
         <div className="flex-grow">
           {/* Profile Details Section */}
-          <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
+          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-10 p-8">
             {/* User Info Section */}
             <div className="flex flex-col items-center text-center border-b pb-8">
               <Avatar className="h-24 w-24 shadow-lg">
@@ -264,14 +264,14 @@ const UserProfile = () => {
                   onError={(e) => (e.target.src = "/default-avatar.png")}
                 />
               </Avatar>
-              <h1 className="mt-4 text-3xl font-bold text-gray-800">
+              <h1 className="mt-4 text-3xl font-bold text-gray-800 dark:text-gray-100">
                 {user?.fullname || "User Name"}
               </h1>
 
-              <h1 className="mt-1 text-gray-600">
+              <h1 className="mt-1 text-gray-600 dark:text-gray-300">
                 {firstExp ? firstExp.jobProfile : "Fresher"}
               </h1>
-              <p className="text-gray-500 mt-1">
+              <p className="text-gray-500 dark:text-gray-400 mt-1">
                 Experience: {totalYears > 0 ? `${totalYears} Year(s)` : "0 Years"}
               </p>
 
@@ -287,11 +287,11 @@ const UserProfile = () => {
 
             {/* Profile Summary Section */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Profile Summary
               </h2>
               <div>
-                <p className="text-gray-600 mt-2">
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
                   {user?.profile?.bio || "No bio available"}
                 </p>
               </div>
@@ -299,68 +299,68 @@ const UserProfile = () => {
 
             {/* Contact Information Section */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Contact Information
               </h2>
               <div className="mt-4 space-y-4">
                 <div className="flex items-center gap-4">
-                  <Mail className="text-blue-500" />
-                  <span className="text-gray-700">
+                  <Mail className="text-blue-500 dark:text-blue-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     {user?.emailId?.email || "Not Provided"}
                   </span>
                   {!user?.emailId?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm cursor-pointer hover:underline"
+                      className="text-blue-600 dark:text-blue-400 text-sm cursor-pointer hover:underline"
                       onClick={() => setOpenEmailOTPModal(true)}
                     >
                       Verify
                     </span>
                   ) : (
-                    <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
                       <MdOutlineVerified size={20} /> <span>Verified</span>
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-4">
-                  <LuPhoneIncoming size={25} className="text-blue-500" />
-                  <span className="text-gray-700">
+                  <LuPhoneIncoming size={25} className="text-blue-500 dark:text-blue-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     {user?.phoneNumber?.number || "Not Provided"}
                   </span>
                   {!user?.phoneNumber?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm hidden cursor-pointer hover:underline"
+                      className="text-blue-600 dark:text-blue-400 text-sm hidden cursor-pointer hover:underline"
                       onClick={() => setOpenNumberOTPModal(true)}
                     >
                       Verify
                     </span>
                   ) : (
-                    <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
                       <MdOutlineVerified size={20} /> <span>Verified</span>
                     </span>
                   )}
                 </div>
                 {/* Alternate Phone */}
                 <div className="flex items-center gap-4 mt-2">
-                  <LuPhoneIncoming size={25} className="text-blue-500" />
-                  <span className="text-gray-700">
+                  <LuPhoneIncoming size={25} className="text-blue-500 dark:text-blue-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     {user?.alternatePhone?.number || "Not Provided"}
                   </span>
                   {!user?.alternatePhone?.isVerified ? (
                     <span
-                      className="text-blue-600 text-sm hidden cursor-pointer hover:underline"
+                      className="text-blue-600 dark:text-blue-400 text-sm hidden cursor-pointer hover:underline"
                       onClick={() => setOpenNumberOTPModal(true)}
                     >
                       Verify
                     </span>
                   ) : (
-                    <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
                       <MdOutlineVerified size={20} /> <span>Verified</span>
                     </span>
                   )}
                 </div>
                 <div className="flex items-center gap-4 pb-4">
-                  <LuMapPin size={25} className="text-blue-500" />
-                  <span className="text-gray-700">
+                  <LuMapPin size={25} className="text-blue-500 dark:text-blue-400" />
+                  <span className="text-gray-700 dark:text-gray-300">
                     {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}, ${user?.address?.pincode}`}
                   </span>
                 </div>
@@ -369,7 +369,7 @@ const UserProfile = () => {
 
             {/* Language (Fixed) */}
             <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 pb-2 border-b">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Languages Known
               </h2>
               {user?.profile?.language?.length > 0 ? (
@@ -377,31 +377,31 @@ const UserProfile = () => {
                   {user?.profile.language.map((lang, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full text-sm"
                     >
                       {lang}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600 mt-2">Not Specified.</p>
+                <p className="text-gray-600 mt-2 dark:text-gray-400">Not Specified.</p>
               )}
             </div>
 
             {/* Gender */}
             <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 pb-2 pt-4 border-b">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Gender
               </h2>
               <div className="flex flex-wrap gap-2 mt-2">
-                <span className="text-gray-700">
+                <span className="text-gray-700 dark:text-gray-300">
                   {user?.profile?.gender}
                 </span>
               </div>
             </div>
 
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Qualification
               </h2>
               {qualificationToDisplay || "-"}
@@ -409,7 +409,7 @@ const UserProfile = () => {
 
             {/* Experience Details Section */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Experience Details
               </h2>
 
@@ -419,51 +419,51 @@ const UserProfile = () => {
                     <div className="grid gap-y-4 md:grid-cols-5 md:gap-y-2 md:gap-x-4">
                       {/* Company Name */}
                       <div className="col-span-5 md:col-span-1">
-                        <p className="font-semibold text-gray-700">Company Name:</p>
+                        <p className="font-semibold text-gray-700 dark:text-gray-300">Company Name:</p>
                       </div>
                       <div className="col-span-5 md:col-span-4">
-                        <p className="text-gray-600">{exp.companyName}</p>
+                        <p className="text-gray-600 dark:text-gray-400">{exp.companyName}</p>
                       </div>
 
                       {/* Job Profile */}
                       <div className="col-span-5 md:col-span-1">
-                        <p className="font-semibold text-gray-700">Job Profile:</p>
+                        <p className="font-semibold text-gray-700 dark:text-gray-300">Job Profile:</p>
                       </div>
                       <div className="col-span-5 md:col-span-4">
-                        <p className="text-gray-600">{exp.jobProfile}</p>
+                        <p className="text-gray-600 dark:text-gray-400">{exp.jobProfile}</p>
                       </div>
 
                       {/* Duration */}
                       <div className="col-span-5 md:col-span-1">
-                        <p className="font-semibold text-gray-700">Duration:</p>
+                        <p className="font-semibold text-gray-700 dark:text-gray-300">Duration:</p>
                       </div>
                       <div className="col-span-5 md:col-span-4">
-                        <p className="text-gray-600">{exp.duration}</p>
+                        <p className="text-gray-600 dark:text-gray-400">{exp.duration}</p>
                       </div>
 
                       {/* Details */}
                       <div className="col-span-5 md:col-span-1">
-                        <p className="font-semibold text-gray-700">Details:</p>
+                        <p className="font-semibold text-gray-700 dark:text-gray-300">Details:</p>
                       </div>
                       <div className="col-span-5 md:col-span-4">
-                        <p className="text-gray-600">{exp.experienceDetails}</p>
+                        <p className="text-gray-600 dark:text-gray-400">{exp.experienceDetails}</p>
                       </div>
 
                       {/* Current Job (only if working) */}
                       {exp.currentlyWorking && (
                         <>
                           <div className="col-span-5 md:col-span-1">
-                            <p className="font-semibold text-gray-700">Current CTC:</p>
+                            <p className="font-semibold text-gray-700 dark:text-gray-300">Current CTC:</p>
                           </div>
                           <div className="col-span-5 md:col-span-4">
-                            <p className="text-gray-600">{exp.currentCTC}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{exp.currentCTC}</p>
                           </div>
 
                           <div className="col-span-5 md:col-span-1">
-                            <p className="font-semibold text-gray-700">Notice Period:</p>
+                            <p className="font-semibold text-gray-700 dark:text-gray-300">Notice Period:</p>
                           </div>
                           <div className="col-span-5 md:col-span-4">
-                            <p className="text-gray-600">{exp.noticePeriod}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{exp.noticePeriod}</p>
                           </div>
                         </>
                       )}
@@ -471,18 +471,18 @@ const UserProfile = () => {
 
                     {/* Separator line */}
                     {index !== normalizedExperiences.length - 1 && (
-                      <hr className="mt-4 border-gray-300" />
+                      <hr className="mt-4 border-gray-300 dark:border-gray-700" />
                     )}
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600 mt-2 pb-4">No experience details available</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-2 pb-4">No experience details available</p>
               )}
             </div>
 
             {/* Category (Fixed) */}
             <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 pb-2 border-b">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Job Category
               </h2>
               {user?.profile?.category?.length > 0 ? (
@@ -490,20 +490,20 @@ const UserProfile = () => {
                   {user?.profile.category.map((cat, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium text-sm"
+                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full text-sm"
                     >
                       {cat}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600 mt-2">Not Specified.</p>
+                <p className="text-gray-600 dark:text-gray-400 mt-2 ">Not Specified.</p>
               )}
             </div>
 
             {/* Skills Section */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 pb-2 border-b">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Skills
               </h2>
               <div className="mt-4 flex flex-wrap gap-3">
@@ -511,20 +511,20 @@ const UserProfile = () => {
                   user?.profile.skills.map((skill, index) => (
                     <Badge
                       key={index}
-                      className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"
+                      className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 rounded-lg font-medium text-sm"
                     >
                       {skill}
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-gray-600">No skills listed</span>
+                  <span className="text-gray-600 dark:text-gray-400">No skills listed</span>
                 )}
               </div>
             </div>
 
             {/* ✅ Show documents */}
             <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 pb-2 pt-4 border-b">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 ID's / Documents
               </h2>
               <div className="mt-4 flex flex-wrap gap-3">
@@ -532,14 +532,14 @@ const UserProfile = () => {
                   user.profile.documents.map((doc, i) => (
                     <span
                       key={i}
-                      className="flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 font-medium text-sm shadow-sm"
+                      className="flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 font-medium text-sm shadow-sm hover:bg-gradient-to-l hover:from-blue-200 hover:to-blue-300 cursor-pointer"
                     >
                       {docIcons[doc] || <FileText className="w-4 h-4" />}
                       {doc}
                     </span>
                   ))
                 ) : (
-                  <span className="text-gray-600">Does not have any documents</span>
+                  <span className="text-gray-600 dark:text-gray-400">Does not have any documents</span>
                 )}
               </div>
             </div>
@@ -551,7 +551,7 @@ const UserProfile = () => {
 
             {/* Resume Section */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                 Resume
               </h2>
               <div className="mt-4">
@@ -560,12 +560,12 @@ const UserProfile = () => {
                     href={user?.profile.resume}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    className="inline-block bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700"
                   >
                     View Resume
                   </a>
                 ) : (
-                  <span className="text-gray-600">
+                  <span className="text-gray-600 dark:text-gray-400">
                     No resume uploaded.{" "}
                     {/* Trigger file input instead of navigation */}
                     {/* <label
@@ -604,7 +604,7 @@ const UserProfile = () => {
 
           {/* Applied Jobs Section */}
           <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8 ">
-            <h2 className="text-lg text-center underline font-semibold  border-b pb-2 dark:text-black">
+            <h2 className="text-lg text-center underline font-semibold border-b pb-2 text-gray-800 dark:text-gray-100">
               APPLIED JOBS
             </h2>
             <div className="mt-4">
