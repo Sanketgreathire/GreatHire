@@ -451,8 +451,11 @@ const Navbar = () => {
               </div>
             </div>
            
-             {/* Mobile Right Icons */}
-            <div className="flex items-center gap-3 lg:hidden">
+            {/* Mobile Right Icons */}
+            <div className="flex items-center gap-2 lg:hidden">
+
+              {/* Theme Toggle - Always visible on mobile */}
+              <ThemeToggle />
 
               {/* Notification */}
               {user && <NotificationDropdown />}
@@ -598,9 +601,6 @@ const Navbar = () => {
                     >
                       Sign Up
                     </Link>
-                    <div className="pt-2">
-                      <ThemeToggle />
-                    </div>
                   </div>
                 ) : (
                   <div className="border-t border-gray-200 dark:border-gray-700 py-2">

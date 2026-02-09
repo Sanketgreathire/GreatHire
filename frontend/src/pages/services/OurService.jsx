@@ -37,7 +37,7 @@ const OurService = () => {
       description:
         "Enhance your online presence and connect with your audience effectively.",
       icon: "📈",
-      url: "/Blogs",
+      url: "/Main_blog_page",
       gradient: "from-purple-500 to-pink-500",
       darkGradient: "from-purple-600 to-pink-600",
     },
@@ -91,7 +91,7 @@ const OurService = () => {
       description:
         "Integrate AI and ML to automate processes and drive innovation.",
       icon: "🤖",
-      url: "/contact",
+      url: "/Main_blog_page",
       gradient: "from-violet-500 to-purple-500",
       darkGradient: "from-violet-600 to-purple-600",
     },
