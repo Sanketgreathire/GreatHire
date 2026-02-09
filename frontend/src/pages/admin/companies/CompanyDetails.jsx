@@ -194,46 +194,74 @@ const CompanyDetails = () => {
   }
 
   return (
-    <>
-      <Navbar linkName={"Company Details"} />
-      <div className="max-w-6xl mx-auto p-10 mt-20 bg-white rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+  <>
+    <Navbar linkName={"Company Details"} />
+
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 mt-20">
+      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 lg:p-10">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-8 text-center">
           Company Details
         </h1>
+
         <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Company Info */}
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-              <p className="text-sm text-gray-500 font-medium mb-1">Company Name</p>
-              <p className="text-lg text-gray-900 font-semibold">{company?.companyName}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                Company Name
+              </p>
+              <p className="text-lg text-gray-900 font-semibold break-words">
+                {company?.companyName}
+              </p>
 
-              <p className="text-sm text-gray-500 font-medium mb-1 mt-6">Industry</p>
-              <p className="text-lg text-gray-900 font-semibold">{company?.industry}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1 mt-6">
+                Industry
+              </p>
+              <p className="text-lg text-gray-900 font-semibold break-words">
+                {company?.industry}
+              </p>
             </div>
+
             {/* Address */}
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors col-span-full lg:col-span-2">
-              <p className="text-sm text-gray-500 font-medium mb-4">Company Address</p>
+              <p className="text-sm text-gray-500 font-medium mb-4">
+                Company Address
+              </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Street Address</p>
-                  <p className="text-gray-900 font-semibold">{company?.address?.streetAddress}</p>
+                  <p className="text-sm text-gray-500 font-medium">
+                    Street Address
+                  </p>
+                  <p className="text-gray-900 font-semibold break-words">
+                    {company?.address?.streetAddress}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">City</p>
-                  <p className="text-gray-900 font-semibold">{company?.address?.city}</p>
+                  <p className="text-gray-900 font-semibold">
+                    {company?.address?.city}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">State</p>
-                  <p className="text-gray-900 font-semibold">{company?.address?.state}</p>
+                  <p className="text-gray-900 font-semibold">
+                    {company?.address?.state}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 font-medium">Postal Code</p>
-                  <p className="text-gray-900 font-semibold">{company?.address?.postalCode}</p>
+                  <p className="text-sm text-gray-500 font-medium">
+                    Postal Code
+                  </p>
+                  <p className="text-gray-900 font-semibold">
+                    {company?.address?.postalCode}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Country</p>
-                  <p className="text-gray-900 font-semibold">{company?.address?.country}</p>
+                  <p className="text-gray-900 font-semibold">
+                    {company?.address?.country}
+                  </p>
                 </div>
               </div>
             </div>
@@ -241,19 +269,28 @@ const CompanyDetails = () => {
             {/* Other Info */}
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
               <p className="text-sm text-gray-500 font-medium mb-1">Phone</p>
-              <p className="text-lg text-gray-900 font-semibold">{company?.phone}</p>
+              <p className="text-lg text-gray-900 font-semibold break-words">
+                {company?.phone}
+              </p>
             </div>
 
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-              <p className="text-sm text-gray-500 font-medium mb-1">Business Email</p>
-              <p className="text-lg text-gray-900 font-semibold break-all">{company?.email}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                Business Email
+              </p>
+              <p className="text-lg text-gray-900 font-semibold break-all">
+                {company?.email}
+              </p>
             </div>
 
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-              <p className="text-sm text-gray-500 font-medium mb-1">Admin Email</p>
-              <p className="text-lg text-gray-900 font-semibold break-all">{company?.adminEmail}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                Admin Email
+              </p>
+              <p className="text-lg text-gray-900 font-semibold break-all">
+                {company?.adminEmail}
+              </p>
             </div>
-
 
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
               <p className="text-sm text-gray-500 font-medium mb-1">Website</p>
@@ -268,12 +305,18 @@ const CompanyDetails = () => {
             </div>
 
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-              <p className="text-sm text-gray-500 font-medium mb-1">CIN Number</p>
-              <p className="text-md text-gray-900 font-semibold">{company?.CIN}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                CIN Number
+              </p>
+              <p className="text-md text-gray-900 font-semibold break-words">
+                {company?.CIN}
+              </p>
             </div>
 
             <div className="w-full bg-gray-50 rounded-lg p-4 border border-gray-100 hover:border-gray-200 transition-colors">
-              <p className="text-sm text-gray-500 font-medium mb-1">Business File</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">
+                Business File
+              </p>
               <a
                 href={company?.businessFile}
                 target="_blank"
@@ -283,20 +326,24 @@ const CompanyDetails = () => {
                 View Business File
               </a>
             </div>
-            {/* Buttons (col-span-full for alignment) */}
+
+            {/* Buttons */}
             <div className="col-span-full">
-              <div className="flex justify-end space-x-6 mt-8">
+              <div className="flex flex-col sm:flex-row justify-end gap-4 sm:gap-6 mt-8">
                 <button
-                  onClick={() => navigate(`/admin/recruiters/${companyId}`)}
-                  // className="px-6 py-3 text-white bg-blue-700 rounded-md hover:bg-blue-800 transition"
-                  className="px-6 py-3 text-white bg-blue-700 border-2 border-transparent rounded-md hover:bg-gray-100 hover:text-blue-700 hover:border-blue-700 hover:font-bold transition-all duration-200"
+                  onClick={() =>
+                    navigate(`/admin/recruiters/${companyId}`)
+                  }
+                  className="w-full sm:w-auto px-6 py-3 text-white bg-blue-700 border-2 border-transparent rounded-md hover:bg-gray-100 hover:text-blue-700 hover:border-blue-700 hover:font-bold transition-all duration-200"
                 >
                   Recruiters List
                 </button>
+
                 <button
                   onClick={onConfirmDelete}
-                  className={`px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${dloading && "cursor-not-allowed"
-                    }`}
+                  className={`w-full sm:w-auto px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200 ${
+                    dloading && "cursor-not-allowed"
+                  }`}
                   disabled={dloading}
                 >
                   {dloading ? "Deleting..." : "Delete Company"}
@@ -306,16 +353,18 @@ const CompanyDetails = () => {
           </div>
         </div>
       </div>
+    </div>
 
-      {showDeleteModal && (
-        <DeleteConfirmation
-          isOpen={showDeleteModal}
-          onConfirm={onConfirmDelete}
-          onCancel={onCancelDelete}
-        />
-      )}
-    </>
-  );
+    {showDeleteModal && (
+      <DeleteConfirmation
+        isOpen={showDeleteModal}
+        onConfirm={onConfirmDelete}
+        onCancel={onCancelDelete}
+      />
+    )}
+  </>
+);
+
 };
 
 export default CompanyDetails;

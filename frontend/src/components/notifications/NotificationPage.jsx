@@ -29,7 +29,6 @@ const NotificationPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedNotification, setSelectedNotification] = useState(null);
 
-  // Priority badge color
   const getPriorityClasses = (priority) => {
     switch (priority) {
       case 'high':
@@ -41,10 +40,9 @@ const NotificationPage = () => {
     }
   };
 
-  // Auth guard
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="text-center">
           <Bell className="w-16 h-16 mx-auto mb-4 text-gray-300" />
           <h3 className="text-lg font-medium">Please log in</h3>
@@ -113,13 +111,13 @@ const NotificationPage = () => {
       <div className="max-w-4xl mx-auto py-8 px-4">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Bell className="w-8 h-8 text-blue-600" />
+            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+              <Bell className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
               Notifications
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 mt-1 text-sm">
               {unreadCount > 0 ? `${unreadCount} unread notifications` : 'All caught up!'}
             </p>
           </div>
@@ -127,7 +125,7 @@ const NotificationPage = () => {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
             >
               <Check className="w-4 h-4" />
               Mark all as read
@@ -136,7 +134,7 @@ const NotificationPage = () => {
         </div>
 
         {/* Search + Filter */}
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex gap-4">
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
             <input
@@ -150,7 +148,7 @@ const NotificationPage = () => {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="border rounded-lg px-3 py-2"
+            className="border rounded-lg px-3 py-2 w-full sm:w-40"
           >
             <option value="all">All</option>
             <option value="unread">Unread</option>
@@ -167,23 +165,23 @@ const NotificationPage = () => {
                 if (!notification.isRead) markAsRead(notification._id);
                 setSelectedNotification(notification);
               }}
-              className={`group p-6 cursor-pointer hover:bg-gray-50 ${
+              className={`group p-4 sm:p-6 cursor-pointer hover:bg-gray-50 ${
                 !notification.isRead ? 'bg-blue-50 border-l-4 border-blue-500' : ''
               }`}
             >
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-white border flex items-center justify-center">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="w-10 h-10 rounded-full bg-white border flex items-center justify-center shrink-0">
                   {getNotificationTypeIcon(notification.type)}
                 </div>
 
                 <div className="flex-1">
                   <h3 className="font-semibold">{notification.title}</h3>
-                  <p className="text-gray-600 mt-1">{notification.message}</p>
+                  <p className="text-gray-600 mt-1 text-sm">{notification.message}</p>
 
-                  <div className="mt-2 text-sm text-gray-500 flex gap-4">
+                  <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-3">
                     <span>{getTimeAgo(notification.createdAt)}</span>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getPriorityClasses(
+                      className={`px-2 py-0.5 rounded-full font-medium capitalize ${getPriorityClasses(
                         notification.priority || 'medium'
                       )}`}
                     >
@@ -192,32 +190,29 @@ const NotificationPage = () => {
                   </div>
                 </div>
 
-                {/* Delete */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notification._id);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 p-2 rounded-full hover:bg-red-100 text-red-500"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-
-                {/* ✅ Mark as Read (ONLY for unread) */}
-                {!notification.isRead && (
+                <div className="flex sm:flex-col gap-2 sm:opacity-0 sm:group-hover:opacity-100">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      markAsRead(notification._id);
+                      deleteNotification(notification._id);
                     }}
-                    className="opacity-0 group-hover:opacity-100 flex items-center gap-1 p-2 rounded-full hover:bg-green-100 text-green-600 transition"
+                    className="p-2 rounded-full hover:bg-red-100 text-red-500"
                   >
-                    <Check className="w-4 h-4" />
-                    <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                      Mark as read
-                    </span>
+                    <Trash2 className="w-4 h-4" />
                   </button>
-                )}
+
+                  {!notification.isRead && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        markAsRead(notification._id);
+                      }}
+                      className="p-2 rounded-full hover:bg-green-100 text-green-600"
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -226,13 +221,13 @@ const NotificationPage = () => {
 
       {/* Overlay */}
       {selectedNotification && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setSelectedNotification(null)}
           />
 
-          <div className="relative bg-white w-full max-w-xl mx-4 rounded-xl shadow-xl p-6">
+          <div className="relative bg-white w-full max-w-xl rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedNotification(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"

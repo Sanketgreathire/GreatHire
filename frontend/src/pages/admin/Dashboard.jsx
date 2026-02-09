@@ -25,7 +25,6 @@ import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
-
 const Dashboard = () => {
   const companyStats = useSelector((state) => state.stats.companyStatsData);
   const { user } = useSelector((state) => state.auth);
@@ -154,11 +153,12 @@ const Dashboard = () => {
   return (
     <>
       <Navbar linkName={"Dashboard"} />
-      <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 min-h-screen transition-colors">
-        {/* Welcome Section with Badge */}
+
+      <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 min-h-screen transition-colors overflow-x-hidden">
+        {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               👋 Welcome, Admin
             </h1>
             <VerifiedRecruiterBadges plan="ENTERPRISE" />
@@ -166,7 +166,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -174,12 +174,12 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.15 }}
               whileHover={{ scale: 1.05 }}
-              className="bg-white/80 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/40 p-6"
+              className="bg-white/80 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-lg border border-white/40 p-4 sm:p-5 md:p-6"
             >
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.title}</h3>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
                     <CountUp end={stat.count} duration={1.5} />
                   </p>
                   <span className="text-xs font-semibold text-green-600">{stat.change}</span>
@@ -196,12 +196,13 @@ const Dashboard = () => {
           <p className="text-2xl text-blue-700 mt-6">Loading...</p>
         ) : (
           <>
-            {/* Recent Activity & Applications Overview */}
+            {/* Recent Activity & Applications */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-              {/* Timeline Recent Activities */}
               <Card className="p-6 shadow-xl rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-6">Recent Activities</h3>
-                <ul className="relative border-l-2 border-purple-300 dark:border-purple-600 ml-6">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-6">
+                  Recent Activities
+                </h3>
+                <ul className="relative border-l-2 border-purple-300 dark:border-purple-600 ml-4 sm:ml-6">
                   {["User Registered","Company Registered","Recruiter Registered","Job Posted","Application Submitted"].map((label, i) => (
                     <li key={i} className="mb-8 ml-4">
                       <span className="absolute -left-4 flex items-center justify-center w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full ring-4 ring-white dark:ring-gray-900 text-white">
@@ -214,9 +215,8 @@ const Dashboard = () => {
                 </ul>
               </Card>
 
-              {/* Applications Overview */}
               <Card className="p-6 shadow-xl rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg border border-gray-200 dark:border-gray-700">
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
                   <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                     Applications Overview
                   </h3>
@@ -232,69 +232,77 @@ const Dashboard = () => {
                     ))}
                   </Select>
                 </div>
-                <Line data={applicationsData} />
+
+                <div className="w-full overflow-x-auto">
+                  <div className="min-w-[320px]">
+                    <Line data={applicationsData} />
+                  </div>
+                </div>
               </Card>
             </div>
 
             {/* Recent Job Postings */}
             <Card className="p-6 mt-8 shadow-xl rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg border border-gray-200 dark:border-gray-700">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Recent Job Postings</h3>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  Recent Job Postings
+                </h3>
                 <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400">
                   Total Jobs: <span className="font-bold">{jobPostings.length}</span>
                 </h3>
               </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Job Title</TableHead>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Posted</TableHead>
-                    <TableHead>Applications</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedJobs.map((job) => (
-                    <TableRow key={job._id} className="odd:bg-white/40 even:bg-gray-50/40 dark:odd:bg-gray-800/50 dark:even:bg-gray-700/50">
-                      <TableCell>{job.jobTitle}</TableCell>
-                      <TableCell>{job.company}</TableCell>
-                      <TableCell>{job.posted}</TableCell>
-                      <TableCell>{job.applications}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold shadow-inner ${
-                            job.status === "Active"
-                              ? "bg-green-200/40 text-green-700 dark:bg-green-800/40 dark:text-green-300"
-                              : "bg-red-200/40 text-red-700 dark:bg-red-800/40 dark:text-red-300"
-                          }`}
-                        >
-                          {job.status}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+
+              <div className="w-full overflow-x-auto">
+                <div className="min-w-[700px]">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Job Title</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Posted</TableHead>
+                        <TableHead>Applications</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {displayedJobs.map((job) => (
+                        <TableRow key={job._id}>
+                          <TableCell>{job.jobTitle}</TableCell>
+                          <TableCell>{job.company}</TableCell>
+                          <TableCell>{job.posted}</TableCell>
+                          <TableCell>{job.applications}</TableCell>
+                          <TableCell>
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold">
+                              {job.status}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
 
               {/* Pagination */}
-              <div className="flex items-center justify-end mt-6 space-x-2">
+              <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center mt-6 gap-3">
                 <Button
                   variant="outline"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="rounded-full flex items-center gap-1"
+                  className="rounded-full px-4 py-2 flex items-center gap-1"
                 >
                   <ChevronLeft size={16} /> Prev
                 </Button>
+
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   Page {currentPage} of {totalPages}
                 </span>
+
                 <Button
                   variant="outline"
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  className="rounded-full flex items-center gap-1"
+                  className="rounded-full px-4 py-2 flex items-center gap-1"
                 >
                   Next <ChevronRight size={16} />
                 </Button>

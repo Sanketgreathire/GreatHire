@@ -186,89 +186,120 @@ const CompanyList = () => {
   ];
 
   return (
-    <>
-      <Navbar linkName="Companies" />
+  <>
+    <Navbar linkName="Companies" />
 
-      {/* Stats Section */}
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <Card
-            key={index}
-            className="p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition"
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-gray-600 font-semibold">{stat.title}</h3>
-                <p className="text-3xl font-bold text-gray-900 mt-1">
-                  {stat.count}
-                </p>
-              </div>
-              <div className="p-3 bg-gray-100 rounded-full">{stat.icon}</div>
+    {/* Stats Section */}
+    <div className="px-4 sm:px-6 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {stats.map((stat, index) => (
+        <Card
+          key={index}
+          className="p-6 bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition"
+        >
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-gray-600 font-semibold text-sm sm:text-base">
+                {stat.title}
+              </h3>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">
+                {stat.count}
+              </p>
             </div>
-          </Card>
-        ))}
+            <div className="p-3 bg-gray-100 rounded-full flex-shrink-0">
+              {stat.icon}
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+
+    {/* Main Company Table */}
+    <div className="mx-4 sm:mx-6 mb-10 bg-white p-4 sm:p-6 rounded-2xl shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center mb-6 gap-4">
+        <Input
+          placeholder="🔍 Search by name, email, or contact..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-1/3 rounded-lg border-gray-300"
+        />
+
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="w-full md:w-1/5 h-10"
+        >
+          <MenuItem value="All">All</MenuItem>
+          <MenuItem value={true}>Active</MenuItem>
+          <MenuItem value={false}>Deactive</MenuItem>
+        </Select>
       </div>
 
-      {/* Main Company Table */}
-      <div className="m-6 bg-white p-6 rounded-2xl shadow-lg">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-          <Input
-            placeholder="🔍 Search by name, email, or contact..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-1/3 rounded-lg border-gray-300"
-          />
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full md:w-1/5 h-10"
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value={true}>Active</MenuItem>
-            <MenuItem value={false}>Deactive</MenuItem>
-          </Select>
-        </div>
-
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <Table>
-            <TableHeader className="bg-gray-100 sticky top-0">
-              <TableRow>
-                {["Company Name", "Email", "Contact", "Admin Email", "Status", "Actions"].map((h) => (
-                  <TableHead key={h} className="font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                    {h}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedCompanies.map((company) => (
-                <TableRow
-                  key={company._id}
-                  className="hover:bg-gray-50 transition-colors"
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <Table>
+          <TableHeader className="bg-gray-100">
+            <TableRow>
+              {[
+                "Company Name",
+                "Email",
+                "Contact",
+                "Admin Email",
+                "Status",
+                "Actions",
+              ].map((h) => (
+                <TableHead
+                  key={h}
+                  className="font-semibold text-gray-700 text-xs sm:text-sm uppercase tracking-wider whitespace-nowrap"
                 >
-                  <TableCell>{company.companyName}</TableCell>
-                  <TableCell>{company.email}</TableCell>
-                  <TableCell>{company.phone}</TableCell>
-                  <TableCell>{company.adminEmail}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        company.isActive
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {company.isActive ? "Active" : "Deactive"}
-                    </span>
-                  </TableCell>
-                  <TableCell className="flex items-center gap-3">
+                  {h}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {paginatedCompanies.map((company) => (
+              <TableRow
+                key={company._id}
+                className="hover:bg-gray-50 transition-colors"
+              >
+                <TableCell className="font-medium">
+                  {company.companyName}
+                </TableCell>
+
+                <TableCell className="break-all">
+                  {company.email}
+                </TableCell>
+
+                <TableCell>{company.phone}</TableCell>
+
+                <TableCell className="break-all">
+                  {company.adminEmail}
+                </TableCell>
+
+                <TableCell>
+                  <span
+                    className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                      company.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {company.isActive ? "Active" : "Deactive"}
+                  </span>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-3">
                     <Eye
                       className="text-blue-500 cursor-pointer hover:scale-110 transition"
                       size={20}
                       onClick={() =>
-                        navigate(`/admin/for-admin/company-details/${company._id}`)
+                        navigate(
+                          `/admin/for-admin/company-details/${company._id}`
+                        )
                       }
                     />
+
                     {loading[company._id] ? (
                       "..."
                     ) : (
@@ -285,6 +316,7 @@ const CompanyList = () => {
                         color="primary"
                       />
                     )}
+
                     {dloading[company._id] ? (
                       "..."
                     ) : (
@@ -297,71 +329,79 @@ const CompanyList = () => {
                         }}
                       />
                     )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-6 text-sm text-gray-600">
-          <span>
-            Showing{" "}
-            {Math.min(
-              (activePage - 1) * itemsPerPage + 1,
-              filteredCompanies.length
-            )}{" "}
-            to{" "}
-            {Math.min(activePage * itemsPerPage, filteredCompanies.length)} of{" "}
-            {filteredCompanies.length} entries
-          </span>
-          <div className="flex gap-2">
-            <Button
-              disabled={activePage === 1}
-              onClick={() => setActivePage(activePage - 1)}
-              className="px-4"
-            >
-              Previous
-            </Button>
-            {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map(
-              (_, i) => (
-                <Button
-                  key={i}
-                  onClick={() => setActivePage(i + 1)}
-                  className={`px-4 ${
-                    activePage === i + 1
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {i + 1}
-                </Button>
-              )
-            )}
-            <Button
-              disabled={
-                activePage ===
-                Math.ceil(filteredCompanies.length / itemsPerPage)
-              }
-              onClick={() => setActivePage(activePage + 1)}
-              className="px-4"
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
-      {showDeleteModal && (
-        <DeleteConfirmation
-          isOpen={showDeleteModal}
-          onConfirm={onConfirmDelete}
-          onCancel={() => setShowDeleteModal(false)}
-        />
-      )}
-    </>
-  );
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-600">
+        <span className="text-center sm:text-left">
+          Showing{" "}
+          {Math.min(
+            (activePage - 1) * itemsPerPage + 1,
+            filteredCompanies.length
+          )}{" "}
+          to{" "}
+          {Math.min(
+            activePage * itemsPerPage,
+            filteredCompanies.length
+          )}{" "}
+          of {filteredCompanies.length} entries
+        </span>
+
+        <div className="flex flex-wrap gap-2 justify-center">
+          <Button
+            disabled={activePage === 1}
+            onClick={() => setActivePage(activePage - 1)}
+            className="px-4"
+          >
+            Previous
+          </Button>
+
+          {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map(
+            (_, i) => (
+              <Button
+                key={i}
+                onClick={() => setActivePage(i + 1)}
+                className={`px-4 ${
+                  activePage === i + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {i + 1}
+              </Button>
+            )
+          )}
+
+          <Button
+            disabled={
+              activePage ===
+              Math.ceil(filteredCompanies.length / itemsPerPage)
+            }
+            onClick={() => setActivePage(activePage + 1)}
+            className="px-4"
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    {showDeleteModal && (
+      <DeleteConfirmation
+        isOpen={showDeleteModal}
+        onConfirm={onConfirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+    )}
+  </>
+);
+
 };
 
 export default CompanyList;
