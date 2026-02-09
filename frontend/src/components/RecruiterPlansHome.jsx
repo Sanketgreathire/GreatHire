@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check } from "lucide-react";
 
 const RecruiterPlansHome = () => {
   const navigate = useNavigate();
@@ -89,20 +89,26 @@ const RecruiterPlansHome = () => {
     },
   ];
 
+  // duplicate for seamless infinite loop
+  const loopedPlans = [...plans, ...plans];
+
+  // auto slide (ONE direction only)
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % (plans.length - 3));
+      setCurrentIndex((prev) => prev + 1);
     }, 3500);
+
     return () => clearInterval(interval);
-  }, [plans.length]);
+  }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % (plans.length - 3));
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + (plans.length - 3)) % (plans.length - 3));
-  };
+  // reset silently (no jump)
+  useEffect(() => {
+    if (currentIndex >= plans.length) {
+      setTimeout(() => {
+        setCurrentIndex(0);
+      }, 500);
+    }
+  }, [currentIndex, plans.length]);
 
   return (
     <section className="py-16 bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 overflow-hidden">
@@ -119,105 +125,72 @@ const RecruiterPlansHome = () => {
           </p>
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative px-4 sm:px-10">
-          {/* Navigation Buttons */}
-          <button
-            onClick={prevSlide}
-            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-all"
+        {/* Carousel */}
+        <div className="overflow-hidden">
+          <div
+            className="flex gap-4 transition-transform duration-500 ease-in-out"
+            style={{
+              transform: `translateX(-${currentIndex * 25}%)`,
+            }}
           >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
-
-          <button
-            onClick={nextSlide}
-            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-all"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
-          </button>
-
-          {/* Slides */}
-          <div className="overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out gap-4"
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {plans.map((plan) => (
+            {loopedPlans.map((plan, idx) => (
+              <div
+                key={`${plan.id}-${idx}`}
+                className="min-w-full sm:min-w-[50%] lg:min-w-[25%]"
+              >
                 <div
-                  key={plan.id}
-                  className="min-w-full sm:min-w-[50%] lg:min-w-[25%]"
+                  onClick={() => navigate("/recruiter/signup")}
+                  className="relative bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-blue-500 h-full flex flex-col"
                 >
-                  <div
-                    onClick={() => navigate("/recruiter/signup")}
-                    className="relative bg-white rounded-xl p-5 shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:-translate-y-1 border border-gray-200 hover:border-blue-500 h-full flex flex-col"
-                  >
-                    {plan.popular && (
-                      <div className="mb-2 text-center">
-                        <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-wide">
-                          MOST POPULAR
-                        </span>
-                      </div>
-                    )}
+                  {plan.popular && (
+                    <div className="mb-2 text-center">
+                      <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">
+                        MOST POPULAR
+                      </span>
+                    </div>
+                  )}
 
-                    <div className="text-center mb-4">
-                      <h3 className="text-sm font-bold text-gray-900 mb-2 min-h-[2.5rem] flex items-center justify-center">
-                        {plan.title}
-                      </h3>
+                  <div className="text-center mb-4">
+                    <h3 className="text-sm font-bold text-gray-900 mb-2 min-h-[2.5rem] flex items-center justify-center">
+                      {plan.title}
+                    </h3>
 
-                      <div className="mb-2">
-                        <span className="text-2xl font-extrabold text-gray-900">
-                          ₹{plan.price}
-                        </span>
-                        <span className="text-[10px] text-gray-500 block mt-1">
-                          {plan.billing}
-                        </span>
-                      </div>
-
-                      <p className="text-[11px] font-medium text-gray-600">
-                        {plan.jobs} • {plan.resumes}
-                      </p>
+                    <div className="mb-2">
+                      <span className="text-2xl font-extrabold text-gray-900">
+                        ₹{plan.price}
+                      </span>
+                      <span className="text-[10px] text-gray-500 block mt-1">
+                        {plan.billing}
+                      </span>
                     </div>
 
-                    <ul className="space-y-2 mb-4 flex-grow">
-                      {plan.features.map((feature, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-[11px]"
-                        >
-                          <Check
-                            size={12}
-                            className="text-green-500 flex-shrink-0 mt-0.5"
-                          />
-                          <span className="text-gray-700 leading-snug">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button className="w-full mt-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2.5 rounded-lg font-semibold text-xs hover:shadow-lg transition-all">
-                      Get Started
-                    </button>
+                    <p className="text-[11px] font-medium text-gray-600">
+                      {plan.jobs} • {plan.resumes}
+                    </p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-6">
-            {Array.from({ length: plans.length - 3 }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentIndex
-                    ? "bg-blue-600 w-6"
-                    : "bg-gray-300 w-2"
-                }`}
-              />
+                  <ul className="space-y-2 mb-4 flex-grow">
+                    {plan.features.map((feature, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-2 text-[11px]"
+                      >
+                        <Check
+                          size={12}
+                          className="text-green-500 flex-shrink-0 mt-0.5"
+                        />
+                        <span className="text-gray-700 leading-snug">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button className="w-full mt-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2.5 rounded-lg font-semibold text-xs hover:shadow-lg transition-all">
+                    Get Started
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
