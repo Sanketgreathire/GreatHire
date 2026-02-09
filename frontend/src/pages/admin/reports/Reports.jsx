@@ -259,35 +259,34 @@ ${csvUrl}
   }), [statsData]);
 
   return (
-    <>
-      <Navbar linkName="Reports" />
+  <>
+    <Navbar linkName="Reports" />
 
-      <main className="p-8 bg-gray-50 min-h-screen">
-        <div className="max-w-[1400px] mx-auto">
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-3xl font-semibold text-gray-900">Corporate Analytics</h1>
-              <p className="text-sm text-gray-500 mt-1">Executive view • consolidated KPIs • up-to-date insights</p>
-            </div>
+    <main className="px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 min-h-screen">
+      <div className="max-w-[1400px] mx-auto">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+              Corporate Analytics
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Executive view • consolidated KPIs • up-to-date insights
+            </p>
+          </div>
 
-            <div className="flex items-center gap-3">
-              <Button
-                    className="px-4 py-2 rounded-xl border border-gray-200 text-black bg-white hover:shadow hover:text-white"
-                    onClick={() => exportToCSV(csvData, "analytics_report.csv")}
-                  >
-                    Export
-                  </Button>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              className="px-4 py-2 rounded-xl border border-gray-200 text-black bg-white hover:shadow hover:text-white"
+              onClick={() => exportToCSV(csvData, "analytics_report.csv")}
+            >
+              Export
+            </Button>
+          </div>
+        </header>
 
-              {/* <Button
-                    className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-black hover:shadow hover:text-white"
-                    onClick={handleShare}
-                  >
-                    Share
-                  </Button> */}
- 
-            </div>
-          </header>
-
+        {/* Filters */}
+        <div className="mb-6">
           <FilterBar
             year={selectedYear}
             range={selectedRange}
@@ -296,137 +295,217 @@ ${csvUrl}
             onApply={fetchStatistics}
             loading={loading}
           />
-
-          {/* KPI Row */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-            {loading ? (
-              Array.from({ length: 4 }).map((_, i) => (
-                <Card key={i} className="p-6 rounded-2xl shadow-sm">
-                  <Skeleton className="h-6 w-32" />
-                  <div className="mt-4">
-                    <Skeleton className="h-8 w-40" />
-                  </div>
-                </Card>
-              ))
-            ) : (
-              [
-                { label: "Total Revenue", value: `₹${statsData?.totalRevenue || 0}`, icon: <DollarSign size={28} className="text-[#2563EB]" />, delta: deltas.revenue },
-                { label: "New Users", value: statsData?.newUsers || 0, icon: <Users size={28} className="text-[#16A34A]" />, delta: deltas.users },
-                { label: "Success Rate", value: `${applicationSuccessRate}%`, icon: <CheckCircle size={28} className="text-[#7C3AED]" />, delta: deltas.success },
-                { label: "Posted Jobs", value: statsData?.totalJobs || 0, icon: <Briefcase size={28} className="text-[#F59E0B]" />, delta: null },
-              ].map((kpi, idx) => (
-                <KPI key={idx} label={kpi.label} value={kpi.value} icon={kpi.icon} delta={kpi.delta} />
-              ))
-            )}
-          </section>
-
-          {/* Charts grid */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            <Card className="p-6 rounded-2xl shadow-lg">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
-                  <p className="text-sm text-gray-500 mt-1">Revenue over selected range</p>
-                </div>
-              </div>
-
-              <div className="mt-4 h-[280px]">
-                {loading ? (
-                  <Skeleton className="h-full" />
-                ) : statsData?.revenueTrend?.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={statsData.revenueTrend} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                      <YAxis tickFormatter={(v) => `₹${v}`} />
-                      <Tooltip formatter={(val) => `₹${val}`} />
-                      <Legend verticalAlign="top" align="right" />
-                      <Line type="monotone" dataKey="revenue" stroke={Accent.primary} strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 6 }} animationDuration={800} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-gray-400">No Revenue Data</div>
-                )}
-              </div>
-            </Card>
-
-            <Card className="p-6 rounded-2xl shadow-lg">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">User Growth</h3>
-                  <p className="text-sm text-gray-500 mt-1">New user acquisition trend</p>
-                </div>
-              </div>
-
-              <div className="mt-4 h-[280px]">
-                {loading ? (
-                  <Skeleton className="h-full" />
-                ) : statsData?.newUsersTrend?.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={statsData.newUsersTrend} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend verticalAlign="top" align="right" />
-                      <Bar dataKey="users" fill={Accent.primaryLight} radius={[6, 6, 0, 0]} animationDuration={700} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-gray-400">No User Data</div>
-                )}
-              </div>
-            </Card>
-          </section>
-
-          {/* Application breakdown */}
-          <section className="mt-8">
-            <Card className="p-6 rounded-2xl shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Application Breakdown</h3>
-                  <p className="text-sm text-gray-500 mt-1">Shortlisted vs Pending vs Rejected</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col lg:flex-row items-center gap-6">
-                <div className="w-full lg:w-1/2 h-64">
-                  {loading ? (
-                    <Skeleton className="h-full" />
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={applicationStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                          {applicationStats.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Legend verticalAlign="bottom" />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-
-                <div className="w-full lg:w-1/2">
-                  <div className="grid grid-cols-1 gap-3">
-                    {applicationStats.map((entry, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100">
-                        <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-800">{entry.name}</p>
-                        </div>
-                        <div className="text-sm text-gray-600">{entry.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </section>
         </div>
-      </main>
-    </>
-  );
+
+        {/* KPI Row */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="p-6 rounded-2xl shadow-sm">
+                <Skeleton className="h-6 w-32" />
+                <div className="mt-4">
+                  <Skeleton className="h-8 w-40" />
+                </div>
+              </Card>
+            ))
+          ) : (
+            [
+              {
+                label: "Total Revenue",
+                value: `₹${statsData?.totalRevenue || 0}`,
+                icon: <DollarSign size={28} className="text-[#2563EB]" />,
+                delta: deltas.revenue,
+              },
+              {
+                label: "New Users",
+                value: statsData?.newUsers || 0,
+                icon: <Users size={28} className="text-[#16A34A]" />,
+                delta: deltas.users,
+              },
+              {
+                label: "Success Rate",
+                value: `${applicationSuccessRate}%`,
+                icon: <CheckCircle size={28} className="text-[#7C3AED]" />,
+                delta: deltas.success,
+              },
+              {
+                label: "Posted Jobs",
+                value: statsData?.totalJobs || 0,
+                icon: <Briefcase size={28} className="text-[#F59E0B]" />,
+                delta: null,
+              },
+            ].map((kpi, idx) => (
+              <KPI
+                key={idx}
+                label={kpi.label}
+                value={kpi.value}
+                icon={kpi.icon}
+                delta={kpi.delta}
+              />
+            ))
+          )}
+        </section>
+
+        {/* Charts */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
+          {/* Revenue Trend */}
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Revenue Trend
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Revenue over selected range
+              </p>
+            </div>
+
+            <div className="mt-4 h-[260px] sm:h-[280px]">
+              {loading ? (
+                <Skeleton className="h-full" />
+              ) : statsData?.revenueTrend?.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={statsData.revenueTrend}
+                    margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                    <YAxis tickFormatter={(v) => `₹${v}`} />
+                    <Tooltip formatter={(val) => `₹${val}`} />
+                    <Legend verticalAlign="top" align="right" />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke={Accent.primary}
+                      strokeWidth={3}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 6 }}
+                      animationDuration={800}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400">
+                  No Revenue Data
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* User Growth */}
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                User Growth
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                New user acquisition trend
+              </p>
+            </div>
+
+            <div className="mt-4 h-[260px] sm:h-[280px]">
+              {loading ? (
+                <Skeleton className="h-full" />
+              ) : statsData?.newUsersTrend?.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={statsData.newUsersTrend}
+                    margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend verticalAlign="top" align="right" />
+                    <Bar
+                      dataKey="users"
+                      fill={Accent.primaryLight}
+                      radius={[6, 6, 0, 0]}
+                      animationDuration={700}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400">
+                  No User Data
+                </div>
+              )}
+            </div>
+          </Card>
+        </section>
+
+        {/* Application Breakdown */}
+        <section className="mt-8">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Application Breakdown
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Shortlisted vs Pending vs Rejected
+              </p>
+            </div>
+
+            <div className="flex flex-col lg:flex-row items-center gap-6">
+              <div className="w-full lg:w-1/2 h-64">
+                {loading ? (
+                  <Skeleton className="h-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={applicationStats}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={80}
+                        label
+                      >
+                        {applicationStats.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                          />
+                        ))}
+                      </Pie>
+                      <Legend verticalAlign="bottom" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+
+              <div className="w-full lg:w-1/2">
+                <div className="grid grid-cols-1 gap-3">
+                  {applicationStats.map((entry, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-100"
+                    >
+                      <div
+                        className="w-3 h-3 rounded"
+                        style={{ backgroundColor: entry.color }}
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-800">
+                          {entry.name}
+                        </p>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {entry.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+      </div>
+    </main>
+  </>
+);
+
 };
 
 export default Reports;

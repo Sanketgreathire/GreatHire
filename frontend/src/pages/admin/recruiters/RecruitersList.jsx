@@ -404,63 +404,67 @@ const RecruitersList = () => {
   );
 
   return (
-    <>
-      <Navbar linkName={"Recruiters List"} />
+  <>
+    <Navbar linkName={"Recruiters List"} />
 
-      {/* Stats */}
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((s, idx) => (
-          <StatCard key={idx} {...s} />
-        ))}
-      </div>
+    {/* Stats */}
+    <div className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {stats.map((s, idx) => (
+        <StatCard key={idx} {...s} />
+      ))}
+    </div>
 
-      <div className="m-4 p-4 bg-white shadow rounded-lg">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3 w-full md:w-1/2">
-            <Input
-              placeholder="Search by name, email, contact, company"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full"
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setSearch("");
-                setStatus("All");
-                setPage(1);
-              }}
-              title="Reset filters"
-            >
-              Reset
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-gray-600">Status</label>
-            <select
-              value={status}
-              onChange={(e) => {
-                const val = e.target.value;
-                setStatus(val === "All" ? "All" : val === "true");
-                setPage(1);
-              }}
-              className="h-10 px-3 border rounded-md bg-white focus:outline-none"
-              aria-label="Filter by status"
-            >
-              <option value="All">All Status</option>
-              <option value="true">Active</option>
-              <option value="false">Deactive</option>
-            </select>
-          </div>
+    <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white shadow rounded-lg">
+      {/* Filters */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
+          <Input
+            placeholder="Search by name, email, contact, company"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full"
+          />
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setSearch("");
+              setStatus("All");
+              setPage(1);
+            }}
+            title="Reset filters"
+            className="self-start sm:self-auto"
+          >
+            Reset
+          </Button>
         </div>
 
-        {/* Table */}
+        <div className="flex items-center gap-3">
+          <label className="text-sm text-gray-600 whitespace-nowrap">
+            Status
+          </label>
+          <select
+            value={status}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStatus(val === "All" ? "All" : val === "true");
+              setPage(1);
+            }}
+            className="h-10 px-3 border rounded-md bg-white focus:outline-none w-full sm:w-auto"
+            aria-label="Filter by status"
+          >
+            <option value="All">All Status</option>
+            <option value="true">Active</option>
+            <option value="false">Deactive</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
         <Table>
           <TableHeader>
             <TableRow>
@@ -477,54 +481,76 @@ const RecruitersList = () => {
 
           <TableBody>
             {isFetching
-              ? Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
+              ? Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonRow key={i} />
+                ))
               : paginatedRecruiters.length > 0
               ? paginatedRecruiters.map((r) => (
-                  <TableRow key={r._id} className="hover:bg-gray-50 transition-colors">
+                  <TableRow
+                    key={r._id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <TableCell>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                            {r.fullname ? r.fullname.charAt(0).toUpperCase() : "R"}
+                      <div className="flex items-start gap-3 min-w-[220px]">
+                        <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+                          {r.fullname ? r.fullname.charAt(0).toUpperCase() : "R"}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-medium flex flex-wrap items-center gap-2">
+                            <span className="break-words">{r.fullname}</span>
+                            {r.isAdmin && (
+                              <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                                Admin
+                              </span>
+                            )}
                           </div>
-                          <div>
-                            <div className="font-medium">
-                              {r.fullname}{" "}
-                              {r.isAdmin && (
-                                <span className="ml-2 inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                                  Admin
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-500">{r.email}</div>
+                          <div className="text-sm text-gray-500 break-all">
+                            {r.email}
                           </div>
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell>{r.companyName}</TableCell>
-                    <TableCell>{r.phone}</TableCell>
-                    <TableCell>{r.position}</TableCell>
-                    <TableCell>{r.postedJobs ?? 0}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {r.companyName}
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap">
+                      {r.phone}
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap">
+                      {r.position}
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      {r.postedJobs ?? 0}
+                    </TableCell>
 
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          r.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                          r.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
                         }`}
                       >
                         {r.isActive ? "Active" : "Deactive"}
                       </span>
                     </TableCell>
 
-                    <TableCell>{r.joined}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {r.joined}
+                    </TableCell>
 
                     <TableCell>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2 min-w-[200px]">
                         {/* View */}
                         <button
                           title="View recruiter details"
-                          onClick={() => navigate(`/admin/recruiter/details/${r._id}`)}
+                          onClick={() =>
+                            navigate(`/admin/recruiter/details/${r._id}`)
+                          }
                           className="p-2 rounded bg-slate-100 hover:bg-slate-200"
                         >
                           <Eye size={16} className="text-slate-600" />
@@ -532,33 +558,78 @@ const RecruitersList = () => {
 
                         {/* Toggle */}
                         {loadingMap[r._id] ? (
-                          <div className="px-2 text-sm">Updating...</div>
+                          <div className="px-2 text-sm whitespace-nowrap">
+                            Updating...
+                          </div>
                         ) : (
                           <button
-                            title={r.isActive ? "Deactivate recruiter" : "Activate recruiter"}
-                            onClick={() => toggleActive(r.companyId, r._id, !r.isActive, r.isAdmin)}
-                            className={`p-2 rounded ${r.isActive ? "bg-green-50 hover:bg-green-100" : "bg-gray-50 hover:bg-gray-100"}`}
+                            title={
+                              r.isActive
+                                ? "Deactivate recruiter"
+                                : "Activate recruiter"
+                            }
+                            onClick={() =>
+                              toggleActive(
+                                r.companyId,
+                                r._id,
+                                !r.isActive,
+                                r.isAdmin
+                              )
+                            }
+                            className={`p-2 rounded ${
+                              r.isActive
+                                ? "bg-green-50 hover:bg-green-100"
+                                : "bg-gray-50 hover:bg-gray-100"
+                            }`}
                           >
-                            <UserCheck size={16} className={r.isActive ? "text-green-600" : "text-slate-600"} />
+                            <UserCheck
+                              size={16}
+                              className={
+                                r.isActive
+                                  ? "text-green-600"
+                                  : "text-slate-600"
+                              }
+                            />
                           </button>
                         )}
 
                         {/* Block / Unblock */}
                         {blockingMap[r._id] ? (
-                          <div className="px-2 text-sm">Processing...</div>
+                          <div className="px-2 text-sm whitespace-nowrap">
+                            Processing...
+                          </div>
                         ) : (
                           <button
-                            title={r.isBlocked ? "Unblock recruiter" : "Block recruiter"}
-                            onClick={() => toggleBlock(r._id, r.companyId, r.isBlocked)}
-                            className={`p-2 rounded ${r.isBlocked ? "bg-gray-100 hover:bg-gray-200" : "bg-orange-50 hover:bg-orange-100"}`}
+                            title={
+                              r.isBlocked
+                                ? "Unblock recruiter"
+                                : "Block recruiter"
+                            }
+                            onClick={() =>
+                              toggleBlock(r._id, r.companyId, r.isBlocked)
+                            }
+                            className={`p-2 rounded ${
+                              r.isBlocked
+                                ? "bg-gray-100 hover:bg-gray-200"
+                                : "bg-orange-50 hover:bg-orange-100"
+                            }`}
                           >
-                            <Ban size={16} className={r.isBlocked ? "text-gray-600" : "text-orange-600"} />
+                            <Ban
+                              size={16}
+                              className={
+                                r.isBlocked
+                                  ? "text-gray-600"
+                                  : "text-orange-600"
+                              }
+                            />
                           </button>
                         )}
 
                         {/* Delete */}
                         {dloadingMap[r._id] ? (
-                          <div className="px-2 text-sm">Deleting...</div>
+                          <div className="px-2 text-sm whitespace-nowrap">
+                            Deleting...
+                          </div>
                         ) : (
                           <button
                             title="Delete recruiter"
@@ -581,7 +652,10 @@ const RecruitersList = () => {
                           }}
                           className="p-2 rounded bg-blue-50 hover:bg-blue-100"
                         >
-                          <MessageSquare size={16} className="text-blue-600" />
+                          <MessageSquare
+                            size={16}
+                            className="text-blue-600"
+                          />
                         </button>
                       </div>
                     </TableCell>
@@ -590,57 +664,80 @@ const RecruitersList = () => {
               : (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8">
-                      <div className="text-gray-500">No recruiters found.</div>
+                      <div className="text-gray-500">
+                        No recruiters found.
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
           </TableBody>
         </Table>
-
-        {/* Footer */}
-        <div className="flex flex-col md:flex-row md:justify-between items-center gap-3 mt-4">
-          <div className="text-sm text-gray-600">
-            Showing{" "}
-            {filteredRecruiters.length === 0
-              ? 0
-              : Math.min((page - 1) * ITEMS_PER_PAGE + 1, filteredRecruiters.length)}{" "}
-            to {Math.min(page * ITEMS_PER_PAGE, filteredRecruiters.length)} of{" "}
-            {filteredRecruiters.length} results
-          </div>
-
-          <CompactPagination page={page} setPage={setPage} totalPages={totalPages} />
-        </div>
       </div>
 
-      {/* Delete confirmation */}
-      {showDeleteModal && (
-        <DeleteConfirmation isOpen={showDeleteModal} onConfirm={onConfirmDelete} onCancel={onCancelDelete} />
-      )}
+      {/* Footer */}
+      <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 mt-4">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          Showing{" "}
+          {filteredRecruiters.length === 0
+            ? 0
+            : Math.min(
+                (page - 1) * ITEMS_PER_PAGE + 1,
+                filteredRecruiters.length
+              )}{" "}
+          to {Math.min(page * ITEMS_PER_PAGE, filteredRecruiters.length)} of{" "}
+          {filteredRecruiters.length} results
+        </div>
 
-      {/* Message Modal */}
-      {showMessageModal && selectedMessageRecruiter && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-          <div className="bg-white p-6 rounded-lg w-[90%] max-w-md shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Message to {selectedMessageRecruiter.fullname}</h2>
-            <textarea
-              className="w-full border rounded-lg p-2 h-32 resize-none"
-              placeholder="Type your message here..."
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-            ></textarea>
-            <div className="mt-4 flex justify-end gap-2">
-              <Button variant="secondary" onClick={() => { setShowMessageModal(false); setMessageText(""); }}>
-                Cancel
-              </Button>
-              <Button onClick={sendMessageToRecruiter} disabled={sendingMessage}>
-                {sendingMessage ? "Sending..." : "Send"}
-              </Button>
-            </div>
+        <CompactPagination
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+        />
+      </div>
+    </div>
+
+    {/* Delete confirmation */}
+    {showDeleteModal && (
+      <DeleteConfirmation
+        isOpen={showDeleteModal}
+        onConfirm={onConfirmDelete}
+        onCancel={onCancelDelete}
+      />
+    )}
+
+    {/* Message Modal */}
+    {showMessageModal && selectedMessageRecruiter && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50 px-4">
+        <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+          <h2 className="text-lg font-semibold mb-4 break-words">
+            Message to {selectedMessageRecruiter.fullname}
+          </h2>
+          <textarea
+            className="w-full border rounded-lg p-2 h-32 resize-none"
+            placeholder="Type your message here..."
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+          ></textarea>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowMessageModal(false);
+                setMessageText("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={sendMessageToRecruiter} disabled={sendingMessage}>
+              {sendingMessage ? "Sending..." : "Send"}
+            </Button>
           </div>
         </div>
-      )}
-    </>
-  );
+      </div>
+    )}
+  </>
+);
+
 };
 
 export default RecruitersList;

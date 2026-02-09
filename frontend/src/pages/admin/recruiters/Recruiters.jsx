@@ -316,82 +316,87 @@ const Recruiters = () => {
   );
 
   return (
-    <>
-      <Navbar linkName={"Recruiters"} />
+  <>
+    <Navbar linkName={"Recruiters"} />
 
-      {/* Stats */}
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((s, idx) => (
-          <StatCard key={idx} {...s} />
-        ))}
-      </div>
+    {/* Stats */}
+    <div className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {stats.map((s, idx) => (
+        <StatCard key={idx} {...s} />
+      ))}
+    </div>
 
-      {/* Main Card */}
-      <div className="m-4 p-4 bg-white shadow rounded-lg">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3 w-full md:w-1/2">
-            <Input
-              placeholder="Search by name, email, contact"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="w-full"
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setSearch("");
-                setStatus("All");
-                setPage(1);
-              }}
-              title="Reset filters"
-            >
-              Reset
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-gray-600">Status</label>
-            <div className="relative">
-              <select
-                value={status}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setStatus(val === "All" ? "All" : val === "true");
-                  setPage(1);
-                }}
-                className="h-10 px-3 border rounded-md bg-white focus:outline-none"
-                aria-label="Filter by status"
-              >
-                <option value="All">All Status</option>
-                <option value="true">Active</option>
-                <option value="false">Deactive</option>
-              </select>
-            </div>
-          </div>
+    {/* Main Card */}
+    <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white shadow rounded-lg">
+      {/* Filters */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
+          <Input
+            placeholder="Search by name, email, contact"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full"
+          />
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setSearch("");
+              setStatus("All");
+              setPage(1);
+            }}
+            title="Reset filters"
+            className="self-start sm:self-auto"
+          >
+            Reset
+          </Button>
         </div>
 
-        {/* Table */}
+        <div className="flex items-center gap-3">
+          <label className="text-sm text-gray-600 whitespace-nowrap">
+            Status
+          </label>
+          <div className="relative w-full sm:w-auto">
+            <select
+              value={status}
+              onChange={(e) => {
+                const val = e.target.value;
+                setStatus(val === "All" ? "All" : val === "true");
+                setPage(1);
+              }}
+              className="h-10 px-3 border rounded-md bg-white focus:outline-none w-full sm:w-auto"
+              aria-label="Filter by status"
+            >
+              <option value="All">All Status</option>
+              <option value="true">Active</option>
+              <option value="false">Deactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Recruiter</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Posted Jobs</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="whitespace-nowrap">Recruiter</TableHead>
+              <TableHead className="whitespace-nowrap">Contact</TableHead>
+              <TableHead className="whitespace-nowrap">Position</TableHead>
+              <TableHead className="whitespace-nowrap">Posted Jobs</TableHead>
+              <TableHead className="whitespace-nowrap">Status</TableHead>
+              <TableHead className="whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {isFetching
-              ? // show 6 skeleton rows
-                Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)
+              ? Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonRow key={i} />
+                ))
               : paginatedRecruiters.length > 0
               ? paginatedRecruiters.map((recruiter) => (
                   <TableRow
@@ -399,33 +404,41 @@ const Recruiters = () => {
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <TableCell>
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                            {recruiter.fullname
-                              ? recruiter.fullname.charAt(0).toUpperCase()
-                              : "R"}
+                      <div className="flex items-start gap-3">
+                        <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+                          {recruiter.fullname
+                            ? recruiter.fullname.charAt(0).toUpperCase()
+                            : "R"}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-medium flex flex-wrap items-center gap-2">
+                            <span className="break-words">
+                              {recruiter.fullname}
+                            </span>
+                            {recruiter.isAdmin && (
+                              <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                                Admin
+                              </span>
+                            )}
                           </div>
-                          <div>
-                            <div className="font-medium">
-                              {recruiter.fullname}{" "}
-                              {recruiter.isAdmin && (
-                                <span className="ml-2 inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                                  Admin
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {recruiter.email}
-                            </div>
+                          <div className="text-sm text-gray-500 break-all">
+                            {recruiter.email}
                           </div>
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell>{recruiter.phone}</TableCell>
-                    <TableCell>{recruiter.position}</TableCell>
-                    <TableCell>{recruiter.postedJobs ?? 0}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {recruiter.phone}
+                    </TableCell>
+
+                    <TableCell className="whitespace-nowrap">
+                      {recruiter.position}
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      {recruiter.postedJobs ?? 0}
+                    </TableCell>
 
                     <TableCell>
                       <span
@@ -445,7 +458,9 @@ const Recruiters = () => {
                         <button
                           title="View recruiter details"
                           onClick={() =>
-                            navigate(`/admin/recruiter/details/${recruiter._id}`)
+                            navigate(
+                              `/admin/recruiter/details/${recruiter._id}`
+                            )
                           }
                           className="p-1 rounded hover:bg-gray-100"
                         >
@@ -454,7 +469,9 @@ const Recruiters = () => {
 
                         {/* Toggle */}
                         {loadingMap[recruiter._id] ? (
-                          <div className="text-sm">Updating...</div>
+                          <div className="text-sm whitespace-nowrap">
+                            Updating...
+                          </div>
                         ) : (
                           <button
                             title={
@@ -471,7 +488,6 @@ const Recruiters = () => {
                             }
                             className="p-1 rounded hover:bg-gray-100"
                           >
-                            {/* Simple accessible toggle representation */}
                             <input
                               type="checkbox"
                               readOnly
@@ -484,7 +500,9 @@ const Recruiters = () => {
 
                         {/* Delete */}
                         {dloadingMap[recruiter._id] ? (
-                          <div className="text-sm">Deleting...</div>
+                          <div className="text-sm whitespace-nowrap">
+                            Deleting...
+                          </div>
                         ) : (
                           <button
                             title="Delete recruiter"
@@ -501,46 +519,58 @@ const Recruiters = () => {
                     </TableCell>
                   </TableRow>
                 ))
-              : // no results
-                (
+              : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
-                      <div className="text-gray-500">No recruiters found.</div>
+                      <div className="text-gray-500">
+                        No recruiters found.
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
           </TableBody>
         </Table>
-
-        {/* Footer: results & pagination */}
-        <div className="flex flex-col md:flex-row md:justify-between items-center gap-3 mt-4">
-          <div className="text-sm text-gray-600">
-            Showing{" "}
-            {filteredRecruiters.length === 0
-              ? 0
-              : Math.min((page - 1) * ITEMS_PER_PAGE + 1, filteredRecruiters.length)}{" "}
-            to{" "}
-            {Math.min(page * ITEMS_PER_PAGE, filteredRecruiters.length)} of{" "}
-            {filteredRecruiters.length} results
-          </div>
-
-          <CompactPagination
-            page={page}
-            setPage={setPage}
-            totalPages={Math.max(1, Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE))}
-          />
-        </div>
       </div>
 
-      {showDeleteModal && (
-        <DeleteConfirmation
-          isOpen={showDeleteModal}
-          onConfirm={onConfirmDelete}
-          onCancel={onCancelDelete}
+      {/* Footer */}
+      <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 mt-4">
+        <div className="text-sm text-gray-600 text-center sm:text-left">
+          Showing{" "}
+          {filteredRecruiters.length === 0
+            ? 0
+            : Math.min(
+                (page - 1) * ITEMS_PER_PAGE + 1,
+                filteredRecruiters.length
+              )}{" "}
+          to{" "}
+          {Math.min(
+            page * ITEMS_PER_PAGE,
+            filteredRecruiters.length
+          )}{" "}
+          of {filteredRecruiters.length} results
+        </div>
+
+        <CompactPagination
+          page={page}
+          setPage={setPage}
+          totalPages={Math.max(
+            1,
+            Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE)
+          )}
         />
-      )}
-    </>
-  );
+      </div>
+    </div>
+
+    {showDeleteModal && (
+      <DeleteConfirmation
+        isOpen={showDeleteModal}
+        onConfirm={onConfirmDelete}
+        onCancel={onCancelDelete}
+      />
+    )}
+  </>
+);
+
 };
 
 export default Recruiters;

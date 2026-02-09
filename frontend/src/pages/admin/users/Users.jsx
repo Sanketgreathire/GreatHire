@@ -358,10 +358,22 @@ const location = useLocation();
                   </TableCell>
                   <TableCell className="text-center">{u.phoneNumber}</TableCell>
                   <TableCell className="text-center">
-                    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium">
-                      {formatDate(u.joined)}
-                    </span>
-                  </TableCell>
+  <span
+    className="
+      inline-block
+      px-3 py-1
+      rounded-full
+      bg-blue-50
+      text-blue-600
+      text-xs
+      font-medium
+      whitespace-nowrap
+    "
+  >
+    {formatDate(u.joined)}
+  </span>
+</TableCell>
+
                   <TableCell className="text-center">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
@@ -374,8 +386,22 @@ const location = useLocation();
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    {u.jobRole || "N/A"}
-                  </TableCell>
+  <div
+    className="
+      max-w-[160px] 
+      mx-auto 
+      text-sm 
+      leading-snug
+      overflow-hidden 
+      text-ellipsis 
+      line-clamp-2
+    "
+    title={u.jobRole}
+  >
+    {u.jobRole || "N/A"}
+  </div>
+</TableCell>
+
                   <TableCell className="text-center">
                     {u.duration || "N/A"}
                   </TableCell>
@@ -408,78 +434,79 @@ const location = useLocation();
         </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex flex-wrap gap-2 justify-center mt-6">
-        <Button
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-          className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
-        >
-          Prev
-        </Button>
-        {(() => {
-          const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-          const pages = [];
-          pages.push(1);
-          if (page > 3) pages.push("...");
-          for (
-            let i = Math.max(2, page - 2);
-            i <= Math.min(totalPages - 1, page + 2);
-            i++
-          ) {
-            pages.push(i);
-          }
-          if (page < totalPages - 2) pages.push("...");
-          if (totalPages > 1) pages.push(totalPages);
-          return pages.map((p, idx) =>
-            p === "..." ? (
-              <span
-                key={idx}
-                className="px-3 py-1 text-gray-500 select-none"
-              >
-                ...
-              </span>
-            ) : (
-              <Button
-                key={p}
-                onClick={() => setPage(p)}
-                className={`px-3 py-1 rounded-md ${
-                  page === p
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {p}
-              </Button>
-            )
-          );
-        })()}
-        <Button
-          disabled={page === Math.ceil(filteredUsers.length / itemsPerPage)}
-          onClick={() => setPage(page + 1)}
-          className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50"
-        >
-          Next
-        </Button>
-      </div>
+{/* Pagination */}
+<div className="flex justify-center items-center gap-2 mt-6 px-4">
+  {(() => {
+    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+    if (totalPages <= 1) return null;
 
-      {/* Floating CSV Download */}
-      <div className="fixed bottom-6 right-6">
+    const pages = new Set();
+
+    pages.add(1);
+    pages.add(totalPages);
+
+    for (
+      let i = Math.max(2, page - 2);
+      i <= Math.min(totalPages - 1, page + 2);
+      i++
+    ) {
+      pages.add(i);
+    }
+
+    const sorted = [...pages].sort((a, b) => a - b);
+
+    const finalPages = [];
+    for (let i = 0; i < sorted.length; i++) {
+      if (i > 0 && sorted[i] - sorted[i - 1] > 1) {
+        finalPages.push("...");
+      }
+      finalPages.push(sorted[i]);
+    }
+
+    return finalPages.map((p, idx) =>
+      p === "..." ? (
+        <span
+          key={`dots-${idx}`}
+          className="px-3 py-1 text-gray-500 select-none"
+        >
+          ...
+        </span>
+      ) : (
+        <Button
+          key={p}
+          onClick={() => setPage(p)}
+          className={`px-3 py-1 rounded-md ${
+            page === p
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
+          {p}
+        </Button>
+      )
+    );
+  })()}
+</div>
+
+
+
+
+      {/* Floating Actions */}
+      <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-30">
         <Button
           onClick={downloadCSV}
-          className="bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg px-6 py-3 flex items-center gap-2"
+          className="bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg px-5 py-3 flex items-center gap-2"
         >
-          <FileDown size={18} /> Download CSV
-        </Button> 
-      
-        <Button
-            disabled={selectedUsers.length === 0}
-            onClick={handleBulkDelete}
-            className="bg-red-600 hover:bg-red-700 mt-2 text-white rounded-full shadow-lg px-6 py-3 flex items-center gap-2"
-          >
-            <Trash size={18} /> Delete Selected ({selectedUsers.length})
-          </Button>
+          <FileDown size={18} /> CSV
+        </Button>
 
+        <Button
+          disabled={selectedUsers.length === 0}
+          onClick={handleBulkDelete}
+          className="bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg px-5 py-3 flex items-center gap-2"
+        >
+          <Trash size={18} /> Delete ({selectedUsers.length})
+        </Button>
       </div>
 
       {/* Delete Confirmation */}
@@ -495,6 +522,7 @@ const location = useLocation();
 };
 
 export default Users;
+
 
 
 // // Users.jsx

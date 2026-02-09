@@ -27,15 +27,33 @@ import ReportedJobList from "@/pages/admin/settings/ReportedJobList";
 const AdminLayout = () => {
   return (
     <AdminProtectWrapper>
-      <div className="flex">
+      {/* Root wrapper */}
+      <div className="flex w-full overflow-hidden">
+
         {/* Sidebar */}
         <Sidebar />
 
         {/* Main Content Area */}
-        <div className="flex-1 mt-16 ml-16 md:ml-52 bg-gray-100 min-h-screen">
-          <Suspense fallback={<div>Loading...</div>}>
+        <div
+          className="
+            flex-1
+            mt-16
+            ml-0
+            sm:ml-16
+            md:ml-52
+            bg-gray-100
+            min-h-screen
+            w-full
+            overflow-x-hidden
+            px-3
+            sm:px-4
+            md:px-6
+            transition-all
+            duration-300
+          "
+        >
+          <Suspense fallback={<div className="p-4">Loading...</div>}>
             <Routes>
-              {/* <Route path="/description/:id" element={<Description />} /> */}
               <Route path="/" element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="users" element={<Users />} />
@@ -57,7 +75,6 @@ const AdminLayout = () => {
               <Route path="profile" element={<Profile />} />
               <Route path="users" element={<Users />} />
               <Route path="user-details/:userId" element={<UserDetails />} />
-
             </Routes>
           </Suspense>
         </div>
