@@ -7,7 +7,7 @@ import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
-import recruiter_video from "../../../assets/videos/recruiter_video.mp4";
+// import recruiter_video from "../../../assets/videos/recruiter_video.mp4";
 
 // ✅ Slides for recruiter side (first image fixed)
 const slides = [
@@ -52,12 +52,12 @@ const RecruiterSignup = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Carousel autoplay
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentSlide((prev) => (prev + 1) % slides.length);
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,11 +105,11 @@ const RecruiterSignup = () => {
       //   { ...formData },
       //   { withCredentials: true }
       // );
- const response = await axios.post(
-  `${RECRUITER_API_END_POINT}/register`,
-  { ...formData },
-  { withCredentials: true }
-);
+      const response = await axios.post(
+        `${RECRUITER_API_END_POINT}/register`,
+        { ...formData },
+        { withCredentials: true }
+      );
 
       if (response?.data?.success) {
         toast.success("Recruiter account created successfully ✅");
@@ -127,6 +127,34 @@ const RecruiterSignup = () => {
       setLoading(false);
     }
   };
+
+  const steps = [
+    {
+      number: "01",
+      title: "Create Account",
+      description: "Set up your recruiter account in minutes"
+    },
+    {
+      number: "02",
+      title: "Company Profile",
+      description: "Build a compelling company profile"
+    },
+    {
+      number: "03",
+      title: "Post Jobs",
+      description: "Publish job openings effortlessly"
+    },
+    {
+      number: "04",
+      title: "Review Applications",
+      description: "Manage candidate submissions efficiently"
+    },
+    {
+      number: "05",
+      title: "Hire Top Talent",
+      description: "Connect with qualified candidates quickly"
+    }
+  ];
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -150,7 +178,7 @@ const RecruiterSignup = () => {
                     // style={{ `transform: translateX(-${currentSlide * 100}%)` }}
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
 
-                    // style = {{transform: trans}}
+                  // style = {{transform: trans}}
                   >
                     {slides.map((slide, index) => (
                       <div key={index} className="min-w-full relative">
@@ -183,11 +211,10 @@ const RecruiterSignup = () => {
                       <button
                         key={index}
                         onClick={() => setCurrentSlide(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                          currentSlide === index
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index
                             ? "bg-white w-6"
                             : "bg-white bg-opacity-50"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -333,11 +360,10 @@ const RecruiterSignup = () => {
                     {/* Submit */}
                     <button
                       type="submit"
-                      className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-300 ${
-                        loading
+                      className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-300 ${loading
                           ? "opacity-70 cursor-not-allowed"
                           : "hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transform hover:-translate-y-0.5"
-                      }`}
+                        }`}
                       disabled={loading}
                     >
                       {loading ? "Creating..." : "Create Account"}
@@ -350,19 +376,19 @@ const RecruiterSignup = () => {
         </div>
 
         {/* VIDEO & INSTRUCTIONS SECTION */}
-        <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto gap-6 mb-12 px-4">
-          <div className="lg:w-1/2">
+        {/* <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto gap-6 mb-12 px-4 justify-center items-center"> */}
+        {/* <div className="lg:w-1/2">
             <video
               src={recruiter_video}
               controls
               className="w-full rounded-xl shadow-lg"
             />
-          </div>
-          <div className="lg:w-1/2 flex flex-col justify-center space-y-4">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
+          </div> */}
+        {/* <div className="lg:w-2/3 flex flex-col justify-center space-y-4">
+            <h3 className="text-6xl font-bold text-gray-800 dark:text-white">
               How to Get Started
             </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2  dark:text-white ">
+            <ul className="list-disc list-inside text-gray-700 space-y-2  dark:text-white text-xl">
               <li>Create your recruiter account.</li>
               <li>Set up your company profile.</li>
               <li>Post job openings easily.</li>
@@ -370,8 +396,60 @@ const RecruiterSignup = () => {
               <li>Hire top candidates quickly.</li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
+        <section className="w-full py-20 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+          <div className="max-w-5xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-16">
+              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+                How to Get Started
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Join thousands of recruiters hiring top talent. Follow these simple steps to get started.
+              </p>
+            </div>
+
+            {/* Steps Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+              {steps.map((step, index) => (
+                <div
+                  key={index}
+                  className="group relative flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300"
+                >
+                  {/* Step Number */}
+                  <div className="mb-4 inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-lg font-bold">
+                    {step.number}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {step.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {step.description}
+                  </p>
+
+                  {/* Connector Line (hidden on mobile) */}
+                  {index < steps.length - 1 && (
+                    <div className="hidden lg:block absolute -right-2 top-1/2 w-4 h-0.5 bg-gradient-to-r from-blue-400 to-transparent transform -translate-y-1/2" />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={() => navigate('/recruiter-login')}
+                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                Get Started Now
+              </button>
+            </div>
+          </div>
+        </section>
         <Footer />
       </div>
     </div>

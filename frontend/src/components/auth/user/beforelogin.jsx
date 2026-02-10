@@ -24,8 +24,8 @@ const GreatHireLanding = () => {
   const navLinks = [
     { id: 'home', label: 'Home', path: '/' },
     { id: 'services', label: 'Our Services', path: '/great-hire/services' },
-    { id: 'about', label: 'About Us', path: '/about' },
     { id: 'blogs', label: 'Blogs', path: '/Main_blog_page' },
+    { id: 'about', label: 'About Us', path: '/about' },
     { id: 'contact', label: 'Contact Us', path: '/contact' },
   ];
 
@@ -39,20 +39,20 @@ const GreatHireLanding = () => {
         "We provide end-to-end business solutions to help you grow and succeed. Our services include job posting and staffing, accounts and payroll management, digital marketing, and web and mobile app development. We also offer BPO, cybersecurity, and cloud computing services to improve efficiency and security. With AI and machine learning solutions, we help automate processes and drive innovation for your business.",
     },
     {
-      id: "support",
-      title: "About Us",
-      animation: about,
-      path: "/about",
-      content:
-        "GreatHire Business Solutions is a technology-driven recruitment and workforce solutions company connecting top talent with growing businesses. We specialize in AI-powered hiring, IT staffing, and strategic workforce solutions focused on efficiency and cultural fit. With strong leadership and a people-first approach, we help companies build reliable teams and professionals grow their careers across India.",
-    },
-    {
       id: "implementation",
       title: "Blogs",
       animation: blog,
       path: "/Main_blog_page",
       content:
         "GreatHire is your all-in-one career hub designed to connect talent with the right opportunities. With AI-powered matching, expert career insights, and hiring guidance, we help job seekers grow and employers hire smarter. From resume building and interview preparation to industry trends and future skills, we support every stage of your career journey. Trusted by thousands of users, GreatHire makes career growth simple, smart, and accessible.",
+    },
+    {
+      id: "support",
+      title: "About Us",
+      animation: about,
+      path: "/about",
+      content:
+        "GreatHire Business Solutions is a technology-driven recruitment and workforce solutions company connecting top talent with growing businesses. We specialize in AI-powered hiring, IT staffing, and strategic workforce solutions focused on efficiency and cultural fit. With strong leadership and a people-first approach, we help companies build reliable teams and professionals grow their careers across India.",
     },
     {
       id: "scalable",
