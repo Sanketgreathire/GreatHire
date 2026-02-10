@@ -353,7 +353,7 @@ const subscriptionPlans = [
   {
     id: "growth-engine",
     title: "Premium (Most Popular)",
-    price: 1,
+    price: 2999,
     billing: "Monthly",
     jobs: "15 Jobs",
     resumes: "300 Credits",
