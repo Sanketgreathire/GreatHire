@@ -353,7 +353,7 @@ const subscriptionPlans = [
   {
     id: "growth-engine",
     title: "Premium (Most Popular)",
-    price: 2999,
+    price: 1,
     billing: "Monthly",
     jobs: "15 Jobs",
     resumes: "300 Credits",
@@ -427,6 +427,66 @@ const subscriptionPlans = [
 const servicePlans = [
   
 ];
+
+const PlanBadge = ({ planId, user }) => {
+  // 🔒 HARD BLOCK: admin route (100% reliable)
+  if (window.location.pathname.startsWith("/admin")) {
+    return null;
+  }
+
+  // 🔒 HARD BLOCK: missing user
+  if (!user) return null;
+
+  // 🔒 HARD BLOCK: admin role (case-insensitive safety)
+  if (
+    user.role &&
+    String(user.role).toUpperCase() === "ADMIN"
+  ) {
+    return null;
+  }
+
+  // 🔒 Only after payment
+  if (user.subscriptionStatus !== "ACTIVE") return null;
+
+  // Map backend plan → pricing card
+  const planMap = {
+    STANDARD: "swift-hire",
+    PREMIUM: "growth-engine",
+    ENTERPRISE: "enterprise-elite",
+  };
+
+  // Show badge ONLY on user's active plan
+  if (planMap[user.plan] !== planId) return null;
+
+  // STANDARD
+  if (user.plan === "STANDARD") {
+    return (
+      <span className="absolute top-3 right-3 bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full">
+        VERIFIED
+      </span>
+    );
+  }
+
+  // PREMIUM
+  if (user.plan === "PREMIUM") {
+    return (
+      <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">
+        ⭐ MOST POPULAR
+      </span>
+    );
+  }
+
+  // ENTERPRISE
+  if (user.plan === "ENTERPRISE") {
+    return (
+      <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">
+        👑 ENTERPRISE ELITE
+      </span>
+    );
+  }
+
+  return null;
+};
 
 function RecruiterPlans() {
   const { user } = useSelector((state) => state.auth);

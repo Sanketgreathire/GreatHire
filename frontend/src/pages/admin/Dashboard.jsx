@@ -161,7 +161,6 @@ const Dashboard = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               👋 Welcome, Admin
             </h1>
-            <VerifiedRecruiterBadges plan="ENTERPRISE" />
           </div>
         </div>
 
