@@ -588,19 +588,24 @@ const Navbar = () => {
                 {/* Mobile User Actions */}
                 {!user ? (
                   <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
-                    <Link
-                      to="/login"
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block"
-                      onClick={() => setIsMenuOpen(false)}
+                    <button
+                      onClick={() => {
+                        navigate("/recruiter-login");
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full text-blue-600 border-2 border-blue-600 px-4 py-2 rounded-md text-center font-medium transition-colors block hover:bg-blue-50"
                     >
-                      Login
-                    </Link>
-                    <Link
-                      to="/signup-choice"
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block"
+                      Recruiter Login
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate("/jobseeker-login");
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-md text-center font-medium transition-colors block hover:shadow-xl"
                     >
-                      Sign Up
-                    </Link>
+                      Jobseeker Login
+                    </button>
                   </div>
                 ) : (
                   <div className="border-t border-gray-200 dark:border-gray-700 py-2">

@@ -300,7 +300,6 @@ const appRouter = createBrowserRouter([
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/contact", element: <Contact /> },
   { path: "/packages", element: <Packges /> },
-  { path: "*", element: <div>Page Not Found</div> },
   {path : "/HowWeHire", element:<HowWeHire/>},
   {path : "/TheFutureTechnology", element : <TheFutureTechnology/>},
   {path : "/HiringInsights", element : <HiringInsights/>},

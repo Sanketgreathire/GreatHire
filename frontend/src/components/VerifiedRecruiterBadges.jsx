@@ -1,290 +1,222 @@
-import React from "react";
-
-export default function VerifiedRecruiterBadges({ plan }) {
-  if (!plan || plan === "FREE") return null;
-
-  const badgeMap = {
-    STANDARD: {
-      label: "VERIFIED",
-      level: "BASIC",
-      color: "#22c55e", // green
-    },
-    PREMIUM: {
-      label: "VERIFIED",
-      level: "PRO",
-      color: "#0ea5e9", // blue
-    },
-    ENTERPRISE: {
-      label: "ELITE PARTNER",
-      level: "ELITE",
-      color: "#f59e0b", // gold
-    },
-  };
-
-  const badge = badgeMap[plan];
-  if (!badge) return null;
-
-  return (
-    <div className="flex items-center">
-      <svg
-        width="180"
-        height="110"
-        viewBox="0 0 180 110"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* ===== SHIELD BASE ===== */}
-        <path
-          d="
-            M15 10
-            H165
-            V70
-            C165 85 120 100 90 105
-            C60 100 15 85 15 70
-            Z
-          "
-          fill={badge.color}
-          opacity="0.12"
-        />
-
-        {/* ===== INNER CARD ===== */}
-        <rect
-          x="25"
-          y="18"
-          width="130"
-          height="58"
-          rx="14"
-          fill="#ffffff"
-        />
-
-        {/* ===== BRAND ===== */}
-        <text
-          x="90"
-          y="34"
-          textAnchor="middle"
-          fontSize="9"
-          fill="#64748b"
-          letterSpacing="1.5"
-          fontWeight="600"
-        >
-          GREATHIRE
-        </text>
-
-        {/* ===== VERIFIED TEXT ===== */}
-        <text
-          x="90"
-          y="54"
-          textAnchor="middle"
-          fontSize="14"
-          fill="#0f172a"
-          fontWeight="800"
-        >
-          {badge.label}
-        </text>
-
-        {/* ===== LEVEL PILL ===== */}
-        <rect
-          x="58"
-          y="62"
-          width="64"
-          height="18"
-          rx="9"
-          fill={badge.color}
-        />
-
-        <text
-          x="90"
-          y="75"
-          textAnchor="middle"
-          fontSize="10"
-          fill="#ffffff"
-          fontWeight="700"
-        >
-          {badge.level}
-        </text>
-
-        {/* ===== BIG CLEAN CHECK ICON (UPDATED) ===== */}
-        <circle cx="145" cy="30" r="11" fill={badge.color} />
-        <path
-          d="M139 30 L144 35 L152 25"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
-
-
 // import React from "react";
 
-// export default function AccreditedBadge({
-//   companyName = "GREATHIRE",
-//   year = "2026",
-//   show = true,
-// }) {
-//   if (!show) return null;
+// export default function VerifiedRecruiterBadges({ plan }) {
+//   if (!plan || plan === "FREE") return null;
+
+//   const badgeMap = {
+//     STANDARD: {
+//       label: "VERIFIED",
+//       level: "BASIC",
+//       color: "#22c55e", // green
+//     },
+//     PREMIUM: {
+//       label: "VERIFIED",
+//       level: "PRO",
+//       color: "#0ea5e9", // blue
+//     },
+//     ENTERPRISE: {
+//       label: "ELITE PARTNER",
+//       level: "ELITE",
+//       color: "#f59e0b", // gold
+//     },
+//   };
+
+//   const badge = badgeMap[plan];
+//   if (!badge) return null;
 
 //   return (
-//     <div className="flex items-center justify-center">
+//     <div className="flex items-center">
 //       <svg
 //         width="180"
-//         height="180"
-//         viewBox="0 0 380 360"
+//         height="110"
+//         viewBox="0 0 180 110"
 //         xmlns="http://www.w3.org/2000/svg"
 //       >
-//         {/* ===== OUTER LIGHT HEXAGON ===== */}
+//         {/* ===== SHIELD BASE ===== */}
 //         <path
-//           d="M190 15 L350 110 L350 260 L190 344 L30 260 L30 110 Z"
-//           fill="#CFE8F7"
+//           d="
+//             M15 10
+//             H165
+//             V70
+//             C165 85 120 100 90 105
+//             C60 100 15 85 15 70
+//             Z
+//           "
+//           fill={badge.color}
+//           opacity="0.12"
 //         />
 
-//         {/* ===== INNER DARK HEXAGON ===== */}
-//         <path
-//           d="M190 40 L320 120 L320 240 L190 315 L60 240 L60 120 Z"
-//           fill="#1F3E56"
+//         {/* ===== INNER CARD ===== */}
+//         <rect
+//           x="25"
+//           y="18"
+//           width="130"
+//           height="58"
+//           rx="14"
+//           fill="#ffffff"
 //         />
 
-//         {/* ===== TICK MARK ===== */}
+//         {/* ===== BRAND ===== */}
+//         <text
+//           x="90"
+//           y="34"
+//           textAnchor="middle"
+//           fontSize="9"
+//           fill="#64748b"
+//           letterSpacing="1.5"
+//           fontWeight="600"
+//         >
+//           GREATHIRE
+//         </text>
+
+//         {/* ===== VERIFIED TEXT ===== */}
+//         <text
+//           x="90"
+//           y="54"
+//           textAnchor="middle"
+//           fontSize="14"
+//           fill="#0f172a"
+//           fontWeight="800"
+//         >
+//           {badge.label}
+//         </text>
+
+//         {/* ===== LEVEL PILL ===== */}
+//         <rect
+//           x="58"
+//           y="62"
+//           width="64"
+//           height="18"
+//           rx="9"
+//           fill={badge.color}
+//         />
+
+//         <text
+//           x="90"
+//           y="75"
+//           textAnchor="middle"
+//           fontSize="10"
+//           fill="#ffffff"
+//           fontWeight="700"
+//         >
+//           {badge.level}
+//         </text>
+
+//         {/* ===== BIG CLEAN CHECK ICON (UPDATED) ===== */}
+//         <circle cx="145" cy="30" r="11" fill={badge.color} />
 //         <path
-//           d="M150 80 L180 120 L240 60"
-//           stroke="#CFE8F2"
-//           strokeWidth="10"
+//           d="M139 30 L144 35 L152 25"
+//           stroke="#ffffff"
+//           strokeWidth="2.5"
 //           fill="none"
 //           strokeLinecap="round"
 //           strokeLinejoin="round"
-//         />
-
-//         {/* ===== ACCREDITED TEXT ===== */}
-//         <text
-//           x="190"
-//           y="160"
-//           textAnchor="middle"
-//           fontSize="30"
-//           fontWeight="800"
-//           letterSpacing="2"
-//           fill="#FFFFFF"
-//         >
-//           VERIFIED
-//         </text>
-
-//         {/* ===== COMPANY NAME ===== */}
-//         <text
-//           x="190"
-//           y="198"
-//           textAnchor="middle"
-//           fontSize="18"
-//           fill="#EAF3F9"
-//         >
-//           {companyName}
-//         </text>
-
-//         {/* ===== BUSINESS PARTNER ===== */}
-//         <text
-//           x="190"
-//           y="222"
-//           textAnchor="middle"
-//           fontSize="18"
-//           fill="#EAF3F9"
-//         >
-//           Recruiter
-//         </text>
-
-//         {/* ===== YEAR ===== */}
-//         <text
-//           x="190"
-//           y="252"
-//           textAnchor="middle"
-//           fontSize="16"
-//           fill="#9FC3D8"
-//           fontWeight="500"
-//         >
-//           {year}
-//         </text>
-
-//         {/* ===== ORANGE RIBBON ===== */}
-//         <path
-//           d="M30 230 L190 315 L350 230 L350 200 L190 285 L30 200 Z"
-//           fill="#F38B5A"
 //         />
 //       </svg>
 //     </div>
 //   );
 // }
 
-// // src/components/VerifiedRecruiterBadge.jsx
-// import React from "react";
 
-// /**
-//  * Professional & clean recruiter badge
-//  * Single-file component
-//  * No emojis, no SVGs, no external imports
-//  */
+import React from "react";
+import "./VerifiedRecruiterBadges.css";
 
-// const PLAN_CONFIG = {
-//   STANDARD: {
-//     label: "Verified Recruiter",
-//     border: "border-emerald-300",
-//     text: "text-emerald-700",
-//     dot: "bg-emerald-500",
-//   },
-//   PREMIUM: {
-//     label: "Professional Recruiter",
-//     border: "border-sky-300",
-//     text: "text-sky-700",
-//     dot: "bg-sky-500",
-//   },
-//   ENTERPRISE: {
-//     label: "Elite Partner",
-//     border: "border-amber-300",
-//     text: "text-amber-700",
-//     dot: "bg-amber-500",
-//   },
-// };
+export default function VerifiedRecruiterBadges({ plan }) {
+  if (!plan || plan === "FREE" || plan === "ADMIN") return null;
 
-// export default function VerifiedRecruiterBadge({
-//   recruiter,
-//   plan, // optional direct prop
-//   className = "",
-// }) {
-//   // Resolve plan safely from all common API shapes
-//   const rawPlan =
-//     plan ||
-//     recruiter?.plan ||
-//     recruiter?.subscription?.plan ||
-//     recruiter?.currentPlan;
+  switch (plan) {
+    case "STANDARD":
+      return <StandardBadge />;
+    case "PREMIUM":
+      return <PremiumBadge />;
+    case "ENTERPRISE":
+      return <EnterpriseBadge />;
+    default:
+      return null;
+  }
+}
 
-//   if (!rawPlan) return null;
+/* ================= STANDARD ================= */
+function StandardBadge() {
+  return (
+    <svg width="160" height="90" viewBox="0 0 160 90">
+      <rect x="5" y="5" width="150" height="80" rx="12" fill="#ecfdf5" />
+      <circle cx="30" cy="45" r="14" fill="#22c55e" />
+      <path
+        d="M24 45 L29 50 L38 38"
+        stroke="#fff"
+        strokeWidth="2.5"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <text x="60" y="42" fontSize="13" fontWeight="700" fill="#065f46">
+        VERIFIED
+      </text>
+      <text x="60" y="60" fontSize="10" fill="#047857">
+        Standard Recruiter
+      </text>
+    </svg>
+  );
+}
 
-//   const planKey = String(rawPlan).trim().toUpperCase();
-//   const cfg = PLAN_CONFIG[planKey];
+/* ================= PREMIUM ================= */
+function PremiumBadge() {
+  return (
+    <div className="premium-glow">
+      <svg width="180" height="100" viewBox="0 0 180 100">
+        <defs>
+          <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0ea5e9" />
+          </linearGradient>
+        </defs>
 
-//   if (!cfg) return null;
+        <rect x="5" y="5" width="170" height="90" rx="14" fill="url(#blueGrad)" />
+        <polygon
+          points="90,18 95,32 110,32 98,42 102,58 90,48 78,58 82,42 70,32 85,32"
+          fill="#ffffff"
+        />
+        <text
+          x="90"
+          y="78"
+          textAnchor="middle"
+          fontSize="12"
+          fontWeight="800"
+          fill="#ffffff"
+        >
+          PREMIUM VERIFIED
+        </text>
+      </svg>
+    </div>
+  );
+}
 
-//   return (
-//     <span
-//       className={`
-//         inline-flex items-center gap-2
-//         px-3 py-1.5
-//         rounded-md
-//         border
-//         bg-white
-//         text-sm font-medium
-//         select-none
-//         ${cfg.border}
-//         ${cfg.text}
-//         ${className}
-//       `}
-//       title={cfg.label}
-//     >
-//       {/* status dot */}
-//       <span
-//         className={`w-2 h-2 rounded-full ${cfg.dot}`}
-//         aria-hidden
-//       />
-//       {cfg.label}
-//     </span>
-//   );
-// }
+/* ================= ENTERPRISE ================= */
+function EnterpriseBadge() {
+  return (
+    <svg width="220" height="120" viewBox="0 0 220 120">
+      <defs>
+        <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#fde68a" />
+          <stop offset="100%" stopColor="#f59e0b" />
+        </linearGradient>
+      </defs>
+
+      <rect x="5" y="5" width="210" height="110" rx="18" fill="url(#goldGrad)" />
+      <path
+        d="M60 55 L80 35 L100 55 L120 35 L140 55 V70 H60 Z"
+        fill="#78350f"
+      />
+      <text
+        x="110"
+        y="90"
+        textAnchor="middle"
+        fontSize="14"
+        fontWeight="900"
+        fill="#78350f"
+      >
+        ENTERPRISE ELITE
+      </text>
+    </svg>
+  );
+}
