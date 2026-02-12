@@ -425,7 +425,7 @@ const subscriptionPlans = [
 
 /* ================= SERVICE / HIRING PLANS ================= */
 const servicePlans = [
-  
+
 ];
 
 const PlanBadge = ({ planId, user }) => {
@@ -499,31 +499,31 @@ function RecruiterPlans() {
   );
 
   const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    if (window.Razorpay) {
-      resolve(true);
-      return;
-    }
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
 
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
 
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
 
-    document.body.appendChild(script);
-  });
-};
+      document.body.appendChild(script);
+    });
+  };
 
   /* ============== PAYMENT FLOW (UNCHANGED) ============== */
   const initiateCreditPayment = async (plan) => {
     try {
       const sdkLoaded = await loadRazorpayScript();
-    if (!sdkLoaded) {
-      toast.error("Razorpay SDK failed to load.");
-      return;
-    }
+      if (!sdkLoaded) {
+        toast.error("Razorpay SDK failed to load.");
+        return;
+      }
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
         {
@@ -570,13 +570,35 @@ function RecruiterPlans() {
 
   /* ============== CTA HANDLER ================= */
   const handleSubscription = async (plan) => {
+    // ✅ SERVICE PLANS → Always redirect (no login required)
+  if (["full-cycle-rpo", "monthly-talent-partner", "partnership"].includes(plan.id)) {
+    navigate("/contact");
+    return;
+  }
+    if (!user) {
+      toast.error("Please login to purchase a plan.");
+      navigate("/recruiter/signup");
+      return;
+    }
+
+    if (!company) {
+      toast.error("Please complete company profile first.");
+      navigate("/recruiter/company-profile");
+      return;
+    }
+
+    if (!user.isActive) {
+      toast.error("Your account is not active.");
+      return;
+    }
+
     if (plan.isFree) {
       // Check if user has already used free plan
       if (company.hasUsedFreePlan) {
         toast.error("You have already used the free plan. Please purchase a paid plan.");
         return;
       }
-      
+
       // If they have 0 credits and haven't posted jobs, give them free plan credits
       if (company.creditedForJobs === 0 && company.creditedForCandidates === 0) {
         // Fetch updated company data to refresh Redux state
@@ -597,7 +619,7 @@ function RecruiterPlans() {
         }
         return;
       }
-      
+
       if (company.creditedForJobs < 500) {
         toast.error("Insufficient credits. Please purchase a plan to post jobs.");
         return;
@@ -639,18 +661,17 @@ function RecruiterPlans() {
         <title>Recruiter Plans | GreatHire</title>
       </Helmet>
 
-      {company && user?.isActive && (
-        <div className="max-w-7xl mx-auto px-4 py-20">
+      <div className="max-w-7xl mx-auto px-4 py-20">
 
-          {/* ================= SUBSCRIPTION SECTION ================= */}
-          <h2 className="text-3xl font-bold text-center mb-10">
-            Recruiter Subscription Plans
-          </h2>
+        {/* ================= SUBSCRIPTION SECTION ================= */}
+        <h2 className="text-3xl font-bold text-center mb-10">
+          Recruiter Subscription Plans
+        </h2>
 
-          <div className="grid md:grid-cols-4 gap-6 mb-20">
-            {subscriptionPlans
-              .filter(plan => !(plan.isFree && company.hasUsedFreePlan)) // Hide free plan if already used
-              .map((plan) => (
+        <div className="grid md:grid-cols-4 gap-6 mb-20">
+          {subscriptionPlans
+            .filter(plan => !(plan.isFree && company?.hasUsedFreePlan)) // Hide free plan if already used
+            .map((plan) => (
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlanId(plan.id)}
@@ -718,22 +739,21 @@ function RecruiterPlans() {
                 )}
               </div>
             ))}
-          </div>
-
-        
-
-          <div className="flex justify-center">
-            <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-full shadow">
-              <FaStar className="text-yellow-400" />
-              <span className="text-sm">
-                Trusted by 10,000+ recruiters
-              </span>
-            </div>
-          </div>
-
-          <RecruiterFAQ />
         </div>
-      )}
+
+
+
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-full shadow">
+            <FaStar className="text-yellow-400" />
+            <span className="text-sm">
+              Trusted by 10,000+ recruiters
+            </span>
+          </div>
+        </div>
+
+        <RecruiterFAQ />
+      </div>
     </>
   );
 }

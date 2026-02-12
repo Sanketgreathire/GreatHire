@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Users, Target, Briefcase, Menu, X, Search, ExternalLink, Star, TrendingUp, Zap, Shield } from 'lucide-react';
 import Footer from "@/components/shared/Footer";
-import RecruiterPlansHome from "@/components/RecruiterPlansHome";
+// import RecruiterPlansHome from "@/components/RecruiterPlansHome";
 import { useNavigate, NavLink, Link } from "react-router-dom";
 import JobsHiringSlider from "./JobSlider";
 import Lottie from "lottie-react";
@@ -10,6 +10,7 @@ import service from "../../../assets/Animation/services.json";
 import about from "../../../assets/Animation/about-s.json";
 import blog from "../../../assets/Animation/blog.json";
 import contact from "../../../assets/Animation/contact-us.json";
+import RecruiterPlans from "@/pages/recruiter/RecruiterPlans";
 
 const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,6 +23,7 @@ const GreatHireLanding = () => {
     { id: 'blogs', label: 'Blogs', path: '/Main_blog_page' },
     { id: 'about', label: 'About Us', path: '/about' },
     { id: 'contact', label: 'Contact Us', path: '/contact' },
+    { id: 'packages', label: 'Recruiter Plans', path: '/upgrade-plans' },
   ];
 
   const tabs = [
@@ -444,7 +446,7 @@ const GreatHireLanding = () => {
               </div>
 
               {/* Recruiter Plans Section */}
-              <RecruiterPlansHome />
+              {/* <RecruiterPlansHome /> */}
 
               {/* Ultra Premium CTA Section */}
               <div className="mt-3">
