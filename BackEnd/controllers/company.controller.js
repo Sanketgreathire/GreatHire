@@ -103,45 +103,57 @@ export const registerCompany = async (req, res) => {
       });
     }
 
-      if (!CIN) {
-      return res.status(400).json({
-        success: false,
-        message: "CIN is required.",
-      });
+      // if (!CIN) {
+      // return res.status(400).json({
+      //   success: false,
+      //   message: "CIN is required.",
+      // });
+    // }
+
+    // CIN Optional Validation
+if (CIN && CIN.trim() !== "") {
+  const cinPattern = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
+
+  if (!cinPattern.test(CIN)) {
+    let errorMessage = "Invalid CIN format. ";
+
+    if (CIN.length !== 21) {
+      errorMessage += `CIN must be exactly 21 characters long (you entered ${CIN.length}). `;
+    }
+    if (!/^[A-Z]/.test(CIN)) {
+      errorMessage += "First character must be an uppercase letter. ";
+    }
+    if (!/^[A-Z]\d{5}/.test(CIN)) {
+      errorMessage += "Characters 2–6 must be digits. ";
+    }
+    if (!/^[A-Z]\d{5}[A-Z]{2}/.test(CIN)) {
+      errorMessage += "Characters 7–8 must be uppercase letters (state code). ";
+    }
+    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}/.test(CIN)) {
+      errorMessage += "Characters 9–12 must be digits (incorporation year). ";
+    }
+    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}/.test(CIN)) {
+      errorMessage += "Characters 13–15 must be uppercase letters (company type). ";
+    }
+    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(CIN)) {
+      errorMessage += "Characters 16–21 must be digits (registration number). ";
     }
 
-    const cinPattern = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
+    return res.status(400).json({
+      success: false,
+      message: errorMessage.trim(),
+    });
+  }
 
-    if (!cinPattern.test(CIN)) {
-      let errorMessage = "Invalid CIN format. ";
-
-      if (CIN.length !== 21) {
-        errorMessage += `CIN must be exactly 21 characters long (you entered ${CIN.length}). `;
-      }
-      if (!/^[A-Z]/.test(CIN)) {
-        errorMessage += "First character must be an uppercase letter. ";
-      }
-      if (!/^[A-Z]\d{5}/.test(CIN)) {
-        errorMessage += "Characters 2–6 must be digits. ";
-      }
-      if (!/^[A-Z]\d{5}[A-Z]{2}/.test(CIN)) {
-        errorMessage += "Characters 7–8 must be uppercase letters (state code). ";
-      }
-      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}/.test(CIN)) {
-        errorMessage += "Characters 9–12 must be digits (incorporation year). ";
-      }
-      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}/.test(CIN)) {
-        errorMessage += "Characters 13–15 must be uppercase letters (company type). ";
-      }
-      if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(CIN)) {
-        errorMessage += "Characters 16–21 must be digits (registration number). ";
-      }
-
-      return res.status(400).json({
-        success: false,
-        message: errorMessage.trim(),
-      });
-    }
+  // Check uniqueness only if CIN provided
+  const existingCIN = await Company.findOne({ CIN });
+  if (existingCIN) {
+    return res.status(400).json({
+      message: "CIN is already registered.",
+      success: false,
+    });
+  }
+}
 
     if (!companyWebsite || !/^https?:\/\/.+\..+/.test(companyWebsite)) {
       return res.status(400).json({
@@ -184,9 +196,16 @@ export const registerCompany = async (req, res) => {
     // }
 
     // Check if any unique field exists in the BlacklistedCompany collection
-    const isBlacklisted = await BlacklistedCompany.findOne({
-      $or: [{ companyName }, { email }, { adminEmail }, { CIN }],
-    });
+    const blacklistQuery = {
+  $or: [{ companyName }, { email }, { adminEmail }],
+};
+
+if (CIN && CIN.trim() !== "") {
+  blacklistQuery.$or.push({ CIN });
+}
+
+const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
+
 
     //console.log("is blacklisted true otherwise false :"+isBlacklisted);             //for testing purpose
 
@@ -284,7 +303,7 @@ export const registerCompany = async (req, res) => {
       email,
       adminEmail: userEmail,
       phone,
-      CIN,
+      CIN: CIN && CIN.trim() !== "" ? CIN : undefined,
       userId: [{ user: recruiter._id, isVerified: 0 }], // Add recruiter with `isVerified: false`
       address: {
         streetAddress,

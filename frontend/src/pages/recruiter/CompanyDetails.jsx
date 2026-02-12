@@ -212,7 +212,7 @@ const CompanyDetails = () => {
 
                <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">
                 <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">CIN Number</p>
-                <p className="text-md text-gray-900 dark:text-gray-400 font-semibold">{company?.CIN}</p>
+                <p className="text-md text-gray-900 dark:text-gray-400 font-semibold">{company?.CIN || "Not Provided"}</p>
               </div>
 
                <div className="w-full rounded-lg p-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors">

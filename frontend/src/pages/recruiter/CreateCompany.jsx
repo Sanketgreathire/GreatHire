@@ -116,7 +116,9 @@ const CreateCompany = () => {
       // Add userEmail to formData
       const updatedFormData = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        updatedFormData.append(key, value);
+        if (value !== "" && value !== null) {
+          updatedFormData.append(key, value);
+        }
       });
 
       // this email become company admin email
@@ -334,7 +336,6 @@ const CreateCompany = () => {
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
                     placeholder="Corporate Identification Number (CIN)"
-                    required
                   />
                 </div>
                 <div className="mt-4">

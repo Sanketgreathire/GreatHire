@@ -37,8 +37,10 @@ const companySchema = new mongoose.Schema(
     },
     CIN: {
       type: String,
-      required: true,
-      //unique: true,
+      required: false,
+      unique: true,
+      sparse: true,
+      trim: true
     },
     businessFile: {
       type: String, // Store the file path or URL

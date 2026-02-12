@@ -6,7 +6,7 @@ import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
-import  { Application } from "../models/application.model.js";
+import { Application } from "../models/application.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
@@ -33,30 +33,30 @@ export const register = async (req, res) => {
 
     const { fullname, email, phoneNumber, password } = req.body;
     // Fullname validation
-          if (!fullname || fullname.length < 3) {
-            return res.status(400).json({
-              success: false,
-              message: "Full name must be at least 3 characters long.",
-            });
-          }
+    if (!fullname || fullname.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: "Full name must be at least 3 characters long.",
+      });
+    }
 
-          // Email validation
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!email || !emailRegex.test(email)) {
-            return res.status(400).json({
-              success: false,
-              message: "Invalid email format.",
-            });
-          }
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format.",
+      });
+    }
 
-          // Phone number validation
-          const phoneRegex = /^[6-9]\d{9}$/;
-          if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-            return res.status(400).json({
-              success: false,
-              message: "Invalid phone number. It must be 10 digits and start with 6–9.",
-            });
-          }
+    // Phone number validation
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid phone number. It must be 10 digits and start with 6–9.",
+      });
+    }
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
@@ -293,17 +293,17 @@ export const getRecruiterById = async (req, res) => {
       return res.status(404).json({ message: "Recruiter not found" });
     }
 
-    
-    const email=recruiter.emailId.email;
+
+    const email = recruiter.emailId.email;
     // Fetch company details by admin email
     const company = await Company.findOne({ adminEmail: email });
 
     if (company) {
-      const companyName=company.companyName;
+      const companyName = company.companyName;
       console.log(companyName);
-      recruiter.companyName=companyName;
+      recruiter.companyName = companyName;
     }
-    
+
     console.log(recruiter);
     res.status(200).json({
       message: "Recruiter fetched successfully",
@@ -424,9 +424,8 @@ export const addRecruiterToCompany = async (req, res) => {
               
               <p style="color: #555;">
                 Please log in to your account using the credentials above at the following link:
-                <a href="${
-                  process.env.FRONTEND_URL
-                }/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
+                <a href="${process.env.FRONTEND_URL
+        }/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
               </p>
         
               <p style="color: #555;">
@@ -683,10 +682,14 @@ export const toggleBlock = async (req, res) => {
         companyName: company.companyName,
         email: company.email,
         adminEmail: company.adminEmail,
-        CIN: company.CIN,
+        CIN: company.CIN || null,
       };
 
-      const existingBlacklist = await BlacklistedCompany.findOne({ CIN: company.CIN });
+      // 🔥 If CIN exists use CIN, otherwise use companyId
+      const existingBlacklist = company.CIN
+        ? await BlacklistedCompany.findOne({ CIN: company.CIN })
+        : await BlacklistedCompany.findOne({ companyName: company.companyName });
+
       if (!existingBlacklist) {
         await BlacklistedCompany.create(blacklistedData);
       }
@@ -695,7 +698,11 @@ export const toggleBlock = async (req, res) => {
       await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: false } });
     } else {
       // If recruiter is unblocked, remove the company from the blacklist
-      await BlacklistedCompany.deleteOne({ CIN: company.CIN });
+      if (company.CIN) {
+        await BlacklistedCompany.deleteOne({ CIN: company.CIN });
+      } else {
+        await BlacklistedCompany.deleteOne({ companyName: company.companyName });
+      }
 
       // 🟢 Activate all recruiters associated with this company
       await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: true } });
@@ -784,10 +791,10 @@ export const hasCreatedCompany = async (req, res) => {
   //   const recruiterId = req.id;
 
   //   const company = await Company.findOne({ "userId.user": recruiterId });
-   
+
 
   //   if (company) {
-      
+
   //     return res.status(200).json({ companyExists: true });
   //   } else {
   //     return res.status(200).json({ companyExists: false });
