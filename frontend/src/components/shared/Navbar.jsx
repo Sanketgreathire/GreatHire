@@ -161,6 +161,9 @@ const Navbar = () => {
         { to: "/Main_blog_page", label: "Blogs" },
         { to: "/about", label: "About Us" },
         { to: "/contact", label: "Contact Us" },
+        ...(!user || isRecruiter
+  ? [{ to: "/recruiter/plans", label: "Recruiter Plans" }]
+  : []),
         // { to: "/jobs", label: "Jobs" },
       ];
 
@@ -170,6 +173,9 @@ const Navbar = () => {
     { to: "/Main_blog_page", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
+    ...(!user || isRecruiter
+  ? [{ to: "/recruiter/plans", label: "Recruiter Plans" }]
+  : []),
   ];
 
   // All nav links for mobile menu

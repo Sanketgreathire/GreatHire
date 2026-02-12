@@ -401,7 +401,6 @@ const Signup = () => {
                 Get Started Now
               </button>
             </div>
-
           </div>
         </section>
         <Footer />
