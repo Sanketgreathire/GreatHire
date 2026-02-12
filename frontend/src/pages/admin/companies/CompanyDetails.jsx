@@ -309,7 +309,7 @@ const CompanyDetails = () => {
                 CIN Number
               </p>
               <p className="text-md text-gray-900 font-semibold break-words">
-                {company?.CIN}
+                {company?.CIN || "Not Provided"}
               </p>
             </div>
 

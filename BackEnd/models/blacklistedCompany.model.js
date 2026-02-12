@@ -19,8 +19,10 @@ const blacklistedCompanySchema = new mongoose.Schema(
     },
     CIN: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
+      sparse: true,
+      trim: true
     },
     reason: {
       type: String,
