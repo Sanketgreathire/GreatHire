@@ -2058,24 +2058,6 @@ color: rgb(160, 67, 246);
             </span>
           </div>
         </div>
-
-        {/* <div className="content-wrapper">
-          <h1 className="main-title">
-            <span className="brand-name text-3xl">
-              Great<span className="highlight-text">Hire</span>
-            </span>
-            <br />
-            Insights – The Future of Work
-          </h1>
-
-          <p className="description-text">
-            "Your all-in-one platform for job applications and recruitment—connecting
-            talent with opportunity and empowering professionals to seize new
-            possibilities in an evolving world of work."
-          </p>
-
-          <p className="author-text">– GreatHire</p>
-        </div> */}
       </section>
 
       {/* ================= BLOG SLIDER SECTION ================= */}
@@ -2258,11 +2240,6 @@ color: rgb(160, 67, 246);
                         <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
                           {product.description}
                         </p>
-
-                        {/* Button */}
-                        {/* <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-                          View Details
-                        </button> */}
                       </div>
                     </div>
                   ))}
@@ -2275,8 +2252,8 @@ color: rgb(160, 67, 246);
                   <button
                     key={index}
                     className={`pagination-dot w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 border-2 ${currentSlide === index
-                        ? "bg-blue-500 border-blue-300 w-3 h-3 sm:w-3.5 sm:h-3.5 active"
-                        : "bg-gray-300 border-transparent hover:bg-gray-400"
+                      ? "bg-blue-500 border-blue-300 w-3 h-3 sm:w-3.5 sm:h-3.5 active"
+                      : "bg-gray-300 border-transparent hover:bg-gray-400"
                       }`}
                     onClick={() => goToSlide(index)}
                     aria-label={`Go to product ${index + 1}`}
@@ -2332,14 +2309,6 @@ color: rgb(160, 67, 246);
                   {/* Author & Date Info */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      {/* <div className="author-avatar">
-                        {article.author.charAt(0)}
-                      </div> */}
-                      <div>
-                        {/* <p className="text-sm font-semibold text-gray-900">
-                          {article.author}
-                        </p> */}
-                      </div>
                     </div>
                     <span className="text-xs text-gray-500">
                       {article.readTime}
@@ -2374,13 +2343,6 @@ color: rgb(160, 67, 246);
               </div>
             ))}
           </div>
-
-          {/* View All Button */}
-          {/* <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300 text-base">
-              View All Articles
-            </button>
-          </div> */}
         </div>
       </section>
 
@@ -2554,11 +2516,6 @@ color: rgb(160, 67, 246);
                     <p className="carousel-description-text text-base sm:text-lg md:text-xl lg:text-xl text-slate-700 leading-relaxed">
                       {item.description}
                     </p>
-
-                    {/* CTA Button */}
-                    {/* <div className="pt-2 sm:pt-3 md:pt-4">
-                     
-                    </div> */}
                   </div>
                 </div>
               ))}
@@ -2567,22 +2524,6 @@ color: rgb(160, 67, 246);
             {/* Navigation Section - Bottom Controls */}
             <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 xl:mt-16">
               <div className="carousel-nav-controls flex-col sm:flex-row gap-6 sm:gap-8 md:gap-10">
-                {/* Progress Dots */}
-                {/* <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 order-2 sm:order-1">
-                  {carouselItems.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => selectSlide(idx)}
-                      className={`progress-dot-item h-1 sm:h-1.5 rounded-full transition-all ${currentIndex === idx
-                          ? 'w-10 sm:w-12 md:w-14 lg:w-16 bg-slate-900 active-dot'
-                          : 'w-3 sm:w-3.5 md:w-4 bg-slate-400 hover:bg-slate-600'
-                        }`}
-                      aria-label={`Navigate to slide ${idx + 1}`}
-                      aria-current={currentIndex === idx ? 'true' : 'false'}
-                    ></button>
-                  ))}
-                </div> */}
-
                 {/* Previous and Next Buttons */}
                 <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 order-1 sm:order-2">
                   <button
@@ -2762,14 +2703,6 @@ color: rgb(160, 67, 246);
             </div>
           </div>
 
-          {/* <div className="mt-16">
-            <button
-              onClick={() => navigate("/hiring-insights")}
-              className="px-8 py-3 rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition"
-            >
-              Explore Hiring Insights
-            </button>
-          </div> */}
           <div className="mt-10">
             <Link
               to="/HiringInsights"

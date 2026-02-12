@@ -498,9 +498,32 @@ function RecruiterPlans() {
     subscriptionPlans.find((p) => p.popular)?.id
   );
 
+  const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+
+    document.body.appendChild(script);
+  });
+};
+
   /* ============== PAYMENT FLOW (UNCHANGED) ============== */
   const initiateCreditPayment = async (plan) => {
     try {
+      const sdkLoaded = await loadRazorpayScript();
+    if (!sdkLoaded) {
+      toast.error("Razorpay SDK failed to load.");
+      return;
+    }
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
         {
@@ -512,11 +535,6 @@ function RecruiterPlans() {
         },
         { withCredentials: true }
       );
-
-      if (!window.Razorpay) {
-        toast.error("Razorpay SDK not loaded");
-        return;
-      }
 
       const options = {
         key: razorpay_key_id,

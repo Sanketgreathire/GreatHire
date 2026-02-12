@@ -7,13 +7,13 @@ import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
-// import recruiter_video from "../../../assets/videos/recruiter_video.mp4";
+import { validateSignupForm } from "@/utils/signupValidation";
 
 // ✅ Slides for recruiter side (first image fixed)
 const slides = [
   {
     image:
-      "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=600&q=60",
     title: "Find Top Talent Fast",
     subtitle:
       "Post jobs, manage applications, and hire efficiently with GreatHire Recruiter.",
@@ -21,7 +21,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=60",
     title: "Streamline Recruitment",
     subtitle:
       "Use intelligent tools to shortlist candidates and save valuable time.",
@@ -29,7 +29,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=60",
     title: "Grow Your Team",
     subtitle:
       "Connect with skilled professionals and build a strong workforce.",
@@ -51,60 +51,25 @@ const RecruiterSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Carousel autoplay
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentSlide((prev) => (prev + 1) % slides.length);
-  //   }, 5000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const validateForm = () => {
-    let newErrors = {};
-
-    if (!formData.fullname || formData.fullname.length < 3) {
-      newErrors.fullname = "Full name must be at least 3 characters long.";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email || !emailRegex.test(formData.email)) {
-      newErrors.email = "Enter a valid email address.";
-    }
-
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber =
-        "Enter a valid phone number (10 digits, starting with 6–9).";
-    }
-
-    if (!formData.password || formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    const validationErrors = validateSignupForm(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       toast.error("Please fix the errors before submitting.");
       return;
     }
 
     setLoading(true);
     try {
-      // const response = await axios.post(
-      //   ${RECRUITER_API_END_POINT}/register,
-      //   { ...formData },
-      //   { withCredentials: true }
-      // );
       const response = await axios.post(
         `${RECRUITER_API_END_POINT}/register`,
         { ...formData },
@@ -160,8 +125,8 @@ const RecruiterSignup = () => {
     <div className="relative min-h-screen flex flex-col">
       {/* 🔵🩷 Background Circles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full opacity-10"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 rounded-full opacity-10"></div>
       </div>
 
       <div className="relative z-10 flex-1 flex flex-col">
@@ -185,6 +150,7 @@ const RecruiterSignup = () => {
                         <img
                           src={slide.image}
                           alt={slide.title}
+                          loading="lazy"
                           className="w-full h-full object-cover rounded-l-2xl rounded-r-[80px]"
                         />
                         <div className="absolute inset-0 bg-black bg-opacity-30 rounded-l-2xl rounded-r-[80px]"></div>
@@ -212,8 +178,8 @@ const RecruiterSignup = () => {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         className={`w-3 h-3 rounded-full transition-all duration-300 ${currentSlide === index
-                            ? "bg-white w-6"
-                            : "bg-white bg-opacity-50"
+                          ? "bg-white w-6"
+                          : "bg-white bg-opacity-50"
                           }`}
                       />
                     ))}
@@ -361,8 +327,8 @@ const RecruiterSignup = () => {
                     <button
                       type="submit"
                       className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-300 ${loading
-                          ? "opacity-70 cursor-not-allowed"
-                          : "hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transform hover:-translate-y-0.5"
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transform hover:-translate-y-0.5"
                         }`}
                       disabled={loading}
                     >
@@ -375,50 +341,34 @@ const RecruiterSignup = () => {
           </div>
         </div>
 
-        {/* VIDEO & INSTRUCTIONS SECTION */}
-        {/* <div className="flex flex-col lg:flex-row w-full max-w-4xl mx-auto gap-6 mb-12 px-4 justify-center items-center"> */}
-        {/* <div className="lg:w-1/2">
-            <video
-              src={recruiter_video}
-              controls
-              className="w-full rounded-xl shadow-lg"
-            />
-          </div> */}
-        {/* <div className="lg:w-2/3 flex flex-col justify-center space-y-4">
-            <h3 className="text-6xl font-bold text-gray-800 dark:text-white">
-              How to Get Started
-            </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2  dark:text-white text-xl">
-              <li>Create your recruiter account.</li>
-              <li>Set up your company profile.</li>
-              <li>Post job openings easily.</li>
-              <li>Review applications efficiently.</li>
-              <li>Hire top candidates quickly.</li>
-            </ul>
-          </div>
-        </div> */}
+        <section className="w-full py-16 px-4 bg-white dark:bg-gray-900">
+          <div className="max-w-6xl mx-auto">
 
-        <section className="w-full py-20 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <div className="max-w-5xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+            <div className="text-center mb-14">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                 How to Get Started
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Join thousands of recruiters hiring top talent. Follow these simple steps to get started.
+              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Join thousands of recruiters hiring top talent in just a few simple steps.
               </p>
             </div>
 
             {/* Steps Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className="group relative flex flex-col items-center text-center p-6 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300"
+                  className="relative flex flex-col items-center text-center p-6 
+                     rounded-lg bg-gray-50 dark:bg-gray-800 
+                     border border-gray-200 dark:border-gray-700 
+                     hover:border-blue-500 hover:shadow-sm 
+                     transition-colors duration-200"
                 >
                   {/* Step Number */}
-                  <div className="mb-4 inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white text-lg font-bold">
+                  <div className="mb-4 flex items-center justify-center 
+                          w-12 h-12 rounded-full 
+                          bg-blue-600 text-white font-semibold">
                     {step.number}
                   </div>
 
@@ -432,22 +382,26 @@ const RecruiterSignup = () => {
                     {step.description}
                   </p>
 
-                  {/* Connector Line (hidden on mobile) */}
+                  {/* Simple Connector Line (No gradient, lightweight) */}
                   {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute -right-2 top-1/2 w-4 h-0.5 bg-gradient-to-r from-blue-400 to-transparent transform -translate-y-1/2" />
+                    <div className="hidden lg:block absolute -right-3 top-1/2 w-6 h-px bg-gray-300 dark:bg-gray-600 -translate-y-1/2" />
                   )}
                 </div>
               ))}
             </div>
 
             {/* CTA Button */}
-            <div className="flex justify-center mt-12">
+            <div className="flex justify-center">
               <button
                 onClick={() => navigate('/recruiter-login')}
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 
+                   text-white font-semibold rounded-md 
+                   transition-colors duration-200"
+              >
                 Get Started Now
               </button>
             </div>
+
           </div>
         </section>
         <Footer />

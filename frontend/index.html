@@ -13,10 +13,23 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- ✅ Google Fonts Optimized -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'"
+>
+
+<noscript>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</noscript>
 
     <title>Great Hire</title>
 
@@ -37,8 +50,8 @@
   <body>
     <div id="root"></div>
 
-    <!-- Razorpay Integration -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Razorpay Integration
+    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script> -->
 
 
     <!-- ✅ Microsoft Clarity -->
