@@ -117,8 +117,10 @@ const HowWeHirePage = () => {
             transition: all 0.4s ease;
           }
 
-          .step-card:hover {
-            transform: translateY(-8px) scale(1.02);
+          @media (hover: hover) {
+            .step-card:hover {
+              transform: translateY(-8px) scale(1.02);
+            }
           }
 
           /* Number Circle Animation */
@@ -126,8 +128,10 @@ const HowWeHirePage = () => {
             transition: all 0.3s ease;
           }
 
-          .step-card:hover .step-number {
-            transform: scale(1.15) rotate(5deg);
+          @media (hover: hover) {
+            .step-card:hover .step-number {
+              transform: scale(1.15) rotate(5deg);
+            }
           }
 
           /* Progress Line Animation */
@@ -170,9 +174,11 @@ const HowWeHirePage = () => {
             }
           }
 
-          .step-card:hover .step-icon {
-            animation: none;
-            transform: scale(1.2);
+          @media (hover: hover) {
+            .step-card:hover .step-icon {
+              animation: none;
+              transform: scale(1.2);
+            }
           }
 
           /* Details Slide In */
@@ -184,7 +190,7 @@ const HowWeHirePage = () => {
           }
 
           .step-details.active {
-            max-height: 500px;
+            max-height: 800px;
             opacity: 1;
           }
 
@@ -205,36 +211,73 @@ const HowWeHirePage = () => {
             -webkit-text-fill-color: transparent;
             animation: gradient-shift 3s ease infinite;
           }
+
+          /* Mobile Responsive Adjustments */
+          @media (max-width: 768px) {
+            .step-card {
+              border-radius: 1rem;
+            }
+
+            .step-number {
+              width: 3rem;
+              height: 3rem;
+              font-size: 1rem;
+            }
+
+            .step-icon {
+              font-size: 2rem;
+            }
+
+            .step-details.active {
+              max-height: 600px;
+            }
+          }
+
+          @media (max-width: 640px) {
+            .step-number {
+              width: 2.5rem;
+              height: 2.5rem;
+              font-size: 0.875rem;
+            }
+
+            .step-icon {
+              font-size: 1.5rem;
+            }
+
+            .step-details.active {
+              max-height: 500px;
+            }
+          }
         `}
       </style>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-screen lg:min-h-[80vh] md:min-h-[70vh] sm:min-h-[60vh] mt-10">
+      <section className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-screen lg:min-h-[80vh] md:min-h-[75vh] sm:min-h-[60vh] mt-10">
         {/* Background Image */}
         <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-30 dark:opacity-20"
           style={{
-            backgroundImage: "url(./971.jpg)", // Replace with your image
+            backgroundImage: "url(./971.webp)",
           }}
         ></div>
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-blue-900/70 to-gray-800/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-blue-900/70 to-gray-800/80 dark:from-gray-950/90 dark:via-slate-900/80 dark:to-gray-900/90"></div>
 
         {/* Background Decorations */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-10 blur-3xl rounded-full"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-500 opacity-10 blur-3xl rounded-full"></div>
+        <div className="absolute top-0 left-0 w-60 h-60 sm:w-96 sm:h-96 bg-blue-500 opacity-10 dark:opacity-5 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-60 h-60 sm:w-96 sm:h-96 bg-green-500 opacity-10 dark:opacity-5 blur-3xl rounded-full"></div>
 
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <h1 className="text-5xl lg:text-6xl md:text-4xl sm:text-3xl font-bold text-white mb-6">
+        <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col justify-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:pt-20 lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             How We <span className="gradient-text">Hire</span>
           </h1>
-          <p className="text-xl lg:text-2xl md:text-lg sm:text-base text-gray-300 max-w-3xl mx-auto mb-8">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 dark:text-gray-400 max-w-3xl mx-auto mb-6 sm:mb-8 px-2">
             Your journey at{" "}
-            <span className="text-green-400 font-semibold">GreatHire</span>{" "}
+            <span className="text-green-400 dark:text-green-300 font-semibold">GreatHire</span>{" "}
             starts with 5 steps!
           </p>
-          <p className="text-base lg:text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-400 dark:text-gray-500 max-w-2xl mx-auto px-2">
             "We've established an open, effective hiring procedure that honors
             your time and helps us locate the best applicant for our business."
           </p>
@@ -242,29 +285,29 @@ const HowWeHirePage = () => {
       </section>
 
       {/* Steps Section */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900 overflow-hidden transition-colors duration-300">
         {/* Optional Background Pattern/Image */}
         <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-5"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-5 dark:opacity-3"
           style={{
-            backgroundImage: "url(/pattern-background.jpg)", // Replace with your pattern/image
+            backgroundImage: "url(/pattern-background.jpg)",
           }}
         ></div>
 
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Steps Grid */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {steps.map((step, index) => (
               <div key={step.id} className="relative">
-                {/* Connecting Line (except for last step) */}
+                {/* Connecting Line (except for last step) - Desktop only */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute left-1/2 top-full h-8 w-1 bg-gradient-to-b from-gray-300 to-transparent transform -translate-x-1/2 z-0"></div>
+                  <div className="hidden lg:block absolute left-1/2 top-full h-8 w-1 bg-gradient-to-b from-gray-300 dark:from-gray-700 to-transparent transform -translate-x-1/2 z-0"></div>
                 )}
 
                 {/* Step Card */}
                 <div
-                  className={`step-card relative bg-white rounded-2xl shadow-xl overflow-hidden cursor-pointer ${
-                    activeStep === step.id ? "ring-4 ring-blue-400" : ""
+                  className={`step-card relative bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl dark:shadow-2xl overflow-hidden cursor-pointer transition-all duration-300 ${
+                    activeStep === step.id ? "ring-2 sm:ring-4 ring-blue-400 dark:ring-blue-500" : ""
                   }`}
                   onClick={() =>
                     setActiveStep(activeStep === step.id ? null : step.id)
@@ -272,28 +315,28 @@ const HowWeHirePage = () => {
                 >
                   {/* Gradient Border Top */}
                   <div
-                    className={`progress-line h-2 bg-gradient-to-r ${step.color}`}
+                    className={`progress-line h-1 sm:h-2 bg-gradient-to-r ${step.color}`}
                   ></div>
 
                   {/* Card Content */}
-                  <div className="p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
                       {/* Left: Number and Icon */}
-                      <div className="lg:col-span-2 flex flex-col items-center lg:items-start">
+                      <div className="lg:col-span-2 flex flex-col items-center lg:items-start gap-2 sm:gap-4">
                         <div
-                          className={`step-number w-20 h-20 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-2xl shadow-lg mb-4`}
+                          className={`step-number w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-xl sm:text-2xl shadow-lg`}
                         >
                           {step.number}
                         </div>
-                        <div className="step-icon text-4xl">{step.icon}</div>
+                        <div className="step-icon text-3xl sm:text-4xl">{step.icon}</div>
                       </div>
 
                       {/* Middle: Content */}
-                      <div className="lg:col-span-7">
-                        <h3 className="text-2xl lg:text-3xl md:text-xl font-bold text-gray-900 mb-4">
+                      <div className="lg:col-span-7 col-span-1">
+                        <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-4 transition-colors duration-300 text-center lg:text-left">
                           Step {step.id}: {step.title}
                         </h3>
-                        <p className="text-base lg:text-lg text-gray-600 leading-relaxed mb-4">
+                        <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-3 sm:mb-4 transition-colors duration-300 text-center lg:text-left">
                           {step.description}
                         </p>
 
@@ -301,19 +344,19 @@ const HowWeHirePage = () => {
                         <div
                           className={`step-details ${activeStep === step.id ? "active" : ""}`}
                         >
-                          <div className="mt-6 bg-gray-50 rounded-xl p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                              <span className="text-blue-500">ℹ️</span>
+                          <div className="mt-4 sm:mt-6 bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-4 sm:p-6 transition-colors duration-300">
+                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2 transition-colors duration-300">
+                              <span className="text-blue-500 dark:text-blue-400">ℹ️</span>
                               What to Expect:
                             </h4>
-                            <ul className="space-y-3">
+                            <ul className="space-y-2 sm:space-y-3">
                               {step.details.map((detail, idx) => (
                                 <li
                                   key={idx}
-                                  className="flex items-start gap-3"
+                                  className="flex items-start gap-2 sm:gap-3"
                                 >
-                                  <span className="text-green-500 mt-1">✓</span>
-                                  <span className="text-gray-700">
+                                  <span className="text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0">✓</span>
+                                  <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 transition-colors duration-300">
                                     {detail}
                                   </span>
                                 </li>
@@ -324,12 +367,12 @@ const HowWeHirePage = () => {
                       </div>
 
                       {/* Right: Action Button */}
-                      <div className="lg:col-span-3 flex items-center justify-center lg:justify-end">
+                      <div className="lg:col-span-3 col-span-1 flex items-center justify-center lg:justify-end w-full lg:w-auto mt-3 sm:mt-0">
                         <button
-                          className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                          className={`w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 ${
                             activeStep === step.id
-                              ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                              ? "bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white shadow-lg"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                           }`}
                         >
                           {activeStep === step.id
@@ -345,21 +388,21 @@ const HowWeHirePage = () => {
           </div>
 
           {/* Timeline Visual (Mobile) */}
-          <div className="lg:hidden mt-12 flex justify-center">
-            <div className="flex items-center gap-2">
+          <div className="lg:hidden mt-8 sm:mt-12 flex justify-center overflow-x-auto pb-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap">
               {steps.map((step, index) => (
                 <React.Fragment key={step.id}>
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                    className={`w-8 sm:w-10 h-8 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 transition-all duration-300 ${
                       activeStep === step.id
                         ? `bg-gradient-to-br ${step.color} text-white shadow-lg scale-110`
-                        : "bg-gray-300 text-gray-600"
-                    } transition-all duration-300`}
+                        : "bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                    }`}
                   >
                     {step.id}
                   </div>
                   {index < steps.length - 1 && (
-                    <div className="w-8 h-1 bg-gray-300"></div>
+                    <div className="w-4 sm:w-6 h-0.5 sm:h-1 bg-gray-300 dark:bg-gray-700 flex-shrink-0"></div>
                   )}
                 </React.Fragment>
               ))}
@@ -369,19 +412,19 @@ const HowWeHirePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-green-600 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-900 dark:to-green-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl md:text-2xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Are You Prepared to Begin Your Adventure?
           </h2>
-          <p className="text-lg lg:text-xl text-blue-100 mb-8">
+          <p className="text-base sm:text-lg lg:text-xl text-blue-100 dark:text-blue-200 mb-6 sm:mb-8 px-2">
             Become a member of our team and contribute to something incredible.
             We can't wait to meet you!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
             <Link
               to="/jobs"
-              className="bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 text-base inline-block"
+              className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:-translate-y-1 hover:shadow-2xl dark:hover:shadow-blue-500/50 transition-all duration-300 text-sm sm:text-base inline-block text-center"
             >
               View Available Positions
             </Link>
