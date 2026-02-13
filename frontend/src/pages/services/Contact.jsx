@@ -372,7 +372,7 @@ const ContactSection = () => {
                     <form className="space-y-6" onSubmit={handleSubmit}>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="relative group">
-                          <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                          <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                             Full Name
                             <span className="text-red-500">*</span>
                           </label>
@@ -388,7 +388,7 @@ const ContactSection = () => {
                         </div>
 
                         <div className="relative group">
-                          <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                          <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                             Email Address
                             <span className="text-red-500">*</span>
                           </label>
@@ -405,7 +405,7 @@ const ContactSection = () => {
                       </div>
 
                       <div className="relative group">
-                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                           Phone Number
                           <span className="text-red-500">*</span>
                         </label>
@@ -421,7 +421,7 @@ const ContactSection = () => {
                       </div>
 
                       <div className="relative group">
-                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                           Your Message
                           <span className="text-red-500">*</span>
                         </label>
