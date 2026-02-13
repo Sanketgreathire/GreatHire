@@ -327,7 +327,7 @@ const CreateCompany = () => {
                 </h2>
                 <div className="mt-4">
                   <label className="block text-gray-600">
-                    CIN/EAN
+                    CIN/EAN <span className="font-bold">(Optional)</span>
                   </label>
                   <input
                     type="text"
