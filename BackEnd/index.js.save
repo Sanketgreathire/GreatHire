@@ -45,33 +45,14 @@ import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 const app = express();
 const server = http.createServer(app);
 
-const defaultProductionOrigins = [
-  "https://greathire.in",
-  "https://www.greathire.in",
-];
-
-const configuredOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(",")
-      .map((origin) => origin.trim())
-      .filter(Boolean)
-  : [];
-
-const productionOrigins = [
-  ...new Set([...defaultProductionOrigins, ...configuredOrigins]),
-];
-
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? productionOrigins
-    : ["http://localhost:5173", "http://localhost:5174"];
-
-const corsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-};
-
 const io = new Server(server, {
-  cors: corsOptions,
+  cors: {
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://greathire.in"]
+        : ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+  },
 });
 
 const PORT = process.env.PORT || 8000;
@@ -90,17 +71,13 @@ app.disable("x-powered-by");
 
 // ================= CORS =================
 app.use(
-<<<<<<< HEAD
-  cors(corsOptions)
-=======
   cors({
     origin:
-       process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === "production"
         ? ["https://greathire.in"]
         : ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   })
-8abefd7a (Minor bug fixes)
 );
 
 // ================= MIDDLEWARE =================
@@ -246,32 +223,39 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= CRON =================
-// DISABLED TEMPORARILY - Will be enabled after proper deployment
-// PRODUCTION: Check plan expiry daily at midnight
-/*
+// PRODUCTION: Check plan expiry daily at midnight (change to "* * * * *" for testing - every minute)
 cron.schedule("0 0 * * *", async () => {
   try {
     console.log("⏰ Checking plan expiry...");
     
+    // Get job subscriptions only (they have checkValidity method)
     const jobSubs = await JobSubscription.find({ status: { $in: ["Active", "Hold"] } });
+
     console.log(`📊 Found ${jobSubs.length} job subscriptions`);
 
     const now = new Date();
     const oneMonthFromNow = new Date();
     oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
 
+    // Fix old subscriptions without expiry date
     for (const sub of jobSubs) {
       if (!sub.expiryDate) {
         console.log(`⚠️ Setting expiry for old subscription ${sub._id} to 1 month from now`);
         await JobSubscription.updateOne(
           { _id: sub._id },
-          { $set: { expiryDate: oneMonthFromNow, status: "Active" } }
+          { 
+            $set: { 
+              expiryDate: oneMonthFromNow,
+              status: "Active"
+            }
+          }
         );
         sub.expiryDate = oneMonthFromNow;
         sub.status = "Active";
       }
     }
 
+    // Check expiry for Active subscriptions
     const activeSubs = jobSubs.filter(s => s.status === "Active");
     console.log(`🔍 Checking ${activeSubs.length} active subscriptions for expiry`);
 
@@ -280,7 +264,10 @@ cron.schedule("0 0 * * *", async () => {
         if (sub.checkValidity && typeof sub.checkValidity === 'function') {
           if (await sub.checkValidity()) {
             console.log(`❌ Plan expired for company: ${sub.company}`);
-            io.emit("planExpired", { companyId: sub.company, message: "Plan expired. Please renew." });
+            io.emit("planExpired", {
+              companyId: sub.company,
+              message: "Plan expired. Please renew.",
+            });
           }
         } else {
           console.warn(`⚠️ Subscription ${sub._id} does not have checkValidity method`);
@@ -293,8 +280,6 @@ cron.schedule("0 0 * * *", async () => {
     console.error("Cron error:", err);
   }
 });
-*/
-console.log("⚠️ Plan expiry cron is temporarily disabled");
 
 // ================= START SERVER (FIXED) =================
 await connectDB();
@@ -312,3 +297,4 @@ process.on("SIGINT", async () => {
   await mongoose.connection.close();
   process.exit(0);
 });
+
