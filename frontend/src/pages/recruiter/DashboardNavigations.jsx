@@ -585,7 +585,7 @@ const DashboardNavigations = () => {
               <NavLink
                       to={
                         company?.maxPostJobs === 0
-                          ? "/recruiter/dashboard/upgrade-plans"
+                          ? "/recruiter/dashboard/packages"
                           : "/recruiter/dashboard/your-plans"
                       }
                       className={navLinkClass}

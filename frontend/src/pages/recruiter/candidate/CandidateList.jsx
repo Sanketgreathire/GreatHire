@@ -146,7 +146,7 @@ const CandidateList = () => {
                 Remaining Credits: <strong>{company?.creditedForCandidates}</strong>
               </p>
               {company?.creditedForCandidates === 0 && (
-                <Button onClick={() => navigate("/recruiter/dashboard/upgrade-plans")}>
+                <Button onClick={() => navigate("/recruiter/dashboard/packages")}>
                   Upgrade Plan
                 </Button>
               )}

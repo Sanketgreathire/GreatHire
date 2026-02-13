@@ -238,7 +238,7 @@ import About from "./pages/services/About";
 
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
-import Packges from "./pages/services/Packages";
+// import Packges from "./pages/services/Packages";
 import ForgotPassword from './pages/ForgotPassword';
 
 // Recruiter Pages
@@ -299,7 +299,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup", element: <AuthPage /> },
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/contact", element: <Contact /> },
-  { path: "/packages", element: <Packges /> },
+  // { path: "/packages", element: <Packges /> },
   {path : "/HowWeHire", element:<HowWeHire/>},
   {path : "/TheFutureTechnology", element : <TheFutureTechnology/>},
   {path : "/HiringInsights", element : <HiringInsights/>},
@@ -334,8 +334,8 @@ const appRouter = createBrowserRouter([
   { path: "/policy/terms-and-conditions", element: <TermsAndConditions /> },
   { path: "/contact", element: <Contact /> },
   { path: "/great-hire/services", element: <OurService /> },
-  { path: "/packages", element: <Packges /> },
-  { path: "upgrade-plans", element: <RecruiterPlans /> },
+  // { path: "/packages", element: <Packges /> },
+  { path: "/packages", element: <RecruiterPlans /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/notifications", element: <NotificationPage /> },
   { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },

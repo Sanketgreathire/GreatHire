@@ -38,7 +38,7 @@ const Navbar = () => {
 
   const logoRedirectPath = !user
     ? "/" // not logged in
-    : user.role === "recruiter"
+    : user?.role === "recruiter"
     ? "/recruiter/dashboard/home"
     : "/jobs"; // jobseeker / student
 
@@ -95,7 +95,7 @@ const Navbar = () => {
       
       if (response.data.success) {
         dispatch(logOut());
-        if (user.role === "recruiter") {
+        if (user?.role === "recruiter") {
           dispatch(removeCompany());
           dispatch(cleanRecruiterRedux());
           dispatch(removeJobPlan());
@@ -162,7 +162,7 @@ const Navbar = () => {
         { to: "/about", label: "About Us" },
         { to: "/contact", label: "Contact Us" },
         ...(!user || isRecruiter
-  ? [{ to: "/recruiter/plans", label: "Recruiter Plans" }]
+  ? [{ to: "/packages", label: "Recruiter Plans" }]
   : []),
         // { to: "/jobs", label: "Jobs" },
       ];
@@ -174,7 +174,7 @@ const Navbar = () => {
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
     ...(!user || isRecruiter
-  ? [{ to: "/recruiter/plans", label: "Recruiter Plans" }]
+  ? [{ to: "/packages", label: "Recruiter Plans" }]
   : []),
   ];
 
