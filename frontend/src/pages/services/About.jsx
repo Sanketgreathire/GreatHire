@@ -216,7 +216,7 @@ function App() {
       image: sakshiimg,
       role: "Full Stack Developer",
       expertise: "React.js, Node.js, Express.js, MongoDB, Python, JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
-      about: "A Full Stack Developer skilled in frontend and backend technologies. Experienced in building secure and scalable applications with AWS integration. Strong in database management using SQL and MongoDB. Focused on delivering optimized and user-centric digital solutions.",
+      about: "Full-stack Developer specializing in React, Tailwind CSS, Bootstrap, Node.js, and MongoDB. Experienced in building scalable web applications and job portal platforms with optimized performance and clean UI/UX. Skilled in RESTful API development, AWS cloud storage integration, and version control using Git and GitHub, with a strong foundation in modern web technologies and problem-solving.",
       isTopPerformer: true,
     },
     {
