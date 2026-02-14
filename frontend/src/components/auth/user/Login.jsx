@@ -1076,18 +1076,18 @@ const Login = ({ role = "user" }) => {
 
 
   return (
-    <div className="relative min-h-screen flex flex-col dark:bg-gray-800 ">
+    <div className="relative min-h-screen flex flex-col">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100  "></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800"></div>
       
       <div className="relative z-10 flex-1 flex flex-col">
         <Navbar/>
 
         <div className="flex justify-center w-full py-8 sm:py-16 sm:mt-16 mt-10">
-          <div className="flex w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="flex w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
             
             {/* Left Side - Image Carousel (UI from beautiful component) */}
-            <div className="hidden lg:flex lg:w-1/2 relative bg-white p-6">
+            <div className="hidden lg:flex lg:w-1/2 relative bg-white dark:bg-gray-800 p-6">
               <div className="relative w-full h-full flex items-center justify-center">
                 <div 
                   className="relative w-[95%] h-[95%] overflow-hidden"
@@ -1135,33 +1135,33 @@ const Login = ({ role = "user" }) => {
                 </div>
 
                 {/* Floating Stats Cards */}
-                <div className="absolute -right-4 top-20 bg-white rounded-xl p-4 shadow-lg">
+                <div className="absolute -right-4 top-20 bg-white dark:bg-gray-700 rounded-xl p-4 shadow-lg">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">98%</div>
-                    <div className="text-xs text-gray-600">Success Rate</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-300">Success Rate</div>
                   </div>
                 </div>
                 
-                <div className="absolute -left-4 bottom-20 bg-white rounded-xl p-4 shadow-lg">
+                <div className="absolute -left-4 bottom-20 bg-white dark:bg-gray-700 rounded-xl p-4 shadow-lg">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-600">50k+</div>
-                    <div className="text-xs text-gray-600">Active Jobs</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-300">Active Jobs</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right Side - Login Form (UI from beautiful component) */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gray-50">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
               <div className="w-full max-w-md space-y-4">
                 
                 {/* Header Section */}
                 <div className="text-center">
-                  <h1 className="text-4xl font-bold text-gray-800">
+                  <h1 className="text-4xl font-bold text-gray-800 dark:text-white">
                     Great<span className="text-blue-600">Hire</span>
                   </h1>
-                  <h2 className="text-xl font-semibold mt-2 text-gray-900">Welcome back</h2>
-                  <p className="text-sm text-gray-600">Find the job made for you!</p>
+                  <h2 className="text-xl font-semibold mt-2 text-gray-900 dark:text-gray-100">Welcome back</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Find the job made for you!</p>
                   <p className="mt-3 text-sm text-blue-600">
                     Don&apos;t have an account?{" "}
                     <span
@@ -1174,12 +1174,12 @@ const Login = ({ role = "user" }) => {
                 </div>
 
                 {/* Login Form Card */}
-                <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
                   <form className="space-y-5" onSubmit={handleSubmit}>
                     
                     {/* Email Field */}
                     <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1.5 ">
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5 ">
                         Email Address
                       </label>
                       <div className="relative">
@@ -1195,7 +1195,7 @@ const Login = ({ role = "user" }) => {
                           value={formData.email}
                           onChange={handleChange}
                           placeholder="Enter your email"
-                          className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:text-black"
+                          className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                           required
                         />
                       </div>
@@ -1204,7 +1204,7 @@ const Login = ({ role = "user" }) => {
                     {/* Password or OTP Field */}
                     {!showOtpInput ? (
                       <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
                           Password
                         </label>
                         <div className="relative">
@@ -1220,7 +1220,7 @@ const Login = ({ role = "user" }) => {
                             value={formData.password}
                             onChange={handleChange}
                             placeholder="Enter your password"
-                            className="block w-full pl-10 pr-10 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:text-black"
+                            className="block w-full pl-10 pr-10 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                             required
                           />
                           <button
@@ -1244,7 +1244,7 @@ const Login = ({ role = "user" }) => {
                       </div>
                     ) : (
                       <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1.5">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
                           Enter OTP
                         </label>
                         <input
@@ -1253,13 +1253,13 @@ const Login = ({ role = "user" }) => {
                           value={otpData.otp}
                           onChange={handleChange}
                           placeholder="Enter 6-digit OTP"
-                          className="block w-full px-4 py-2.5 border border-gray-300 rounded-lg text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                           maxLength={6}
                           required
                         />
                         <div className="mt-3 text-center">
                           {resendTimer > 0 ? (
-                            <p className="text-gray-500 text-xs">
+                            <p className="text-gray-500 dark:text-gray-400 text-xs">
                               Resend OTP in {formatTime(resendTimer)}
                             </p>
                           ) : (
@@ -1286,7 +1286,7 @@ const Login = ({ role = "user" }) => {
                           onChange={(e) => setRememberMe(e.target.checked)}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors"
                         />
-                        <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700">
+                        <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                           Remember me
                         </label>
                       </div>
@@ -1338,7 +1338,7 @@ const Login = ({ role = "user" }) => {
                 </div>
 
                 {/* Trust Indicators */}
-                <div className="mt-6 flex items-center justify-center space-x-6 text-xs text-gray-500">
+                <div className="mt-6 flex items-center justify-center space-x-6 text-xs text-gray-500 dark:text-gray-400">
                   <div className="flex items-center space-x-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -1368,9 +1368,9 @@ const Login = ({ role = "user" }) => {
 
       {/* Background Animation Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 rounded-full opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 dark:bg-blue-900 rounded-full opacity-20 dark:opacity-10 animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200 dark:bg-purple-900 rounded-full opacity-20 dark:opacity-10 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-200 dark:bg-indigo-900 rounded-full opacity-10 dark:opacity-5 animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
       <Footer/>
