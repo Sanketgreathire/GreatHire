@@ -262,13 +262,13 @@ const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
           }
 
           // Check if industry already exists
-          const existingIndustry = await Company.findOne({ industry });
-          if (existingIndustry) {
-            return res.status(400).json({
-              message: "Industry is already registered with another company.",
-              success: false,
-            });
-          }
+          // const existingIndustry = await Company.findOne({ industry });
+          // if (existingIndustry) {
+          //   return res.status(400).json({
+          //     message: "Industry is already registered with another company.",
+          //     success: false,
+          //   });
+          // }
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
