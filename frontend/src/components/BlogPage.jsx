@@ -247,14 +247,7 @@ function BlogPage() {
             {/* ================= HERO ================= */}
             <section className="video-banner-section">
                 {/* Video Background */}
-                <video
-                    className="video-background"
-                    src="/video2.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                ></video>
+                
 
                 {/* Optional Overlay for better text visibility */}
                 <div className="video-overlay"></div>
