@@ -145,3 +145,29 @@
 .premium-glow {
   animation: premiumGlow 2s ease-in-out infinite;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 60s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+.leader-glow {
+  animation: leaderGlow 3s infinite ease-in-out;
+}
+
+@keyframes leaderGlow {
+  0%,100% { box-shadow: 0 0 20px rgba(234,179,8,0.4); }
+  50% { box-shadow: 0 0 40px rgba(234,179,8,0.8); }
+}

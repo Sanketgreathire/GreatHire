@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Users, Target, Award, Building2, Briefcase, ChevronRight, Sparkles } from 'lucide-react';
+import { Users, Target, Award, Building2, Briefcase, ChevronRight, Sparkles, Crown, BadgeCheck, Linkedin } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 
@@ -130,430 +130,440 @@ function App() {
     {
       name: "Software Developers",
       members: [
-
-        {
-          name: "Charan Sai",
-          image: CharanImg,
-          role: ["Associate AWS Architect", "Full Stack Developer", "AI Engineer"],
-          expertise: "Cloud Solutions, DevOps, Web Development",
-          about: "Specializes in designing and implementing cloud solutions on AWS.",
-        },
-        {
-          name: "Dhanshree Parab",
-          image: DhanshreeImg,
-          role: ["Full Stack Developer"],
-          expertise: "Web Development, Machine Learning, DJango, MongoDB SQL, Python",
-          about: "Skilled with expertise in emerging technologies, crafting high-level websites and applications from core logic to polished interfaces.",
-        },
-        {
-          name: "Aman",
-          image: AmanImg,
-          role: ["Frontend Developer"],
-          expertise: "React, HTML, CSS, JavaScript",
-          about: "Skilled in creating responsive and interactive user interfaces, with a focus on performance and user experience.",
-        },
-        {
-          name: "T.Eswar Reddy",
-          image: eswarImg,
-          role: ["Full Stack Developer", "AI Engineer", "Test Engineer"],
-          expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
-          about: "Experienced in building full-stack applications with a focus on user experience and performance.",
-        },
-        {
-          name: "Sujeeth Kumar",
-          image: SujeethImg,
-          role: ["Information Security Analyst", "Full Stack Developer", "AI Engineer", "Team Lead"],
-          expertise: "Web Development, Cyber Security, AWS Cloud",
-          about: "Skilled in building scalable web applications with modern technologies and security best practices.",
-        },
-        {
-          name: "Maheswar Reddy",
-          image: MaheshImg,
-          role: ["Frontend Developer"],
-          expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
-          about: "Skilled in creating responsive and interactive user interfaces.",
-        },
-        {
-          name: "Moiz Qureshi",
-          image: MoizImg,
-          role: ["Full Stack Developer"],
-          expertise: "React, Node.js, MongoDB, Express, JavaScript",
-          about: "Experienced in building full-stack applications with a focus on user experience and performance.",
-        },
-        {
-          name: "Virender",
-          image: VirendarImg,
-          role: ["Mern Stack Developer"],
-          expertise: "React, Node.js, MongoDB, Express, JavaScript",
-          about: "Specialized in building full-stack applications with a focus on user experience and performance.",
-        },
-        {
-          name: "Nazir",
-          image: NazirImg,
-          role: ["Full Stack Developer"],
-          expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
-          about: "Experienced in building full-stack applications with a focus on user experience and performance.",
-        },
-        {
-          name: "Pratibha",
-          image: Pratibhaimg,
-          role: ["Frontend Developer"],
-          expertise: "HTML, CSS, Tailwind, JavaScript, React ",
-          about: "Dedicated to crafting seamless web solutions that blend creativity with functionality"
-        },
-        {
-          name: "Saumya",
-          image: Saumya,
-          role: ["Full Stack Developer"],
-          expertise: "HTML, CSS, JavaScript, React, Node.js, Express, MongoDB",
-          about: "Full Stack Developer focused on building scalable web applications with clean UI, efficient backend architecture, and real-world problem solving.",
-        },
-        {
-          name: "Sakshi Juwar",
-          image: sakshiimg,
-          role: "Full Stack Developer",
-          expertise: "React.js, Node.js, Express.js, MongoDB, Python, AWS, JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
-          about: "Passionate Full Stack Developer dedicated to creating efficient and user-friendly web applications that solve real-world problems.",
-        },
-        {
-          name: "Jitendra",
-          image: Jitendraimg,
-          role: "Full Stack developer",
-          expertise: "Frontend",
-          about: "Crafts engaging digital journeys that connect and convert audiences",
-        },
-        {
-          name: "Swapnil Marke",
-          image: swapnil,
-          role: ["Full Stack Developer"],
-          expertise: "Java, SpringBoot , HTML, CSS, JavaScript, React, Node.js, Express, MongoDB",
-          about:
-            "Full Stack Developer focused on building scalable web applications with clean UI, efficient backend architecture, and real-world problem solving.",
-        },
-        {
-          name: "Krishna Gupta",
-          image: krishna,
-          role: ["Full Stack Developer"],
-          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
-          about:
-            "Architecting Scalable Full-Stack Web Solutions with Java Backend and Modern Frontend Technologies",
-        },
-        {
-          name: "Prasad Margaj",
-          image: prasad,
-          role: ["Full Stack Developer"],
-          expertise: "React.js, MySQL, HTML, CSS, JavaScript, Bootstrap, Java, SpringBoot",
-          about:
-            "Full stack developer skilled in java, spring boot, MySQL, and React.js",
-        },
-        {
-          name: "Moin Shaikh",
-          image: moin,
-          role: ["Full Stack Developer"],
-          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
-          about:
-            "Turning ideas into High-Performance Full-Stack Applications",
-        },
-        {
-          name: "Samdaniel Nadar",
-          image: sam,
-          role: ["Full Stack Developer"],
-          expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
-          about:
-            "Crafting Robust Full-Stack Application with Java & React",
-        },
-      ],
+    {
+      name: "Charan Sai",
+      image: CharanImg,
+      role: ["Associate AWS Architect", "Full Stack Developer", "AI Engineer"],
+      expertise: "Cloud Solutions, DevOps, Web Development",
+      about: "An Associate AWS Architect and Full Stack Developer specializing in scalable cloud-native solutions. Experienced in AWS deployments, DevOps automation, and secure infrastructure design. Skilled in building modern web applications with optimized backend systems. Passionate about integrating AI-driven technologies into high-performance cloud environments.",
+      isTopPerformer: true,
     },
     {
-      name: "Human Resources",
-      members: [
-        {
-          name: "Naveneeth",
-          image: NavaneethImg,
-          role: "Human Resource",
-          expertise: "Recruitment, Employee Relations",
-          about: "Oversees recruitment and employee relations.",
-        },
-        {
-          name: "Koshistha",
-          image: KOIImg,
-          role: "Sourcing Specialist",
-          expertise: "Talent Sourcing, Networking",
-          about: "Focuses on sourcing candidates through various channels.",
-        },
-        {
-          name: "Mounika",
-          image: MounikaImg,
-          role: "Screening Specialist",
-          expertise: "Talent Acquisition, Screening",
-          about: "Responsible for screening and shortlisting candidates.",
-        },
-        {
-          name: "Tanmai",
-          image: tanmaiImg,
-          role: "Hiring Manager",
-          expertise: "Recruitment Strategy, Team Leadership, Software Development",
-          about: "A strategically driven Hiring Manager who effectively balances technical expertise in software development with recruitment leadership, enabling informed hiring decisions, strong team alignment, and seamless collaboration between technical and non-technical stakeholders. Known for building high-performing teams through structured leadership strategies, talent optimization, and a deep understanding of both business and technology requirements.",
-        },
-        {
-          name: "Lahari",
-          image: lahariImg,
-          role: "On Boarding Specialist",
-          expertise: "Onboarding, Employee Engagement",
-          about: "Facilitates onboarding and employee engagement activities.",
-        },
-        {
-          name: "Madhu Sri",
-          image: madhuImg,
-          role: "Human Resource",
-          expertise: "Recruitment, Employee Relations",
-          about: "Oversees recruitment and employee relations.",
-        },
-        {
-          name: "Rohit",
-          image: Gen17Img,
-          role: "Interviewer",
-          expertise: "Interviewing, Assessment",
-          about: "Conducts interviews and assesses candidates skills.",
-        },
-        {
-          name: "Dikshita",
-          image: Gen2Img,
-          role: "Hiring Specialist",
-          expertise: "Hiring, Team Management",
-          about: "Responsible for managing the hiring process and team.",
-        },
-        {
-          name: "Sadaab Hassan",
-          image: sadaabimg,
-          role: "Human Resource",
-          expertise: "Recruitment, Employee Relations",
-          about: "Oversees recruitment and employee relations.",
-        },
-        {
-          name: "Afra Tabassum",
-          image: afraimg,
-          role: "Human Resource",
-          expertise: "Recruitment, Employee Relations",
-          about: "Oversees recruitment and employee relations.",
-        },
-      ],
+      name: "Dhanshree Parab",
+      image: DhanshreeImg,
+      role: ["Full Stack Developer"],
+      expertise: "Web Development, Machine Learning, DJango, MongoDB SQL, Python",
+      about: "A Full Stack Developer skilled in Django, Python, MongoDB, and SQL. Experienced in developing data-driven web applications and integrating machine learning models. Strong in database design and backend optimization. Focused on building scalable and maintainable digital solutions.",
     },
     {
-      name: "Digital Marketing",
-      members: [
-        {
-          name: "Vikram",
-          image: Gen18Img,
-          role: "Digital Marketing Specialist",
-          expertise: "SEO, SEM, Content Marketing",
-          about: "Ensures Brand vsibility and engagement through digital channels to reach right audience effectively.",
-        },
-        {
-          name: "Alekhya",
-          image: Gen3Img,
-          role: "Digital Marketing Executive",
-          expertise: "Social media strategy, content creation",
-          about: "Drives brand growth through creative and data-driven digital campaigns.",
-        },
-        {
-          name: "Darshini",
-          image: Gen4Img,
-          role: "Digital Marketing Manager",
-          expertise: "Content Marketing, conversion rate optimization",
-          about: "Delivers high-performing digital solutions through deep performance insights.",
-        },
-        {
-          name: "Anuskha",
-          image: Gen5Img,
-          role: "Digital Marketing",
-          expertise: "Multi-channel marketing, team leadership",
-          about: "Builds strong digital brands with scalable, results-oriented plans.",
-        },
-        {
-          name: "Anil",
-          image: Gen19Img,
-          role: "Content & Digital Marketing Strategist",
-          expertise: "Content marketing, email campaigns",
-          about: "Crafts engaging digital journeys that connect and convert audiences.",
-        },
-      ],
+      name: "Aman",
+      image: AmanImg,
+      role: ["Frontend Developer"],
+      expertise: "React, HTML, CSS, JavaScript",
+      about: "A Frontend Developer proficient in React, HTML, CSS, and JavaScript. Skilled in creating responsive and user-friendly interfaces. Strong understanding of UI/UX principles and performance optimization. Dedicated to delivering seamless digital experiences.",
     },
     {
-      name: "US IT Recruiters",
-      members: [
-        {
-          name: "Sushma",
-          image: sushmaImg,
-          role: "Technical Recruiter",
-          expertise: "Tech Recruitment, Talent Assessment",
-          about: "Specializes in recruiting top tech talent.",
-        },
-        {
-          name: "Janki Patel",
-          image: janakiImg,
-          role: "Talent Acquisition Specialist",
-          expertise: "Executive Search, Talent Strategy",
-          about: "Focuses on executive and leadership recruitment.",
-        },
-        {
-          name: "Santhosh Kumar",
-          image: santhoshImg,
-          role: "US IT Recruiter",
-          expertise: " Graduate Hiring, University Relations",
-          about: "Focuses on strategic hiring pratices, I ensure we attract and retain top talent.",
-        },
-        {
-          name: "Mansi Kargar",
-          image: mansiImg,
-          role: "Talent Acquisition – US IT Staffing",
-          expertise: "International Recruitment, Relocation",
-          about: "Focuses on identifying and attracting top talent from around the world.",
-        },
-        {
-          name: "Riya",
-          image: riyaImg,
-          role: "Recruitment Operations",
-          expertise: "Process Optimization, Tools",
-          about: "Focuses on streamlining recruitment processes by connecting the right talent with the right opportunities.",
-        },
-        {
-          name: "Rashi sharma",
-          image: RashiImg,
-          role: "Technical Recruiter",
-          expertise: "Tech Recruitment, Talent Assessment",
-          about: "Specializes in recruiting top tech talent.",
-        },
-      ],
+      name: "T.Eswar Reddy",
+      image: eswarImg,
+      role: ["Full Stack Developer", "AI Engineer", "Test Engineer"],
+      expertise: "React, Node.js, MongoDB, Express, JavaScript, Python",
+      about: "A Full Stack Developer and AI Engineer experienced in building end-to-end web applications. Skilled in MERN stack development and backend API integration. Strong in authentication systems and database management. Focused on delivering reliable and high-performance applications.",
+      isTopPerformer: true,
     },
     {
-      name: "Sales and Marketing",
-      members: [
-        {
-          name: "Chirag",
-          image: Gen16Img,
-          role: "Sales Manager",
-          expertise: "B2B Sales, Account Management, campaign strategy",
-          about: "Focused on driving business growth through marketing strategies, client relationships, and sales initiatives.",
-        },
-        {
-          name: "Divya",
-          image: Gen6Img,
-          role: "Sales Executive",
-          expertise: "Solution Sales, Negotiations",
-          about: "Involves into creating impactful marketing campaigns, fostering client relationship, and ensuring services stand out in competitive market.",
-        },
-        {
-          name: "Riya",
-          image: Gen12Img,
-          role: "Sales and Marketing",
-          expertise: "Market Research, Lead Generation",
-          about: "Conducts market research and generates leads for sales.",
-        },
-        {
-          name: "Anita Sharma",
-          image: Gen8Img,
-          role: "Sales and Marketing Executive",
-          expertise: "Lead generation, client relationship management",
-          about: " Passionate about driving growth through smart sales strategies and engaging marketing campaigns.",
-        },
-        {
-          name: "Aditi Mishra",
-          image: Gen9Img,
-          role: " Digital Marketing & Sales Strategist",
-          expertise: "SEO, content marketing, email campaigns",
-          about: "Blends creativity and analytics to turn prospects into loyal customers.",
-        },
-        {
-          name: "Tanaya Suchak",
-          image: Gen10Img,
-          role: "Sales Representative & Marketing Coordinator",
-          expertise: "Customer engagement, promotional planning",
-          about: "Committed to delivering value by connecting the right product to the right audience.",
-        },
-      ],
+      name: "Sujeeth Kumar",
+      image: SujeethImg,
+      role: ["Information Security Analyst", "Full Stack Developer", "AI Engineer", "Team Lead"],
+      expertise: "Web Development, Cyber Security, AWS Cloud",
+      about: "An Information Security Analyst and Full Stack Developer with expertise in cybersecurity and AWS cloud solutions. Experienced in building secure and scalable web systems. Strong leadership skills in managing technical teams. Committed to delivering enterprise-grade and secure digital platforms.",
+      isTopPerformer: true,
     },
     {
-      name: "Bench Sales Recruiters",
-      members: [
-        {
-          name: "Neha",
-          image: Gen11Img,
-          role: "Bench Sales Specialist",
-          expertise: "B2B Sales, Account Management",
-          about: "Leads bench sales and client relationship management.",
-        },
-        {
-          name: "Babitha",
-          image: Gen2Img,
-          role: "Bench Sales Recruiter",
-          expertise: "Marketing IT consultants to clients and vendors, handling Negotiations",
-          about: "Efficient in building vendor relationships and placing bench candidates across various technologies.",
-        },
-        {
-          name: "Cherry",
-          image: Gen3Img,
-          role: "US IT Bench Sales Executive",
-          expertise: "Expertise in sourcing requirements, closing deals with implementation",
-          about: "Proven ability to place consultants quickly through strong networking and communication skills.",
-        },
-        {
-          name: "Dakshitha",
-          image: Gen4Img,
-          role: "Technical Bench Sales Specialist",
-          expertise: "Skilled in promoting bench candidates, resume formatting",
-          about: "Focused on maximizing consultant utilization and aligning talent with the right opportunities.",
-        },
-        {
-          name: "Gunjana",
-          image: Gen5Img,
-          role: "IT Bench Sales Executive",
-          expertise: "Candidate profiling, vendor networking",
-          about: "Skilled in accelerating consultant placements by building long-term vendor relationships.",
-        },
-      ],
+      name: "Maheswar Reddy",
+      image: MaheshImg,
+      role: ["Frontend Developer"],
+      expertise: "React, HTML, CSS, JavaScript, Node.js, AWS, MongoDB",
+      about: "A Frontend Developer skilled in React and modern JavaScript technologies. Experienced in integrating APIs and cloud-based services. Strong focus on UI performance and scalability. Dedicated to building intuitive and high-performing interfaces.",
     },
     {
-      name: "Business development",
-      members: [
-        {
-          name: "Nabhy Singh",
-          image: nabhayImg,
-          role: "Business Development Specialist",
-          expertise: "Lead generation, strategic partnerships",
-          about: "Passionate about driving business growth through meaningful client relationships.",
-        },
-        {
-          name: "Mani kumar",
-          image: Gen15Img,
-          role: "Business Development Manager",
-          expertise: "Lead generation, client relationship management",
-          about: "Specilized in business expansion by levaraging marketing insights and innovative sales strategies.",
-        },
-        {
-          name: "Dharshini",
-          image: Gen5Img,
-          role: "Business Development",
-          expertise: "Process Management, Analytics",
-          about: "Excelled in client engagement and negotation strageries, leading to the successful deals and strong client relationships.",
-        },
-        {
-          name: "Shobita",
-          image: Gen13Img,
-          role: "Business Development Executive",
-          expertise: "Market Expansion, Partnerships",
-          about: "Works towards conducting market research and implementing innovative sales strategies to drive business growth in greathire.",
-        },
-        {
-          name: "Aina",
-          image: Gen1Img,
-          role: "Business Development Associate",
-          expertise: "Account Management, Growth",
-          about: "Ensures client satisfaction and retention.",
-        },
-      ],
+      name: "Moiz Qureshi",
+      image: MoizImg,
+      role: ["Full Stack Developer"],
+      expertise: "React, Node.js, MongoDB, Express, JavaScript",
+      about: "A MERN Stack Developer experienced in building scalable web applications. Skilled in RESTful API design and efficient database structuring. Strong in frontend-backend integration and authentication systems. Passionate about delivering optimized and maintainable solutions.",
+      isTopPerformer: true,
     },
-  ];
+    {
+      name: "Virender",
+      image: VirendarImg,
+      role: ["Mern Stack Developer"],
+      expertise: "React, Node.js, MongoDB, Express, JavaScript",
+      about: "A MERN Stack Developer specializing in full-stack application development. Skilled in building dynamic frontends and scalable backend systems. Strong in MongoDB and Express framework integration. Focused on delivering secure and reliable web solutions.",
+    },
+    {
+      name: "Nazir",
+      image: NazirImg,
+      role: ["Full Stack Developer"],
+      expertise: "React, Node.js, MongoDB, Express, JavaScript, Python, Tailwind CSS",
+      about: "A Full Stack Developer experienced in React, Node.js, and Python technologies. Skilled in building modern UI components using Tailwind CSS. Strong in backend API development and database architecture. Passionate about clean code and scalable application design.",
+    },
+    {
+      name: "Pratibha",
+      image: Pratibhaimg,
+      role: ["Frontend Developer"],
+      expertise: "HTML, CSS, Tailwind, JavaScript, React",
+      about: "A Frontend Developer specializing in responsive and modern web design. Skilled in React and Tailwind CSS for interactive UI development. Strong understanding of usability and performance optimization. Dedicated to delivering engaging digital experiences.",
+    },
+    {
+      name: "Saumya",
+      image: Saumya,
+      role: ["Full Stack Developer"],
+      expertise: "HTML, CSS, JavaScript,Node.js, Express",
+      about: "A Full Stack Developer experienced in MERN stack development. Skilled in building responsive frontends and efficient backend systems. Strong in REST APIs and authentication implementation. Focused on delivering performance-driven web applications.",
+    },
+    {
+      name: "Sakshi Juwar",
+      image: sakshiimg,
+      role: "Full Stack Developer",
+      expertise: "React.js, Node.js, Express.js, MongoDB, Python, JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
+      about: "A Full Stack Developer skilled in frontend and backend technologies. Experienced in building secure and scalable applications with AWS integration. Strong in database management using SQL and MongoDB. Focused on delivering optimized and user-centric digital solutions.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Jitendra",
+      image: Jitendraimg,
+      role: "Full Stack Developer",
+      expertise: "React.js, Node.js, Express.js, MongoDB, Python, Django,JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
+      about: "Results-driven Full Stack Developer with expertise in React.js, Node.js, and Django-based application development. Experienced in designing secure backend architectures, scalable APIs, and optimized database systems. Committed to delivering enterprise-grade, high-performance web solutions aligned with business objectives.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Swapnil Marke",
+      image: swapnil,
+      role: ["Full Stack Developer"],
+      expertise: "Java, SpringBoot , HTML, CSS, JavaScript, React, Node.js, Express, MongoDB",
+      about: "A Full Stack Developer with expertise in Java and Spring Boot backend systems. Experienced in building secure APIs and scalable web applications. Skilled in React-based frontend development and system integration. Committed to delivering high-performance software solutions.",
+    },
+    {
+      name: "Krishna Gupta",
+      image: krishna,
+      role: ["Full Stack Developer"],
+      expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+      about: "A Full Stack Developer specializing in Java backend and React frontend development. Skilled in MySQL database management and REST API design. Strong in responsive UI implementation. Focused on building scalable and maintainable enterprise applications.",
+    },
+    {
+      name: "Prasad Margaj",
+      image: prasad,
+      role: ["Full Stack Developer"],
+      expertise: "React.js, MySQL, HTML, CSS, JavaScript, Bootstrap, Java, SpringBoot",
+      about: "A Full Stack Developer experienced in Java Spring Boot and React.js development. Skilled in backend services and dynamic UI creation. Strong in MySQL database integration and API connectivity. Dedicated to delivering reliable and business-focused solutions.",
+    },
+    {
+      name: "Moin Shaikh",
+      image: moin,
+      role: ["Full Stack Developer"],
+      expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+      about: "A Full Stack Developer skilled in Java and React-based application development. Experienced in backend services using Spring Boot and MySQL optimization. Strong in frontend responsiveness and API integration. Focused on building scalable and secure applications.",
+    },
+    {
+      name: "Samdaniel Nadar",
+      image: sam,
+      role: ["Full Stack Developer"],
+      expertise: "Java, SpringBoot, React.js, MySQL, HTML, CSS, JavaScript, Bootstrap",
+      about: "A Full Stack Developer proficient in Java and React technologies. Experienced in building scalable backend systems and responsive frontends. Strong in database management and RESTful API integration. Committed to delivering structured and secure web solutions.",
+    },
+  ],
+},
+{
+  name: "Human Resources",
+  members: [
+    {
+      name: "Naveneeth",
+      image: NavaneethImg,
+      role: "Human Resource",
+      expertise: "Recruitment, Employee Relations",
+      about: "An HR professional experienced in end-to-end recruitment and employee relations. Skilled in sourcing, screening, and onboarding candidates efficiently. Strong understanding of HR policies and compliance standards. Focused on building a positive and productive workplace culture.",
+    },
+    {
+      name: "Koshistha",
+      image: KOIImg,
+      role: "Sourcing Specialist",
+      expertise: "Talent Sourcing, Networking",
+      about: "A Sourcing Specialist skilled in identifying and attracting qualified candidates across platforms. Experienced in talent pipeline development and market research. Strong networking and recruitment tool expertise. Focused on delivering timely and quality hiring solutions.",
+    },
+    {
+      name: "Mounika",
+      image: MounikaImg,
+      role: "Screening Specialist",
+      expertise: "Talent Acquisition, Screening",
+      about: "A Screening Specialist experienced in evaluating profiles and conducting initial interviews. Skilled in assessing technical and behavioral competencies. Strong understanding of hiring standards and shortlisting processes. Dedicated to improving screening accuracy and efficiency.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Tanmai",
+      image: tanmaiImg,
+      role: ["Hiring Manager", "Talent & Technology Strategy Leader"],
+      expertise: "Technical Leadership, Talent Strategy, Organizational Scaling",
+      verified: true,
+      leadership: true,
+      highlight: "Architect of High-Impact, Growth-Driven Tech Teams",
+      about: "A visionary Hiring Leader with strong technical expertise and strategic recruitment leadership. Experienced in building scalable hiring systems aligned with business growth. Skilled in developing high-impact talent strategies that drive innovation and operational excellence. Focused on building future-ready teams and leadership pipelines. Committed to transforming hiring into a strategic driver of organizational success.",
+    },
+    {
+      name: "Lahari",
+      image: lahariImg,
+      role: "On Boarding Specialist",
+      expertise: "Onboarding, Employee Engagement",
+      about: "An Onboarding Specialist ensuring smooth employee integration and documentation processes. Skilled in engagement initiatives and cross-team coordination. Strong understanding of compliance and HR best practices. Focused on enhancing employee experience from day one.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Madhu Sri",
+      image: madhuImg,
+      role: "Human Resource",
+      expertise: "Recruitment, Employee Relations",
+      about: "An HR professional experienced in recruitment coordination and employee support. Skilled in interview scheduling and HR documentation. Strong understanding of workplace policies and compliance. Focused on maintaining smooth HR operations.",
+    },
+    {
+      name: "Rohit",
+      image: Gen17Img,
+      role: "Interviewer",
+      expertise: "Interviewing, Assessment",
+      about: "An Interviewer experienced in structured technical and behavioral assessments. Skilled in competency-based evaluation and candidate feedback. Strong understanding of fair hiring practices. Focused on identifying top-performing and culturally aligned talent.",
+    },
+    {
+      name: "Dikshita",
+      image: Gen2Img,
+      role: "Hiring Specialist",
+      expertise: "Hiring, Team Management",
+      about: "A Hiring Specialist managing end-to-end recruitment workflows. Skilled in team coordination and workforce planning. Strong understanding of recruitment analytics and process optimization. Focused on aligning hiring decisions with business objectives.",
+    },
+    {
+      name: "Sadaab Hassan",
+      image: sadaabimg,
+      role: "Human Resource",
+      expertise: "Recruitment, Employee Relations",
+      about: "An HR specialist experienced in recruitment operations and candidate engagement. Skilled in onboarding coordination and HR documentation. Strong understanding of compliance and communication processes. Focused on strengthening hiring pipelines and retention strategies.",
+    },
+    {
+      name: "Afra Tabassum",
+      image: afraimg,
+      role: "Human Resource",
+      expertise: "Recruitment, Employee Relations",
+      about: "An HR professional focused on talent acquisition and employee coordination. Skilled in interview management and recruitment databases. Strong in structured hiring workflows and compliance standards. Dedicated to supporting sustainable organizational growth.",
+      isTopPerformer: true,
+    },
+  ],
+},
+{
+  name: "Digital Marketing",
+  members: [
+    {
+      name: "Vikram",
+      image: Gen18Img,
+      role: "Digital Marketing Specialist",
+      expertise: "SEO, SEM, Content Marketing",
+      about: "A Digital Marketing Specialist skilled in SEO, SEM, and content strategies. Experienced in improving search rankings and brand visibility. Strong in campaign optimization and performance analytics. Focused on delivering measurable digital growth.",
+    },
+    {
+      name: "Alekhya",
+      image: Gen3Img,
+      role: "Digital Marketing Executive",
+      expertise: "Social media strategy, content creation",
+      about: "A Digital Marketing Executive experienced in social media strategy and content development. Skilled in audience engagement and campaign tracking. Strong understanding of brand positioning. Focused on building consistent digital presence.",
+    },
+    {
+      name: "Darshini",
+      image: Gen4Img,
+      role: "Digital Marketing Manager",
+      expertise: "Content Marketing, conversion rate optimization",
+      about: "A Digital Marketing Manager specializing in content strategy and CRO. Experienced in managing performance-driven campaigns. Skilled in ROI analysis and marketing leadership. Focused on maximizing engagement and conversions.",
+    },
+    {
+      name: "Anuskha",
+      image: Gen5Img,
+      role: "Digital Marketing",
+      expertise: "Multi-channel marketing, team leadership",
+      about: "A Digital Marketing professional experienced in multi-channel campaigns. Skilled in team coordination and performance optimization. Strong understanding of engagement metrics. Focused on scalable brand growth strategies.",
+    },
+    {
+      name: "Anil",
+      image: Gen19Img,
+      role: "Content & Digital Marketing Strategist",
+      expertise: "Content marketing, email campaigns",
+      about: "A Content Strategist experienced in email campaigns and audience engagement. Skilled in automation and conversion funnels. Strong blend of creativity and analytics. Focused on driving measurable marketing success.",
+    },
+  ],
+},
+{
+  name: "US IT Recruiters",
+  members: [
+    {
+      name: "Sushma",
+      image: sushmaImg,
+      role: "Technical Recruiter",
+      expertise: "Tech Recruitment, Talent Assessment",
+      about: "A Technical Recruiter specializing in sourcing and evaluating IT professionals. Experienced in full-cycle recruitment for US-based technical roles. Skilled in candidate assessment and stakeholder coordination. Focused on delivering quality hires within tight timelines.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Janki Patel",
+      image: janakiImg,
+      role: "Talent Acquisition Specialist",
+      expertise: "Executive Search, Talent Strategy",
+      about: "A Talent Acquisition Specialist experienced in executive and leadership hiring. Skilled in workforce planning and strategic talent mapping. Strong in stakeholder communication and recruitment analytics. Focused on building strong leadership pipelines.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Santhosh Kumar",
+      image: santhoshImg,
+      role: "US IT Recruiter",
+      expertise: "Graduate Hiring, University Relations",
+      about: "A US IT Recruiter experienced in graduate hiring and university partnerships. Skilled in building campus recruitment pipelines and early talent strategies. Strong understanding of US IT staffing requirements. Focused on attracting emerging technology talent.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Mansi Kargar",
+      image: mansiImg,
+      role: "Talent Acquisition – US IT Staffing",
+      expertise: "International Recruitment, Relocation",
+      about: "A Talent Acquisition professional specializing in US IT staffing and global recruitment. Skilled in sourcing international candidates and managing compliance processes. Strong in client coordination and niche hiring. Focused on delivering qualified talent efficiently.",
+    },
+    {
+      name: "Riya",
+      image: riyaImg,
+      role: "Recruitment Operations",
+      expertise: "Process Optimization, Tools",
+      about: "A Recruitment Operations specialist focused on streamlining hiring workflows. Skilled in ATS management and recruitment analytics. Strong in improving process efficiency and reporting. Dedicated to enhancing overall recruitment productivity.",
+    },
+    {
+      name: "Rashi sharma",
+      image: RashiImg,
+      role: "Technical Recruiter",
+      expertise: "Tech Recruitment, Talent Assessment",
+      about: "A Technical Recruiter experienced in sourcing IT professionals for US markets. Skilled in technical screening and cultural fit evaluation. Strong understanding of emerging technologies and staffing trends. Focused on delivering timely and quality placements.",
+    },
+  ],
+},
+{
+  name: "Sales and Marketing",
+  members: [
+    {
+      name: "Chirag",
+      image: Gen16Img,
+      role: "Sales Manager",
+      expertise: "B2B Sales, Account Management, campaign strategy",
+      about: "A Sales Manager experienced in driving B2B growth and strategic account management. Skilled in revenue planning and contract negotiations. Strong in client acquisition and retention strategies. Focused on expanding market presence and profitability.",
+    },
+    {
+      name: "Divya",
+      image: Gen6Img,
+      role: "Sales Executive",
+      expertise: "Solution Sales, Negotiations",
+      about: "A Sales Executive specializing in solution-based selling and negotiations. Skilled in understanding client needs and delivering tailored solutions. Strong in relationship management and closing deals. Focused on achieving consistent sales targets.",
+    },
+    {
+      name: "Riya",
+      image: Gen12Img,
+      role: "Sales and Marketing",
+      expertise: "Market Research, Lead Generation",
+      about: "A Sales and Marketing professional skilled in market research and lead generation. Experienced in identifying new business opportunities. Strong in campaign coordination and client engagement. Focused on driving revenue growth.",
+    },
+    {
+      name: "Anita Sharma",
+      image: Gen8Img,
+      role: "Sales and Marketing Executive",
+      expertise: "Lead generation, client relationship management",
+      about: "A Sales and Marketing Executive experienced in generating qualified leads. Skilled in client relationship management and promotional strategies. Strong understanding of customer lifecycle management. Focused on measurable business growth.",
+    },
+    {
+      name: "Aditi Mishra",
+      image: Gen9Img,
+      role: "Digital Marketing & Sales Strategist",
+      expertise: "SEO, content marketing, email campaigns",
+      about: "A Digital Marketing and Sales Strategist blending creativity with analytics. Skilled in SEO, content marketing, and conversion optimization. Strong understanding of customer journey mapping. Focused on turning prospects into loyal clients.",
+    },
+    {
+      name: "Tanaya Suchak",
+      image: Gen10Img,
+      role: "Sales Representative & Marketing Coordinator",
+      expertise: "Customer engagement, promotional planning",
+      about: "A Sales Representative and Marketing Coordinator skilled in client engagement and promotional planning. Experienced in managing sales pipelines and marketing initiatives. Strong in customer communication. Focused on strengthening brand presence and loyalty.",
+    },
+  ],
+},
+{
+  name: "Bench Sales Recruiters",
+  members: [
+    {
+      name: "Neha",
+      image: Gen11Img,
+      role: "Bench Sales Specialist",
+      expertise: "B2B Sales, Account Management",
+      about: "A Bench Sales Specialist experienced in marketing IT consultants to vendors and clients. Skilled in B2B negotiations and contract management. Strong understanding of US staffing processes. Focused on maximizing consultant placements and revenue.",
+    },
+    {
+      name: "Babitha",
+      image: Gen2Img,
+      role: "Bench Sales Recruiter",
+      expertise: "Marketing IT consultants to clients and vendors, handling Negotiations",
+      about: "A Bench Sales Recruiter skilled in consultant marketing and vendor coordination. Experienced in handling negotiations and resume positioning. Strong understanding of US IT requirements. Focused on increasing placement opportunities.",
+    },
+    {
+      name: "Cherry",
+      image: Gen3Img,
+      role: "US IT Bench Sales Executive",
+      expertise: "Expertise in sourcing requirements, closing deals with implementation",
+      about: "A US IT Bench Sales Executive experienced in sourcing requirements and closing deals. Skilled in vendor networking and consultant marketing. Strong understanding of staffing workflows. Focused on quick turnaround placements.",
+    },
+    {
+      name: "Dakshitha",
+      image: Gen4Img,
+      role: "Technical Bench Sales Specialist",
+      expertise: "Skilled in promoting bench candidates, resume formatting",
+      about: "A Technical Bench Sales Specialist skilled in promoting bench candidates effectively. Experienced in resume optimization and vendor communication. Strong in consultant positioning strategies. Focused on consistent placement success.",
+    },
+    {
+      name: "Gunjana",
+      image: Gen5Img,
+      role: "IT Bench Sales Executive",
+      expertise: "Candidate profiling, vendor networking",
+      about: "An IT Bench Sales Executive experienced in candidate profiling and vendor networking. Skilled in consultant marketing and negotiations. Strong understanding of staffing cycles. Focused on accelerating placements and revenue growth.",
+    },
+  ],
+},
+{
+  name: "Business development",
+  members: [
+    {
+      name: "Nabhy Singh",
+      image: nabhayImg,
+      role: "Business Development Specialist",
+      expertise: "Lead generation, strategic partnerships",
+      about: "A Business Development Specialist focused on lead generation and strategic partnerships. Skilled in identifying growth opportunities and client acquisition. Strong in negotiation and relationship building. Focused on driving sustainable business expansion.",
+      isTopPerformer: true,
+    },
+    {
+      name: "Mani kumar",
+      image: Gen15Img,
+      role: "Business Development Manager",
+      expertise: "Lead generation, client relationship management",
+      about: "A Business Development Manager experienced in expanding operations through strategic initiatives. Skilled in client relationship management and revenue planning. Strong in competitive positioning and deal closures. Focused on long-term growth.",
+    },
+    {
+      name: "Dharshini",
+      image: Gen5Img,
+      role: "Business Development",
+      expertise: "Process Management, Analytics",
+      about: "A Business Development professional skilled in process management and analytics-driven strategies. Experienced in client engagement and growth planning. Strong in performance tracking and operational improvements. Focused on closing strategic deals.",
+    },
+    {
+      name: "Shobita",
+      image: Gen13Img,
+      role: "Business Development Executive",
+      expertise: "Market Expansion, Partnerships",
+      about: "A Business Development Executive experienced in market expansion and partnership development. Skilled in competitive analysis and opportunity identification. Strong in sales strategy execution. Focused on strengthening brand presence.",
+    },
+    {
+      name: "Aina",
+      image: Gen1Img,
+      role: "Business Development Associate",
+      expertise: "Account Management, Growth",
+      about: "A Business Development Associate skilled in account management and client retention. Experienced in supporting revenue growth initiatives. Strong in cross-team coordination and customer satisfaction. Focused on building long-term partnerships.",
+    },
+  ],
+},
+];
 
   const achievements = [
     {
@@ -635,12 +645,56 @@ function App() {
 
   const [isCenter, setIsCenter] = useState(false);
 
+  // Internship auto growth logic
+  const baseInterns = 150;
+  const growthPerMonth = 10;
+  const startDate = new Date("2024-01-01");
+
+  const now = new Date();
+
+  const monthsPassed =
+    (now.getFullYear() - startDate.getFullYear()) * 12 +
+    (now.getMonth() - startDate.getMonth());
+
+  const currentInternCount =
+    baseInterns + (monthsPassed * growthPerMonth);
+
   const allTeamMembers = departments.flatMap((dept) =>
     dept.members.map((member) => ({
       ...member,
       department: dept.name,
+      verified: true,
+      isLeader: member.name === "Tanmai"
     }))
   );
+
+  const getDepartmentBadge = (department) => {
+
+    const styles = {
+      "Software Developers":
+        "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300",
+
+      "Human Resources":
+        "bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-300",
+
+      "Digital Marketing":
+        "bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300",
+
+      "US IT Recruiters":
+        "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300",
+
+      "Sales and Marketing":
+        "bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300",
+
+      "Bench Sales Recruiters":
+        "bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-300",
+
+      "Business development":
+        "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300",
+    };
+
+    return styles[department] || "bg-gray-100 text-gray-600";
+  };
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -778,77 +832,72 @@ function App() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+            <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10">
               {leadership.map((leader, index) => (
                 <div
                   key={index}
-                  className="group relative bg-white dark:bg-gray-900 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700"
+                  className="group relative bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition duration-500 p-8 border border-purple-200 dark:border-purple-700 hover:-translate-y-1 overflow-hidden"
                 >
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  {/* Profile Image with highlight ring */}
+                  <div className="flex justify-center">
+                    <div className="relative">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 blur-md opacity-40"></div>
 
-                  {/* Enhanced page curl */}
-                  <div className="absolute top-0 right-0 w-20 h-20 overflow-hidden">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 via-purple-100 to-white dark:from-blue-900 dark:via-purple-900 dark:to-gray-800 [clip-path:polygon(100%_0,0_0,100%_100%)] shadow-lg"></div>
-                  </div>
-
-                  <div className="relative z-10 p-10">
-                    {/* Leader initial badge */}
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-blue-100 dark:ring-blue-900/30 group-hover:scale-110 transition-transform duration-300">
-                      {/* Profile Image */}
-                      <img
-                        src={leader.image} // path relative to public folder
-                        alt={leader.name}
-                        className="relative w-full h-full rounded-full object-cover ring-4 ring-blue-100 dark:ring-blue-900/30 shadow-lg"
-                      />
-                    </div>
-
-                    <h3 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      {leader.name}
-                    </h3>
-
-                    <div className="text-center mb-6">
-                      <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-2 rounded-full">
-                        <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                          {Array.isArray(leader.title)
-                            ? leader.title.map((t, i) => <div key={i}>{t}</div>)
-                            : leader.title}
-                        </p>
+                      <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-gray-900 shadow-md">
+                        <img
+                          src={leader.image}
+                          alt={leader.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
+                  </div>
 
-                    <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto mb-8"></div>
+                  {/* Name */}
+                  <h3 className="text-xl font-bold text-center mt-5 text-gray-900 dark:text-white">
+                    {leader.name}
+                  </h3>
 
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-8 text-center">
-                      {leader.description}
+                  {/* Role as text */}
+                  <p className="text-purple-600 font-semibold text-center mt-1">
+                    {leader.title}
+                  </p>
+
+                  {/* Premium divider */}
+                  <div className="flex justify-center mt-4">
+                    <div className="w-20 h-[3px] bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-600 dark:text-gray-400 text-center text-sm leading-relaxed mt-4">
+                    {leader.description}
+                  </p>
+
+                  {/* Achievements */}
+                  <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl p-4 border border-purple-100 dark:border-purple-800">
+                    <h4 className="text-sm font-semibold text-purple-600 mb-3 flex items-center gap-2">
+                      ⭐ Key Achievements
+                    </h4>
+
+                    <ul className="space-y-2">
+                      {leader.achievements.map((item, i) => (
+                        <li key={i} className="text-sm text-gray-600 dark:text-gray-400 flex gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Vision */}
+                  <div className="mt-5 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900 rounded-xl p-4">
+                    <h4 className="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">
+                      Vision
+                    </h4>
+
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {leader.vision}
                     </p>
-
-                    {/* Achievements */}
-                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 mb-6">
-                      <h4 className="text-lg font-bold mb-4 text-blue-800 dark:text-blue-300 font-[Oswald] flex items-center gap-2">
-                        <Award className="w-5 h-5" />
-                        Key Achievements
-                      </h4>
-                      <ul className="space-y-3">
-                        {leader.achievements.map((achievement, i) => (
-                          <li key={i} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
-                            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 flex-shrink-0"></div>
-                            <span className="text-sm leading-relaxed">{achievement}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Vision */}
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6">
-                      <h4 className="text-lg font-bold mb-3 text-purple-800 dark:text-purple-300 font-[Oswald] flex items-center gap-2">
-                        <Sparkles className="w-5 h-5" />
-                        Vision
-                      </h4>
-                      <p className="text-gray-700 dark:text-gray-300 italic text-sm leading-relaxed">
-                        {leader.vision}
-                      </p>
-                    </div>
                   </div>
                 </div>
               ))}
@@ -1000,108 +1049,237 @@ function App() {
           </div>
         </div>
 
+{/* OUR TEAM SECTION */}
+<section className="py-20 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
 
-        {/* Team Section - Enhanced */}
-        {/* Team Section - Single Fast Continuous Carousel */}
-        <div className="relative py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden w-full max-w-full">
-          {/* Background grid */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+  {/* Heading */}
+  <div className="text-center mb-12">
 
-          <div className="relative z-10 w-full px-2 sm:px-4 max-w-full">
-            {/* HEADER */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-6">
-                <Users className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">
-                  Our People
-                </span>
+    <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-4">
+      <Users className="w-4 h-4 text-purple-600" />
+      <span className="text-sm font-semibold text-purple-600">
+        Our Team
+      </span>
+    </div>
+
+    <h2 className="text-4xl md:text-5xl font-bold font-[Oswald]
+      bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+      Meet Our Team
+    </h2>
+
+    <p className="text-gray-600 dark:text-gray-400 mt-3">
+      Meet the talented professionals behind GreatHire
+    </p>
+
+  </div>
+
+
+  {/* TEAM HIGHLIGHTS WITH ANIMATION */}
+  <div className="flex flex-wrap justify-center gap-6 mt-10 mb-16">
+
+    {/* Team Members */}
+    <div className="bg-white dark:bg-gray-900
+      border border-purple-200 dark:border-purple-800
+      px-8 py-5 rounded-xl shadow-md hover:shadow-xl transition">
+
+      <h3 className="text-3xl font-bold text-purple-600 text-center">
+
+        <NumberCounter end={200} duration={2000} suffix="+" />
+
+      </h3>
+
+      <p className="text-sm text-gray-500 text-center font-semibold">
+        Team Members
+      </p>
+
+    </div>
+
+
+    {/* Departments */}
+    <div className="bg-white dark:bg-gray-900
+      border border-blue-200 dark:border-blue-800
+      px-8 py-5 rounded-xl shadow-md hover:shadow-xl transition">
+
+      <h3 className="text-3xl font-bold text-blue-600 text-center">
+
+        <NumberCounter end={10} duration={2000} suffix="+" />
+
+      </h3>
+
+      <p className="text-sm text-gray-500 text-center font-semibold">
+        Departments
+      </p>
+
+    </div>
+
+
+    {/* Internship Program */}
+    <div className="relative bg-gradient-to-r
+      from-yellow-400 to-orange-500
+      text-white px-8 py-5 rounded-xl
+      shadow-lg hover:shadow-2xl transition scale-105">
+
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2
+        bg-white text-orange-500 text-xs
+        px-4 py-1 rounded-full font-bold shadow
+        whitespace-nowrap">
+
+        INTERNSHIP PROGRAM
+
+      </div>
+
+      <h3 className="text-3xl font-bold text-center">
+
+        <NumberCounter
+          end={currentInternCount}
+          duration={2000}
+          suffix="+"
+        />
+
+      </h3>
+
+      <p className="text-sm text-center font-semibold">
+        Interns Trained & Placed
+      </p>
+
+    </div>
+
+  </div>
+
+
+  {/* Auto scrolling cards */}
+  <div className="relative overflow-hidden">
+
+    <div className="flex gap-6 animate-scroll hover:[animation-play-state:paused] px-6 w-max">
+
+      {[...allTeamMembers, ...allTeamMembers].map((member, index) => (
+
+        <div key={index}
+          className="group relative min-w-[300px] max-w-[300px]
+          rounded-2xl border border-purple-200 dark:border-purple-800
+          bg-white dark:bg-gray-900 shadow-sm hover:shadow-lg hover:scale-[1.02] transition duration-300 overflow-visible">
+
+          {member.isTopPerformer && !member.isLeader && (
+            <div className="absolute top-3 right-3 bg-green-100 text-green-700 text-[10px] font-semibold px-2 py-1 rounded-full flex items-center gap-1">
+              ⭐ Top Performer
+            </div>
+          )}
+
+          {member.leadership && (
+            <div className="absolute top-3 right-3 z-10">
+              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-semibold px-3 py-1 rounded-full shadow-md">
+                ⭐ Team Lead
+              </span>
+            </div>
+          )}
+
+          <div className="rounded-2xl flex flex-col px-5 pt-4 pb-6 text-center relative">
+
+
+
+
+            {/* Profile Image */}
+            <div className="mt-3 mb-2 flex justify-center">
+
+              <div className={`w-28 h-28 rounded-xl overflow-hidden border-4
+
+                ${member.isLeader
+                  ? "border-yellow-400"
+                  : "border-gray-300 dark:border-gray-700"
+                } shadow-md`}>
+
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-full object-cover"
+                />
+
               </div>
 
-              <h2 className="text-4xl md:text-5xl font-bold font-[Oswald] bg-gradient-to-br from-yellow-800 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-4">
-                Meet Our Team
-              </h2>
+            </div>
 
-              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ">
-                Dedicated professionals committed to your success
+
+            {/* NAME WITH VERIFIED ICON */}
+            <div className="text-center mt-4 space-y-2">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-1">
+
+                {member.name}
+
+                <BadgeCheck
+                  className={`w-4 h-4
+                    ${member.isLeader
+                      ? "text-yellow-500"
+                      : "text-blue-500"
+                    }`}
+                />
+
+              </h3>
+
+
+              {/* Role */}
+              <p className="text-purple-600 font-semibold text-base leading-snug">
+
+                {Array.isArray(member.role)
+                  ? member.role.join(" • ")
+                  : member.role}
+
+              </p>
+
+
+              {/* Expertise */}
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+                {member.expertise}
               </p>
             </div>
 
-            {/* CAROUSEL WRAPPER */}
-            <div className="relative w-full overflow-hidden max-w-full">
-              <div className="w-full overflow-hidden">
-                <div className="[&_.swiper-wrapper]:!transition-linear w-full">
-                  <Swiper
-                    className="h-[350px] sm:h-[400px] mt-2"
-                    modules={[Autoplay]}
-                    loop
-                    centeredSlides
-                    slidesPerView="auto"
-                    spaceBetween={30}
-                    speed={1500}
-                    autoplay={{
-                      delay: 0,
-                      disableOnInteraction: false,
-                    }}
-                    allowTouchMove={false}
-                    onSwiper={setTeamSwiper}
-                    onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-                  >
-                    {allTeamMembers.map((member, index) => {
-                      const isActive = index === activeIndex;
+            {/* Divider */}
+            <div className="w-full h-[1px] bg-gray-200 dark:bg-gray-700 my-2"></div>
 
-                      return (
-                        <SwiperSlide
-                          key={index}
-                          className="!w-[220px] sm:!w-[260px] flex justify-center"
-                        >
-                          <div
-                            onMouseEnter={() => teamSwiper?.autoplay.stop()}
-                            onMouseLeave={() => teamSwiper?.autoplay.start()}
-                            className={`flex flex-col items-center text-center transition-all duration-500
-                  ${isActive ? "scale-103" : "scale-90 opacity-75"}
-                `}
-                          >
-                            {/* IMAGE WITH ARC */}
-                            <div className="relative mb-4 sm:mb-6">
-                              <div
-                                className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full p-2 transition-all duration-500
-                      ${isActive
-                                    ? "bg-[conic-gradient(#f59e0b_0deg,transparent_120deg,#f59e0b_360deg)]"
-                                    : "bg-[conic-gradient(#2563eb_0deg,transparent_120deg,#2563eb_360deg)]"
-                                  }
-                    `}
-                              >
-                                <img
-                                  src={member.image}
-                                  alt={member.name}
-                                  className="w-full h-full rounded-full object-cover bg-white"
-                                />
-                              </div>
-                            </div>
-
-                            {/* TEXT */}
-                            <h4 className="text-lg sm:text-xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent px-2">
-                              {member.name}
-                            </h4>
-                            <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 px-3 sm:px-4 py-1 rounded-full">
-                              <p className="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-300">
-                                {member.role}
-                              </p>
-                            </div>
-
-                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 max-w-[180px] sm:max-w-[200px] px-2">
-                              {member.about}
-                            </p>
-                          </div>
-                        </SwiperSlide>
-                      );
-                    })}
-                  </Swiper>
-                </div>
-              </div>
+            {/* Description */}
+            <div className="mt-3 px-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed whitespace-normal break-words">
+                {member.about}
+              </p>
+>>>>>>> fb2af7dc (Did chnages in about page)
             </div>
+
+
+            {/* GreatHire Tag — CENTERED */}
+            <div className="flex justify-center mt-3 mb-2">
+
+              <div className="flex items-center gap-1 text-[10px]
+                bg-purple-100 dark:bg-purple-900
+                text-purple-600 dark:text-purple-300
+                px-3 py-1 rounded-full font-semibold">
+
+                <BadgeCheck className="w-3 h-3" />
+
+                GreatHire Team
+
+              </div>
+
+            </div>
+
+
+            {/* Footer */}
+            <div className="flex flex-col items-center mt-6 space-y-2">
+              <span className="text-yellow-500 text-lg">★★★★★</span>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                {member.leadership ? "Executive Leadership Rating" : "Team Member Rating"}
+              </p>
+            </div>
+
           </div>
+
         </div>
+
+      ))}
+
+    </div>
+
+  </div>
+
+</section>
 
         <Footer />
       </div>
