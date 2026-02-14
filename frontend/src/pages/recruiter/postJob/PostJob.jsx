@@ -312,15 +312,15 @@ const PostJob = () => {
 
         <meta
           name="description"
-          content="Post jobs effortlessly on GreatHire and reach qualified candidates faster with our powerful recruitment tools. Designed for modern hiring teams operating from Hyderabad State, one of India’s fastest-growing employment and technology hubs, this platform streamlines job posting end to end. Add job details, skills, salary, benefits, and location with ease while ensuring compliance and transparency. Whether you’re hiring urgently or planning long-term growth, GreatHire helps companies attract the right talent, reduce hiring time, and scale recruitment with confidence and speed."
+          content="Post jobs effortlessly on GreatHire and reach qualified candidates faster with our powerful recruitment tools. Designed for modern hiring teams operating from Hyderabad State, one of India's fastest-growing employment and technology hubs, this platform streamlines job posting end to end. Add job details, skills, salary, benefits, and location with ease while ensuring compliance and transparency. Whether you're hiring urgently or planning long-term growth, GreatHire helps companies attract the right talent, reduce hiring time, and scale recruitment with confidence and speed."
         />
       </Helmet>
 
       {company && user?.isActive ? (
-        <div className="px-2 py-4 pt-20 dark:bg-gray-800">
+        <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           {/* Credit Status Banner */}
           <div className="max-w-3xl mx-auto mb-4 px-4">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 shadow-lg">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 text-white rounded-lg p-4 shadow-lg transition-colors duration-300">
               <div className="flex items-center justify-center">
                 <div className="text-center">
                   <p className="text-sm font-medium">Remaining Job Posts</p>
@@ -332,52 +332,44 @@ const PostJob = () => {
             </div>
           </div>
 
-          <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg dark:bg-gray-800">
+          <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
             <h1>
               {/* Display only the title of the current step */}
-              <h2 className="md:hidden font-bold text-2xl text-blue-700 py-7 dark:texxt-gray-800 dark:text-gray-800">
+              <h2 className="md:hidden font-bold text-2xl text-blue-700 dark:text-blue-400 py-7 transition-colors duration-300">
                 {steps[step].title}
               </h2>
             </h1>
-            {/* <div className="mb-10 w-full hidden md:block dark:bg-gray-800 dark:text-gray-800">
-              <Stepper
-                steps={steps}
-                activeStep={step}
-                activeColor="blue"
-                completeColor="green"
-              />
-            </div> */}
 
             <form onSubmit={formik.handleSubmit}>
               {step === 0 && (
                 <div>
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1 dark:bg-gray-800 dark:text-gray-800">
-                      Company Name<span className="text-red-500 ml-1 dark:text-gray-800">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Company Name<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="companyName"
                       type="text"
                       placeholder="Enter company name"
-                      className="w-full p-2 border border-gray-300 rounded dark:text-black"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       value={formik.values.companyName}
                       readOnly
                     />
                     {formik.touched.companyName &&
                       formik.errors.companyName && (
-                        <div className="text-red-500 text-sm dark:text-black">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.companyName}
                         </div>
                       )}
                   </div>
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
-                      Urgent Hiring<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Urgent Hiring<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <select
                       name="urgentHiring"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.urgentHiring}
                     >
@@ -387,26 +379,26 @@ const PostJob = () => {
                     </select>
                     {formik.touched.urgentHiring &&
                       formik.errors.urgentHiring && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.urgentHiring}
                         </div>
                       )}
                   </div>
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700  mb-1">
-                      Job Title<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Job Title<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="title"
                       type="text"
                       placeholder="Enter job title"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.title}
                     />
                     {formik.touched.title && formik.errors.title && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.title}
                       </div>
                     )}
@@ -415,18 +407,18 @@ const PostJob = () => {
 
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-2">
-                      Job Details<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
+                      Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
 
                     {/* Toolbar */}
-                    <div className="flex items-center gap-2 border border-gray-300 rounded-t px-3 py-2 bg-gray-50">
+                    <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
                       {/* Bold */}
                       <button
                         type="button"
                         onClick={toggleBold}
-                        className={`p-2 rounded font-bold ${boldMode ? "bg-gray-200 " : "hover:bg-gray-200"
-                          }`}
+                        className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
+                          } text-gray-900 dark:text-gray-100`}
                       >
                         B
                       </button>
@@ -435,8 +427,8 @@ const PostJob = () => {
                       <button
                         type="button"
                         onClick={toggleItalic}
-                        className={`p-2 rounded italic ${italicMode ? "bg-gray-200" : "hover:bg-gray-200"
-                          }`}
+                        className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
+                          } text-gray-900 dark:text-gray-100`}
                       >
                         <i>i</i>
                       </button>
@@ -446,7 +438,7 @@ const PostJob = () => {
                       <button
                         type="button"
                         onClick={bulletList}
-                        className="p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                         title="Bullet List"
                       >
                         ●
@@ -456,29 +448,18 @@ const PostJob = () => {
                       <button
                         type="button"
                         onClick={numberList}
-                        className="p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                         title="Numbered List"
                       >
                         123
                       </button>
-
-                      {/* Alphabet */}
-                      {/* <button
-                        type="button"
-                        onClick={alphaList}
-                        className="p-2 rounded hover:bg-gray-200"
-                        title="Alphabet List"
-                      >
-                        abc
-                      </button> */}
-
                     </div>
 
                     {/* Editor */}
                     <div
                       ref={editorRef}
                       contentEditable
-                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 rounded-b focus:outline-none [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman]"
+                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
                       onKeyDown={handleKeyDown}
                       onInput={(e) =>
                         formik.setFieldValue("details", e.currentTarget.innerHTML)
@@ -487,7 +468,7 @@ const PostJob = () => {
 
                     {/* Error */}
                     {formik.touched.details && formik.errors.details && (
-                      <div className="text-red-500 text-sm mt-1">
+                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">
                         {formik.errors.details}
                       </div>
                     )}
@@ -501,9 +482,9 @@ const PostJob = () => {
                       type="button"
                       onClick={handlePrevious}
                       disabled={step === 0} // Disable button if step is 0
-                      className={`p-2 rounded ${step === 0
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gray-500 text-white"
+                      className={`p-2 rounded transition-colors duration-300 ${step === 0
+                          ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-600 cursor-not-allowed"
+                          : "bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-500"
                         }`}
                     >
                       Previous
@@ -511,17 +492,17 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="bg-blue-700 text-white p-2 rounded"
+                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
                     >
                       Next
                     </button>
                   </div>
 
-                  <p className="text-sm text-gray-600 text-center mt-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
                     Have feedback?{" "}
                     <Link
                       to="/contact"
-                      className="text-blue-700 cursor-pointer"
+                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
                     >
                       Tell us more
                     </Link>
@@ -535,20 +516,20 @@ const PostJob = () => {
                   <div className="mb-6">
                     <Label
                       htmlFor="skills"
-                      className="block text-gray-700 mb-1"
+                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
                     >
-                      Skills<span className="text-red-500 ml-1">*</span>
+                      Skills<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <textarea
                       id="skills"
                       name="skills"
                       placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
-                      className="w-full p-3 border border-gray-300 rounded"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.skills}
                     />
                     {formik.touched.skills && formik.errors.skills && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.skills}
                       </div>
                     )}
@@ -556,8 +537,8 @@ const PostJob = () => {
 
                   {/* Benefits */}
                   <div className="mb-6">
-                    <Label htmlFor="benefits" className="block text-gray-700 mb-1">
-                      Benefits<span className="text-red-500 ml-1">*</span>
+                    <Label htmlFor="benefits" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Benefits<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <div className="grid grid-cols-2 gap-2 mb-2">
                       {[
@@ -598,7 +579,7 @@ const PostJob = () => {
                                 formik.setFieldValue("benefits", updatedBenefits.join("\n")); // Store as a string
                               }}
                             />
-                            <span className="text-gray-600">{benefit}</span>
+                            <span className="text-gray-600 dark:text-gray-300 transition-colors duration-300">{benefit}</span>
                           </label>
                         );
                       })}
@@ -608,85 +589,60 @@ const PostJob = () => {
                       id="benefits"
                       name="benefits"
                       placeholder="Enter additional benefits..."
-                      className="w-full p-2 border border-gray-300 rounded h-24"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={String(formik.values.benefits || "")} // Ensure it's always a string
                     />
                     {formik.touched.benefits && formik.errors.benefits && (
-                      <div className="text-red-500 text-sm">{formik.errors.benefits}</div>
+                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.benefits}</div>
                     )}
                   </div>
                   {/* Qualifications */}
                   <div className="mb-6">
                     <Label
                       htmlFor="qualifications"
-                      className="block text-gray-700 mb-1"
+                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
                     >
-                      Qualifications<span className="text-red-500 ml-1">*</span>
+                      Qualifications<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <textarea
                       id="qualifications"
                       name="qualifications"
                       placeholder="Enter qualifications separated by new lines (eg. Bechelor, Master or diploma)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.qualifications}
                     />
                     {formik.touched.qualifications &&
                       formik.errors.qualifications && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.qualifications}
                         </div>
                       )}
                   </div>
-
-                  {/* Responsibilities
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="responsibilities"
-                      className="block text-gray-700 mb-1"
-                    >
-                      Responsibilities
-                      <span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <textarea
-                      id="responsibilities"
-                      name="responsibilities"
-                      placeholder="Enter responsibilities separated by new lines (eg. candidate role, or tasks perfom in job)"
-                      className="w-full p-12 border border-gray-300 rounded"
-                      onChange={formik.handleChange}
-                      value={formik.values.responsibilities}
-                    />
-                    {formik.touched.responsibilities &&
-                      formik.errors.responsibilities && (
-                        <div className="text-red-500 text-sm">
-                          {formik.errors.responsibilities}
-                        </div>
-                      )}
-                  </div> */}
 
                   {/* Navigation Buttons */}
                   <div className="flex justify-between">
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="bg-gray-500 text-white p-2 rounded"
+                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
                     >
                       Previous
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="bg-blue-700 text-white p-2 rounded"
+                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
                     >
                       Next
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 text-center mt-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
                     Have feedback?{" "}
                     <Link
                       to="/contact"
-                      className="text-blue-700 cursor-pointer"
+                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
                     >
                       Tell us more
                     </Link>
@@ -698,8 +654,8 @@ const PostJob = () => {
                 <div>
                   {/* Experience */}
                   <div className="mb-6">
-                    <Label htmlFor="experience" className="block text-gray-700 mb-1">
-                      Experience<span className="text-red-500 ml-1">*</span>
+                    <Label htmlFor="experience" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Experience<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <div className="grid grid-cols-2 gap-2">
                       {[
@@ -738,7 +694,7 @@ const PostJob = () => {
                               }}
                               className="peer hidden"
                             />
-                            <div className="w-4 h-4 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500">
+                            <div className="w-4 h-4 border border-gray-400 dark:border-gray-500 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-600 transition-colors duration-300">
                               {selectedOptions.includes(option) && (
                                 <svg
                                   className="w-4 h-4 text-white"
@@ -753,13 +709,13 @@ const PostJob = () => {
                                 </svg>
                               )}
                             </div>
-                            <span className="text-gray-700">{option}</span>
+                            <span className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{option}</span>
                           </label>
                         );
                       })}
                     </div>
                     {formik.touched.experience && formik.errors.experience && (
-                      <div className="text-red-500 text-sm">{formik.errors.experience}</div>
+                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.experience}</div>
                     )}
                   </div>
 
@@ -767,9 +723,9 @@ const PostJob = () => {
                   <div className="mb-6">
                     <Label
                       htmlFor="salary"
-                      className="block text-gray-700 mb-1"
+                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
                     >
-                      Salary<span className="text-red-500 ml-1">*</span>
+                      Salary<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <div className="flex items-center space-x-2">
                       <input
@@ -777,14 +733,14 @@ const PostJob = () => {
                         name="salary"
                         type="text"
                         placeholder="Enter salary (e.g., 45000-50000)"
-                        className="w-full p-2 border border-gray-300 rounded h-10"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                         onChange={formik.handleChange}
                         value={formik.values.salary}
                       />
                       <select
                         id="salaryType"
                         name="salaryType"
-                        className="p-2 border border-gray-300 rounded bg-white h-10 w-32 text-gray-700"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 h-10 w-32 text-gray-700 dark:text-gray-300 transition-colors duration-300"
                         onChange={formik.handleChange}
                         value={formik.values.salaryType || ""}
                       >
@@ -798,7 +754,7 @@ const PostJob = () => {
                       </select>
                     </div>
                     {formik.touched.salary && formik.errors.salary && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.salary}
                       </div>
                     )}
@@ -808,15 +764,15 @@ const PostJob = () => {
                   <div className="mb-6">
                     <Label
                       htmlFor="jobType"
-                      className="block text-gray-700 mb-1"
+                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
                     >
-                      Job Type<span className="text-red-500 ml-1">*</span>
+                      Job Type<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <select
                       id="jobType"
                       name="jobType"
                       type="text"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.jobType}
                     >
@@ -830,19 +786,19 @@ const PostJob = () => {
                       <option value="Fresher">Fresher</option>
                     </select>
                     {formik.touched.jobType && formik.errors.jobType && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.jobType}
                       </div>
                     )}
                   </div>
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
-                      Work Place Flexibility <span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Work Place Flexibility <span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <select
                       name="workPlaceFlexibility"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.workPlaceFlexibility}
                     >
@@ -853,7 +809,7 @@ const PostJob = () => {
                     </select>
                     {formik.touched.workPlaceFlexibility &&
                       formik.errors.workPlaceFlexibility && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.workPlaceFlexibility}
                         </div>
                       )}
@@ -861,14 +817,14 @@ const PostJob = () => {
 
                   {/* Location */}
                   <div className="mb-6 relative">
-                    <Label htmlFor="location" className="block text-gray-700 mb-1">
-                      Location<span className="text-red-500 ml-1">*</span>
+                    <Label htmlFor="location" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Location<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       type="text"
                       id="location"
                       name="location"
-                      className="w-full p-2 border border-gray-300 rounded bg-white"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       placeholder="Enter location manually or select from dropdown"
                       value={formik.values.location}
                       onChange={(e) => {
@@ -878,7 +834,7 @@ const PostJob = () => {
                       onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
                       onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
                     />
-                    <div className="absolute w-full bg-white border border-gray-300 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden">
+                    <div className="absolute w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden transition-colors duration-300">
                       {[
                         ...Object.values(allLocations)
                           .flat()
@@ -894,7 +850,7 @@ const PostJob = () => {
                       ].map((location) => (
                         <div
                           key={location}
-                          className="p-2 hover:bg-gray-200 cursor-pointer"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 transition-colors duration-300"
                           onMouseDown={(e) => {
                             formik.setFieldValue("location", location);
                             e.target.parentNode.classList.add("hidden");
@@ -905,7 +861,7 @@ const PostJob = () => {
                       ))}
                     </div>
                     {formik.touched.location && formik.errors.location && (
-                      <div className="text-red-500 text-sm">{formik.errors.location}</div>
+                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.location}</div>
                     )}
                   </div>
 
@@ -914,23 +870,23 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="bg-gray-500 text-white p-2 rounded"
+                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
                     >
                       Previous
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="bg-blue-700 text-white p-2 rounded"
+                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
                     >
                       Next
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 text-center mt-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
                     Have feedback?{" "}
                     <Link
                       to="/contact"
-                      className="text-blue-700 cursor-pointer"
+                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
                     >
                       Tell us more
                     </Link>
@@ -942,21 +898,21 @@ const PostJob = () => {
                 <div>
                   {/* Number of Openings */}
                   <div className="mb-6 ">
-                    <Label className="block text-gray-700 mb-1">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Number of Openings
-                      <span className="text-red-500 ml-1">*</span>
+                      <span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="numberOfOpening"
                       type="number"
                       placeholder="Enter number of openings (e.g. 1, 2)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.numberOfOpening}
                     />
                     {formik.touched.numberOfOpening &&
                       formik.errors.numberOfOpening && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.numberOfOpening}
                         </div>
                       )}
@@ -964,20 +920,20 @@ const PostJob = () => {
 
                   {/* Response Time */}
                   <div className="mb-6">
-                    <Label className="block text-gray-700  mb-1">
-                      Response Time<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Response Time<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="respondTime"
                       type="number"
                       placeholder="Enter response time (e.g. 1 day, 2 days)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.respondTime}
                     />
                     {formik.touched.respondTime &&
                       formik.errors.respondTime && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.respondTime}
                         </div>
                       )}
@@ -985,31 +941,31 @@ const PostJob = () => {
 
                   {/* Duration */}
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
-                      Duration<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Duration<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="duration"
                       type="text"
                       placeholder="Enter duration (e.g. Monday to Friday)"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.duration}
                     />
                     {formik.touched.duration && formik.errors.duration && (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.duration}
                       </div>
                     )}
                   </div>
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700 mb-1">
-                      Applicants need to  pay any charges?<span className="text-red-500 ml-1">*</span>
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Applicants need to  pay any charges?<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <select
                       name="anyAmount"
-                      className="w-full p-2 border border-gray-300 rounded"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
                       onChange={formik.handleChange}
                       value={formik.values.anyAmount}
                     >
@@ -1019,13 +975,13 @@ const PostJob = () => {
                     </select>
                     {formik.touched.activeColor &&
                       formik.errors.anyAmount && (
-                        <div className="text-red-500 text-sm">
+                        <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.anyAmount}
                         </div>
                       )}
 
                     {/* Note about GreatHire policy */}
-                    <p className="text-sm text-gray-600 mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">
                       <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
                     </p>
                   </div>
@@ -1035,23 +991,23 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="bg-gray-500 text-white p-2 rounded"
+                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
                     >
                       Previous
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="bg-blue-700 text-white p-2 rounded"
+                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
                     >
                       Next
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 text-center mt-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
                     Have feedback?{" "}
                     <Link
                       to="/contact"
-                      className="text-blue-700 cursor-pointer"
+                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
                     >
                       Tell us more
                     </Link>
@@ -1062,21 +1018,20 @@ const PostJob = () => {
               {step === 4 && (
                 <>
                   {/* <h2 className="text-xl font-bold mb-4">Review & Submit</h2> */}
-                  <div className="p-4 bg-blue-50 rounded-xl">
-                    <div className="mb-2">
+                  <div className="p-4 bg-blue-50 dark:bg-gray-700 rounded-xl transition-colors duration-300">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Company Name:</strong>{" "}
                       {formik.values.companyName || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Urgent Hiring:</strong>{" "}
                       {formik.values.urgentHiring || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Job Title:</strong> {formik.values.title || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Job Details:</strong>{" "}
-                      {/* <div className="whitespace-pre-wrap text-justify">{formik.values.details || "N/A"}</div> */}
                       <div
                         className="
     text-justify text-sm
@@ -1096,7 +1051,7 @@ const PostJob = () => {
                       />
 
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Skills:</strong>{" "}
                       {formik.values.skills.length > 0
                         ? formik.values.skills
@@ -1104,72 +1059,72 @@ const PostJob = () => {
                           .map((skill, index) => (
                             <span
                               key={index}
-                              className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-2"
+                              className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded mr-2 mb-2 transition-colors duration-300"
                             >
                               {skill.trim()}
                             </span>
                           ))
                         : "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Experience:</strong>{" "}
                       {formik.values.experience || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Benefits:</strong>{" "}
                       {formik.values.benefits
                         ? formik.values.benefits.split("\n").join(", ") : "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Qualification:</strong>{" "}
                       {formik.values.qualifications || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Salary:</strong>{" "}
                       {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim() : "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Job Type:</strong>{" "}
                       {formik.values.jobType || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Work Place Flexibility:</strong>{" "}
                       {formik.values.workPlaceFlexibility || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Location:</strong>{" "}
                       {formik.values.location || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Number of Openings:</strong>{" "}
                       {formik.values.numberOfOpening || "N/A"}
                     </div>
-                    <div className="mb-2 dark:text-gray-100">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Response Time:</strong>{" "}
                       {formik.values.respondTime + " days" || "N/A"}
                     </div>
 
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Applicants need to  pay any charges?:</strong>{" "}
                       {formik.values.anyAmount || "N/A"}
                     </div>
 
-                    <p className="text-sm text-gray-500 mb-6">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors duration-300">
                       If you notice an error in your job post, please <br />
-                      <Link to="/contact" className="underline cursor-pointer">
+                      <Link to="/contact" className="underline cursor-pointer text-blue-700 dark:text-blue-400">
                         contact Great Hire
                       </Link>
                     </p>
 
-                    <small className="text-xs text-gray-500 block mb-6">
+                    <small className="text-xs text-gray-500 dark:text-gray-400 block mb-6 transition-colors duration-300">
                       By pressing apply: 1) you agree to our{" "}
                       <Link
                         to="/policy/privacy-policy"
-                        className="underline cursor-pointer"
+                        className="underline cursor-pointer text-blue-700 dark:text-blue-400"
                       >
                         Terms, Cookie & Privacy Policies
                       </Link>
@@ -1182,11 +1137,11 @@ const PostJob = () => {
                       of data protection.
                     </small>
 
-                    <p className="text-center text-sm text-gray-500">
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
                       Having an issue with this job?{" "}
                       <Link
                         to="/contact"
-                        className="underline text-blue-700 cursor-pointer"
+                        className="underline text-blue-700 dark:text-blue-400 cursor-pointer"
                       >
                         Tell us more
                       </Link>
@@ -1196,13 +1151,13 @@ const PostJob = () => {
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="bg-gray-500 text-white p-2 rounded"
+                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
                     >
                       Previous
                     </button>
                     <button
                       type="submit"
-                      className={`bg-blue-700 text-white p-2 rounded ${loading && "cursor-not-allowed"
+                      className={`bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300 ${loading && "cursor-not-allowed opacity-70"
                         }`}
                       disabled={loading}
                     >
@@ -1215,15 +1170,15 @@ const PostJob = () => {
           </div>
         </div>
       ) : !company ? (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400 dark:text-white">Company not created</span>
-        </p>
+        <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
+        </div>
       ) : (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400 dark:text-black">
+        <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">
             GreatHire will verify your company soon.
           </span>
-        </p>
+        </div>
       )}
     </>
   );
