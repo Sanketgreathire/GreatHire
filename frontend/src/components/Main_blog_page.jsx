@@ -1,8 +1,21 @@
-import React, { lazy } from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import HiringInsights from "@/pages/HiringInsights";
+import Lottie from "lottie-react";
+import career from "../assets/Career Animation.json";
+import hiring from "../assets/Human-Resources-Approval-Animation.json";
+import resume from "../assets/Recolored job proposal review animation.json";
+import remoteWork from "../assets/Work from Home.json";
 import { Link, useNavigate } from "react-router-dom"; //npm install react-router-dom
+import ProductDetailPage from "@/components/ProductDetailPage";
+import CareerAdvice from "@/components/CareerAdvice";
+import bannerBlog from "../assets/blogs images/banner.blog.webp";
+
 import Navbar from "@/components/shared/Navbar";
-import { Helmet } from "react-helmet-async"; // imported helmet to apply customized meta tags
+import Footer from "@/components/shared/Footer";
+import TheFuture from "@/components/TheFuture";
+
+// imported helmet to apply customized meta tags
+import { Helmet } from "react-helmet-async";
 
 // Slides data outside component to prevent recreation
 const slides = [
@@ -11,325 +24,34 @@ const slides = [
     title: "The future technology",
     description:
       "The future of technology begins with bold ideas. At Capgemini, we bring those ideas to life – as intended.",
-    image: "./3320008.webp",
+    image: "./3320008.jpg",
   },
   {
     id: 2,
     title: "Innovation drives growth",
     description:
       "We transform businesses through cutting-edge technology solutions and innovative approaches.",
-    image: "./innovation-bg.webp",
+    image: "./innovation-bg.png",
   },
   {
     id: 3,
     title: "Digital transformation",
     description:
       "Empowering organizations to thrive in the digital age with our expertise and solutions.",
-    image: "./digital_bg.webp",
+    image: "./digital_bg.jpg",
   },
   {
     id: 4,
     title: "Technology solutions",
     description:
       "Building the future with scalable, secure, and sustainable technology platforms.",
-    image: "./technology-solutions_bg.webp",
-  },
-];
-
-
-// Carousel products data
-const carouselProducts = [
-  {
-    title: "Mastering",
-    subtitle: "remote work",
-    description:
-      "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
-    image: "./vector.webp",
-    date: "December 20, 2024",
-    category: "Featured",
-  },
-  {
-    title: "AI",
-    subtitle: "Recruitment",
-    description:
-      "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in",
-    image: "./19276.webp",
-    date: "December 18, 2024",
-    category: "Featured",
-  },
-  {
-    title: "Build ",
-    subtitle: "Winning Resumes",
-    description:
-      "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.",
-    image: "./Resume_bg.webp",
-    date: "December 15, 2024",
-    category: "Trending",
-  },
-  {
-    title: "Interview",
-    subtitle: "Preparations",
-    description:
-      "Research the company, practice questions, and present yourself professionally. GreatHire.in provides expert tips and top job opportunities to help you succeed and make a lasting impression.",
-    image: "./Interview_bg.webp",
-    date: "December 12, 2024",
-    category: "Featured",
-  },
-  {
-    title: "The Future",
-    subtitle: "Of Work",
-    description:
-      "AI-driven hiring, remote work, and flexible roles are reshaping the workplace, making upskilling crucial. GreatHire.in keeps you informed on trends and connects you to top career opportunities.",
-    image: "./future_of_work.webp",
-    date: "December 10, 2024",
-    category: "Trending",
-  },
-  {
-    title: "Upskilling for ",
-    subtitle: "Career Growth",
-    description:
-      "Continuous learning is essential for career advancement, with in-demand skills shifting toward AI, cloud computing, and data analytics. Investing in online courses, certifications.",
-    image: "./trendingz-topic_02.webp",
-    date: "December 10, 2024",
-    category: "Trending",
-  },
-];
-
-const articles = [
-  {
-    id: 1,
-    title: "Advance Your Career in Tech",
-    description:
-      "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.",
-    image: "./971.webp",
-    category: "Business",
-    author: "Moin Shaikh",
-    date: "December 20, 2024",
-  },
-  {
-    id: 2,
-    title: "Work-Life Balance Tips",
-    description:
-      "Balancing work and personal life is essential for success. Set realistic boundaries, take breaks, and manage time to reduce stress. GreatHire.in offers flexible job opportunities for a healthy work-life balance.",
-    image: "./feature_article.webp",
-    category: "Technology",
-    author: "Moin Shaikh",
-    date: "December 18, 2024",
-  },
-  {
-    id: 3,
-    title: "Networking For Career Growth",
-    description:
-      "Networking opens doors to career growth engage on LinkedIn, attend events, and build meaningful connections. GreatHire.in helps you find the right opportunities and insights to advance your career.",
-    image: "./networking_bg.webp",
-    category: "Network",
-    author: "Moin Shaikh",
-    date: "December 15, 2024",
-  },
-];
-
-const HiringAdvices = [
-  {
-    id: 1,
-    title: "Mastering Remote Work",
-    description:
-      "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
-    image: "./Mastering_remote_work.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-  {
-    id: 2,
-    title: "AI For Recruitment",
-    description:
-      "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
-    image: "./AI_recruitment.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-  {
-    id: 3,
-    title: "Industry-Specific Hiring",
-    description:
-      "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
-    image: "./Industry_work.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-];
-
-const TrendingTopics = [
-  {
-    id: 1,
-    title: "The Future of Work",
-    description:
-      "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.",
-    image: "./future_of_work.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-  {
-    id: 2,
-    title: "Future Skills for Job Seekers",
-    description:
-      "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.",
-    image: "./trendingz-topic_02.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-  {
-    id: 3,
-    title: "Impact of Global Events on Workforce",
-    description:
-      "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
-    image: "./trendingz_topic_03.webp",
-    link: "",
-    overlayText: "",
-    overlaySubtext: "",
-  },
-];
-
-const carouselItems = [
-  {
-    id: 1,
-    category: "Resume Tips",
-    title: "Creating a Successful CV",
-    date: "19 Dec, 2025",
-    image: "./Resume_bg.webp",
-    description:
-      "A strong resume successfully highlights a candidate's abilities, accomplishments, and professional experience through the strategic use of pertinent keywords and clear, consistent structure. By offering ATS-friendly resumes that are designed for applicant tracking systems, GreatHire.in helps expedite the recruiting process. This guarantees improved visibility, precise applicant matching, and quicker shortlisting, allowing companies to find top talent and make more intelligent, effective hiring decisions.",
-    link: "#",
-  },
-  {
-    id: 2,
-    category: "Resume Tips",
-    title: "ATS Optimization",
-    date: "18 Dec, 2025",
-    image: "./ATS_bg.webp",
-    description:
-      "Gaining awareness in the competitive job market of today requires an ATS-friendly resume. Applicant tracking systems (ATS) automatically analyze and assess resumes based on predetermined criteria, including pertinent keywords, abilities, job titles, and formatting, before they are sent to a recruiter. Regardless of a candidate's qualifications, resumes that are not suited for applicant tracking systems may be eliminated early in the process. Making an ATS-compliant resume guarantees that recruiting experts analyze your profile and improves your chances of passing first screenings.",
-    link: "#",
-  },
-  {
-    id: 3,
-    category: "Resume Tips",
-    title: "Using Keywords",
-    date: "17 Dec, 2025",
-    description:
-      "By utilizing industry-specific keywords, you can greatly improve your resume's exposure to applicant tracking systems. Finding frequently used words, abilities, and phrases that employers value can be accomplished by closely examining job descriptions. The likelihood that your profile will be shortlisted for recruiter evaluation is increased and ATS matching accuracy is improved when these pertinent keywords are organically incorporated throughout your CV.",
-    image: "./Keyword_bg.webp",
-    link: "#",
-  },
-  {
-    id: 4,
-    category: "HR Insights",
-    title: "Interview Preparation",
-    date: "16 Dec, 2025",
-    description:
-      "Candidates are assessed through a methodical interview process that emphasizes problem-solving skills, cultural fit, and behavioral evaluations. GreatHire.in facilitates this process with AI-powered tools and professional insights that assist expedite hiring, enhance decision-making, and swiftly find top personnel most appropriate for your company.",
-    image: "./Interview_bg.webp",
-    link: "#",
-  },
-  {
-    id: 5,
-    category: "HR Insights",
-    title: "Behavioral Interview Techniques",
-    date: "16 Dec, 2025",
-    description:
-      "During a structured interview process, candidates are assessed using behavioral questions, cultural fit, and problem-solving skills. GreatHire.in offers professional insights and AI-powered solutions to find top talent and speed up recruiting.",
-    image: "./HR_Insight_02.webp",
-    link: "#",
-  },
-  {
-    id: 6,
-    category: "HR Insights",
-    title: "Cultural Fit Assessment",
-    date: "16 Dec, 2025",
-    description:
-      "The purpose of a cultural fit review is to determine how well a candidate fits with the team dynamics, workplace culture, and basic values of a business. It looks at attitudes, communication styles, work ethics, and behavioral characteristics in addition to technical skills. This assessment aids in determining whether a candidate's methods for problem-solving, teamwork, and decision-making align with the organization's long-term goals and expectations. Cultural fit evaluations help increase employee engagement, teamwork, retention, and overall organizational success by guaranteeing alignment between the individual and the company.",
-    image: "./HR_Insight_03.webp",
-    link: "#",
-  },
-];
-
-const productItems = [
-  {
-    id: 1,
-    name: "Effective Job Interview Strategies",
-    category: "Interview Tips",
-    description:
-      "Making a good impression during an interview requires careful preparation. Examine the organization and position to learn about its objectives, principles, and standards; rehearse your answers to frequently asked interview questions; and use the STAR (Situation, Task, Action, Result) method to showcase your abilities and accomplishments. GreatHire.in offers professional advice, tools for interview preparation, and access to pertinent career prospects to support candidates at every stage. This will help you perform successfully, make an impression on employers, and land your dream job.",
-    readMore: "Read More",
-    image: "./interview_tips_01.webp",
-  },
-  {
-    id: 2,
-    name: "Post-Interview Follow-Up",
-    category: "Interview Tips",
-    description:
-      "It shows professionalism and reaffirms your interest in the job to send a thank-you email within 24 hours of the interview. In order to make a good and lasting impression on the employer, a well-written follow-up message also offers the chance to restate important qualifications, emphasize your appropriateness for the position, and respectfully ask about the next steps or hiring timeframe.",
-    image: "./interview_tips_02.webp",
-    readMore: "Read More",
-  },
-  {
-    id: 3,
-    name: "Common Interview Questions",
-    category: "Interview Tips",
-    description:
-      "Candidates can comfortably and successfully react to frequently asked interview questions, such as 'Tell me about yourself, 'Why do you want to work here?' and 'What are your strengths and weaknesses?' Candidates can show self-awareness, clearly communicate their abilities, experiences, and goals, and make a good impression on interviewers by anticipating these inquiries.",
-    readMore: "Read More",
-    image: "./interview_tips_03.webp",
-  },
-  {
-    id: 4,
-    name: "Top Companies Hiring in 2025",
-    category: "Company Insights",
-    description:
-      "In 2025, major international corporations like Amazon, Google, and GE Aerospace are expanding significantly and providing a variety of professional options. You may stay up to date on the most recent job openings—including remote and flexible employment—by using GreatHire.in. This allows you to investigate positions that fit your talents, career objectives, and preferred work schedules.",
-    readMore: "Read More",
-    image: "./company_insight_01.webp",
-  },
-  {
-    id: 5,
-    name: "Industry Trends",
-    category: "Company Insights",
-    description:
-      "AI-driven automation, sustainable business practices, and the quick growth of remote and hybrid work models are examples of emerging trends in a variety of industries. Businesses are concentrating more on cybersecurity, digital transformation, and the use of cutting-edge technologies that boost productivity, safeguard data, and spur creativity in order to stay competitive in this changing environment. Organizations and professionals looking to match their talents with future prospects must keep an eye on these trends.",
-    readMore: "Read More",
-    image: "./company_insight_02.webp",
-  },
-  {
-    id: 6,
-    name: "Development Programs",
-    category: "Company Insights",
-    description:
-      "Prominent companies actively fund training, mentorship, and upskilling initiatives to support staff development and advancement. In addition to improving workforce skills, initiatives like technical certifications, leadership development courses, and ongoing education also boost engagement, productivity, and employee retention. By placing a high priority on employee development, businesses build a workforce that is capable, driven, and prepared for the future, all of which contribute to long-term organizational success.",
-    readMore: "Read More",
-    image: "./company_insight_03.webp",
+    image: "./technology-solutions_bg.jpg",
   },
 ];
 
 function Moin_blog_page() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
-
-  // ==================== VIDEO IMMEDIATE LOADING ====================
-  const videoBannerRef = useRef(null);
-  const [videoReady, setVideoReady] = useState(false);
-
-  // Preload video immediately for better LCP
-  useEffect(() => {
-    const videoPreload = document.createElement('link');
-    videoPreload.rel = 'preload';
-    videoPreload.as = 'video';
-    videoPreload.href = '/video2.webm';
-    document.head.appendChild(videoPreload);
-  }, []);
 
   // Slider navigation functions
   const nextSlide = () => {
@@ -383,9 +105,67 @@ function Moin_blog_page() {
     subtitle: "Articles",
     description:
       "Stay updated with the latest trends, tips, and insights in the job market. Explore our featured articles to enhance your career journey with GreatHire.in.",
-    image: "./feature_article.webp",
+    image: "./feature_article.png",
     date: "December 24, 2024",
   };
+
+  // Carousel products data
+  const carouselProducts = [
+    {
+      title: "Mastering",
+      subtitle: "remote work",
+      description:
+        "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
+      image: "./vector.png",
+      date: "December 20, 2024",
+      category: "Featured",
+    },
+    {
+      title: "AI",
+      subtitle: "Recruitment",
+      description:
+        "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in",
+      image: "./19276.jpg",
+      date: "December 18, 2024",
+      category: "Featured",
+    },
+    {
+      title: "Build ",
+      subtitle: "Winning Resumes",
+      description:
+        "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.",
+      image: "./Resume_bg.png",
+      date: "December 15, 2024",
+      category: "Trending",
+    },
+    {
+      title: "Interview",
+      subtitle: "Preparations",
+      description:
+        "Research the company, practice questions, and present yourself professionally. GreatHire.in provides expert tips and top job opportunities to help you succeed and make a lasting impression.",
+      image: "./Interview_bg.png",
+      date: "December 12, 2024",
+      category: "Featured",
+    },
+    {
+      title: "The Future",
+      subtitle: "Of Work",
+      description:
+        "AI-driven hiring, remote work, and flexible roles are reshaping the workplace, making upskilling crucial. GreatHire.in keeps you informed on trends and connects you to top career opportunities.",
+      image: "./furure_of_work.png",
+      date: "December 10, 2024",
+      category: "Trending",
+    },
+    {
+      title: "Upskilling for ",
+      subtitle: "Career Growth",
+      description:
+        "Continuous learning is essential for career advancement, with in-demand skills shifting toward AI, cloud computing, and data analytics. Investing in online courses, certifications.",
+      image: "./trendingz-topic_02.png",
+      date: "December 10, 2024",
+      category: "Trending",
+    },
+  ];
 
   const nextCardSlide = () => {
     setCardCurrentSlide((prev) => (prev + 1) % carouselProducts.length);
@@ -401,10 +181,170 @@ function Moin_blog_page() {
     setCardCurrentSlide(index);
   };
 
+  const articles = [
+    {
+      id: 1,
+      title: "Advance Your Career in Tech",
+      description:
+        "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.",
+      image: "./971.jpg",
+      category: "Business",
+      author: "Moin Shaikh",
+      date: "December 20, 2024",
+    },
+    {
+      id: 2,
+      title: "Work-Life Balance Tips",
+      description:
+        "Balancing work and personal life is essential for success. Set realistic boundaries, take breaks, and manage time to reduce stress. GreatHire.in offers flexible job opportunities for a healthy work-life balance.",
+      image: "./feature_article.png",
+      category: "Technology",
+      author: "Moin Shaikh",
+      date: "December 18, 2024",
+    },
+    {
+      id: 3,
+      title: "Networking For Career Growth",
+      description:
+        "Networking opens doors to career growth engage on LinkedIn, attend events, and build meaningful connections. GreatHire.in helps you find the right opportunities and insights to advance your career.",
+      image: "./networking_bg.png",
+      category: "Network",
+      author: "Moin Shaikh",
+      date: "December 15, 2024",
+    },
+  ];
+
+  const HiringAdvices = [
+    {
+      id: 1,
+      title: "Mastering Remote Work",
+      description:
+        "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
+      image: "./Mastering_remote_work.png",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+    {
+      id: 2,
+      title: "AI For Recruitment",
+      description:
+        "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
+      image: "./AI_recruitment.jpg",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+    {
+      id: 3,
+      title: "Industry-Specific Hiring",
+      description:
+        "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
+      image: "./Industry_work.png",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+  ];
+
+  const TrendingTopics = [
+    {
+      id: 1,
+      title: "The Future of Work",
+      description:
+        "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.",
+      image: "./future_of_work.png",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+    {
+      id: 2,
+      title: "Future Skills for Job Seekers",
+      description:
+        "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.",
+      image: "./trendingz-topic_02.png",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+    {
+      id: 3,
+      title: "Impact of Global Events on Workforce",
+      description:
+        "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
+      image: "./trendingz_topic_03.png",
+      link: "",
+      overlayText: "",
+      overlaySubtext: "",
+    },
+  ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
+  const carouselItems = [
+    {
+      id: 1,
+      category: "Resume Tips",
+      title: "Creating a Successful CV",
+      date: "19 Dec, 2025",
+      image: "./Resume_bg.png",
+      description:
+        "A strong resume successfully highlights a candidate's abilities, accomplishments, and professional experience through the strategic use of pertinent keywords and clear, consistent structure. By offering ATS-friendly resumes that are designed for applicant tracking systems, GreatHire.in helps expedite the recruiting process. This guarantees improved visibility, precise applicant matching, and quicker shortlisting, allowing companies to find top talent and make more intelligent, effective hiring decisions.",
+      link: "#",
+    },
+    {
+      id: 2,
+      category: "Resume Tips",
+      title: "ATS Optimization",
+      date: "18 Dec, 2025",
+      image: "./ATS_bg.png",
+      description:
+        "Gaining awareness in the competitive job market of today requires an ATS-friendly resume. Applicant tracking systems (ATS) automatically analyze and assess resumes based on predetermined criteria, including pertinent keywords, abilities, job titles, and formatting, before they are sent to a recruiter. Regardless of a candidate's qualifications, resumes that are not suited for applicant tracking systems may be eliminated early in the process. Making an ATS-compliant resume guarantees that recruiting experts analyze your profile and improves your chances of passing first screenings.",
+      link: "#",
+    },
+    {
+      id: 3,
+      category: "Resume Tips",
+      title: "Using Keywords",
+      date: "17 Dec, 2025",
+      description:
+        "By utilizing industry-specific keywords, you can greatly improve your resume's exposure to applicant tracking systems. Finding frequently used words, abilities, and phrases that employers value can be accomplished by closely examining job descriptions. The likelihood that your profile will be shortlisted for recruiter evaluation is increased and ATS matching accuracy is improved when these pertinent keywords are organically incorporated throughout your CV.",
+      image: "./Keyword_bg.png",
+      link: "#",
+    },
+    {
+      id: 4,
+      category: "HR Insights",
+      title: "Interview Preparation",
+      date: "16 Dec, 2025",
+      description:
+        "Candidates are assessed through a methodical interview process that emphasizes problem-solving skills, cultural fit, and behavioral evaluations. GreatHire.in facilitates this process with AI-powered tools and professional insights that assist expedite hiring, enhance decision-making, and swiftly find top personnel most appropriate for your company.",
+      image: "./Interview_bg.png",
+      link: "#",
+    },
+    {
+      id: 5,
+      category: "HR Insights",
+      title: "Behavioral Interview Techniques",
+      date: "16 Dec, 2025",
+      description:
+        "During a structured interview process, candidates are assessed using behavioral questions, cultural fit, and problem-solving skills. GreatHire.in offers professional insights and AI-powered solutions to find top talent and speed up recruiting.",
+      image: "./HR_Insight_02.png",
+      link: "#",
+    },
+    {
+      id: 6,
+      category: "HR Insights",
+      title: "Cultural Fit Assessment",
+      date: "16 Dec, 2025",
+      description:
+        "The purpose of a cultural fit review is to determine how well a candidate fits with the team dynamics, workplace culture, and basic values of a business. It looks at attitudes, communication styles, work ethics, and behavioral characteristics in addition to technical skills. This assessment aids in determining whether a candidate's methods for problem-solving, teamwork, and decision-making align with the organization's long-term goals and expectations. Cultural fit evaluations help increase employee engagement, teamwork, retention, and overall organizational success by guaranteeing alignment between the individual and the company.",
+      image: "./HR_Insight_03.png",
+      link: "#",
+    },
+  ];
 
   // Auto-play functionality
   useEffect(() => {
@@ -437,6 +377,62 @@ function Moin_blog_page() {
   const [currentPage, setCurrentPage] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
 
+  const productItems = [
+    {
+      id: 1,
+      name: "Effective Job Interview Strategies",
+      category: "Interview Tips",
+      description:
+        "Making a good impression during an interview requires careful preparation. Examine the organization and position to learn about its objectives, principles, and standards; rehearse your answers to frequently asked interview questions; and use the STAR (Situation, Task, Action, Result) method to showcase your abilities and accomplishments. GreatHire.in offers professional advice, tools for interview preparation, and access to pertinent career prospects to support candidates at every stage. This will help you perform successfully, make an impression on employers, and land your dream job.",
+      readMore: "Read More",
+      image: "./interview_tips_01.png",
+    },
+    {
+      id: 2,
+      name: "Post-Interview Follow-Up",
+      category: "Interview Tips",
+      description:
+        "It shows professionalism and reaffirms your interest in the job to send a thank-you email within 24 hours of the interview. In order to make a good and lasting impression on the employer, a well-written follow-up message also offers the chance to restate important qualifications, emphasize your appropriateness for the position, and respectfully ask about the next steps or hiring timeframe.",
+      image: "./interview_tips_02.png",
+      readMore: "Read More",
+    },
+    {
+      id: 3,
+      name: "Common Interview Questions",
+      category: "Interview Tips",
+      description:
+        "Candidates can comfortably and successfully react to frequently asked interview questions, such as 'Tell me about yourself, 'Why do you want to work here?' and 'What are your strengths and weaknesses?' Candidates can show self-awareness, clearly communicate their abilities, experiences, and goals, and make a good impression on interviewers by anticipating these inquiries.",
+      readMore: "Read More",
+      image: "./interview_tips_03.png",
+    },
+    {
+      id: 4,
+      name: "Top Companies Hiring in 2025",
+      category: "Company Insights",
+      description:
+        "In 2025, major international corporations like Amazon, Google, and GE Aerospace are expanding significantly and providing a variety of professional options. You may stay up to date on the most recent job openings—including remote and flexible employment—by using GreatHire.in. This allows you to investigate positions that fit your talents, career objectives, and preferred work schedules.",
+      readMore: "Read More",
+      image: "./company_insight_01.png",
+    },
+    {
+      id: 5,
+      name: "Industry Trends",
+      category: "Company Insights",
+      description:
+        "AI-driven automation, sustainable business practices, and the quick growth of remote and hybrid work models are examples of emerging trends in a variety of industries. Businesses are concentrating more on cybersecurity, digital transformation, and the use of cutting-edge technologies that boost productivity, safeguard data, and spur creativity in order to stay competitive in this changing environment. Organizations and professionals looking to match their talents with future prospects must keep an eye on these trends.",
+      readMore: "Read More",
+      image: "./company_insight_02.png",
+    },
+    {
+      id: 6,
+      name: "Development Programs",
+      category: "Company Insights",
+      description:
+        "Prominent companies actively fund training, mentorship, and upskilling initiatives to support staff development and advancement. In addition to improving workforce skills, initiatives like technical certifications, leadership development courses, and ongoing education also boost engagement, productivity, and employee retention. By placing a high priority on employee development, businesses build a workforce that is capable, driven, and prepared for the future, all of which contribute to long-term organizational success.",
+      readMore: "Read More",
+      image: "./company_insight_03.png",
+    },
+  ];
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(productItems.length / itemsPerPage);
@@ -484,13 +480,7 @@ function Moin_blog_page() {
           name="description"
           content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
         />
-
-        {/* Preload critical resources */}
-        <link rel="preload" href="/video2.webm" as="video" type="video/webm" />
-        <link rel="preload" href="./video-thumbnail.webp" as="image" />
-        <link rel="preload" href="./feature_article.webp" as="image" />
       </Helmet>
-
 
       <Navbar />
       <style>
@@ -1173,7 +1163,7 @@ function Moin_blog_page() {
             }
           }
 
-          /* ================= CARDSLIDER ================= */
+          ================= CARDSLIDER =================
             /* Carousel Slide Animations */
           .carousel-slide {
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
@@ -1442,7 +1432,7 @@ function Moin_blog_page() {
             }
           }
 
-          /* ============= Resume Tips and HR Insights Section ============= */
+          ============= Resume Tips and HR Insights Section =============
           /* Carousel Container Styling */
           .hr-carousel-wrapper {
             position: relative;
@@ -1922,78 +1912,17 @@ color: rgb(160, 67, 246);
       </style>
 
       {/* ================= VIDEO BANNER SECTION ================= */}
-      <section className="video-banner-section mt-20" ref={videoBannerRef}>
-        {/* POSTER IMAGE - Shows immediately while video loads */}
-        {!videoReady && (
-          <img
-            src="./video-thumbnail.webp"
-            alt="Video loading placeholder"
-            fetchPriority="high"
-            width="1920"
-            height="1080"
-            className="video-thumbnail"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              zIndex: 0,
-              transition: 'opacity 0.6s ease-in-out',
-            }}
-          />
-        )}
-
-
-        {/* VIDEO - Load immediately */}
-        <video
-          className={`video-background ${videoReady ? "opacity-100" : "opacity-0"
-            } transition-opacity duration-500`}
-          onCanPlay={() => setVideoReady(true)}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/video-thumbnail.jpg"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-          }}
-        >
-          {/* WebM Format - BEST COMPRESSION (load first) */}
-          <source src="/video2.webm" type="video/webm" />
-
-          {/* Fallback to Compressed MP4 for unsupported browsers */}
-          <source src="/video2_compressed.mp4" type="video/mp4" />
-
-          Your browser doesn't support HTML5 video.
-        </video>
-
-
-        {/* OVERLAY */}
-        <div
-          className="video-overlay"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(255, 255, 255, 0.1)',
-            zIndex: 1,
-          }}
+      {/* Banner Section */}
+      <section className="video-banner-section mt-20 mb-24">
+        <img
+          className="video-background w-full h-[100px] object-cover"
+          src={bannerBlog}
+          alt="GreatHire Banner"
         />
 
 
-        <div className="content-wrapper max-w-xl bg-white rounded-2xl shadow-max p-8 shadow-[0_10px_25px_rgba(59,130,246,0.5)]">
-          {/* Title */}
+
+        <div className="content-wrapper max-w-xl bg-white rounded-2xl shadow-max p-10 shadow-[0_10px_25px_rgba(59,130,246,0.5)]">
           <h1 className="main-title text-2xl font-bold text-gray-900 leading-snug text-center">
             <span className="brand-name">
               Great<span className="highlight-text text-blue-600">Hire</span>
@@ -2004,7 +1933,6 @@ color: rgb(160, 67, 246);
             </span>
           </h1>
 
-          {/* Description */}
           <p className="description-text mt-4 text-gray-600 text-sm leading-relaxed text-left">
             Your one-stop shop for recruiting and job applications, matching top
             talent with suitable positions and enabling employers to make more
@@ -2012,7 +1940,6 @@ color: rgb(160, 67, 246);
             today.
           </p>
 
-          {/* Features */}
           <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-gray-700">
             <div className="flex items-center gap-2 font-medium">
               <span className="text-blue-600">✔</span>
@@ -2032,7 +1959,6 @@ color: rgb(160, 67, 246);
             </div>
           </div>
 
-          {/* CTA */}
           <div className="mt-6 flex items-center gap-4">
             <a
               href="#future-of-hiring"
@@ -2045,7 +1971,6 @@ color: rgb(160, 67, 246);
             </span>
           </div>
 
-          {/* Stats */}
           <div className="mt-6 border-t pt-4 flex justify-between text-sm text-gray-600">
             <span>
               <strong className="text-gray-900">10,000+</strong> Candidates
@@ -2061,63 +1986,82 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* ================= BLOG SLIDER SECTION ================= */}
-      <section className="slider-section">
-        <div
-          className="slider-background"
-          style={{
-            backgroundImage: `url(${slides[currentSlide]?.image || ""})`,
-          }}
-        ></div>
+      {/* Slider Section */}
+      <section className="relative w-full h-[100dvh] min-h-[550px] overflow-hidden">
 
-        <div className="slider-content">
-          <div className="content-box">
-            <div className="mb-2 text-sm text-blue-300 font-semibold">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src={slides[currentSlide]?.image}
+            alt={slides[currentSlide]?.title}
+            className="w-full h-full object-cover"
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex items-end md:items-center h-full px-4 md:px-16 pb-28 md:pb-0">
+          <div className="w-full md:max-w-xl bg-gray-900/80 backdrop-blur-md p-6 md:p-10 rounded-xl shadow-2xl">
+
+            <div className="mb-2 text-xs md:text-sm text-blue-300 font-semibold">
               Slide {currentSlide + 1} of {slides.length}
             </div>
-            <h1 className="slide-title">{slides[currentSlide]?.title}</h1>
-            <p className="slide-description">
+
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
+              {slides[currentSlide]?.title}
+            </h1>
+
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 mb-6 leading-relaxed">
               {slides[currentSlide]?.description}
             </p>
 
             <Link
-              className="read-more-btn"
               to={`/TheFuture/${slides[currentSlide]?.id}`}
+              className="inline-flex items-center gap-2 border border-white/50 px-5 py-2.5 md:px-8 md:py-3 rounded-full text-white text-sm md:text-base font-semibold hover:bg-white/10 transition"
             >
-              Read more
-              <span className="arrow">→</span>
+              Read More
+              <span className="text-lg">→</span>
             </Link>
           </div>
         </div>
 
-        <div className="slider-controls">
+        {/* Controls */}
+        <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 md:left-16 md:translate-x-0 flex items-center gap-4 md:gap-6 bg-black/60 backdrop-blur-md px-4 py-2 md:px-6 md:py-3 rounded-full z-20">
+
+          {/* Prev */}
           <button
-            className="nav-arrow"
             onClick={prevSlide}
-            aria-label="Previous slide"
+            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border border-white/50 rounded-full text-white text-lg md:text-xl hover:bg-white/20 transition"
           >
             ‹
           </button>
 
-          <div className="pagination-dots">
+          {/* Dots */}
+          <div className="flex gap-2 md:gap-3">
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`dot ${currentSlide === index ? "active" : ""}`}
                 onClick={() => goToSlide(index)}
-                aria-label={`Go to slide ${index + 1}`}
+                className={`rounded-full transition-all duration-300 ${currentSlide === index
+                    ? "bg-blue-500 w-3 h-3 md:w-4 md:h-4"
+                    : "bg-white/40 w-2 h-2 md:w-3 md:h-3"
+                  }`}
               ></button>
             ))}
           </div>
 
+          {/* Next */}
           <button
-            className="nav-arrow"
             onClick={nextSlide}
-            aria-label="Next slide"
+            className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center border border-white/50 rounded-full text-white text-lg md:text-xl hover:bg-white/20 transition"
           >
             ›
           </button>
         </div>
+
       </section>
+
 
       {/* ================= CAREER ADVICE SECTION ================= */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -2135,16 +2079,48 @@ color: rgb(160, 67, 246);
           {/* 2-Column Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
             {/* Column 1 - Static Product Card */}
+
+            {/* <div className="product-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-blue-500 flex flex-col">
+              
+              <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
+                <img
+                  src={staticProduct.image}
+                  alt={staticProduct.title}
+                  className="product-image-hover w-full h-full object-cover"
+                />
+                
+                <span className="absolute top-4 left-4 bg-white/95 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                  {staticProduct.category}
+                </span>
+              </div>
+
+              
+              <div className="p-6 flex-grow flex flex-col">
+                
+                <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+                  <span className="text-base">📅</span>
+                  <span>{staticProduct.date}</span>
+                </div>
+
+                <h3 className="text-2xl lg:text-3xl md:text-xl sm:text-lg font-bold mb-3">
+                  <span className="text-gray-900">{staticProduct.title}</span>
+                  <span className="text-green-600">{staticProduct.subtitle}</span>
+                </h3>
+
+                
+                <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 flex-grow">
+                  {staticProduct.description}
+                </p>
+
+              </div>
+            </div> */}
+
             <div className="product-card flex flex-col">
               <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
                 <img
                   src={staticProduct.image}
                   alt={staticProduct.title}
-                  width="800"
-                  height="600"
-                  fetchPriority="high"
                   className="product-image-hover w-full aspect-[3/2] sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[16/10]  object-cover"
-                  loading="eager"
                 />
 
                 <span className="absolute top-4 left-4 bg-white/95 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
@@ -2208,9 +2184,6 @@ color: rgb(160, 67, 246);
                         <img
                           src={product.image}
                           alt={product.title}
-                          width="800"
-                          height="600"
-                          loading="lazy"
                           className="product-image-hover w-full h-full object-cover"
                         />
                         {/* Category Badge */}
@@ -2240,6 +2213,11 @@ color: rgb(160, 67, 246);
                         <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
                           {product.description}
                         </p>
+
+                        {/* Button */}
+                        {/* <button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                          View Details
+                        </button> */}
                       </div>
                     </div>
                   ))}
@@ -2290,12 +2268,8 @@ color: rgb(160, 67, 246);
                 {/* Article Image */}
                 <div className="article-image-container relative h-64 md:h-56 sm:h-52 bg-gradient-to-br from-gray-800 to-gray-600">
                   <img
-
                     src={article.image}
                     alt={article.title}
-                    width="800"
-                    height="600"
-                    loading="lazy"
                     className="article-image w-full h-full object-cover"
                   />
                   {/* Category Badge */}
@@ -2309,6 +2283,14 @@ color: rgb(160, 67, 246);
                   {/* Author & Date Info */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
+                      {/* <div className="author-avatar">
+                        {article.author.charAt(0)}
+                      </div> */}
+                      <div>
+                        {/* <p className="text-sm font-semibold text-gray-900">
+                          {article.author}
+                        </p> */}
+                      </div>
                     </div>
                     <span className="text-xs text-gray-500">
                       {article.readTime}
@@ -2343,6 +2325,13 @@ color: rgb(160, 67, 246);
               </div>
             ))}
           </div>
+
+          {/* View All Button */}
+          {/* <div className="text-center mt-12">
+            <button className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300 text-base">
+              View All Articles
+            </button>
+          </div> */}
         </div>
       </section>
 
@@ -2351,7 +2340,7 @@ color: rgb(160, 67, 246);
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-white mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
               Hiring <span className="highlight-text">Advices</span>
             </h2>
           </div>
@@ -2368,12 +2357,21 @@ color: rgb(160, 67, 246);
                   <img
                     src={article.image}
                     alt={article.title}
-                    width="800"
-                    height="600"
-                    loading="lazy"
                     className="article-featured-image w-full h-full object-cover"
                   />
 
+                  {/* Text Overlay on Image */}
+                  {/* <div className="article-image-overlay absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                    <h3 className="overlay-main-text text-4xl md:text-5xl font-bold text-white mb-2" style={{ fontWeight: 300 }}>
+                      Crafting
+                    </h3>
+                    <h3 className="overlay-highlight-text text-4xl md:text-5xl font-bold text-cyan-400 mb-4">
+                      Tomorrow
+                    </h3>
+                    <p className="overlay-subtext text-sm text-gray-300">
+                      Leaders' perspective on technology
+                    </p>
+                  </div> */}
                 </div>
 
                 {/* Content Section */}
@@ -2408,7 +2406,7 @@ color: rgb(160, 67, 246);
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-white mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
               Trending <span className="highlight-text">Topics</span>
             </h2>
           </div>
@@ -2425,11 +2423,21 @@ color: rgb(160, 67, 246);
                   <img
                     src={article.image}
                     alt={article.title}
-                    width="800"
-                    height="600"
-                    loading="lazy"
                     className="article-featured-image w-full h-full object-cover"
                   />
+
+                  {/* Text Overlay on Image */}
+                  {/* <div className="article-image-overlay absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                    <h3 className="overlay-main-text text-4xl md:text-5xl font-bold text-white mb-2" style={{ fontWeight: 300 }}>
+                      Crafting
+                    </h3>
+                    <h3 className="overlay-highlight-text text-4xl md:text-5xl font-bold text-cyan-400 mb-4">
+                      Tomorrow
+                    </h3>
+                    <p className="overlay-subtext text-sm text-gray-300">
+                      Leaders' perspective on technology
+                    </p>
+                  </div> */}
                 </div>
 
                 {/* Content Section */}
@@ -2485,7 +2493,6 @@ color: rgb(160, 67, 246);
                   <div className="lg:col-span-5 xl:col-span-4">
                     <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96 overflow-hidden rounded-xl sm:rounded-2xl">
                       <img
-                        loading="lazy"
                         src={item.image}
                         alt={item.title}
                         className="carousel-media-item w-full h-full object-cover object-center"
@@ -2516,6 +2523,11 @@ color: rgb(160, 67, 246);
                     <p className="carousel-description-text text-base sm:text-lg md:text-xl lg:text-xl text-slate-700 leading-relaxed">
                       {item.description}
                     </p>
+
+                    {/* CTA Button */}
+                    {/* <div className="pt-2 sm:pt-3 md:pt-4">
+                     
+                    </div> */}
                   </div>
                 </div>
               ))}
@@ -2524,6 +2536,22 @@ color: rgb(160, 67, 246);
             {/* Navigation Section - Bottom Controls */}
             <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 xl:mt-16">
               <div className="carousel-nav-controls flex-col sm:flex-row gap-6 sm:gap-8 md:gap-10">
+                {/* Progress Dots */}
+                {/* <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 order-2 sm:order-1">
+                  {carouselItems.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => selectSlide(idx)}
+                      className={`progress-dot-item h-1 sm:h-1.5 rounded-full transition-all ${currentIndex === idx
+                          ? 'w-10 sm:w-12 md:w-14 lg:w-16 bg-slate-900 active-dot'
+                          : 'w-3 sm:w-3.5 md:w-4 bg-slate-400 hover:bg-slate-600'
+                        }`}
+                      aria-label={`Navigate to slide ${idx + 1}`}
+                      aria-current={currentIndex === idx ? 'true' : 'false'}
+                    ></button>
+                  ))}
+                </div> */}
+
                 {/* Previous and Next Buttons */}
                 <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 order-1 sm:order-2">
                   <button
@@ -2577,7 +2605,6 @@ color: rgb(160, 67, 246);
                       src={product.image}
                       alt={product.name}
                       className="product-img-element w-full h-full object-cover"
-                      loading="lazy"
                     />
                     {/* Badge */}
                     <div className="product-badge-label absolute top-3 sm:top-4 right-3 sm:right-4 bg-amber-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold uppercase shadow-lg">
@@ -2644,7 +2671,7 @@ color: rgb(160, 67, 246);
         </div>
       </section>
       {/* ================= FUTURE OF HIRING SECTION ================= */}
-      <section className="w-full  py-20 px-6 " id="future-of-hiring">
+      <section className="w-full  py-20 px-6 " id="future-of-hiring ">
         <div className="max-w-6xl mx-auto text-center ">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Creating the Future of Employment
@@ -2703,6 +2730,14 @@ color: rgb(160, 67, 246);
             </div>
           </div>
 
+          {/* <div className="mt-16">
+            <button
+              onClick={() => navigate("/hiring-insights")}
+              className="px-8 py-3 rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition"
+            >
+              Explore Hiring Insights
+            </button>
+          </div> */}
           <div className="mt-10">
             <Link
               to="/HiringInsights"
@@ -2720,7 +2755,7 @@ color: rgb(160, 67, 246);
         <div
           className="conversations-background"
           style={{
-            backgroundImage: "url(./971.webp)"
+            backgroundImage: "url(./971.jpg)", // Replace with your image
           }}
         ></div>
 
@@ -2806,4 +2841,5 @@ color: rgb(160, 67, 246);
     </>
   );
 }
+
 export default Moin_blog_page;
