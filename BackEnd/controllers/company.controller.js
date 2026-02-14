@@ -228,14 +228,6 @@ const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
             });
           }
 
-          const existingCIN = await Company.findOne({ CIN });
-          if (existingCIN) {
-            return res.status(400).json({
-              message: "CIN is already registered.",
-              success: false,
-            });
-          }
-
           const existingPhone = await Company.findOne({ phone });
           if (existingPhone) {
             return res.status(400).json({
