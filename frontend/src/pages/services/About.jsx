@@ -1240,7 +1240,6 @@ function App() {
               <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed whitespace-normal break-words">
                 {member.about}
               </p>
->>>>>>> fb2af7dc (Did chnages in about page)
             </div>
 
 
