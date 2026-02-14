@@ -10,9 +10,9 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
   const tripleReviews = [...reviews, ...reviews, ...reviews];
 
   return (
-    <div className="py-10 relative w-full overflow-hidden bg-white">
+    <div className="py-10 relative w-full overflow-hidden bg-white dark:bg-gray-950 transition-colors duration-300">
       {/* Animated background pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 dark:opacity-3">
         <div className="absolute inset-0" style={{
           backgroundImage: `radial-gradient(circle at 2px 2px, gray 1px, transparent 0)`,
           backgroundSize: '40px 40px'
@@ -22,14 +22,14 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 mb-12 text-center relative z-10">
         <div className="inline-block mb-4">
-          <span className="px-4 py-2 bg-blue-500/20 text-blue-600 rounded-full text-sm font-semibold border border-blue-500/30">
+          <span className="px-4 py-2 bg-blue-500/20 dark:bg-blue-500/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold border border-blue-500/30 dark:border-blue-500/40 transition-colors duration-300">
             Testimonials
           </span>
         </div>
-        <h2 className="text-4xl md:text-6xl font-black text-blue-600 mb-4 tracking-tight">
+        <h2 className="text-4xl md:text-6xl font-black text-blue-600 dark:text-blue-400 mb-4 tracking-tight transition-colors duration-300">
           {title}
         </h2>
-        <p className="text-gray-600 text-xl max-w-2xl mx-auto">{subtitle}</p>
+        <p className="text-gray-600 dark:text-gray-400 text-xl max-w-2xl mx-auto transition-colors duration-300">{subtitle}</p>
       </div>
 
       <style>{`
@@ -61,20 +61,12 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
         }
 
         .review-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
           border-radius: 24px;
         }
 
         .review-card:hover {
-          border-color: #60a5fa;
           transform: translateY(-8px) scale(1.01);
-          box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.3), 
-                      0 10px 20px -8px rgba(59, 130, 246, 0.2),
-                      0 0 0 1px rgba(96, 165, 250, 0.2);
-          background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
         }
 
         .review-card:hover .quote-icon {
@@ -108,10 +100,10 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
           {tripleReviews.map((review, index) => (
             <div
               key={`review-${index}`}
-              className="review-card w-[400px] flex-shrink-0 p-8 transition-all duration-300 relative overflow-hidden"
+              className="review-card w-[400px] flex-shrink-0 p-8 transition-all duration-300 relative overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl dark:hover:shadow-blue-500/20"
             >
               {/* Subtle gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/50 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/50 dark:from-blue-950/30 dark:via-transparent dark:to-purple-950/30 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
               
               <div className="relative z-10">
                 {/* Quote icon */}
@@ -124,25 +116,25 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
                 {/* Stars */}
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-yellow-400 star-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <svg key={i} className="w-5 h-5 text-yellow-400 dark:text-yellow-300 star-icon transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                   ))}
                 </div>
 
                 {/* Review Text */}
-                <p className="text-gray-900 text-base leading-relaxed mb-8 min-h-[120px]">
+                <p className="text-gray-900 dark:text-gray-100 text-base leading-relaxed mb-8 min-h-[120px] transition-colors duration-300">
                   "{review.text}"
                 </p>
 
                 {/* Author */}
-                <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-lg">
+                <div className="flex items-center gap-4 pt-6 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 flex items-center justify-center text-white font-bold text-xl flex-shrink-0 shadow-lg transition-colors duration-300">
                     {review.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-gray-900 font-bold text-base">{review.name}</p>
-                    <p className="text-gray-600 text-sm">{review.author}</p>
+                    <p className="text-gray-900 dark:text-white font-bold text-base transition-colors duration-300">{review.name}</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm transition-colors duration-300">{review.author}</p>
                   </div>
                 </div>
               </div>
@@ -154,7 +146,7 @@ const ReviewsCarousel = ({ reviews, title, subtitle, pixelsPerSecond = 50 }) => 
       {/* Pause indicator */}
       {isPaused && (
         <div className="text-center mt-8">
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-300">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-sm border border-gray-300 dark:border-gray-600 transition-colors duration-300">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
@@ -174,7 +166,7 @@ export default function ReviewsSection() {
     author: "Head of Human Resources",
   },
   {
-    text: "We truly appreciate Great Hire’s structured and professional hiring approach, as their team took the time to understand our needs and provided us with high-quality candidates who were ready to contribute from day one.",
+    text: "We truly appreciate Great Hire's structured and professional hiring approach, as their team took the time to understand our needs and provided us with high-quality candidates who were ready to contribute from day one.",
     name: "Amit Verma",
     author: "Operations Manager",
   },
@@ -194,7 +186,7 @@ export default function ReviewsSection() {
     author: "Business Operations Head",
   },
   {
-    text: "Great Hire’s ability to understand our hiring challenges and deliver timely solutions has made them a trusted partner in our recruitment strategy.",
+    text: "Great Hire's ability to understand our hiring challenges and deliver timely solutions has made them a trusted partner in our recruitment strategy.",
     name: "Swati Iyer",
     author: "HR Manager",
   },
@@ -219,7 +211,7 @@ export default function ReviewsSection() {
     author: "Director – Human Resources",
   },
   {
-    text: "Great Hire’s attention to detail and commitment to understanding our workforce requirements has resulted in successful placements across both technical and non-technical roles.",
+    text: "Great Hire's attention to detail and commitment to understanding our workforce requirements has resulted in successful placements across both technical and non-technical roles.",
     name: "Ritika Sen",
     author: "Staffing Manager",
   },
@@ -367,7 +359,7 @@ export default function ReviewsSection() {
     author: "Payroll Executive",
   },
   {
-    text: "I am grateful to GreatHire for simplifying my job search and helping me secure a Stock Executive role, as the platform’s recommendations and guidance were both relevant and highly effective.",
+    text: "I am grateful to GreatHire for simplifying my job search and helping me secure a Stock Executive role, as the platform's recommendations and guidance were both relevant and highly effective.",
     name: "Rohit Kulkarni",
     author: "Stock Executive",
   },
@@ -377,7 +369,7 @@ export default function ReviewsSection() {
     author: "Sales Coordinator",
   },
   {
-    text: "Thanks to GreatHire’s professional approach and continuous support, I was able to secure a Customer Relationship Manager role and confidently take the next step in my career.",
+    text: "Thanks to GreatHire's professional approach and continuous support, I was able to secure a Customer Relationship Manager role and confidently take the next step in my career.",
     name: "Swati Mishra",
     author: "Customer Relationship Manager",
   },
