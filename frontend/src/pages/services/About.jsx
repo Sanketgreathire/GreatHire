@@ -658,11 +658,11 @@ function App() {
       </Helmet>
 
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:bg-gray-800 dark:text-white transition-colors duration-300 mt-16">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-300 mt-16 overflow-x-hidden">
         <Navbar />
 
         {/* Hero Section - Enhanced */}
-        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-blue-300 to-blue-600 shadow-2xl">
+        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-blue-300 to-blue-600 dark:from-blue-900 dark:to-purple-900 shadow-2xl max-w-full">
           {/* <div className="absolute inset-0">
             <Silk
               speed={5}
@@ -675,22 +675,22 @@ function App() {
 
           {/* Enhanced Decorative elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-purple-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-3xl"></div>
+            <div className="absolute top-10 left-10 w-40 h-40 sm:w-72 sm:h-72 bg-purple-400/20 dark:bg-purple-600/30 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-96 sm:h-96 bg-pink-400/20 dark:bg-pink-600/30 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-[500px] sm:h-[500px] bg-blue-400/10 dark:bg-blue-600/20 rounded-full blur-3xl"></div>
           </div>
 
           <div className="relative z-10 text-white h-full flex items-center">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-              <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-5">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-12 max-w-full">
+              <div className="max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full mb-2 animate-fade-in">
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="text-xs sm:text-sm font-medium">About Our Journey</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2">
-                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 bg-clip-text text-transparent">GreatHire</span>
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-[Oswald] tracking-tight px-2 break-words text-white">
+                  About <span className="bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 dark:from-blue-300 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent">GreatHire</span>
                 </h1>
-                <p className="text-base sm:text-lg md:text-xl font-serif text-blue-50 leading-relaxed px-2 sm:px-4">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl font-serif text-blue-50 dark:text-blue-100 leading-relaxed px-2 sm:px-4">
                   GreatHire Business Solutions provides strategic staffing and
                   workforce solutions tailored to meet diverse business needs. We
                   specialize in connecting companies with top-tier talent, driving
@@ -734,10 +734,10 @@ function App() {
         {/* </section> */}
 
         {/* Our Mission Section - Enhanced */}
-        <div className="">
+        <div className="relative overflow-hidden">
           {/* Decorative background elements */}
-          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-100/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 left-0 w-48 h-48 sm:w-96 sm:h-96 bg-blue-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-purple-100/30 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
           {/* <div className="container mx-auto px-6 lg:px-12 relative z-10">
             <div className="max-w-4xl mx-auto">
@@ -766,12 +766,8 @@ function App() {
         </div>
 
         {/* Leadership Section - Enhanced */}
-        <div className="">
-          {/* Decorative elements */}
-          <div className=""></div>
-          <div className=""></div>
-
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+        <div className="relative overflow-hidden">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 max-w-full">
             <div className="text-center mb-16 mt-16">
               <div className="inline-flex items-center gap-2 bg-purple-100 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-4">
                 <Award className="w-4 h-4 text-purple-600 dark:text-purple-400" />
@@ -861,13 +857,13 @@ function App() {
         </div>
 
         {/* Our Story Section - Enhanced */}
-        <div className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-gray-900 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-300 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+        <div className="py-12 sm:py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-30 dark:opacity-20">
+            <div className="absolute top-0 left-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-blue-300 dark:bg-blue-600 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-purple-300 dark:bg-purple-600 rounded-full blur-3xl"></div>
           </div>
 
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 max-w-full">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
@@ -887,13 +883,13 @@ function App() {
                 ].map((text, index) => (
                   <div
                     key={index}
-                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50 dark:border-gray-700/50 group"
+                    className="bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50 dark:border-gray-600/50 group"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300">
                         {index + 1}
                       </div>
-                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed flex-1 pt-2">
+                      <p className="text-gray-700 dark:text-gray-200 leading-relaxed flex-1 pt-2">
                         {text}
                       </p>
                     </div>
@@ -905,10 +901,10 @@ function App() {
         </div>
 
         {/* Achievements Section - Enhanced */}
-        <div className="py-10 bg-white dark:bg-gray-800 relative overflow-hidden"> {/* py-20 to py-10 */}
+        <div className="py-10 bg-white dark:bg-gray-900 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent dark:via-blue-900/10"></div>
 
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 max-w-full">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 px-4 py-2 rounded-full mb-4">
                 <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -923,7 +919,7 @@ function App() {
               {achievements.map((a, index) => (
                 <div
                   key={index}
-                  className="group relative bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-gray-700 overflow-hidden"
+                  className="group relative bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-gray-600 overflow-hidden"
                 >
                   {/* Animated background gradient */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -939,7 +935,7 @@ function App() {
                       <NumberCounter end={a.value} duration={a.duration} suffix={a.suffix} />
                     </h3>
 
-                    <p className="text-gray-600 dark:text-gray-400 text-center font-medium">
+                    <p className="text-gray-600 dark:text-gray-300 text-center font-medium">
                       {a.description}
                     </p>
                   </div>
@@ -953,10 +949,10 @@ function App() {
         </div>
 
         {/* Client Logo Carousel - Enhanced */}
-        <div className="py-10 bg-gradient-to-b from-gray-50 to-white dark:bg-gray-900 relative overflow-hidden w-full">
+        <div className="py-10 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden w-full">
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-          <div className="container mx-auto px-6 lg:px-12 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 max-w-full">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full mb-4">
                 <Building2 className="w-4 h-4 text-green-600 dark:text-green-400" />
@@ -972,7 +968,7 @@ function App() {
 
             <Swiper
               modules={[Autoplay]}
-              spaceBetween={30}
+              spaceBetween={20}
               slidesPerView={2}
               loop={true}
               speed={2000}
@@ -982,16 +978,16 @@ function App() {
                 reverseDirection: true,
               }}
               breakpoints={{
-                0: { slidesPerView: 2 },
-                640: { slidesPerView: 3 },
-                768: { slidesPerView: 6 },
-                1024: { slidesPerView: 8 },
+                0: { slidesPerView: 2, spaceBetween: 15 },
+                640: { slidesPerView: 3, spaceBetween: 20 },
+                768: { slidesPerView: 6, spaceBetween: 25 },
+                1024: { slidesPerView: 8, spaceBetween: 30 },
               }}
-              className="py-4 w-full"
+              className="py-4 w-full max-w-full"
             >
               {clientLogos.map((client, index) => (
                 <SwiperSlide key={index}>
-                  <div className="group flex items-center justify-center h-28 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl p-6 transition-all duration-300 border border-gray-100 dark:border-gray-700">
+                  <div className="group flex items-center justify-center h-20 sm:h-28 bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl p-3 sm:p-6 transition-all duration-300 border border-gray-100 dark:border-gray-600">
                     <img
                       src={client.logo}
                       alt={client.name}
@@ -1007,11 +1003,11 @@ function App() {
 
         {/* Team Section - Enhanced */}
         {/* Team Section - Single Fast Continuous Carousel */}
-        <div className="relative py-8 bg-gradient-to-b from-white to-gray-50 dark:bg-gray-800 overflow-hidden w-full">
+        <div className="relative py-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden w-full max-w-full">
           {/* Background grid */}
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-          <div className="relative z-10 w-full px-4">
+          <div className="relative z-10 w-full px-2 sm:px-4 max-w-full">
             {/* HEADER */}
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 px-4 py-2 rounded-full mb-6">
@@ -1025,22 +1021,22 @@ function App() {
                 Meet Our Team
               </h2>
 
-              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto ">
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ">
                 Dedicated professionals committed to your success
               </p>
             </div>
 
             {/* CAROUSEL WRAPPER */}
-            <div className="relative w-full overflow-hidden">
+            <div className="relative w-full overflow-hidden max-w-full">
               <div className="w-full overflow-hidden">
                 <div className="[&_.swiper-wrapper]:!transition-linear w-full">
                   <Swiper
-                    className="h-[400px] mt-2"
+                    className="h-[350px] sm:h-[400px] mt-2"
                     modules={[Autoplay]}
                     loop
                     centeredSlides
                     slidesPerView="auto"
-                    spaceBetween={60}
+                    spaceBetween={30}
                     speed={1500}
                     autoplay={{
                       delay: 0,
@@ -1056,7 +1052,7 @@ function App() {
                       return (
                         <SwiperSlide
                           key={index}
-                          className="!w-[260px] flex justify-center"
+                          className="!w-[220px] sm:!w-[260px] flex justify-center"
                         >
                           <div
                             onMouseEnter={() => teamSwiper?.autoplay.stop()}
@@ -1066,9 +1062,9 @@ function App() {
                 `}
                           >
                             {/* IMAGE WITH ARC */}
-                            <div className="relative mb-6">
+                            <div className="relative mb-4 sm:mb-6">
                               <div
-                                className={`w-40 h-40 rounded-full p-2 transition-all duration-500
+                                className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full p-2 transition-all duration-500
                       ${isActive
                                     ? "bg-[conic-gradient(#f59e0b_0deg,transparent_120deg,#f59e0b_360deg)]"
                                     : "bg-[conic-gradient(#2563eb_0deg,transparent_120deg,#2563eb_360deg)]"
@@ -1084,16 +1080,16 @@ function App() {
                             </div>
 
                             {/* TEXT */}
-                            <h4 className="text-xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            <h4 className="text-lg sm:text-xl font-bold text-center mb-2 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent px-2">
                               {member.name}
                             </h4>
-                            <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-4 py-1 rounded-full">
-                              <p className="text-sm font-semibold text-blue-600 ">
+                            <div className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 px-3 sm:px-4 py-1 rounded-full">
+                              <p className="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-300">
                                 {member.role}
                               </p>
                             </div>
 
-                            <p className="text-xs text-black-300 mt-2 max-w-[200px] dark:text-black">
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 max-w-[180px] sm:max-w-[200px] px-2">
                               {member.about}
                             </p>
                           </div>

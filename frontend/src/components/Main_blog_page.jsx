@@ -1913,7 +1913,7 @@ color: rgb(160, 67, 246);
 
       {/* ================= VIDEO BANNER SECTION ================= */}
       {/* Banner Section */}
-      <section className="video-banner-section mt-20 mb-24">
+      <section className="video-banner-section mt-20 mb-24 dark:bg-gray-900">
         <img
           className="video-background w-full h-[100px] object-cover"
           src={bannerBlog}
@@ -1922,39 +1922,39 @@ color: rgb(160, 67, 246);
 
 
 
-        <div className="content-wrapper max-w-xl bg-white rounded-2xl shadow-max p-10 shadow-[0_10px_25px_rgba(59,130,246,0.5)]">
-          <h1 className="main-title text-2xl font-bold text-gray-900 leading-snug text-center">
+        <div className="content-wrapper max-w-xl bg-white dark:bg-gray-800 rounded-2xl shadow-max p-10 shadow-[0_10px_25px_rgba(59,130,246,0.5)] dark:shadow-[0_10px_25px_rgba(59,130,246,0.3)]">
+          <h1 className="main-title text-2xl font-bold text-gray-900 dark:text-white leading-snug text-center">
             <span className="brand-name">
               Great<span className="highlight-text text-blue-600">Hire</span>
             </span>
             <br />
-            <span className="text-gray-800 text-2xl">
+            <span className="text-gray-800 dark:text-gray-200 text-2xl">
               Insights – The Future of Work
             </span>
           </h1>
 
-          <p className="description-text mt-4 text-gray-600 text-sm leading-relaxed text-left">
+          <p className="description-text mt-4 text-gray-600 dark:text-gray-300 text-sm leading-relaxed text-left">
             Your one-stop shop for recruiting and job applications, matching top
             talent with suitable positions and enabling employers to make more
             informed, data-driven hiring decisions in the dynamic workplace of
             today.
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-gray-700">
+          <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
             <div className="flex items-center gap-2 font-medium">
-              <span className="text-blue-600">✔</span>
+              <span className="text-blue-600 dark:text-blue-400">✔</span>
               Hiring Insights Driven by AI
             </div>
             <div className="flex items-center gap-2 font-medium">
-              <span className="text-blue-600">✔</span>
+              <span className="text-blue-600 dark:text-blue-400">✔</span>
               Growing Businesses Trust Us
             </div>
             <div className="flex items-center gap-2 font-medium">
-              <span className="text-blue-600">✔</span>
+              <span className="text-blue-600 dark:text-blue-400">✔</span>
               Quicker & More Intelligent Hiring
             </div>
             <div className="flex items-center gap-2 font-medium">
-              <span className="text-blue-600">✔</span>
+              <span className="text-blue-600 dark:text-blue-400">✔</span>
               Complete Talent Platform
             </div>
           </div>
@@ -1962,24 +1962,24 @@ color: rgb(160, 67, 246);
           <div className="mt-6 flex items-center gap-4">
             <a
               href="#future-of-hiring"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition"
             >
               Explore Insights
             </a>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               Hire more wisely right now.
             </span>
           </div>
 
-          <div className="mt-6 border-t pt-4 flex justify-between text-sm text-gray-600">
+          <div className="mt-6 border-t dark:border-gray-600 pt-4 flex justify-between text-sm text-gray-600 dark:text-gray-300">
             <span>
-              <strong className="text-gray-900">10,000+</strong> Candidates
+              <strong className="text-gray-900 dark:text-white">10,000+</strong> Candidates
             </span>
             <span>
-              <strong className="text-gray-900">1,200+</strong> Recruiters
+              <strong className="text-gray-900 dark:text-white">1,200+</strong> Recruiters
             </span>
             <span>
-              <strong className="text-gray-900">98%</strong> Satisfaction
+              <strong className="text-gray-900 dark:text-white">98%</strong> Satisfaction
             </span>
           </div>
         </div>
@@ -1987,7 +1987,7 @@ color: rgb(160, 67, 246);
 
       {/* ================= BLOG SLIDER SECTION ================= */}
       {/* Slider Section */}
-      <section className="relative w-full h-[100dvh] min-h-[550px] overflow-hidden">
+      <section className="relative w-full h-[100dvh] min-h-[550px] overflow-hidden dark:bg-gray-900">
 
         {/* Background Image */}
         <div className="absolute inset-0">
@@ -1997,12 +1997,12 @@ color: rgb(160, 67, 246);
             className="w-full h-full object-cover"
           />
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 dark:from-black/90 dark:via-black/70 dark:to-black/40"></div>
         </div>
 
         {/* Content */}
         <div className="relative z-10 flex items-end md:items-center h-full px-4 md:px-16 pb-28 md:pb-0">
-          <div className="w-full md:max-w-xl bg-gray-900/80 backdrop-blur-md p-6 md:p-10 rounded-xl shadow-2xl">
+          <div className="w-full md:max-w-xl bg-gray-900/80 dark:bg-gray-800/90 backdrop-blur-md p-6 md:p-10 rounded-xl shadow-2xl">
 
             <div className="mb-2 text-xs md:text-sm text-blue-300 font-semibold">
               Slide {currentSlide + 1} of {slides.length}
@@ -2044,8 +2044,8 @@ color: rgb(160, 67, 246);
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`rounded-full transition-all duration-300 ${currentSlide === index
-                    ? "bg-blue-500 w-3 h-3 md:w-4 md:h-4"
-                    : "bg-white/40 w-2 h-2 md:w-3 md:h-3"
+                  ? "bg-blue-500 w-3 h-3 md:w-4 md:h-4"
+                  : "bg-white/40 w-2 h-2 md:w-3 md:h-3"
                   }`}
               ></button>
             ))}
@@ -2064,14 +2064,14 @@ color: rgb(160, 67, 246);
 
 
       {/* ================= CAREER ADVICE SECTION ================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-gray-50 to-gray-100 min-h-screen">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 mb-3">
+            <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3">
               Our Blogs
             </h2>
-            <p className="text-lg md:text-xl text-gray-600">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Discover our latest and featured products
             </p>
           </div>
@@ -2115,7 +2115,7 @@ color: rgb(160, 67, 246);
               </div>
             </div> */}
 
-            <div className="product-card flex flex-col">
+            <div className="product-card flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
               <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
                 <img
                   src={staticProduct.image}
@@ -2128,14 +2128,14 @@ color: rgb(160, 67, 246);
                 </span>
               </div>
 
-              <div className="p-6 flex-grow flex flex-col">
-                <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+              <div className="p-6 flex-grow flex flex-col bg-white dark:bg-gray-800">
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm mb-4">
                   <span className="text-base">📅</span>
                   <span>{staticProduct.date}</span>
                 </div>
 
                 <h3 className="text-2xl lg:text-3xl md:text-xl sm:text-lg font-bold mb-3">
-                  <span className="text-gray-900 text-5xl">
+                  <span className="text-gray-900 dark:text-white text-5xl">
                     {staticProduct.title}
                   </span>
                   <span className="text-green-600 text-5xl">
@@ -2143,14 +2143,14 @@ color: rgb(160, 67, 246);
                   </span>
                 </h3>
 
-                <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 flex-grow">
+                <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6 flex-grow">
                   {staticProduct.description}
                 </p>
               </div>
             </div>
 
             {/* Column 2 - Carousel Product Card */}
-            <div className="product-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col">
+            <div className="product-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col">
               {/* Carousel Container */}
               <div className="relative">
                 {/* Navigation Arrows */}
@@ -2193,15 +2193,15 @@ color: rgb(160, 67, 246);
                       </div>
 
                       {/* Content */}
-                      <div className="p-6">
+                      <div className="p-6 bg-white dark:bg-gray-800">
                         {/* Date */}
-                        <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm mb-4">
                           <span className="text-base">📅</span>
                           <span>{product.date}</span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
                           {product.title}
                           <span className="highlight-text">
                             {" "}
@@ -2210,7 +2210,7 @@ color: rgb(160, 67, 246);
                         </h3>
 
                         {/* Description */}
-                        <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
+                        <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                           {product.description}
                         </p>
 
@@ -2243,14 +2243,14 @@ color: rgb(160, 67, 246);
         </div>
       </section>
       {/* ================= INSIGHTS SLIDER SECTION ================= */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-gray-50 to-gray-100">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black dark:text-white mb-2">
               Career <span className="highlight-text ">Advise</span>
             </h2>
-            <p className="text-lg md:text-base sm:text-sm text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-base sm:text-sm text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Keep up with our most recent observations, trends, and
               professional viewpoints on a variety of subjects and industries.
               Stay current on the information and advancements that are most
@@ -2263,7 +2263,7 @@ color: rgb(160, 67, 246);
             {articles.map((article) => (
               <div
                 key={article.id}
-                className="article-card bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full"
+                className="article-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full"
               >
                 {/* Article Image */}
                 <div className="article-image-container relative h-64 md:h-56 sm:h-52 bg-gradient-to-br from-gray-800 to-gray-600">
@@ -2279,7 +2279,7 @@ color: rgb(160, 67, 246);
                 </div>
 
                 {/* Article Content */}
-                <div className="p-6 flex-grow flex flex-col">
+                <div className="p-6 flex-grow flex flex-col bg-white dark:bg-gray-800">
                   {/* Author & Date Info */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
@@ -2292,24 +2292,24 @@ color: rgb(160, 67, 246);
                         </p> */}
                       </div>
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {article.readTime}
                     </span>
                   </div>
 
                   {/* Date */}
-                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                  <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm mb-4">
                     <span className="text-base">📅</span>
                     <span>{article.date}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl lg:text-2xl md:text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+                  <h3 className="text-xl lg:text-2xl md:text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
                     {article.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-base md:text-sm text-gray-600 leading-relaxed mb-6 flex-grow line-clamp-3">
+                  <p className="text-base md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6 flex-grow line-clamp-3">
                     {article.description}
                   </p>
 
@@ -2467,11 +2467,19 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* ==================== Resume Tips and HR Insight ================== */}
-      <section className="w-full overflow-visible py-6 sm:py-10 md:py-12 lg:py-16 xl:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-transparent">
+      <section className="w-full overflow-visible 
+                    py-6 sm:py-10 md:py-12 lg:py-16 xl:py-20 
+                    px-3 sm:px-4 md:px-6 lg:px-8 
+                    bg-gray-50 dark:bg-gray-900 
+                    transition-colors duration-300">
+
         <div className="max-w-screen-2xl mx-auto">
+
           {/* Main Heading */}
           <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light text-slate-900">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 
+                     font-light 
+                     text-slate-900 dark:text-white">
               Resume HR &{" "}
               <span className="gradient-heading-text font-medium">
                 HR Insights
@@ -2480,165 +2488,255 @@ color: rgb(160, 67, 246);
           </div>
 
           {/* Carousel Box */}
-          <div className="hr-carousel-wrapper rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[3rem] px-4 py-8 sm:px-6 sm:py-7 md:px-8 md:py-9 lg:px-12 lg:py-12 xl:px-16 xl:py-16 shadow-[0_25px_50px_rgba(0,0,0,0.12)]">
+          <div className="rounded-xl sm:rounded-2xl md:rounded-3xl lg:rounded-[3rem] 
+                    px-4 py-8 sm:px-6 sm:py-7 md:px-8 md:py-9 
+                    lg:px-12 lg:py-12 xl:px-16 xl:py-16 
+                    bg-white dark:bg-gray-800
+                    border border-gray-200 dark:border-gray-700
+                    shadow-[0_25px_50px_rgba(0,0,0,0.12)]
+                    transition-colors duration-300">
+
             {/* Slides Container */}
             <div className="relative overflow-visible">
               {carouselItems.map((item, idx) => (
                 <div
                   key={item.id}
-                  className={`carousel-content-slide ${currentIndex === idx ? "visible" : "hidden"
-                    } grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 md:gap-7 lg:gap-9 xl:gap-11 items-center overflow`}
+                  className={`${currentIndex === idx ? "grid" : "hidden"
+                    } grid-cols-1 lg:grid-cols-12 gap-6 items-center`}
                 >
+
                   {/* Image Column */}
                   <div className="lg:col-span-5 xl:col-span-4">
-                    <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96 overflow-hidden rounded-xl sm:rounded-2xl">
+                    <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96 
+                              overflow-hidden rounded-xl sm:rounded-2xl">
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="carousel-media-item w-full h-full object-cover object-center"
+                        className="w-full h-full object-cover object-center"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/10 via-transparent to-transparent"></div>
+
+                      {/* Better Dark Overlay */}
+                      <div className="absolute inset-0 
+                                bg-gradient-to-tr 
+                                from-purple-900/10 
+                                dark:from-purple-900/30
+                                via-transparent to-transparent" />
                     </div>
                   </div>
 
                   {/* Content Column */}
-                  <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6">
+                  <div className="lg:col-span-7 xl:col-span-8 
+                            flex flex-col justify-center 
+                            space-y-4">
+
                     {/* Category Badge */}
-                    <div className="carousel-tag-wrapper flex items-center gap-2 text-slate-900 text-xs sm:text-sm md:text-base font-bold">
-                      <span className="carousel-tag-line block w-8 sm:w-10 md:w-11 lg:w-12 h-0.5 bg-slate-900"></span>
+                    <div className="flex items-center gap-2 
+                              text-slate-900 dark:text-gray-300 
+                              text-sm font-semibold">
+                      <span className="block w-10 h-0.5 
+                                 bg-slate-900 dark:bg-gray-400"></span>
                       <span>{item.category}</span>
                     </div>
 
                     {/* Main Title */}
-                    <h2 className="carousel-main-title text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-slate-900 leading-tight tracking-tight">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl 
+                             font-semibold 
+                             text-slate-900 dark:text-white 
+                             leading-tight tracking-tight">
                       {item.title}
                     </h2>
 
                     {/* Date */}
-                    <time className="carousel-date-display block text-sm sm:text-base md:text-lg text-slate-600 font-normal">
+                    <time className="block text-sm md:text-base 
+                               text-slate-600 dark:text-gray-400">
                       {item.date}
                     </time>
 
                     {/* Description */}
-                    <p className="carousel-description-text text-base sm:text-lg md:text-xl lg:text-xl text-slate-700 leading-relaxed">
+                    <p className="text-base md:text-lg 
+                            text-slate-700 dark:text-gray-300 
+                            leading-relaxed">
                       {item.description}
                     </p>
 
-                    {/* CTA Button */}
-                    {/* <div className="pt-2 sm:pt-3 md:pt-4">
-                     
-                    </div> */}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Navigation Section - Bottom Controls */}
-            <div className="mt-8 sm:mt-10 md:mt-12 lg:mt-14 xl:mt-16">
-              <div className="carousel-nav-controls flex-col sm:flex-row gap-6 sm:gap-8 md:gap-10">
-                {/* Progress Dots */}
-                {/* <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 order-2 sm:order-1">
-                  {carouselItems.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => selectSlide(idx)}
-                      className={`progress-dot-item h-1 sm:h-1.5 rounded-full transition-all ${currentIndex === idx
-                          ? 'w-10 sm:w-12 md:w-14 lg:w-16 bg-slate-900 active-dot'
-                          : 'w-3 sm:w-3.5 md:w-4 bg-slate-400 hover:bg-slate-600'
-                        }`}
-                      aria-label={`Navigate to slide ${idx + 1}`}
-                      aria-current={currentIndex === idx ? 'true' : 'false'}
-                    ></button>
-                  ))}
-                </div> */}
+            {/* Navigation */}
+            <div className="mt-10">
+              <div className="flex items-center justify-center gap-4">
 
-                {/* Previous and Next Buttons */}
-                <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 order-1 sm:order-2">
-                  <button
-                    onClick={moveToPrevious}
-                    className="nav-direction-btn flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 border-2 border-slate-900 text-slate-900 rounded-full text-xl sm:text-2xl md:text-3xl font-bold shadow-md hover:shadow-xl"
-                    aria-label="Previous slide"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={moveToNext}
-                    className="nav-direction-btn flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 border-2 border-slate-900 text-slate-900 rounded-full text-xl sm:text-2xl md:text-3xl font-bold shadow-md hover:shadow-xl"
-                    aria-label="Next slide"
-                  >
-                    ›
-                  </button>
-                </div>
+                <button
+                  onClick={moveToPrevious}
+                  className="flex items-center justify-center 
+                       w-12 h-12 md:w-14 md:h-14 
+                       border-2 
+                       border-slate-900 dark:border-gray-400
+                       text-slate-900 dark:text-white
+                       rounded-full text-2xl font-bold
+                       hover:bg-slate-900 hover:text-white
+                       dark:hover:bg-gray-700
+                       transition"
+                >
+                  ‹
+                </button>
+
+                <button
+                  onClick={moveToNext}
+                  className="flex items-center justify-center 
+                       w-12 h-12 md:w-14 md:h-14 
+                       border-2 
+                       border-slate-900 dark:border-gray-400
+                       text-slate-900 dark:text-white
+                       rounded-full text-2xl font-bold
+                       hover:bg-slate-900 hover:text-white
+                       dark:hover:bg-gray-700
+                       transition"
+                >
+                  ›
+                </button>
+
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
+
       {/* ======================== Interview Tips & Company Insight ==================== */}
 
-      <section className="bg-linear-to-tr from-orange-50 via-rose-50 to-purple-50 min-h-screen w-full py-7 sm:py-10 md:py-14 lg:py-18 xl:py-24 px-3 sm:px-5 md:px-7 lg:px-9">
+      <section className="min-h-screen w-full 
+                    py-7 sm:py-10 md:py-14 lg:py-18 xl:py-24 
+                    px-3 sm:px-5 md:px-7 lg:px-9
+                    bg-gradient-to-tr 
+                    from-orange-50 via-rose-50 to-purple-50
+                    dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+                    transition-colors duration-500">
+
         <div className="max-w-screen-2xl mx-auto">
+
           {/* Section Heading */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl 
+                     font-normal 
+                     text-gray-900 dark:text-white 
+                     mb-2">
               Interview Tips &{" "}
-              <span className="highlight-text">Company Insights</span>
+              <span className="highlight-text">
+                Company Insights
+              </span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 font-medium">
+
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl 
+                    text-gray-600 dark:text-gray-300 
+                    font-medium">
               Explore our Interview Tips & Company Insights
             </p>
           </div>
 
           {/* Carousel Container */}
-          <div className="grid-carousel-container rounded-3xl sm:rounded-[2.5rem] md:rounded-[3rem] lg:rounded-[3.5rem] p-6 sm:p-8 md:p-12 lg:p-16 xl:p-20 shadow-[0_30px_60px_rgba(0,0,0,0.12)]">
+          <div className="rounded-3xl sm:rounded-[2.5rem] md:rounded-[3rem] 
+                    lg:rounded-[3.5rem] 
+                    p-6 sm:p-8 md:p-12 lg:p-16 xl:p-20 
+                    bg-white dark:bg-gray-800
+                    border border-gray-200 dark:border-gray-700
+                    shadow-[0_30px_60px_rgba(0,0,0,0.12)]
+                    transition-colors duration-300">
+
             {/* 3-Column Grid */}
-            <div className="product-grid-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8 lg:gap-10 xl:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 
+                      gap-6 sm:gap-7 md:gap-8 lg:gap-10 xl:gap-12">
+
               {getCurrentProducts().map((product) => (
                 <div
                   key={product.id}
-                  className="product-grid-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border-2 border-gray-100 hover:border-orange-400"
+                  className="rounded-2xl sm:rounded-3xl 
+                       overflow-hidden 
+                       bg-gray-50 dark:bg-gray-900
+                       shadow-lg 
+                       border border-gray-200 dark:border-gray-700
+                       hover:border-orange-400
+                       transition duration-300"
                 >
+
                   {/* Product Image */}
-                  <div className="product-img-box relative aspect-[4/3] bg-gradient-to-br from-gray-200 to-gray-300">
+                  <div className="relative aspect-[4/3] 
+                            bg-gradient-to-br 
+                            from-gray-200 to-gray-300 
+                            dark:from-gray-700 dark:to-gray-800">
+
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="product-img-element w-full h-full object-cover"
+                      className="w-full h-full object-cover"
                     />
+
                     {/* Badge */}
-                    <div className="product-badge-label absolute top-3 sm:top-4 right-3 sm:right-4 bg-amber-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold uppercase shadow-lg">
+                    <div className="absolute top-4 right-4 
+                              bg-amber-500 text-white 
+                              px-4 py-2 rounded-full 
+                              text-xs sm:text-sm 
+                              font-bold uppercase shadow-lg">
                       {product.badge}
                     </div>
+
                     {/* Stock Label */}
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-white/90 backdrop-blur-sm text-gray-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
+                    <div className="absolute bottom-4 left-4 
+                              bg-white/90 dark:bg-gray-800/90 
+                              backdrop-blur-sm 
+                              text-gray-800 dark:text-gray-200 
+                              px-4 py-2 rounded-full 
+                              text-xs sm:text-sm font-semibold">
                       {product.stock}
                     </div>
                   </div>
 
                   {/* Product Details */}
-                  <div className="p-4 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
+                  <div className="p-4 sm:p-5 md:p-6 
+                            space-y-4">
+
                     {/* Category */}
-                    <div className="category-tag-box inline-block bg-rose-100 text-rose-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold uppercase">
+                    <div className="inline-block 
+                              bg-rose-100 dark:bg-rose-900/40 
+                              text-rose-700 dark:text-rose-300 
+                              px-4 py-2 rounded-full 
+                              text-xs sm:text-sm 
+                              font-bold uppercase">
                       {product.category}
                     </div>
 
                     {/* Product Name */}
-                    <h3 className="product-title-text text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight">
+                    <h3 className="text-lg sm:text-xl md:text-2xl 
+                             font-bold 
+                             text-gray-900 dark:text-white 
+                             leading-tight">
                       {product.name}
                     </h3>
 
-                    {/* Rating */}
-
-                    {/* Price */}
-                    <p className="text-base md:text-sm text-gray-600 leading-relaxed mb-6 flex-grow line-clamp-3">
+                    {/* Description */}
+                    <p className="text-sm md:text-base 
+                            text-gray-600 dark:text-gray-300 
+                            leading-relaxed line-clamp-3">
                       {product.description}
                     </p>
 
-                    {/* Add to Cart Button */}
+                    {/* Read More Button */}
                     <Link
-                      to={`/ProductDetailPage/${product.id}`} // <-- include the ID dynamically
-                      className="cart-action-btn w-full bg-red-500 text-white font-bold text-sm sm:text-base md:text-lg py-3 sm:py-3.5 md:py-4 rounded-xl sm:rounded-2xl shadow-lg relative z-10 flex items-center justify-center"
+                      to={`/ProductDetailPage/${product.id}`}
+                      className="w-full 
+                           bg-red-500 hover:bg-red-600 
+                           dark:bg-red-600 dark:hover:bg-red-700
+                           text-white 
+                           font-bold 
+                           text-sm sm:text-base md:text-lg 
+                           py-3 sm:py-4 
+                           rounded-xl sm:rounded-2xl 
+                           shadow-lg 
+                           flex items-center justify-center 
+                           transition"
                     >
                       Read More
                     </Link>
@@ -2648,58 +2746,80 @@ color: rgb(160, 67, 246);
             </div>
 
             {/* Navigation Controls */}
-            <div className="grid-nav-controls mt-10 sm:mt-12 md:mt-14 lg:mt-16">
-              {/* Arrow Buttons */}
-              <div className="flex items-center gap-4 sm:gap-5 md:gap-6">
+            <div className="mt-12">
+              <div className="flex items-center gap-6">
+
                 <button
                   onClick={goToPrevPage}
-                  className="page-arrow-btn w-13 h-13 sm:w-15 sm:h-15 md:w-17 md:h-17 lg:w-20 lg:h-20 border-3 border-gray-900 text-gray-900 rounded-full flex items-center justify-center text-2xl sm:text-3xl md:text-4xl font-black shadow-xl"
-                  aria-label="Previous page"
+                  className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20
+                       border-2 
+                       border-gray-900 dark:border-gray-400
+                       text-gray-900 dark:text-white
+                       rounded-full 
+                       flex items-center justify-center 
+                       text-3xl font-black 
+                       shadow-xl
+                       hover:bg-gray-900 hover:text-white
+                       dark:hover:bg-gray-700
+                       transition"
                 >
                   ‹
                 </button>
+
                 <button
                   onClick={goToNextPage}
-                  className="page-arrow-btn w-13 h-13 sm:w-15 sm:h-15 md:w-17 md:h-17 lg:w-20 lg:h-20 border-3 border-gray-900 text-gray-900 rounded-full flex items-center justify-center text-2xl sm:text-3xl md:text-4xl font-black shadow-xl"
-                  aria-label="Next page"
+                  className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20
+                       border-2 
+                       border-gray-900 dark:border-gray-400
+                       text-gray-900 dark:text-white
+                       rounded-full 
+                       flex items-center justify-center 
+                       text-3xl font-black 
+                       shadow-xl
+                       hover:bg-gray-900 hover:text-white
+                       dark:hover:bg-gray-700
+                       transition"
                 >
                   ›
                 </button>
+
               </div>
             </div>
+
           </div>
         </div>
       </section>
+
       {/* ================= FUTURE OF HIRING SECTION ================= */}
-      <section className="w-full  py-20 px-6 " id="future-of-hiring ">
-        <div className="max-w-6xl mx-auto text-center ">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section className="w-full py-20 px-6 bg-black dark:bg-black" id="future-of-hiring">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Creating the Future of Employment
           </h2>
 
-          <p className="text-gray-600 max-w-3xl mx-auto mb-14 leading-relaxed">
+          <p className="text-gray-400 max-w-3xl mx-auto mb-14 leading-relaxed">
             "At GreatHire, we help employers make faster, smarter, and more
             meaningful hiring decisions by combining human knowledge with
             intelligent technology."
           </p>
 
-          <div className="grid  grid-cols-1 shadow-lg md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-            <div className="rounded-2xl bg-blue-100 border  shadow-xl p-6 hover:shadow-sm transition">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 Making Wise Hiring Choices
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-white leading-relaxed">
                 Improve hiring accuracy and efficiency by utilizing real-time
                 data-driven insights that enable recruiters to confidently find
                 and engage the right people.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 Data-Driven Recruitment
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-white leading-relaxed">
                 Utilize modern analytics to ensure a more equitable and
                 successful talent acquisition strategy by streamlining hiring
                 procedures, increasing productivity, and lowering bias in hiring
@@ -2707,22 +2827,22 @@ color: rgb(160, 67, 246);
               </p>
             </div>
 
-            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 Human + AI Collaboration
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-white leading-relaxed">
                 Combining human knowledge with AI-driven intelligence to improve
                 decision-making and guarantee wiser, more informed results
                 without taking the crucial place of human judgment.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-blue-100 border border-gray-100 shadow-xl p-6 hover:shadow-md transition">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 Solutions for Scalable Talent
               </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-white leading-relaxed">
                 Integrating AI-driven intelligence with human knowledge to
                 enhance decision-making and ensure wiser, more informed outcomes
                 without displacing human judgment.
@@ -2730,18 +2850,10 @@ color: rgb(160, 67, 246);
             </div>
           </div>
 
-          {/* <div className="mt-16">
-            <button
-              onClick={() => navigate("/hiring-insights")}
-              className="px-8 py-3 rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition"
-            >
-              Explore Hiring Insights
-            </button>
-          </div> */}
           <div className="mt-10">
             <Link
               to="/HiringInsights"
-              className="px-8 py-3 inline-block rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition"
+              className="px-8 py-3 inline-block rounded-full border border-gray-600 text-white font-medium hover:bg-gray-800 hover:border-gray-500 transition-all duration-300"
             >
               Explore Hiring Insights
             </Link>
@@ -2795,29 +2907,21 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* ================= Job Sign Up ================= */}
-      <section className="talent-community-banner-section relative bg-linear-to-br from-indigo-950 via-blue-950 to-indigo-900 talent-community-gradient-bg py-12 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] flex items-center justify-center">
+      <section className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] flex items-center justify-center">
         {/* Decorative Background Blur Elements */}
-        <div className="decorative-blur-left absolute top-0 left-0 w-96 h-96 bg-cyan-500 opacity-5 blur-3xl rounded-full"></div>
-        <div className="decorative-blur-right absolute bottom-0 right-0 w-96 h-96 bg-blue-500 opacity-5 blur-3xl rounded-full"></div>
-
-        {/* Optional Background Pattern Overlay */}
-        <div
-          className="background-pattern-overlay absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-10"
-          style={{
-            backgroundImage: "url(/talent-community-bg.jpg)", // Replace with your image
-          }}
-        ></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
 
         {/* Main Content Wrapper */}
-        <div className="talent-community-wrapper max-w-7xl mx-auto w-full relative z-10">
-          <div className="community-content-card bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="bg-gray-800 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border border-gray-700 hover:bg-gray-750 transition-all duration-300">
             {/* Main Heading */}
-            <h1 className="community-main-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-indigo-950 mb-4 sm:mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
               Join our talent community
             </h1>
 
             {/* Description Text */}
-            <p className="community-description-text text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 leading-relaxed mb-6 sm:mb-8 max-w-4xl">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white leading-relaxed mb-6 sm:mb-8 max-w-4xl">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Cupiditate atque aliquid voluptates voluptatum facere delectus
               deserunt alias, animi sapiente! Aperiam nemo aliquid aut. Tempora,
@@ -2827,16 +2931,13 @@ color: rgb(160, 67, 246);
             {/* Call to Action Button */}
             <Link
               to="/HowWeHire"
-              className="talent-signup-button bg-cyan-500 hover:bg-cyan-600 text-indigo-950 font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full inline-flex items-center gap-3 shadow-lg relative z-10"
+              className="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full inline-flex items-center gap-3 shadow-lg transition-all duration-300"
             >
-              <span className="button-text">Explore</span>
-              <span className="button-arrow-icon text-xl">▷</span>
+              <span>Explore</span>
+              <span className="text-xl">▷</span>
             </Link>
           </div>
         </div>
-
-        {/* Bottom Gradient Fade */}
-        <div className="bottom-gradient-fade absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-indigo-950 to-transparent pointer-events-none"></div>
       </section>
     </>
   );
