@@ -2069,7 +2069,7 @@ color: rgb(160, 67, 246);
           {/* Section Header */}
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3">
-              Our Blogs
+              Our <span className="highlight-text"> Blogs</span>
             </h2>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Discover our latest and featured products
@@ -2340,7 +2340,7 @@ color: rgb(160, 67, 246);
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black dark:text-white mb-2">
               Hiring <span className="highlight-text">Advices</span>
             </h2>
           </div>
@@ -2406,7 +2406,7 @@ color: rgb(160, 67, 246);
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black dark:text-white mb-2">
               Trending <span className="highlight-text">Topics</span>
             </h2>
           </div>
@@ -2747,7 +2747,7 @@ color: rgb(160, 67, 246);
 
             {/* Navigation Controls */}
             <div className="mt-12">
-              <div className="flex items-center gap-6">
+              <div className="flex items-center justify-center gap-6">
 
                 <button
                   onClick={goToPrevPage}
@@ -2791,35 +2791,35 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* ================= FUTURE OF HIRING SECTION ================= */}
-      <section className="w-full py-20 px-6 bg-black dark:bg-black" id="future-of-hiring">
+      <section className="w-full py-20 px-6 bg-white dark:bg-gray-900" id="future-of-hiring">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Creating the Future of Employment
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Creating the <span className="highlight-text"> Future of Employment</span>
           </h2>
 
-          <p className="text-gray-400 max-w-3xl mx-auto mb-14 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-14 leading-relaxed">
             "At GreatHire, we help employers make faster, smarter, and more
             meaningful hiring decisions by combining human knowledge with
             intelligent technology."
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
-              <h3 className="text-lg font-semibold text-white mb-2">
+            <div className="rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl p-6 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Making Wise Hiring Choices
               </h3>
-              <p className="text-sm text-white leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 Improve hiring accuracy and efficiency by utilizing real-time
                 data-driven insights that enable recruiters to confidently find
                 and engage the right people.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
-              <h3 className="text-lg font-semibold text-white mb-2">
+            <div className="rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl p-6 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Data-Driven Recruitment
               </h3>
-              <p className="text-sm text-white leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 Utilize modern analytics to ensure a more equitable and
                 successful talent acquisition strategy by streamlining hiring
                 procedures, increasing productivity, and lowering bias in hiring
@@ -2827,22 +2827,22 @@ color: rgb(160, 67, 246);
               </p>
             </div>
 
-            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
-              <h3 className="text-lg font-semibold text-white mb-2">
+            <div className="rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl p-6 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Human + AI Collaboration
               </h3>
-              <p className="text-sm text-white leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 Combining human knowledge with AI-driven intelligence to improve
                 decision-making and guarantee wiser, more informed results
                 without taking the crucial place of human judgment.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-gray-800 border border-gray-700 shadow-xl p-6 hover:bg-gray-700 transition-all duration-300">
-              <h3 className="text-lg font-semibold text-white mb-2">
+            <div className="rounded-2xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl p-6 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Solutions for Scalable Talent
               </h3>
-              <p className="text-sm text-white leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 Integrating AI-driven intelligence with human knowledge to
                 enhance decision-making and ensure wiser, more informed outcomes
                 without displacing human judgment.
@@ -2853,7 +2853,7 @@ color: rgb(160, 67, 246);
           <div className="mt-10">
             <Link
               to="/HiringInsights"
-              className="px-8 py-3 inline-block rounded-full border border-gray-600 text-white font-medium hover:bg-gray-800 hover:border-gray-500 transition-all duration-300"
+              className="px-8 py-3 inline-block rounded-full border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-medium hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 transition-all duration-300"
             >
               Explore Hiring Insights
             </Link>
@@ -2907,21 +2907,21 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* ================= Job Sign Up ================= */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] flex items-center justify-center">
+      <section className="relative bg-gradient-to-br from-gray-100 via-white to-gray-100 dark:from-gray-900 dark:via-black dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] flex items-center justify-center">
         {/* Decorative Background Blur Elements */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gray-300 dark:bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gray-300 dark:bg-gray-700 opacity-10 blur-3xl rounded-full"></div>
 
         {/* Main Content Wrapper */}
         <div className="max-w-7xl mx-auto w-full relative z-10">
-          <div className="bg-gray-800 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border border-gray-700 hover:bg-gray-750 transition-all duration-300">
+          <div className="bg-gray-200 dark:bg-gray-800 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12 max-w-5xl mx-auto border border-gray-300 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-gray-750 transition-all duration-300">
             {/* Main Heading */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
               Join our talent community
             </h1>
 
             {/* Description Text */}
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white leading-relaxed mb-6 sm:mb-8 max-w-4xl">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-6 sm:mb-8 max-w-4xl">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Cupiditate atque aliquid voluptates voluptatum facere delectus
               deserunt alias, animi sapiente! Aperiam nemo aliquid aut. Tempora,
@@ -2931,7 +2931,7 @@ color: rgb(160, 67, 246);
             {/* Call to Action Button */}
             <Link
               to="/HowWeHire"
-              className="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full inline-flex items-center gap-3 shadow-lg transition-all duration-300"
+              className="bg-gray-700 hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full inline-flex items-center gap-3 shadow-lg transition-all duration-300"
             >
               <span>Explore</span>
               <span className="text-xl">▷</span>
