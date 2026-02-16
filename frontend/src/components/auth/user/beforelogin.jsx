@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Users, Target, Briefcase, Menu, X, Search, ExternalLink, Star, TrendingUp, Zap, Shield } from 'lucide-react';
 import Footer from "@/components/shared/Footer";
-// import RecruiterPlansHome from "@/components/RecruiterPlansHome";
 import { useNavigate, NavLink, Link } from "react-router-dom";
 import JobsHiringSlider from "./JobSlider";
 import Lottie from "lottie-react";
@@ -11,6 +10,7 @@ import about from "../../../assets/Animation/about-s.json";
 import blog from "../../../assets/Animation/blog.json";
 import contact from "../../../assets/Animation/contact-us.json";
 import RecruiterPlans from "@/pages/recruiter/RecruiterPlans";
+import CompactTestimonials from "@/components/ui/CompactTestimonials";
 
 const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -447,6 +447,9 @@ const GreatHireLanding = () => {
 
               {/* Recruiter Plans Section */}
               {/* <RecruiterPlansHome /> */}
+
+              {/* Compact Testimonials Section */}
+              <CompactTestimonials />
 
               {/* Ultra Premium CTA Section */}
               <div className="mt-3">
