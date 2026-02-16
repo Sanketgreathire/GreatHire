@@ -242,8 +242,19 @@ function RecruiterPlans() {
 
           if (verify.data.success) {
             dispatch(addJobPlan(verify.data.plan));
+            
+            // Refresh company data to update credits
+            const companyRes = await axios.post(
+              `${COMPANY_API_END_POINT}/company-by-userid`,
+              { userId: user._id },
+              { withCredentials: true }
+            );
+            if (companyRes?.data.success) {
+              dispatch(addCompany(companyRes.data.company));
+            }
+            
             toast.success("Payment Successful");
-            navigate("/recruiter/dashboard/post-job");
+            navigate("/recruiter/dashboard/home");
           }
         },
       };
