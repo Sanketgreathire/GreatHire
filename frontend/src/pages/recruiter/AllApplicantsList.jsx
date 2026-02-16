@@ -48,8 +48,12 @@ const AllApplicantsList = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        setApplicants(response.data.applications);
-        setFilteredApplicants(response.data.applications);
+        // Filter out applications with null/undefined applicants
+        const validApplicants = response.data.applications.filter(
+          app => app.applicant != null
+        );
+        setApplicants(validApplicants);
+        setFilteredApplicants(validApplicants);
       }
     } catch (error) {
       console.error("Error fetching applicants:", error);
@@ -71,9 +75,9 @@ const AllApplicantsList = () => {
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (app) =>
-          app.applicant.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.applicant.emailId.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.applicant.phoneNumber.number.includes(searchTerm)
+          app.applicant?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.applicant?.emailId?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.applicant?.phoneNumber?.number?.includes(searchTerm)
       );
     }
 
@@ -98,8 +102,8 @@ const AllApplicantsList = () => {
             key={page}
             onClick={() => setCurrentPage(page)}
             className={`px-3 py-1 border rounded ${currentPage === page
-                ? "bg-blue-700 text-white"
-                : "bg-white text-blue-700 hover:bg-blue-100"
+                ? "bg-blue-700 text-white dark:bg-blue-800 dark:text-white shadow-md"
+                : "bg-white text-blue-700 hover:bg-blue-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               }`}
           >
             {page}
@@ -126,20 +130,20 @@ const AllApplicantsList = () => {
 
       {company && user?.isActive ? (
         !applicantDetailsModal ? (
-          <div className="min-h-screen bg-gray-50 p-6 sm:p-12 pt-28">
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-28">
             {/* Page Wrapper */}
-            <div className="bg-white shadow-2xl rounded-3xl p-12">
+            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-12">
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
-                  <h1 className="text-3xl font-extrabold text-gray-800 flex items-center gap-3">
-                    <FiUsers className="text-blue-600 text-4xl" /> All Applicants
+                  <h1 className="text-3xl font-extrabold text-gray-800 dark:text-gray-200 flex items-center gap-3">
+                    <FiUsers className="text-blue-600 dark:text-blue-400 text-4xl" /> All Applicants
                   </h1>
-                  <p className="text-gray-500 mt-1">
+                  <p className="text-gray-500 dark:text-gray-400 mt-1">
                     Review and manage all candidates who applied to your jobs.
                   </p>
                 </div>
-                <span className="mt-4 sm:mt-0 bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-semibold text-sm">
+                <span className="mt-4 sm:mt-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 px-4 py-2 rounded-full font-semibold text-sm">
                   Total: {applicants.length}
                 </span>
               </div>
@@ -148,13 +152,13 @@ const AllApplicantsList = () => {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 {/* Search Box */}
                 <div className="relative w-full md:w-1/3">
-                  <BsSearch className="absolute left-3 top-3 text-gray-400 text-lg" />
+                  <BsSearch className="absolute left-3 top-3 text-gray-400 dark:text-gray-300 text-lg" />
                   <Input
                     type="text"
                     placeholder="Search applicants..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
@@ -164,8 +168,8 @@ const AllApplicantsList = () => {
                     <Button
                       key={status}
                       className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${selectedStatus === status
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          ? "bg-blue-600 text-white dark:bg-blue-700 shadow-md"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
                         }`}
                       onClick={() => setSelectedStatus(status)}
                     >
@@ -176,9 +180,9 @@ const AllApplicantsList = () => {
               </div>
 
               {/* Applicants Table */}
-              <div className="overflow-x-auto rounded-xl border border-gray-200">
-                <table className="w-full bg-white">
-                  <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+              <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <table className="w-full bg-white dark:bg-gray-800">
+                  <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white dark:from-blue-700 dark:to-indigo-700">
                     <tr>
                       <th className="text-left p-4">Applicant</th>
                       <th className="text-left p-4">Email</th>
@@ -200,25 +204,29 @@ const AllApplicantsList = () => {
                       currentApplicants.map((app) => (
                         <tr
                           key={app._id}
-                          className="border-b last:border-0 hover:bg-gray-50 transition"
+                          className="border-b last:border-0 hover:bg-gray-50 transition dark:hover:bg-gray-700 cursor-pointer"
                         >
                           <td className="p-4 flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold">
-                              {app?.applicant?.fullname?.charAt(0)}
+                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-bold">
+                              {app?.applicant?.fullname?.charAt(0) || "?"}
                             </div>
-                            <span className="font-medium text-gray-800">
-                              {app?.applicant?.fullname}
+                            <span className="font-medium text-gray-800 dark:text-gray-200">
+                              {app?.applicant?.fullname || "Unknown"}
                             </span>
                           </td>
-                          <td className="p-4">{app?.applicant?.emailId?.email}</td>
-                          <td className="p-4">{app?.applicant?.phoneNumber?.number}</td>
+                          <td className="p-4 text-gray-700 dark:text-gray-300">
+                            {app?.applicant?.emailId?.email || "N/A"}
+                          </td>
+                          <td className="p-4 text-gray-700 dark:text-gray-300">
+                            {app?.applicant?.phoneNumber?.number || "N/A"}
+                          </td>
                           <td className="p-4 text-center">
                             <span
                               className={`px-3 py-1 rounded-full text-sm font-semibold ${app.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-700"
+                                  ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
                                   : app.status === "Shortlisted"
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-red-100 text-red-700"
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200"
+                                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200"
                                 }`}
                             >
                               {app?.status}
@@ -226,7 +234,7 @@ const AllApplicantsList = () => {
                           </td>
                           <td className="p-4 text-center flex justify-center gap-3">
                             <Button
-                              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded-lg"
+                              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800 px-4 py-2 text-sm rounded-lg"
                               onClick={() => {
                                 setApplicant(app);
                                 setApplicantId(app?._id);
@@ -237,8 +245,8 @@ const AllApplicantsList = () => {
                               👁 View
                             </Button>
                             <Button
-                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm rounded-lg"
-                              onClick={() =>
+                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 px-4 py-2 text-sm rounded-lg"
+                              onClick={() => 
                                 navigate(`/recruiter/dashboard/job-details/${app?.job}`)
                               }
                             >
@@ -249,7 +257,7 @@ const AllApplicantsList = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="text-center p-6 text-gray-500">
+                        <td colSpan={5} className="text-center p-6 text-gray-500 dark:text-gray-400">
                           No applicants found.
                         </td>
                       </tr>
@@ -274,11 +282,11 @@ const AllApplicantsList = () => {
         )
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">Company not created</span>
+          <span className="text-4xl text-gray-400 dark:text-gray-500">Company not created</span>
         </p>
       ) : (
         <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">
+          <span className="text-4xl text-gray-400 dark:text-gray-500">
             GreatHire will verify your company soon.
           </span>
         </p>
