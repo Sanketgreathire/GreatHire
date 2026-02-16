@@ -46,7 +46,7 @@ const RecruiterApplicationDetails = () => {
   }
 
   if (error) {
-    return <div className="p-6 text-red-500">{error}</div>;
+    return <div className="p-6 text-red-500 dark:text-red-400">{error}</div>;
   }
 
   if (!candidate) {
@@ -75,7 +75,7 @@ const RecruiterApplicationDetails = () => {
             href={candidate.resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline"
+            className="text-blue-600 underline dark:text-blue-400"
           >
             View / Download Resume
           </a>
