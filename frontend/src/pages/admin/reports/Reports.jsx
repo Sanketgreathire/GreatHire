@@ -1,4 +1,4 @@
-// Reports.jsx — Modern Elite Corporate (Light Mode — Poppins, Royal Blue Accent)
+// Reports.jsx — Modern Elite Corporate with Dark Mode Support
 import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
@@ -62,20 +62,20 @@ const Accent = {
   glass: "rgba(30,64,175,0.06)",
 };
 
-const Skeleton = ({ className = "h-6 w-full bg-gray-200 rounded animate-pulse" }) => (
+const Skeleton = ({ className = "h-6 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" }) => (
   <div className={className} aria-hidden />
 );
 
 const KPI = ({ label, value, icon, delta }) => (
-  <Card className="p-5 rounded-2xl shadow-md border border-gray-100">
+  <Card className="p-5 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors">
     <div className="flex items-center justify-between gap-4">
       <div>
-        <p className="text-xs text-gray-500 uppercase tracking-wider">{label}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">{label}</p>
         <div className="mt-2 flex items-baseline gap-3">
-          <h4 className="text-2xl font-semibold text-gray-900">{value}</h4>
+          <h4 className="text-2xl font-semibold text-gray-900 dark:text-white">{value}</h4>
           {delta != null && (
             <span
-              className={`text-sm font-medium ${delta >= 0 ? "text-green-600" : "text-red-600"}`}
+              className={`text-sm font-medium ${delta >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
             >
               {delta >= 0 ? `+${delta}%` : `${delta}%`}
             </span>
@@ -84,8 +84,7 @@ const KPI = ({ label, value, icon, delta }) => (
       </div>
 
       <div
-        className="p-3 rounded-full shadow-sm"
-        style={{ background: Accent.glass }}
+        className="p-3 rounded-full shadow-sm bg-blue-50 dark:bg-blue-900/30"
         aria-hidden
       >
         {icon}
@@ -94,11 +93,54 @@ const KPI = ({ label, value, icon, delta }) => (
   </Card>
 );
 
-const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-wrap gap-4 items-center justify-between">
+const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading, isDarkMode }) => (
+  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex flex-wrap gap-4 items-center justify-between transition-colors">
     <div className="flex gap-3 items-center">
       <FormControl size="small">
-        <Select value={year} onChange={onYearChange} size="small" className="min-w-[140px]">
+        <Select 
+          value={year} 
+          onChange={onYearChange} 
+          size="small" 
+          className="min-w-[140px]"
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#3b82f6' : '#2563eb',
+            },
+            '& .MuiSelect-select': {
+              color: isDarkMode ? '#f3f4f6' : '#111827',
+              backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+            },
+            '& .MuiSvgIcon-root': {
+              color: isDarkMode ? '#9ca3af' : '#6b7280',
+            },
+            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+          }}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                bgcolor: isDarkMode ? '#374151' : '#ffffff',
+                color: isDarkMode ? '#f3f4f6' : '#111827',
+                '& .MuiMenuItem-root': {
+                  '&:hover': {
+                    bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6',
+                  },
+                  '&.Mui-selected': {
+                    bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                    '&:hover': {
+                      bgcolor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    },
+                  },
+                },
+              },
+            },
+          }}
+        >
           {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
             <MenuItem key={y} value={y}>{y}</MenuItem>
           ))}
@@ -106,7 +148,50 @@ const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading 
       </FormControl>
 
       <FormControl size="small">
-        <Select value={range} onChange={onRangeChange} size="small" className="min-w-[160px]">
+        <Select 
+          value={range} 
+          onChange={onRangeChange} 
+          size="small" 
+          className="min-w-[160px]"
+          sx={{
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDarkMode ? '#3b82f6' : '#2563eb',
+            },
+            '& .MuiSelect-select': {
+              color: isDarkMode ? '#f3f4f6' : '#111827',
+              backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+            },
+            '& .MuiSvgIcon-root': {
+              color: isDarkMode ? '#9ca3af' : '#6b7280',
+            },
+            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+          }}
+          MenuProps={{
+            PaperProps: {
+              sx: {
+                bgcolor: isDarkMode ? '#374151' : '#ffffff',
+                color: isDarkMode ? '#f3f4f6' : '#111827',
+                '& .MuiMenuItem-root': {
+                  '&:hover': {
+                    bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6',
+                  },
+                  '&.Mui-selected': {
+                    bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                    '&:hover': {
+                      bgcolor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    },
+                  },
+                },
+              },
+            },
+          }}
+        >
           <MenuItem value={7}>Last 7 Days</MenuItem>
           <MenuItem value={30}>Last 30 Days</MenuItem>
           <MenuItem value={1}>Last Month</MenuItem>
@@ -116,7 +201,7 @@ const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading 
         </Select>
       </FormControl>
 
-      <div className="hidden sm:block text-sm text-gray-500">Showing recent data for analysis</div>
+      <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">Showing recent data for analysis</div>
     </div>
 
     <div className="flex gap-3">
@@ -144,6 +229,26 @@ const Reports = () => {
       document.documentElement.style.fontFamily = "Poppins, system-ui, -apple-system, 'Segoe UI', Roboto";
     }
   }, []);
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Track dark mode changes
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
 const handleShare = async () => {
   if (!csvData.length) {
     alert("No data available to share!");
@@ -262,22 +367,22 @@ ${csvUrl}
   <>
     <Navbar linkName="Reports" />
 
-    <main className="px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 min-h-screen">
+    <main className="px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">
               Corporate Analytics
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Executive view • consolidated KPIs • up-to-date insights
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <Button
-              className="px-4 py-2 rounded-xl border border-gray-200 text-black bg-white hover:shadow hover:text-white"
+              className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 hover:shadow hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               onClick={() => exportToCSV(csvData, "analytics_report.csv")}
             >
               Export
@@ -294,6 +399,7 @@ ${csvUrl}
             onRangeChange={(e) => setSelectedRange(Number(e.target.value))}
             onApply={fetchStatistics}
             loading={loading}
+            isDarkMode={isDarkMode}
           />
         </div>
 
@@ -301,7 +407,7 @@ ${csvUrl}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="p-6 rounded-2xl shadow-sm">
+              <Card key={i} className="p-6 rounded-2xl shadow-sm bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
                 <Skeleton className="h-6 w-32" />
                 <div className="mt-4">
                   <Skeleton className="h-8 w-40" />
@@ -313,25 +419,25 @@ ${csvUrl}
               {
                 label: "Total Revenue",
                 value: `₹${statsData?.totalRevenue || 0}`,
-                icon: <DollarSign size={28} className="text-[#2563EB]" />,
+                icon: <DollarSign size={28} className="text-[#2563EB] dark:text-blue-400" />,
                 delta: deltas.revenue,
               },
               {
                 label: "New Users",
                 value: statsData?.newUsers || 0,
-                icon: <Users size={28} className="text-[#16A34A]" />,
+                icon: <Users size={28} className="text-[#16A34A] dark:text-green-400" />,
                 delta: deltas.users,
               },
               {
                 label: "Success Rate",
                 value: `${applicationSuccessRate}%`,
-                icon: <CheckCircle size={28} className="text-[#7C3AED]" />,
+                icon: <CheckCircle size={28} className="text-[#7C3AED] dark:text-purple-400" />,
                 delta: deltas.success,
               },
               {
                 label: "Posted Jobs",
                 value: statsData?.totalJobs || 0,
-                icon: <Briefcase size={28} className="text-[#F59E0B]" />,
+                icon: <Briefcase size={28} className="text-[#F59E0B] dark:text-amber-400" />,
                 delta: null,
               },
             ].map((kpi, idx) => (
@@ -349,12 +455,12 @@ ${csvUrl}
         {/* Charts */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
           {/* Revenue Trend */}
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 transition-colors">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Revenue Trend
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Revenue over selected range
               </p>
             </div>
@@ -368,15 +474,35 @@ ${csvUrl}
                     data={statsData.revenueTrend}
                     margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                    <YAxis tickFormatter={(v) => `₹${v}`} />
-                    <Tooltip formatter={(val) => `₹${val}`} />
-                    <Legend verticalAlign="top" align="right" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#374151" : "#F1F5F9"} />
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 12, fill: isDarkMode ? "#9ca3af" : "#6b7280" }} 
+                      stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
+                    />
+                    <YAxis 
+                      tickFormatter={(v) => `₹${v}`} 
+                      tick={{ fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
+                      stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
+                    />
+                    <Tooltip 
+                      formatter={(val) => `₹${val}`}
+                      contentStyle={{
+                        backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                        border: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
+                        borderRadius: "8px",
+                        color: isDarkMode ? "#f3f4f6" : "#111827"
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="top" 
+                      align="right"
+                      wrapperStyle={{ color: isDarkMode ? "#f3f4f6" : "#111827" }}
+                    />
                     <Line
                       type="monotone"
                       dataKey="revenue"
-                      stroke={Accent.primary}
+                      stroke={isDarkMode ? "#60a5fa" : Accent.primary}
                       strokeWidth={3}
                       dot={{ r: 3 }}
                       activeDot={{ r: 6 }}
@@ -385,7 +511,7 @@ ${csvUrl}
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex items-center justify-center text-gray-400">
+                <div className="h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                   No Revenue Data
                 </div>
               )}
@@ -393,12 +519,12 @@ ${csvUrl}
           </Card>
 
           {/* User Growth */}
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 transition-colors">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 User Growth
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 New user acquisition trend
               </p>
             </div>
@@ -412,21 +538,39 @@ ${csvUrl}
                     data={statsData.newUsersTrend}
                     margin={{ top: 10, right: 10, bottom: 0, left: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend verticalAlign="top" align="right" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#374151" : "#F1F5F9"} />
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
+                      stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
+                    />
+                    <YAxis 
+                      tick={{ fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
+                      stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                        border: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
+                        borderRadius: "8px",
+                        color: isDarkMode ? "#f3f4f6" : "#111827"
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="top" 
+                      align="right"
+                      wrapperStyle={{ color: isDarkMode ? "#f3f4f6" : "#111827" }}
+                    />
                     <Bar
                       dataKey="users"
-                      fill={Accent.primaryLight}
+                      fill={isDarkMode ? "#60a5fa" : Accent.primaryLight}
                       radius={[6, 6, 0, 0]}
                       animationDuration={700}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex items-center justify-center text-gray-400">
+                <div className="h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                   No User Data
                 </div>
               )}
@@ -436,12 +580,12 @@ ${csvUrl}
 
         {/* Application Breakdown */}
         <section className="mt-8">
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 transition-colors">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Application Breakdown
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Shortlisted vs Pending vs Rejected
               </p>
             </div>
@@ -469,7 +613,10 @@ ${csvUrl}
                           />
                         ))}
                       </Pie>
-                      <Legend verticalAlign="bottom" />
+                      <Legend 
+                        verticalAlign="bottom"
+                        wrapperStyle={{ color: isDarkMode ? "#f3f4f6" : "#111827" }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 )}
@@ -480,18 +627,18 @@ ${csvUrl}
                   {applicationStats.map((entry, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-100"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800/50 transition-colors"
                     >
                       <div
                         className="w-3 h-3 rounded"
                         style={{ backgroundColor: entry.color }}
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-800">
+                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                           {entry.name}
                         </p>
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         {entry.value}
                       </div>
                     </div>

@@ -63,23 +63,23 @@ const RecruitersDetails = () => {
 
       {user?.role !== "recruiter" && <Navbar linkName="Recruiter Details" />}
 
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-12">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center px-6 py-12 transition-colors">
         {loading ? (
-          <div className="text-2xl font-semibold text-gray-600">Loading...</div>
+          <div className="text-2xl font-semibold text-gray-600 dark:text-gray-400">Loading...</div>
         ) : recruiterDetails ? (
           <div className="w-full max-w-6xl space-y-8">
             {/* Profile Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-lg text-white p-9 flex flex-col md:flex-row items-center md:items-start gap-8">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 rounded-2xl shadow-lg text-white p-9 flex flex-col md:flex-row items-center md:items-start gap-8 transition-all">
               <img
                 src={getSafeImageUrl(recruiterDetails?.profile?.profilePhoto)}
                 alt="Recruiter"
-                className="w-32 h-32 rounded-full border-4 border-white shadow-md"
+                className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-md"
               />
               <div className="flex flex-col justify-center space-y-2">
                 <h2 className="text-3xl font-bold tracking-wide">
                   {recruiterDetails?.fullname}
                 </h2>
-                <p className="text-sm text-blue-100">
+                <p className="text-sm text-blue-100 dark:text-blue-200">
                   {recruiterDetails?.position || "Recruiter"}
                 </p>
                 <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ const RecruitersDetails = () => {
                     {recruiterDetails?.emailId?.email}
                   </span>
                   {recruiterDetails?.emailId?.isVerified && (
-                    <MdOutlineVerified className="text-green-300" size={22} />
+                    <MdOutlineVerified className="text-green-300 dark:text-green-400" size={22} />
                   )}
                 </div>
               </div>
@@ -95,25 +95,25 @@ const RecruitersDetails = () => {
 
             {/* Details Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="shadow-md border border-gray-100 hover:shadow-lg transition-all rounded-2xl">
+              <Card className="shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all rounded-2xl bg-white dark:bg-gray-800">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
                     Contact Information
                   </h3>
-                  <p className="text-gray-600">
-                    <strong>Email:</strong> {recruiterDetails?.emailId?.email}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Email:</strong> {recruiterDetails?.emailId?.email}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Phone:</strong>{" "}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Phone:</strong>{" "}
                     {recruiterDetails?.phoneNumber?.number || "N/A"}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Phone Verified:</strong>{" "}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Phone Verified:</strong>{" "}
                     <span
                       className={
                         recruiterDetails?.phoneNumber?.isVerified
-                          ? "text-green-600"
-                          : "text-red-600"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
                       }
                     >
                       {recruiterDetails?.phoneNumber?.isVerified
@@ -124,26 +124,26 @@ const RecruitersDetails = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-md border border-gray-100 hover:shadow-lg transition-all rounded-2xl">
+              <Card className="shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all rounded-2xl bg-white dark:bg-gray-800">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
                     Company Details
                   </h3>
-                  <p className="text-gray-600">
-                    <strong>Company:</strong>{" "}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Company:</strong>{" "}
                     {company?.companyName || recruiterDetails?.companyName}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Company Created:</strong>{" "}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Company Created:</strong>{" "}
                     {recruiterDetails?.isCompanyCreated ? "Yes" : "No"}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Account Status:</strong>{" "}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Account Status:</strong>{" "}
                     <span
                       className={
                         recruiterDetails?.isActive
-                          ? "text-green-600"
-                          : "text-red-600"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
                       }
                     >
                       {recruiterDetails?.isActive ? "Active" : "Inactive"}
@@ -152,28 +152,28 @@ const RecruitersDetails = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-md border border-gray-100 hover:shadow-lg transition-all rounded-2xl">
+              <Card className="shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all rounded-2xl bg-white dark:bg-gray-800">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
                     Additional Info
                   </h3>
-                  <p className="text-gray-600">
-                    <strong>Role:</strong> {recruiterDetails?.role}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Role:</strong> {recruiterDetails?.role}
                   </p>
-                  <p className="text-gray-600">
-                    <strong>Recruiter ID:</strong> {recruiterId}
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong className="text-gray-900 dark:text-white">Recruiter ID:</strong> {recruiterId}
                   </p>
                 </CardContent>
               </Card>
             </div>
 
             {/* Corporate Job Section */}
-            <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-              <div className="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 border-b border-gray-200">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+              <div className="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
-                  <MdWorkOutline className="text-blue-600" size={26} />
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Recruiter’s Job Postings
+                  <MdWorkOutline className="text-blue-600 dark:text-blue-400" size={26} />
+                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+                    Recruiter's Job Postings
                   </h3>
                 </div>
               </div>
@@ -184,7 +184,7 @@ const RecruitersDetails = () => {
             </div>
           </div>
         ) : (
-          <div className="text-xl font-semibold text-gray-500">
+          <div className="text-xl font-semibold text-gray-500 dark:text-gray-400">
             No recruiter details found.
           </div>
         )}

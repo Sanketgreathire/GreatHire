@@ -16,7 +16,7 @@ const AdminLogin = () => {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);  // Add loading state
 
   useEffect(() => {
     if (user) {
@@ -25,7 +25,6 @@ const AdminLogin = () => {
       else navigate("/admin/login");
     }
   }, [user]);
-
 
   // Update state when input fields change
   const handleChange = (e) => {
@@ -68,74 +67,87 @@ const AdminLogin = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="flex flex-col-reverse md:flex-row h-screen">
         {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 h-screen p-6">
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 dark:from-gray-900 dark:to-gray-800 h-screen p-6">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
-            <h1 className="text-3xl font-bold text-center">
-              Great<span className="text-blue-700">Hire</span>
+            {/* Logo/Brand */}
+            <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+              Great<span className="text-blue-700 dark:text-blue-400">Hire</span>
             </h1>
-            <h1 className="text-2xl md:text-4xl font-bold text-center">
+            
+            {/* Title */}
+            <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white">
               Login
             </h1>
 
-            <h1 className="text-lg font-bold text-gray-700 text-center mt-6">
+            {/* Subtitle */}
+            <h1 className="text-lg font-bold text-gray-700 dark:text-gray-300 text-center mt-6">
               Empowering administrators to build and manage with precision
             </h1>
 
             {/* Form Fields */}
             <div className="flex flex-col space-y-4">
-              <label className="font-bold">Email</label>
+              <label className="font-bold text-gray-900 dark:text-white">Email</label>
               <input
                 type="email"
                 name="email"
                 placeholder="mail@domain.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                required
               />
-              <label className="font-bold">Password</label>
+              
+              <label className="font-bold text-gray-900 dark:text-white">Password</label>
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                required
               />
-              <div className="flex flex-row-reverse ">
+              
+              <div className="flex flex-row-reverse">
                 <p
-                  className="text-blue-600 text-sm cursor-pointer"
+                  className="text-blue-600 dark:text-blue-400 text-sm cursor-pointer hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   onClick={() => navigate("/forgot-password")}
                 >
                   Forgot Password
                 </p>
               </div>
             </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
-              className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                loading ? "cursor-not-allowed" : ""
+              className={`w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 transition-colors ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
               disabled={loading} // Disable button when loading
             >
               {loading ? (
-                <>
+                <div className="flex items-center justify-center">
                   <Loading color="white" />
-                </>
+                </div>
               ) : (
                 "Login"
               )}
             </button>
-            {/* <p className="text-center text-sm text-gray-500">
+
+            {/* Optional: Sign Up Link (commented out in original) */}
+            {/* <p className="text-center text-sm text-gray-500 dark:text-gray-400">
               New Admin?{" "}
-              <a href="/admin/signup" className="text-blue-500 hover:underline">
+              <a 
+                href="/admin/signup" 
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
+              >
                 Sign Up
               </a>
             </p> */}
-
-            
           </form>
         </div>
 
@@ -144,8 +156,10 @@ const AdminLogin = () => {
           <img
             src={img}
             alt="Background"
-            className="w-full h-full object-cover opacity-85"
+            className="w-full h-full object-cover opacity-85 dark:opacity-70"
           />
+          {/* Optional: Dark overlay for better contrast in dark mode */}
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-gray-900/10 dark:to-gray-900/40"></div>
         </div>
       </div>
     </div>
@@ -153,8 +167,3 @@ const AdminLogin = () => {
 };
 
 export default AdminLogin;
-
-
-
-
-

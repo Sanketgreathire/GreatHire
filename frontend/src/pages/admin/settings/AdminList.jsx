@@ -63,7 +63,8 @@ const AdminList = () => {
       // Display success message if admin removal is successful
       if (response?.data?.success) {
         setAdminList((prevList) =>
-          prevList.filter((admin) => admin._id !== userId) )
+          prevList.filter((admin) => admin._id !== userId)
+        );
         toast.success(response?.data?.message);
       }
     } catch (err) {
@@ -83,7 +84,7 @@ const AdminList = () => {
     setShowDeleteModal(false);
   };
 
-  // Function to admin list 
+  // Function to admin list
   const fetchAdminList = async () => {
     try {
       const response = await axios.get(`${ADMIN_API_END_POINT}/getAdmin-list`, {
@@ -136,99 +137,296 @@ const AdminList = () => {
   return (
     <>
       <Navbar linkName="Admin List" />
-      <Box p={3} className="bg-white m-4 p-4 relative">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 flex items-center text-gray-600 hover:text-gray-800 text-lg z-10"
-        >
-          <FiArrowLeft size={30} className="mr-2" />
-        </button>
-        <Typography variant="h4" align="center" gutterBottom>
-          Admin List
-        </Typography>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={2}
-        >
-          <TextField
-            label="Search Admin"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by name, email, or phone"
-            className="w-72"
-          />
-          <p className="text-xl font-semibold">
-            Total Admins: <span className="text-gray-500">{totalAdmins}</span>
-          </p>
-        </Box>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone No.</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {currentAdmins.map((admin) => (
-                <TableRow key={admin._id} hover>
-                  <TableCell>{admin.fullname}</TableCell>
-                  <TableCell>{admin.emailId?.email}</TableCell>
-                  <TableCell>{admin.phoneNumber?.number}</TableCell>
-                  <TableCell>
-                    {user?.role === "Owner" ? (
-                      <Button variant="text" color="error">
-                        <FaTrash
-                          size={16}
-                          onClick={() => {
-                            setAdminId(admin?._id);
-                            setShowDeleteModal(true);
-                          }}
-                        />
-                      </Button>
-                    ) : (
-                      "-------"
-                    )}
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors p-4">
+        <div className="bg-white dark:bg-gray-800 relative transition-colors rounded-lg shadow-lg p-6">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute top-4 left-4 flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white text-lg z-10 transition-colors"
+          >
+            <FiArrowLeft size={30} className="mr-2" />
+          </button>
+          <Typography 
+            variant="h4" 
+            align="center" 
+            gutterBottom
+            className="text-gray-900 dark:text-gray-100"
+          >
+            Admin List
+          </Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <TextField
+              label="Search Admin"
+              variant="outlined"
+              size="small"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name, email, or phone"
+              className="w-72"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'transparent',
+                  '& fieldset': {
+                    borderColor: 'rgb(209, 213, 219)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgb(156, 163, 175)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'rgb(59, 130, 246)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgb(107, 114, 128)',
+                },
+                '& .MuiOutlinedInput-input': {
+                  color: 'rgb(17, 24, 39)',
+                },
+                '.dark &': {
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'rgb(75, 85, 99)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgb(107, 114, 128)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'rgb(96, 165, 250)',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgb(156, 163, 175)',
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    color: 'rgb(229, 231, 235)',
+                  },
+                },
+              }}
+            />
+            <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Total Admins: <span className="text-gray-500 dark:text-gray-400">{totalAdmins}</span>
+            </p>
+          </Box>
+          <TableContainer 
+            component={Paper}
+            elevation={0}
+            sx={{
+              backgroundColor: 'white',
+              boxShadow: 'none',
+              border: '1px solid rgb(229, 231, 235)',
+              '.dark &': {
+                backgroundColor: 'rgb(55, 65, 81)',
+                border: '1px solid rgb(75, 85, 99)',
+              },
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow 
+                  sx={{ 
+                    backgroundColor: "#f5f5f5",
+                    '.dark &': {
+                      backgroundColor: 'rgb(31, 41, 55)',
+                    },
+                  }}
+                >
+                  <TableCell 
+                    sx={{
+                      color: 'rgb(17, 24, 39)',
+                      '.dark &': {
+                        color: 'rgb(229, 231, 235)',
+                        borderColor: 'rgb(75, 85, 99)',
+                      },
+                    }}
+                  >
+                    Name
+                  </TableCell>
+                  <TableCell 
+                    sx={{
+                      color: 'rgb(17, 24, 39)',
+                      '.dark &': {
+                        color: 'rgb(229, 231, 235)',
+                        borderColor: 'rgb(75, 85, 99)',
+                      },
+                    }}
+                  >
+                    Email
+                  </TableCell>
+                  <TableCell 
+                    sx={{
+                      color: 'rgb(17, 24, 39)',
+                      '.dark &': {
+                        color: 'rgb(229, 231, 235)',
+                        borderColor: 'rgb(75, 85, 99)',
+                      },
+                    }}
+                  >
+                    Phone No.
+                  </TableCell>
+                  <TableCell 
+                    sx={{
+                      color: 'rgb(17, 24, 39)',
+                      '.dark &': {
+                        color: 'rgb(229, 231, 235)',
+                        borderColor: 'rgb(75, 85, 99)',
+                      },
+                    }}
+                  >
+                    Action
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* Pagination Controls */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mt={2}
-        >
-          <Button
-            variant="contained"
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
+              </TableHead>
+              <TableBody>
+                {currentAdmins.map((admin) => (
+                  <TableRow 
+                    key={admin._id} 
+                    hover
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                      },
+                      '.dark &:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      },
+                    }}
+                  >
+                    <TableCell 
+                      sx={{
+                        color: 'rgb(17, 24, 39)',
+                        '.dark &': {
+                          color: 'rgb(209, 213, 219)',
+                          borderColor: 'rgb(75, 85, 99)',
+                        },
+                      }}
+                    >
+                      {admin.fullname}
+                    </TableCell>
+                    <TableCell 
+                      sx={{
+                        color: 'rgb(17, 24, 39)',
+                        '.dark &': {
+                          color: 'rgb(209, 213, 219)',
+                          borderColor: 'rgb(75, 85, 99)',
+                        },
+                      }}
+                    >
+                      {admin.emailId?.email}
+                    </TableCell>
+                    <TableCell 
+                      sx={{
+                        color: 'rgb(17, 24, 39)',
+                        '.dark &': {
+                          color: 'rgb(209, 213, 219)',
+                          borderColor: 'rgb(75, 85, 99)',
+                        },
+                      }}
+                    >
+                      {admin.phoneNumber?.number}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        '.dark &': {
+                          borderColor: 'rgb(75, 85, 99)',
+                        },
+                      }}
+                    >
+                      {user?.role === "Owner" ? (
+                        <Button variant="text" color="error">
+                          <FaTrash
+                            size={16}
+                            onClick={() => {
+                              setAdminId(admin?._id);
+                              setShowDeleteModal(true);
+                            }}
+                          />
+                        </Button>
+                      ) : (
+                        <span className="text-gray-500 dark:text-gray-400">-------</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* Pagination Controls */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mt={2}
           >
-            Previous
-          </Button>
-          <Typography variant="body1">Page {currentPage}</Typography>
-          <Button
-            variant="contained"
-            onClick={() => paginate(currentPage + 1)}
-            disabled={
-              currentPage === Math.ceil(totalAdmins / adminsPerPage) ||
-              totalAdmins === 0
-            }
-          >
-            Next
-          </Button>
-        </Box>
-      </Box>
+            <Button
+              variant="contained"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              sx={{
+                backgroundColor: 'rgb(59, 130, 246)',
+                '&:hover': {
+                  backgroundColor: 'rgb(37, 99, 235)',
+                },
+                '&:disabled': {
+                  backgroundColor: 'rgb(209, 213, 219)',
+                  color: 'rgb(107, 114, 128)',
+                },
+                '.dark &': {
+                  backgroundColor: 'rgb(37, 99, 235)',
+                  '&:hover': {
+                    backgroundColor: 'rgb(29, 78, 216)',
+                  },
+                  '&:disabled': {
+                    backgroundColor: 'rgb(55, 65, 81)',
+                    color: 'rgb(107, 114, 128)',
+                  },
+                },
+              }}
+            >
+              Previous
+            </Button>
+            <Typography 
+              variant="body1"
+              className="text-gray-900 dark:text-gray-100"
+            >
+              Page {currentPage}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={
+                currentPage === Math.ceil(totalAdmins / adminsPerPage) ||
+                totalAdmins === 0
+              }
+              sx={{
+                backgroundColor: 'rgb(59, 130, 246)',
+                '&:hover': {
+                  backgroundColor: 'rgb(37, 99, 235)',
+                },
+                '&:disabled': {
+                  backgroundColor: 'rgb(209, 213, 219)',
+                  color: 'rgb(107, 114, 128)',
+                },
+                '.dark &': {
+                  backgroundColor: 'rgb(37, 99, 235)',
+                  '&:hover': {
+                    backgroundColor: 'rgb(29, 78, 216)',
+                  },
+                  '&:disabled': {
+                    backgroundColor: 'rgb(55, 65, 81)',
+                    color: 'rgb(107, 114, 128)',
+                  },
+                },
+              }}
+            >
+              Next
+            </Button>
+          </Box>
+        </div>
+      </div>
       {showDeleteModal && (
         <DeleteConfirmation
           isOpen={showDeleteModal}
