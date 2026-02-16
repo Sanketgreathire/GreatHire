@@ -1,4 +1,3 @@
-// Import necessary modules and dependencies
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -52,7 +51,7 @@ const ApplicationList = ({ applications }) => {
 
   return (
     <div className="p-3 sm:p-4">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
         My Applications
       </h2>
 
@@ -61,7 +60,7 @@ const ApplicationList = ({ applications }) => {
         <input
           type="text"
           placeholder="Search by job title or company"
-          className="w-full lg:w-1/2 p-2 border rounded"
+          className="w-full lg:w-1/2 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -77,8 +76,8 @@ const ApplicationList = ({ applications }) => {
               className={`px-3 py-1 rounded border text-sm transition-colors ${
                 (statusFilter === "" && status === "All") ||
                 statusFilter === status
-                  ? "bg-blue-700 text-white border-blue-700"
-                  : "bg-white text-blue-700 border-blue-700 hover:bg-blue-100"
+                  ? "bg-blue-700 dark:bg-blue-600 text-white border-blue-700 dark:border-blue-600"
+                  : "bg-white dark:bg-gray-700 text-blue-700 dark:text-blue-400 border-blue-700 dark:border-blue-600 hover:bg-blue-100 dark:hover:bg-gray-600"
               }`}
             >
               {status}
@@ -90,13 +89,21 @@ const ApplicationList = ({ applications }) => {
       {/* Table */}
       <div className="w-full overflow-x-auto">
         <div className="min-w-[700px]">
-          <table className="w-full bg-white border text-sm">
+          <table className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-sm transition-colors">
             <thead>
-              <tr className="bg-gray-200 text-left">
-                <th className="px-4 py-2 border">Job Title</th>
-                <th className="px-4 py-2 border">Company Name</th>
-                <th className="px-4 py-2 border">Status</th>
-                <th className="px-4 py-2 border">Action</th>
+              <tr className="bg-gray-200 dark:bg-gray-700 text-left">
+                <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold">
+                  Job Title
+                </th>
+                <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold">
+                  Company Name
+                </th>
+                <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold">
+                  Status
+                </th>
+                <th className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white font-semibold">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -104,28 +111,28 @@ const ApplicationList = ({ applications }) => {
                 currentApplications.map((app) => (
                   <tr
                     key={app.id}
-                    className="border-b hover:bg-gray-50"
+                    className="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
-                    <td className="px-4 py-2 border">
+                    <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                       {app.job.jobDetails.title}
                     </td>
-                    <td className="px-4 py-2 border">
+                    <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                       {app.job.jobDetails.companyName}
                     </td>
                     <td
-                      className={`px-4 py-2 border font-medium ${
+                      className={`px-4 py-2 border border-gray-300 dark:border-gray-600 font-medium ${
                         app.status === "Shortlisted"
-                          ? "text-green-600"
+                          ? "text-green-600 dark:text-green-400"
                           : app.status === "Rejected"
-                          ? "text-red-600"
-                          : "text-orange-600"
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-orange-600 dark:text-orange-400"
                       }`}
                     >
                       {app.status}
                     </td>
-                    <td className="px-4 py-2 border">
+                    <td className="px-4 py-2 border border-gray-300 dark:border-gray-600">
                       <button
-                        className="bg-blue-700 text-white px-3 py-1 rounded hover:bg-blue-800 whitespace-nowrap"
+                        className="bg-blue-700 dark:bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-800 dark:hover:bg-blue-700 whitespace-nowrap transition-colors"
                         onClick={() =>
                           navigate(`/admin/job/details/${app.job._id}`)
                         }
@@ -137,7 +144,10 @@ const ApplicationList = ({ applications }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="px-4 py-6 text-center">
+                  <td 
+                    colSpan="4" 
+                    className="px-4 py-6 text-center text-gray-500 dark:text-gray-400 border border-gray-300 dark:border-gray-600"
+                  >
                     No applications found
                   </td>
                 </tr>
@@ -157,8 +167,8 @@ const ApplicationList = ({ applications }) => {
                 onClick={() => handlePageChange(page)}
                 className={`px-3 py-1 border rounded text-sm transition-colors ${
                   currentPage === page
-                    ? "bg-blue-700 text-white border-blue-700"
-                    : "bg-white text-blue-700 border-blue-700 hover:bg-blue-100"
+                    ? "bg-blue-700 dark:bg-blue-600 text-white border-blue-700 dark:border-blue-600"
+                    : "bg-white dark:bg-gray-700 text-blue-700 dark:text-blue-400 border-blue-700 dark:border-blue-600 hover:bg-blue-100 dark:hover:bg-gray-600"
                 }`}
               >
                 {page}

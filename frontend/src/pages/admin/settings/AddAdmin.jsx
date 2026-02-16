@@ -77,28 +77,28 @@ const AddAdmin = () => {
   return (
     <>
       <Navbar linkName="Add Admin" />
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r bg-gray-100 relative px-4 sm:px-0">
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 relative px-4 sm:px-0 transition-colors">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-white bg-opacity-90 backdrop-blur-md shadow-xl rounded-xl p-8 w-full max-w-md relative overflow-hidden mt-0 md:mt-[-50px]"
+          className="bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-md shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 rounded-xl p-8 w-full max-w-md relative overflow-hidden mt-0 md:mt-[-50px]"
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="absolute inset-0 bg-white opacity-10 rounded-xl"
+            className="absolute inset-0 bg-white dark:bg-gray-700 opacity-10 rounded-xl"
           />
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-2 left-4 md:top-5 md:left-6 flex items-center text-gray-600 hover:text-gray-900 text-lg z-20"
+            className="absolute top-2 left-4 md:top-5 md:left-6 flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-lg z-20 transition-colors"
           >
             <FiArrowLeft size={30} className="mr-2" />
           </button>
-          <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 mb-6">
-            <RiAdminLine size={45} className="text-blue-700" />
+          <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 dark:text-gray-200 mb-6">
+            <RiAdminLine size={45} className="text-blue-700 dark:text-blue-500" />
             <span>Add New Admin</span>
           </h2>
           <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
@@ -133,18 +133,18 @@ const AddAdmin = () => {
               },
             ].map(({ label, name, type, placeholder, icon }) => (
               <div key={name} className="relative">
-                <label className="block text-gray-600 font-semibold text-sm mb-1">
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold text-sm mb-1">
                   {label}
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-lg shadow-sm bg-white px-3 py-1 focus-within:ring-2 focus-within:ring-blue-400">
-                  <span className="text-gray-500 text-lg mr-2">{icon}</span>
+                <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 px-3 py-1 focus-within:ring-2 focus-within:ring-blue-400 dark:focus-within:ring-blue-500 transition-colors">
+                  <span className="text-gray-500 dark:text-gray-400 text-lg mr-2">{icon}</span>
                   <input
                     type={type}
                     name={name}
                     placeholder={placeholder}
                     value={formData[name]}
                     onChange={handleChange}
-                    className="w-full focus:outline-none text-lg bg-transparent py-1"
+                    className="w-full focus:outline-none text-lg bg-transparent py-1 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                     required
                   />
                 </div>
@@ -156,7 +156,7 @@ const AddAdmin = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
               type="submit"
-              className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 focus:ring-2 focus:ring-blue-400 focus:outline-none text-sm font-semibold transition-all ${
+              className={`w-full bg-blue-700 dark:bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:outline-none text-sm font-semibold transition-all ${
                 loading ? "cursor-not-allowed opacity-75" : ""
               }`}
               disabled={loading}
