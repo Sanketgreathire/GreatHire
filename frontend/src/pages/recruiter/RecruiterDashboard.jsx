@@ -115,13 +115,6 @@ const RecruiterDashboard = () => {
         {/* Navbar */}
         <Navbar />
 
-        {/* Verified Recruiter Badge */}
-        {jobPlan && (
-          <div className="mt-10">
-            <VerifiedRecruiterBadges plan={jobPlan?.title || jobPlan?.planName || jobPlan?.name} />
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="flex flex-1">
           <DashboardNavigations />

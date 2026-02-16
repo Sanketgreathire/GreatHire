@@ -16,6 +16,7 @@ import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
+  const { jobPlan } = useSelector((state) => state.jobPlan);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
@@ -148,10 +149,15 @@ const RecruiterHome = () => {
     },
   ];
 
-  const recruiterPlan = company?.plan ?? user?.plan ?? "PREMIUM";
+  const recruiterPlan = jobPlan?.title || jobPlan?.planName || jobPlan?.name || company?.plan || user?.plan;
+  console.log("=== BADGE DEBUG ===");
+  console.log("Job plan object:", jobPlan);
+  console.log("Job plan status:", jobPlan?.status);
+  console.log("Job plan expiryDate:", jobPlan?.expiryDate);
   console.log("Company plan:", company?.plan);
   console.log("User plan:", user?.plan);
   console.log("Final recruiterPlan:", recruiterPlan);
+  console.log("===================");
 
   return (
     <>
@@ -186,7 +192,11 @@ const RecruiterHome = () => {
             
             {/* Badge on the right */}
             <div className="flex items-start">
-              <VerifiedRecruiterBadges plan={recruiterPlan} />
+              <VerifiedRecruiterBadges 
+                plan={recruiterPlan}
+                status={jobPlan?.status}
+                expiryDate={jobPlan?.expiryDate}
+              />
             </div>
           </header>
 
