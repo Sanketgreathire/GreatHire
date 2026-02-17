@@ -129,10 +129,6 @@ class NotificationService {
   async notifyJobMatch(matchData) {
     const { userId, jobId, jobTitle, companyName, matchScore, location, salary } = matchData;
 
-    console.log(`🎯 Creating job match notification for user ${userId}:`, {
-      jobTitle, companyName, matchScore
-    });
-
     await this.createAndEmit({
       recipient: userId,
       recipientModel: 'User',

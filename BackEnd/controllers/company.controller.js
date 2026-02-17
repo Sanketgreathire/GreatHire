@@ -559,8 +559,8 @@ export const getCurrentPlan = async (req, res) => {
     // Find the active subscription for the company
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
-      status: { $ne: "Hold" }, // Exclude plans with status "Hold"
-    }).select("jobBoost expiryDate planName price status purchaseDate");
+      status: "Active", // Only get Active plans
+    }).select("jobBoost expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
     // Select only required fields
 
     res.status(200).json({
