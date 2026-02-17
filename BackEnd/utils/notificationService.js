@@ -47,8 +47,9 @@ class NotificationService {
 
       return notification;
     } catch (error) {
-      console.error("Error creating notification:", error);
-      throw error;
+      console.error("Error creating notification:", error.message);
+      // Don't throw error - allow the main operation to continue
+      return null;
     }
   }
 
