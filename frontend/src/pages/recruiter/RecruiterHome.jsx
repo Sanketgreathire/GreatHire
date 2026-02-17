@@ -152,6 +152,9 @@ const RecruiterHome = () => {
   const recruiterPlan = jobPlan?.title || jobPlan?.planName || jobPlan?.name || company?.plan || user?.plan;
   console.log("=== BADGE DEBUG ===");
   console.log("Job plan object:", jobPlan);
+  console.log("Job plan title:", jobPlan?.title);
+  console.log("Job plan planName:", jobPlan?.planName);
+  console.log("Job plan name:", jobPlan?.name);
   console.log("Job plan status:", jobPlan?.status);
   console.log("Job plan expiryDate:", jobPlan?.expiryDate);
   console.log("Company plan:", company?.plan);

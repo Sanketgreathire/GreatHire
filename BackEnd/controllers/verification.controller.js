@@ -389,7 +389,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           status: "Active", // Activate the plan after paymentStatus is paid
         },
         { new: true } // Return the updated document
-      ).select("credits expiryDate planName price status purchaseDate");
+      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
 
       // here remove expired plan of company
       await JobSubscription.deleteOne({
@@ -408,6 +408,8 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       // Set credits (not add) - replace old credits with new plan credits
       company.creditedForCandidates = creditsForCandidates;
       company.creditedForJobs = creditsForJobs;
+      company.maxJobPosts = "Unlimited"; // Set to Unlimited for paid plans
+      company.hasSubscription = true; // Mark that company has active subscription
       await company.save();
 
       res.status(200).json({
