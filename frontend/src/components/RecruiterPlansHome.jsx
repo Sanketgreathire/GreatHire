@@ -337,19 +337,19 @@ const RecruiterPlansHome = () => {
         "Free replacement 90 days",
       ],
     },
-    {
-      id: "monthly-talent-partner",
-      title: "Monthly Talent Partner",
-      price: 10000,
-      billing: "Monthly",
-      jobs: "3 Hires",
-      resumes: "Managed",
-      features: [
-        "Dedicated recruiter",
-        "Up to 3 hires per month",
-        "Fixed predictable cost",
-      ],
-    },
+    // {
+    //   id: "monthly-talent-partner",
+    //   title: "Monthly Talent Partner",
+    //   price: 10000,
+    //   billing: "Monthly",
+    //   jobs: "3 Hires",
+    //   resumes: "Managed",
+    //   features: [
+    //     "Dedicated recruiter",
+    //     "Up to 3 hires per month",
+    //     "Fixed predictable cost",
+    //   ],
+    // },
   ];
 
   const loopedPlans = [...plans, ...plans];

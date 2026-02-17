@@ -106,22 +106,22 @@ const subscriptionPlans = [
     ],
     cta: "Contact Sales",
   },
-  {
-    id: "monthly-talent-partner",
-    title: "Monthly Talent Partner",
-    price: 10000,
-    billing: "Monthly Retainer",
-    jobs: "Up to 3 Hires",
-    resumes: "Managed Hiring",
-    features: [
-      "Dedicated recruiter",
-      "Up to 3 successful hires per month",
-      "Fixed predictable cost",
-      "Ideal for startups & GCCs",
-    ],
-    extraInfo: ["₹10,000 per month", "1 month advance required"],
-    cta: "Talk to RPO Expert",
-  },
+  // {
+  //   id: "monthly-talent-partner",
+  //   title: "Monthly Talent Partner",
+  //   price: 10000,
+  //   billing: "Monthly Retainer",
+  //   jobs: "Up to 3 Hires",
+  //   resumes: "Managed Hiring",
+  //   features: [
+  //     "Dedicated recruiter",
+  //     "Up to 3 successful hires per month",
+  //     "Fixed predictable cost",
+  //     "Ideal for startups & GCCs",
+  //   ],
+  //   extraInfo: ["₹10,000 per month", "1 month advance required"],
+  //   cta: "Talk to RPO Expert",
+  // },
 ];
 
 const PlanBadge = ({ planId, user }) => {
