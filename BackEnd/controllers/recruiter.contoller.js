@@ -529,23 +529,36 @@ export const deleteAccount = async (req, res) => {
   console.log(req.body);
 
   try {
+    // Check if the logged-in user is an admin first
+    const admin = await Admin.findById(req.id);
+    
     const user = await Recruiter.findOne({ "emailId.email": userEmail });
     let userId;
     if (user) userId = user._id;
     else userId = req.id;
 
-    const admin = await Admin.findById(userId); // Check if user is an admin
-
     // if user not admin or not recruiter then we will not allowed to delete recruiter
-    if (!admin && !isUserAssociated(companyId, userId)) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized", success: false });
+    // Skip isUserAssociated check if user is admin
+    if (!admin) {
+      const isAssociated = await isUserAssociated(companyId, userId);
+      if (!isAssociated) {
+        return res
+          .status(403)
+          .json({ message: "You are not authorized", success: false });
+      }
     }
 
     const company = await Company.findById(companyId);
     if (!company) {
-      return res.status(404).json({ message: "Company not found" });
+      // If admin and company doesn't exist, just delete the recruiter directly
+      if (admin && user) {
+        await Recruiter.findByIdAndDelete(user._id);
+        return res.status(200).json({
+          success: true,
+          message: "Recruiter deleted successfully",
+        });
+      }
+      return res.status(404).json({ message: "Company not found", success: false });
     }
 
     // if admin delete recruiter or recruiter admin deleted the account
@@ -653,11 +666,15 @@ export const toggleBlock = async (req, res) => {
     const admin = await Admin.findById(userId);
 
     // Check authorization: Either the user is an admin, or they are associated with the company.
-    if (!admin && !isUserAssociated(companyId, userId)) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized",
-      });
+    // Skip isUserAssociated check if user is admin
+    if (!admin) {
+      const isAssociated = await isUserAssociated(companyId, userId);
+      if (!isAssociated) {
+        return res.status(403).json({
+          success: false,
+          message: "You are not authorized",
+        });
+      }
     }
 
     // Find the recruiter by ID
@@ -731,11 +748,15 @@ export const toggleActive = async (req, res) => {
     const admin = await Admin.findById(userId);
 
     // Check authorization: Either the user is an admin, or they are associated with the company.
-    if (!admin && !isUserAssociated(companyId, userId)) {
-      return res.status(403).json({
-        message: "You are not authorized",
-        success: false,
-      });
+    // Skip isUserAssociated check if user is admin
+    if (!admin) {
+      const isAssociated = await isUserAssociated(companyId, userId);
+      if (!isAssociated) {
+        return res.status(403).json({
+          message: "You are not authorized",
+          success: false,
+        });
+      }
     }
 
     // Fetch the targeted recruiter

@@ -34,8 +34,8 @@ export const isUserAssociated = async (companyId, userId) => {
     // Find the company by its ID
     const company = await Company.findById(companyId);
     if (!company) {
-      // If company is not found, you can either throw an error or return false.
-      throw new Error("Company not found.");
+      // Return false instead of throwing error
+      return false;
     }
 
     // Check if the user is associated with the company.
@@ -51,7 +51,7 @@ export const isUserAssociated = async (companyId, userId) => {
     // Now, check if the recruiter (user) is active.
     const recruiter = await Recruiter.findById(userId);
     if (!recruiter) {
-      throw new Error("Recruiter not found.");
+      return false;
     }
 
     // Return true only if the recruiter is active.
@@ -460,7 +460,7 @@ export const updateCompany = async (req, res) => {
     const companyId = req.params.id;
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
@@ -550,7 +550,7 @@ export const getCurrentPlan = async (req, res) => {
     const companyId = req.params.id; // Get company ID from request parameters
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
@@ -835,7 +835,7 @@ export const getCompanyApplicants = async (req, res) => {
     const { companyId } = req.params; // Extract company id 
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
