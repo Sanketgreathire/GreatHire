@@ -249,6 +249,9 @@ const RecruitersList = () => {
 
   // Toggle active
   const toggleActive = async (companyId, recruiterId, newIsActive, isAdmin) => {
+    // Prevent multiple clicks
+    if (loadingMap[recruiterId]) return;
+    
     setLoadingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const response = await axios.put(
@@ -278,7 +281,7 @@ const RecruitersList = () => {
       }
     } catch (err) {
       console.error("toggleActive error", err);
-      toast.error("Error toggling status");
+      toast.error(err.response?.data?.message || "Error toggling status");
     } finally {
       setLoadingMap((s) => ({ ...s, [recruiterId]: false }));
     }
@@ -286,6 +289,9 @@ const RecruitersList = () => {
 
   // Toggle block/unblock
   const toggleBlock = async (recruiterId, companyId, currentBlocked) => {
+    // Prevent multiple clicks
+    if (blockingMap[recruiterId]) return;
+    
     setBlockingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const updatedBlockStatus = !currentBlocked;
@@ -308,7 +314,7 @@ const RecruitersList = () => {
       }
     } catch (err) {
       console.error("toggleBlock error", err);
-      toast.error("Error toggling block status");
+      toast.error(err.response?.data?.message || "Error toggling block status");
     } finally {
       setBlockingMap((s) => ({ ...s, [recruiterId]: false }));
     }
@@ -345,6 +351,9 @@ const RecruitersList = () => {
 
   // Delete recruiter
   const deleteRecruiter = async (recruiterId, userEmail, companyId, isAdmin) => {
+    // Prevent multiple clicks
+    if (dloadingMap[recruiterId]) return;
+    
     setDLoadingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
@@ -367,7 +376,7 @@ const RecruitersList = () => {
       }
     } catch (err) {
       console.error("deleteRecruiter error", err);
-      toast.error("Error deleting recruiter");
+      toast.error(err.response?.data?.message || "Error deleting recruiter");
     } finally {
       setDLoadingMap((s) => ({ ...s, [recruiterId]: false }));
     }
@@ -478,18 +487,18 @@ const RecruitersList = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700">
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-gray-700/50">
                 <TableRow className="border-b border-gray-200 dark:border-gray-700">
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Recruiter Name</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Company</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Position</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Posted Jobs</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Status</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
-                  <TableHead className="whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-semibold">Actions</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Recruiter Name</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Company</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Position</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">Jobs</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Status</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -505,45 +514,45 @@ const RecruitersList = () => {
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
                       >
                         <TableCell>
-                          <div className="flex items-start gap-3 min-w-[220px]">
-                            <div className="h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0">
+                          <div className="flex items-start gap-2">
+                            <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0 text-sm">
                               {r.fullname ? r.fullname.charAt(0).toUpperCase() : "R"}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-medium flex flex-wrap items-center gap-2 text-gray-900 dark:text-white">
+                              <div className="font-medium flex flex-wrap items-center gap-1 text-gray-900 dark:text-white text-sm">
                                 <span className="break-words">{r.fullname}</span>
                                 {r.isAdmin && (
-                                  <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                                  <span className="inline-block text-xs px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                                     Admin
                                   </span>
                                 )}
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400 break-all">
+                              <div className="text-xs text-gray-500 dark:text-gray-400 break-all">
                                 {r.email}
                               </div>
                             </div>
                           </div>
                         </TableCell>
 
-                        <TableCell className="whitespace-nowrap text-gray-900 dark:text-gray-100">
+                        <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
                           {r.companyName}
                         </TableCell>
 
-                        <TableCell className="whitespace-nowrap text-gray-900 dark:text-gray-100">
+                        <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
                           {r.phone}
                         </TableCell>
 
-                        <TableCell className="whitespace-nowrap text-gray-900 dark:text-gray-100">
+                        <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
                           {r.position}
                         </TableCell>
 
-                        <TableCell className="text-center text-gray-900 dark:text-gray-100">
+                        <TableCell className="text-center text-gray-900 dark:text-gray-100 text-sm">
                           {r.postedJobs ?? 0}
                         </TableCell>
 
                         <TableCell>
                           <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
                               r.isActive
                                 ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
                                 : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
@@ -553,27 +562,27 @@ const RecruitersList = () => {
                           </span>
                         </TableCell>
 
-                        <TableCell className="whitespace-nowrap text-gray-900 dark:text-gray-100">
+                        <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
                           {r.joined}
                         </TableCell>
 
                         <TableCell>
-                          <div className="flex flex-wrap items-center gap-2 min-w-[200px]">
+                          <div className="flex flex-wrap items-center gap-1.5">
                             {/* View */}
                             <button
                               title="View recruiter details"
                               onClick={() =>
                                 navigate(`/admin/recruiter/details/${r._id}`)
                               }
-                              className="p-2 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                              className="p-1.5 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
                             >
-                              <Eye size={16} className="text-slate-600 dark:text-slate-400" />
+                              <Eye size={14} className="text-slate-600 dark:text-slate-400" />
                             </button>
 
                             {/* Toggle */}
                             {loadingMap[r._id] ? (
-                              <div className="px-2 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
-                                Updating...
+                              <div className="px-1 text-xs text-gray-600 dark:text-gray-400">
+                                ...
                               </div>
                             ) : (
                               <button
@@ -590,14 +599,14 @@ const RecruitersList = () => {
                                     r.isAdmin
                                   )
                                 }
-                                className={`p-2 rounded transition-colors ${
+                                className={`p-1.5 rounded transition-colors ${
                                   r.isActive
                                     ? "bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50"
                                     : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                                 }`}
                               >
                                 <UserCheck
-                                  size={16}
+                                  size={14}
                                   className={
                                     r.isActive
                                       ? "text-green-600 dark:text-green-400"
@@ -609,8 +618,8 @@ const RecruitersList = () => {
 
                             {/* Block / Unblock */}
                             {blockingMap[r._id] ? (
-                              <div className="px-2 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
-                                Processing...
+                              <div className="px-1 text-xs text-gray-600 dark:text-gray-400">
+                                ...
                               </div>
                             ) : (
                               <button
@@ -622,14 +631,14 @@ const RecruitersList = () => {
                                 onClick={() =>
                                   toggleBlock(r._id, r.companyId, r.isBlocked)
                                 }
-                                className={`p-2 rounded transition-colors ${
+                                className={`p-1.5 rounded transition-colors ${
                                   r.isBlocked
                                     ? "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                                     : "bg-orange-50 dark:bg-orange-900/30 hover:bg-orange-100 dark:hover:bg-orange-900/50"
                                 }`}
                               >
                                 <Ban
-                                  size={16}
+                                  size={14}
                                   className={
                                     r.isBlocked
                                       ? "text-gray-600 dark:text-gray-400"
@@ -641,8 +650,8 @@ const RecruitersList = () => {
 
                             {/* Delete */}
                             {dloadingMap[r._id] ? (
-                              <div className="px-2 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
-                                Deleting...
+                              <div className="px-1 text-xs text-gray-600 dark:text-gray-400">
+                                ...
                               </div>
                             ) : (
                               <button
@@ -651,9 +660,9 @@ const RecruitersList = () => {
                                   setSelectedRecruiter(r);
                                   setShowDeleteModal(true);
                                 }}
-                                className="p-2 rounded bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+                                className="p-1.5 rounded bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
                               >
-                                <Trash size={16} className="text-red-600 dark:text-red-400" />
+                                <Trash size={14} className="text-red-600 dark:text-red-400" />
                               </button>
                             )}
 
@@ -664,10 +673,10 @@ const RecruitersList = () => {
                                 setSelectedMessageRecruiter(r);
                                 setShowMessageModal(true);
                               }}
-                              className="p-2 rounded bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                              className="p-1.5 rounded bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                             >
                               <MessageSquare
-                                size={16}
+                                size={14}
                                 className="text-blue-600 dark:text-blue-400"
                               />
                             </button>

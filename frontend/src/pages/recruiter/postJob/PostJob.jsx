@@ -551,7 +551,7 @@ const PostJob = () => {
                         "Food Provided",
                         "Life Insurance",
                         "Internet Reimbursement",
-                        "Commuter Assistance",
+                        "Travelling Allowance",
                         "Leave Encashment",
                         "Flexible Schedule",
                         "Others",
