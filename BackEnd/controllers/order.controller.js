@@ -73,6 +73,7 @@ export const createOrderForJobPlan = async (req, res) => {
     });
 
     // 🧾 Save subscription (✅ schema-safe)
+    const expiryMonths = planName === "Enterprise Elite" ? 12 : 1;
     await JobSubscription.create({
       planName,
       creditedForJobs: creditsForJobs,               // ✅ FIXED
@@ -82,7 +83,7 @@ export const createOrderForJobPlan = async (req, res) => {
       company: companyId,
       status: "Hold",
       paymentStatus: "created",
-      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // PRODUCTION: 1 month from now
+      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + expiryMonths)),
       purchaseDate: new Date(), // ✅ Set purchase date when order is created
     });
 

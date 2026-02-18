@@ -76,11 +76,11 @@ const subscriptionPlans = [
     price: 24999,
     billing: "Yearly",
     jobs: "Unlimited",
-    resumes: "1,500 Credits / year",
+    resumes: "8,333 Credits / year",
     enterprise: true,
     features: [
       "Unlimited Job Postings",
-      "1,500 Resume Credits / year",
+      "8,333 Resume Credits / year",
       "Homepage Employer Branding",
       "Dedicated Account Manager",
       "AI Headhunter Reports",
