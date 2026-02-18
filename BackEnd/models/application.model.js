@@ -21,7 +21,7 @@ const applicationSchema = new mongoose.Schema(
     resume: { type: String }, // yaha resume ka URL ya filename save hoga
     status: {
       type: String,
-      enum: ["Pending", "Shortlisted", "Rejected"],
+      enum: ["Pending", "Interview Schedule", "Shortlisted", "Rejected"],
       default: "Pending",
     },
   },
