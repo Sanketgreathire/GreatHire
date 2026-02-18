@@ -19,10 +19,8 @@ class NotificationService {
         type: notificationData.type,
         title: notificationData.title
       });
-      
       const notification = new Notification(notificationData);
       await notification.save();
-      
       console.log('✅ Notification saved to database:', notification._id);
 
       // Emit to specific user room with error handling
@@ -38,7 +36,6 @@ class NotificationService {
           isRead: notification.isRead,
           actionUrl: notification.actionUrl
         };
-        
         this.io.to(room).emit('newNotification', notificationPayload);
         console.log(`🔔 Real-time notification sent to room: ${room}`);
       } else {
@@ -90,9 +87,7 @@ class NotificationService {
 
   async notifyApplicationStatusChanged(statusData) {
     const { applicantId, jobId, jobTitle, companyName, status, recruiterId } = statusData;
-    
     let title, message, priority;
-    
     switch (status) {
       case 'Shortlisted':
         title = '🎉 Application Shortlisted!';
@@ -101,7 +96,7 @@ class NotificationService {
         break;
       case 'Rejected':
         title = 'Application Update';
-        message = `Thank you for your interest in ${jobTitle} at ${companyName}. We've decided to move forward with other candidates.`;
+        message = `📢 Update: Thank you for your interest! Unfortunately, we won't be proceeding with your application for the ${jobTitle} position at ${companyName}.\n\nRemember: "Struggles are the raw materials for success stories" 🌈`;
         priority = 'medium';
         break;
       default:
@@ -217,7 +212,6 @@ class NotificationService {
     const { userId, userType, planType, expiryDate, daysLeft } = planData;
 
     const urgency = daysLeft <= 3 ? 'urgent' : daysLeft <= 7 ? 'high' : 'medium';
-    
     await this.createAndEmit({
       recipient: userId,
       recipientModel: userType === 'recruiter' ? 'Recruiter' : userType === 'company' ? 'Company' : 'User',
@@ -245,7 +239,6 @@ class NotificationService {
 
     try {
       await Notification.insertMany(notifications);
-      
       // Emit to all users
       if (this.io) {
         recommendations.forEach(rec => {

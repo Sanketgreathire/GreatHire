@@ -17,15 +17,20 @@ import { useSelector } from "react-redux";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 
-// Define available status options for filtering applicants
-const statusOptions = ["All", "Pending", "Shortlisted", "Rejected"];
+// ✅ Only 4 allowed statuses — exact strings stored in DB
+const ALL_STATUSES = ["Pending", "Interview Schedule", "Shortlisted", "Rejected"];
 
-// Define styles for different application statuses
-const statusStyles = {
-  Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
-  Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
-  Rejected: "bg-red-200 text-red-700 hover:bg-red-100",
+// Filter bar options
+const FILTER_OPTIONS = ["All", ...ALL_STATUSES];
+
+// Badge colors per status
+const statusBadgeStyles = {
+  Pending: "bg-yellow-100 text-yellow-700",
+  "Interview Schedule": "bg-purple-100 text-purple-700",
+  Shortlisted: "bg-green-100 text-green-700",
+  Rejected: "bg-red-100 text-red-700",
 };
 
 const AppliedCandidatesList = () => {
@@ -37,6 +42,7 @@ const AppliedCandidatesList = () => {
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false); // State to show/hide applicant details modal
   const [applicant, setApplicant] = useState(null); // Selected applicant details
   const [applicantId, setApplicantId] = useState(null); // Selected applicant ID
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
   const navigate = useNavigate();
 
   // Pagination states
@@ -75,13 +81,45 @@ const AppliedCandidatesList = () => {
     }
   }, [jobId]);
 
-  // Filter applicants based on search query and selected status
+  // ✅ Key fix: explicitly trim the value before sending to avoid whitespace bugs
+  const handleStatusChange = async (applicationId, rawValue) => {
+    const newStatus = rawValue.trim();
+
+    if (!ALL_STATUSES.includes(newStatus)) {
+      toast.error(`"${newStatus}" is not a valid status.`);
+      return;
+    }
+
+    setUpdatingStatusId(applicationId);
+    try {
+      const response = await axios.post(
+        `${APPLICATION_API_END_POINT}/status/${applicationId}/update`,
+        { status: newStatus },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setApplicants((prev) =>
+          prev.map((app) =>
+            app._id === applicationId ? { ...app, status: newStatus } : app
+          )
+        );
+        toast.success(`Status updated to "${newStatus}"`);
+      } else {
+        toast.error(response.data.message || "Failed to update status.");
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+      const msg = err?.response?.data?.message || "Failed to update status.";
+      toast.error(msg);
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
+
   const filteredApplicants = applicants?.filter((data) => {
     const matchesSearch =
-      data?.applicant?.fullname.toLowerCase().includes(search.toLowerCase()) ||
-      data?.applicant?.emailId?.email
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      data?.applicant?.fullname?.toLowerCase().includes(search.toLowerCase()) ||
+      data?.applicant?.emailId?.email?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus =
       statusFilter === "All" || data.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -97,7 +135,7 @@ const AppliedCandidatesList = () => {
   const totalPages = Math.ceil(filteredApplicants.length / applicantsPerPage);
 
   return (
-    <>
+   <>
 
       <Helmet>
         <title>
@@ -113,8 +151,7 @@ const AppliedCandidatesList = () => {
 
       {user?.role !== "recruiter" && <Navbar linkName={"Applicants List"} />}
       <div
-        className={`${user?.role !== "recruiter" ? "bg-white m-4" : ""
-          } p-10 h-screen`}
+        className={`${user?.role !== "recruiter" ? "bg-white m-4" : ""} p-10 min-h-screen`}
       >
         {!applicantDetailsModal ? (
           <>
@@ -140,54 +177,69 @@ const AppliedCandidatesList = () => {
                   placeholder="Search by name, email"
                   className="pl-10 p-2 border border-gray-300 rounded-md w-full"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
                 />
               </div>
 
               <select
-                className="p-2 border border-gray-300 rounded-md w-full md:w-1/6"
+                className="p-2 border border-gray-300 rounded-md w-full md:w-auto"
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
-                {statusOptions.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
+                {FILTER_OPTIONS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
                   </option>
                 ))}
               </select>
             </div>
 
-            <Table className="w-full border-collapse border border-gray-300 bg-white">
-              <TableHeader className="bg-gray-300 text-center">
-                <TableRow>
-                  <TableHead className="text-center">Sr No.</TableHead>
-                  <TableHead className="text-center">Name</TableHead>
-                  <TableHead className="text-center">Email</TableHead>
-                  <TableHead className="text-center">Resume</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-center">
-                {currentApplicants.length > 0 ? (
-                  currentApplicants.map((data, index) => (
-                    <TableRow
-                      key={data._id}
-                      className="hover:bg-gray-50 transition duration-150 cursor-pointer"
-                      onClick={() => {
-                        setApplicant(data);
-                        setApplicantId(data._id);
-                        setApplicantDetailsModal(true);
-                      }}
-                    >
-                      <TableCell>{indexOfFirstApplicant + index + 1}</TableCell>
-                      <TableCell>{data.applicant.fullname}</TableCell>
-                      <TableCell>{data.applicant.emailId.email}</TableCell>
-                      <TableCell>
-                        <div
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <Table className="w-full border-collapse bg-white min-w-[800px]">
+                <TableHeader className="bg-gray-100">
+                  <TableRow>
+                    <TableHead className="text-center font-semibold">Sr No.</TableHead>
+                    <TableHead className="text-center font-semibold">Name</TableHead>
+                    <TableHead className="text-center font-semibold">Email</TableHead>
+                    <TableHead className="text-center font-semibold">Resume</TableHead>
+                    <TableHead className="text-center font-semibold">Status</TableHead>
+                    <TableHead className="text-center font-semibold">Update Status</TableHead>
+                    <TableHead className="text-center font-semibold">Details</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="text-center">
+                  {currentApplicants.length > 0 ? (
+                    currentApplicants.map((data, index) => (
+                      <TableRow
+                        key={data._id}
+                        className="hover:bg-gray-50 transition duration-150"
+                      >
+                        {/* Sr No */}
+                        <TableCell>{indexOfFirstApplicant + index + 1}</TableCell>
+
+                        {/* Name */}
+                        <TableCell className="font-medium">
+                          {data.applicant?.fullname}
+                        </TableCell>
+
+                        {/* Email */}
+                        <TableCell className="text-gray-600">
+                          {data.applicant?.emailId?.email}
+                        </TableCell>
+
+                        {/* Resume */}
+                        <TableCell>
+                          <div
                           className="flex justify-center space-x-2"
                           onClick={(e) => e.stopPropagation()} // Prevents row click when clicking the eye button
                         >
-                          {isValidHttpUrl(data.applicant.profile.resume) ? (
+                              {isValidHttpUrl(data.applicant.profile.resume) ? (
                             <a
                               href={encodeURI(data.applicant.profile.resume)}
                               target="_blank"
@@ -202,41 +254,80 @@ const AppliedCandidatesList = () => {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div
-                          className={`px-3 py-1 rounded-md text-sm text-center ${statusStyles[data.status]
+
+                        {/* Status Badge */}
+                        <TableCell>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              statusBadgeStyles[data.status] ||
+                              "bg-gray-100 text-gray-600"
                             }`}
-                        >
-                          {data.status}
-                        </div>
+                          >
+                            {data.status}
+                          </span>
+                        </TableCell>
+
+                        {/* ✅ Status Dropdown — value explicitly trimmed on change */}
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <select
+                              className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
+                              value={data.status}
+                              disabled={updatingStatusId === data._id}
+                              onChange={(e) =>
+                                handleStatusChange(data._id, e.target.value)
+                              }
+                            >
+                              {ALL_STATUSES.map((s) => (
+                                <option key={s} value={s}>
+                                  {s}
+                                </option>
+                              ))}
+                            </select>
+                            {updatingStatusId === data._id && (
+                              <span className="text-xs text-gray-400">Saving...</span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        {/* View Details */}
+                        <TableCell>
+                          <button
+                            className="flex items-center gap-1 mx-auto px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition"
+                            onClick={() => {
+                              setApplicant(data);
+                              setApplicantId(data._id);
+                              setApplicantDetailsModal(true);
+                            }}
+                          >
+                            <FiEye size={14} /> View
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan="7"
+                        className="text-center text-gray-500 py-8"
+                      >
+                        No applicants found.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan="6"
-                      className="text-center text-gray-500 py-4"
-                    >
-                      No applicants found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
 
-            {/* Pagination Controls */}
-            {/* Pagination Controls */}
+            {/* Pagination Controls*/}
             {totalPages >= 1 && (
               <div className="flex justify-between items-center mt-4">
                 <button
                   className={`px-4 py-2 text-white rounded-md ${currentPage === 1
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600"
-                    }`}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -247,14 +338,14 @@ const AppliedCandidatesList = () => {
                 </span>
 
                 <button
-                  className={`px-4 py-2 text-white rounded-md ${currentPage === totalPages
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600"
-                    }`}
+                  className={`px-4 py-2 text-white rounded-md ${currentPage === totalPages || totalPages === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === totalPages || totalPages === 0}
                 >
                   Next
                 </button>

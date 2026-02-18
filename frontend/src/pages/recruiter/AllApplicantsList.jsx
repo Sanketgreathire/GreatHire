@@ -5,14 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { BsSearch } from "react-icons/bs";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { COMPANY_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { FiUsers } from "react-icons/fi";
 import ApplicantDetails from "./ApplicantDetails";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 
-// Status options for filtering applicants
-const statuses = ["All", "Pending", "Shortlisted", "Rejected"];
+// ✅ Only 4 allowed statuses
+const ALL_STATUSES = ["Pending", "Interview Schedule", "Shortlisted", "Rejected"];
+
+// Filter bar (includes "All")
+const FILTER_OPTIONS = ["All", ...ALL_STATUSES];
+
+// Badge colors per status
+const statusBadgeStyles = {
+  Pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200",
+  "Interview Schedule": "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200",
+  Shortlisted: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200",
+  Rejected: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200",
+};
 
 const AllApplicantsList = () => {
   const { company } = useSelector((state) => state.company);
@@ -22,13 +34,14 @@ const AllApplicantsList = () => {
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
 
-  // Pagination states
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const [loading, setLoading] = useState(true);
-
+  // Detail modal
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
@@ -50,7 +63,7 @@ const AllApplicantsList = () => {
       if (response.data.success) {
         // Filter out applications with null/undefined applicants
         const validApplicants = response.data.applications.filter(
-          app => app.applicant != null
+          (app) => app.applicant != null
         );
         setApplicants(validApplicants);
         setFilteredApplicants(validApplicants);
@@ -85,6 +98,41 @@ const AllApplicantsList = () => {
     setCurrentPage(1); // Reset to first page when filters change
   }, [selectedStatus, searchTerm, applicants]);
 
+  // ✅ Key fix: trim value before sending and validate against allowed list
+  const handleStatusChange = async (applicationId, rawValue) => {
+    const newStatus = rawValue.trim();
+
+    if (!ALL_STATUSES.includes(newStatus)) {
+      toast.error(`"${newStatus}" is not a valid status.`);
+      return;
+    }
+
+    setUpdatingStatusId(applicationId);
+    try {
+      const response = await axios.post(
+        `${APPLICATION_API_END_POINT}/status/${applicationId}/update`,
+        { status: newStatus },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setApplicants((prev) =>
+          prev.map((app) =>
+            app._id === applicationId ? { ...app, status: newStatus } : app
+          )
+        );
+        toast.success(`Status updated to "${newStatus}"`);
+      } else {
+        toast.error(response.data.message || "Failed to update status.");
+      }
+    } catch (err) {
+      console.error("Error updating status:", err);
+      const msg = err?.response?.data?.message || "Failed to update status.";
+      toast.error(msg);
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
+
   // Pagination Logic
   const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -115,7 +163,7 @@ const AllApplicantsList = () => {
 
   return (
     <>
-      <Helmet>
+<Helmet>
         {/* Meta Title */}
         <title>
           Every Applicant | Oversee Employees & Hiring Process - GreatHire
@@ -131,13 +179,15 @@ const AllApplicantsList = () => {
       {company && user?.isActive ? (
         !applicantDetailsModal ? (
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-28">
-            {/* Page Wrapper */}
-            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-12">
+             {/* Page Wrapper */}
+            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 md:p-12">
+
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
                   <h1 className="text-3xl font-extrabold text-gray-800 dark:text-gray-200 flex items-center gap-3">
-                    <FiUsers className="text-blue-600 dark:text-blue-400 text-4xl" /> All Applicants
+                    <FiUsers className="text-blue-600 dark:text-blue-400 text-4xl" />
+                    All Applicants
                   </h1>
                   <p className="text-gray-500 dark:text-gray-400 mt-1">
                     Review and manage all candidates who applied to your jobs.
@@ -148,9 +198,8 @@ const AllApplicantsList = () => {
                 </span>
               </div>
 
-              {/* Search & Filter */}
+              {/* Search & Status Filter */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                {/* Search Box */}
                 <div className="relative w-full md:w-1/3">
                   <BsSearch className="absolute left-3 top-3 text-gray-400 dark:text-gray-300 text-lg" />
                   <Input
@@ -162,15 +211,15 @@ const AllApplicantsList = () => {
                   />
                 </div>
 
-                {/* Status Filters */}
                 <div className="flex flex-wrap gap-2">
-                  {statuses.map((status) => (
+                  {FILTER_OPTIONS.map((status) => (
                     <Button
                       key={status}
-                      className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${selectedStatus === status
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        selectedStatus === status
                           ? "bg-blue-600 text-white dark:bg-blue-700 shadow-md"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200"
-                        }`}
+                      }`}
                       onClick={() => setSelectedStatus(status)}
                     >
                       {status}
@@ -179,15 +228,16 @@ const AllApplicantsList = () => {
                 </div>
               </div>
 
-              {/* Applicants Table */}
+              {/* Table */}
               <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-                <table className="w-full bg-white dark:bg-gray-800">
+                <table className="w-full bg-white dark:bg-gray-800 min-w-[950px]">
                   <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white dark:from-blue-700 dark:to-indigo-700">
                     <tr>
                       <th className="text-left p-4">Applicant</th>
                       <th className="text-left p-4">Email</th>
                       <th className="text-left p-4">Phone</th>
                       <th className="text-center p-4">Status</th>
+                      <th className="text-center p-4">Update Status</th>
                       <th className="text-center p-4">Actions</th>
                     </tr>
                   </thead>
@@ -195,7 +245,7 @@ const AllApplicantsList = () => {
                     {loading ? (
                       Array.from({ length: 5 }).map((_, i) => (
                         <tr key={i}>
-                          <td colSpan={5} className="p-4">
+                          <td colSpan={6} className="p-4">
                             <Skeleton className="w-full h-6" />
                           </td>
                         </tr>
@@ -204,60 +254,97 @@ const AllApplicantsList = () => {
                       currentApplicants.map((app) => (
                         <tr
                           key={app._id}
-                          className="border-b last:border-0 hover:bg-gray-50 transition dark:hover:bg-gray-700 cursor-pointer"
+                          className="border-b last:border-0 hover:bg-gray-50 transition dark:hover:bg-gray-700"
                         >
+                          {/* Applicant */}
                           <td className="p-4 flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-bold">
+                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-bold flex-shrink-0">
                               {app?.applicant?.fullname?.charAt(0) || "?"}
                             </div>
                             <span className="font-medium text-gray-800 dark:text-gray-200">
                               {app?.applicant?.fullname || "Unknown"}
                             </span>
                           </td>
+
+                          {/* Email */}
                           <td className="p-4 text-gray-700 dark:text-gray-300">
                             {app?.applicant?.emailId?.email || "N/A"}
                           </td>
+
+                          {/* Phone */}
                           <td className="p-4 text-gray-700 dark:text-gray-300">
                             {app?.applicant?.phoneNumber?.number || "N/A"}
                           </td>
+
+                          {/* Status Badge */}
                           <td className="p-4 text-center">
                             <span
-                              className={`px-3 py-1 rounded-full text-sm font-semibold ${app.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
-                                  : app.status === "Shortlisted"
-                                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200"
-                                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200"
-                                }`}
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                statusBadgeStyles[app.status] ||
+                                "bg-gray-100 text-gray-600"
+                              }`}
                             >
                               {app?.status}
                             </span>
                           </td>
-                          <td className="p-4 text-center flex justify-center gap-3">
-                            <Button
-                              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-800 px-4 py-2 text-sm rounded-lg"
-                              onClick={() => {
-                                setApplicant(app);
-                                setApplicantId(app?._id);
-                                setApplicantDetailsModal(true);
-                                setJobId(app?.job);
-                              }}
-                            >
-                              👁 View
-                            </Button>
-                            <Button
-                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-800 px-4 py-2 text-sm rounded-lg"
-                              onClick={() => 
-                                navigate(`/recruiter/dashboard/job-details/${app?.job}`)
-                              }
-                            >
-                              📄 Job
-                            </Button>
+
+                          {/* ✅ Status Dropdown */}
+                          <td className="p-4 text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <select
+                                className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 bg-white dark:bg-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
+                                value={app.status}
+                                disabled={updatingStatusId === app._id}
+                                onChange={(e) =>
+                                  handleStatusChange(app._id, e.target.value)
+                                }
+                              >
+                                {ALL_STATUSES.map((s) => (
+                                  <option key={s} value={s}>
+                                    {s}
+                                  </option>
+                                ))}
+                              </select>
+                              {updatingStatusId === app._id && (
+                                <span className="text-xs text-gray-400 dark:text-gray-500">
+                                  Saving...
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Action Buttons */}
+                          <td className="p-4 text-center">
+                            <div className="flex justify-center gap-2">
+                              <Button
+                                className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded-lg"
+                                onClick={() => {
+                                  setApplicant(app);
+                                  setApplicantId(app?._id);
+                                  setApplicantDetailsModal(true);
+                                  setJobId(app?.job);
+                                }}
+                              >
+                                👁 View
+                              </Button>
+                              <Button
+                                className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 text-sm rounded-lg"
+                                onClick={() =>
+                                  navigate(`/recruiter/dashboard/job-details/${app?.job}`)
+                                }
+                              >
+                                📄 Job
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="text-center p-6 text-gray-500 dark:text-gray-400">
+                        <td
+                          colSpan={6}
+                          className="text-center p-6 text-gray-500 dark:text-gray-400"
+                        >
                           No applicants found.
                         </td>
                       </tr>
@@ -294,7 +381,6 @@ const AllApplicantsList = () => {
       )}
     </>
   );
-
 };
 
 export default AllApplicantsList;
