@@ -63,7 +63,6 @@ const ProductDetailPage = () => {
   const product = productItems.find((item) => item.id === Number(id));
   const currentProduct = product || productItems[0];
 
-  // Navigation for next/prev
   const currentIndex = productItems.indexOf(currentProduct);
   const prevProduct = productItems[(currentIndex - 1 + productItems.length) % productItems.length];
   const nextProduct = productItems[(currentIndex + 1) % productItems.length];
@@ -75,11 +74,11 @@ const ProductDetailPage = () => {
           <title>GreatHire - Product Not Found</title>
         </Helmet>
         <Navbar />
-        <div className="min-h-screen flex flex-col items-center justify-center">
-          <p className="text-xl font-bold">Product not found</p>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-950 transition-colors duration-300">
+          <p className="text-xl font-bold text-gray-900 dark:text-white">Product not found</p>
           <button
             onClick={() => navigate(-1)}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
           >
             Go Back
           </button>
@@ -93,15 +92,21 @@ const ProductDetailPage = () => {
     <>
       <Helmet>
         <title>GreatHire - {currentProduct.name}</title>
-        <meta
-          name="description"
-          content={currentProduct.description.slice(0, 160)}
-        />
+        <meta name="description" content={currentProduct.description.slice(0, 160)} />
       </Helmet>
 
       <Navbar />
 
+      <div className="min-h-screen w-full bg-white dark:bg-gray-950 transition-colors duration-300">
       <section className="max-w-6xl mx-auto px-4 py-12 mt-10">
+
+        {/* Category Badge */}
+        <div className="mb-4">
+          <span className="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+            {currentProduct.category}
+          </span>
+        </div>
+
         {/* Hero Image */}
         <div className="relative w-full h-96 sm:h-[400px] overflow-hidden rounded-xl shadow-lg">
           <img
@@ -113,23 +118,23 @@ const ProductDetailPage = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl font-bold mt-8 mb-4 text-gray-900">
+        <h1 className="text-4xl sm:text-5xl font-bold mt-8 mb-4 text-gray-900 dark:text-white">
           {currentProduct.name}
         </h1>
 
         {/* Description split into paragraphs */}
         {currentProduct.description.split(". ").map((para, index) => (
-          <p key={index} className="mt-4 text-gray-700 text-lg leading-relaxed">
+          <p key={index} className="mt-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
             {para}.
           </p>
         ))}
 
         {/* Key Highlights */}
-        <div className="mt-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-950/50 border-l-4 border-blue-600 dark:border-blue-400 rounded-lg shadow transition-colors duration-300">
+          <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-400 mb-2">
             Key Takeaways
           </h2>
-          <ul className="list-disc list-inside text-gray-800">
+          <ul className="list-disc list-inside text-gray-800 dark:text-gray-300 space-y-1">
             <li>Prepare thoroughly for interviews and research the company.</li>
             <li>Follow structured methods like STAR to answer questions.</li>
             <li>Post-interview follow-ups enhance professionalism and interest.</li>
@@ -141,29 +146,20 @@ const ProductDetailPage = () => {
         <div className="mt-10 flex justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-400 text-white rounded hover:bg-gray-500"
+            className="px-6 py-3 bg-gray-400 hover:bg-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded transition-colors duration-200"
           >
             Go Back
           </button>
-         
+
           <button
             onClick={() => navigate(`/ProductDetailPage/${nextProduct.id}`)}
-            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded transition-colors duration-200"
           >
             Next →
           </button>
         </div>
-
-        {/* Go Back Button */}
-        {/* <div className="mt-6 flex justify-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-400 text-white rounded hover:bg-gray-500"
-          >
-            Go Back
-          </button>
-        </div> */}
       </section>
+      </div>
 
       <Footer />
     </>
