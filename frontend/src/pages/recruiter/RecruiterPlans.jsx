@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet-async";
 import RecruiterFAQ from "../../components/RecruiterFAQ";
 import Navbar from "@/components/shared/Navbar";
 import DashboardNavigations from "./DashboardNavigations";
+import Footer from "@/components/shared/Footer";
 
 import {
   ORDER_API_END_POINT,
@@ -595,6 +596,7 @@ function RecruiterPlans() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
