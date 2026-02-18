@@ -468,10 +468,10 @@ export const getStatisticInRange = async (req, res) => {
     const totalRevenue =
       totalRevenueAgg.length > 0 ? totalRevenueAgg[0].total : 0;
 
-    const formattedRevenue = new Intl.NumberFormat("en", {
-      notation: "compact",
-      compactDisplay: "short",
-      maximumFractionDigits: 1,
+    const formattedRevenue = new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
     }).format(totalRevenue);
 
     const newUsers = await User.countDocuments({
@@ -520,6 +520,57 @@ export const getStatisticInRange = async (req, res) => {
     return res.status(500).json({
       message: "Error fetching admin statistics",
       error: error.message,
+    });
+  }
+};
+
+/* ======================================================
+   RECENT PLAN PURCHASES
+====================================================== */
+export const getRecentPurchases = async (req, res) => {
+  try {
+    const allPurchases = await Revenue.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    console.log(`Total purchases found: ${allPurchases.length}`);
+    if (allPurchases.length > 0) {
+      console.log('Latest purchase date:', allPurchases[0].createdAt);
+      console.log('Oldest purchase date:', allPurchases[allPurchases.length - 1].createdAt);
+    }
+
+    const purchases = allPurchases.map((purchase) => {
+      const now = new Date();
+      const diffMs = now - new Date(purchase.createdAt);
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      
+      let timeAgo;
+      if (diffMins < 60) timeAgo = `${diffMins} min ago`;
+      else if (diffHours < 24) timeAgo = `${diffHours}h ago`;
+      else timeAgo = `${diffDays}d ago`;
+
+      return {
+        userName: purchase.userDetails?.userName || "N/A",
+        email: purchase.userDetails?.email || "N/A",
+        phoneNumber: purchase.userDetails?.phoneNumber || "N/A",
+        companyName: purchase.companyName || "N/A",
+        planName: purchase.itemDetails?.itemName || "N/A",
+        planType: purchase.itemDetails?.itemType || "N/A",
+        price: purchase.itemDetails?.price || 0,
+        timeAgo,
+        date: new Date(purchase.createdAt).toLocaleDateString('en-IN'),
+        time: new Date(purchase.createdAt).toLocaleTimeString('en-IN'),
+      };
+    });
+
+    return res.status(200).json({ success: true, purchases, total: purchases.length });
+  } catch (error) {
+    console.error("Error fetching recent purchases:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };

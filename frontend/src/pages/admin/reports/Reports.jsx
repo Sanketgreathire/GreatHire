@@ -309,6 +309,11 @@ ${csvUrl}
   const [selectedRange, setSelectedRange] = useState(7);
   const [loading, setLoading] = useState(false);
   const [statsData, setStatsData] = useState(null);
+  const [recentPurchases, setRecentPurchases] = useState([]);
+  const [purchasePage, setPurchasePage] = useState(1);
+  const [showAllPurchases, setShowAllPurchases] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const PURCHASES_PER_PAGE = 20;
   const csvData = statsData
   ? [
       {
@@ -329,6 +334,23 @@ ${csvUrl}
     return Number(((statsData.shortlistedApplications * 100) / statsData.totalApplications).toFixed(2));
   }, [statsData]);
 
+  const filteredPurchases = useMemo(() => {
+    if (!searchQuery) return recentPurchases;
+    const query = searchQuery.toLowerCase();
+    return recentPurchases.filter(p => 
+      p.userName?.toLowerCase().includes(query) ||
+      p.email?.toLowerCase().includes(query) ||
+      p.phoneNumber?.toLowerCase().includes(query) ||
+      p.companyName?.toLowerCase().includes(query) ||
+      p.planName?.toLowerCase().includes(query)
+    );
+  }, [recentPurchases, searchQuery]);
+
+  const displayedPurchases = useMemo(() => {
+    const purchases = showAllPurchases ? filteredPurchases : filteredPurchases.slice(0, 8);
+    return purchases;
+  }, [filteredPurchases, showAllPurchases]);
+
   const applicationStats = useMemo(() => [
     { name: "Shortlisted", value: statsData?.shortlistedApplications || 0, color: "#00b894" },
     { name: "Pending", value: statsData?.pendingApplications || 0, color: "#fdcb6e" },
@@ -339,7 +361,7 @@ ${csvUrl}
     setLoading(true);
     try {
       const response = await axios.get(`${ADMIN_STAT_API_END_POINT}/getState-in-range`, {
-        params: { year: selectedYear, range: selectedRange },
+        params: { year: selectedYear, range: selectedRange, _t: Date.now() },
         withCredentials: true,
       });
       if (response?.data?.success) setStatsData(response.data.stats);
@@ -350,9 +372,38 @@ ${csvUrl}
     }
   };
 
+  const fetchRecentPurchases = async () => {
+    try {
+      const timestamp = new Date().getTime();
+      const response = await axios.get(`${ADMIN_STAT_API_END_POINT}/recent-purchases`, {
+        params: { _t: timestamp },
+        withCredentials: true,
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (response?.data?.success) {
+        console.log('Fetched purchases:', response.data.purchases.length, 'Latest:', response.data.purchases[0]);
+        setRecentPurchases(response.data.purchases);
+        setPurchasePage(1);
+      }
+    } catch (error) {
+      console.error("Error fetching recent purchases:", error);
+    }
+  };
+
+  const handleApplyFilters = () => {
+    fetchStatistics();
+    fetchRecentPurchases();
+  };
+
   useEffect(() => {
     // fetch on mount if user exists
-    if (user) fetchStatistics();
+    if (user) {
+      fetchStatistics();
+      fetchRecentPurchases();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -397,7 +448,7 @@ ${csvUrl}
             range={selectedRange}
             onYearChange={(e) => setSelectedYear(Number(e.target.value))}
             onRangeChange={(e) => setSelectedRange(Number(e.target.value))}
-            onApply={fetchStatistics}
+            onApply={handleApplyFilters}
             loading={loading}
             isDarkMode={isDarkMode}
           />
@@ -418,7 +469,7 @@ ${csvUrl}
             [
               {
                 label: "Total Revenue",
-                value: `₹${statsData?.totalRevenue || 0}`,
+                value: statsData?.totalRevenue || "₹0",
                 icon: <DollarSign size={28} className="text-[#2563EB] dark:text-blue-400" />,
                 delta: deltas.revenue,
               },
@@ -481,12 +532,12 @@ ${csvUrl}
                       stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
                     />
                     <YAxis 
-                      tickFormatter={(v) => `₹${v}`} 
+                      tickFormatter={(v) => `₹${v.toLocaleString('en-IN')}`} 
                       tick={{ fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
                       stroke={isDarkMode ? "#4b5563" : "#e5e7eb"}
                     />
                     <Tooltip 
-                      formatter={(val) => `₹${val}`}
+                      formatter={(val) => [`₹${val.toLocaleString('en-IN')}`, 'Revenue']}
                       contentStyle={{
                         backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
                         border: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
@@ -646,6 +697,101 @@ ${csvUrl}
                 </div>
               </div>
             </div>
+          </Card>
+        </section>
+
+        {/* Recent Plan Purchases */}
+        <section className="mt-8">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 transition-colors">
+            <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  All Plan Purchases
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {showAllPurchases ? `Showing all ${filteredPurchases.length} purchases` : `Showing ${Math.min(8, filteredPurchases.length)} of ${recentPurchases.length} purchases`}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Search by name, email, phone, company..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 sm:w-64 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <Button
+                  size="sm"
+                  onClick={fetchRecentPurchases}
+                  className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-gray-700">
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Recruiter</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Company</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Plan</th>
+                    <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</th>
+                    <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedPurchases.length > 0 ? (
+                    displayedPurchases.map((purchase, idx) => (
+                      <tr key={idx} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">{purchase.userName}</td>
+                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{purchase.email}</td>
+                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{purchase.phoneNumber}</td>
+                        <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{purchase.companyName}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">{purchase.planName}</td>
+                        <td className="py-3 px-4 text-sm text-right font-medium text-green-600 dark:text-green-400">
+                          ₹{purchase.price.toLocaleString('en-IN')}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-right text-gray-500 dark:text-gray-400">
+                          <div>{purchase.date}</div>
+                          <div className="text-xs">{purchase.timeAgo}</div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="py-8 text-center text-gray-400 dark:text-gray-500">
+                        No purchases found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {!showAllPurchases && filteredPurchases.length > 8 && (
+              <div className="mt-4 text-center">
+                <Button
+                  onClick={() => setShowAllPurchases(true)}
+                  className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 px-6 py-2"
+                >
+                  See More ({filteredPurchases.length - 8} more purchases)
+                </Button>
+              </div>
+            )}
+            {showAllPurchases && filteredPurchases.length > 8 && (
+              <div className="mt-4 text-center">
+                <Button
+                  onClick={() => setShowAllPurchases(false)}
+                  className="bg-gray-600 dark:bg-gray-500 text-white hover:bg-gray-700 dark:hover:bg-gray-600 px-6 py-2"
+                >
+                  Show Less
+                </Button>
+              </div>
+            )}
           </Card>
         </section>
       </div>
