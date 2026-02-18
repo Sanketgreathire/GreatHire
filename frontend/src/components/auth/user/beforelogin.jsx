@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Users, Target, Briefcase, Menu, X, Search, ExternalLink, Star, TrendingUp, Zap, Shield } from 'lucide-react';
+import { Users, Target, Briefcase, Menu, X, Search, ExternalLink, Star, TrendingUp, Zap, Shield, Moon, Sun } from 'lucide-react';
 import Footer from "@/components/shared/Footer";
 import { useNavigate, NavLink, Link } from "react-router-dom";
 import JobsHiringSlider from "./JobSlider";
@@ -16,6 +16,25 @@ const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark' ||
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+
+  // Apply dark mode class to <html> element
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   const navLinks = [
     { id: 'home', label: 'Home', path: '/' },
@@ -57,7 +76,7 @@ const GreatHireLanding = () => {
       animation: contact,
       path: "/contact",
       content:
-        "Have questions or want to collaborate with us? Reach out to GreatHire through our FAQs, support phone number, or email for quick assistance. You can also fill out the contact form, and our team will get back to you within 24 hours. We’re here to help and look forward to",
+        "Have questions or want to collaborate with us? Reach out to GreatHire through our FAQs, support phone number, or email for quick assistance. You can also fill out the contact form, and our team will get back to you within 24 hours. We're here to help and look forward to",
     },
   ];
 
@@ -83,14 +102,15 @@ const GreatHireLanding = () => {
       </Helmet>
 
       <div className="[&_.hide-section]:hidden">
-        <div className="w-full min-h-screen bg-white">
+        <div className="w-full min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+
           {/* Fixed Navbar */}
-          <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
+          <nav className="fixed top-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
             <div className="w-full px-6 py-3">
               <div className="flex items-center justify-between w-full">
                 <Link to="/" className="cursor-pointer">
                   <div className="flex items-center">
-                    <h1 className="text-4xl font-bold text-black whitespace-nowrap">
+                    <h1 className="text-4xl font-bold text-black dark:text-white whitespace-nowrap">
                       Great<span className="text-blue-600">Hire</span>
                     </h1>
                   </div>
@@ -104,18 +124,27 @@ const GreatHireLanding = () => {
                       <button
                         key={link.id}
                         onClick={() => { navigate(link.path); window.scrollTo(0, 0) }}
-                        className="text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg text-black hover:text-blue-600 hover:bg-blue-50"
+                        className="text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg text-black dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                       >
                         {link.label}
                       </button>
                     ))}
                   </div>
 
+                  {/* Dark Mode Toggle */}
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 bg-transparent text-gray-700 dark:text-white hover:scale-110 transition-all"
+                    aria-label="Toggle dark mode"
+                  >
+                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                  </button>
+
                   {/* Login Buttons */}
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => navigate("/recruiter-login")}
-                      className="px-5 py-2.5 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all text-sm font-semibold"
+                      className="px-5 py-2.5 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all text-sm font-semibold"
                     >
                       Recruiter Login
                     </button>
@@ -128,19 +157,27 @@ const GreatHireLanding = () => {
                   </div>
                 </div>
 
-                {/* MOBILE MENU BUTTON */}
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden p-2 text-gray-900"
-                >
-                  {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-
+                {/* MOBILE: Dark toggle + Menu button */}
+                <div className="lg:hidden flex items-center gap-2">
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 bg-transparent text-gray-700 dark:text-white hover:scale-110 transition-all"
+                    aria-label="Toggle dark mode"
+                  >
+                    {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+                  </button>
+                  <button
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    className="p-2 text-gray-900 dark:text-white"
+                  >
+                    {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                  </button>
+                </div>
               </div>
 
               {/* MOBILE MENU */}
               {mobileMenuOpen && (
-                <div className="lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
+                <div className="lg:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                   <div className="flex flex-col gap-3">
                     {navLinks.map((link) => (
                       <button
@@ -148,16 +185,23 @@ const GreatHireLanding = () => {
                         onClick={() => {
                           navigate(link.path);
                           window.scrollTo(0, 0);
+                          setMobileMenuOpen(false);
                         }}
-                        className="text-left py-2 px-3 rounded text-gray-700 hover:text-blue-600"
+                        className="text-left py-2 px-3 rounded text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                       >
                         {link.label}
                       </button>
                     ))}
-                    <button className="mt-3 px-4 py-2 text-blue-600 border border-blue-600 rounded-lg" onClick={() => navigate('/recruiter-login')}>
+                    <button
+                      className="mt-3 px-4 py-2 text-blue-600 dark:text-blue-400 border border-blue-600 dark:border-blue-400 rounded-lg"
+                      onClick={() => navigate('/recruiter-login')}
+                    >
                       Recruiter Login
                     </button>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold" onClick={() => navigate('/jobseeker-login')}>
+                    <button
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold"
+                      onClick={() => navigate('/jobseeker-login')}
+                    >
                       Jobseeker Login
                     </button>
                   </div>
@@ -167,13 +211,13 @@ const GreatHireLanding = () => {
           </nav>
 
 
-          {/* HOME SECTION - Ultra Modern Design */}
-          <section id="home" className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-gray-900 relative overflow-hidden">
+          {/* HOME SECTION */}
+          <section id="home" className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300">
             {/* Animated Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-              <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-              <div className="absolute top-40 -right-20 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-              <div className="absolute -bottom-20 left-1/3 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+              <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-400 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
+              <div className="absolute top-40 -right-20 w-96 h-96 bg-purple-400 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+              <div className="absolute -bottom-20 left-1/3 w-96 h-96 bg-pink-400 dark:bg-pink-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
             </div>
 
             <div className="container mx-auto px-4 py-8 relative z-10">
@@ -182,14 +226,14 @@ const GreatHireLanding = () => {
                 {/* Left Column - Text */}
                 <div className="space-y-6 animate-fade-in-up">
 
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
                     Find Your
                     <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-gradient">
                       Dream Career
                     </span>
                   </h1>
-                  <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                    Join <span className="font-bold text-blue-600">6 Crore+</span> job seekers and explore <span className="font-bold text-purple-600">10,000+</span> new opportunities daily across India
+                  <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Join <span className="font-bold text-blue-600 dark:text-blue-400">6 Crore+</span> job seekers and explore <span className="font-bold text-purple-600 dark:text-purple-400">10,000+</span> new opportunities daily across India
                   </p>
 
                   {/* Two Cards - Mobile Only */}
@@ -197,7 +241,7 @@ const GreatHireLanding = () => {
                     {/* Candidate Card */}
                     <button
                       onClick={() => navigate('/signup')}
-                      className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+                      className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
                     >
                       <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,15 +249,15 @@ const GreatHireLanding = () => {
                         </svg>
                       </div>
                       <div className="text-center">
-                        <h3 className="font-bold text-lg text-gray-800">I'm a Candidate</h3>
-                        <p className="text-sm text-gray-600 mt-1">Find Jobs</p>
+                        <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">I'm a Candidate</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Find Jobs</p>
                       </div>
                     </button>
 
                     {/* Recruiter Card */}
                     <button
                       onClick={() => navigate('/recruiter/signup')}
-                      className="bg-gradient-to-br from-purple-50 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
+                      className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-950 dark:to-pink-900 border-2 border-purple-200 dark:border-purple-700 rounded-2xl p-6 hover:shadow-xl transition-all transform hover:scale-105 flex flex-col items-center gap-3 group"
                     >
                       <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,8 +265,8 @@ const GreatHireLanding = () => {
                         </svg>
                       </div>
                       <div className="text-center">
-                        <h3 className="font-bold text-lg text-gray-800">I'm a Recruiter</h3>
-                        <p className="text-sm text-gray-600 mt-1">Post Jobs</p>
+                        <h3 className="font-bold text-lg text-gray-800 dark:text-gray-100">I'm a Recruiter</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Post Jobs</p>
                       </div>
                     </button>
                   </div>
@@ -231,15 +275,15 @@ const GreatHireLanding = () => {
                   <div className="flex gap-8 pt-6">
                     <div className="group">
                       <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform">10K+</h3>
-                      <p className="text-gray-600 text-sm font-medium mt-1">Daily Jobs</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mt-1">Daily Jobs</p>
                     </div>
                     <div className="group">
                       <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform">6Cr+</h3>
-                      <p className="text-gray-600 text-sm font-medium mt-1">Job Seekers</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mt-1">Job Seekers</p>
                     </div>
                     <div className="group">
                       <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform">900+</h3>
-                      <p className="text-gray-600 text-sm font-medium mt-1">Cities</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mt-1">Cities</p>
                     </div>
                   </div>
                 </div>
@@ -249,47 +293,47 @@ const GreatHireLanding = () => {
                   <div className="relative scale-90">
                     {/* Main Card Container */}
                     <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-1 shadow-2xl">
-                      <div className="bg-white rounded-[2.3rem] p-6">
+                      <div className="bg-white dark:bg-gray-900 rounded-[2.3rem] p-6">
                         {/* Floating Job Cards */}
                         <div className="space-y-4">
-                          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all animate-float border-2 border-blue-200">
+                          <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all animate-float border-2 border-blue-200 dark:border-blue-700">
                             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                               <Briefcase className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="font-bold text-gray-900 text-base">Software Developer</p>
-                              <p className="text-sm text-gray-600 font-medium">TCS • Bangalore</p>
-                              <p className="text-xs text-blue-600 font-semibold mt-1">₹12-18 LPA</p>
+                              <p className="font-bold text-gray-900 dark:text-white text-base">Software Developer</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">TCS • Bangalore</p>
+                              <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">₹12-18 LPA</p>
                             </div>
-                            <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">
+                            <div className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-xs font-bold">
                               New
                             </div>
                           </div>
 
-                          <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all ml-6 animate-float-delay border-2 border-purple-200">
+                          <div className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all ml-6 animate-float-delay border-2 border-purple-200 dark:border-purple-700">
                             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                               <Users className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="font-bold text-gray-900 text-base">HR Manager</p>
-                              <p className="text-sm text-gray-600 font-medium">Infosys • Mumbai</p>
-                              <p className="text-xs text-purple-600 font-semibold mt-1">₹8-15 LPA</p>
+                              <p className="font-bold text-gray-900 dark:text-white text-base">HR Manager</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Infosys • Mumbai</p>
+                              <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-1">₹8-15 LPA</p>
                             </div>
-                            <div className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold">
+                            <div className="bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded-full text-xs font-bold">
                               Hot
                             </div>
                           </div>
 
-                          <div className="bg-gradient-to-r from-pink-50 to-pink-100 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all animate-float-slow border-2 border-pink-200">
+                          <div className="bg-gradient-to-r from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900 rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all animate-float-slow border-2 border-pink-200 dark:border-pink-700">
                             <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
                               <Target className="w-6 h-6 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="font-bold text-gray-900 text-base">Marketing Lead</p>
-                              <p className="text-sm text-gray-600 font-medium">Flipkart • Delhi</p>
-                              <p className="text-xs text-pink-600 font-semibold mt-1">₹15-25 LPA</p>
+                              <p className="font-bold text-gray-900 dark:text-white text-base">Marketing Lead</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Flipkart • Delhi</p>
+                              <p className="text-xs text-pink-600 dark:text-pink-400 font-semibold mt-1">₹15-25 LPA</p>
                             </div>
-                            <div className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-bold">
+                            <div className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-xs font-bold">
                               Apply
                             </div>
                           </div>
@@ -298,9 +342,9 @@ const GreatHireLanding = () => {
                     </div>
 
                     {/* Floating Badge */}
-                    <div className="absolute -top-4 -right-4 bg-white rounded-2xl p-3 shadow-2xl border-4 border-yellow-400 animate-bounce-slow">
+                    <div className="absolute -top-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-2xl border-4 border-yellow-400 animate-bounce-slow">
                       <Star className="w-6 h-6 text-yellow-500" fill="currentColor" />
-                      <p className="text-xs font-bold text-gray-900 mt-1">Verified</p>
+                      <p className="text-xs font-bold text-gray-900 dark:text-white mt-1">Verified</p>
                     </div>
                   </div>
                 </div>
@@ -314,25 +358,25 @@ const GreatHireLanding = () => {
               {/* Premium Features Grid */}
               <div className="mb-10">
                 <div className="text-center mb-8 md:mb-16 px-4 md:px-0">
-                  <h2 className="text-3xl lg:text-5xl font-black text-gray-900 mb-4">
+                  <h2 className="text-3xl lg:text-5xl font-black text-gray-900 dark:text-white mb-4">
                     Why Choose <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">GreatHire</span>?
                   </h2>
-                  <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                     India's most trusted job platform with cutting-edge features
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                   {[
-                    { icon: <TrendingUp />, title: "Latest Jobs", desc: "10K+ fresh opportunities every day", gradient: "from-blue-500 to-cyan-500", bg: "from-blue-50 to-cyan-50" },
-                    { icon: <Zap />, title: "Easy Apply", desc: "One-click instant applications", gradient: "from-purple-500 to-pink-500", bg: "from-purple-50 to-pink-50" },
-                    { icon: <Target />, title: "Smart Match", desc: "AI-powered job recommendations", gradient: "from-pink-500 to-red-500", bg: "from-pink-50 to-red-50" },
-                    { icon: <Shield />, title: "Verified Companies", desc: "500+ trusted hiring partners", gradient: "from-green-500 to-emerald-500", bg: "from-green-50 to-emerald-50" }
+                    { icon: <TrendingUp />, title: "Latest Jobs", desc: "10K+ fresh opportunities every day", gradient: "from-blue-500 to-cyan-500", bg: "from-blue-50 to-cyan-50", darkBg: "dark:from-blue-950 dark:to-cyan-950" },
+                    { icon: <Zap />, title: "Easy Apply", desc: "One-click instant applications", gradient: "from-purple-500 to-pink-500", bg: "from-purple-50 to-pink-50", darkBg: "dark:from-purple-950 dark:to-pink-950" },
+                    { icon: <Target />, title: "Smart Match", desc: "AI-powered job recommendations", gradient: "from-pink-500 to-red-500", bg: "from-pink-50 to-red-50", darkBg: "dark:from-pink-950 dark:to-red-950" },
+                    { icon: <Shield />, title: "Verified Companies", desc: "500+ trusted hiring partners", gradient: "from-green-500 to-emerald-500", bg: "from-green-50 to-emerald-50", darkBg: "dark:from-green-950 dark:to-emerald-950" }
                   ].map((feature, i) => (
                     <div key={i} className="group relative">
                       <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-3xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300`}></div>
 
                       {/* CARD */}
-                      <div className={`relative bg-gradient-to-br ${feature.bg} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-white hover:-translate-y-3`}>
+                      <div className={`relative bg-gradient-to-br ${feature.bg} ${feature.darkBg} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-white dark:group-hover:border-gray-700 hover:-translate-y-3`}>
 
                         {/* MOBILE VIEW */}
                         <div className="flex md:hidden items-start gap-4">
@@ -341,24 +385,24 @@ const GreatHireLanding = () => {
                           </div>
 
                           <div>
-                            <h3 className="text-base font-bold text-gray-900 mb-1">
+                            <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">
                               {feature.title}
                             </h3>
-                            <p className="text-sm text-gray-600 leading-relaxed">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                               {feature.desc}
                             </p>
                           </div>
                         </div>
 
-                        {/* LAPTOP VIEW (UNCHANGED) */}
+                        {/* LAPTOP VIEW */}
                         <div className="hidden md:block">
                           <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg`}>
                             <div className="text-white">{feature.icon}</div>
                           </div>
-                          <h3 className="text-xl font-bold mb-3 text-gray-900">
+                          <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                             {feature.title}
                           </h3>
-                          <p className="text-sm text-gray-600 leading-relaxed">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                             {feature.desc}
                           </p>
                         </div>
@@ -369,7 +413,7 @@ const GreatHireLanding = () => {
                 </div>
               </div>
 
-              {/* the cards and carousel */}
+              {/* Tabs and Carousel */}
               <div className="max-w-7xl mx-auto px-6 py-4 mt-4">
                 {/* Tabs Header */}
                 <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-4 sm:mb-8">
@@ -378,9 +422,9 @@ const GreatHireLanding = () => {
                       key={tab.id}
                       onClick={() => setIndex(i)}
                       className={`px-8 py-3 rounded-full font-semibold transition-all duration-300
-          ${index === i
+                        ${index === i
                           ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
-                          : "text-gray-700 hover:text-slate-900"
+                          : "text-gray-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
                         }`}
                     >
                       {tab.title}
@@ -397,7 +441,7 @@ const GreatHireLanding = () => {
                     {tabs.map((tab) => (
                       <div key={tab.id} className="min-w-full px-6">
                         {/* CARD */}
-                        <div className="relative bg-gradient-to-r from-purple-300 to-purple-350 rounded-3xl shadow-xl p-10 h-72 flex flex-col md:flex-row items-center gap-10">
+                        <div className="relative bg-gradient-to-r from-purple-300 to-purple-350 dark:from-purple-900 dark:to-purple-800 rounded-3xl shadow-xl p-10 h-72 flex flex-col md:flex-row items-center gap-10">
 
                           {/* Image */}
                           <div className="flex-shrink-0">
@@ -411,7 +455,7 @@ const GreatHireLanding = () => {
 
                           {/* Text */}
                           <div className="flex-1">
-                            <p className="text-lg text-black-900 leading-relaxed">
+                            <p className="text-lg text-gray-900 dark:text-gray-100 leading-relaxed">
                               {tab.content}
                             </p>
                           </div>
@@ -439,25 +483,22 @@ const GreatHireLanding = () => {
                       key={i}
                       onClick={() => setIndex(i)}
                       className={`w-3 h-3 rounded-full transition-all
-                        ${index === i ? "bg-blue-600" : "bg-gray-300"}`}
+                        ${index === i ? "bg-blue-600 dark:bg-blue-400" : "bg-gray-300 dark:bg-gray-600"}`}
                     />
                   ))}
                 </div>
               </div>
 
-              {/* Recruiter Plans Section */}
-              {/* <RecruiterPlansHome /> */}
-
               {/* Compact Testimonials Section */}
               <CompactTestimonials />
 
-              {/* Ultra Premium CTA Section */}
+              {/* CTA Section */}
               <div className="mt-3">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] blur-2xl opacity-30"></div>
                   <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-6 sm:p-10 md:p-16 shadow-2xl overflow-hidden">
-                    <div className="absolute top-0 right-0  w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10 -mr-24 -mt-24 sm:-mr-36 sm:-mt-36 md:-mr-48 md:-mt-48"></div>
-                    <div className="absolute bottom-0 left-0  w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10  -ml-24 -mb-24 sm:-ml-36 sm:-mb-36 md:-ml-48 md:-mb-48"></div>
+                    <div className="absolute top-0 right-0 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10 -mr-24 -mt-24 sm:-mr-36 sm:-mt-36 md:-mr-48 md:-mt-48"></div>
+                    <div className="absolute bottom-0 left-0 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-white rounded-full opacity-10 -ml-24 -mb-24 sm:-ml-36 sm:-mb-36 md:-ml-48 md:-mb-48"></div>
 
                     <div className="relative z-10 text-center">
                       <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 sm:mb-6">
@@ -473,7 +514,7 @@ const GreatHireLanding = () => {
                             navigate("/signup-choice");
                             window.scrollTo(0, 0);
                           }}
-                          className="group px-6 py-4 sm:px-10 sm:py-5  bg-white text-blue-600 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                          className="group px-6 py-4 sm:px-10 sm:py-5 bg-white text-blue-600 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
                         >
                           <span>Create Free Account</span>
                           <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -511,58 +552,23 @@ const GreatHireLanding = () => {
             50% { background-position: 100% 50%; }
           }
           @keyframes fade-in-up {
-            from {
-              opacity: 0;
-              transform: translateY(30px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
           }
           @keyframes fade-in-right {
-            from {
-              opacity: 0;
-              transform: translateX(-30px);
-            }
-            to {
-              opacity: 1;
-              transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
           }
-          .animate-float {
-            animation: float 3s ease-in-out infinite;
-          }
-          .animate-float-delay {
-            animation: float 3s ease-in-out infinite;
-            animation-delay: 1s;
-          }
-          .animate-float-slow {
-            animation: float 4s ease-in-out infinite;
-            animation-delay: 2s;
-          }
-          .animate-blob {
-            animation: blob 7s infinite;
-          }
-          .animation-delay-2000 {
-            animation-delay: 2s;
-          }
-          .animation-delay-4000 {
-            animation-delay: 4s;
-          }
-          .animate-gradient {
-            background-size: 200% 200%;
-            animation: gradient 3s ease infinite;
-          }
-          .animate-fade-in-up {
-            animation: fade-in-up 1s ease-out;
-          }
-          .animate-fade-in-right {
-            animation: fade-in-right 1s ease-out;
-          }
-          .animate-bounce-slow {
-            animation: bounce 2s infinite;
-          }
+          .animate-float { animation: float 3s ease-in-out infinite; }
+          .animate-float-delay { animation: float 3s ease-in-out infinite; animation-delay: 1s; }
+          .animate-float-slow { animation: float 4s ease-in-out infinite; animation-delay: 2s; }
+          .animate-blob { animation: blob 7s infinite; }
+          .animation-delay-2000 { animation-delay: 2s; }
+          .animation-delay-4000 { animation-delay: 4s; }
+          .animate-gradient { background-size: 200% 200%; animation: gradient 3s ease infinite; }
+          .animate-fade-in-up { animation: fade-in-up 1s ease-out; }
+          .animate-fade-in-right { animation: fade-in-right 1s ease-out; }
+          .animate-bounce-slow { animation: bounce 2s infinite; }
         `}</style>
           </section>
           <Footer />
