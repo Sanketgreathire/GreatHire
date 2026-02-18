@@ -2922,10 +2922,7 @@ color: rgb(160, 67, 246);
 
             {/* Description Text */}
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-6 sm:mb-8 max-w-4xl">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Cupiditate atque aliquid voluptates voluptatum facere delectus
-              deserunt alias, animi sapiente! Aperiam nemo aliquid aut. Tempora,
-              odit veritatis? Atque quia vel autem?
+              Connect with a network of forward-thinking professionals and unlock opportunities tailored to your skills and ambitions. Be the first to hear about new roles, industry insights, and career-defining moments — all in one place.
             </p>
 
             {/* Call to Action Button */}
@@ -2939,6 +2936,8 @@ color: rgb(160, 67, 246);
           </div>
         </div>
       </section>
+
+      <Footer />
     </>
   );
 }

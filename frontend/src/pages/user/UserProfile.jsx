@@ -603,8 +603,8 @@ const UserProfile = () => {
           </div>
 
           {/* Applied Jobs Section */}
-          <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8 ">
-            <h2 className="text-lg text-center underline font-semibold border-b pb-2 text-gray-800 dark:text-gray-100">
+          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-8 p-8 ">
+            <h2 className="text-lg text-center underline font-semibold border-b pb-2 text-gray-800 dark:text-white">
               APPLIED JOBS
             </h2>
             <div className="mt-4">

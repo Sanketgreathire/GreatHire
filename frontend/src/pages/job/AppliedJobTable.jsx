@@ -26,9 +26,9 @@ import { Helmet } from "react-helmet-async";
 
 // Define status styles for different job application statuses
 const statusStyles = {
-  Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100",
-  Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
-  Rejected: "bg-red-200 text-red-700 hover:bg-red-100",
+  Shortlisted: "bg-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900 dark:text-green-300 dark:hover:bg-green-800",
+  Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800",
+  Rejected: "bg-red-200 text-red-700 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800",
 };
 
 const AppliedJobTable = () => {
@@ -74,7 +74,7 @@ const AppliedJobTable = () => {
 
   // Display loading message while data is being fetched
   if (loading) {
-    return <p className="text-center text-gray-600 ">Loading applied jobs...</p>;
+    return <p className="text-center text-gray-600 dark:text-gray-300">Loading applied jobs...</p>;
   }
 
   // Pagination logic
@@ -178,17 +178,17 @@ const AppliedJobTable = () => {
       />
     </Helmet>
 
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg text-black">
+    <div className="p-5 bg-gray-50 dark:bg-gray-950 text-black dark:text-white transition-colors duration-300 shadow-md rounded-lg">
       {/* Job Applications Table */}
-      <Table className="w-full border-collapse border border-gray-200">
+      <Table className="w-full border-collapse bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-black/40 transition-colors duration-300">
 
         {/* Table Header */}
-        <TableHeader className="bg-gray-50">
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Job Role</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead className="text-right">Status</TableHead>
+        <TableHeader className="bg-gray-50 dark:bg-gray-800">
+          <TableRow className="border-b border-gray-200 dark:border-gray-700">
+            <TableHead className="text-gray-700 dark:text-gray-300">Date</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Job Role</TableHead>
+            <TableHead className="text-gray-700 dark:text-gray-300">Company</TableHead>
+            <TableHead className="text-right text-gray-700 dark:text-gray-300">Status</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -198,21 +198,21 @@ const AppliedJobTable = () => {
             currentJobs.map((job, index) => (
               <TableRow
                 key={index}
-                className="transition duration-150 cursor-pointer"
+                className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
                 onClick={() => handleRowClick(job.applicant, job.job)}
               >
-                <TableCell className="text-gray-700">
+                <TableCell className="text-gray-700 dark:text-gray-300">
                   {new Date(job.createdAt).toLocaleDateString()}
                 </TableCell>
-                <TableCell className="text-gray-800 font-medium">
+                <TableCell className="text-gray-800 dark:text-white font-medium">
                   {job.job?.jobDetails?.title || "N/A"}
                 </TableCell>
-                <TableCell className="text-gray-800 font-medium">
+                <TableCell className="text-gray-800 dark:text-white font-medium">
                   {job.job?.company?.companyName || "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
                   <Badge
-                    className={`px-2 py-1 rounded-md ${statusStyles[job.status] || "bg-gray-200 text-gray-300"
+                    className={`px-2 py-1 rounded-md ${statusStyles[job.status] || "bg-gray-200 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                       }`}
                   >
                     {job.status || "Pending"}
@@ -222,7 +222,7 @@ const AppliedJobTable = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-gray-500">
+              <TableCell colSpan={4} className="text-center text-gray-500 dark:text-gray-400">
                 No applications found.
               </TableCell>
             </TableRow>
@@ -232,18 +232,18 @@ const AppliedJobTable = () => {
 
 
       {/* Pagination Controls */}
-      <div className="flex justify-between mt-4 p-2 rounded-md dark:bg-white">
+      <div className="flex justify-between mt-4 p-2 rounded-md bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className={`px-4 py-2 rounded ${currentPage === 1
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-700 text-gray-100 hover:bg-blue-800"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${currentPage === 1
+              ? "bg-gray-300 text-gray-500 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed"
+              : "bg-blue-700 text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             }`}
         >
           Previous
         </button>
-        <span className="text-gray-400">
+        <span className="text-gray-600 dark:text-gray-300">
           Page {currentPage} of {totalPages}
         </span>
         <button
@@ -251,9 +251,9 @@ const AppliedJobTable = () => {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 rounded ${currentPage === totalPages
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-blue-700 text-white hover:bg-blue-800"
+          className={`px-4 py-2 rounded transition-colors duration-200 ${currentPage === totalPages
+              ? "bg-gray-300 text-gray-500 dark:bg-gray-800 dark:text-gray-500 cursor-not-allowed"
+              : "bg-blue-700 text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             }`}
         >
           Next
