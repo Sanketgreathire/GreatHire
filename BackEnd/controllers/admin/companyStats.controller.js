@@ -34,11 +34,11 @@ export const companyStats = async (req, res) => {
 // return all company list to admin
 export const companyList = async (req, res) => {
   try {
-    // Fetch all companies with only the selected fields
+    // Fetch all companies with only the selected fields, sorted by createdAt descending (latest first)
     const companies = await Company.find(
       {},
       "companyName email adminEmail phone isActive"
-    );
+    ).sort({ createdAt: -1 });
 
     // Send the response with a success status
     res.status(200).json({ success: true, companies });

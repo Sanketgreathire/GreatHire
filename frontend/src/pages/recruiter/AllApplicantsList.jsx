@@ -278,6 +278,7 @@ const AllApplicantsList = () => {
             jobId={jobId}
             user={user}
             setApplicants={setApplicants}
+            shouldDeductCredit={false}
           />
         )
       ) : !company ? (

@@ -226,7 +226,11 @@ export const getRecruitersList = async (req, res) => {
                   date: "$createdAt",
                 },
               },
+              createdAt: 1,
             },
+          },
+          {
+            $sort: { createdAt: -1 }
           },
         ]);
 

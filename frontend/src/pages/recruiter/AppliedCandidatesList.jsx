@@ -269,6 +269,7 @@ const AppliedCandidatesList = () => {
             setApplicantDetailsModal={setApplicantDetailsModal}
             user={user}
             setApplicants={setApplicants}
+            shouldDeductCredit={false}
           />
         )}
       </div>

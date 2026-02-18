@@ -14,6 +14,7 @@ import {
   ORDER_API_END_POINT,
   VERIFICATION_API_END_POINT,
   COMPANY_API_END_POINT,
+  REVENUE_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { addJobPlan } from "@/redux/jobPlanSlice";
@@ -252,6 +253,21 @@ function RecruiterPlans() {
             if (companyRes?.data.success) {
               dispatch(addCompany(companyRes.data.company));
             }
+            
+            // Store revenue record
+            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+              itemDetails: {
+                itemType: "Job Plan",
+                itemName: plan.title,
+                price: plan.price,
+              },
+              companyName: company?.companyName,
+              userDetails: {
+                userName: user?.fullname,
+                email: user.emailId.email,
+                phoneNumber: user.phoneNumber.number,
+              },
+            });
             
             toast.success("Payment Successful");
             navigate("/recruiter/dashboard/home");

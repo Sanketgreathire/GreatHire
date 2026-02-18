@@ -20,16 +20,17 @@ const applicantDetails = ({
   jobId,
   user,
   setApplicants,
+  shouldDeductCredit = false, // New prop to control credit deduction
 }) => {
   const [loading, setLoading] = useState(0);
   const [creditDeducted, setCreditDeducted] = useState(false);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
 
-  // Deduct credit when viewing applicant details
+  // Deduct credit when viewing applicant details (only if shouldDeductCredit is true)
   useEffect(() => {
     const deductCredit = async () => {
-      if (creditDeducted || !company?._id) return;
+      if (!shouldDeductCredit || creditDeducted || !company?._id) return;
       
       try {
         const response = await axios.post(
@@ -51,7 +52,7 @@ const applicantDetails = ({
     };
 
     deductCredit();
-  }, [company, creditDeducted, dispatch, setApplicantDetailsModal]);
+  }, [company, creditDeducted, dispatch, setApplicantDetailsModal, shouldDeductCredit]);
 
   // Function to update the application status (Shortlisted or Rejected)
   const updateStatus = async (status) => {
