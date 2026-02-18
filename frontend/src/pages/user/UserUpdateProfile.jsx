@@ -318,228 +318,228 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   // Generate Resume PDF from entered details
   const generateResumePDF = () => {
-  // --- required fields (core) ---
-  const requiredFields = [
-    { field: "fullname", label: "Full Name" },
-    { field: "email", label: "Email" },
-    { field: "phoneNumber", label: "Phone Number" },
-    { field: "gender", label: "Gender" },
-    { field: "skills", label: "Skills" },
-    { field: "bio", label: "Profile Summary" },
-    { field: "city", label: "City" },
-    { field: "state", label: "State" },
-    { field: "country", label: "Country" },
-    { field: "selectedLanguages", label: "Known Languages" },
-  ];
+    // --- required fields (core) ---
+    const requiredFields = [
+      { field: "fullname", label: "Full Name" },
+      { field: "email", label: "Email" },
+      { field: "phoneNumber", label: "Phone Number" },
+      { field: "gender", label: "Gender" },
+      { field: "skills", label: "Skills" },
+      { field: "bio", label: "Profile Summary" },
+      { field: "city", label: "City" },
+      { field: "state", label: "State" },
+      { field: "country", label: "Country" },
+      { field: "selectedLanguages", label: "Known Languages" },
+    ];
 
-  const missingFields = [];
+    const missingFields = [];
 
-  // --- Normal field validation (defensive) ---
-  requiredFields.forEach(f => {
-    if (f.field === "selectedLanguages") {
-      if (!selectedLanguages || !Array.isArray(selectedLanguages) || selectedLanguages.length === 0) {
-        missingFields.push(f.label);
+    // --- Normal field validation (defensive) ---
+    requiredFields.forEach(f => {
+      if (f.field === "selectedLanguages") {
+        if (!selectedLanguages || !Array.isArray(selectedLanguages) || selectedLanguages.length === 0) {
+          missingFields.push(f.label);
+        }
+      } else {
+        const val = input?.[f.field];
+        if (!val || String(val).trim() === "") {
+          missingFields.push(f.label);
+        }
       }
-    } else {
-      const val = input?.[f.field];
-      if (!val || String(val).trim() === "") {
-        missingFields.push(f.label);
+    });
+
+    // --- Qualification / otherQualification ---
+    if (!input.qualification || String(input.qualification).trim() === "") {
+      missingFields.push("Qualification");
+    } else if (String(input.qualification) === "Others") {
+      if (!input.otherQualification || String(input.otherQualification).trim() === "") {
+        missingFields.push("Other Qualification");
       }
     }
-  });
 
-  // --- Qualification / otherQualification ---
-  if (!input.qualification || String(input.qualification).trim() === "") {
-    missingFields.push("Qualification");
-  } else if (String(input.qualification) === "Others") {
-    if (!input.otherQualification || String(input.otherQualification).trim() === "") {
-      missingFields.push("Other Qualification");
-    }
-  }
+    // --- Experience validation (use boolean hasExperience from UI) ---
+    if (hasExperience) {
+      if (!Array.isArray(experiences) || experiences.length === 0) {
+        missingFields.push("Experience (Please add at least one experience)");
+      } else {
+        experiences.forEach((exp, idx) => {
+          const requiredExpFields = [
+            { key: "jobProfile", label: "Job Profile" },
+            { key: "companyName", label: "Company Name" },
+            { key: "duration", label: "Duration" },
+            { key: "experienceDetails", label: "Experience Details" },
+          ];
 
-  // --- Experience validation (use boolean hasExperience from UI) ---
-  if (hasExperience) {
-    if (!Array.isArray(experiences) || experiences.length === 0) {
-      missingFields.push("Experience (Please add at least one experience)");
-    } else {
-      experiences.forEach((exp, idx) => {
-        const requiredExpFields = [
-          { key: "jobProfile", label: "Job Profile" },
-          { key: "companyName", label: "Company Name" },
-          { key: "duration", label: "Duration" },
-          { key: "experienceDetails", label: "Experience Details" },
-        ];
-
-        requiredExpFields.forEach(({ key, label }) => {
-          const v = exp?.[key];
-          if (!v || String(v).trim() === "") {
-            missingFields.push(`Experience ${idx + 1} - ${label}`);
-          }
+          requiredExpFields.forEach(({ key, label }) => {
+            const v = exp?.[key];
+            if (!v || String(v).trim() === "") {
+              missingFields.push(`Experience ${idx + 1} - ${label}`);
+            }
+          });
         });
-      });
+      }
     }
-  }
 
-  // --- If any missing fields, show error and stop ---
-  if (missingFields.length > 0) {
-    const unique = [...new Set(missingFields)];
-    toast.error(`Please fill in the following fields: ${unique.join(", ")}`);
-    console.log("Resume validation failed:", unique);
-    return;
-  }
-
-  // --- Create PDF ---
-  const doc = new jsPDF();
-  let y = 20;
-  const checkPageBreak = (yPos, extra = 20) => {
-    const pageHeight = doc.internal.pageSize.getHeight();
-    if (yPos + extra > pageHeight) {
-      doc.addPage();
-      return 20;
+    // --- If any missing fields, show error and stop ---
+    if (missingFields.length > 0) {
+      const unique = [...new Set(missingFields)];
+      toast.error(`Please fill in the following fields: ${unique.join(", ")}`);
+      console.log("Resume validation failed:", unique);
+      return;
     }
-    return yPos;
-  };
 
-  doc.setFont("helvetica", "normal");
+    // --- Create PDF ---
+    const doc = new jsPDF();
+    let y = 20;
+    const checkPageBreak = (yPos, extra = 20) => {
+      const pageHeight = doc.internal.pageSize.getHeight();
+      if (yPos + extra > pageHeight) {
+        doc.addPage();
+        return 20;
+      }
+      return yPos;
+    };
 
-  // Name
-  doc.setFontSize(26);
-  doc.setFont("helvetica", "bold");
-  doc.text((input.fullname || "Your Name").toUpperCase(), 20, y);
-  y += 12;
-
-  // Top job profile (only if user has experience)
-  if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
-    doc.setFontSize(14);
     doc.setFont("helvetica", "normal");
-    doc.text(String(experiences[0].jobProfile || "").toUpperCase(), 20, y);
-    y += 12;
-  } else {
-    y += 6;
-  }
 
-  // Divider
-  doc.setLineWidth(0.5);
-  doc.line(20, y, 190, y);
-  y += 14;
-
-  // Personal details
-  doc.setFontSize(16).setFont("helvetica", "bold");
-  doc.text("Personal Details", 20, y);
-  y += 10;
-  doc.setFontSize(12).setFont("helvetica", "normal");
-
-  const address = `${input.city || ""}, ${input.state || ""}, ${input.country || ""}${input.pincode && String(input.pincode).trim() ? " - " + input.pincode : ""}`;
-  const labels = ["Address", "Gender", "Email", "Phone", "Languages Known"];
-  const values = [
-    address,
-    input.gender || "",
-    input.email || "",
-    input.phoneNumber || "",
-    selectedLanguages && selectedLanguages.length ? selectedLanguages.join(", ") : "",
-  ];
-
-  const xLabel = 20, xColon = 65, xValue = 70;
-  for (let i = 0; i < labels.length; i++) {
+    // Name
+    doc.setFontSize(26);
     doc.setFont("helvetica", "bold");
-    doc.text(labels[i], xLabel, y);
-    doc.text(":", xColon, y);
-    doc.setFont("helvetica", "normal");
-    doc.text(values[i], xValue, y);
-    y += 8;
-  }
-  y += 4;
+    doc.text((input.fullname || "Your Name").toUpperCase(), 20, y);
+    y += 12;
 
-  // Divider
-  doc.line(20, y, 190, y);
-  y += 12;
+    // Top job profile (only if user has experience)
+    if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "normal");
+      doc.text(String(experiences[0].jobProfile || "").toUpperCase(), 20, y);
+      y += 12;
+    } else {
+      y += 6;
+    }
 
-  // Profile summary
-  y = checkPageBreak(y);
-  doc.setFontSize(16).setFont("helvetica", "bold");
-  doc.text("Profile Summary", 20, y);
-  y += 10;
-  doc.setFontSize(12).setFont("helvetica", "normal");
-  const bioLines = doc.splitTextToSize(String(input.bio || ""), 170);
-  bioLines.forEach(line => { doc.text(line, 20, y); y += 7; });
-  y += 5;
+    // Divider
+    doc.setLineWidth(0.5);
+    doc.line(20, y, 190, y);
+    y += 14;
 
-  // Divider
-  doc.line(20, y, 190, y);
-  y += 12;
-
-  // Experience section (only if hasExperience)
-  if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
-    y = checkPageBreak(y);
+    // Personal details
     doc.setFontSize(16).setFont("helvetica", "bold");
-    doc.text("Experience", 20, y);
+    doc.text("Personal Details", 20, y);
     y += 10;
     doc.setFontSize(12).setFont("helvetica", "normal");
 
-    experiences.forEach((exp, index) => {
-      y = checkPageBreak(y);
-      doc.setFont("helvetica", "bold").setFontSize(14);
-      const jobProfile = `${index + 1}. ${String(exp.jobProfile || "")}`;
-      doc.text(jobProfile, 20, y);
+    const address = `${input.city || ""}, ${input.state || ""}, ${input.country || ""}${input.pincode && String(input.pincode).trim() ? " - " + input.pincode : ""}`;
+    const labels = ["Address", "Gender", "Email", "Phone", "Languages Known"];
+    const values = [
+      address,
+      input.gender || "",
+      input.email || "",
+      input.phoneNumber || "",
+      selectedLanguages && selectedLanguages.length ? selectedLanguages.join(", ") : "",
+    ];
 
-      const duration = exp.duration ? `(${String(exp.duration).trim()})` : "";
-      doc.text(duration, 190, y, { align: "right" });
-
-      y += 8;
-
-      doc.setFont("helvetica", "bold").setFontSize(12);
-      doc.text(String(exp.companyName || ""), 25, y);
-      y += 10;
-
-      y = checkPageBreak(y);
+    const xLabel = 20, xColon = 65, xValue = 70;
+    for (let i = 0; i < labels.length; i++) {
+      doc.setFont("helvetica", "bold");
+      doc.text(labels[i], xLabel, y);
+      doc.text(":", xColon, y);
       doc.setFont("helvetica", "normal");
-      const details = String(exp.experienceDetails || "");
-      const detailsLines = doc.splitTextToSize(details, 165);
-      detailsLines.forEach(line => {
+      doc.text(values[i], xValue, y);
+      y += 8;
+    }
+    y += 4;
+
+    // Divider
+    doc.line(20, y, 190, y);
+    y += 12;
+
+    // Profile summary
+    y = checkPageBreak(y);
+    doc.setFontSize(16).setFont("helvetica", "bold");
+    doc.text("Profile Summary", 20, y);
+    y += 10;
+    doc.setFontSize(12).setFont("helvetica", "normal");
+    const bioLines = doc.splitTextToSize(String(input.bio || ""), 170);
+    bioLines.forEach(line => { doc.text(line, 20, y); y += 7; });
+    y += 5;
+
+    // Divider
+    doc.line(20, y, 190, y);
+    y += 12;
+
+    // Experience section (only if hasExperience)
+    if (hasExperience && Array.isArray(experiences) && experiences.length > 0) {
+      y = checkPageBreak(y);
+      doc.setFontSize(16).setFont("helvetica", "bold");
+      doc.text("Experience", 20, y);
+      y += 10;
+      doc.setFontSize(12).setFont("helvetica", "normal");
+
+      experiences.forEach((exp, index) => {
         y = checkPageBreak(y);
-        doc.text(line, 25, y);
-        y += 7;
+        doc.setFont("helvetica", "bold").setFontSize(14);
+        const jobProfile = `${index + 1}. ${String(exp.jobProfile || "")}`;
+        doc.text(jobProfile, 20, y);
+
+        const duration = exp.duration ? `(${String(exp.duration).trim()})` : "";
+        doc.text(duration, 190, y, { align: "right" });
+
+        y += 8;
+
+        doc.setFont("helvetica", "bold").setFontSize(12);
+        doc.text(String(exp.companyName || ""), 25, y);
+        y += 10;
+
+        y = checkPageBreak(y);
+        doc.setFont("helvetica", "normal");
+        const details = String(exp.experienceDetails || "");
+        const detailsLines = doc.splitTextToSize(details, 165);
+        detailsLines.forEach(line => {
+          y = checkPageBreak(y);
+          doc.text(line, 25, y);
+          y += 7;
+        });
+
+        y += 5;
       });
 
-      y += 5;
-    });
+      y = checkPageBreak(y);
+      doc.line(20, y, 190, y);
+      y += 12;
+    }
 
+    // Qualification
+    y = checkPageBreak(y);
+    doc.setFontSize(16).setFont("helvetica", "bold");
+    doc.text("Qualification", 20, y);
+    y += 10;
+    doc.setFontSize(12).setFont("helvetica", "normal");
+    const qual = (input.qualification === "Others") ? (input.otherQualification || "") : (input.qualification || "");
+    doc.text(String(qual), 20, y);
+    y += 10;
+
+    // Divider
     y = checkPageBreak(y);
     doc.line(20, y, 190, y);
     y += 12;
-  }
 
-  // Qualification
-  y = checkPageBreak(y);
-  doc.setFontSize(16).setFont("helvetica", "bold");
-  doc.text("Qualification", 20, y);
-  y += 10;
-  doc.setFontSize(12).setFont("helvetica", "normal");
-  const qual = (input.qualification === "Others") ? (input.otherQualification || "") : (input.qualification || "");
-  doc.text(String(qual), 20, y);
-  y += 10;
+    // Skills
+    y = checkPageBreak(y);
+    doc.setFontSize(16).setFont("helvetica", "bold").text("Skills", 20, y);
+    y += 10;
+    doc.setFontSize(12).setFont("helvetica", "normal");
+    const skillLines = doc.splitTextToSize(String(input.skills || ""), 170);
+    skillLines.forEach(line => { y = checkPageBreak(y); doc.text(line, 20, y); y += 7; });
 
-  // Divider
-  y = checkPageBreak(y);
-  doc.line(20, y, 190, y);
-  y += 12;
-
-  // Skills
-  y = checkPageBreak(y);
-  doc.setFontSize(16).setFont("helvetica", "bold").text("Skills", 20, y);
-  y += 10;
-  doc.setFontSize(12).setFont("helvetica", "normal");
-  const skillLines = doc.splitTextToSize(String(input.skills || ""), 170);
-  skillLines.forEach(line => { y = checkPageBreak(y); doc.text(line, 20, y); y += 7; });
-
-  // Save and set URL
-  const blob = doc.output("blob");
-  const fileUrl = URL.createObjectURL(blob);
-  setGeneratedResumeUrl(fileUrl);
-  const file = new File([blob], `${input.fullname || "Resume"}.pdf`, { type: "application/pdf" });
-  setInput(prev => ({ ...prev, resume: file, resumeOriginalName: file.name }));
-  toast.success("Resume generated successfully!");
-};
+    // Save and set URL
+    const blob = doc.output("blob");
+    const fileUrl = URL.createObjectURL(blob);
+    setGeneratedResumeUrl(fileUrl);
+    const file = new File([blob], `${input.fullname || "Resume"}.pdf`, { type: "application/pdf" });
+    setInput(prev => ({ ...prev, resume: file, resumeOriginalName: file.name }));
+    toast.success("Resume generated successfully!");
+  };
 
 
   // Handles profile photo upload and preview
@@ -722,670 +722,690 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   return (
     <>
-     <Helmet>
-      <title>
-        Update Your Profile | Resume, Experience, and Career Information - GreatHire
-      </title>
+      <Helmet>
+        <title>
+          Update Your Profile | Resume, Experience, and Career Information - GreatHire
+        </title>
 
-      <meta
-        name="description"
-        content="Update and enhance your professional profile on GreatHire, one of the most trustworthy and popular job portals, conceptualized and developed in Hyderabad State, India, to bring qualified candidates and top companies together. The profile updating page will enable candidates to edit their personal information, upload resumes, create work experience, skills, qualifications, languages, and valid documents quickly."
-      />
-    </Helmet>
-    
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={() => setOpen(false)}
-    >
+        <meta
+          name="description"
+          content="Update and enhance your professional profile on GreatHire, one of the most trustworthy and popular job portals, conceptualized and developed in Hyderabad State, India, to bring qualified candidates and top companies together. The profile updating page will enable candidates to edit their personal information, upload resumes, create work experience, skills, qualifications, languages, and valid documents quickly."
+        />
+      </Helmet>
+
       <div
-        className="relative bg-white sm:max-w-[850px] w-full p-6 shadow-lg max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={() => setOpen(false)}
       >
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-          aria-label="Close"
-        > ✖
-        </button>
+        <div
+          className="relative bg-white dark:bg-gray-900 sm:max-w-[850px] w-full p-6 shadow-lg max-h-[90vh] overflow-y-auto text-black dark:text-white"
 
-        {/* Modal Heading */}
-        <h2 className="text-2xl text-center font-semibold mb-4"> Update Profile </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Personal Details Section */}
-          <div className="border-b pb-4">
-            <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
-            <div className="grid sm:grid-cols-2 gap-4 items-start">
-              <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:items-center sm:justify-center sm:min-h-[300px]">
-                {/* Profile Image with Pencil Icon */}
-                <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex-shrink-0">
-                  {previewImage ? (
-                    <img
-                      src={previewImage}
-                      alt="Profile Preview"
-                      className="w-full h-full rounded-full object-cover border"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
-                      <p>No Image</p>
-                    </div>
-                  )}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white focus:outline-none"
 
-                  {/* Pencil Icon */}
-                  <label
-                    htmlFor="profilePhoto"
-                    className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-lg cursor-pointer"
-                  >
-                    <Pencil className="w-5 h-5 text-gray-700" />
-                  </label>
-                </div>
+            aria-label="Close"
+          > ✖
+          </button>
 
-                {/* Hidden file input for image upload */}
-                <input
-                  type="file"
-                  id="profilePhoto"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange} // Handle image selection
-                />
-              </div>
+          {/* Modal Heading */}
+          <h2 className="text-2xl text-center font-semibold mb-4"> Update Profile </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Personal Details Section */}
+            <div className="border-b pb-4">
+              <h3 className="text-lg font-semibold mb-3">Personal Details</h3>
+              <div className="grid sm:grid-cols-2 gap-4 items-start">
+                <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:items-center sm:justify-center sm:min-h-[300px]">
+                  {/* Profile Image with Pencil Icon */}
+                  <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex-shrink-0">
+                    {previewImage ? (
+                      <img
+                        src={previewImage}
+                        alt="Profile Preview"
+                        className="w-full h-full rounded-full object-cover border border-black dark:border-white"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-white dark:bg-black rounded-full border border-black dark:border-white">
+                        <p className="text-black dark:text-white">No Image</p>
+                      </div>
+                    )}
 
-              {/* Name, Email and Phone Fields */}
-              <div className="flex-1 grid gap-3 w-full">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                  <Label
-                    htmlFor="fullname"
-                    className="sm:w-24 w-full font-semibold"
-                  >
-                    Name
-                  </Label>
-                  <Input
-                    id="fullname"
-                    name="fullname"
-                    value={input.fullname}
-                    onChange={handleChange}
-                    className="flex-1"
-                    placeholder="Enter your full name"
-                    required
+
+
+                    {/* Pencil Icon */}
+                    <label
+                      htmlFor="profilePhoto"
+                      className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-lg cursor-pointer"
+                    >
+                      <Pencil className="w-5 h-5 text-gray-700" />
+                    </label>
+                  </div>
+
+                  {/* Hidden file input for image upload */}
+                  <input
+                    type="file"
+                    id="profilePhoto"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange} // Handle image selection
                   />
                 </div>
 
-                <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                  <Label
-                    htmlFor="email"
-                    className="sm:w-24 w-full font-semibold"
-                  >
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    value={input.email}
-                    onChange={handleChange}
-                    className="flex-1"
-                    placeholder="example@gmail.com"
-                    required
-                  />
-                </div>
-
-                <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                  <Label
-                    htmlFor="phoneNumber"
-                    className="sm:w-24 w-full font-semibold"
-                  >
-                    Phone
-                  </Label>
-                  <Input
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={user?.phoneNumber?.number || ""}
-                    onChange={handleChange}
-                    className="flex-1"
-                    placeholder="Phone Number"
-                    maxLength={10}
-                    required
-                  />
-                </div>
-                <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                  <Label
-                    htmlFor="alternatePhone"
-                    className="sm:w-24 w-full font-semibold"
-                  >
-                    Alt. Phone
-                  </Label>
-                  <Input
-                    id="alternatePhone"
-                    name="alternatePhone"
-                    value={input.alternatePhone}
-                    onChange={handleChange}
-                    className="flex-1"
-                    placeholder="Alt. Phone"
-                    maxLength={10}
-                  //required
-                  />
-                </div>
-                <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                  <Label htmlFor="gender" className="sm:w-24 w-full font-semibold">
-                    Gender
-                  </Label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={input.gender} // empty string shows placeholder
-                    onChange={handleChange}
-                    className="flex-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
-                    <option value="" disabled>Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                  <Label htmlFor="qualification" className="sm:w-24 w-full font-semibold">
-                    Qualification
-                  </Label>
-                  <select
-                    id="qualification"
-                    name="qualification"
-                    value={input.qualification}
-                    onChange={handleChange}
-                    className="w-full sm:flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    //defaultValue={"Select Qualification"}
-                    placeholder="Select"
-                    required
-                  >
-                    <option value="" disabled>Select Qualification</option>
-                    <option value="Post Graduation">Post Graduation</option>
-                    <option value="Under Graduation">Under Graduation</option>
-                    <option value="M.Sc. Computer Science">M.Sc. Computer Science</option>
-                    <option value="B.Sc. Computer Science">B.Sc. Computer Science</option>
-                    <option value="M.Sc. Information Technology">M.Sc. Information Technology</option>
-                    <option value="B.Sc. Information Technology">B.Sc. Information Technology</option>
-                    <option value="M.Tech">M.Tech</option>
-                    <option value="B.Tech">B.Tech</option>
-                    <option value="MBA">MBA</option>
-                    <option value="MCA">MCA</option>
-                    <option value="B.Sc">B.Sc</option>
-                    <option value="M.Sc">M.Sc</option>
-                    <option value="B.Com">B.Com</option>
-                    <option value="M.Com">M.Com</option>
-                    <option value="Diploma">Diploma</option>
-                    <option value="12th Pass">12th Pass</option>
-                    <option value="10th Pass">10th Pass</option>
-                    <option value="Others">Others</option>
-                  </select>
-                </div>
-                {/* If "Others" is selected */}
-                {input.qualification === "Others" && (
-                  <div className="flex flex-col sm:flex-row items-center gap-2 w-full mt-2">
-                    <Label htmlFor="otherQualification" className="sm:w-24 w-full font-semibold">
-                      Specify
+                {/* Name, Email and Phone Fields */}
+                <div className="flex-1 grid gap-3 w-full">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                    <Label
+                      htmlFor="fullname"
+                      className="sm:w-24 w-full font-semibold"
+                    >
+                      Name
                     </Label>
                     <Input
-                      id="otherQualification"
-                      name="otherQualification"
-                      value={input.otherQualification}
+                      id="fullname"
+                      name="fullname"
+                      value={input.fullname}
                       onChange={handleChange}
+                      className="flex-1"
+                      placeholder="Enter your full name"
                       required
-                      className="w-full sm:flex-1"
-                      placeholder="Enter your qualification"
                     />
                   </div>
-                )}
-              </div>
-            </div>
 
-            <div className="grid sm:grid-cols-3 gap-4 mt-3">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label
-                  htmlFor="country"
-                  className="sm:w-20 w-full font-semibold"
-                >
-                  Country
-                </Label>
-                <select
-                  id="country"
-                  name="country"
-                  value={input.country}
-                  onChange={handleCountryChange}
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  required
-                >
-                  <option value="">Select Country</option>
-                  {countries.map((c) => (
-                    <option key={c.isoCode} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-
-              </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
-                  State
-                </Label>
-                <select
-                  id="state"
-                  name="state"
-                  value={input.state}
-                  onChange={handleStateChange}
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  required
-                >
-                  <option value="">Select State</option>
-                  {states.map((s) => (
-                    <option key={s.isoCode} value={s.name}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
-                  City
-                </Label>
-                <select
-                  id="city"
-                  name="city"
-                  value={input.city}
-                  onChange={handleCityChange}
-                  className="w-full border border-gray-300 rounded-md p-2"
-                  required
-                >
-                  <option value="">Select City</option>
-                  {cities.map((city) => (
-                    <option key={city.name} value={city.name}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                <Label htmlFor="pincode" className="sm:w-20 w-full font-semibold">
-                  Pincode
-                </Label>
-                <Input
-                  id="pincode"
-                  name="pincode"
-                  value={input.pincode}
-                  onChange={handleChange}
-                  className="w-full"
-                  placeholder="Enter Pincode"
-                  required
-                />
-              </div>
-              {/* Language Selection Dropdown */}
-              <LanguageSelector
-                selectedLanguages={selectedLanguages}
-                setSelectedLanguages={setSelectedLanguages}
-              />
-            </div>
-            {/* Selected Language Preview */}
-            <div>
-              <SelectedLanguagePreview
-                selectedLanguages={selectedLanguages}
-                setSelectedLanguages={setSelectedLanguages}
-              />
-            </div>
-          </div>
-
-          {/* Professional Details Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3">
-              Professional / Experience Details
-            </h3>
-            <div className="flex items-center gap-6 mb-4">
-              <p className="font-medium">Do you have any professional experience?</p>
-              <label className="flex items-center gap-1">
-                <input
-                  type="radio"
-                  name="experienceRadio"
-                  value="yes"
-                  checked={hasExperience}
-                  onChange={() => {
-                    setHasExperience(true);
-                    if (experiences.length === 0) {
-                      handleAddExperience();
-                    }
-                  }}
-                />
-                Yes
-              </label>
-              <label className="flex items-center gap-1">
-                <input
-                  type="radio"
-                  name="experienceRadio"
-                  value="no"
-                  checked={!hasExperience}
-                  onChange={() => {
-                    if (experiences.length > 0) {
-                      toast.error("Please delete all experience details before selecting Fresher.");
-                      return;
-                    }
-                    setHasExperience(false);
-                  }}
-                />
-                No
-              </label>
-            </div>
-            {/* Experience Section */}
-            <div className="space-y-4">
-              {/* Experience Section (only if Yes selected) */}
-              {hasExperience && (
-                <div className="relative border rounded-xl p-4 bg-gray-50">
-                  {/* Add New button (aligned properly for mobile + desktop) */}
-                  <div className="flex justify-end mb-4">
-                    <button
-                      type="button"
-                      onClick={handleAddExperience}
-                      className="flex items-center gap-2 px-3 py-1 bg-sky-600 text-white text-sm rounded-lg shadow hover:bg-sky-700"
+                  <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
+                    <Label
+                      htmlFor="email"
+                      className="sm:w-24 w-full font-semibold"
                     >
-                      <Plus size={16} /> Add New
-                    </button>
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      value={input.email}
+                      onChange={handleChange}
+                      className="flex-1"
+                      placeholder="example@gmail.com"
+                      required
+                    />
                   </div>
 
-                  {experiences.map((exp, index) => (
-                    <div
-                      key={index}
-                      className="relative border rounded-lg p-4 bg-white shadow mb-4"
+                  <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
+                    <Label
+                      htmlFor="phoneNumber"
+                      className="sm:w-24 w-full font-semibold"
                     >
-                      {/* Dustbin icon */}
+                      Phone
+                    </Label>
+                    <Input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={user?.phoneNumber?.number || ""}
+                      onChange={handleChange}
+                      className="flex-1"
+                      placeholder="Phone Number"
+                      maxLength={10}
+                      required
+                    />
+                  </div>
+                  <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
+                    <Label
+                      htmlFor="alternatePhone"
+                      className="sm:w-24 w-full font-semibold"
+                    >
+                      Alt. Phone
+                    </Label>
+                    <Input
+                      id="alternatePhone"
+                      name="alternatePhone"
+                      value={input.alternatePhone}
+                      onChange={handleChange}
+                      className="flex-1"
+                      placeholder="Alt. Phone"
+                      maxLength={10}
+                    //required
+                    />
+                  </div>
+                  <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
+                    <Label htmlFor="gender" className="sm:w-24 w-full font-semibold">
+                      Gender
+                    </Label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={input.gender} // empty string shows placeholder
+                      onChange={handleChange}
+                      className="flex-1 w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                      required
+                    >
+                      <option value="" disabled>Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
+                    <Label htmlFor="qualification" className="sm:w-24 w-full font-semibold">
+                      Qualification
+                    </Label>
+                    <select
+                      id="qualification"
+                      name="qualification"
+                      value={input.qualification}
+                      onChange={handleChange}
+                      className="w-full sm:flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                      //defaultValue={"Select Qualification"}
+                      placeholder="Select"
+                      required
+                    >
+                      <option value="" disabled>Select Qualification</option>
+                      <option value="Post Graduation">Post Graduation</option>
+                      <option value="Under Graduation">Under Graduation</option>
+                      <option value="M.Sc. Computer Science">M.Sc. Computer Science</option>
+                      <option value="B.Sc. Computer Science">B.Sc. Computer Science</option>
+                      <option value="M.Sc. Information Technology">M.Sc. Information Technology</option>
+                      <option value="B.Sc. Information Technology">B.Sc. Information Technology</option>
+                      <option value="M.Tech">M.Tech</option>
+                      <option value="B.Tech">B.Tech</option>
+                      <option value="MBA">MBA</option>
+                      <option value="MCA">MCA</option>
+                      <option value="B.Sc">B.Sc</option>
+                      <option value="M.Sc">M.Sc</option>
+                      <option value="B.Com">B.Com</option>
+                      <option value="M.Com">M.Com</option>
+                      <option value="Diploma">Diploma</option>
+                      <option value="12th Pass">12th Pass</option>
+                      <option value="10th Pass">10th Pass</option>
+                      <option value="Others">Others</option>
+                    </select>
+                  </div>
+                  {/* If "Others" is selected */}
+                  {input.qualification === "Others" && (
+                    <div className="flex flex-col sm:flex-row items-center gap-2 w-full mt-2">
+                      <Label htmlFor="otherQualification" className="sm:w-24 w-full font-semibold">
+                        Specify
+                      </Label>
+                      <Input
+                        id="otherQualification"
+                        name="otherQualification"
+                        value={input.otherQualification}
+                        onChange={handleChange}
+                        required
+                        className="w-full sm:flex-1"
+                        placeholder="Enter your qualification"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4 mt-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label
+                    htmlFor="country"
+                    className="sm:w-20 w-full font-semibold"
+                  >
+                    Country
+                  </Label>
+                  <select
+                    id="country"
+                    name="country"
+                    value={input.country}
+                    onChange={handleCountryChange}
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
+
+                    required
+                  >
+                    <option value="">Select Country</option>
+                    {countries.map((c) => (
+                      <option key={c.isoCode} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+
+                </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
+                    State
+                  </Label>
+                  <select
+                    id="state"
+                    name="state"
+                    value={input.state}
+                    onChange={handleStateChange}
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                    required
+                  >
+                    <option value="">Select State</option>
+                    {states.map((s) => (
+                      <option key={s.isoCode} value={s.name}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
+                    City
+                  </Label>
+                  <select
+                    id="city"
+                    name="city"
+                    value={input.city}
+                    onChange={handleCityChange}
+                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                    required
+                  >
+                    <option value="">Select City</option>
+                    {cities.map((city) => (
+                      <option key={city.name} value={city.name}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                  <Label htmlFor="pincode" className="sm:w-20 w-full font-semibold">
+                    Pincode
+                  </Label>
+                  <Input
+                    id="pincode"
+                    name="pincode"
+                    value={input.pincode}
+                    onChange={handleChange}
+                    className="w-full"
+                    placeholder="Enter Pincode"
+                    required
+                  />
+                </div>
+                {/* Language Selection Dropdown */}
+                <LanguageSelector
+                  selectedLanguages={selectedLanguages}
+                  setSelectedLanguages={setSelectedLanguages}
+                />
+              </div>
+              {/* Selected Language Preview */}
+              <div>
+                <SelectedLanguagePreview
+                  selectedLanguages={selectedLanguages}
+                  setSelectedLanguages={setSelectedLanguages}
+                />
+              </div>
+            </div>
+
+            {/* Professional Details Section */}
+            <div>
+              <h3 className="text-lg font-semibold mb-3">
+                Professional / Experience Details
+              </h3>
+              <div className="flex items-center gap-6 mb-4">
+                <p className="font-medium">Do you have any professional experience?</p>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="experienceRadio"
+                    value="yes"
+                    checked={hasExperience}
+                    onChange={() => {
+                      setHasExperience(true);
+                      if (experiences.length === 0) {
+                        handleAddExperience();
+                      }
+                    }}
+                  />
+                  Yes
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="experienceRadio"
+                    value="no"
+                    checked={!hasExperience}
+                    onChange={() => {
+                      if (experiences.length > 0) {
+                        toast.error("Please delete all experience details before selecting Fresher.");
+                        return;
+                      }
+                      setHasExperience(false);
+                    }}
+                  />
+                  No
+                </label>
+              </div>
+              {/* Experience Section */}
+              <div className="space-y-4">
+                {/* Experience Section (only if Yes selected) */}
+                {hasExperience && (
+                  <div className="relative border rounded-xl p-4 bg-gray-50 dark:bg-gray-800"
+                  >
+                    {/* Add New button (aligned properly for mobile + desktop) */}
+                    <div className="flex justify-end mb-4">
                       <button
                         type="button"
-                        onClick={() => handleDeleteExperience(index)}
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                        onClick={handleAddExperience}
+                        className="flex items-center gap-2 px-3 py-1 bg-sky-600 text-white text-sm rounded-lg shadow hover:bg-sky-700"
                       >
-                        <Trash2 size={18} />
+                        <Plus size={16} /> Add New
                       </button>
+                    </div>
 
-                      {/* Two-column layout */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Left side - Job Profile, Company, Duration */}
-                        <div>
-                          {/* Job Profile */}
-                          <div className="mb-3">
-                            <label className="block font-medium">Job Profile</label>
-                            <input
-                              type="text"
-                              value={exp.jobProfile || ""}
-                              onChange={(e) =>
-                                handleExperienceChange(index, "jobProfile", e.target.value)
-                              }
-                              placeholder="e.g., Software Developer, Data Analyst"
-                              className="w-full border rounded p-2"
-                              required
-                            />
-                          </div>
+                    {experiences.map((exp, index) => (
+                      <div
+                        key={index}
+                        className="relative border rounded-lg p-4 bg-white dark:bg-gray-900 shadow mb-4"
 
-                          {/* Company Name */}
-                          <div className="mb-3">
-                            <label className="block font-medium">Company Name</label>
-                            <input
-                              type="text"
-                              value={exp.companyName || ""}
-                              onChange={(e) =>
-                                handleExperienceChange(index, "companyName", e.target.value)
-                              }
-                              placeholder="e.g., Infosys, Google"
-                              className="w-full border rounded p-2"
-                              required
-                            />
-                          </div>
+                      >
+                        {/* Dustbin icon */}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteExperience(index)}
+                          className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={18} />
+                        </button>
 
-                          {/* Duration */}
-                          <div className="mb-3">
-                            <label className="block font-medium">Duration (in years)</label>
-                            <input
-                              type="text"
-                              value={exp.duration || ""}
-                              onChange={(e) =>
-                                handleExperienceChange(index, "duration", e.target.value)
-                              }
-                              placeholder="e.g., 2 (in years only)"
-                              className="w-full border rounded p-2"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        {/* Right side - Experience Details */}
-                        <div>
-                          <div className="mb-3">
-                            <label className="block font-medium">Experience Details</label>
-                            <textarea
-                              value={exp.experienceDetails || ""}
-                              onChange={(e) => {
-                                const words = e.target.value.trim().split(/\s+/).filter(Boolean);
-                                if (words.length <= 600) {
-                                  handleExperienceChange(index, "experienceDetails", e.target.value);
+                        {/* Two-column layout */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Left side - Job Profile, Company, Duration */}
+                          <div>
+                            {/* Job Profile */}
+                            <div className="mb-3">
+                              <label className="block font-medium">Job Profile</label>
+                              <input
+                                type="text"
+                                value={exp.jobProfile || ""}
+                                onChange={(e) =>
+                                  handleExperienceChange(index, "jobProfile", e.target.value)
                                 }
-                              }}
-                              placeholder="Describe your work experience in detail... Just in few words (500 - 600)"
-                              className="w-full border rounded p-2 h-32 md:h-40 lg:h-48"
-                              required
-                            />
-                            {/* Word Counter */}
-                            <div className="text-right text-sm text-gray-600 mt-1">
-                              {
-                                (exp.experienceDetails?.trim().split(/\s+/).filter(Boolean).length) || 0
-                              }{" "}
-                              / 600 words
+                                placeholder="e.g., Software Developer, Data Analyst"
+                                className="w-full border rounded p-2"
+                                required
+                              />
+                            </div>
+
+                            {/* Company Name */}
+                            <div className="mb-3">
+                              <label className="block font-medium">Company Name</label>
+                              <input
+                                type="text"
+                                value={exp.companyName || ""}
+                                onChange={(e) =>
+                                  handleExperienceChange(index, "companyName", e.target.value)
+                                }
+                                placeholder="e.g., Infosys, Google"
+                                className="w-full border rounded p-2"
+                                required
+                              />
+                            </div>
+
+                            {/* Duration */}
+                            <div className="mb-3">
+                              <label className="block font-medium">Duration (in years)</label>
+                              <input
+                                type="text"
+                                value={exp.duration || ""}
+                                onChange={(e) =>
+                                  handleExperienceChange(index, "duration", e.target.value)
+                                }
+                                placeholder="e.g., 2 (in years only)"
+                                className="w-full border rounded p-2"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          {/* Right side - Experience Details */}
+                          <div>
+                            <div className="mb-3">
+                              <label className="block font-medium">Experience Details</label>
+                              <textarea
+                                value={exp.experienceDetails || ""}
+                                onChange={(e) => {
+                                  const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+                                  if (words.length <= 600) {
+                                    handleExperienceChange(index, "experienceDetails", e.target.value);
+                                  }
+                                }}
+                                placeholder="Describe your work experience in detail... Just in few words (500 - 600)"
+                                className="w-full border rounded p-2 h-32 md:h-40 lg:h-48"
+                                required
+                              />
+                              {/* Word Counter */}
+                              <div className="text-right text-sm text-gray-600 mt-1">
+                                {
+                                  (exp.experienceDetails?.trim().split(/\s+/).filter(Boolean).length) || 0
+                                }{" "}
+                                / 600 words
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Currently Working (full width row) */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <input
-                          type="checkbox"
-                          checked={!!exp.currentlyWorking}
-                          onChange={(e) =>
-                            handleExperienceChange(
-                              index,
-                              "currentlyWorking",
-                              e.target.checked
-                            )
-                          }
-                        />
-                        <label className="font-medium">Currently Working</label>
-                      </div>
-
-                      {/* Current CTC + Notice Period (row with 2 columns) */}
-                      {exp.currentlyWorking && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                          {/* Current CTC */}
-                          <div>
-                            <label className="block font-medium">Current CTC</label>
-                            <input
-                              type="text"
-                              value={exp.currentCTC || ""}
-                              onChange={(e) => handleExperienceChange(index, "currentCTC", e.target.value)}
-                              className="w-full border rounded p-2"
-                              placeholder="e.g. 10 LPA"
-                              required
-                            />
-                          </div>
-
-                          {/* Notice Period */}
-                          <div>
-                            <label className="block font-medium">Notice Period</label>
-                            <input
-                              type="text"
-                              value={exp.noticePeriod || ""}
-                              onChange={(e) =>
-                                handleExperienceChange(index, "noticePeriod", e.target.value)
-                              }
-                              className="w-full border rounded p-2"
-                              placeholder="e.g. 15 days"
-                              required
-                            />
-                          </div>
+                        {/* Currently Working (full width row) */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <input
+                            type="checkbox"
+                            checked={!!exp.currentlyWorking}
+                            onChange={(e) =>
+                              handleExperienceChange(
+                                index,
+                                "currentlyWorking",
+                                e.target.checked
+                              )
+                            }
+                          />
+                          <label className="font-medium">Currently Working</label>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <JobCategory
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-              />
-              <SelectedCategoryPreview
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
-              />
-              <div className="w-full">
-                <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
-                  Bio
-                </Label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  value={input.bio}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows="3"
-                  placeholder="Enter your bio..."
-                  required
-                />
-                <p className="text-sm text-gray-600 mt-1 self-end text-right">
-                  {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
-                </p>
-              </div>
 
-              <div className="w-full">
-                <Label htmlFor="skills" className="block mb-2 font-semibold">
-                  Skills
-                </Label>
-                <Input
-                  id="skills"
-                  name="skills"
-                  value={input.skills}
-                  onChange={handleChange}
-                  placeholder="Enter skills (comma separated)"
-                  required
+                        {/* Current CTC + Notice Period (row with 2 columns) */}
+                        {exp.currentlyWorking && (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                            {/* Current CTC */}
+                            <div>
+                              <label className="block font-medium">Current CTC</label>
+                              <input
+                                type="text"
+                                value={exp.currentCTC || ""}
+                                onChange={(e) => handleExperienceChange(index, "currentCTC", e.target.value)}
+                                className="w-full border rounded p-2"
+                                placeholder="e.g. 10 LPA"
+                                required
+                              />
+                            </div>
+
+                            {/* Notice Period */}
+                            <div>
+                              <label className="block font-medium">Notice Period</label>
+                              <input
+                                type="text"
+                                value={exp.noticePeriod || ""}
+                                onChange={(e) =>
+                                  handleExperienceChange(index, "noticePeriod", e.target.value)
+                                }
+                                className="w-full border rounded p-2"
+                                placeholder="e.g. 15 days"
+                                required
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <JobCategory
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setSelectedCategories}
                 />
+                <SelectedCategoryPreview
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setSelectedCategories}
+                />
+                <div className="w-full">
+                  <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
+                    Bio
+                  </Label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={input.bio}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+                    rows="3"
+                    placeholder="Enter your bio..."
+                    required
+                  />
+                  <p className="text-sm text-gray-600 mt-1 self-end text-right">
+                    {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
+                  </p>
+                </div>
+
+                <div className="w-full">
+                  <Label htmlFor="skills" className="block mb-2 font-semibold">
+                    Skills
+                  </Label>
+                  <Input
+                    id="skills"
+                    name="skills"
+                    value={input.skills}
+                    onChange={handleChange}
+                    placeholder="Enter skills (comma separated)"
+                    required
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ✅ New Document Section */}
-          <div className="border-b pb-4 pt-4 mt-2">
-            <Label htmlFor="skills" className="block mb-2 font-semibold">ID's / Documents</Label>
-            <p className="mb-2">Which of these IDs / documents do you have?</p>
-            <div className="flex flex-wrap gap-3">
-              {["PAN Card", "Aadhar Card", "Passport", "None of these"].map(
-                (doc) => (
+            {/* ✅ New Document Section */}
+            <div className="border-b pb-4 pt-4 mt-2">
+              <Label htmlFor="skills" className="block mb-2 font-semibold">ID's / Documents</Label>
+              <p className="mb-2">Which of these IDs / documents do you have?</p>
+              <div className="flex flex-wrap gap-3">
+                {["PAN Card", "Aadhar Card", "Passport", "None of these"].map(
+                  (doc) => (
+                    <button
+                      type="button"
+                      key={doc}
+                      onClick={() => toggleDocSelection(doc)}
+                      className={`px-4 py-1 rounded-full border ${selectedDocs.includes(doc)
+                        ? "bg-blue-100 dark:bg-blue-900 border-blue-400 text-black dark:text-white"
+                        : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+
+
+                        }`}
+                    >
+                      {doc}
+                      {selectedDocs.includes(doc) && " ✓"}
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div className="w-full">
+              <Label htmlFor="resume" className="block mb-2 font-semibold">
+                Resume
+              </Label>
+
+              <div className="relative w-full">
+                {/* File Input */}
+                <Input
+                  id="resume"
+                  name="resume"
+                  type="text"
+                  value={input.resumeOriginalName}
+                  placeholder="Upload your resume"
+                  readOnly
+                  className="pr-10"
+                />
+                <input
+                  type="file"
+                  id="resumeInput"
+                  accept=".pdf, .doc, .docx"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <p><strong>Note:</strong> PDF or DOCX  (.pdf , .docx)  are allowed.</p>
+
+                {/* Display remove button inside input field */}
+                {resumeUrl && (
                   <button
                     type="button"
-                    key={doc}
-                    onClick={() => toggleDocSelection(doc)}
-                    className={`px-4 py-1 rounded-full border ${selectedDocs.includes(doc)
-                      ? "bg-blue-100 border-blue-400 text-black"
-                      : "bg-white border-gray-300 text-gray-700"
-                      }`}
-                  >
-                    {doc}
-                    {selectedDocs.includes(doc) && " ✓"}
+                    onClick={removeResume}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500"
+                  >   ✖
                   </button>
-                )
-              )}
-            </div>
-          </div>
+                )}
+              </div>
+              {/* Create Resume Section */}
+              <div className="border-b pb-4 pt-4 mt-2">
+                <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
+                <p className="mb-2">You can generate a resume from the details you entered above.</p>
 
-          <div className="w-full">
-            <Label htmlFor="resume" className="block mb-2 font-semibold">
-              Resume
-            </Label>
-
-            <div className="relative w-full">
-              {/* File Input */}
-              <Input
-                id="resume"
-                name="resume"
-                type="text"
-                value={input.resumeOriginalName}
-                placeholder="Upload your resume"
-                readOnly
-                className="pr-10"
-              />
-              <input
-                type="file"
-                id="resumeInput"
-                accept=".pdf, .doc, .docx"
-                onChange={handleFileChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <p><strong>Note:</strong> PDF or DOCX  (.pdf , .docx)  are allowed.</p>
-
-              {/* Display remove button inside input field */}
-              {resumeUrl && (
-                <button
-                  type="button"
-                  onClick={removeResume}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500"
-                >   ✖
-                </button>
-              )}
-            </div>
-            {/* Create Resume Section */}
-            <div className="border-b pb-4 pt-4 mt-2">
-              <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
-              <p className="mb-2">You can generate a resume from the details you entered above.</p>
-
-              <div className="flex items-center gap-4 mb-2">
-                <button
-                  type="button"
-                  onClick={toggleCreateResume}
-                  className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  {isCreatingResume ? "Close Resume Creator" : "Create Resume"}
-                </button>
-
-                {/* Show download if already generated */}
-                {generatedResumeUrl && (
-                  <a
-                    href={generatedResumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
+                <div className="flex items-center gap-4 mb-2">
+                  <button
+                    type="button"
+                    onClick={toggleCreateResume}
+                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                   >
-                    Preview / Download
-                  </a>
+                    {isCreatingResume ? "Close Resume Creator" : "Create Resume"}
+                  </button>
+
+                  {/* Show download if already generated */}
+                  {generatedResumeUrl && (
+                    <a
+                      href={generatedResumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
+                    >
+                      Preview / Download
+                    </a>
+                  )}
+                </div>
+
+                {isCreatingResume && (
+                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md border mt-2"
+                  >
+                    <p className="mb-2 text-gray-700">Click the button below to generate your resume PDF:</p>
+                    <button
+                      type="button"
+                      onClick={generateResumePDF}
+                      className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      Generate Resume PDF
+                    </button>
+                  </div>
                 )}
               </div>
 
-              {isCreatingResume && (
-                <div className="bg-gray-50 p-4 rounded-md border mt-2">
-                  <p className="mb-2 text-gray-700">Click the button below to generate your resume PDF:</p>
-                  <button
-                    type="button"
-                    onClick={generateResumePDF}
-                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-                  >
-                    Generate Resume PDF
-                  </button>
-                </div>
-              )}
             </div>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Update"
+              )}
+            </Button>
 
-          </div>
-          {/* Submit Button */}
-          <Button type="submit" className="w-full mt-2" disabled={loading}>
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Update"
-            )}
-          </Button>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };

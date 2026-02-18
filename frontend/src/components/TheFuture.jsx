@@ -69,7 +69,7 @@ const TheFuture = () => {
       </Helmet>
       <Navbar />
 
-      <section className="max-w-6xl mx-auto px-4 py-12 my-10">
+      <section className="max-w-6xl mx-auto px-4 py-12 my-10 bg-white dark:bg-gray-950 transition-colors duration-300">
         {/* Hero Image */}
         <div className="relative w-full h-96 sm:h-[400px] overflow-hidden rounded-xl shadow-lg">
           <img
@@ -81,23 +81,23 @@ const TheFuture = () => {
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl font-bold mt-8 mb-4 text-gray-900">
+        <h1 className="text-4xl sm:text-5xl font-bold mt-8 mb-4 text-gray-900 dark:text-white transition-colors duration-300">
           {currentSlide.title}
         </h1>
 
         {/* Description split into paragraphs */}
         {currentSlide.description.split(". ").map((para, index) => (
-          <p key={index} className="mt-4 text-gray-700 text-lg leading-relaxed">
+          <p key={index} className="mt-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed transition-colors duration-300">
             {para}.
           </p>
         ))}
 
         {/* Key Highlights / Callout Box */}
-        <div className="mt-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold text-blue-700 mb-2">
+        <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-600 dark:border-blue-400 rounded-lg shadow transition-colors duration-300">
+          <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-400 mb-2 transition-colors duration-300">
             Key Takeaways
           </h2>
-          <ul className="list-disc list-inside text-gray-800">
+          <ul className="list-disc list-inside text-gray-800 dark:text-gray-300 transition-colors duration-300">
             <li>AI and automation are transforming industries rapidly.</li>
             <li>Innovation drives growth and competitive advantage.</li>
             <li>Digital transformation reshapes culture, workflow, and strategy.</li>
@@ -109,13 +109,13 @@ const TheFuture = () => {
         <div className="mt-10 flex justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+            className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300"
           >
             ← Back
           </button>
           <button
             onClick={() => navigate(`/TheFuture/${currentSlide.id + 1}`)}
-            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-300"
           >
             Next →
           </button>

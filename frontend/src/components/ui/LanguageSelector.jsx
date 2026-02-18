@@ -7,7 +7,7 @@ function LanguageSelector({ selectedLanguages, setSelectedLanguages }) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const dropdownRef = useRef(null);
 
-   const languages = [
+  const languages = [
     'English', 'Hindi', 'Urdu', 'Telugu', 'Marathi',
     'Tamil', 'Gujarati', 'Punjabi', 'Other'
   ];
@@ -44,14 +44,16 @@ function LanguageSelector({ selectedLanguages, setSelectedLanguages }) {
   }, []);
 
   return (
-    <div className="relative w-full sm:w-80 " ref={dropdownRef}>
+    <div className="relative w-full sm:w-80" ref={dropdownRef}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
-        <label className="block font-semibold">Job Languages</label>
+        <label className="block font-semibold text-black dark:text-white">
+          Job Languages
+        </label>
 
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="mt-2 sm:mt-0 flex justify-between items-center border border-gray-300 px-3 py-2 rounded-lg bg-white shadow-sm hover:border-blue-500 w-full sm:w-[200px]"
+          className="mt-2 sm:mt-0 flex justify-between items-center border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white shadow-sm hover:border-blue-500 w-full sm:w-[200px]"
         >
           {selectedLanguages.length > 0
             ? `${selectedLanguages.length} selected`
@@ -63,24 +65,25 @@ function LanguageSelector({ selectedLanguages, setSelectedLanguages }) {
       </div>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20">
+        <div className="absolute right-0 mt-1 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto z-20">
           <div className="relative mb-6 pr-10 mr-2">
-            {/* Close Button */}
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white focus:outline-none"
               aria-label="Close"
             >
               ✖
             </button>
           </div>
+
           <ul className="p-2 space-y-1">
             {languages.map((language) => (
               <li key={language}>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    className="accent-blue-600"
                     checked={
                       language === 'Other'
                         ? showCustomInput
@@ -88,20 +91,22 @@ function LanguageSelector({ selectedLanguages, setSelectedLanguages }) {
                     }
                     onChange={() => handleCheckboxChange(language)}
                   />
-                  <span>{language}</span>
+                  <span className="text-black dark:text-white">
+                    {language}
+                  </span>
                 </label>
               </li>
             ))}
           </ul>
 
           {showCustomInput && (
-            <div className="p-2 border-t border-gray-200 flex gap-2">
+            <div className="p-2 border-t border-gray-200 dark:border-gray-700 flex gap-2">
               <input
                 type="text"
                 value={customLanguage}
                 onChange={(e) => setCustomLanguage(e.target.value)}
                 placeholder="Enter language"
-                className="flex-1 border border-gray-300 px-2 py-1 rounded-lg"
+                className="flex-1 border border-gray-300 dark:border-gray-600 px-2 py-1 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white"
               />
               <button
                 type="button"

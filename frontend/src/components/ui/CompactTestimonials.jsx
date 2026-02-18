@@ -125,22 +125,22 @@ const CompactTestimonials = () => {
   }, [testimonials.length]);
 
   return (
-    <div className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-16 px-4 overflow-hidden">
+    <div className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-gray-900 dark:to-black py-16 px-4 overflow-hidden transition-colors duration-300">
       {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-0 left-0 w-64 h-64 bg-blue-200 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-30 dark:opacity-10 animate-blob"></div>
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-200 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-normal filter blur-3xl opacity-30 dark:opacity-10 animate-blob animation-delay-2000"></div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md mb-4">
+          <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md mb-4 transition-colors duration-300">
             <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-            <span className="text-sm font-bold text-gray-700">Trusted by 10,000+ Users</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-gray-300 transition-colors duration-300">Trusted by 10,000+ Users</span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-3">
+          <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-3 transition-colors duration-300">
             What Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Community</span> Says
           </h2>
-          <p className="text-gray-600 text-lg">Real stories from real people</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg transition-colors duration-300">Real stories from real people</p>
         </div>
 
         {/* Testimonials Grid */}
@@ -152,7 +152,7 @@ const CompactTestimonials = () => {
           ).slice(0, 3).map((testimonial, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700"
             >
               {/* Quote Icon */}
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
@@ -167,18 +167,18 @@ const CompactTestimonials = () => {
               </div>
 
               {/* Text */}
-              <p className="text-gray-700 text-sm leading-relaxed mb-6 min-h-[80px]">
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-6 min-h-[80px] transition-colors duration-300">
                 "{testimonial.text}"
               </p>
 
               {/* Author */}
-              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700 transition-colors duration-300">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                   {testimonial.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-gray-900 text-sm">{testimonial.name}</p>
-                  <p className="text-gray-500 text-xs">{testimonial.role}</p>
+                  <p className="font-bold text-gray-900 dark:text-white text-sm transition-colors duration-300">{testimonial.name}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs transition-colors duration-300">{testimonial.role}</p>
                 </div>
               </div>
 
@@ -191,7 +191,7 @@ const CompactTestimonials = () => {
                     if (element) element.scrollIntoView({ behavior: 'smooth' });
                   }, 100);
                 }}
-                className="mt-4 w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm group"
+                className="mt-4 w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold text-sm group transition-colors duration-300"
               >
                 <span>Read More Reviews</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -209,7 +209,7 @@ const CompactTestimonials = () => {
               className={`w-2 h-2 rounded-full transition-all ${
                 Math.floor(activeIndex / 3) === idx
                   ? "bg-blue-600 w-8"
-                  : "bg-gray-300"
+                  : "bg-gray-300 dark:bg-gray-600"
               }`}
             />
           ))}
@@ -221,19 +221,19 @@ const CompactTestimonials = () => {
             <p className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               {Math.floor(displayStats.users / 1000)}K+
             </p>
-            <p className="text-gray-600 text-sm font-medium mt-1">Happy Users</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-1 transition-colors duration-300">Happy Users</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               {displayStats.success.toFixed(1)}%
             </p>
-            <p className="text-gray-600 text-sm font-medium mt-1">Success Rate</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-1 transition-colors duration-300">Success Rate</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-black bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">
               {displayStats.rating.toFixed(1)}★
             </p>
-            <p className="text-gray-600 text-sm font-medium mt-1">Average Rating</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mt-1 transition-colors duration-300">Average Rating</p>
           </div>
         </div>
       </div>
