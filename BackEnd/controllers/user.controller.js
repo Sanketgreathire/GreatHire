@@ -362,6 +362,8 @@ export const recruiterLogin = async (req, res) => {
       isCompanyCreated,
       position,
       isActive,
+      plan: user.plan || "FREE",
+      subscriptionStatus: user.subscriptionStatus || "INACTIVE",
     };
 
     return res
@@ -1331,6 +1333,8 @@ export const verifyRecruiterOtp = async (req, res) => {
           fullname: user.fullname,
           emailId: user.emailId,
           role: user.role,
+          plan: user.plan || "FREE",
+          subscriptionStatus: user.subscriptionStatus || "INACTIVE",
         },
       });
   } catch (err) {

@@ -85,6 +85,8 @@ export const register = async (req, res) => {
         isVerified: false,
       },
       password: hashedPassword,
+      plan: "FREE",
+      subscriptionStatus: "INACTIVE",
     });
 
     // ✅ Send welcome notification for new recruiter registration
@@ -209,6 +211,8 @@ export const googleLogin = async (req, res) => {
       profile: {
         profilePhoto: googleUser.picture || "",
       },
+      plan: "FREE",
+      subscriptionStatus: "INACTIVE",
     });
 
     await user.save();

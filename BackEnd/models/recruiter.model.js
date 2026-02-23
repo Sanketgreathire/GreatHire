@@ -69,6 +69,16 @@ const recruiterSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    plan: {
+      type: String,
+      enum: ["FREE", "STANDARD", "PREMIUM", "ENTERPRISE"],
+      default: "FREE",
+    },
+    subscriptionStatus: {
+      type: String,
+      enum: ["INACTIVE", "ACTIVE", "EXPIRED"],
+      default: "INACTIVE",
+    },
   },
 
   { timestamps: true }

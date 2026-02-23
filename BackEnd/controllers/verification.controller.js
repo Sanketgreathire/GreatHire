@@ -412,9 +412,30 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       company.hasSubscription = true; // Mark that company has active subscription
       await company.save();
 
+      // Determine plan type based on credits
+      let planType = "STANDARD";
+      if (creditsForJobs >= 999999) {
+        planType = "ENTERPRISE";
+      } else if (creditsForJobs >= 7500) {
+        planType = "PREMIUM";
+      } else if (creditsForJobs >= 2500) {
+        planType = "STANDARD";
+      }
+
+      // Update all recruiters associated with this company
+      const recruiterIds = company.userId.map((u) => u.user);
+      await Recruiter.updateMany(
+        { _id: { $in: recruiterIds } },
+        {
+          plan: planType,
+          subscriptionStatus: "ACTIVE",
+        }
+      );
+
       res.status(200).json({
         success: true,
         plan: currentPlan,
+        userPlan: planType,
         message: "Payment verified successfully",
       });
     } else {
