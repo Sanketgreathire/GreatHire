@@ -108,10 +108,10 @@ const applicantDetails = ({
           content="Assess the full information of applicants on the recruitment platform, GreatHire, a smart recruitment system functioning in the region of Hyderabad, the India State. The “Applicant Details” interface gives a full briefing on the candidates, comprising their personal information, contacts, application status in a job, and analysis of their profiles. With a focus on exactness, speed, and ease of understanding, GreatHire is designed to give the hiring team the ability to shortlist the most appropriate candidates, decrease the time span for recruiting, and create a better workforce."
         />
       </Helmet>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center my-4 py-8">
-        <div className="w-11/12 max-w-4xl bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-14">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-start md:items-center justify-center px-4 py-6 md:py-8">
+        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-5 sm:p-8 md:p-12">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-6 pt-10">
             <IoArrowBackSharp
               onClick={() => setApplicantDetailsModal(false)}
               className="cursor-pointer text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400"
@@ -123,7 +123,7 @@ const applicantDetails = ({
           </div>
 
           {/* applicant Overview */}
-          <div className="flex items-center mb-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left mb-6 gap-4">
             {app?.applicant?.profile?.profilePhoto && (
               <img
                 src={app?.applicant?.profile?.profilePhoto}
@@ -144,7 +144,7 @@ const applicantDetails = ({
               <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
                 Personal Details
               </h2>
-              <div className="mt-4 grid grid-cols-2 gap-4">
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
                   <span className="font-semibold">Full Name:</span>
                   {app?.applicant?.fullname}
@@ -179,7 +179,7 @@ const applicantDetails = ({
                   <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
                     Salary Details
                   </h2>
-                  <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <p className="text-gray-600 dark:text-gray-400">
                       <span className="font-semibold">Current CTC:</span> ₹
                       {app?.applicant?.profile.currentCTC.toLocaleString()}

@@ -41,71 +41,90 @@ const RecruiterProfile = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen flex flex-col bg-gray-50 pt-10">
-        {/* Navbar */}
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300 pt-24 lg:pt-4 md:pt-0">
+        
         <Navbar />
 
-        {/* Main Content */}
-        <div className="flex-grow flex justify-center items-center py-10">
-          <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-10">
-            {/* Header Section */}
-            <div className="flex flex-col items-center border-b pb-6">
-              <Avatar className="h-28 w-28 shadow-lg">
+        {/* Main Section */}
+        <div className="flex-grow flex justify-center items-start md:items-center px-4 sm:px-6 py-8 md:py-12">
+          
+          {/* Card */}
+          <div className="w-full max-w-2xl bg-white dark:bg-gray-800 shadow-md md:shadow-xl rounded-2xl p-5 sm:p-8 md:p-10 transition-colors duration-300">
+            
+            {/* Header */}
+            <div className="flex flex-col items-center text-center border-b border-gray-200 dark:border-gray-700 pb-6">
+              
+              <Avatar className="h-24 w-24 sm:h-28 sm:w-28 shadow-lg">
                 <AvatarImage
                   src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
                   alt="Profile Photo"
                 />
               </Avatar>
-              <h1 className="mt-4 text-3xl font-semibold text-gray-800">
+
+              <h1 className="mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 dark:text-gray-100">
                 {user?.fullname || "User"}
               </h1>
-              <p className="text-gray-600 text-lg">
+
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-1">
                 {user?.position || "Recruiter"}
               </p>
-              <p className="text-gray-600 text-lg">
+
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
                 {company?.companyName || "Company"}
               </p>
+
               <Button
                 onClick={() => setOpen(true)}
                 variant="outline"
-                className="mt-4 flex items-center gap-2 hover:bg-gray-100"
+                className="mt-5 w-full sm:w-auto flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 <Pen className="h-4 w-4" />
                 Edit Profile
               </Button>
             </div>
 
-            {/* Contact Information */}
+            {/* Contact Info */}
             <div className="mt-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 mb-5">
                 Contact Information
               </h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-4">
-                  <Mail className="text-blue-500" />
-                  <span className="text-gray-700 text-lg">
-                    {user?.emailId?.email || "No Email"}
-                  </span>
-                  {!user?.emailId?.isVerified ? (
-                    <span
-                      className="text-blue-600 text-sm cursor-pointer hover:underline"
-                      onClick={() => setOpenEmailOTPModal(true)}
-                    >
-                      Verify
+
+              <div className="space-y-5">
+
+                {/* Email Row */}
+                <div className="flex items-start gap-4">
+                  <Mail className="text-blue-500 mt-1 shrink-0" />
+
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 w-full">
+                    
+                    <span className="text-gray-700 dark:text-gray-300 text-sm sm:text-base break-all">
+                      {user?.emailId?.email || "No Email"}
                     </span>
-                  ) : (
-                    <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
-                      <MdOutlineVerified size={20} /> <span>Verified</span>
-                    </span>
-                  )}
+
+                    {!user?.emailId?.isVerified ? (
+                      <button
+                        onClick={() => setOpenEmailOTPModal(true)}
+                        className="text-blue-600 text-sm hover:underline mt-1 sm:mt-0 text-left"
+                      >
+                        Verify
+                      </button>
+                    ) : (
+                      <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-gray-700 px-2 py-1 rounded-md gap-1 text-sm mt-2 sm:mt-0 w-fit">
+                        <MdOutlineVerified size={18} />
+                        Verified
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <Contact className="text-green-500" />
-                  <span className="text-gray-700 text-lg">
+
+                {/* Phone Row */}
+                <div className="flex items-start gap-4">
+                  <Contact className="text-green-500 mt-1 shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300 text-sm sm:text-base break-all">
                     {user?.phoneNumber?.number || "No Phone Number"}
                   </span>
-
                 </div>
+
               </div>
             </div>
           </div>
@@ -114,14 +133,12 @@ const RecruiterProfile = () => {
         {/* Recruiter Update Profile */}
         <RecruiterUpdateProfile open={open} setOpen={setOpen} />
 
-        {/* Footer */}
-        <Footer className="mt-auto" />
+        <Footer />
 
         {/* OTP Modals */}
         {openEmailOTPModal && (
           <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />
         )}
-
       </div>
     </>
   );

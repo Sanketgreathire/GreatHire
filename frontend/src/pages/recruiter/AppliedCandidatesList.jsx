@@ -151,7 +151,7 @@ const AppliedCandidatesList = () => {
 
       {user?.role !== "recruiter" && <Navbar linkName={"Applicants List"} />}
       <div
-        className={`${user?.role !== "recruiter" ? "bg-white m-4" : ""} p-10 min-h-screen`}
+        className={`${user?.role !== "recruiter" ? "bg-white dark:bg-gray-900 dark:text-white m-4" : ""} p-10 min-h-screen bg-white dark:bg-gray-900 dark:text-white rounded-lg shadow-md`}
       >
         {!applicantDetailsModal ? (
           <>
@@ -159,7 +159,7 @@ const AppliedCandidatesList = () => {
             <div>
               <IoIosArrowRoundBack
                 size={35}
-                className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
                 onClick={() => navigate(-1)}
               />
             </div>
@@ -171,11 +171,11 @@ const AppliedCandidatesList = () => {
             {/* Search & Filter Section */}
             <div className="flex flex-wrap justify-between mb-4 gap-4">
               <div className="relative w-full md:w-1/3">
-                <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
+                <FiSearch className="absolute left-3 top-2.5 text-gray-500 dark:text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search by name, email"
-                  className="pl-10 p-2 border border-gray-300 rounded-md w-full"
+                  className="pl-10 p-2 border border-gray-300 rounded-md w-full dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
@@ -185,7 +185,7 @@ const AppliedCandidatesList = () => {
               </div>
 
               <select
-                className="p-2 border border-gray-300 rounded-md w-full md:w-auto"
+                className="p-2 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white rounded-md w-full md:w-auto"
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
@@ -200,9 +200,9 @@ const AppliedCandidatesList = () => {
               </select>
             </div>
 
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <Table className="w-full border-collapse bg-white min-w-[800px]">
-                <TableHeader className="bg-gray-100">
+            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+              <Table className="w-full border-collapse bg-white dark:bg-gray-800 min-w-[800px]">
+                <TableHeader className="bg-gray-100 dark:bg-gray-700">
                   <TableRow>
                     <TableHead className="text-center font-semibold">Sr No.</TableHead>
                     <TableHead className="text-center font-semibold">Name</TableHead>
@@ -218,7 +218,7 @@ const AppliedCandidatesList = () => {
                     currentApplicants.map((data, index) => (
                       <TableRow
                         key={data._id}
-                        className="hover:bg-gray-50 transition duration-150"
+                        className="hover:bg-gray-50 dark:bg-gray-800 transition duration-150"
                       >
                         {/* Sr No */}
                         <TableCell>{indexOfFirstApplicant + index + 1}</TableCell>
@@ -229,7 +229,7 @@ const AppliedCandidatesList = () => {
                         </TableCell>
 
                         {/* Email */}
-                        <TableCell className="text-gray-600">
+                        <TableCell className="text-gray-600 dark:text-gray-400">
                           {data.applicant?.emailId?.email}
                         </TableCell>
 
@@ -244,13 +244,13 @@ const AppliedCandidatesList = () => {
                               href={encodeURI(data.applicant.profile.resume)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 underline"
+                              className="text-blue-600 dark:text-blue-400 underline"
                               title="View Resume"
                             >
                               <FiEye size={20} />
                             </a>
                           ) : (
-                            <span className="text-red-500">Invalid URL</span>
+                            <span className="text-red-500 dark:text-red-400">Invalid URL</span>
                           )}
                         </div>
                       </TableCell>
@@ -260,7 +260,7 @@ const AppliedCandidatesList = () => {
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
                               statusBadgeStyles[data.status] ||
-                              "bg-gray-100 text-gray-600"
+                              "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
                             }`}
                           >
                             {data.status}
@@ -271,7 +271,7 @@ const AppliedCandidatesList = () => {
                         <TableCell>
                           <div className="flex items-center justify-center gap-1">
                             <select
-                              className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
+                              className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 cursor-pointer"
                               value={data.status}
                               disabled={updatingStatusId === data._id}
                               onChange={(e) =>
@@ -285,7 +285,7 @@ const AppliedCandidatesList = () => {
                               ))}
                             </select>
                             {updatingStatusId === data._id && (
-                              <span className="text-xs text-gray-400">Saving...</span>
+                              <span className="text-xs text-gray-400 dark:text-gray-500">Saving...</span>
                             )}
                           </div>
                         </TableCell>
@@ -293,7 +293,7 @@ const AppliedCandidatesList = () => {
                         {/* View Details */}
                         <TableCell>
                           <button
-                            className="flex items-center gap-1 mx-auto px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition"
+                            className="flex items-center gap-1 mx-auto px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white dark:text-gray-200 text-sm rounded-md transition"
                             onClick={() => {
                               setApplicant(data);
                               setApplicantId(data._id);
@@ -309,7 +309,7 @@ const AppliedCandidatesList = () => {
                     <TableRow>
                       <TableCell
                         colSpan="7"
-                        className="text-center text-gray-500 py-8"
+                        className="text-center text-gray-500 dark:text-gray-400 py-8"
                       >
                         No applicants found.
                       </TableCell>
@@ -324,8 +324,8 @@ const AppliedCandidatesList = () => {
               <div className="flex justify-between items-center mt-4">
                 <button
                   className={`px-4 py-2 text-white rounded-md ${currentPage === 1
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
+                      ? "bg-gray-400 cursor-not-allowed dark:bg-gray-600"
+                      : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
                   }`}
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
@@ -333,14 +333,14 @@ const AppliedCandidatesList = () => {
                   Previous
                 </button>
 
-                <span className="text-gray-700">
+                <span className="text-gray-700 dark:text-gray-300">
                   Page {currentPage} of {Math.max(totalPages, 1)}
                 </span>
 
                 <button
-                  className={`px-4 py-2 text-white rounded-md ${currentPage === totalPages || totalPages === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600"
+                  className={`px-4 py-2 text-white dark rounded-md ${currentPage === totalPages || totalPages === 0
+                      ? "bg-gray-400 cursor-not-allowed dark:bg-gray-600"
+                      : "bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
                   }`}
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
