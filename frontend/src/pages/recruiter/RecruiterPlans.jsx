@@ -20,6 +20,7 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { addJobPlan } from "@/redux/jobPlanSlice";
 import { addCompany } from "@/redux/companySlice";
+import { updateUserPlan } from "@/redux/authSlice";
 
 /* ================= SUBSCRIPTION PLANS ================= */
 const subscriptionPlans = [
@@ -244,6 +245,14 @@ function RecruiterPlans() {
 
           if (verify.data.success) {
             dispatch(addJobPlan(verify.data.plan));
+            
+            // Update user plan in Redux
+            if (verify.data.userPlan) {
+              dispatch(updateUserPlan({
+                plan: verify.data.userPlan,
+                subscriptionStatus: "ACTIVE"
+              }));
+            }
             
             // Refresh company data to update credits
             const companyRes = await axios.post(

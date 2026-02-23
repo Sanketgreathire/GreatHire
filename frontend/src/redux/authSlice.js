@@ -36,6 +36,13 @@ const authSlice = createSlice({
       state.user.phoneNumber.isVerified = action.payload;
     },
 
+    updateUserPlan: (state, action) => {
+      if (state.user) {
+        state.user.plan = action.payload.plan;
+        state.user.subscriptionStatus = action.payload.subscriptionStatus;
+      }
+    },
+
     logOut: (state) => {
       state.user = null;
     },
@@ -55,6 +62,7 @@ export const {
   setSearchedQuery,
   updateEmailVerification,
   updateNumberVerification,
+  updateUserPlan,
 } = authSlice.actions;
 
 export default authSlice.reducer;
