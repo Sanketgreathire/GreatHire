@@ -151,180 +151,181 @@ const PostedJobList = () => {
       </Helmet>
 
       {company && user.isActive ? (
-        <div className="p-5 bg-gray-50 dark:bg-gray-900 shadow-md rounded-lg pt-20 transition-colors duration-300">
-
-          {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mb-4"></div>
-                <p className="text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300">Loading jobs...</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              {/* Filters Section */}
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
-                <div className="relative w-full md:w-1/3">
-                  <FiSearch className="absolute left-3 top-2.5 text-gray-500 dark:text-gray-400 transition-colors duration-300" />
-                  <input
-                    type="text"
-                    placeholder="Search by job title"
-                    className="pl-10 p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-md w-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
-
-                <div className="w-full md:w-1/6">
-                  <select
-                    className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md w-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    {statusOptions.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          <div className="p-5 shadow-md rounded-lg pt-20">
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mb-4"></div>
+                  <p className="text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300">Loading jobs...</p>
                 </div>
               </div>
+            ) : (
+              <>
+                {/* Filters Section */}
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-4">
+                  <div className="relative w-full md:w-1/3">
+                    <FiSearch className="absolute left-3 top-2.5 text-gray-500 dark:text-gray-400 transition-colors duration-300" />
+                    <input
+                      type="text"
+                      placeholder="Search by job title"
+                      className="pl-10 p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-md w-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </div>
 
-              {/* Table Container with overflow for responsiveness */}
-              <div className="overflow-x-auto w-full">
-                <Table className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md transition-colors duration-300">
-                  <TableHeader className="bg-gray-200 dark:bg-gray-700 transition-colors duration-300">
-                    <TableRow className="border-b border-gray-300 dark:border-gray-600">
-                      <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Sr No.</TableHead>
-                      <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Date</TableHead>
-                      <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Job Role</TableHead>
-                      <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Status</TableHead>
-                      <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                  <div className="w-full md:w-1/6">
+                    <select
+                      className="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md w-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      {statusOptions.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-                  <TableBody className="text-center">
-                    {currentJobs.length > 0 ? (
-                      currentJobs.map((job, index) => (
-                        <TableRow
-                          key={job._id}
-                          className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
-                          onClick={() => handleJobDetailsClick(job._id)}
-                        >
-                          <TableCell className="text-gray-900 dark:text-gray-100">
-                            {(currentPage - 1) * jobsPerPage + index + 1}
-                          </TableCell>
-                          <TableCell className="text-gray-900 dark:text-gray-100">
-                            {new Date(job.createdAt).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              }
-                            )}
-                          </TableCell>
-                          <TableCell className="text-gray-900 dark:text-gray-100">{job.jobDetails.title}</TableCell>
-                          {job?.created_by === user?._id ||
-                            user?.emailId.email === company?.adminEmail ? (
-                            <TableCell className="place-items-center">
-                              {statusLoading[job._id] ? (
-                                <span className="text-gray-600 dark:text-gray-400">loading...</span>
-                              ) : job.jobDetails.isActive ? (
-                                <FaToggleOn
-                                  className="text-green-500 dark:text-green-400 cursor-pointer mx-auto transition-colors duration-300"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      job._id,
-                                      !job.jobDetails.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
-                              ) : (
-                                <FaToggleOff
-                                  className="text-red-500 dark:text-red-400 cursor-pointer mx-auto transition-colors duration-300"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      job._id,
-                                      !job.jobDetails.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
+                {/* Table Container with overflow for responsiveness */}
+                <div className="overflow-x-auto w-full">
+                  <Table className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md transition-colors duration-300">
+                    <TableHeader className="bg-gray-200 dark:bg-gray-700 transition-colors duration-300">
+                      <TableRow className="border-b border-gray-300 dark:border-gray-600">
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Sr No.</TableHead>
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Date</TableHead>
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Job Role</TableHead>
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Status</TableHead>
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody className="text-center">
+                      {currentJobs.length > 0 ? (
+                        currentJobs.map((job, index) => (
+                          <TableRow
+                            key={job._id}
+                            className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                            onClick={() => handleJobDetailsClick(job._id)}
+                          >
+                            <TableCell className="text-gray-900 dark:text-gray-100">
+                              {(currentPage - 1) * jobsPerPage + index + 1}
+                            </TableCell>
+                            <TableCell className="text-gray-900 dark:text-gray-100">
+                              {new Date(job.createdAt).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                }
                               )}
                             </TableCell>
-                          ) : (
-                            <TableCell className="text-gray-900 dark:text-gray-100">-----</TableCell>
-                          )}
-                          <TableCell className="p-3 text-center">
-                            <div className="flex justify-center gap-3 flex-wrap">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleJobDetailsClick(job._id);
-                                }}
-                                className="bg-blue-700 dark:bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300"
-                              >
-                                Job Details
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleApplicantsClick(job._id);
-                                }}
-                                className="bg-green-500 dark:bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 dark:hover:bg-green-500 transition-colors duration-300"
-                              >
-                                Applicants List
-                              </button>
-                            </div>
+                            <TableCell className="text-gray-900 dark:text-gray-100">{job.jobDetails.title}</TableCell>
+                            {job?.created_by === user?._id ||
+                              user?.emailId.email === company?.adminEmail ? (
+                              <TableCell className="place-items-center">
+                                {statusLoading[job._id] ? (
+                                  <span className="text-gray-600 dark:text-gray-400">loading...</span>
+                                ) : job.jobDetails.isActive ? (
+                                  <FaToggleOn
+                                    className="text-green-500 dark:text-green-400 cursor-pointer mx-auto transition-colors duration-300"
+                                    onClick={(event) =>
+                                      toggleActive(
+                                        event,
+                                        job._id,
+                                        !job.jobDetails.isActive
+                                      )
+                                    }
+                                    size={30}
+                                  />
+                                ) : (
+                                  <FaToggleOff
+                                    className="text-red-500 dark:text-red-400 cursor-pointer mx-auto transition-colors duration-300"
+                                    onClick={(event) =>
+                                      toggleActive(
+                                        event,
+                                        job._id,
+                                        !job.jobDetails.isActive
+                                      )
+                                    }
+                                    size={30}
+                                  />
+                                )}
+                              </TableCell>
+                            ) : (
+                              <TableCell className="text-gray-900 dark:text-gray-100">-----</TableCell>
+                            )}
+                            <TableCell className="p-3 text-center">
+                              <div className="flex justify-center gap-3 flex-wrap">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleJobDetailsClick(job._id);
+                                  }}
+                                  className="bg-blue-700 dark:bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300"
+                                >
+                                  Job Details
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleApplicantsClick(job._id);
+                                  }}
+                                  className="bg-green-500 dark:bg-green-600 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 dark:hover:bg-green-500 transition-colors duration-300"
+                                >
+                                  Applicants List
+                                </button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan="5"
+                            className="text-center text-gray-500 dark:text-gray-400 py-8 transition-colors duration-300"
+                          >
+                            No jobs found.
                           </TableCell>
                         </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell
-                          colSpan="5"
-                          className="text-center text-gray-500 dark:text-gray-400 py-8 transition-colors duration-300"
-                        >
-                          No jobs found.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
 
-              {/* Pagination */}
-              <div className="flex justify-between items-center mt-4">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 border rounded transition-colors duration-300 ${currentPage === 1
+                {/* Pagination */}
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 border rounded transition-colors duration-300 ${currentPage === 1
                       ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 border-gray-300 dark:border-gray-600 cursor-not-allowed"
                       : "bg-blue-700 dark:bg-blue-600 text-white border-blue-700 dark:border-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500"
-                    }`}
-                >
-                  Previous
-                </button>
-                <span className="text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 border rounded transition-colors duration-300 ${currentPage === totalPages
+                      }`}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 border rounded transition-colors duration-300 ${currentPage === totalPages
                       ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 border-gray-300 dark:border-gray-600 cursor-not-allowed"
                       : "bg-blue-700 dark:bg-blue-600 text-white border-blue-700 dark:border-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500"
-                    }`}
-                >
-                  Next
-                </button>
-              </div>
-            </>
-          )}
+                      }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       ) : !company ? (
         <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
