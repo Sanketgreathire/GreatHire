@@ -213,6 +213,12 @@ export const getRecruitersList = async (req, res) => {
               companyName: "$companyDetails.companyName",
               companyId: "$companyDetails._id",
               adminEmail: "$companyDetails.adminEmail",
+              creditedForJobs: "$companyDetails.creditedForJobs",
+              creditedForCandidates: "$companyDetails.creditedForCandidates",
+              maxJobPosts: "$companyDetails.maxJobPosts",
+              customCreditsForJobs: "$companyDetails.customCreditsForJobs",
+              customCreditsForCandidates: "$companyDetails.customCreditsForCandidates",
+              customMaxJobPosts: "$companyDetails.customMaxJobPosts",
               isAdmin: {
                 $cond: {
                   if: { $eq: ["$emailId.email", "$companyDetails.adminEmail"] },

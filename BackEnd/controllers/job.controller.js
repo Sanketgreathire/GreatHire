@@ -61,6 +61,14 @@ export const postJob = [
       // Debug log
       console.log("anyAmount value received:", anyAmount, "Type:", typeof anyAmount);
 
+      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && company.maxJobPosts <= 0) {
+        return res.status(400).json({
+          success: false,
+          message: "You have reached your maximum job post limit. Please upgrade your plan.",
+          redirectTo: "/recruiter/dashboard/upgrade-plans"
+        });
+      }
+
       if (company.creditedForJobs < 500) {
         return res.status(400).json({
           success: false,
@@ -130,15 +138,15 @@ export const postJob = [
         console.error('❌ Error notifying matching candidates:', matchingError.message);
       }
 
-      if (company.maxJobPosts > 0) {
+      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && company.maxJobPosts > 0) {
         company.maxJobPosts -= 1;
-      } else {
-        company.creditedForJobs -= 500;
-        
-        // Mark free plan as used when credits reach 0
-        if (company.creditedForJobs === 0 && !company.hasUsedFreePlan) {
-          company.hasUsedFreePlan = true;
-        }
+      }
+      
+      company.creditedForJobs -= 500;
+      
+      // Mark free plan as used when credits reach 0
+      if (company.creditedForJobs === 0 && !company.hasUsedFreePlan) {
+        company.hasUsedFreePlan = true;
       }
       
       await company.save();

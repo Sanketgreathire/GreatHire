@@ -60,6 +60,18 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 5, // 5 free candidate views
     },
+    customCreditsForJobs: {
+      type: Number,
+      default: null, // Admin can set custom credits
+    },
+    customCreditsForCandidates: {
+      type: Number,
+      default: null, // Admin can set custom credits
+    },
+    customMaxJobPosts: {
+      type: Number,
+      default: null, // Admin can set custom max job posts
+    },
     hasUsedFreePlan: {
       type: Boolean,
       default: false, // Track if user has used free plan
