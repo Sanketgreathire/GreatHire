@@ -44,7 +44,7 @@ const subscriptionPlans = [
   {
     id: "swift-hire",
     title: "Standard",
-    price: 999,
+    price: 1,
     billing: "Monthly",
     jobs: "5 Jobs",
     resumes: "333 Credits",

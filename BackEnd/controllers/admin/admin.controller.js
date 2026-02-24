@@ -262,9 +262,18 @@ export const updateRecruiterCredits = async (req, res) => {
     const { Company } = await import("../../models/company.model.js");
     
     const updateData = {};
-    if (customCreditsForJobs !== undefined) updateData.customCreditsForJobs = customCreditsForJobs;
-    if (customCreditsForCandidates !== undefined) updateData.customCreditsForCandidates = customCreditsForCandidates;
-    if (customMaxJobPosts !== undefined) updateData.customMaxJobPosts = customMaxJobPosts;
+    if (customCreditsForJobs !== undefined) {
+      updateData.customCreditsForJobs = customCreditsForJobs;
+      updateData.creditedForJobs = customCreditsForJobs;
+    }
+    if (customCreditsForCandidates !== undefined) {
+      updateData.customCreditsForCandidates = customCreditsForCandidates;
+      updateData.creditedForCandidates = customCreditsForCandidates;
+    }
+    if (customMaxJobPosts !== undefined) {
+      updateData.customMaxJobPosts = customMaxJobPosts;
+      updateData.maxJobPosts = customMaxJobPosts;
+    }
 
     const company = await Company.findByIdAndUpdate(
       companyId,

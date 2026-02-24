@@ -138,7 +138,7 @@ export const postJob = [
         console.error('❌ Error notifying matching candidates:', matchingError.message);
       }
 
-      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && company.maxJobPosts > 0) {
+      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && typeof company.maxJobPosts === 'number' && company.maxJobPosts > 0) {
         company.maxJobPosts -= 1;
       }
       
