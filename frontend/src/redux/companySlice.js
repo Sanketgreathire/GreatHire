@@ -39,7 +39,9 @@ const companySlice = createSlice({
 
     // reducer function to decrease max job posts
     decreaseMaxPostJobs: (state, action) => {
-      state.company.maxJobPosts = state.company.maxJobPosts - action.payload;
+      if (typeof state.company.maxJobPosts === 'number' && state.company.maxJobPosts > 0) {
+        state.company.maxJobPosts = state.company.maxJobPosts - action.payload;
+      }
     },
 
     // reducer function to update candidate credits (set to specific value)

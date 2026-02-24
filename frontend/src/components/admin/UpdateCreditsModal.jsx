@@ -5,15 +5,13 @@ import { X } from "lucide-react";
 
 const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
   const [customCreditsForJobs, setCustomCreditsForJobs] = useState("");
-  const [customCreditsForCandidates, setCustomCreditsForCandidates] = useState(""*500);
-  const [customMaxJobPosts, setCustomMaxJobPosts] = useState("");
+  const [customCreditsForCandidates, setCustomCreditsForCandidates] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (recruiter) {
       setCustomCreditsForJobs(recruiter.customMaxJobPosts || "");
       setCustomCreditsForCandidates(recruiter.customCreditsForCandidates || "");
-      setCustomMaxJobPosts(recruiter.customMaxJobPosts || "");
     }
   }, [recruiter]);
 
@@ -62,11 +60,8 @@ const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
               className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Current: ( {Math.floor((recruiter?.creditedForJobs || 0) / 500)} job posts have recruiter )
+              Current: {recruiter?.maxJobPosts || 0} job posts
             </p>
-            {/* <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-              Note: 500 credits = 1 job post
-            </p> */}
           </div>
 
           <div>
@@ -84,25 +79,6 @@ const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
               Current: {recruiter?.creditedForCandidates || 0}
             </p>
           </div>
-
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Custom Max Job Posts
-            </label>
-            <Input
-              type="number"
-              placeholder="e.g., 10 (leave empty for unlimited)"
-              value={customMaxJobPosts}
-              onChange={(e) => setCustomMaxJobPosts(e.target.value)}
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
-            />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Current: {recruiter?.maxJobPosts || "Unlimited"}
-            </p>
-            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-              This will limit the total number of job posts allowed
-            </p>
-          </div> */}
 
           <div className="flex justify-end gap-2 pt-2">
             <Button

@@ -49,7 +49,7 @@ const RecruiterDashboard = () => {
     };
 
     if (user) fetchCompanyByUserId();
-  }, [user]);
+  }, [user, dispatch]);
 
   // Fetch recruiters and job plan if company exists
   useEffect(() => {
