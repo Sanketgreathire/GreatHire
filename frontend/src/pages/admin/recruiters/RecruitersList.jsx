@@ -17,6 +17,7 @@ import {
   XCircle,
   MessageSquare,
   Ban,
+  CreditCard,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { FaRegUser } from "react-icons/fa";
@@ -25,12 +26,14 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   ADMIN_RECRUITER_DATA_API_END_POINT,
   RECRUITER_API_END_POINT,
+  ADMIN_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import UpdateCreditsModal from "@/components/admin/UpdateCreditsModal";
 
 /**
  * Rewritten RecruitersList.jsx
@@ -190,6 +193,9 @@ const RecruitersList = () => {
   const [selectedMessageRecruiter, setSelectedMessageRecruiter] = useState(null);
   const [sendingMessage, setSendingMessage] = useState(false);
 
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [selectedCreditsRecruiter, setSelectedCreditsRecruiter] = useState(null);
+
   const stats = [
     {
       title: "Total Recruiters",
@@ -346,6 +352,27 @@ const RecruitersList = () => {
       toast.error("Error sending message");
     } finally {
       setSendingMessage(false);
+    }
+  };
+
+  // Update recruiter credits
+  const updateRecruiterCredits = async (data) => {
+    try {
+      const response = await axios.put(
+        `${ADMIN_API_END_POINT}/update-recruiter-credits`,
+        data,
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success("Credits updated successfully");
+        setShowCreditsModal(false);
+        fetchRecruiterList();
+      } else {
+        toast.error(response.data.message || "Failed to update credits");
+      }
+    } catch (err) {
+      console.error("updateCredits error", err);
+      toast.error("Error updating credits");
     }
   };
 
@@ -680,6 +707,21 @@ const RecruitersList = () => {
                                 className="text-blue-600 dark:text-blue-400"
                               />
                             </button>
+
+                            {/* Update Credits */}
+                            <button
+                              title="Update credits"
+                              onClick={() => {
+                                setSelectedCreditsRecruiter(r);
+                                setShowCreditsModal(true);
+                              }}
+                              className="p-1.5 rounded bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
+                            >
+                              <CreditCard
+                                size={14}
+                                className="text-purple-600 dark:text-purple-400"
+                              />
+                            </button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -764,6 +806,14 @@ const RecruitersList = () => {
           </div>
         </div>
       )}
+
+      {/* Update Credits Modal */}
+      <UpdateCreditsModal
+        isOpen={showCreditsModal}
+        onClose={() => setShowCreditsModal(false)}
+        recruiter={selectedCreditsRecruiter}
+        onUpdate={updateRecruiterCredits}
+      />
     </>
   );
 };

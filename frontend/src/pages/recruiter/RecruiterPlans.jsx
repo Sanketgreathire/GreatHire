@@ -16,6 +16,7 @@ import {
   VERIFICATION_API_END_POINT,
   COMPANY_API_END_POINT,
   REVENUE_API_END_POINT,
+  RECRUITER_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { addJobPlan } from "@/redux/jobPlanSlice";
@@ -46,10 +47,10 @@ const subscriptionPlans = [
     price: 999,
     billing: "Monthly",
     jobs: "5 Jobs",
-    resumes: "50 Credits",
+    resumes: "333 Credits",
     features: [
       "5 Job Postings (30 days)",
-      "50 Resume Credits",
+      "333 Resume Credits",
       "WhatsApp & Email Invites",
     ],
     cta: "Upgrade Now",
@@ -60,11 +61,11 @@ const subscriptionPlans = [
     price: 2999,
     billing: "Monthly",
     jobs: "15 Jobs",
-    resumes: "300 Credits",
+    resumes: "1000 Credits",
     popular: true,
     features: [
       "15 Job Postings (60 days)",
-      "300 Resume Credits",
+      "1000 Resume Credits",
       "Advanced AI Filters",
       "Priority Listing (7 days)",
       "Multi-user Login (3 recruiters)",
@@ -187,6 +188,30 @@ function RecruiterPlans() {
     subscriptionPlans.find((p) => p.popular)?.id
   );
   const [showComparison, setShowComparison] = useState(false);
+
+  // Refresh user data when component mounts to get latest plan info
+  useEffect(() => {
+    const refreshUserData = async () => {
+      if (user && user.role === "recruiter" && user._id) {
+        try {
+          const response = await axios.get(
+            `${RECRUITER_API_END_POINT}/recruiter-by-id/${user._id}`,
+            { withCredentials: true }
+          );
+          if (response?.data?.success && response?.data?.recruiter) {
+            const recruiter = response.data.recruiter;
+            dispatch(updateUserPlan({
+              plan: recruiter.plan || "FREE",
+              subscriptionStatus: recruiter.subscriptionStatus || "INACTIVE"
+            }));
+          }
+        } catch (error) {
+          console.error("Error refreshing user data:", error);
+        }
+      }
+    };
+    refreshUserData();
+  }, []);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -368,7 +393,7 @@ function RecruiterPlans() {
       title: plan.title,
       price: plan.price,
       creditsForJobs,
-      creditsForCandidates: plan.id === "swift-hire" ? 50 : 300,
+      creditsForCandidates: plan.id === "swift-hire" ? 333 : 1000,
     });
   };
 

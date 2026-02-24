@@ -369,10 +369,22 @@ export const getCompanyById = async (req, res) => {
       });
     }
 
+    // Apply custom credits if they exist
+    const companyData = company.toObject();
+    if (companyData.customCreditsForJobs !== null && companyData.customCreditsForJobs !== undefined) {
+      companyData.creditedForJobs = companyData.customCreditsForJobs;
+    }
+    if (companyData.customCreditsForCandidates !== null && companyData.customCreditsForCandidates !== undefined) {
+      companyData.creditedForCandidates = companyData.customCreditsForCandidates;
+    }
+    if (companyData.customMaxJobPosts !== null && companyData.customMaxJobPosts !== undefined) {
+      companyData.maxJobPosts = companyData.customMaxJobPosts;
+    }
+
     // Return company details
     return res.status(200).json({ 
       success: true,
-      company: company,
+      company: companyData,
       message: "Company details fetched successfully",
     });
     
@@ -439,7 +451,18 @@ export const companyByUserId = async (req, res) => {
     });
 
     if (company) {
-      return res.status(200).json({ success: true, company });
+      // Apply custom credits if they exist
+      const companyData = company.toObject();
+      if (companyData.customCreditsForJobs !== null && companyData.customCreditsForJobs !== undefined) {
+        companyData.creditedForJobs = companyData.customCreditsForJobs;
+      }
+      if (companyData.customCreditsForCandidates !== null && companyData.customCreditsForCandidates !== undefined) {
+        companyData.creditedForCandidates = companyData.customCreditsForCandidates;
+      }
+      if (companyData.customMaxJobPosts !== null && companyData.customMaxJobPosts !== undefined) {
+        companyData.maxJobPosts = companyData.customMaxJobPosts;
+      }
+      return res.status(200).json({ success: true, company: companyData });
     } else {
       return res.status(404).json({
         success: false,

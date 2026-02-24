@@ -249,3 +249,40 @@ export const removeAccount = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+// Update custom credits for a recruiter
+export const updateRecruiterCredits = async (req, res) => {
+  try {
+    const { companyId, customCreditsForJobs, customCreditsForCandidates, customMaxJobPosts } = req.body;
+
+    if (!companyId) {
+      return res.status(400).json({ success: false, message: "Company ID is required" });
+    }
+
+    const { Company } = await import("../../models/company.model.js");
+    
+    const updateData = {};
+    if (customCreditsForJobs !== undefined) updateData.customCreditsForJobs = customCreditsForJobs;
+    if (customCreditsForCandidates !== undefined) updateData.customCreditsForCandidates = customCreditsForCandidates;
+    if (customMaxJobPosts !== undefined) updateData.customMaxJobPosts = customMaxJobPosts;
+
+    const company = await Company.findByIdAndUpdate(
+      companyId,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Credits updated successfully",
+      company
+    });
+  } catch (error) {
+    console.error("Error updating recruiter credits:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
