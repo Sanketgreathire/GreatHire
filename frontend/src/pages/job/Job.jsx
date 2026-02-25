@@ -138,22 +138,24 @@ const Job = ({ job }) => {
       </Helmet>
 
 
-      <div className=" flex flex-col space-y-2 p-5 rounded-md bg-white border-grey-100 dark:text-white border-gray-100 dark:bg-[#2a2f3d] ">
+      <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 border">
+        
+        {/* Header Section with Badge and Icons */}
         <div className="flex justify-between items-center mb-2 min-h-[28px]">
 
           {/* Urgent Hiring Label */}
           {job?.jobDetails?.urgentHiring === "Yes" && (
-            <p className=" inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold dark:text-gray-800 border-white ">
+            <p className="inline-block text-sm bg-violet-100 rounded-md px-2 p-1 text-violet-800 font-bold border border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-700">
               Urgent Hiring
             </p>
           )}
 
           {/* Right side icons */}
-          <div className="flex items-center gap-3 ml-auto ">
+          <div className="flex items-center gap-3 ml-auto">
 
             {/* Share Icon (always visible) */}
             <div className="relative inline-block">
-              <div onClick={handleShareClick} className="cursor-pointer">
+              <div onClick={handleShareClick} className="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
                 <FiShare2 size={22} />
               </div>
               {showShareCard && (
@@ -173,37 +175,43 @@ const Job = ({ job }) => {
             {user && !isApplied && (
               <div
                 onClick={() => handleBookmark(job._id)}
-                className="cursor-pointer"
+                className="cursor-pointer transition-colors"
               >
-                {isBookmarked ? (
-                  <FaBookmark size={25} className="text-green-700" />
+                {isBookmarked ? (<FaBookmark size={25} className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"/>
                 ) : (
-                  <CiBookmark size={25} />
+                  <CiBookmark size={25} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"/>
                 )}
               </div>
             )}
           </div>
         </div>
 
+        {/* Job Title */}
+        <h3 className="text-lg font-semibold line-clamp-2 h-[48px] text-gray-900 dark:text-white">{job?.jobDetails?.title}</h3>
 
-        <h3 className="text-lg font-semibold line-clamp-2 h-[48px] ">{job?.jobDetails?.title}</h3>
-        <div className="flex items-center justify-between gap-2 my-2 ">
-          <div>{job?.jobDetails?.companyName}</div>
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.workPlaceFlexibility}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-100">{job?.jobDetails?.location}</p>
+        {/* Company Name and Location Section */}
+        <div className="flex items-center justify-between gap-2 my-2">
+          <div className="text-gray-700 dark:text-gray-300 font-medium">{job?.jobDetails?.companyName}</div>
+          <div className="text-right">
+            <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.workPlaceFlexibility}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.location}</p>
           </div>
         </div>
-        <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md ">
-          <div className="flex items-center gap-1 ">
-            <AiOutlineThunderbolt />
+
+        {/* Response Time Badge */}
+        <div className="p-1 flex items-center w-full text-sm bg-blue-100 dark:bg-blue-900/30 justify-center text-blue-800 dark:text-blue-300 rounded-md border border-blue-200 dark:border-blue-700">
+          <div className="flex items-center gap-1">
+            <AiOutlineThunderbolt size={16} />
             <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
           </div>
         </div>
-        <div className="text-sm flex flex-col space-y-2 ">
-          <div className="flex gap-2 justify-between items-center ">
+
+        {/* Salary, Job Type, and Duration Section */}
+        <div className="text-sm flex flex-col space-y-2">
+          <div className="flex gap-2 justify-between items-center">
+            {/* Salary */}
             <div className="flex w-1/2">
-              <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
+              <p className="p-1 text-center w-full font-semibold text-gray-700 dark:text-gray-300 rounded-md bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600">
                 {job?.jobDetails?.salary
                   .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                   .split("-")
@@ -215,39 +223,46 @@ const Job = ({ job }) => {
                   ))}
               </p>
             </div>
-            <div className="flex w-1/2 ">
-              <p className="p-1 w-full font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
+            
+            {/* Job Type */}
+            <div className="flex w-1/2">
+              <p className="p-1 w-full font-semibold text-green-700 dark:text-green-400 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center gap-1 border border-green-200 dark:border-green-700">
                 {job.jobDetails?.jobType}
               </p>
             </div>
           </div>
-          <div className="w-full ">
-            <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200 ">
+
+          {/* Duration */}
+          <div className="w-full">
+            <p className="p-1 text-center font-semibold text-gray-700 dark:text-gray-300 rounded-md bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600">
               {job.jobDetails?.duration}
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-between ">
+
+        {/* Active Days and Applied Status Section */}
+        <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-100 ">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Active {calculateActiveDays(job?.createdAt)} days ago
             </p>
           </div>
-          <div className="flex items-center text-sm text-blue-700 gap-2">
-            {isApplied && <span className="text-green-600">Applied</span>}
+          <div className="flex items-center text-sm text-blue-700 dark:text-blue-400 gap-2">
+            {isApplied && <span className="text-green-600 dark:text-green-400 font-semibold">✓ Applied</span>}
           </div>
         </div>
+
+        {/* Details Button */}
         <div className="flex w-full items-center justify-between gap-4">
           <Button
             onClick={() => {
               navigate(`/jobs/${job._id}`);
             }}
             variant="outline"
-            className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white"
+            className="w-full text-white bg-blue-700 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white dark:border-blue-600 transition-colors"
           >
             Details
           </Button>
-
         </div>
 
       </div>

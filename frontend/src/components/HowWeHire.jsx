@@ -252,7 +252,7 @@ const HowWeHirePage = () => {
       </style>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-screen lg:min-h-[80vh] md:min-h-[75vh] sm:min-h-[60vh] mt-10">
+      <section className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 dark:from-gray-950 dark:via-slate-900 dark:to-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] sm:min-h-[60vh] md:min-h-[75vh] lg:min-h-[80vh] mt-10">
         {/* Background Image */}
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-30 dark:opacity-20"
@@ -268,7 +268,7 @@ const HowWeHirePage = () => {
         <div className="absolute top-0 left-0 w-60 h-60 sm:w-96 sm:h-96 bg-blue-500 opacity-10 dark:opacity-5 blur-3xl rounded-full"></div>
         <div className="absolute bottom-0 right-0 w-60 h-60 sm:w-96 sm:h-96 bg-green-500 opacity-10 dark:opacity-5 blur-3xl rounded-full"></div>
 
-        <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col justify-center">
+        <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col justify-center pt-20 sm:pt-0">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:pt-20 lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             How We <span className="gradient-text">Hire</span>
           </h1>
