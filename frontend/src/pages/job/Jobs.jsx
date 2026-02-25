@@ -395,15 +395,13 @@ const Jobs = () => {
         />
       </Helmet>
 
-
-
-      <div className="min-h-screen flex flex-col pb-4">
+      <div className="min-h-screen flex flex-col pb-4 bg-white dark:bg-gray-900">
         <Navbar />
 
         {/* Hero Section */}
-        <div className="pt-24 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800">
+        <div className="pt-24 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="flex flex-col gap-5 my-10">
-            <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce">
+            <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium animate-bounce">
               No. 1 Job Hunt Website
             </span>
 
@@ -426,36 +424,30 @@ const Jobs = () => {
           </div>
         </div>
 
-        {/* Jobs Listing Section - FIXED CONTAINER */}
-        <div className="w-full px-0 lg:px-0 dark:bg-gray-900">
-          <div className="
-  flex-grow w-full max-w-[1600px] mx-auto pt-6
-  bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50
-  dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950
-">
+        {/* Jobs Listing Section */}
+        <div className="w-full px-0 lg:px-0 bg-white dark:bg-gray-900">
+          <div className="flex-grow w-full max-w-[1600px] mx-auto pt-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 
-          {/* <div className="flex-grow w-full max-w-[1600px] mx-auto bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-6 dark:bg-gray-100"> */}
-          {/* <div className="flex-grow w-full max-w-full bg-gray-100 pt-6 px-0 dark:bg-gray-800"> */}
             <div className="flex">
               {/* Sidebar (Desktop only) */}
-              <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 dark:bg-gray-800 pb-4">
+              <div className="hidden lg:block lg:w-72 lg:flex-shrink-0 lg:pl-4 pb-4">
                 <FilterCard
                   onFilterChange={handleFilterChange}
                   onReset={handleResetFilters}
                 />
               </div>
 
-              {/* Main area - FIXED WIDTH */}
-              <div className="flex-1 min-w-0 ">
+              {/* Main area */}
+              <div className="flex-1 min-w-0">
                 {/* Mobile toggle */}
-                <div className="flex items-center justify-between mb-4 lg:hidden px-2">
+                <div className="flex items-center justify-between mb-4 lg:hidden px-4 sm:px-6">
                   <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-md"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-3 py-2 rounded-md transition-colors shadow-md"
                   >
-                    <FiFilter /> Filters
+                    <FiFilter size={18} /> Filters
                   </button>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 font-semibold">
                     {totalFilteredJobs} jobs
                   </div>
                 </div>
@@ -463,7 +455,7 @@ const Jobs = () => {
                 {/* Loading State */}
                 {isLoading ? (
                   <div className="flex justify-center items-center h-40">
-                    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-r-transparent"></div>
                   </div>
                 ) : displayedJobs.length > 0 ? (
                   <>
@@ -471,32 +463,34 @@ const Jobs = () => {
                     <LatestJobs jobs={displayedJobs} />
 
                     {/* Pagination Controls */}
-                    <div className="w-full flex justify-center lg:justify-end items-center gap-4 mt-0 mb-0 px-4">
+                    <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-4 mt-6 mb-6 px-4 sm:px-6">
                       <button
-                        className="px-4 py-2 border rounded disabled:opacity-50 hover:bg-gray-200 transition"
+                        className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         disabled={currentPage === 1}
                         onClick={() => handlePageChange(currentPage - 1)}
                       >
-                        Prev
+                        ← Previous
                       </button>
 
-                      <span className="text-base sm:text-lg font-semibold text-center">
-                        Page {currentPage} of {totalPages}
+                      <span className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-300 text-center whitespace-nowrap">
+                        Page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of <span className="text-blue-600 dark:text-blue-400">{totalPages}</span>
                       </span>
 
                       <button
-                        className="px-4 py-2 border rounded disabled:opacity-40 hover:bg-gray-200 transition"
+                        className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         disabled={currentPage === totalPages}
                         onClick={() => handlePageChange(currentPage + 1)}
                       >
-                        Next
+                        Next →
                       </button>
                     </div>
 
                   </>
                 ) : (
-                  <div className="flex justify-center items-center h-40">
-                    <span className="text-gray-500 text-lg">Job not found</span>
+                  <div className="flex justify-center items-center h-40 px-4">
+                    <span className="text-gray-500 dark:text-gray-400 text-lg">
+                      No jobs found matching your criteria
+                    </span>
                   </div>
                 )}
               </div>
@@ -508,11 +502,11 @@ const Jobs = () => {
         {isFilterOpen && (
           <div className="fixed inset-0 z-50 flex lg:hidden">
             <div
-              className="absolute inset-0 bg-black bg-opacity-50"
+              className="absolute inset-0 bg-black bg-opacity-50 dark:bg-opacity-70"
               onClick={() => setIsFilterOpen(false)}
             ></div>
 
-            <div className="relative bg-white w-64 sm:w-72 h-full shadow-lg transform transition-transform duration-300 translate-x-0 overflow-y-auto">
+            <div className="relative bg-white dark:bg-gray-800 w-64 sm:w-72 h-full shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-y-auto">
               <FilterCard
                 onFilterChange={handleFilterChange}
                 onReset={handleResetFilters}
