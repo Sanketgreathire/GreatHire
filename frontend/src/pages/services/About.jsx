@@ -223,7 +223,7 @@ function App() {
       name: "Jitendra",
       image: Jitendraimg,
       role: "Full Stack Developer",
-      expertise: "React.js, Node.js, Express.js, MongoDB, Python, Django,JavaScript, HTML, CSS, Tailwind CSS, Bootstrap, SQL",
+      expertise: "React.js, Node.js, Express.js, MongoDB, Python, Django,JavaScript, Tailwind CSS, Bootstrap, SQL",
       about: "Results-driven Full Stack Developer with expertise in React.js, Node.js, and Django-based application development. Experienced in designing secure backend architectures, scalable APIs, and optimized database systems. Committed to delivering enterprise-grade, high-performance web solutions aligned with business objectives.",
       isTopPerformer: true,
     },
