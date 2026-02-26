@@ -66,8 +66,11 @@ const JobSearch = ({ searchInfo, onSearchUpdate }) => {
             />
           </div>
 
-          {/* Location Search */}
-          <LocationSearch onSelectLocation={handleLocationSelect} />
+          {/* Location Search — value prop added so FilterCard changes reflect here */}
+          <LocationSearch
+            value={searchInfo.location}
+            onSelectLocation={handleLocationSelect}
+          />
 
           {/* Desktop Search Button */}
           <div className="hidden md:block">
