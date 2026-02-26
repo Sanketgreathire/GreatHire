@@ -341,6 +341,32 @@ export const getAllJobs = async (req, res) => {
   }
 };
 
+
+// Get latest 20 jobs for slider/carousel - lightweight function
+export const getLatestJobsForSlider = async (req, res) => {
+  try {
+    const latestJobs = await Job.find({ "jobDetails.isActive": true })
+      .select("jobDetails company created_by createdAt saveJob")
+      .populate("company", "name logo")
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      jobs: latestJobs,
+      count: latestJobs.length
+    });
+  } catch (error) {
+    console.error("Error fetching latest jobs for slider:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching jobs for slider",
+      error: error.message
+    });
+  }
+};
+
 //get job by recruiter id...
 export const getJobByRecruiterId = async (req, res) => {
   try {
