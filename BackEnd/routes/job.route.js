@@ -52,10 +52,10 @@
 
 
 import express from "express";
-import { Application }from "../models/application.model.js"; //thisssssssss
 // import { getJobById } from "../controllers/job.controller.js";
 import {
   postJob,
+  getLatestJobsForSlider,
   getAllJobs,
   getJobById,
   deleteJobById,
@@ -66,12 +66,14 @@ import {
   getJobByCompanyId,
   getJobsStatistics,
   getExternalJobsFromFindwork,  // Importing the new function
+  applyJob,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
-import { singleUpload } from "../middlewares/multer.js";
-import { applyJob } from "../controllers/job.controller.js"; //this
 
 const router = express.Router();
+
+// Latest jobs for slider - add this route
+router.get("/slider/latest", getLatestJobsForSlider);  // GET /jobs/slider/latest
 
 router.route("/post-job").post(isAuthenticated, postJob);
 router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
