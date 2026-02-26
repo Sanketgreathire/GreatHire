@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoMdClose } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 
@@ -119,41 +119,18 @@ const filterOptions = {
   datePosted: ["Last 24 hours", "Last 7 days", "Last 15 days", "Past Month"],
 };
 
-const FilterCard = ({ onFilterChange, onReset, onClose }) => {
-  const [filters, setFilters] = useState({
-    jobTitle: "",
-    location: "",
-    jobType: [],
-    workPlace: [],
-    company: "",
-    datePosted: [],
-  });
+const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
   const handleCheckboxChange = (category, value) => {
-    setFilters((prev) => {
-      const current = Array.isArray(prev[category]) ? prev[category] : [];
-      const updated = current.includes(value)
-        ? current.filter((item) => item !== value)
-        : [...current, value];
-
-      const newFilters = { ...prev, [category]: updated };
-
-      // Immediately notify parent
-      onFilterChange?.(newFilters);
-
-      return newFilters;
-    });
+    const current = Array.isArray(filters[category]) ? filters[category] : [];
+    const updated = current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value];
+    onFilterChange?.({ ...filters, [category]: updated });
   };
 
   const handleDropdownChange = (category, value) => {
-    setFilters((prev) => {
-      const newFilters = { ...prev, [category]: value };
-
-      // Immediately notify parent
-      onFilterChange?.(newFilters);
-
-      return newFilters;
-    });
+    onFilterChange?.({ ...filters, [category]: value });
   };
 
   const handleReset = () => {
@@ -165,10 +142,11 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
       company: "",
       datePosted: [],
     };
-    setFilters(resetFilters);
     onFilterChange?.(resetFilters);
     onReset?.();
   };
+
+  if (!filters) return null;
 
   return (
     <>
@@ -186,8 +164,8 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
         <div className="sm:hidden fixed inset-0 bg-black/50 z-30" onClick={onClose} />
       )}
 
-      {/* Filter Card */}
-      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full sm:w-[250px] md:w-[280px] bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
+      {/* Filter Card — CHANGE: reduced sm:w-[210px] md:w-[224px] to match lg:w-56 sidebar in Jobs.jsx */}
+      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full sm:w-[210px] md:w-[224px] bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
         {onClose && (
           <button
             onClick={onClose}
@@ -205,7 +183,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-0 pb-20 sm:pb-4">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-0 pb-20 sm:pb-4 pt-6 space-y-6">
           {/* Dropdown Filters */}
           {["jobTitle", "location"].map((category) => (
             <div key={category} className="mb-6">
@@ -218,7 +196,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
 
               <select
                 id={category}
-                value={filters[category]}
+                value={filters[category] || ""}
                 onChange={(e) => handleDropdownChange(category, e.target.value)}
                 className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500 transition"
               >
@@ -271,7 +249,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
 
               <select
                 id={category}
-                value={filters[category]}
+                value={filters[category] || ""}
                 onChange={(e) => handleDropdownChange(category, e.target.value)}
                 className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500 transition"
               >
@@ -317,7 +295,7 @@ const FilterCard = ({ onFilterChange, onReset, onClose }) => {
         <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto flex justify-center gap-2 pt-3 pb-3 sm:pt-3 sm:pb-3 px-4 sm:px-8 bg-white dark:bg-gray-800 flex-shrink-0 border-t border-gray-200 dark:border-gray-700 shadow-lg sm:shadow-none rounded-t-2xl sm:rounded-none">
           <button
             onClick={handleReset}
-            className="w-full sm:w-auto px-10 py-2 rounded-full border border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 text-sm sm:text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white transition"
+            className="w-full sm:w-auto px-6 py-2 rounded-full border border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 text-sm sm:text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white transition"
           >
             Reset Filters
           </button>
