@@ -42,6 +42,7 @@ const GreatHireLanding = () => {
     { id: 'blogs', label: 'Blogs', path: '/Main_blog_page' },
     { id: 'about', label: 'About Us', path: '/about' },
     { id: 'contact', label: 'Contact Us', path: '/contact' },
+    { id: 'privacy', label: 'Privacy Policy', path: '/policy/privacy-policy' },
     { id: 'packages', label: 'Recruiter Plans', path: '/packages' },
   ];
 

@@ -156,6 +156,7 @@ const Navbar = () => {
     { to: "/Main_blog_page", label: "Blogs" },
     { to: "/about", label: "About Us" },
     { to: "/contact", label: "Contact Us" },
+    { to: "/policy/privacy-policy", label: "Privacy Policy" },
   ];
 
   const navLinks = [

@@ -45,14 +45,33 @@ import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 const app = express();
 const server = http.createServer(app);
 
+const defaultProductionOrigins = [
+  "https://greathire.in",
+  "https://www.greathire.in",
+];
+
+const configuredOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean)
+  : [];
+
+const productionOrigins = [
+  ...new Set([...defaultProductionOrigins, ...configuredOrigins]),
+];
+
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? productionOrigins
+    : ["http://localhost:5173", "http://localhost:5174"];
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+};
+
 const io = new Server(server, {
-  cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? ["https://greathire.in"]
-        : ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 const PORT = process.env.PORT || 8000;
@@ -71,13 +90,7 @@ app.disable("x-powered-by");
 
 // ================= CORS =================
 app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? ["https://greathire.in"]
-        : ["http://localhost:5173", "http://localhost:5174"],
-    credentials: true,
-  })
+  cors(corsOptions)
 );
 
 // ================= MIDDLEWARE =================
