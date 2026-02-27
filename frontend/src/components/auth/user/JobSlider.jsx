@@ -17,7 +17,7 @@ export default function JobsHiringSection() {
         const fetchLatestJobs = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:8000/api/v1/job/slider/latest');
+                const response = await fetch('/api/v1/job/slider/latest');
                 const data = await response.json();
 
                 if (data.success) {
