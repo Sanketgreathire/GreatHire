@@ -7,8 +7,11 @@ import {
   getAppliedJobs,
   updateStatus,
   getApplicationDetails,
+  deleteApplication,
+  getAllApplications,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import isAdmin from "../middlewares/isAdmin.js";
 import { singleUpload } from "../middlewares/multer.js";
 import { validateJobApplication } from "../middlewares/jobValidator.js";
 // import { applyJobController } from "../controllers/application.controller.js";
@@ -38,6 +41,11 @@ router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 // New route for getting individual application details
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
+router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
+
+// Admin routes
+router.route("/admin/applications").get(isAuthenticated, isAdmin, getAllApplications);
+router.route("/admin/application/:id").delete(isAuthenticated, isAdmin, deleteApplication);
 
 
 export default router;

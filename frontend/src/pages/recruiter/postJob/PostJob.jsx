@@ -175,8 +175,9 @@ const PostJob = () => {
 
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      companyName: company?.companyName,
+      companyName: company?.companyName || "",
       urgentHiring: "",
       title: "",
       details: "",
@@ -352,8 +353,8 @@ const PostJob = () => {
                       type="text"
                       placeholder="Enter company name"
                       className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                      onChange={formik.handleChange}
                       value={formik.values.companyName}
-                      readOnly
                     />
                     {formik.touched.companyName &&
                       formik.errors.companyName && (
