@@ -50,6 +50,144 @@ export const companyList = async (req, res) => {
   }
 };
 
+import validator from "validator";
+
+export const updateCompanyEmails = async (req, res) => {
+  try {
+    const { companyId, email, adminEmail } = req.body;
+
+    // 🔐 Allow only Owner
+    if (!req.user || req.user.role !== "Owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Only admin can update company emails",
+      });
+    }
+
+    if (!companyId) {
+      return res.status(400).json({
+        success: false,
+        message: "Company ID is required",
+      });
+    }
+
+    const updateData = {};
+
+    // ✅ Business Email Validation
+    if (email !== undefined) {
+      const trimmedEmail = email.trim().toLowerCase();
+
+      if (!trimmedEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Business email cannot be blank",
+        });
+      }
+
+      if (!validator.isEmail(trimmedEmail)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid business email format",
+        });
+      }
+
+      // 🔁 Check duplicate
+      const existingBusinessEmail = await Company.findOne({
+        email: trimmedEmail,
+        _id: { $ne: companyId },
+      });
+
+      if (existingBusinessEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Business email already in use",
+        });
+      }
+
+      updateData.email = trimmedEmail;
+    }
+
+    // ✅ Admin Email Validation
+    if (adminEmail !== undefined) {
+      const trimmedAdminEmail = adminEmail.trim().toLowerCase();
+
+      if (!trimmedAdminEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Admin email cannot be blank",
+        });
+      }
+
+      if (!validator.isEmail(trimmedAdminEmail)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid admin email format",
+        });
+      }
+
+      // 🔁 Check duplicate
+      const existingAdminEmail = await Company.findOne({
+        adminEmail: trimmedAdminEmail,
+        _id: { $ne: companyId },
+      });
+
+      if (existingAdminEmail) {
+        return res.status(400).json({
+          success: false,
+          message: "Admin email already in use",
+        });
+      }
+
+      updateData.adminEmail = trimmedAdminEmail;
+    }
+
+    // 🚫 Optional: prevent same email for both fields
+    if (
+      updateData.email &&
+      updateData.adminEmail &&
+      updateData.email === updateData.adminEmail
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Business and admin email cannot be the same",
+      });
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided for update",
+      });
+    }
+
+    const company = await Company.findByIdAndUpdate(
+      companyId,
+      updateData,
+      { new: true }
+    );
+
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Emails updated successfully",
+      company,
+    });
+
+  } catch (error) {
+    console.error("Update email error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 // return all deleted company list to admin
 export const deletedCompanyList = async (req, res) => {
   try {
