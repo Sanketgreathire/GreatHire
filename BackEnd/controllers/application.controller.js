@@ -275,3 +275,49 @@ export const updateStatus = async (req, res) => {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+// Delete an application by ID
+export const deleteApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ message: "Application not found.", success: false });
+    }
+
+    // Remove application from the job's application array
+    await Job.findByIdAndUpdate(application.job, {
+      $pull: { application: applicationId },
+    });
+
+    // Delete the application
+    await Application.findByIdAndDelete(applicationId);
+
+    return res.status(200).json({ message: "Application deleted successfully.", success: true });
+  } catch (error) {
+    console.error("Error deleting application:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+// Get all applications (for admin)
+export const getAllApplications = async (req, res) => {
+  try {
+    const applications = await Application.find()
+      .populate({
+        path: "applicant",
+        select: "fullname emailId phoneNumber profile",
+      })
+      .populate({
+        path: "job",
+        populate: { path: "company" },
+      })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ success: true, applications });
+  } catch (error) {
+    console.error("Error fetching all applications:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
