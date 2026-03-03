@@ -9,6 +9,7 @@ import Navbar from "@/components/admin/Navbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Helmet } from "react-helmet-async";
+import toast from "react-hot-toast";
 
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,8 @@ const RecruitersDetails = () => {
   const { recruiterId } = useParams();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+  const [editEmail, setEditEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
 
   const fetchRecruiterDetails = async () => {
     setLoading(true);
@@ -46,6 +49,25 @@ const RecruitersDetails = () => {
       return "https://github.com/shadcn.png";
     }
     return "https://github.com/shadcn.png";
+  };
+
+  const handleUpdateEmail = async () => {
+    try {
+      const response = await axios.put(
+        `/api/v1/admin/recruiter/data/update-email/${recruiterId}`,
+        { email: newEmail },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        setRecruiterDetails(response.data.recruiter);
+        setEditEmail(false);
+        toast("Email updated successfully");
+      }
+    } catch (error) {
+      console.error(error);
+      toast(error.response?.data?.message || "Error updating email");
+    }
   };
 
   return (
@@ -101,7 +123,45 @@ const RecruitersDetails = () => {
                     Contact Information
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    <strong className="text-gray-900 dark:text-white">Email:</strong> {recruiterDetails?.emailId?.email}
+                    <strong className="text-gray-900 dark:text-white">Email:</strong>
+
+                    {!editEmail ? (
+                      <>
+                        {" "}{recruiterDetails?.emailId?.email}
+                        {user?.role === "Owner" && (
+                          <button
+                            onClick={() => {
+                              setEditEmail(true);
+                              setNewEmail(recruiterDetails?.emailId?.email);
+                            }}
+                            className="ml-3 text-blue-600 text-sm underline"
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <input
+                          type="email"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          className="border px-2 py-1 rounded ml-2 text-black"
+                        />
+                        <button
+                          onClick={handleUpdateEmail}
+                          className="ml-2 bg-green-600 text-white px-2 py-1 rounded text-sm"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditEmail(false)}
+                          className="ml-2 bg-gray-400 text-white px-2 py-1 rounded text-sm"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">
                     <strong className="text-gray-900 dark:text-white">Phone:</strong>{" "}

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getRecruitersList, getRecruiter, getRecrutierStats, getAllRecruitersList,sendMessage } from '../../controllers/admin/recruiterStats.controller.js';
+import { getRecruitersList, getRecruiter, getRecrutierStats, getAllRecruitersList,sendMessage, updateRecruiterEmail } from '../../controllers/admin/recruiterStats.controller.js';
 import isAuthenticated from '../../middlewares/isAuthenticated.js';
 
 const router = express.Router();
@@ -9,5 +9,7 @@ router.get("/getAllRecruiter-stats", isAuthenticated, getAllRecruitersList);
 router.get('/recruiter-stats/:companyId', isAuthenticated, getRecruitersList);
 router.get('/getUser/:userId', isAuthenticated, getRecruiter);
 router.post('/send-message', isAuthenticated, sendMessage);
+
+router.put('/update-email/:recruiterId', isAuthenticated, updateRecruiterEmail);
 
 export default router;

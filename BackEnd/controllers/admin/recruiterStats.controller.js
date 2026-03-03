@@ -292,6 +292,81 @@ export const getRecruiter = async (req, res) => {
     });
   }
 };
+export const updateRecruiterEmail = async (req, res) => {
+  try {
+    const { recruiterId } = req.params;
+    const { email } = req.body;
+
+    // 🔐 Allow only Owner
+    if (!req.user || req.user.role !== "Owner") {
+      return res.status(403).json({
+        success: false,
+        message: "Only admin can update recruiter email",
+      });
+    }
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    // ✅ Email format validation
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
+
+    // Optional: Check if email already exists (excluding current recruiter)
+    const existingEmail = await Recruiter.findOne({
+      "emailId.email": email,
+      _id: { $ne: recruiterId },
+    });
+
+    if (existingEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already in use",
+      });
+    }
+
+    const updatedRecruiter = await Recruiter.findByIdAndUpdate(
+      recruiterId,
+      {
+        $set: {
+          "emailId.email": email,
+          "emailId.isVerified": false,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedRecruiter) {
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Email updated successfully",
+      recruiter: updatedRecruiter,
+    });
+  } catch (error) {
+    console.error("Error updating recruiter email:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 
 // Controller to send email reply to recruiter 
 export const sendMessage = async (req, res) => {
