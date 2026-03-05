@@ -66,6 +66,11 @@ const JobsForYou = ({ jobs = [] }) => {
     if (jobContainerRef.current) {
       jobContainerRef.current.scrollTop = 0;
     }
+    const heading = document.getElementById('job-openings-heading');
+    if (heading) {
+      const y = heading.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   }, [selectedJob]);
 
   const handleScroll = () => {
@@ -125,6 +130,7 @@ const JobsForYou = ({ jobs = [] }) => {
   // ========== JOB CLICK HANDLER ==========
   const handleJobClick = (job) => {
     setSelectedJob(job);
+    setShareJobId(null);
     if (window.innerWidth < 768) {
       setShowJobDetails(true);
     }

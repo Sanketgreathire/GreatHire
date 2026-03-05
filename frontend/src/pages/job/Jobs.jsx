@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Navbar from "@/components/shared/Navbar";
 // import Footer from "@/components/shared/Footer";
 import { FiFilter } from "react-icons/fi";
@@ -16,6 +16,7 @@ const Jobs = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const jobListingsRef = useRef(null);
 
   const [filters, setFilters] = useState({
     jobTitle: "",
@@ -115,8 +116,14 @@ const Jobs = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (jobListingsRef.current) {
+      const yOffset = -100;
+      const element = jobListingsRef.current;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
   };
+
 
   return (
     <>
@@ -153,7 +160,7 @@ const Jobs = () => {
 
         {/* Jobs Listing Section */}
         <div className="w-full bg-white dark:bg-gray-900">
-          <div className="flex-grow w-full max-w-[1500px] mx-auto pt-2 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+          <div ref={jobListingsRef} className="flex-grow w-full max-w-[1500px] mx-auto pt-2 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 
             {/* ── CHANGE: gap-4 added so sidebar and job list never touch ── */}
             <div className="flex gap-4">
