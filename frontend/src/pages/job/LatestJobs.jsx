@@ -1,15 +1,35 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import JobsForYou from "./JobsForYou.jsx";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
 
 const LatestJobs = ({ jobs = [] }) => {
+  const { setSelectedJob } = useJobDetails();
   // State to manage loading status
   const [loading, setLoading] = useState(true);
   const [firstLoad, setFirstLoad] = useState(true); // track initial load
+  const prevJobsRef = useRef();
+
+  // Auto-select first job on initial load or when jobs array changes (pagination)
+  useEffect(() => {
+    if (jobs.length > 0) {
+      // Check if jobs array actually changed (pagination)
+      const jobsChanged = !prevJobsRef.current || 
+        prevJobsRef.current.length !== jobs.length ||
+        prevJobsRef.current[0]?._id !== jobs[0]?._id;
+      
+      if (jobsChanged) {
+        setSelectedJob(jobs[0]);
+        prevJobsRef.current = jobs;
+      }
+      
+      if (firstLoad) setFirstLoad(false);
+    }
+  }, [jobs, setSelectedJob, firstLoad]);
 
   // Simulate a loading delay for a better user experience
   useEffect(() => {
@@ -33,7 +53,7 @@ const LatestJobs = ({ jobs = [] }) => {
 
       <div className="max-w-7xl mx-auto my-4 dark:text-gray-100 ">
         {/* Section Title */}
-        <h1 className="ml-2 sm:ml-4 lg:ml-14 font-bold lg:tracking-wide text-2xl sm:text-3xl lg:text-4xl dark:text-gray-100">
+        <h1 id="job-openings-heading" className="ml-2 sm:ml-4 lg:ml-14 font-bold lg:tracking-wide text-2xl sm:text-3xl lg:text-4xl dark:text-gray-100">
           <span className="text-[#384ac2] lg:tracking-wider">
             Latest&nbsp;&amp;&nbsp;Top
           </span>
