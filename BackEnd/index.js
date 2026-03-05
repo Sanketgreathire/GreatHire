@@ -178,11 +178,35 @@ import { startAutoRejectCron } from "./utils/autoRejectApplications.js";
 // ================= SOCKET =================
 io.on("connection", (socket) => {
   console.log("🔌 Socket connected:", socket.id);
+  
+  // User joins their personal room for notifications
+  socket.on("join", (userId) => {
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      socket.join(`user_${userId}`);
+      console.log(`👤 User ${userId} joined room: user_${userId}`);
+    } else {
+      console.warn(`⚠️ Invalid userId provided for join: ${userId}`);
+    }
+  });
+  
+  // Handle user leaving room
+  socket.on("leave", (userId) => {
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      socket.leave(`user_${userId}`);
+      console.log(`👋 User ${userId} left room: user_${userId}`);
+    } else {
+      console.warn(`⚠️ Invalid userId provided for leave: ${userId}`);
+    }
+  });
 
   socket.on("disconnect", () => {
     console.log("❌ Socket disconnected:", socket.id);
   });
 });
+
+// Initialize Socket.IO for notification service
+setIO(io);
+notificationService.setIO(io);
 
 // ================= START SERVER =================
 await connectDB();
