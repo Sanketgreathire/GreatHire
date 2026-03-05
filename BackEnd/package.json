@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon index.js",
     "build": "echo 'No build step defined for backend'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:email": "node test-email.js",
+    "test:auto-reject": "node test-auto-reject.js",
+    "backdate:applications": "node backdate-applications.js",
+    "check:auto-reject": "node check-auto-reject-status.js"
   },
   "author": "",
   "license": "ISC",

@@ -7,6 +7,7 @@ import {
   getAppliedJobs,
   updateStatus,
   getApplicationDetails,
+  triggerAutoReject,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -38,6 +39,8 @@ router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 // New route for getting individual application details
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
+// Manual trigger for auto-reject (for testing/admin)
+router.route("/auto-reject/trigger").post(isAuthenticated, triggerAutoReject);
 
 
 export default router;
