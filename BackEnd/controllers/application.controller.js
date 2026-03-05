@@ -6,6 +6,7 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
+import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -273,5 +274,23 @@ export const updateStatus = async (req, res) => {
   } catch (error) {
     console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+// Manual trigger for auto-rejecting old applications (Admin/Testing only)
+export const triggerAutoReject = async (req, res) => {
+  try {
+    await autoRejectOldApplications();
+    return res.status(200).json({ 
+      success: true, 
+      message: "Auto-reject process completed successfully" 
+    });
+  } catch (error) {
+    console.error("Error triggering auto-reject:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Error triggering auto-reject", 
+      error: error.message 
+    });
   }
 };

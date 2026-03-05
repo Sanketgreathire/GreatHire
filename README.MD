@@ -67,6 +67,27 @@ Make sure you have the following installed on your machine:
 - The backend is built using Express.js.
 - Make sure to configure environment variables as needed for both frontend and backend.
 
+## New Features
+
+### Auto-Reject Job Applications
+The system now automatically rejects job applications that have been pending for too long. This feature:
+- ✅ Automatically rejects applications older than configured days (default: 30 days)
+- ✅ Sends professional rejection emails to candidates
+- ✅ Creates in-app notifications
+- ✅ Runs daily at 2:00 AM via cron job
+- ✅ Configurable via `AUTO_REJECT_DAYS` environment variable
+
+**Quick Start:**
+```bash
+# The feature is already configured and will run automatically
+# To test manually:
+node BackEnd/test-auto-reject.js
+```
+
+**Documentation:**
+- Full Guide: [AUTO_REJECT_FEATURE.md](./AUTO_REJECT_FEATURE.md)
+- Quick Start: [AUTO_REJECT_QUICK_START.md](./AUTO_REJECT_QUICK_START.md)
+
 For any issues or contributions, please open an issue or submit a pull request on the project's repository.
 
 Happy coding!

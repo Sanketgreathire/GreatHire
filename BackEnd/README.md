@@ -94,7 +94,36 @@ This repository contains the backend code for the GreatHire application. The bac
 
 ## Cron Jobs
 
-- A cron job runs every hour to check for expired plans and emits events if any plans have expired.
+- **Plan Expiry Check**: Runs every hour to check for expired subscription plans (currently disabled)
+- **Auto-Reject Applications**: Runs daily at 2:00 AM to automatically reject old pending applications
+- **Monthly Free Plan Renewal**: Handles automatic renewal of free plans
+
+### Auto-Reject Feature
+The system automatically rejects job applications that have been pending for too long:
+- Default: 30 days (configurable via `AUTO_REJECT_DAYS`)
+- Sends email notifications to candidates
+- Creates in-app notifications
+- Runs daily at 2:00 AM
+
+**Testing Commands:**
+```bash
+# Check feature status
+npm run check:auto-reject
+
+# Test email service
+npm run test:email
+
+# Test auto-reject process
+npm run test:auto-reject
+
+# Create test data
+npm run backdate:applications
+```
+
+**Documentation:**
+- [Auto-Reject Feature Guide](../AUTO_REJECT_FEATURE.md)
+- [Quick Start Guide](../AUTO_REJECT_QUICK_START.md)
+- [Implementation Summary](../AUTO_REJECT_IMPLEMENTATION_SUMMARY.md)
 
 ## Security
 
