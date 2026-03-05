@@ -20,8 +20,8 @@ env: {
   NODE_ENV: "production",
 
   // These will be read from .env on the VPS
-  RAZORPAY_KEY_ID: "rzp_live_g7k2lNMcaGjjhW",
-  RAZORPAY_KEY_SECRET: "LDBCkzEEX6JfibrYAzetSaDR"
+  RAZORPAY_KEY_ID: "rzp_live_S2t2qrM6F4UFD9",
+  RAZORPAY_KEY_SECRET: "22KLR0amLuLqee83wVtRS7jY"
 },
 
       // Logs

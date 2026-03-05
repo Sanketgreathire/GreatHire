@@ -51,6 +51,13 @@ const CompanyDetails = () => {
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [isEditingEmails, setIsEditingEmails] = useState(false);
+  const [emailData, setEmailData] = useState({
+    email: "",
+    adminEmail: "",
+  });
+  const [emailLoading, setEmailLoading] = useState(false);
+
   // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -66,6 +73,10 @@ const CompanyDetails = () => {
 
       if (response.data.success) {
         setCompany(response.data.company);
+        setEmailData({
+          email: response.data.company.email || "",
+          adminEmail: response.data.company.adminEmail || "",
+        });
       } else {
         toast.error(response.data.message || "Failed to fetch company details");
       }
@@ -81,6 +92,39 @@ const CompanyDetails = () => {
   useEffect(() => {
     fetchCompanyDetails();
   }, []);
+
+  const handleUpdateEmails = async () => {
+    try {
+      setEmailLoading(true);
+
+      const response = await axios.put(
+        `/api/v1/admin/company/data/update-emails`,
+        {
+          companyId,
+          email: emailData.email,
+          adminEmail: emailData.adminEmail,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success("Emails updated successfully");
+        setCompany((prev) => ({
+          ...prev,
+          email: emailData.email,
+          adminEmail: emailData.adminEmail,
+        }));
+        setIsEditingEmails(false);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update emails");
+    } finally {
+      setEmailLoading(false);
+    }
+  };
 
   // Function to handle company deletion
   const handleDeleteCompany = async () => {
@@ -263,22 +307,48 @@ const CompanyDetails = () => {
                   </p>
                 </div>
 
-                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
+                {/* Business Email */}
+                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
                     Business Email
                   </p>
-                  <p className="text-lg text-gray-900 dark:text-white font-semibold break-all">
-                    {company?.email}
-                  </p>
+
+                  {isEditingEmails ? (
+                    <input
+                      type="email"
+                      value={emailData.email}
+                      onChange={(e) =>
+                        setEmailData({ ...emailData, email: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
+                    />
+                  ) : (
+                    <p className="text-lg text-gray-900 dark:text-white font-semibold break-all">
+                      {company?.email}
+                    </p>
+                  )}
                 </div>
 
-                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
+                {/* Admin Email */}
+                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
                     Admin Email
                   </p>
-                  <p className="text-lg text-gray-900 dark:text-white font-semibold break-all">
-                    {company?.adminEmail}
-                  </p>
+
+                  {isEditingEmails ? (
+                    <input
+                      type="email"
+                      value={emailData.adminEmail}
+                      onChange={(e) =>
+                        setEmailData({ ...emailData, adminEmail: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
+                    />
+                  ) : (
+                    <p className="text-lg text-gray-900 dark:text-white font-semibold break-all">
+                      {company?.adminEmail}
+                    </p>
+                  )}
                 </div>
 
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
@@ -319,6 +389,33 @@ const CompanyDetails = () => {
                 {/* Buttons */}
                 <div className="col-span-full">
                   <div className="flex flex-col sm:flex-row justify-end gap-4 sm:gap-6 mt-8">
+                    <div className="col-span-full flex justify-end gap-4">
+                      {isEditingEmails ? (
+                        <>
+                          <button
+                            onClick={() => setIsEditingEmails(false)}
+                            className="px-4 py-2 bg-gray-500 text-white rounded-md"
+                          >
+                            Cancel
+                          </button>
+
+                          <button
+                            onClick={handleUpdateEmails}
+                            disabled={emailLoading}
+                            className="px-4 py-2 bg-green-600 text-white rounded-md"
+                          >
+                            {emailLoading ? "Saving..." : "Save Emails"}
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setIsEditingEmails(true)}
+                          className="px-4 py-2 bg-yellow-600 text-white rounded-md"
+                        >
+                          Edit Emails
+                        </button>
+                      )}
+                    </div>
                     <button
                       onClick={() =>
                         navigate(`/admin/recruiters/${companyId}`)
@@ -330,9 +427,8 @@ const CompanyDetails = () => {
 
                     <button
                       onClick={onConfirmDelete}
-                      className={`w-full sm:w-auto px-6 py-3 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200 ${
-                        dloading && "cursor-not-allowed opacity-50"
-                      }`}
+                      className={`w-full sm:w-auto px-6 py-3 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200 ${dloading && "cursor-not-allowed opacity-50"
+                        }`}
                       disabled={dloading}
                     >
                       {dloading ? "Deleting..." : "Delete Company"}
