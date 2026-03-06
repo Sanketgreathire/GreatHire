@@ -545,7 +545,7 @@ export const getRecentPurchases = async (req, res) => {
       const diffMins = Math.floor(diffMs / 60000);
       const diffHours = Math.floor(diffMins / 60);
       const diffDays = Math.floor(diffHours / 24);
-      
+
       let timeAgo;
       if (diffMins < 60) timeAgo = `${diffMins} min ago`;
       else if (diffHours < 24) timeAgo = `${diffHours}h ago`;
@@ -790,6 +790,15 @@ export const getReportedJobList = async (req, res) => {
       reportTitle: report.reportTitle,
       description: report.description,
       createdAt: report.createdAt,
+
+      // ✅ ADD THESE:
+      reportType: report.reportType,
+      screenshots: report.screenshots,
+      offensiveDetails: report.offensiveDetails,
+      moneyDetails: report.moneyDetails,
+      incorrectDetails: report.incorrectDetails,
+      sellingDetails: report.sellingDetails,
+      otherDetails: report.otherDetails,
     }));
 
     return res.status(200).json({ success: true, data: jobReportMessages });

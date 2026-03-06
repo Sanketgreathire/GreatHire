@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import Navbar from "@/components/admin/Navbar";
 import {
   ADMIN_STAT_API_END_POINT,
+  COMPANY_API_END_POINT,
   NOTIFICATION_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import axios from "axios";
@@ -46,6 +47,9 @@ const ReportedJobList = () => {
         // Updates the reported jobs state if the request is successful
         if (response?.data?.success) {
           setReportedJobs(response.data.data);
+          console.log("Reported Jobs:", response.data.data); // 👈 ADD HERE
+          console.log("latest job:", response.data.data[3]); // 👈 check full object
+          console.log("Screenshots:", response.data.data[0]?.screenshots); // 👈 check screenshots
         }
       } catch (err) {
         // Sets an error message if fetching fails
@@ -59,28 +63,29 @@ const ReportedJobList = () => {
   }, []);
 
   // Handles the deletion of a reported job by making an API call
-  const handleDeleteJob = async (msgId) => {
-    if (!msgId) return;
+  const handleDeleteJob = async (reportid) => {
+    console.log("Deleting reportid:", reportid); // ← add this
+    if (!reportid) return;
 
     try {
       const response = await axios.delete(
-        `${NOTIFICATION_API_END_POINT}/jobReports/${msgId}`,
+        `${COMPANY_API_END_POINT}/jobReports/${reportid}`,
         { withCredentials: true }
       );
 
       // If deletion is successful, update the state and show a success message
       if (response?.data?.success) {
         setReportedJobs((prevJobs) =>
-          prevJobs.filter((job) => job.id !== msgId)
+          prevJobs.filter((job) => job.id !== reportid)
         );
-        toast("Reported job deleted successfully!");
+        toast.success("Reported job deleted successfully!");
       } else {
-        toast("Failed to delete reported job.");
+        toast.error("Failed to delete reported job.");
       }
     } catch (error) {
       // Logs and displays an error message if deletion fails
       console.error("Error deleting reported job:", error);
-      toast("Error deleting reported job. Please try again.");
+      toast.error("Error deleting reported job. Please try again.");
     }
   };
 
@@ -176,6 +181,70 @@ const ReportedJobList = () => {
                       {job.description}
                     </p>
                   </div>
+                  {/* ── PANEL DETAILS ── */}
+                  {job.reportType === "offensive" && job.offensiveDetails && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="font-bold text-red-800 text-xs uppercase mb-1">🚫 Offensive Details</p>
+                      {job.offensiveDetails.offensiveType && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Type:</span> {job.offensiveDetails.offensiveType}</p>
+                      )}
+                      {job.offensiveDetails.offensiveWhere && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Where:</span> {job.offensiveDetails.offensiveWhere}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {job.reportType === "money" && job.moneyDetails && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="font-bold text-yellow-800 text-xs uppercase mb-1">⚠️ Money / Fake Job Details</p>
+                      {job.moneyDetails.feeAmount && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Amount:</span> ₹{job.moneyDetails.feeAmount}</p>
+                      )}
+                      {job.moneyDetails.paymentMode && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Payment Mode:</span> {job.moneyDetails.paymentMode}</p>
+                      )}
+                      {job.moneyDetails.feeReason && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Fee For:</span> {job.moneyDetails.feeReason}</p>
+                      )}
+                      {job.moneyDetails.didPay && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Did Pay:</span> {job.moneyDetails.didPay}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {job.reportType === "incorrect" && job.incorrectDetails && (
+                    <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="font-bold text-green-800 text-xs uppercase mb-1">✏️ Incorrect Details</p>
+                      {job.incorrectDetails.wrongFields?.length > 0 && (
+                        <p className="text-sm text-gray-600">
+                          <span className="font-semibold">Wrong Fields:</span>{" "}
+                          {job.incorrectDetails.wrongFields.join(", ")}
+                        </p>
+                      )}
+                      {job.incorrectDetails.correctInfo && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Correct Info:</span> {job.incorrectDetails.correctInfo}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {job.reportType === "selling" && job.sellingDetails && (
+                    <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                      <p className="font-bold text-purple-800 text-xs uppercase mb-1">🛒 Selling Details</p>
+                      {job.sellingDetails.sellingWhat && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Selling:</span> {job.sellingDetails.sellingWhat}</p>
+                      )}
+                      {job.sellingDetails.askedToBuy && (
+                        <p className="text-sm text-gray-600"><span className="font-semibold">Asked to Buy:</span> {job.sellingDetails.askedToBuy}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {job.reportType === "other" && job.otherDetails?.otherCategory && (
+                    <div className="mb-4 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                      <p className="font-bold text-slate-600 text-xs uppercase mb-1">📝 Other Details</p>
+                      <p className="text-sm text-gray-600"><span className="font-semibold">Category:</span> {job.otherDetails.otherCategory}</p>
+                    </div>
+                  )}
                   <div>
                     <p className="font-bold text-gray-700">Reported By:</p>
                     <p className="text-gray-600">
@@ -184,6 +253,35 @@ const ReportedJobList = () => {
                       {job.user?.phone || "N/A"}
                     </p>
                   </div>
+                  {/* ── SCREENSHOTS ── */}
+                  {job.screenshots?.length > 0 && (
+                    <div className="mb-4">
+                      <p className="font-bold text-gray-700 mb-2">Screenshots / Proof:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {job.screenshots.map((url, idx) => (
+                          url.endsWith(".pdf") ? (
+                            <a
+                              key={idx}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-xs text-blue-600 underline bg-gray-100 px-2 py-1 rounded"
+                            >
+                              📄 PDF {idx + 1}
+                            </a>
+                          ) : (
+                            <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
+                              <img
+                                src={url}
+                                alt={`screenshot-${idx}`}
+                                className="w-16 h-16 object-cover rounded border border-gray-200 hover:scale-105 transition"
+                              />
+                            </a>
+                          )
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <Trash
                     className="text-red-500 cursor-pointer absolute bottom-4 right-4"
                     size={25}

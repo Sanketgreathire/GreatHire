@@ -11,10 +11,11 @@ import {
   deductCandidateCredit,
   getCompanyApplicants,
   reportJob,
+  deleteJobReport,
   getCandidateInformation,
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
-import { singleUpload } from "../middlewares/multer.js";
+import { singleUpload, multiUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
@@ -48,7 +49,16 @@ router
   .route("/deduct-candidate-credit")
   .post(isAuthenticated, deductCandidateCredit);
 
-router.route("/report-job").post(isAuthenticated, reportJob);
+router.route("/report-job").post(isAuthenticated,(req, res, next) => {
+    multiUpload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
+      next();
+    });
+  }, reportJob);
+
+router.route("/jobReports/:id").delete(isAuthenticated, deleteJobReport);
 
 // Test route to manually expire plans
 router.route("/test-expire-plans").get(async (req, res) => {
