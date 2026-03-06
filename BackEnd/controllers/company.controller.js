@@ -80,7 +80,7 @@ export const registerCompany = async (req, res) => {
       recruiterPosition,
       userEmail,
     } = req.body;
-     //  Added validations here for create company fields
+    //  Added validations here for create company fields
 
     if (!companyName || companyName.trim().length < 2) {
       return res.status(400).json({
@@ -103,57 +103,57 @@ export const registerCompany = async (req, res) => {
       });
     }
 
-      // if (!CIN) {
-      // return res.status(400).json({
-      //   success: false,
-      //   message: "CIN is required.",
-      // });
+    // if (!CIN) {
+    // return res.status(400).json({
+    //   success: false,
+    //   message: "CIN is required.",
+    // });
     // }
 
     // CIN Optional Validation
-if (CIN && CIN.trim() !== "") {
-  const cinPattern = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
+    if (CIN && CIN.trim() !== "") {
+      const cinPattern = /^[A-Z]{1}\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/;
 
-  if (!cinPattern.test(CIN)) {
-    let errorMessage = "Invalid CIN format. ";
+      if (!cinPattern.test(CIN)) {
+        let errorMessage = "Invalid CIN format. ";
 
-    if (CIN.length !== 21) {
-      errorMessage += `CIN must be exactly 21 characters long (you entered ${CIN.length}). `;
-    }
-    if (!/^[A-Z]/.test(CIN)) {
-      errorMessage += "First character must be an uppercase letter. ";
-    }
-    if (!/^[A-Z]\d{5}/.test(CIN)) {
-      errorMessage += "Characters 2–6 must be digits. ";
-    }
-    if (!/^[A-Z]\d{5}[A-Z]{2}/.test(CIN)) {
-      errorMessage += "Characters 7–8 must be uppercase letters (state code). ";
-    }
-    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}/.test(CIN)) {
-      errorMessage += "Characters 9–12 must be digits (incorporation year). ";
-    }
-    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}/.test(CIN)) {
-      errorMessage += "Characters 13–15 must be uppercase letters (company type). ";
-    }
-    if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(CIN)) {
-      errorMessage += "Characters 16–21 must be digits (registration number). ";
-    }
+        if (CIN.length !== 21) {
+          errorMessage += `CIN must be exactly 21 characters long (you entered ${CIN.length}). `;
+        }
+        if (!/^[A-Z]/.test(CIN)) {
+          errorMessage += "First character must be an uppercase letter. ";
+        }
+        if (!/^[A-Z]\d{5}/.test(CIN)) {
+          errorMessage += "Characters 2–6 must be digits. ";
+        }
+        if (!/^[A-Z]\d{5}[A-Z]{2}/.test(CIN)) {
+          errorMessage += "Characters 7–8 must be uppercase letters (state code). ";
+        }
+        if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}/.test(CIN)) {
+          errorMessage += "Characters 9–12 must be digits (incorporation year). ";
+        }
+        if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}/.test(CIN)) {
+          errorMessage += "Characters 13–15 must be uppercase letters (company type). ";
+        }
+        if (!/^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(CIN)) {
+          errorMessage += "Characters 16–21 must be digits (registration number). ";
+        }
 
-    return res.status(400).json({
-      success: false,
-      message: errorMessage.trim(),
-    });
-  }
+        return res.status(400).json({
+          success: false,
+          message: errorMessage.trim(),
+        });
+      }
 
-  // Check uniqueness only if CIN provided
-  const existingCIN = await Company.findOne({ CIN });
-  if (existingCIN) {
-    return res.status(400).json({
-      message: "CIN is already registered.",
-      success: false,
-    });
-  }
-}
+      // Check uniqueness only if CIN provided
+      const existingCIN = await Company.findOne({ CIN });
+      if (existingCIN) {
+        return res.status(400).json({
+          message: "CIN is already registered.",
+          success: false,
+        });
+      }
+    }
 
     if (!companyWebsite || !/^https?:\/\/.+\..+/.test(companyWebsite)) {
       return res.status(400).json({
@@ -175,7 +175,7 @@ if (CIN && CIN.trim() !== "") {
         message: "Complete company address is required.",
       });
     }
-    
+
     //console.log(req.body);   //for testing purpose
 
     const adminEmail = userEmail;
@@ -197,14 +197,14 @@ if (CIN && CIN.trim() !== "") {
 
     // Check if any unique field exists in the BlacklistedCompany collection
     const blacklistQuery = {
-  $or: [{ companyName }, { email }, { adminEmail }],
-};
+      $or: [{ companyName }, { email }, { adminEmail }],
+    };
 
-if (CIN && CIN.trim() !== "") {
-  blacklistQuery.$or.push({ CIN });
-}
+    if (CIN && CIN.trim() !== "") {
+      blacklistQuery.$or.push({ CIN });
+    }
 
-const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
+    const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
 
 
     //console.log("is blacklisted true otherwise false :"+isBlacklisted);             //for testing purpose
@@ -220,47 +220,47 @@ const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
     let company = await Company.findOne({ email, adminEmail, CIN });
 
     //console.log("is company already existed true otherwise false :"+company);             //for testing purpose
-          const existingEmail = await Company.findOne({ email });
-          if (existingEmail) {
-            return res.status(400).json({
-              message: "Email is already used by another company.",
-              success: false,
-            });
-          }
+    const existingEmail = await Company.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({
+        message: "Email is already used by another company.",
+        success: false,
+      });
+    }
 
-          const existingPhone = await Company.findOne({ phone });
-          if (existingPhone) {
-            return res.status(400).json({
-              message: "Phone number is already used by another company.",
-              success: false,
-            });
-          }
-          // Check if company name already exists
-          const existingCompanyName = await Company.findOne({ companyName });
-          if (existingCompanyName) {
-            return res.status(400).json({
-              message: "Company name is already registered.",
-              success: false,
-            });
-          }
+    const existingPhone = await Company.findOne({ phone });
+    if (existingPhone) {
+      return res.status(400).json({
+        message: "Phone number is already used by another company.",
+        success: false,
+      });
+    }
+    // Check if company name already exists
+    const existingCompanyName = await Company.findOne({ companyName });
+    if (existingCompanyName) {
+      return res.status(400).json({
+        message: "Company name is already registered.",
+        success: false,
+      });
+    }
 
-          // Check if company website already exists
-          const existingWebsite = await Company.findOne({ companyWebsite });
-          if (existingWebsite) {
-            return res.status(400).json({
-              message: "Company website is already registered.",
-              success: false,
-            });
-          }
+    // Check if company website already exists
+    const existingWebsite = await Company.findOne({ companyWebsite });
+    if (existingWebsite) {
+      return res.status(400).json({
+        message: "Company website is already registered.",
+        success: false,
+      });
+    }
 
-          // Check if industry already exists
-          // const existingIndustry = await Company.findOne({ industry });
-          // if (existingIndustry) {
-          //   return res.status(400).json({
-          //     message: "Industry is already registered with another company.",
-          //     success: false,
-          //   });
-          // }
+    // Check if industry already exists
+    // const existingIndustry = await Company.findOne({ industry });
+    // if (existingIndustry) {
+    //   return res.status(400).json({
+    //     message: "Industry is already registered with another company.",
+    //     success: false,
+    //   });
+    // }
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
@@ -286,7 +286,7 @@ const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    } 
+    }
     // Create a new company if it doesn't exist
     company = await Company.create({
       companyName,
@@ -350,7 +350,7 @@ const isBlacklisted = await BlacklistedCompany.findOne(blacklistQuery);
 export const getCompanyById = async (req, res) => {
   try {
     const { companyId } = req.body;
-    
+
     // Validate companyId
     if (!companyId) {
       return res.status(400).json({
@@ -361,7 +361,7 @@ export const getCompanyById = async (req, res) => {
 
     // Find company by ID
     const company = await Company.findById(companyId);
-    
+
     if (!company) {
       return res.status(404).json({
         message: "Company not found.",
@@ -382,12 +382,12 @@ export const getCompanyById = async (req, res) => {
     }
 
     // Return company details
-    return res.status(200).json({ 
+    return res.status(200).json({
       success: true,
       company: companyData,
       message: "Company details fetched successfully",
     });
-    
+
   } catch (error) {
     console.error("Error fetching company by ID:", error);
     return res.status(500).json({
@@ -401,7 +401,7 @@ export const getCompanyById = async (req, res) => {
 export const activateCompanySubscription = async (req, res) => {
   try {
     const { companyId } = req.body;
-    
+
     if (!companyId) {
       return res.status(400).json({
         message: "Company ID is required.",
@@ -410,7 +410,7 @@ export const activateCompanySubscription = async (req, res) => {
     }
 
     const company = await Company.findById(companyId);
-    
+
     if (!company) {
       return res.status(404).json({
         message: "Company not found.",
@@ -421,11 +421,11 @@ export const activateCompanySubscription = async (req, res) => {
     company.hasSubscription = true;
     await company.save();
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       success: true,
       message: "Subscription activated successfully",
     });
-    
+
   } catch (error) {
     console.error("Error activating subscription:", error);
     return res.status(500).json({
@@ -597,7 +597,7 @@ export const getCandidateData = async (req, res) => {
       experience,
       salaryBudget,
       gender,
-      qualification,    
+      qualification,
       lastActive,
       location,
       skills,
@@ -662,25 +662,25 @@ export const getCandidateData = async (req, res) => {
     if (location) {
       const sanitizedLocation = escapeRegex(location.trim().toLowerCase());
       const locationRegex = new RegExp(sanitizedLocation, "i");
-    
+
       query.$or = [
         { "address.city": locationRegex },
         { "address.state": locationRegex },
         { "address.country": locationRegex },
       ];
     }
-    
+
 
     // Skills (array match)
     if (skills) {
       let skillArray = [];
-    
+
       if (typeof skills === "string") {
         skillArray = skills.split(",").map((s) => s.trim().toLowerCase());
       } else if (Array.isArray(skills)) {
         skillArray = skills.map((s) => String(s).trim().toLowerCase());
       }
-    
+
       if (skillArray.length > 0) {
         // Using aggregation expression to match lowercased DB skills
         query.$expr = {
@@ -726,9 +726,8 @@ export const getCandidateData = async (req, res) => {
           ...candidate.toObject(),
           daysAgoLastActive: diffDays,
           hoursAgoLastActive: diffHours,
-          lastActiveAgo: `${diffDays} day${diffDays !== 1 ? "s" : ""} ${
-            diffHours
-          } hour${diffHours !== 1 ? "s" : ""} ago`,
+          lastActiveAgo: `${diffDays} day${diffDays !== 1 ? "s" : ""} ${diffHours
+            } hour${diffHours !== 1 ? "s" : ""} ago`,
         };
       })
       .sort((a, b) => {
@@ -738,7 +737,7 @@ export const getCandidateData = async (req, res) => {
       });
 
 
-    res.status(200).json({ success: true, candidates:enhancedCandidates });
+    res.status(200).json({ success: true, candidates: enhancedCandidates });
   } catch (error) {
     console.error("Error fetching candidate data:", error);
     res.status(500).json({ message: "Internal Server Error", error });
@@ -753,26 +752,26 @@ export const deductCandidateCredit = async (req, res) => {
     const userId = req.id;
 
     if (!(await isUserAssociated(companyId, userId))) {
-      return res.status(403).json({ 
-        message: "You are not authorized", 
-        success: false 
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false
       });
     }
 
     const company = await Company.findById(companyId);
-    
+
     if (!company) {
-      return res.status(404).json({ 
-        message: "Company not found", 
-        success: false 
+      return res.status(404).json({
+        message: "Company not found",
+        success: false
       });
     }
 
     // Check if company has credits
     if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({ 
-        message: "Insufficient candidate credits. Please purchase a plan.", 
-        success: false 
+      return res.status(400).json({
+        message: "Insufficient candidate credits. Please purchase a plan.",
+        success: false
       });
     }
 
@@ -787,9 +786,9 @@ export const deductCandidateCredit = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deducting candidate credit:", error);
-    res.status(500).json({ 
-      message: "Internal Server Error", 
-      success: false 
+    res.status(500).json({
+      message: "Internal Server Error",
+      success: false
     });
   }
 };
@@ -805,38 +804,38 @@ export const decreaseCandidateCredits = async (req, res) => {
         .status(403)
         .json({ message: "You are not authorized", success: false });
     }
-    
+
     const company = await Company.findById(companyId);
-    
+
     if (!company) {
-      return res.status(404).json({ 
-        message: "Company not found", 
-        success: false 
+      return res.status(404).json({
+        message: "Company not found",
+        success: false
       });
     }
-    
+
     // Check if company has credits
     if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({ 
-        message: "Insufficient credits", 
-        success: false 
+      return res.status(400).json({
+        message: "Insufficient credits",
+        success: false
       });
     }
-    
+
     // Deduct 1 credit
     company.creditedForCandidates -= 1;
     await company.save();
-    
+
     return res.status(200).json({
       success: true,
       remainingCredits: company.creditedForCandidates
     });
   } catch (error) {
     console.error("Error decreasing candidate credits:", error);
-    res.status(500).json({ 
-      message: "Internal Server Error", 
+    res.status(500).json({
+      message: "Internal Server Error",
       success: false,
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -875,31 +874,95 @@ export const getCompanyApplicants = async (req, res) => {
 // this controller report to a particular job by a user if a job found invalid 
 export const reportJob = async (req, res) => {
   try {
-    const { jobId, reportTitle, description } = req.body;
+      console.log("BODY:", req.body);        // 👈 add this
+    console.log("FILES:", req.files);      // 👈 add this
+    const { jobId, reportTitle, reportType, description, offensiveType, offensiveWhere,
+      feeAmount, paymentMode, feeReason, didPay, wrongFields, correctInfo,
+      sellingWhat, askedToBuy, otherCategory } = req.body;
+
     const userId = req.id;
 
+    // Basic validation
     if (!jobId || !userId || !reportTitle) {
       return res
         .status(400)
         .json({ message: "Job ID, User ID, and Report Title are required." });
     }
 
-    if (
-      reportTitle === "Other" &&
-      (typeof description !== "string" || description.length > 300)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Description should be within 300 characters." });
+    // Validate reportType is one of the allowed values
+    const allowedTypes = ["offensive", "money", "incorrect", "selling", "other"];
+    if (!allowedTypes.includes(reportType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report type.",
+      });
     }
 
-    const newReport = new JobReport({
+    // 'Other' requires a description
+    if (reportType === "other" && (!description || description.trim() === "")) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a description for 'Other'.",
+      });
+    }
+
+    // Description max length check
+    if (description && description.length > 300) {
+      return res.status(400).json({
+        success: false,
+        message: "Description must be within 300 characters.",
+      });
+    }
+
+    // Add this AFTER the basic validation, BEFORE building reportData
+    const existingReport = await JobReport.findOne({ userId, jobId });
+    if (existingReport) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already reported this job.",
+      });
+    }
+
+    // Build the report object
+    const reportData = {
       userId,
       jobId,
       reportTitle,
-      description: reportTitle === "Other" && !description ? null : description,
-    });
+      reportType,
+      description: description || "",
+    };
 
+    // Attach only the relevant panel's details
+    if (reportType === "offensive") {
+      reportData.offensiveDetails = { offensiveType, offensiveWhere };
+    }
+    if (reportType === "money") {
+      reportData.moneyDetails = { feeAmount, paymentMode, feeReason, didPay };
+    }
+    if (reportType === "incorrect") {
+      reportData.incorrectDetails = {
+        wrongFields: Array.isArray(wrongFields) ? wrongFields : wrongFields ? [wrongFields] : [],
+        correctInfo,
+      };
+    }
+    if (reportType === "selling") {
+      reportData.sellingDetails = { sellingWhat, askedToBuy };
+    }
+    if (reportType === "other") {
+      reportData.otherDetails = { otherCategory };
+    }
+
+    // ✅ NOW upload screenshots and attach — AFTER reportData exists
+    const files = req.files?.screenshots || [];
+    const screenshotUrls = [];
+    for (const file of files) {
+      const fileUri = getDataUri(file);
+      const cloudRes = await cloudinary.uploader.upload(fileUri.content, { folder: "job_reports" });
+      screenshotUrls.push(cloudRes.secure_url);
+    }
+    reportData.screenshots = screenshotUrls; // ✅ safe now
+
+    const newReport = new JobReport(reportData);
     await newReport.save();
     res.status(201).json({
       success: true,
@@ -907,6 +970,23 @@ export const reportJob = async (req, res) => {
     });
   } catch (err) {
     console.error("Error reporting job:", err);
-    res.status(500).json({ message: "Internal Server Error", error: err.message });
+    res.status(500).json({ success: false, message: "Internal Server Error", error: err.message });
+  }
+};
+
+export const deleteJobReport = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await JobReport.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Report not found." });
+    }
+
+    return res.status(200).json({ success: true, message: "Report deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting job report:", err);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
