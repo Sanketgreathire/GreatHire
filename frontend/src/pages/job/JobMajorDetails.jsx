@@ -31,7 +31,7 @@ const JobMajorDetails = ({ selectedJob }) => {
 
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Job details */}
-        <div className="p-6 flex flex-col gap-6 border-b border-gray-200">
+        <div className="space-y-2 flex flex-col gap-6 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-300">
             Job details
           </h1>
@@ -86,13 +86,13 @@ const JobMajorDetails = ({ selectedJob }) => {
         </div>
 
         {/* Profile Insight */}
-        <div className="p-6 flex flex-col gap-6 border-b border-gray-200">
+        <div className="space-y-2 flex flex-col gap-6 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-100">
             Profile Insight
           </h1>
 
           {/* Skills Section */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <HiLightBulb />
               <span className="font-bold text-black dark:text-gray-100">
@@ -209,7 +209,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         </div>
 
         {/* Full Job Description (✅ FIXED) */}
-        <div className="p-6 flex flex-col gap-4 border-b border-gray-200">
+        <div className="space-y-2 flex flex-col gap-4 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-100">
             Full Job Description
           </h1>
@@ -255,7 +255,7 @@ const JobMajorDetails = ({ selectedJob }) => {
 
 
         {/* Benefits */}
-        <div className="p-6 flex flex-col gap-3 border-b border-gray-200">
+        <div className="space-y-2 flex flex-col gap-3 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-100">
             Benifits
           </h1>
@@ -268,7 +268,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         </div>
 
         {/* Qualifications */}
-        <div className="p-6 flex flex-col gap-3 border-b border-gray-200">
+        <div className="space-y-2 flex flex-col gap-3 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-200">
             Qualifications
           </h1>
@@ -281,7 +281,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         </div>
 
         {/* Report Button */}
-        <div className="p-6 flex justify-end">
+        <div className="space-y-2 flex justify-end">
           <button
             className="flex items-center gap-2 bg-gray-400 px-4 py-2 rounded-lg font-semibold cursor-pointer dark:bg-white dark:text-gray-900 disabled:opacity-50"
             onClick={() => navigate(`/report-job`)}
