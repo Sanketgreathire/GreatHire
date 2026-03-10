@@ -34,7 +34,7 @@ const Jobs = () => {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10;
+  const jobsPerPage = 20;
 
   useEffect(() => {
     resetFilter?.();

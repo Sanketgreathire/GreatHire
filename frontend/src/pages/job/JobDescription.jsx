@@ -15,7 +15,9 @@ import DOMPurify from "dompurify";
 const JobDescription = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const { jobId } = useParams();
+  // const { jobId } = useParams();
+  const { jobId: jobParam } = useParams();
+  const jobId = jobParam?.length === 24 ? jobParam : jobParam?.split("-").pop();
 
   const [job, setJob] = useState(null);
   const [isApplied, setApplied] = useState(false);
