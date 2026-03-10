@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
@@ -33,6 +33,12 @@ const CandidateList = () => {
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("Find great talent for your team");
+
+  useEffect(() => {
+    if (company?._id) {
+      fetchCandidates();
+    }
+  }, [company?._id]);
 
   const fetchCandidates = async () => {
     try {
