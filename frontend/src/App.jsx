@@ -231,6 +231,7 @@ import SavedJobs from "./pages/job/SavedJob";
 import Contact from "./pages/services/Contact";
 import OurService from "./pages/services/OurService";
 import Blogs from "./components/Main_blog_page";
+import BlogDetail from "./pages/services/BlogDetail";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
@@ -293,6 +294,7 @@ const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/Main_blog_page", element: <Blogs /> },
   { path: "/blogs/:slug", element: <Blogs /> },
+  { path: "/blog/:id", element: <BlogDetail /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },

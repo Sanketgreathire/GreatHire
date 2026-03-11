@@ -425,6 +425,7 @@
 // export default Blogs;
 import React from 'react';
 import { Sparkles, TrendingUp, Users, Briefcase, FileText, MessageSquare, Building2, ChevronRight, Star, Zap, Award } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 
@@ -432,20 +433,25 @@ import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
 
 const Blogs = () => {
+  const navigate = useNavigate();
+  
   const blogPosts = [
     {
+      id: "mastering-remote-work",
       title: "Mastering Remote Work",
       description: "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
       icon: "🏠",
       gradient: "from-purple-500 to-pink-500"
     },
     {
+      id: "ai-recruitment",
       title: "AI Recruitment",
       description: "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
       icon: "🤖",
       gradient: "from-blue-500 to-cyan-500"
     },
     {
+      id: "winning-resumes",
       title: "Build Winning Resumes",
       description: "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.",
       icon: "📄",
@@ -763,7 +769,10 @@ const Blogs = () => {
                     {post.description}
                   </p>
 
-                  <div className="flex items-center text-blue-600 font-bold group-hover:gap-2 transition-all cursor-pointer">
+                  <div 
+                    onClick={() => navigate(`/blog/${post.id}`)}
+                    className="flex items-center text-blue-600 font-bold group-hover:gap-2 transition-all cursor-pointer"
+                  >
                     Read More
                     <ChevronRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
                   </div>
