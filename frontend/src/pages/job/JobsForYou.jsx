@@ -12,6 +12,7 @@ import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { AlertCircle, User, Phone, Mail, FileText, Briefcase, Star, GraduationCap } from 'lucide-react';
+import { slugify } from "@/utils/slugify";
 
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
@@ -341,7 +342,8 @@ const JobsForYou = ({ jobs = [] }) => {
                 {shareJobId === job._id && (
                   <div ref={shareCardRef} onClick={(e) => e.stopPropagation()} className="relative">
                     <ShareCard
-                      urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                      // urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                      urlToShare={`${window.location.origin}/jobs/${slugify(job.jobDetails?.title || "job")}-${job._id}`}
                       jobTitle={job.jobDetails?.title}
                       jobLocation={job.jobDetails?.location}
                       jobSalary={job.jobDetails?.salary}

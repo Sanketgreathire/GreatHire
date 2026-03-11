@@ -526,7 +526,7 @@ const ReportJob = () => {
           <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
             <BsFillInfoCircleFill size={20} className="text-blue-600" />
             <span>
-              Do not disclose personal details like your name or phone number.
+              Do not disclose your financial & personal details. Legitimate jobs never ask for payment.
             </span>
           </div>
 
