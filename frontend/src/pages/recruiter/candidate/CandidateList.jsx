@@ -64,7 +64,14 @@ const CandidateList = () => {
       if (response.data.success) {
         if (response.data.candidates.length === 0)
           setMessage("No Candidate found");
-        setCandidates(response.data.candidates);
+        const sortedCandidates = response.data.candidates
+          .sort((a, b) => {
+            const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
+            const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
+            return totalA - totalB;
+          })
+          .slice(0, 1000);
+        setCandidates(sortedCandidates);
         setCurrentPage(1);
       }
     } catch (error) {
