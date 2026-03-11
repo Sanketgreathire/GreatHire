@@ -48,15 +48,15 @@ const Jobs = () => {
     const checkDarkMode = () => {
       setIsDarkMode(document.documentElement.classList.contains('dark'));
     };
-    
+
     checkDarkMode();
-    
+
     const observer = new MutationObserver(checkDarkMode);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
     });
-    
+
     return () => observer.disconnect();
   }, []);
 
@@ -112,7 +112,17 @@ const Jobs = () => {
         `${ADMIN_JOB_DATA_API_END_POINT}/getAllJobs-stats`,
         { withCredentials: true }
       );
-      if (response.data.success) setJobList(response.data.jobs);
+      if (response.data.success) {
+        const sorted = [...response.data.jobs].sort(
+          (a, b) => {
+            // Extract timestamp from MongoDB ObjectId (first 4 bytes)
+            const timeA = parseInt(a._id.substring(0, 8), 16);
+            const timeB = parseInt(b._id.substring(0, 8), 16);
+            return timeB - timeA; // newest first
+          }
+        );
+        setJobList(sorted);
+      }
     } catch (err) {
       console.error("Error fetching jobs", err);
     }
@@ -317,11 +327,10 @@ const Jobs = () => {
 
                       <TableCell>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            job.isActive
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${job.isActive
                               ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
                               : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
-                          }`}
+                            }`}
                         >
                           {job.isActive ? "Active" : "Deactive"}
                         </span>

@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
-
+import Notification from "../models/notification.model.js";
 
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const getCandidateInformation = async (req, res) => {
@@ -874,7 +874,7 @@ export const getCompanyApplicants = async (req, res) => {
 // this controller report to a particular job by a user if a job found invalid 
 export const reportJob = async (req, res) => {
   try {
-      console.log("BODY:", req.body);        // 👈 add this
+    console.log("BODY:", req.body);        // 👈 add this
     console.log("FILES:", req.files);      // 👈 add this
     const { jobId, reportTitle, reportType, description, offensiveType, offensiveWhere,
       feeAmount, paymentMode, feeReason, didPay, wrongFields, correctInfo,
@@ -923,6 +923,26 @@ export const reportJob = async (req, res) => {
       });
     }
 
+    // ── Fetch job to get recruiter + meta for notifications ───
+    // Populate created_by so we have the recruiter's _id
+    const job = await Job.findById(jobId).select(
+      "jobDetails.title jobDetails.companyName created_by company"
+    );
+
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found." });
+    }
+
+    const jobTitle = job.jobDetails?.title || "this job";
+    const companyName = job.jobDetails?.companyName || "the company";
+    const recruiterId = job.created_by; // ObjectId ref → Recruiter
+
+    // ── Fetch reporter (jobseeker) details ──  ✅ ADD HERE
+    const reporter = await User.findById(userId).select("fullname emailId phoneNumber address");
+    const reporterName = reporter?.fullname || "N/A";
+    const reporterEmail = reporter?.emailId?.email || "N/A";
+    const reporterPhone = reporter?.phoneNumber?.number || "N/A";
+
     // Build the report object
     const reportData = {
       userId,
@@ -952,7 +972,7 @@ export const reportJob = async (req, res) => {
       reportData.otherDetails = { otherCategory };
     }
 
-    // ✅ NOW upload screenshots and attach — AFTER reportData exists
+    // ✅ NOW upload screenshots and attach to cloudinary — AFTER reportData exists
     const files = req.files?.screenshots || [];
     const screenshotUrls = [];
     for (const file of files) {
@@ -962,8 +982,219 @@ export const reportJob = async (req, res) => {
     }
     reportData.screenshots = screenshotUrls; // ✅ safe now
 
+    // save report to DB
     const newReport = new JobReport(reportData);
     await newReport.save();
+
+    // ── Send email to admin ──
+    try {
+      const nodemailer = await import("nodemailer");
+
+      const transporter = nodemailer.default.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: ["sanketbabde@greathire.in", "tanmai.dev077@greathire.in"],
+        subject: `🚨 New Job Report: ${reportTitle}`,
+        html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+</head>
+<body style="margin:0; padding:0; background:#f1f5f9; font-family: Arial, sans-serif;">
+  <div style="max-width:620px; margin:30px auto; background:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+
+    <!-- ═══ HEADER ═══ -->
+    <div style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); padding:32px; text-align:center;">
+      <div style="font-size:40px; margin-bottom:10px;">🚨</div>
+      <h1 style="color:#ffffff; margin:0; font-size:24px; letter-spacing:0.5px;">New Job Report Submitted</h1>
+      <p style="color:#fecaca; margin:8px 0 0; font-size:14px;">A user has flagged a job posting for your review</p>
+      <div style="margin-top:16px; display:inline-block; background:rgba(255,255,255,0.2); border-radius:20px; padding:6px 18px;">
+        <span style="color:#fff; font-size:13px; font-weight:700; letter-spacing:1px;">
+          Report Type : ${reportType.toUpperCase()}
+        </span>
+      </div>
+    </div>
+
+    <div style="padding:28px 32px;">
+
+      <!-- ═══ JOB DETAILS ═══ -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; margin-bottom:14px;">
+          <div style="width:4px; height:20px; background:#2563eb; border-radius:2px; margin-right:10px;"></div>
+          <h2 style="margin:0; font-size:15px; color:#1e40af; text-transform:uppercase; letter-spacing:1px;">💼 Job Details</h2>
+        </div>
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse;">
+            <tr style="border-bottom:1px solid #bfdbfe;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600; width:40%;">Job Title</td>
+              <td style="padding:12px 16px; color:#1e3a8a; font-size:13px; font-weight:700;">${jobTitle}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #bfdbfe;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">Company</td>
+              <td style="padding:12px 16px; color:#1e3a8a; font-size:13px; font-weight:700;">${companyName}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">Job ID</td>
+              <td style="padding:12px 16px; color:#6b7280; font-size:12px; font-family:monospace;">${jobId}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ REPORT INFORMATION ═══ -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; margin-bottom:14px;">
+          <div style="width:4px; height:20px; background:#dc2626; border-radius:2px; margin-right:10px;"></div>
+          <h2 style="margin:0; font-size:15px; color:#991b1b; text-transform:uppercase; letter-spacing:1px;">📋 Report Information</h2>
+        </div>
+        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse;">
+            <tr style="border-bottom:1px solid #fecaca;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600; width:40%;">Report Type</td>
+              <td style="padding:12px 16px;">
+                <span style="background:#dc2626; color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; letter-spacing:0.5px;">
+                  ${reportType.toUpperCase()}
+                </span>
+              </td>
+            </tr>
+            <tr ${description ? 'style="border-bottom:1px solid #fecaca;"' : ''}>
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">Report Title</td>
+              <td style="padding:12px 16px; color:#991b1b; font-size:13px; font-weight:700;">${reportTitle}</td>
+            </tr>
+            ${description ? `
+            <tr>
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600; vertical-align:top;">Description</td>
+              <td style="padding:12px 16px; color:#7f1d1d; font-size:13px; line-height:1.6;">${description}</td>
+            </tr>` : ""}
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ REPORTER ═══ -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; margin-bottom:14px;">
+          <div style="width:4px; height:20px; background:#059669; border-radius:2px; margin-right:10px;"></div>
+          <h2 style="margin:0; font-size:15px; color:#065f46; text-transform:uppercase; letter-spacing:1px;">👤 Reporter</h2>
+        </div>
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; overflow:hidden;">
+          <table style="width:100%; border-collapse:collapse;">
+            <tr style="border-bottom:1px solid #bbf7d0;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600; width:40%;">Name</td>
+              <td style="padding:12px 16px; color:#065f46; font-size:13px; font-weight:700;">${reporterName}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #bbf7d0;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">Email</td>
+              <td style="padding:12px 16px; color:#047857; font-size:13px;">${reporterEmail}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #bbf7d0;">
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">Phone</td>
+              <td style="padding:12px 16px; color:#047857; font-size:13px;">${reporterPhone}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 16px; color:#6b7280; font-size:13px; font-weight:600;">User ID</td>
+              <td style="padding:12px 16px; color:#6b7280; font-size:12px; font-family:monospace;">${userId}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ REPORTED AT ═══ -->
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 20px; margin-bottom:28px; text-align:center;">
+        <span style="font-size:18px;">🕐</span>
+        <span style="color:#64748b; font-size:13px; font-weight:600; margin-left:8px;">Reported At : </span>
+        <span style="color:#0f172a; font-size:13px; font-weight:700;">
+          ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
+        </span>
+      </div>
+
+      <!-- ═══ ACTION BUTTONS ═══ -->
+      <div style="text-align:center; margin-bottom:8px;">
+        <a href="${process.env.ADMIN_PANEL_URL}/settings/reported-job-list"
+           style="background:#2563eb; color:#ffffff; display:inline-block; padding:13px 30px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; margin:0 8px; box-shadow:0 2px 8px rgba(37,99,235,0.4);">
+          👁️ View Report
+        </a>
+        <a href="${process.env.ADMIN_PANEL_URL}"
+           style="background:#ffffff; color:#374151; border:1.5px solid #d1d5db; display:inline-block; padding:13px 30px; border-radius:8px; text-decoration:none; font-weight:700; font-size:14px; margin:0 8px;">
+          🏠 Admin Panel
+        </a>
+      </div>
+
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div style="background:#f8fafc; padding:18px 32px; text-align:center; border-top:1px solid #e2e8f0;">
+      <p style="margin:0; color:#94a3b8; font-size:12px;">
+        This is an automated alert from <strong style="color:#64748b;">GreatHire</strong>. Do not reply to this email.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+`,
+      });
+    } catch (emailErr) {
+      console.error("Email sending failed (non-critical):", emailErr.message);
+    }
+
+    // ── Fire all 3 notifications (non-blocking, won't fail the response) ──
+    try {
+      await Promise.all([
+
+        // 1️⃣  JOBSEEKER — confirmation that their report was received
+        Notification.create({
+          recipient: userId,
+          recipientModel: "User",
+          sender: userId,
+          senderModel: "User",
+          type: "system-alert",
+          title: "Report Submitted Successfully ✅",
+          message: `Your report for the job "${jobTitle}" at ${companyName} has been received. Our team will review it shortly.`,
+          relatedEntity: jobId,
+          relatedEntityModel: "Job",
+          priority: "medium",
+          metadata: {
+            reportId: newReport._id,
+            reportType,
+            jobTitle,
+            companyName,
+          },
+        }),
+
+        // 2️⃣  RECRUITER — alert that their job posting was reported
+        Notification.create({
+          recipient: recruiterId,
+          recipientModel: "Recruiter",
+          sender: userId,
+          senderModel: "User",
+          type: "system-alert",
+          title: "⚠️ Your Job Posting Has Been Reported",
+          message: `A candidate has reported your job posting "${jobTitle}" at ${companyName}. Reason: ${reportTitle}. Our admin team will review the report.`,
+          relatedEntity: jobId,
+          relatedEntityModel: "Job",
+          priority: "high",
+          metadata: {
+            reportId: newReport._id,
+            reportType,
+            jobTitle,
+            companyName,
+          },
+        }),
+      ]);
+    } catch (notifErr) {
+      // Notifications failing should NOT affect the report submission response
+      console.error("Notification error (non-critical):", notifErr.message);
+    }
+
+    // ── Success response ──────────────────────────────────────
     res.status(201).json({
       success: true,
       message: "Report submitted successfully.",
