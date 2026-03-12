@@ -69,4 +69,65 @@ export const sendRejectionEmail = async (applicantEmail, applicantName, jobTitle
   }
 };
 
-export default { sendRejectionEmail };
+export const sendCompanyProfileReminderEmail = async (recruiterEmail, recruiterName) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: recruiterEmail,
+    subject: "Complete Your Company Profile - GreatHire",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2 style="color: #1D4ED8; margin-bottom: 20px; text-align: center;">Great<span style="color: #333;">Hire</span></h2>
+          
+          <p style="color: #555; line-height: 1.6;">Dear ${recruiterName},</p>
+          
+          <p style="color: #555; line-height: 1.6;">
+            We noticed that your company profile is still inactive. You're just one step away from unlocking access to talented candidates.
+          </p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://greathire.in/recruiter/dashboard/create-company" target="_blank"
+               style="background-color: #1D4ED8; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              Complete Profile Now
+            </a>
+          </div>
+          
+          <p style="color: #555; line-height: 1.6;">
+            Please complete your profile to 100% so our team can verify your company and activate your account. Once verified, you'll be able to post jobs for free and connect with qualified professionals who are actively looking for opportunities.
+          </p>
+          
+          <p style="color: #555; line-height: 1.6;">
+            A complete profile not only helps with verification but also improves your visibility and builds trust with potential candidates.
+          </p>
+          
+          <div style="background-color: #f0f7ff; padding: 15px; border-left: 4px solid #1D4ED8; margin: 20px 0; border-radius: 5px;">
+            <p style="color: #333; margin: 0 0 8px 0; font-weight: bold;">Complete your profile here:</p>
+            <p style="color: #1D4ED8; margin: 0;">
+              <a href="https://greathire.in/recruiter/login" style="color: #1D4ED8; text-decoration: none; font-weight: 500;">Recruiter Login: https://greathire.in/recruiter/login</a>
+            </p>
+          </div>
+          
+          <p style="color: #555; line-height: 1.6;">
+            Don't miss the opportunity to attract the right talent for your team. Take a minute to complete your company details and start hiring today.
+          </p>
+          
+          <p style="color: #555; line-height: 1.6; margin-top: 30px;">
+            Best regards,<br>
+            <strong>The GreatHire Team</strong>
+          </p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Company profile reminder email sent to ${recruiterEmail}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Error sending reminder email to ${recruiterEmail}:`, error.message);
+    return false;
+  }
+};
+
+export default { sendRejectionEmail, sendCompanyProfileReminderEmail };
