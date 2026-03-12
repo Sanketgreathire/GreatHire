@@ -276,6 +276,8 @@ export const registerCompany = async (req, res) => {
 
     recruiter.position = recruiterPosition;
     recruiter.isCompanyCreated = true;
+    recruiter.isCompanyDetailsCompleted = true;
+    recruiter.reminderEmailSent = true; // Stop further reminders
     await recruiter.save();
 
     let cloudResponse;

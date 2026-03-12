@@ -329,6 +329,10 @@ export const recruiterLogin = async (req, res) => {
       });
     }
 
+    // Set login tracking and reset email flag for new session
+    user.isRecruiterLoggedIn = true;
+    user.lastLoginTime = new Date();
+    user.reminderEmailSent = false; // Reset so they can get reminder again if needed
     await user.save();
 
     try {

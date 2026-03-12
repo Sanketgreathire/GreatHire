@@ -79,6 +79,22 @@ const recruiterSchema = new mongoose.Schema(
       enum: ["INACTIVE", "ACTIVE", "EXPIRED"],
       default: "INACTIVE",
     },
+    isRecruiterLoggedIn: {
+      type: Boolean,
+      default: false,
+    },
+    isCompanyDetailsCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    lastLoginTime: {
+      type: Date,
+      default: null,
+    },
+    reminderEmailSent: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   { timestamps: true }
