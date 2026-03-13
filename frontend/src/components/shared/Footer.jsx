@@ -18,7 +18,7 @@ const Footer = () => {
             <span className="text-blue-600">Hire</span>
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            © 2025 GreatHire. All rights reserved.
+            © 2026 GreatHire <br></br>All rights reserved. GreatHire is owned and operated by BABDE Pvt. Ltd.
           </p>
         </div>
 
