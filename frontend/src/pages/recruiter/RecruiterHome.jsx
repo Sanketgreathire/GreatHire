@@ -89,9 +89,11 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company?.creditedForJobs >= 500 
-        ? Math.floor(company.creditedForJobs / 500) 
-        : 0,
+      count: company?.freeJobsPosted < 2
+        ? 2 - company.freeJobsPosted
+        : company?.creditedForJobs >= 500 
+          ? Math.floor(company.creditedForJobs / 500) 
+          : 0,
       icon: (
         <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2 transition-colors duration-300" />
       ),
@@ -177,8 +179,29 @@ const RecruiterHome = () => {
 
 
 
-      {company && user?.isActive ? (
+      {company ? (
         <div className="min-h-screen p-8 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          {/* Verification Status Banner */}
+          {!user?.isActive && (
+            <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                    <span className="font-medium">Verification Pending:</span>{" "}
+                    {company.freeJobsPosted === 0
+                      ? "You can post 1 free job now. Your 2nd free job will unlock after admin verification."
+                      : "1 free job remaining. This job can be posted after admin verification."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Header Section */}
           <header className="mb-10 flex flex-col gap-6 md:flex-row md:justify-between md:items-start">
             <div className="flex-1">
@@ -222,15 +245,9 @@ const RecruiterHome = () => {
             ))}
           </div>
         </div>
-      ) : !company ? (
-        <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          <p className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</p>
-        </div>
       ) : (
         <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          <p className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">
-            GreatHire will verify your company soon.
-          </p>
+          <p className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</p>
         </div>
       )}
     </>

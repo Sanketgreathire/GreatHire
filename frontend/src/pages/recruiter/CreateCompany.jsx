@@ -23,7 +23,7 @@ const CreateCompany = () => {
 
   useEffect(() => {
     if (user && user.isCompanyCreated) {
-      navigate("/recruiter/dashboard/home");
+      navigate("/recruiter/dashboard/post-job");
     } else if (!user) navigate("/login");
   }, []);
 
@@ -139,7 +139,7 @@ const CreateCompany = () => {
         toast.success("Created successfully!");
         dispatch(setRecruiterIsCompanyCreated(true));
         toast.success("GreatHire will active company soon!");
-        navigate("/recruiter/dashboard/home");
+        navigate("/recruiter/dashboard/post-job");
       } else {
         toast.error(res.data.message || "Error creating company");
       }

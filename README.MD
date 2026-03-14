@@ -69,6 +69,30 @@ Make sure you have the following installed on your machine:
 
 ## New Features
 
+### Verification-Based Job Posting
+Recruiters can now start posting jobs immediately without waiting for verification:
+- ✅ Post 1 free job before company verification
+- ✅ Post 2nd free job after admin verification
+- ✅ Clear status messages and banners
+- ✅ Automatic unlock after verification
+- ✅ Smooth transition to credit-based system
+
+**How it works:**
+1. New recruiter signs up → Can post 1 job immediately
+2. After 1st job → Must wait for admin verification
+3. Admin verifies company → 2nd free job unlocked automatically
+4. After 2 free jobs → Normal credit system applies (500 credits per job)
+
+**Documentation:**
+- Full Guide: [VERIFICATION_BASED_JOB_POSTING.md](./VERIFICATION_BASED_JOB_POSTING.md)
+- Testing Guide: [VERIFICATION_TESTING_GUIDE.md](./VERIFICATION_TESTING_GUIDE.md)
+
+**Migration:**
+```bash
+# Run this ONCE after deploying the new code
+node BackEnd/migrate-free-jobs.js
+```
+
 ### Auto-Reject Job Applications
 The system now automatically rejects job applications that have been pending for too long. This feature:
 - ✅ Automatically rejects applications older than configured days (default: 30 days)

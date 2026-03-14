@@ -57,22 +57,25 @@ export const postJob = [
       const userId = req.id;
 
       const company = await Company.findById(companyId);
+      const recruiter = await Recruiter.findById(userId);
 
       // Debug log
       console.log("anyAmount value received:", anyAmount, "Type:", typeof anyAmount);
 
-      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && company.maxJobPosts <= 0) {
+      // ✅ Allow 1 free job before verification (recruiter not yet active/verified)
+      if (!recruiter?.isActive && company.freeJobsPosted >= 1) {
         return res.status(400).json({
           success: false,
-          message: "You have reached your maximum job post limit. Please upgrade your plan.",
-          redirectTo: "/recruiter/dashboard/upgrade-plans"
+          message: "You have posted your free job. Please wait for admin verification to post more jobs.",
+          redirectTo: "/recruiter/dashboard/home"
         });
       }
 
-      if (company.creditedForJobs < 500) {
+      // ✅ After verification, allow 2nd free job; block 3rd+ without credits
+      if (company.freeJobsPosted >= 2 && company.creditedForJobs < 500) {
         return res.status(400).json({
           success: false,
-          message: "Insufficient credits to post jobs. Please purchase a plan.",
+          message: "You have used both free jobs. Please purchase a plan to continue posting.",
           redirectTo: "/recruiter/dashboard/upgrade-plans"
         });
       }
@@ -142,10 +145,16 @@ export const postJob = [
         company.maxJobPosts -= 1;
       }
       
-      company.creditedForJobs -= 500;
+      // ✅ Track free jobs posted (first 2 jobs are free)
+      if (company.freeJobsPosted < 2) {
+        company.freeJobsPosted += 1;
+      } else {
+        // Only deduct credits after 2 free jobs
+        company.creditedForJobs -= 500;
+      }
       
-      // Mark free plan as used when credits reach 0
-      if (company.creditedForJobs === 0 && !company.hasUsedFreePlan) {
+      // Mark free plan as used when both free jobs are posted
+      if (company.freeJobsPosted >= 2 && !company.hasUsedFreePlan) {
         company.hasUsedFreePlan = true;
       }
       

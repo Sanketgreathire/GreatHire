@@ -219,6 +219,12 @@ const PostJob = () => {
     }),
 
     onSubmit: async (values) => {
+      // ✅ Block submission if not verified and already posted 1 job
+      if (!user?.isActive && company.freeJobsPosted >= 1) {
+        toast.error("Please wait for admin verification to post more jobs.");
+        return;
+      }
+
       setLoading(true);
       console.log("Form values being submitted:", values);
       console.log("anyAmount value:", values.anyAmount);
@@ -317,8 +323,48 @@ const PostJob = () => {
         />
       </Helmet>
 
-      {company && user?.isActive ? (
+      {company ? (
         <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          {/* Verification Status Banner - shown after 1st job, not yet verified */}
+          {!user?.isActive && company.freeJobsPosted >= 1 && (
+            <div className="max-w-3xl mx-auto mb-4 px-4">
+              <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700 dark:text-red-300">
+                      <span className="font-medium">1 free job remaining.</span> This job can be posted after verification by admin.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Verified banner - shown after verification with 1 job already posted */}
+          {user?.isActive && company.freeJobsPosted === 1 && (
+            <div className="max-w-3xl mx-auto mb-4 px-4">
+              <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                      <span className="font-medium">Verified!</span> You can now post your remaining free job.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Credit Status Banner */}
           <div className="max-w-3xl mx-auto mb-4 px-4">
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 text-white rounded-lg p-4 shadow-lg transition-colors duration-300">
@@ -326,7 +372,12 @@ const PostJob = () => {
                 <div className="text-center">
                   <p className="text-sm font-medium">Remaining Job Posts</p>
                   <p className="text-3xl font-bold">
-                    {company?.creditedForJobs >= 500 ? Math.floor(company.creditedForJobs / 500) : 0} Jobs
+                    {company.freeJobsPosted < 2 
+                      ? `${2 - company.freeJobsPosted} Free Job${2 - company.freeJobsPosted > 1 ? 's' : ''}`
+                      : company.creditedForJobs >= 500 
+                        ? `${Math.floor(company.creditedForJobs / 500)} Jobs`
+                        : '0 Jobs'
+                    }
                   </p>
                 </div>
               </div>
@@ -334,6 +385,27 @@ const PostJob = () => {
           </div>
 
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
+            {/* Block form if not verified and already posted 1 job */}
+            {!user?.isActive && company.freeJobsPosted >= 1 ? (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">Job Posting Locked</h3>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  You have used your free job post. Please wait for admin verification to unlock your second free job.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    to="/recruiter/dashboard/home"
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                  >
+                    Go to Dashboard
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <>
             <h1>
               {/* Display only the title of the current step */}
               <h2 className="md:hidden font-bold text-2xl text-blue-700 dark:text-blue-400 py-7 transition-colors duration-300">
@@ -1168,17 +1240,13 @@ const PostJob = () => {
                 </>
               )}
             </form>
+              </>
+            )}
           </div>
-        </div>
-      ) : !company ? (
-        <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
         </div>
       ) : (
         <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">
-            GreatHire will verify your company soon.
-          </span>
+          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
         </div>
       )}
     </>

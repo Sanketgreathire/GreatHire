@@ -80,6 +80,10 @@ const companySchema = new mongoose.Schema(
       type: Date,
       default: Date.now, // Track when free plan was last renewed
     },
+    freeJobsPosted: {
+      type: Number,
+      default: 0, // Track free jobs posted before/after verification
+    },
     hasSubscription: { 
       type: Boolean, 
       default: false 
