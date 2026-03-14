@@ -158,8 +158,8 @@ const DashboardNavigations = () => {
                       </NavLink>
                     )}
 
-                  {/* Post Job (Visible if company is created) */}
-                  {user?.isActive && user?.isCompanyCreated && (
+                  {/* Post Job (Visible if company is created, regardless of verification) */}
+                  {user?.isCompanyCreated && (
                     <NavLink
                       to="/recruiter/dashboard/post-job"
                       className={navLinkClass}
