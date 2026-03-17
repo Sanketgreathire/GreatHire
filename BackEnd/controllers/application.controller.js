@@ -295,6 +295,63 @@ export const triggerAutoReject = async (req, res) => {
   }
 };
 
+// Bulk apply to multiple jobs
+export const bulkApplyJobs = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { jobIds } = req.body;
+
+    if (!Array.isArray(jobIds) || jobIds.length === 0) {
+      return res.status(400).json({ success: false, message: "jobIds array is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const applied = [];
+    const skipped = [];
+
+    for (const jobId of jobIds) {
+      const job = await Job.findById(jobId);
+      if (!job || !job.jobDetails.isActive) { skipped.push(jobId); continue; }
+
+      const existing = await Application.findOne({ job: jobId, applicant: userId });
+      if (existing) { skipped.push(jobId); continue; }
+
+      const newApplication = new Application({
+        job: jobId,
+        applicant: userId,
+        applicantName: user.fullname || "Unknown",
+        applicantEmail: user.emailId?.email || "noemail@example.com",
+        applicantPhone: user.phoneNumber?.number || "",
+        applicantProfile: user.profile || {},
+        resume: user.profile?.resume || "",
+        status: "Pending",
+      });
+
+      await newApplication.save();
+      job.application.push(newApplication._id);
+      await job.save();
+
+      await notificationService.notifyApplicationSubmitted({
+        applicantId: userId,
+        jobId,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        recruiterId: job.created_by,
+        applicationId: newApplication._id,
+      });
+
+      applied.push(jobId);
+    }
+
+    return res.status(201).json({ success: true, applied, skipped });
+  } catch (err) {
+    console.error("Error in bulk apply:", err);
+    return res.status(500).json({ success: false, message: "Internal server error", error: err.message });
+  }
+};
+
 // Delete an application by ID
 export const deleteApplication = async (req, res) => {
   try {
