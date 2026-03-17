@@ -427,6 +427,11 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       company.creditedForJobs = creditsForJobs;
       company.maxJobPosts = "Unlimited"; // Set to Unlimited for paid plans
       company.hasSubscription = true; // Mark that company has active subscription
+      
+      // Initialize paid plan free jobs tracking
+      company.paidPlanFreeJobsPosted = 0;
+      company.paidPlanFreeJobsRenewal = new Date();
+      
       await company.save();
 
       // Determine plan type based on job count

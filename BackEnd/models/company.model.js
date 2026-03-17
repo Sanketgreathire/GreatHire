@@ -84,6 +84,14 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 0, // Track free jobs posted before/after verification
     },
+    paidPlanFreeJobsPosted: {
+      type: Number,
+      default: 0, // Track free jobs posted by paid plan users this month
+    },
+    paidPlanFreeJobsRenewal: {
+      type: Date,
+      default: null, // Track when paid plan free jobs were last renewed
+    },
     plan: {
       type: String,
       enum: ["FREE", "STANDARD", "PREMIUM", "ENTERPRISE"],

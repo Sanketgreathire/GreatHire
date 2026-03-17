@@ -151,6 +151,15 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
       company.creditedForCandidates = 5; // 5 free candidate views
       company.maxJobPosts = 0;
       company.lastFreePlanRenewal = new Date(); // Reset renewal date
+      company.hasSubscription = false; // Mark as no longer having subscription
+      company.plan = "FREE"; // Reset plan to FREE
+      
+      // Reset paid plan free jobs tracking
+      company.paidPlanFreeJobsPosted = 0;
+      company.paidPlanFreeJobsRenewal = null;
+      company.planJobsPostedThisMonth = 0;
+      company.planMonthStart = null;
+      
       await company.save();
     }
     return true;

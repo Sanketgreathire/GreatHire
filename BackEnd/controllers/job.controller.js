@@ -21,6 +21,9 @@ const PLAN_LIMITS = {
   ENTERPRISE: { jobsPerMonth: Infinity,  resumeCredits: 8333 },
 };
 
+// Free job posts for paid plans (monthly)
+const PAID_PLAN_FREE_JOBS = 2;
+
 // postjob by recruiter
 export const postJob = [
   check("title").notEmpty().withMessage("Title is required"),
@@ -64,15 +67,32 @@ export const postJob = [
       // Count how many jobs have been posted so far (use the correct counter per plan)
       const jobsPostedSoFar = companyPlan === "FREE"
         ? company.freeJobsPosted
-        : (company.planJobsPostedThisMonth || 0);
+        : (company.planJobsPostedThisMonth || 0) + (company.paidPlanFreeJobsPosted || 0);
 
-      if (!isVerified && jobsPostedSoFar >= 1) {
-        return res.status(400).json({
-          success: false,
-          message: "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
-          requiresVerification: true,
-          redirectTo: "/recruiter/dashboard/home",
-        });
+      // Check if there are any pending jobs (first job waiting for verification)
+      const pendingJobs = await Job.countDocuments({
+        company: companyId,
+        "jobDetails.status": "pending"
+      });
+
+      if (!isVerified) {
+        if (pendingJobs > 0) {
+          // If there's already a pending job, block further posting
+          return res.status(400).json({
+            success: false,
+            message: "Your first job is currently under admin review. You can post your next job once your account is verified.",
+            requiresVerification: true,
+            redirectTo: "/recruiter/dashboard/home",
+          });
+        } else if (jobsPostedSoFar >= 1) {
+          // If already posted 1 job and it's not pending (shouldn't happen, but safety check)
+          return res.status(400).json({
+            success: false,
+            message: "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
+            requiresVerification: true,
+            redirectTo: "/recruiter/dashboard/home",
+          });
+        }
       }
 
       // --- Plan-specific limits (only reached after verification) ---
@@ -86,23 +106,29 @@ export const postJob = [
           });
         }
       } else {
-        // Reset monthly counter if new month
+        // For paid plans: check both paid plan limit AND free job posts
         const now = new Date();
         const monthStart = company.planMonthStart ? new Date(company.planMonthStart) : null;
         const isSameMonth = monthStart &&
           monthStart.getMonth() === now.getMonth() &&
           monthStart.getFullYear() === now.getFullYear();
 
+        // Reset monthly counters if new month
         if (!isSameMonth) {
           company.planJobsPostedThisMonth = 0;
           company.planMonthStart = now;
+          company.paidPlanFreeJobsPosted = 0; // Reset free jobs for paid plans
+          company.paidPlanFreeJobsRenewal = now;
         }
 
-        const limit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
-        if (limit !== Infinity && company.planJobsPostedThisMonth >= limit) {
+        const paidPlanLimit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
+        const totalJobsPosted = company.planJobsPostedThisMonth + company.paidPlanFreeJobsPosted;
+        const totalAllowedJobs = paidPlanLimit === Infinity ? Infinity : paidPlanLimit + PAID_PLAN_FREE_JOBS;
+
+        if (totalAllowedJobs !== Infinity && totalJobsPosted >= totalAllowedJobs) {
           return res.status(400).json({
             success: false,
-            message: `You have reached the ${companyPlan} plan limit of ${limit} jobs. Please upgrade your plan.`,
+            message: `You have reached the ${companyPlan} plan limit of ${paidPlanLimit === Infinity ? 'unlimited' : paidPlanLimit} paid jobs + ${PAID_PLAN_FREE_JOBS} free jobs (${totalAllowedJobs} total). Please upgrade your plan.`,
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
@@ -140,7 +166,12 @@ export const postJob = [
           company.hasUsedFreePlan = true;
         }
       } else {
-        company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
+        // For paid plans: consume free jobs first, then paid jobs
+        if (company.paidPlanFreeJobsPosted < PAID_PLAN_FREE_JOBS) {
+          company.paidPlanFreeJobsPosted += 1;
+        } else {
+          company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
+        }
       }
       await company.save();
 
