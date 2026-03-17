@@ -856,7 +856,7 @@ const JobDetail = () => {
       {/* {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />} */}
 
       {/* --- UI CHANGE START: Main page container with a professional background color and centered layout --- */}
-      <div className=" bg-[#404] min-h-screen font-sans "
+      <div className=" bg-[#404] min-h-screen font-sans"
         style={{
           backgroundImage: `url(${jobbackg})`,
           backgroundSize: "cover",
@@ -867,8 +867,8 @@ const JobDetail = () => {
 
           {/* Back Button and action buttons header */}
           <div className="flex justify-between items-center mb-6">
-            <Button variant="ghost" onClick={() => navigate(-1)} className=" bg-green-500 text-slate-700 hover:bg-green-800 hover:text-white">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button variant="ghost" onClick={() => navigate(-1)} className=" bg-green-400 border border-green-900 text-slate-900 hover:bg-green-800 hover:text-white dark:bg-green-800 dark:text-slate-200 dark:hover:bg-green-600 dark:hover:text-white">
+              <ArrowLeft className="h-6 w-8 mr-2" />
               Back
             </Button>
             {user?.role === "recruiter" && !editMode && (
@@ -886,11 +886,11 @@ const JobDetail = () => {
             </h1>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-slate-600 dark:text-slate-300">
               <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-slate-500" />
+                <Building2 className="h-5 w-5 text-slate-500 dark:text-slate-300" />
                 <span>{jobDetails?.companyName || "Company not specified"}</span>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-slate-500" />
+                <MapPin className="h-5 w-5 text-slate-500 dark:text-slate-300" />
                 <span>{jobDetails?.location || "Location Not Available"}</span>
               </div>
             </div>
@@ -903,7 +903,7 @@ const JobDetail = () => {
                     name="salary"
                     value={editedJob.salary || ""}
                     onChange={handleInputChange}
-                    className="w-full p-2 rounded border border-slate-300"
+                    className="w-full p-2 rounded border border-slate-300 dark:bg-slate-700 dark:border-slate-600 text-slate-600 dark:text-slate-300"
                     placeholder="e.g., 50000 - 70000"
                   />
                 </div>
@@ -940,12 +940,12 @@ const JobDetail = () => {
 
                   <div className="w-full">
                     {/* Toolbar */}
-                    <div className="flex items-center gap-2 border border-gray-300 rounded-t px-3 py-2 bg-gray-50">
+                    <div className="flex items-center gap-2 border border-gray-300 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
 
                       <button
                         type="button"
                         onClick={toggleBold}
-                        className={`p-2 rounded font-bold ${boldMode ? "bg-gray-200" : "hover:bg-gray-200"
+                        className={`p-2 rounded font-bold ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
                           }`}
                       >
                         B
@@ -954,7 +954,7 @@ const JobDetail = () => {
                       <button
                         type="button"
                         onClick={toggleItalic}
-                        className={`p-2 rounded italic ${italicMode ? "bg-gray-200" : "hover:bg-gray-200"
+                        className={`p-2 rounded italic ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
                           }`}
                       >
                         i
@@ -963,7 +963,7 @@ const JobDetail = () => {
                       <button
                         type="button"
                         onClick={bulletList}
-                        className="p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                         title="Bullet List"
                       >
                         ●
@@ -972,7 +972,7 @@ const JobDetail = () => {
                       <button
                         type="button"
                         onClick={numberList}
-                        className="p-2 rounded hover:bg-gray-200"
+                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                         title="Numbered List"
                       >
                         123
@@ -994,9 +994,9 @@ const JobDetail = () => {
                       contentEditable
                       className="
   w-full min-h-[150px] p-3
-  border border-t-0 border-gray-300 rounded-b
+  border border-t-0 border-gray-300 rounded-b dark:bg-gray-700 dark:border-gray-600
   focus:outline-none
-  text-slate-600
+  text-slate-600 dark:text-gray-300
 
   [&_ul]:list-disc
   [&_ul]:pl-6
@@ -1012,7 +1012,7 @@ const JobDetail = () => {
   [&_ol[style*='alpha']]:list-[lower-alpha]
   [&_ol[style*='roman']]:list-[lower-roman]
 
-  [&_li]:list-item
+  [&_li]:list-item dark:text-gray-300
 "
                       onKeyDown={handleKeyDown}
                       onInput={(e) =>
@@ -1071,7 +1071,7 @@ const JobDetail = () => {
                     name="benefits"
                     value={editedJob.benefits ? editedJob.benefits.join("\n") : ""}
                     onChange={(e) => setEditedJob({ ...editedJob, benefits: e.target.value.split("\n") })}
-                    className="w-full p-2 rounded border border-slate-300"
+                    className="w-full p-2 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300"
                     rows={4}
                     placeholder="Enter each benefit on a new line"
                   />
@@ -1080,7 +1080,7 @@ const JobDetail = () => {
                     {jobDetails?.benefits?.length > 0 ? (
                       jobDetails.benefits.map((benefit, index) => (
                         <li key={index} className="flex items-start gap-3">
-                          <CheckCircle2 className="h-6 w-6 text-green-500 flex-shrink-0 mt-1" />
+                          <CheckCircle2 className="h-6 w-6 text-green-500 dark:text-green-400 flex-shrink-0 mt-1" />
                           <span className="text-slate-600 dark:text-slate-300">{benefit}</span>
                         </li>
                       ))
@@ -1102,7 +1102,7 @@ const JobDetail = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">Qualifications</h4>
-                      {editMode ? <input type="text" name="qualifications" value={editedJob.qualifications || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="text" name="qualifications" value={editedJob.qualifications || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.qualifications?.join(", ") || "Not specified"}</p>}
                     </div>
                   </div>
@@ -1113,7 +1113,7 @@ const JobDetail = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">Experience</h4>
-                      {editMode ? <input type="text" name="experience" value={editedJob.experience || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="text" name="experience" value={editedJob.experience || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.experience || "Not specified"}</p>}
                     </div>
                   </div>
@@ -1146,7 +1146,7 @@ const JobDetail = () => {
                               skills: e.target.value.split("\n"),
                             })
                           }
-                          className="w-full p-2 mt-1 rounded border border-slate-300"
+                          className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300"
                           rows={3}
                         />
                       ) : (
@@ -1266,7 +1266,7 @@ const JobDetail = () => {
                     <Briefcase className="h-6 w-6 text-slate-500" />
                     <div>
                       <span className="text-sm text-slate-500 dark:text-slate-400">Job Type</span>
-                      {editMode ? <input type="text" name="jobType" value={editedJob.jobType || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="text" name="jobType" value={editedJob.jobType || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300" />
                         : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.jobType || "Not specified"}</p>}
                     </div>
                   </li>
@@ -1275,7 +1275,7 @@ const JobDetail = () => {
                     <Users className="h-6 w-6 text-slate-500" />
                     <div>
                       <span className="text-sm text-slate-500 dark:text-slate-400">No. of Openings</span>
-                      {editMode ? <input type="number" name="numberOfOpening" value={editedJob.numberOfOpening || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="number" name="numberOfOpening" value={editedJob.numberOfOpening || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300" />
                         : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.numberOfOpening || "Not specified"}</p>}
                     </div>
                   </li>
@@ -1284,7 +1284,7 @@ const JobDetail = () => {
                     <Hourglass className="h-6 w-6 text-slate-500" />
                     <div>
                       <span className="text-sm text-slate-500 dark:text-slate-400">Working Days</span>
-                      {editMode ? <input type="text" name="duration" value={editedJob.duration || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="text" name="duration" value={editedJob.duration || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300" />
                         : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.duration || "Not specified"}</p>}
                     </div>
                   </li>
@@ -1293,7 +1293,7 @@ const JobDetail = () => {
                     <Sparkles className="h-6 w-6 text-slate-500" />
                     <div>
                       <span className="text-sm text-slate-500 dark:text-slate-400">Work Place Flexibility</span>
-                      {editMode ? <input type="text" name="workPlaceFlexibility" value={editedJob.workPlaceFlexibility || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300" />
+                      {editMode ? <input type="text" name="workPlaceFlexibility" value={editedJob.workPlaceFlexibility || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-300" />
                         : <p className="font-semibold text-slate-700 dark:text-slate-200">{jobDetails?.workPlaceFlexibility || "Not specified"}</p>}
                     </div>
                   </li>
@@ -1333,7 +1333,7 @@ const JobDetail = () => {
                     <div className="flex space-x-4">
                       <Button
                         size="lg"
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        className="w-full bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white"
                         onClick={handleSave}
                         disabled={saveLoading}
                       >
@@ -1342,7 +1342,7 @@ const JobDetail = () => {
                       <Button
                         size="lg"
                         variant="outline"
-                        className="w-full"
+                        className="w-full bg-slate-700 hover:bg-slate-600 text-white hover:text-white"
                         onClick={handleCancel}
                       >
                         Cancel

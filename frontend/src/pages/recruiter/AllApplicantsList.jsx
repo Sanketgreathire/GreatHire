@@ -189,13 +189,13 @@ const AllApplicantsList = () => {
                         <td className="p-4">{app?.applicant?.phoneNumber?.number}</td>
                         <td className="p-4 text-center">{app.status}</td>
 
-                        <td className="p-4 text-center">
+                        <td className="p-4 text-center dark:text-gray-300 rounded">
                           <select
                             value={app.status}
                             onChange={(e) =>
                               handleStatusChange(app._id, e.target.value)
                             }
-                            className="border rounded px-2 py-1"
+                            className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-300"
                           >
                             {ALL_STATUSES.map((s) => (
                               <option key={s} value={s}>{s}</option>
@@ -204,10 +204,10 @@ const AllApplicantsList = () => {
                         </td>
 
                         {/* ✅ UPDATED ACTIONS */}
-                        <td className="p-4 text-center">
+                        <td className="p-4 text-center dark:text-gray-300">
                           <div className="flex justify-center gap-2">
                             <Button
-                              className="bg-blue-600 text-white px-3 py-1 rounded"
+                              className="bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-300 px-3 py-1 rounded"
                               onClick={() => {
                                 setApplicant(app);
                                 setApplicantId(app?._id);
