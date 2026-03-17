@@ -1,7 +1,7 @@
 import Razorpay from "razorpay";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
-import { isUserAssociated } from "./company.controller.js";
+import { isUserAssociated, isUserAssociatedForPlan } from "./company.controller.js";
 
 // ✅ Razorpay instance
 if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -38,8 +38,8 @@ export const createOrderForJobPlan = async (req, res) => {
         .json({ success: false, message: "Unauthorized: no user ID" });
     }
 
-    // 🔐 Check recruiter-company association
-    const isAssociated = await isUserAssociated(companyId, userId);
+    // 🔐 Check recruiter-company association (membership only — allows unverified recruiters to purchase)
+    const isAssociated = await isUserAssociatedForPlan(companyId, userId);
     if (!isAssociated) {
       return res.status(403).json({
         success: false,

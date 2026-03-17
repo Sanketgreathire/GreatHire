@@ -219,9 +219,12 @@ const PostJob = () => {
     }),
 
     onSubmit: async (values) => {
-      // ✅ Block submission if not verified and already posted 1 job
-      if (!user?.isActive && company.freeJobsPosted >= 1) {
-        toast.error("Please wait for admin verification to post more jobs.");
+      // Block 2nd+ job for ALL plans until admin verifies
+      const jobsPostedSoFar = (!company.plan || company.plan === "FREE")
+        ? company.freeJobsPosted
+        : (company.planJobsPostedThisMonth || 0);
+      if (!company.isActive && jobsPostedSoFar >= 1) {
+        toast.error("Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.");
         return;
       }
 
@@ -242,15 +245,12 @@ const PostJob = () => {
         if (response.data.success) {
           if (company?.maxJobPosts !== null) {
             dispatch(decreaseMaxPostJobs(1));
-          }//else if(company?.creditedForJobs !== null ){
-          //   dispatch(decreaseJobCredits(500));
-          // }
-
-          toast.success("Job post successfully");
-          // Redirect to the dashboard after 2 seconds
-          setTimeout(() => {
-            navigate("/recruiter/dashboard/home");
-          }, 1000);
+          }
+          const msg = response.data.jobStatus === "pending"
+            ? "Job submitted! It will be published after admin verification."
+            : "Job posted successfully!";
+          toast.success(msg);
+          setTimeout(() => { navigate("/recruiter/dashboard/home"); }, 1000);
         } else {
           toast.error("Job post failed");
         }
@@ -325,8 +325,8 @@ const PostJob = () => {
 
       {company ? (
         <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          {/* Verification Status Banner - shown after 1st job, not yet verified */}
-          {!user?.isActive && company.freeJobsPosted >= 1 && (
+          {/* Verification Status Banner - shown after 1st job, not yet verified (free or paid plan) */}
+          {!company?.isActive && ((!company.plan || company.plan === "FREE") ? company.freeJobsPosted >= 1 : (company.planJobsPostedThisMonth || 0) >= 1) && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded">
                 <div className="flex items-center">
@@ -337,7 +337,7 @@ const PostJob = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-red-700 dark:text-red-300">
-                      <span className="font-medium">1 free job remaining.</span> This job can be posted after verification by admin.
+                      <span className="font-medium">Pending Verification.</span> Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.
                     </p>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ const PostJob = () => {
           )}
 
           {/* Verified banner - shown after verification with 1 job already posted */}
-          {user?.isActive && company.freeJobsPosted === 1 && (
+          {company?.isActive && company.freeJobsPosted === 1 && (!company.plan || company.plan === "FREE") && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded">
                 <div className="flex items-center">
@@ -357,7 +357,7 @@ const PostJob = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-green-700 dark:text-green-300">
-                      <span className="font-medium">Verified!</span> You can now post your remaining free job.
+                      <span className="font-medium">Verified!</span> You can now post your 2nd free job.
                     </p>
                   </div>
                 </div>
@@ -372,28 +372,32 @@ const PostJob = () => {
                 <div className="text-center">
                   <p className="text-sm font-medium">Remaining Job Posts</p>
                   <p className="text-3xl font-bold">
-                    {company.freeJobsPosted < 2 
-                      ? `${2 - company.freeJobsPosted} Free Job${2 - company.freeJobsPosted > 1 ? 's' : ''}`
-                      : company.creditedForJobs >= 500 
-                        ? `${Math.floor(company.creditedForJobs / 500)} Jobs`
-                        : '0 Jobs'
-                    }
+                    {(() => {
+                      const plan = company.plan || "FREE";
+                      const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+                      const limit = limits[plan] ?? 2;
+                      const used = plan === "FREE" ? company.freeJobsPosted : (company.planJobsPostedThisMonth || 0);
+                      if (limit === Infinity) return "Unlimited";
+                      const remaining = Math.max(0, limit - used);
+                      return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
+                    })()}
                   </p>
+                  <p className="text-xs mt-1 opacity-80">{company.plan || "FREE"} Plan</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
-            {/* Block form if not verified and already posted 1 job */}
-            {!user?.isActive && company.freeJobsPosted >= 1 ? (
+            {/* Lock form for ALL recruiters (free or paid) after 1st job until verified */}
+            {!company?.isActive && ((!company.plan || company.plan === "FREE") ? company.freeJobsPosted >= 1 : (company.planJobsPostedThisMonth || 0) >= 1) ? (
               <div className="text-center py-12">
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">Job Posting Locked</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  You have used your free job post. Please wait for admin verification to unlock your second free job.
+                  Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.
                 </p>
                 <div className="mt-6">
                   <Link

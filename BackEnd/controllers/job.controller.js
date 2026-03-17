@@ -13,6 +13,14 @@ import notificationService from "../utils/notificationService.js";
 import axios from "axios";
 
 
+// Plan limits configuration
+const PLAN_LIMITS = {
+  FREE:       { jobsPerMonth: 2,         resumeCredits: 5 },
+  STANDARD:   { jobsPerMonth: 5,         resumeCredits: 333 },
+  PREMIUM:    { jobsPerMonth: 15,        resumeCredits: 1000 },
+  ENTERPRISE: { jobsPerMonth: Infinity,  resumeCredits: 8333 },
+};
+
 // postjob by recruiter
 export const postJob = [
   check("title").notEmpty().withMessage("Title is required"),
@@ -34,50 +42,70 @@ export const postJob = [
       }
 
       const {
-        companyName,
-        urgentHiring,
-        title,
-        details,
-        skills,
-        qualifications,
-        benefits,
-        responsibilities,
-        experience,
-        salary,
-        jobType,
-        workPlaceFlexibility,
-        location,
-        numberOfOpening,
-        respondTime,
-        duration,
-        anyAmount,
-        companyId,
+        companyName, urgentHiring, title, details, skills, qualifications,
+        benefits, responsibilities, experience, salary, jobType,
+        workPlaceFlexibility, location, numberOfOpening, respondTime,
+        duration, anyAmount, companyId,
       } = req.body;
 
       const userId = req.id;
-
       const company = await Company.findById(companyId);
       const recruiter = await Recruiter.findById(userId);
 
-      // Debug log
-      console.log("anyAmount value received:", anyAmount, "Type:", typeof anyAmount);
+      if (!company) {
+        return res.status(404).json({ success: false, message: "Company not found. Please create a company first." });
+      }
 
-      // ✅ Allow 1 free job before verification (recruiter not yet active/verified)
-      if (!recruiter?.isActive && company.freeJobsPosted >= 1) {
+      const companyPlan = company.plan || "FREE";
+      const isVerified = company.isActive;
+      const isFirstJob = company.freeJobsPosted === 0;
+
+      // --- Unified pre-verification check (applies to ALL plans) ---
+      // Count how many jobs have been posted so far (use the correct counter per plan)
+      const jobsPostedSoFar = companyPlan === "FREE"
+        ? company.freeJobsPosted
+        : (company.planJobsPostedThisMonth || 0);
+
+      if (!isVerified && jobsPostedSoFar >= 1) {
         return res.status(400).json({
           success: false,
-          message: "You have posted your free job. Please wait for admin verification to post more jobs.",
-          redirectTo: "/recruiter/dashboard/home"
+          message: "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
+          requiresVerification: true,
+          redirectTo: "/recruiter/dashboard/home",
         });
       }
 
-      // ✅ After verification, allow 2nd free job; block 3rd+ without credits
-      if (company.freeJobsPosted >= 2 && company.creditedForJobs < 500) {
-        return res.status(400).json({
-          success: false,
-          message: "You have used both free jobs. Please purchase a plan to continue posting.",
-          redirectTo: "/recruiter/dashboard/upgrade-plans"
-        });
+      // --- Plan-specific limits (only reached after verification) ---
+      if (companyPlan === "FREE") {
+        // Block if free limit (2 jobs/month) reached
+        if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
+          return res.status(400).json({
+            success: false,
+            message: "You have reached the Free plan limit of 2 jobs per month. Please upgrade your plan.",
+            redirectTo: "/recruiter/dashboard/upgrade-plans",
+          });
+        }
+      } else {
+        // Reset monthly counter if new month
+        const now = new Date();
+        const monthStart = company.planMonthStart ? new Date(company.planMonthStart) : null;
+        const isSameMonth = monthStart &&
+          monthStart.getMonth() === now.getMonth() &&
+          monthStart.getFullYear() === now.getFullYear();
+
+        if (!isSameMonth) {
+          company.planJobsPostedThisMonth = 0;
+          company.planMonthStart = now;
+        }
+
+        const limit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
+        if (limit !== Infinity && company.planJobsPostedThisMonth >= limit) {
+          return res.status(400).json({
+            success: false,
+            message: `You have reached the ${companyPlan} plan limit of ${limit} jobs. Please upgrade your plan.`,
+            redirectTo: "/recruiter/dashboard/upgrade-plans",
+          });
+        }
       }
 
       const splitSkills = (typeof skills === 'string') ? skills.split(",").map(s => s.trim()) : [];
@@ -85,26 +113,19 @@ export const postJob = [
       const splitBenefits = (typeof benefits === 'string') ? benefits.split("\n").map(b => b.trim()) : [];
       const splitResponsibilities = (typeof responsibilities === 'string') ? responsibilities.split("\n").map(r => r.trim()) : [];
 
+      // First job for any unverified company → pending (acts as verification request)
+      const jobStatus = (!isVerified && jobsPostedSoFar === 0) ? "pending" : "active";
+      const jobIsActive = jobStatus === "active";
+
       const newJob = new Job({
         jobDetails: {
-          companyName,
-          urgentHiring,
-          title,
-          details,
-          skills: splitSkills,
-          benefits: splitBenefits,
-          qualifications: splitQualifications,
-          responsibilities: splitResponsibilities,
-          salary,
-          experience,
-          jobType,
-          workPlaceFlexibility,
-          location,
-          numberOfOpening,
-          respondTime,
-          duration,
-          anyAmount,
-          isActive: true,
+          companyName, urgentHiring, title, details,
+          skills: splitSkills, benefits: splitBenefits,
+          qualifications: splitQualifications, responsibilities: splitResponsibilities,
+          salary, experience, jobType, workPlaceFlexibility,
+          location, numberOfOpening, respondTime, duration, anyAmount,
+          isActive: jobIsActive,
+          status: jobStatus,
         },
         created_by: userId,
         company: companyId,
@@ -112,77 +133,37 @@ export const postJob = [
 
       await newJob.save();
 
-      // ✅ Notify recruiter about successful job posting
-      try {
-        console.log('📨 Sending job posting notification...', {
-          recruiterId: userId,
-          jobId: newJob._id,
-          jobTitle: title,
-          companyName: companyName
-        });
-        
-        await notificationService.notifyNewJobPosted({
-          recruiterId: userId,
-          jobId: newJob._id,
-          jobTitle: title,
-          companyName: companyName
-        });
-        
-        console.log('✅ Job posting notification sent successfully');
-      } catch (notificationError) {
-        console.error('❌ Error sending job posting notification:', notificationError);
-        // Don't fail the job posting if notification fails
-      }
-
-      // ✅ Find and notify matching candidates
-      try {
-        await findAndNotifyMatchingCandidates(newJob);
-      } catch (matchingError) {
-        console.error('❌ Error notifying matching candidates:', matchingError.message);
-      }
-
-      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts !== null && typeof company.maxJobPosts === 'number' && company.maxJobPosts > 0) {
-        company.maxJobPosts -= 1;
-      }
-      
-      // ✅ Track free jobs posted (first 2 jobs are free)
-      if (company.freeJobsPosted < 2) {
+      // Update counters
+      if (companyPlan === "FREE") {
         company.freeJobsPosted += 1;
+        if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
+          company.hasUsedFreePlan = true;
+        }
       } else {
-        // Only deduct credits after 2 free jobs
-        company.creditedForJobs -= 500;
+        company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
       }
-      
-      // Mark free plan as used when both free jobs are posted
-      if (company.freeJobsPosted >= 2 && !company.hasUsedFreePlan) {
-        company.hasUsedFreePlan = true;
-      }
-      
       await company.save();
 
-      // Only check subscription expiry if maxJobPosts is not "Unlimited"
-      if (company.maxJobPosts !== "Unlimited" && company.maxJobPosts === 0) {
-        const activeSubscription = await JobSubscription.findOne({
-          company: company._id,
-          status: "Active",
-        });
-
-        if (activeSubscription && activeSubscription.planName !== "Free") {
-          activeSubscription.status = "Expired";
-          await activeSubscription.save();
-        }
+      // Notify recruiter
+      try {
+        await notificationService.notifyNewJobPosted({ recruiterId: userId, jobId: newJob._id, jobTitle: title, companyName });
+      } catch (e) {
+        console.error('❌ Job posting notification error:', e);
       }
 
-      return res.status(201).json({
-        success: true,
-        message: "Job posted successfully.",
-      });
+      // Notify matching candidates only for active jobs
+      if (jobIsActive) {
+        try { await findAndNotifyMatchingCandidates(newJob); } catch (e) { console.error('❌ Matching candidates error:', e.message); }
+      }
+
+      const message = jobStatus === "pending"
+        ? "Job submitted for verification. It will be published after admin approval."
+        : "Job posted successfully.";
+
+      return res.status(201).json({ success: true, message, jobStatus });
     } catch (error) {
       console.error("Error posting job:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error.",
-      });
+      return res.status(500).json({ success: false, message: "Internal server error." });
     }
   }
 ];

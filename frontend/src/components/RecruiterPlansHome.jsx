@@ -286,7 +286,7 @@ const RecruiterPlansHome = () => {
     {
       id: "swift-hire",
       title: "Standard",
-      price: 999,
+      price: 1,
       billing: "Monthly",
       jobs: "5 Jobs",
       resumes: "50 Credits",

@@ -29,10 +29,21 @@ const CurrentPlans = () => {
           content="View and manage your existing subscription plan on GreatHire in a completely transparent and controlled manner. Hyderabad State, India based hiring platform enables recruiters, startups, enterprises to empower trusted hiring solutions. It provides innovative hiring tools, viewing of existing plans, real-time tracking of credits, advantages of posting jobs, viewing or knowing about pricing, viewing or knowing about expiry, and upgrades."
         />
       </Helmet>
-      {/* Check if the company exists and the user is active */}
-      {company && user?.isActive ? (
+      {/* Check if the company exists */}
+      {company ? (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 pt-20">
           <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
+
+            {/* Verification pending banner for unverified recruiters with a paid plan */}
+            {!user?.isActive && company?.hasSubscription && (
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4">
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  <span className="font-semibold">Verification Pending: </span>
+                  Your account and company are currently under admin verification. Once verified, you will be able to access all the features included in your plan.
+                </p>
+              </div>
+            )}
+
             {/* Header */}
             <div className="bg-blue-600 dark:bg-blue-700 text-white p-6 text-center">
               <AiFillSafetyCertificate className="mx-auto text-5xl mb-3 text-green-400 dark:text-green-300" />
@@ -145,13 +156,7 @@ const CurrentPlans = () => {
         <p className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
           <span className="text-4xl text-gray-400 dark:text-gray-500">Company not created</span>
         </p>
-      ) : (
-        <p className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-          <span className="text-4xl text-gray-400 dark:text-gray-500">
-            GreatHire will verify your company soon.
-          </span>
-        </p>
-      )}
+      ) : null}
     </>
   );
 };
