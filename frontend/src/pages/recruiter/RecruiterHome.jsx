@@ -89,11 +89,14 @@ const RecruiterHome = () => {
     },
     {
       title: "Max Post Jobs",
-      count: company?.freeJobsPosted < 2
-        ? 2 - company.freeJobsPosted
-        : company?.creditedForJobs >= 500 
-          ? Math.floor(company.creditedForJobs / 500) 
-          : 0,
+      count: (() => {
+        const plan = company?.plan || "FREE";
+        const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+        const limit = limits[plan] ?? 2;
+        if (limit === Infinity) return "∞";
+        const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
+        return Math.max(0, limit - used);
+      })(),
       icon: (
         <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2 transition-colors duration-300" />
       ),
@@ -182,7 +185,7 @@ const RecruiterHome = () => {
       {company ? (
         <div className="min-h-screen p-8 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           {/* Verification Status Banner */}
-          {!user?.isActive && (
+          {!company?.isActive && (
             <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -194,8 +197,8 @@ const RecruiterHome = () => {
                   <p className="text-sm text-yellow-700 dark:text-yellow-300">
                     <span className="font-medium">Verification Pending:</span>{" "}
                     {company.freeJobsPosted === 0
-                      ? "You can post 1 free job now. Your 2nd free job will unlock after admin verification."
-                      : "1 free job remaining. This job can be posted after admin verification."}
+                      ? "Post your first job now. It will be reviewed by admin and published upon approval."
+                      : "Your first job is under admin review. Your 2nd free job will unlock after verification."}
                   </p>
                 </div>
               </div>

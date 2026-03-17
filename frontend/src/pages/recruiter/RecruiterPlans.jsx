@@ -44,7 +44,7 @@ const subscriptionPlans = [
   {
     id: "swift-hire",
     title: "Standard",
-    price: 999,
+    price: 1,
     billing: "Monthly",
     jobs: "5 Jobs",
     resumes: "333 Credits",
@@ -188,6 +188,7 @@ function RecruiterPlans() {
     subscriptionPlans.find((p) => p.popular)?.id
   );
   const [showComparison, setShowComparison] = useState(false);
+  const [showVerificationBanner, setShowVerificationBanner] = useState(false);
 
   // Refresh user data when component mounts to get latest plan info
   useEffect(() => {
@@ -270,7 +271,7 @@ function RecruiterPlans() {
 
           if (verify.data.success) {
             dispatch(addJobPlan(verify.data.plan));
-            
+
             // Update user plan in Redux
             if (verify.data.userPlan) {
               dispatch(updateUserPlan({
@@ -278,7 +279,7 @@ function RecruiterPlans() {
                 subscriptionStatus: "ACTIVE"
               }));
             }
-            
+
             // Refresh company data to update credits
             const companyRes = await axios.post(
               `${COMPANY_API_END_POINT}/company-by-userid`,
@@ -288,7 +289,7 @@ function RecruiterPlans() {
             if (companyRes?.data.success) {
               dispatch(addCompany(companyRes.data.company));
             }
-            
+
             // Store revenue record
             await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
               itemDetails: {
@@ -303,9 +304,15 @@ function RecruiterPlans() {
                 phoneNumber: user.phoneNumber.number,
               },
             });
-            
+
             toast.success("Payment Successful");
-            navigate("/recruiter/dashboard/home");
+
+            // If not yet verified, show banner instead of navigating away
+            if (!user.isActive || !companyRes?.data?.company?.isActive) {
+              setShowVerificationBanner(true);
+            } else {
+              navigate("/recruiter/dashboard/home");
+            }
           }
         },
       };
@@ -333,8 +340,9 @@ function RecruiterPlans() {
       return;
     }
 
-    if (!user.isActive) {
-      toast.error("Your account is not active.");
+    // Block free plan if recruiter already has a paid subscription
+    if (plan.isFree && company.hasSubscription) {
+      toast.error("You already have a paid plan. Free plan is not available.");
       return;
     }
 
@@ -372,12 +380,11 @@ function RecruiterPlans() {
     }
 
     if (plan.enterprise) {
-      let creditsForJobs = 999999;
       initiateCreditPayment({
         title: plan.title,
         price: plan.price,
-        creditsForJobs,
-        creditsForCandidates: 1500,
+        creditsForJobs: 999999,
+        creditsForCandidates: 8333,
       });
       return;
     }
@@ -387,13 +394,16 @@ function RecruiterPlans() {
       return;
     }
 
-    let creditsForJobs = plan.id === "swift-hire" ? 2500 : 7500;
+    const planCredits = {
+      "swift-hire":    { creditsForJobs: 5,  creditsForCandidates: 333 },
+      "growth-engine": { creditsForJobs: 15, creditsForCandidates: 1000 },
+    };
+    const credits = planCredits[plan.id] || { creditsForJobs: 5, creditsForCandidates: 333 };
 
     initiateCreditPayment({
       title: plan.title,
       price: plan.price,
-      creditsForJobs,
-      creditsForCandidates: plan.id === "swift-hire" ? 333 : 1000,
+      ...credits,
     });
   };
 
@@ -404,6 +414,27 @@ function RecruiterPlans() {
       </Helmet>
 
       <Navbar />
+
+      {/* Verification Pending Banner — shown after payment for unverified recruiters */}
+      {showVerificationBanner && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+            <div className="text-5xl mb-4">🕐</div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Plan Purchased Successfully!
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Your account and company are currently under admin verification. Once verified, you will be able to access all the features included in your plan.
+            </p>
+            <button
+              onClick={() => navigate("/recruiter/dashboard/home")}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-300"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Layout wrapper with sidebar and main content */}
       <div className="flex">
@@ -472,7 +503,7 @@ function RecruiterPlans() {
             {/* ================= PRICING CARDS (ORIGINAL) ================= */}
             <div className="grid md:grid-cols-4 gap-6 mb-12">
               {subscriptionPlans
-                .filter(plan => !(plan.isFree && company?.hasUsedFreePlan))
+                .filter(plan => !(plan.isFree && (company?.hasUsedFreePlan || company?.hasSubscription)))
                 .map((plan) => (
                   <div
                     key={plan.id}

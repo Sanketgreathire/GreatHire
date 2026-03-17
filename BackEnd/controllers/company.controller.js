@@ -62,6 +62,26 @@ export const isUserAssociated = async (companyId, userId) => {
   }
 };
 
+// Membership-only check — does NOT require isActive.
+// Used for plan purchase so unverified recruiters can still buy a plan.
+export const isUserAssociatedForPlan = async (companyId, userId) => {
+  try {
+    const company = await Company.findById(companyId);
+    if (!company) return false;
+
+    const isAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isAssociated) return false;
+
+    const recruiter = await Recruiter.findById(userId);
+    return !!recruiter;
+  } catch (err) {
+    console.error("Error in plan association check:", err);
+    return false;
+  }
+};
+
 // this controller create the company
 export const registerCompany = async (req, res) => {
   try {

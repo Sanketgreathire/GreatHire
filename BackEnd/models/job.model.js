@@ -82,8 +82,13 @@ const jobSchema = new mongoose.Schema(
         required: true,
       },
       isActive: {
-        type: Boolean, // Assuming this is a number but stored as string
-        default:true,
+        type: Boolean,
+        default: true,
+      },
+      status: {
+        type: String,
+        enum: ["pending", "active", "rejected"],
+        default: "active",
       },
     }, 
     saveJob: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

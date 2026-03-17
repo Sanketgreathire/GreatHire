@@ -84,6 +84,19 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 0, // Track free jobs posted before/after verification
     },
+    plan: {
+      type: String,
+      enum: ["FREE", "STANDARD", "PREMIUM", "ENTERPRISE"],
+      default: "FREE",
+    },
+    planJobsPostedThisMonth: {
+      type: Number,
+      default: 0,
+    },
+    planMonthStart: {
+      type: Date,
+      default: null,
+    },
     hasSubscription: { 
       type: Boolean, 
       default: false 

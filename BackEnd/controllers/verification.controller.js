@@ -11,6 +11,7 @@ import { CandidateSubscription } from "../models/candidateSubscription.model.js"
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 import { validationResult } from "express-validator";
+import { isUserAssociatedForPlan } from "./company.controller.js";
 // otpService.js
 import twilio from "twilio";
 // Setup nodemailer
@@ -70,6 +71,15 @@ export const sendVerificationStatus = async (req, res) => {
     // Update the company's isActive status
     company.isActive = isActive;
     await company.save();
+
+    // If approving (isActive = true), activate the first pending job
+    if (isActive) {
+      await Job.findOneAndUpdate(
+        { company: companyId, "jobDetails.status": "pending" },
+        { "jobDetails.status": "active", "jobDetails.isActive": true },
+        { sort: { createdAt: 1 } }
+      );
+    }
 
     // Update the admin recruiter (company admin) based on company.adminEmail.
     // This assumes the admin of the company is stored as a recruiter.
@@ -374,6 +384,13 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       companyId,
     } = req.body;
 
+    // Allow unverified recruiters to complete payment verification
+    const userId = req.id;
+    const isAssociated = await isUserAssociatedForPlan(companyId, userId);
+    if (!isAssociated) {
+      return res.status(403).json({ success: false, message: "You are not authorized" });
+    }
+
     if (
       matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
     ) {
@@ -412,13 +429,13 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       company.hasSubscription = true; // Mark that company has active subscription
       await company.save();
 
-      // Determine plan type based on credits
+      // Determine plan type based on job count
       let planType = "STANDARD";
       if (creditsForJobs >= 999999) {
         planType = "ENTERPRISE";
-      } else if (creditsForJobs >= 7500) {
+      } else if (creditsForJobs >= 15) {
         planType = "PREMIUM";
-      } else if (creditsForJobs >= 2500) {
+      } else if (creditsForJobs >= 5) {
         planType = "STANDARD";
       }
 
@@ -431,6 +448,12 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           subscriptionStatus: "ACTIVE",
         }
       );
+
+      // Update company plan and reset monthly counter
+      company.plan = planType;
+      company.planJobsPostedThisMonth = 0;
+      company.planMonthStart = new Date();
+      await company.save();
 
       res.status(200).json({
         success: true,
