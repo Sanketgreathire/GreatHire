@@ -220,11 +220,13 @@ const PostJob = () => {
 
     onSubmit: async (values) => {
       // Block 2nd+ job for ALL plans until admin verifies
-      const jobsPostedSoFar = (!company.plan || company.plan === "FREE")
-        ? company.freeJobsPosted
-        : (company.planJobsPostedThisMonth || 0);
+      const plan = company?.plan || "FREE";
+      const jobsPostedSoFar = plan === "FREE"
+        ? (company?.freeJobsPosted || 0)
+        : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
+        
       if (!company.isActive && jobsPostedSoFar >= 1) {
-        toast.error("Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.");
+        toast.error("Your first job is under admin review. You cannot post additional jobs until your account is verified.");
         return;
       }
 
@@ -326,7 +328,13 @@ const PostJob = () => {
       {company ? (
         <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           {/* Verification Status Banner - shown after 1st job, not yet verified (free or paid plan) */}
-          {!company?.isActive && ((!company.plan || company.plan === "FREE") ? company.freeJobsPosted >= 1 : (company.planJobsPostedThisMonth || 0) >= 1) && (
+          {!company?.isActive && (() => {
+            const plan = company?.plan || "FREE";
+            const jobsPosted = plan === "FREE" 
+              ? (company?.freeJobsPosted || 0) 
+              : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
+            return jobsPosted >= 1;
+          })() && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded">
                 <div className="flex items-center">
@@ -337,7 +345,7 @@ const PostJob = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-red-700 dark:text-red-300">
-                      <span className="font-medium">Pending Verification.</span> Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.
+                      <span className="font-medium">Pending Verification.</span> Your first job is under admin review. You cannot post additional jobs until your account is verified.
                     </p>
                   </div>
                 </div>
@@ -346,7 +354,15 @@ const PostJob = () => {
           )}
 
           {/* Verified banner - shown after verification with 1 job already posted */}
-          {company?.isActive && company.freeJobsPosted === 1 && (!company.plan || company.plan === "FREE") && (
+          {company?.isActive && (() => {
+            const plan = company?.plan || "FREE";
+            if (plan === "FREE") {
+              return company.freeJobsPosted === 1;
+            } else {
+              const totalPosted = (company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0);
+              return totalPosted === 1;
+            }
+          })() && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded">
                 <div className="flex items-center">
@@ -357,7 +373,7 @@ const PostJob = () => {
                   </div>
                   <div className="ml-3">
                     <p className="text-sm text-green-700 dark:text-green-300">
-                      <span className="font-medium">Verified!</span> You can now post your 2nd free job.
+                      <span className="font-medium">Verified!</span> You can now post more jobs according to your plan.
                     </p>
                   </div>
                 </div>
@@ -375,11 +391,26 @@ const PostJob = () => {
                     {(() => {
                       const plan = company.plan || "FREE";
                       const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-                      const limit = limits[plan] ?? 2;
-                      const used = plan === "FREE" ? company.freeJobsPosted : (company.planJobsPostedThisMonth || 0);
-                      if (limit === Infinity) return "Unlimited";
-                      const remaining = Math.max(0, limit - used);
-                      return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
+                      const PAID_PLAN_FREE_JOBS = 2;
+                      
+                      if (plan === "FREE") {
+                        const limit = limits[plan] ?? 2;
+                        const used = company.freeJobsPosted || 0;
+                        const remaining = Math.max(0, limit - used);
+                        return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
+                      } else {
+                        // For paid plans: include free jobs in total limit
+                        const paidLimit = limits[plan] ?? 0;
+                        if (paidLimit === Infinity) return "Unlimited";
+                        
+                        const totalLimit = paidLimit + PAID_PLAN_FREE_JOBS;
+                        const paidUsed = company.planJobsPostedThisMonth || 0;
+                        const freeUsed = company.paidPlanFreeJobsPosted || 0;
+                        const totalUsed = paidUsed + freeUsed;
+                        const remaining = Math.max(0, totalLimit - totalUsed);
+                        
+                        return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
+                      }
                     })()}
                   </p>
                   <p className="text-xs mt-1 opacity-80">{company.plan || "FREE"} Plan</p>
@@ -390,14 +421,20 @@ const PostJob = () => {
 
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
             {/* Lock form for ALL recruiters (free or paid) after 1st job until verified */}
-            {!company?.isActive && ((!company.plan || company.plan === "FREE") ? company.freeJobsPosted >= 1 : (company.planJobsPostedThisMonth || 0) >= 1) ? (
+            {!company?.isActive && (() => {
+              const plan = company?.plan || "FREE";
+              const jobsPosted = plan === "FREE" 
+                ? (company?.freeJobsPosted || 0) 
+                : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
+              return jobsPosted >= 1;
+            })() ? (
               <div className="text-center py-12">
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">Job Posting Locked</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.
+                  Your first job is under admin review. You cannot post additional jobs until your account is verified.
                 </p>
                 <div className="mt-6">
                   <Link

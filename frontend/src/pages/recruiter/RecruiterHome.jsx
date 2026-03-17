@@ -92,15 +92,37 @@ const RecruiterHome = () => {
       count: (() => {
         const plan = company?.plan || "FREE";
         const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-        const limit = limits[plan] ?? 2;
-        if (limit === Infinity) return "∞";
-        const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
-        return Math.max(0, limit - used);
+        const PAID_PLAN_FREE_JOBS = 2;
+        
+        if (plan === "FREE") {
+          const limit = limits[plan] ?? 2;
+          const used = company?.freeJobsPosted || 0;
+          return Math.max(0, limit - used);
+        } else {
+          // For paid plans: include free jobs in total limit
+          const paidLimit = limits[plan] ?? 0;
+          const totalLimit = paidLimit === Infinity ? Infinity : paidLimit + PAID_PLAN_FREE_JOBS;
+          
+          if (totalLimit === Infinity) return "∞";
+          
+          const paidUsed = company?.planJobsPostedThisMonth || 0;
+          const freeUsed = company?.paidPlanFreeJobsPosted || 0;
+          const totalUsed = paidUsed + freeUsed;
+          
+          return Math.max(0, totalLimit - totalUsed);
+        }
       })(),
       icon: (
         <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2 transition-colors duration-300" />
       ),
-      description: "Number of jobs you can post.",
+      description: (() => {
+        const plan = company?.plan || "FREE";
+        if (plan === "FREE") {
+          return "Number of jobs you can post.";
+        } else {
+          return "Number of jobs you can post.";
+        }
+      })(),
     },
     {
       title: "Active Jobs",
@@ -196,9 +218,17 @@ const RecruiterHome = () => {
                 <div className="ml-3">
                   <p className="text-sm text-yellow-700 dark:text-yellow-300">
                     <span className="font-medium">Verification Pending:</span>{" "}
-                    {company.freeJobsPosted === 0
-                      ? "Post your first job now. It will be reviewed by admin and published upon approval."
-                      : "Your first job is under admin review. Your 2nd free job will unlock after verification."}
+                    {(() => {
+                      const plan = company?.plan || "FREE";
+                      const jobsPosted = plan === "FREE" ? (company?.freeJobsPosted || 0) : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
+                      
+                      if (jobsPosted === 0) {
+                        return "Post your first job now. It will be reviewed by admin and published upon approval.";
+                      } else {
+                        return "Your first job is under admin review. You cannot post additional jobs until your account is verified.";
+                      }
+                    })()
+                    }
                   </p>
                 </div>
               </div>

@@ -92,11 +92,28 @@ const CurrentPlans = () => {
                     <div className="flex justify-between p-3 bg-white dark:bg-gray-700 rounded-lg shadow">
                       <span className="font-medium">Max Job Posts Remaining:</span>
                       <span className="font-semibold">
-                        {typeof company.maxJobPosts === 'number' 
-                          ? company.maxJobPosts 
-                          : company.maxJobPosts === "Unlimited" 
-                          ? "Unlimited" 
-                          : Math.floor(company.creditedForJobs / 500)
+                        {(() => {
+                          const plan = company?.plan || "FREE";
+                          const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+                          const PAID_PLAN_FREE_JOBS = 2;
+                          
+                          if (plan === "FREE") {
+                            const limit = limits[plan] ?? 2;
+                            const used = company?.freeJobsPosted || 0;
+                            return Math.max(0, limit - used);
+                          } else {
+                            const paidLimit = limits[plan] ?? 0;
+                            if (paidLimit === Infinity) return "Unlimited";
+                            
+                            const totalLimit = paidLimit + PAID_PLAN_FREE_JOBS;
+                            const paidUsed = company?.planJobsPostedThisMonth || 0;
+                            const freeUsed = company?.paidPlanFreeJobsPosted || 0;
+                            const totalUsed = paidUsed + freeUsed;
+                            const remaining = Math.max(0, totalLimit - totalUsed);
+                            
+                            return `${remaining}/${totalLimit} (${paidLimit} paid + ${PAID_PLAN_FREE_JOBS} free)`;
+                          }
+                        })()
                         }
                       </span>
                     </div>

@@ -56,7 +56,39 @@ export const startMonthlyFreePlanRenewal = () => {
         console.log(`✅ Renewed free plan for company: ${company.companyName}`);
       }
 
-      console.log(`✅ Monthly free plan renewal completed. ${companies.length} companies renewed.`);
+      // Find companies with active paid plans that need free job renewal
+      const paidPlanCompanies = await Company.find({
+        hasSubscription: true,
+        $or: [
+          {
+            paidPlanFreeJobsRenewal: { $lte: oneMonthAgo }
+          },
+          {
+            paidPlanFreeJobsRenewal: { $exists: false }
+          },
+          {
+            paidPlanFreeJobsRenewal: null
+          }
+        ]
+      });
+
+      for (const company of paidPlanCompanies) {
+        // Verify company still has active paid plan
+        const activePlan = await JobSubscription.findOne({
+          company: company._id,
+          status: "Active"
+        });
+
+        if (activePlan) {
+          // Reset free jobs for paid plan users
+          company.paidPlanFreeJobsPosted = 0;
+          company.paidPlanFreeJobsRenewal = new Date();
+          await company.save();
+          console.log(`✅ Renewed free jobs for paid plan company: ${company.companyName}`);
+        }
+      }
+
+      console.log(`✅ Monthly free plan renewal completed. ${companies.length} free plan companies and ${paidPlanCompanies.length} paid plan companies renewed.`);
     } catch (error) {
       console.error("❌ Error in monthly free plan renewal:", error);
     }
