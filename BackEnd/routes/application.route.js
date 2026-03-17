@@ -10,6 +10,7 @@ import {
   deleteApplication,
   getAllApplications,
   triggerAutoReject,
+  bulkApplyJobs,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -38,6 +39,7 @@ router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplicati
   applyJob
 );
 router.route("/get").get(isAuthenticated, getAppliedJobs);
+router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 // New route for getting individual application details

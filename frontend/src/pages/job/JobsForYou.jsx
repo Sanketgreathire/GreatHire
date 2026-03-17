@@ -8,7 +8,7 @@ import JobMajorDetails from "./JobMajorDetails";
 import ShareCard from "./ShareJob";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { AlertCircle, User, Phone, Mail, FileText, Briefcase, Star, GraduationCap } from 'lucide-react';
@@ -27,6 +27,10 @@ const JobsForYou = ({ jobs = [] }) => {
   const [showJobDetails, setShowJobDetails] = useState(false);
   const [shareJobId, setShareJobId] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  // ========== BULK APPLY STATE ==========
+  const [selectedJobs, setSelectedJobs] = useState(new Set());
+  const [isBulkApplying, setIsBulkApplying] = useState(false);
 
   // Ref to track the scrollable container & share card container
   const jobContainerRef = useRef(null);
@@ -218,6 +222,47 @@ const JobsForYou = ({ jobs = [] }) => {
     ((totalFields - missingFields.length) / totalFields) * 100
   );
 
+  // ========== BULK APPLY HANDLERS ==========
+  const toggleJobSelection = (e, jobId) => {
+    e.stopPropagation();
+    if (hasAppliedToJob(jobId)) return;
+    setSelectedJobs((prev) => {
+      const next = new Set(prev);
+      next.has(jobId) ? next.delete(jobId) : next.add(jobId);
+      return next;
+    });
+  };
+
+  const handleBulkApply = async () => {
+    if (!user) { toast.error("Please login to apply"); return; }
+    if (selectedJobs.size === 0) { toast.error("No jobs selected"); return; }
+
+    const missingFieldsList = getMissingProfileFields(user);
+    if (missingFieldsList.length > 0) {
+      toast.error(`Complete your profile before applying: ${missingFieldsList.map((f) => f.label).join(", ")}.`, { duration: 6000 });
+      return;
+    }
+
+    setIsBulkApplying(true);
+    try {
+      const response = await axios.post(
+        `${APPLICATION_API_END_POINT}/bulk-apply`,
+        { jobIds: Array.from(selectedJobs) },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        const { applied, skipped } = response.data;
+        if (applied.length > 0) toast.success(`Applied to ${applied.length} job(s) successfully!`);
+        if (skipped.length > 0) toast.error(`${skipped.length} job(s) skipped (already applied or inactive).`);
+        setSelectedJobs(new Set());
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Bulk apply failed. Try again.");
+    } finally {
+      setIsBulkApplying(false);
+    }
+  };
+
   // ========== APPLY JOB HANDLER ==========
   const handleApply = async (jobId) => {
     if (!user) {
@@ -294,7 +339,29 @@ const JobsForYou = ({ jobs = [] }) => {
         <div className="flex justify-center gap-6 dark:bg-gray-900">
 
           {/* Left: Job Cards List - FIXED WIDTH & OVERFLOW */}
-          <div className="flex flex-col gap-4 w-full md:w-1/3 md:max-w-[600px] m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(152vh-80px)]">
+          <div className="flex flex-col gap-4 w-full md:w-1/3 md:max-w-[600px] m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(152vh-80px)] relative">
+
+            {/* Bulk Apply Sticky Bar */}
+            {user && selectedJobs.size > 0 && (
+              <div className="sticky top-0 z-10 flex items-center justify-between bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                <span className="text-sm font-semibold">{selectedJobs.size} job(s) selected</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedJobs(new Set())}
+                    className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-colors"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={handleBulkApply}
+                    disabled={isBulkApplying}
+                    className="text-xs px-3 py-1 bg-white text-blue-700 font-bold hover:bg-blue-50 rounded-md transition-colors disabled:opacity-60"
+                  >
+                    {isBulkApplying ? "Applying..." : "Apply Selected Jobs"}
+                  </button>
+                </div>
+              </div>
+            )}
             {jobs?.map((job) => (
               <div
                 key={job._id}
@@ -304,8 +371,20 @@ const JobsForYou = ({ jobs = [] }) => {
                   }`}
                 onClick={() => handleJobClick(job)}
               >
+                {/* Checkbox for bulk apply (only for logged-in users who haven't applied) */}
+                {user && !hasAppliedToJob(job._id) && (
+                  <div className="absolute top-3 left-3 z-10" onClick={(e) => toggleJobSelection(e, job._id)}>
+                    <input
+                      type="checkbox"
+                      checked={selectedJobs.has(job._id)}
+                      onChange={() => {}}
+                      className="w-4 h-4 accent-blue-600 cursor-pointer"
+                    />
+                  </div>
+                )}
+
                 {/* Top Row: Title, Company & Urgent Badge + Share Icon */}
-                <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="flex items-start justify-between gap-3 mb-2 pl-5">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-semibold text-gray-900 leading-tight truncate dark:text-white">
                       {job.jobDetails?.title}
