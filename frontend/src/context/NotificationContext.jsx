@@ -20,12 +20,15 @@ export const NotificationProvider = ({ children }) => {
       transports: ['websocket', 'polling']
     });
 
-    // Join user's notification room
-    socketInstance.emit('join', user._id);
-    
+    // ✅ Wait for connection before joining — don't emit before connect
+  socketInstance.on('connect', () => {
+    socketInstance.emit('join', user._id);   // Join user's notification room
+    });
+
     setSocket(socketInstance);
 
     return () => {
+      socketInstance.off('connect'); // ✅ prevent memory leak
       if (user?._id) {
         socketInstance.emit('leave', user._id);
       }
@@ -74,10 +77,10 @@ export const NotificationProvider = ({ children }) => {
       }
     });
 
-    socket.on('connect', () => {
-      console.log('🔌 Socket connected');
-      socket.emit('join', user._id);
-    });
+    // socket.on('connect', () => {
+    //   console.log('🔌 Socket connected');
+    //   socket.emit('join', user._id);
+    // });
 
     socket.on('disconnect', () => {
       console.log('❌ Socket disconnected');
@@ -85,7 +88,7 @@ export const NotificationProvider = ({ children }) => {
 
     return () => {
       socket.off('newNotification');
-      socket.off('connect');
+      // socket.off('connect');
       socket.off('disconnect');
     };
   }, [socket, user]);
