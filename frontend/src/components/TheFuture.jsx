@@ -8,34 +8,30 @@ const TheFuture = () => {
   const navigate = useNavigate();
 
   const slides = [
-    {
-      id: 1,
-      title: "Future of Technology",
-      description:
-        "Artificial Intelligence is driving innovation across healthcare, finance, and technology sectors. From machine learning algorithms to neural networks, AI is reshaping how we work and live. In healthcare, AI assists in early disease detection, personalized treatment plans, and drug discovery, enabling faster and more accurate medical decisions. In finance, intelligent algorithms streamline fraud detection, optimize investment strategies, and improve customer experiences through predictive analytics. Meanwhile, the technology sector leverages AI to enhance automation, natural language processing, and computer vision, powering smarter applications and devices. As AI continues to evolve, it not only increases efficiency and productivity but also opens new possibilities for creativity, problem-solving, and transforming industries worldwide. Ethical AI development and responsible implementation remain crucial to ensure these advancements benefit society as a whole.",
-      image: "/AI_recruitment.jpg",
-    },
-    {
-      id: 2,
-      title: "Innovation Drives Growth",
-      description:
-        "Innovation drives growth by transforming ideas into actionable solutions that create value, improve efficiency, and open new opportunities. Businesses that embrace innovation stay ahead of competition, adapt to changing markets, and empower their teams to solve complex challenges. In today’s fast-paced world, growth isn’t just about expansion—it’s about evolving intelligently, leveraging technology, and continuously reimagining what’s possible. Blockchain technology, for example, ensures transparency and security in digital systems. This revolutionary technology is transforming industries from finance to supply chain management.",
-      image: "/technology_bg.jpg",
-    },
-    {
-      id: 3,
-      title: "Digital Transformation",
-      description:
-        "Digital Transformation is the process of leveraging digital technologies to fundamentally change how businesses operate, deliver value to customers, and stay competitive in a rapidly evolving marketplace. From cloud computing and AI to data analytics and automation, digital transformation enables organizations to streamline processes, enhance customer experiences, and make smarter, data-driven decisions. It’s not just about adopting new tools—it’s about reshaping culture, workflows, and business models to thrive in the digital age.",
-      image: "/vector.png",
-    },
-    {
-      id: 4,
-      title: "Technology Solutions",
-      description:
-        "Technology Solutions encompass the tools, platforms, and strategies that help businesses solve complex problems, optimize operations, and drive growth. From software applications and cloud services to AI-driven analytics and automation, technology solutions enable organizations to work smarter, respond faster, and deliver superior experiences to customers. By integrating the right technologies, companies can unlock efficiency, innovation, and scalability, ensuring they stay ahead in an increasingly digital and competitive world.",
-      image: "/agentic-bg.png",
-    },
+     {
+    id: 1,
+    title: "Future of Technology",
+    description: "The future of technology is not only shaped by innovation, but by the people who bring ideas to life with purpose and determination.At GreatHire, we believe that success begins with identifying the right talent and empowering individuals to thrive in roles where they can create real impact. Our approach focuses on aligning skills, potential, and opportunity to build strong, future-ready teams that drive meaningful change across industries.By combining human insight with smart technology, we aim to redefine how organizations discover talent and how individuals unlock their true potential in an ever-evolving digital landscape. In today’s rapidly evolving digital ecosystem, organizations require more than just talent — they need individuals who can adapt, innovate, and lead change.At GreatHire, we are committed to transforming the hiring experience by leveraging intelligent solutions that simplify recruitment while enhancing accuracy and efficiency. Our platform is designed to bridge the gap between opportunity and capability, enabling businesses to make informed hiring decisions and candidates to discover roles where they can truly excel.Through continuous innovation and a people-first approach, we strive to build a smarter, more connected future of work.",
+    image: "/AI_recruitment.jpg",
+  },
+  {
+    id: 2,
+    title: "Innovation Drives Growth",
+    description: "Innovation drives growth by transforming ideas into actionable solutions that create value, improve efficiency, and open new opportunities.Businesses that embrace innovation stay ahead of competition, adapt to changing markets, and empower their teams to solve complex challenges. In today’s fast-paced world, growth is not just about expansion—it is about evolving intelligently, leveraging technology, and continuously reimagining what is possible.Blockchain technology, for example, ensures transparency and security in digital systems and is transforming industries from finance to supply chain management. Moreover, innovation enhances customer experiences through personalization, automation, and faster response systems.Companies that invest in research and development are better positioned to lead the market and sustain long-term growth. By fostering a culture of innovation, organizations can unlock new revenue streams, improve operational efficiency, and remain resilient in a dynamic business environment.",
+    image: "/technology_bg.jpg",
+  },
+  {
+    id: 3,
+    title: "Digital Transformation",
+    description: "Digital transformation is the process of leveraging digital technologies to fundamentally change how businesses operate, deliver value to customers, and stay competitive in a rapidly evolving marketplace.From cloud computing and artificial intelligence to data analytics and automation, it enables organizations to streamline processes, enhance customer experiences, and make smarter, data-driven decisions. It is not just about adopting new tools—it is about reshaping culture, workflows, and business models to thrive in the digital age.Furthermore, it supports real-time collaboration, remote work capabilities, and improved scalability. Organizations can use advanced analytics to gain insights into customer behavior, predict trends, and optimize decision-making.By integrating digital solutions across all levels, businesses achieve greater agility, innovation, and long-term sustainability. Digital transformation also empowers organizations to create more personalized and engaging customer experiences by leveraging data-driven insights and intelligent automation.By integrating advanced technologies such as artificial intelligence, cloud computing, and IoT, businesses can enhance operational efficiency, reduce costs, and respond quickly to changing market demands. This continuous evolution not only strengthens competitiveness but also enables companies to innovate at scale, ensuring long-term growth, resilience, and the ability to adapt in an increasingly digital-first world.",
+    image: "/vector.png",
+  },
+  {
+    id: 4,
+    title: "Technology Solutions",
+    description: "Technology solutions encompass the tools, platforms, and strategies that help businesses solve complex problems, optimize operations, and drive growth.From software applications and cloud services to AI-driven analytics and automation, these solutions enable organizations to work smarter, respond faster, and deliver superior customer experiences. By integrating the right technologies, companies can unlock efficiency, innovation, and scalability, ensuring they remain competitive in a digital-first world.Modern solutions also focus on security, scalability, and seamless system integration. Businesses can leverage APIs, microservices architecture, and cloud infrastructure to build flexible and resilient applications. These advancements reduce operational costs while improving performance, reliability, and user satisfaction.Ultimately, adopting the right technology solutions empowers organizations to innovate continuously and maintain a strong competitive edge.",
+    image: "/agentic-bg.png",
+  },
   ];
 
   const slide = slides.find((item) => item.id === Number(id));
@@ -102,6 +98,9 @@ const TheFuture = () => {
             <li>Innovation drives growth and competitive advantage.</li>
             <li>Digital transformation reshapes culture, workflow, and strategy.</li>
             <li>Technology solutions optimize operations and enhance customer experience.</li>
+            <li>Automation reduces manual effort and increases operational efficiency.</li>
+            <li>Data-driven decision making improves accuracy and strategic planning.</li>
+            <li>Security and scalability are essential in modern tech solutions.</li>
           </ul>
         </div>
 
