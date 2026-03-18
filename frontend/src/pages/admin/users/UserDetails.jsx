@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import ApplicationList from "./ApplicationList";
 import Navbar from "@/components/admin/Navbar";
 import { Badge } from "../../../components/ui/badge";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import { ADMIN_USER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
+import { IoIosArrowRoundBack } from "react-icons/io";
 
 const UserDetails = () => {
   const { userId } = useParams();
@@ -12,7 +13,7 @@ const UserDetails = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [applications, setApplications] = useState([]);
-
+  const navigate = useNavigate();
   const fetchUser = async () => {
     try {
       setLoading(true);
@@ -69,13 +70,22 @@ const UserDetails = () => {
       <Navbar linkName="User Details" />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+        <div className="ps-8 pt-2">
+                  <IoIosArrowRoundBack
+                    size={35}
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                    onClick={() => navigate(-1)}
+                  />
+                </div>
         <div className="m-3 sm:m-4 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors">
+          
           <div className="flex flex-col lg:flex-row gap-6">
             {/* LEFT : USER DETAILS */}
             {loading ? (
               <p className="text-xl text-blue-700 dark:text-blue-400">Loading...</p>
             ) : (
               <div className="lg:w-1/3 border-b lg:border-b-0 lg:border-r border-gray-300 dark:border-gray-700 lg:pr-6 pb-6 lg:pb-0">
+                
                 <div className="flex flex-col items-center text-center">
                   <img
                     src={
@@ -166,7 +176,7 @@ const UserDetails = () => {
                     </h3>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {Array.isArray(user?.profile?.skills) &&
-                      user.profile.skills.length > 0 ? (
+                        user.profile.skills.length > 0 ? (
                         user.profile.skills.map((skill, index) => (
                           <Badge
                             key={index}

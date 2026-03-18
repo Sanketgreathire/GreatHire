@@ -156,7 +156,7 @@ const AppliedCandidatesList = () => {
         {!applicantDetailsModal ? (
           <>
             {/* Back Button */}
-            <div>
+            <div class="pt-10">
               <IoIosArrowRoundBack
                 size={35}
                 className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"

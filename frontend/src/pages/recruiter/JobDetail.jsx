@@ -853,7 +853,7 @@ const JobDetail = () => {
           content="Detailed descriptions entailing job responsibilities, skills and qualifications required, benefits, salary range, and workplace flexibility can be found on GreatHire. Hyderabad State India-based job platform for recruiters and candidates to make confident hiring and career decisions based on clarity and transparency. GreatHire supports companies, startups, recruiters, and professionals with reliable job management tools, scalable recruitment solutions, and seamless talent connections. Take a closer look at openings, manage postings with ease, and connect with the right candidates through a trusted platform built for modern hiring success, productivity, and growth."
         />
       </Helmet>
-      {/* {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />} */}
+      {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />}
 
       {/* --- UI CHANGE START: Main page container with a professional background color and centered layout --- */}
       <div className=" bg-[#404] min-h-screen font-sans"
@@ -863,7 +863,7 @@ const JobDetail = () => {
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center"
         }}>
-        <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 mt-16">
+        <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
 
           {/* Back Button and action buttons header */}
           <div className="flex justify-between items-center mb-6">

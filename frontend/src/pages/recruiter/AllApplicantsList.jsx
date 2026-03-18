@@ -155,8 +155,8 @@ const AllApplicantsList = () => {
     <>
       {company && user?.isActive ? (
         !applicantDetailsModal ? (
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-28">
-            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 md:p-12">
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-10">
+            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 mt-6">
 
               <div className="flex justify-between mb-6">
                 <h1 className="text-3xl font-bold flex items-center gap-3">
