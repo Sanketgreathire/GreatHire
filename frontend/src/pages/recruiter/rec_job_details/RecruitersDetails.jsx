@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { MdOutlineVerified, MdWorkOutline } from "react-icons/md";
 import RecruiterJobs from "./RecruiterJobs";
 import Navbar from "@/components/admin/Navbar";
@@ -10,11 +10,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
+import { IoIosArrowRoundBack } from "react-icons/io";
 
 const RecruitersDetails = () => {
   const [loading, setLoading] = useState(false);
   const [recruiterDetails, setRecruiterDetails] = useState(null);
   const { recruiterId } = useParams();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [editEmail, setEditEmail] = useState(false);
@@ -85,11 +87,19 @@ const RecruitersDetails = () => {
 
       {user?.role !== "recruiter" && <Navbar linkName="Recruiter Details" />}
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center px-6 py-12 transition-colors">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center px-6 py-5 transition-colors">
         {loading ? (
           <div className="text-2xl font-semibold text-gray-600 dark:text-gray-400">Loading...</div>
         ) : recruiterDetails ? (
           <div className="w-full max-w-6xl space-y-8">
+            {/* Back Button */}
+            <div className="pt-2">
+              <IoIosArrowRoundBack
+                size={35}
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                onClick={() => navigate(-1)}
+              />
+            </div>
             {/* Profile Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 rounded-2xl shadow-lg text-white p-9 flex flex-col md:flex-row items-center md:items-start gap-8 transition-all">
               <img
