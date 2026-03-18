@@ -23,28 +23,28 @@ const slides = [
     id: 1,
     title: "The future technology",
     description:
-      "The future of technology begins with bold ideas. At Capgemini, we bring those ideas to life – as intended.",
+      "The future of technology is shaped by bold ideas and the courage to act on them. At GreatHire, we believe that innovation begins with people — the right talent, in the right roles, driving meaningful change across industries.",
     image: "./3320008.jpg",
   },
   {
     id: 2,
     title: "Innovation drives growth",
     description:
-      "We transform businesses through cutting-edge technology solutions and innovative approaches.",
+      "Innovation is the engine behind every thriving organization. By embracing forward-thinking strategies and emerging technologies, businesses can unlock new opportunities, improve efficiency, and build a competitive edge that lasts.",
     image: "./innovation-bg.png",
   },
   {
     id: 3,
     title: "Digital transformation",
     description:
-      "Empowering organizations to thrive in the digital age with our expertise and solutions.",
+      "Digital transformation is no longer optional — it is the foundation of modern business success. Organizations that adapt to evolving technologies and digital workflows are better positioned to serve their customers and grow sustainably.",
     image: "./digital_bg.jpg",
   },
   {
     id: 4,
     title: "Technology solutions",
     description:
-      "Building the future with scalable, secure, and sustainable technology platforms.",
+      "Scalable, secure, and sustainable technology platforms are the backbone of tomorrow's enterprises. Building with the right tools and the right talent ensures that organizations remain resilient, agile, and ready for what comes next.",
     image: "./technology-solutions_bg.jpg",
   },
 ];
@@ -291,7 +291,7 @@ function Moin_blog_page() {
       date: "19 Dec, 2025",
       image: "./Resume_bg.png",
       description:
-        "A strong resume successfully highlights a candidate's abilities, accomplishments, and professional experience through the strategic use of pertinent keywords and clear, consistent structure. By offering ATS-friendly resumes that are designed for applicant tracking systems, GreatHire.in helps expedite the recruiting process. This guarantees improved visibility, precise applicant matching, and quicker shortlisting, allowing companies to find top talent and make more intelligent, effective hiring decisions.",
+        "A well-crafted resume is your first opportunity to make a lasting impression on a potential employer. It should clearly highlight your skills, accomplishments, and professional experience using a clean, consistent structure and relevant keywords. GreatHire.in supports candidates by offering ATS-friendly resume guidance, ensuring your profile gains maximum visibility and reaches the right recruiters faster.",
       link: "#",
     },
     {
@@ -310,7 +310,7 @@ function Moin_blog_page() {
       title: "Using Keywords",
       date: "17 Dec, 2025",
       description:
-        "By utilizing industry-specific keywords, you can greatly improve your resume's exposure to applicant tracking systems. Finding frequently used words, abilities, and phrases that employers value can be accomplished by closely examining job descriptions. The likelihood that your profile will be shortlisted for recruiter evaluation is increased and ATS matching accuracy is improved when these pertinent keywords are organically incorporated throughout your CV.",
+        "Strategically incorporating industry-specific keywords into your resume can significantly improve its visibility to Applicant Tracking Systems. By carefully reviewing job descriptions, you can identify the skills, phrases, and qualifications that employers prioritize. Naturally weaving these keywords throughout your resume improves ATS matching accuracy and increases the likelihood of your profile being shortlisted.",
       image: "./Keyword_bg.png",
       link: "#",
     },
@@ -320,7 +320,7 @@ function Moin_blog_page() {
       title: "Interview Preparation",
       date: "16 Dec, 2025",
       description:
-        "Candidates are assessed through a methodical interview process that emphasizes problem-solving skills, cultural fit, and behavioral evaluations. GreatHire.in facilitates this process with AI-powered tools and professional insights that assist expedite hiring, enhance decision-making, and swiftly find top personnel most appropriate for your company.",
+        "A structured interview process helps employers evaluate candidates across key dimensions, including problem-solving ability, cultural alignment, and behavioral competencies. GreatHire.in enhances this process with AI-powered tools and professional insights, enabling recruiters to make faster, more informed hiring decisions and connect with the talent best suited for their organization.",
       image: "./Interview_bg.png",
       link: "#",
     },
@@ -330,7 +330,7 @@ function Moin_blog_page() {
       title: "Behavioral Interview Techniques",
       date: "16 Dec, 2025",
       description:
-        "During a structured interview process, candidates are assessed using behavioral questions, cultural fit, and problem-solving skills. GreatHire.in offers professional insights and AI-powered solutions to find top talent and speed up recruiting.",
+        "Behavioral interview techniques are designed to assess how candidates have handled real-world situations in the past, offering valuable insight into their future performance. By evaluating responses to structured questions around teamwork, conflict resolution, and decision-making, employers can identify candidates who are not only skilled but also a strong fit for the team. GreatHire.in provides AI-powered tools and expert insights to help streamline this process.",
       image: "./HR_Insight_02.png",
       link: "#",
     },
@@ -340,7 +340,7 @@ function Moin_blog_page() {
       title: "Cultural Fit Assessment",
       date: "16 Dec, 2025",
       description:
-        "The purpose of a cultural fit review is to determine how well a candidate fits with the team dynamics, workplace culture, and basic values of a business. It looks at attitudes, communication styles, work ethics, and behavioral characteristics in addition to technical skills. This assessment aids in determining whether a candidate's methods for problem-solving, teamwork, and decision-making align with the organization's long-term goals and expectations. Cultural fit evaluations help increase employee engagement, teamwork, retention, and overall organizational success by guaranteeing alignment between the individual and the company.",
+        "A cultural fit assessment evaluates how well a candidate aligns with an organization's values, team dynamics, and workplace environment. Beyond technical qualifications, it examines communication styles, work ethics, and behavioral tendencies to determine whether a candidate's approach to collaboration and decision-making complements the company's long-term vision. Organizations that prioritize cultural alignment tend to see stronger employee engagement, higher retention, and greater overall performance.",
       image: "./HR_Insight_03.png",
       link: "#",
     },
@@ -383,7 +383,7 @@ function Moin_blog_page() {
       name: "Effective Job Interview Strategies",
       category: "Interview Tips",
       description:
-        "Making a good impression during an interview requires careful preparation. Examine the organization and position to learn about its objectives, principles, and standards; rehearse your answers to frequently asked interview questions; and use the STAR (Situation, Task, Action, Result) method to showcase your abilities and accomplishments. GreatHire.in offers professional advice, tools for interview preparation, and access to pertinent career prospects to support candidates at every stage. This will help you perform successfully, make an impression on employers, and land your dream job.",
+        "Thorough preparation is the foundation of a successful job interview. Researching the company, understanding the role, and practicing responses using the STAR method — Situation, Task, Action, Result — allows candidates to present their experience with clarity and confidence. GreatHire.in provides expert guidance and interview preparation resources to help candidates perform at their best and make a lasting impression on employers.",
       readMore: "Read More",
       image: "./interview_tips_01.png",
     },
@@ -392,7 +392,7 @@ function Moin_blog_page() {
       name: "Post-Interview Follow-Up",
       category: "Interview Tips",
       description:
-        "It shows professionalism and reaffirms your interest in the job to send a thank-you email within 24 hours of the interview. In order to make a good and lasting impression on the employer, a well-written follow-up message also offers the chance to restate important qualifications, emphasize your appropriateness for the position, and respectfully ask about the next steps or hiring timeframe.",
+        "Sending a thoughtful thank-you email within 24 hours of an interview is a simple yet powerful way to reinforce your professionalism. A well-crafted follow-up message allows you to restate your key qualifications, reaffirm your enthusiasm for the role, and politely inquire about the next steps in the hiring process — leaving a positive and memorable impression on the employer.",
       image: "./interview_tips_02.png",
       readMore: "Read More",
     },
@@ -401,7 +401,7 @@ function Moin_blog_page() {
       name: "Common Interview Questions",
       category: "Interview Tips",
       description:
-        "Candidates can comfortably and successfully react to frequently asked interview questions, such as 'Tell me about yourself, 'Why do you want to work here?' and 'What are your strengths and weaknesses?' Candidates can show self-awareness, clearly communicate their abilities, experiences, and goals, and make a good impression on interviewers by anticipating these inquiries.",
+        "Preparing for commonly asked interview questions — such as 'Tell me about yourself,' 'Why do you want to work here?' and 'What are your strengths and weaknesses?' — gives candidates a significant advantage. Thoughtful, well-rehearsed answers demonstrate self-awareness and clear communication, helping candidates present their skills, experiences, and goals in a way that resonates with interviewers.",
       readMore: "Read More",
       image: "./interview_tips_03.png",
     },
@@ -410,7 +410,7 @@ function Moin_blog_page() {
       name: "Top Companies Hiring in 2025",
       category: "Company Insights",
       description:
-        "In 2025, major international corporations like Amazon, Google, and GE Aerospace are expanding significantly and providing a variety of professional options. You may stay up to date on the most recent job openings—including remote and flexible employment—by using GreatHire.in. This allows you to investigate positions that fit your talents, career objectives, and preferred work schedules.",
+        "In 2025, leading global organizations including Amazon, Google, and GE Aerospace are expanding their teams across technology, engineering, finance, and operations. Alongside these industry giants, fast-growing startups and mid-sized firms are actively recruiting in fields such as Artificial Intelligence, Data Science, and Cybersecurity. GreatHire.in provides real-time job updates and personalized recommendations to help you discover opportunities that align with your skills, career goals, and preferred work style.",
       readMore: "Read More",
       image: "./company_insight_01.png",
     },
@@ -419,7 +419,7 @@ function Moin_blog_page() {
       name: "Industry Trends",
       category: "Company Insights",
       description:
-        "AI-driven automation, sustainable business practices, and the quick growth of remote and hybrid work models are examples of emerging trends in a variety of industries. Businesses are concentrating more on cybersecurity, digital transformation, and the use of cutting-edge technologies that boost productivity, safeguard data, and spur creativity in order to stay competitive in this changing environment. Organizations and professionals looking to match their talents with future prospects must keep an eye on these trends.",
+        "Emerging industry trends — including AI-driven automation, the rise of remote and hybrid work models, and a growing focus on sustainable business practices — are reshaping how organizations operate. Companies that invest in digital transformation and advanced technologies are better equipped to boost productivity, protect data, and foster innovation. Staying informed about these shifts is essential for professionals and organizations looking to remain competitive.",
       readMore: "Read More",
       image: "./company_insight_02.png",
     },
@@ -428,7 +428,7 @@ function Moin_blog_page() {
       name: "Development Programs",
       category: "Company Insights",
       description:
-        "Prominent companies actively fund training, mentorship, and upskilling initiatives to support staff development and advancement. In addition to improving workforce skills, initiatives like technical certifications, leadership development courses, and ongoing education also boost engagement, productivity, and employee retention. By placing a high priority on employee development, businesses build a workforce that is capable, driven, and prepared for the future, all of which contribute to long-term organizational success.",
+        "Leading organizations recognize that investing in employee development is key to long-term success. Through technical certifications, leadership training, mentorship programs, and continuous learning initiatives, companies equip their workforce with the skills needed to grow and adapt. A strong commitment to professional development not only enhances individual performance but also drives higher engagement, retention, and organizational resilience.",
       readMore: "Read More",
       image: "./company_insight_03.png",
     },

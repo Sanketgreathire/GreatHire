@@ -78,7 +78,9 @@ const Jobs = () => {
       }
       if (filters.jobTitle) {
         const jobTitle = (job?.jobDetails?.title || job?.job_title || "").toLowerCase();
-        if (!jobTitle.includes(filters.jobTitle.toLowerCase())) return false;
+        const companyName = (job?.jobDetails?.companyName || "").toLowerCase();
+        const keyword = filters.jobTitle.toLowerCase();
+        if (!jobTitle.includes(keyword) && !companyName.includes(keyword)) return false;
       }
       if (Array.isArray(filters.jobType) && filters.jobType.length > 0) {
         const jobType = (job?.jobDetails?.jobType || "").toLowerCase();
