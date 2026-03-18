@@ -176,23 +176,23 @@ const ReportJob = () => {
 
 
 
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
-        <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-col overflow-y-auto max-h-[90vh]">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4 dark:bg-gray-800">
+        <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg w-full flex flex-col overflow-y-auto max-h-[90vh] dark:bg-gray-900">
           <div className="flex justify-between items-center border-b pb-2">
             <h2 className="text-lg font-semibold">Report a Job</h2>
             <button
               onClick={() => navigate(-1)}
-              className="text-gray-500 hover:text-gray-800"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 transition text-xl"
             >
               ✖
             </button>
           </div>
 
           <div className="mt-4">
-            <p className="font-semibold text-gray-800">
+            <p className="font-semibold text-gray-800 dark:text-gray-200">
               {selectedJob?.jobDetails?.title}
             </p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-sm dark:text-gray-400">
               {selectedJob?.jobDetails?.companyName}
             </p>
           </div>
@@ -213,15 +213,15 @@ const ReportJob = () => {
                 />
                 <span
                   className={`w-5 h-5 flex items-center justify-center border rounded-full ${selectedProblem === problem.value
-                    ? "bg-blue-600 border-blue-600"
-                    : "border-gray-400"
+                    ? "bg-blue-600 border-blue-600 dark:bg-blue-500 dark:border-blue-500"
+                    : "border-gray-400 dark:border-gray-500"
                     }`}
                 >
                   {selectedProblem === problem.value && (
                     <span className="w-2 h-2 bg-white rounded-full"></span>
                   )}
                 </span>
-                <span className="text-gray-600">{problem.label}</span>
+                <span className="text-gray-600 dark:text-gray-300">{problem.label}</span>
               </label>
             ))}
           </div>
@@ -229,18 +229,18 @@ const ReportJob = () => {
           <div className="mt-6">
             {/* ── OFFENSIVE PANEL ── */}
             {selectedProblem === "offensive" && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex flex-col gap-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-red-800">
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 dark:bg-red-900 dark:border-red-600 rounded-lg flex flex-col gap-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-red-800 dark:text-red-400">
                   🚫 Offensive / Harassment Details
                 </p>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1 dark:text-gray-400">
                     Type of Offensive Content
                   </label>
                   <select
                     value={offensiveType}
                     onChange={(e) => setOffensiveType(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option>Inappropriate / Vulgar language</option>
@@ -251,13 +251,13 @@ const ReportJob = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1 dark:text-gray-400">
                     Where did this happen?
                   </label>
                   <select
                     value={offensiveWhere}
                     onChange={(e) => setOffensiveWhere(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option>In the job description itself</option>
@@ -271,13 +271,13 @@ const ReportJob = () => {
 
             {/* ── MONEY / FAKE JOB PANEL ── */}
             {selectedProblem === "money" && (
-              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex flex-col gap-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-yellow-800">
+              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex flex-col gap-3 dark:bg-yellow-900 dark:border-yellow-600">
+                <p className="text-xs font-bold uppercase tracking-wide text-yellow-800 dark:text-yellow-400">
                   ⚠️ Money / Fake Job Details
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                    <label className="text-xs font-semibold uppercase text-gray-600 block mb-1 dark:text-gray-400">
                       Amount Demanded (₹)
                     </label>
                     <input
@@ -285,17 +285,17 @@ const ReportJob = () => {
                       value={feeAmount}
                       onChange={(e) => setFeeAmount(e.target.value)}
                       placeholder="e.g. 500"
-                      className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                    <label className="text-xs font-semibold uppercase text-gray-600 block mb-1 dark:text-gray-400">
                       Payment Mode
                     </label>
                     <select
                       value={paymentMode}
                       onChange={(e) => setPaymentMode(e.target.value)}
-                      className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                     >
                       <option value="">— Select —</option>
                       <option>UPI / GPay / PhonePe</option>
@@ -307,13 +307,13 @@ const ReportJob = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     Fee Was Asked For
                   </label>
                   <select
                     value={feeReason}
                     onChange={(e) => setFeeReason(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select reason —</option>
                     <option>Registration / Joining Fee</option>
@@ -325,13 +325,13 @@ const ReportJob = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     Did you pay?
                   </label>
                   <select
                     value={didPay}
                     onChange={(e) => setDidPay(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option value="yes">Yes, I paid</option>
@@ -344,12 +344,12 @@ const ReportJob = () => {
 
             {/* ── INCORRECT DETAILS PANEL ── */}
             {selectedProblem === "incorrect" && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-300 rounded-lg flex flex-col gap-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-green-800">
+              <div className="mt-4 p-4 bg-green-50 border border-green-300 dark:bg-gray-800 dark:border-gray-600 rounded-lg flex flex-col gap-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-green-800 dark:text-green-400">
                   ✏️ What Details Are Wrong?
                 </p>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-2">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-2">
                     Select all that are incorrect
                   </label>
                   {[
@@ -360,19 +360,19 @@ const ReportJob = () => {
                     { value: "experience", label: "Experience / qualification required" },
                     { value: "worktype", label: "Work type (Remote / On-site)" },
                   ].map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer mb-1">
+                    <label key={opt.value} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer mb-1">
                       <input
                         type="checkbox"
                         checked={wrongFields.includes(opt.value)}
                         onChange={() => toggleWrongField(opt.value)}
-                        className="accent-blue-600 w-4 h-4"
+                        className="accent-blue-600 dark:bg-blue-600 w-4 h-4"
                       />
                       {opt.label}
                     </label>
                   ))}
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     Correct Information (if you know)
                   </label>
                   <textarea
@@ -380,7 +380,7 @@ const ReportJob = () => {
                     onChange={(e) => setCorrectInfo(e.target.value)}
                     placeholder="e.g. Actual location is Pune, not Mumbai..."
                     rows={3}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   />
                 </div>
               </div>
@@ -388,18 +388,18 @@ const ReportJob = () => {
 
             {/* ── SELLING PANEL ── */}
             {selectedProblem === "selling" && (
-              <div className="mt-4 p-4 bg-purple-50 border border-purple-300 rounded-lg flex flex-col gap-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-purple-800">
+              <div className="mt-4 p-4 bg-purple-50 border border-purple-300 dark:bg-gray-800 dark:border-gray-600 rounded-lg flex flex-col gap-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-purple-800 dark:text-purple-400">
                   🛒 Product / Service Being Sold
                 </p>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     What Are They Selling?
                   </label>
                   <select
                     value={sellingWhat}
                     onChange={(e) => setSellingWhat(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option>Insurance / Financial products</option>
@@ -411,13 +411,13 @@ const ReportJob = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     Did They Ask You to Invest or Buy?
                   </label>
                   <select
                     value={askedToBuy}
                     onChange={(e) => setAskedToBuy(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option value="yes">Yes, they asked me to invest / purchase</option>
@@ -430,18 +430,18 @@ const ReportJob = () => {
 
             {/* ── OTHER PANEL ── */}
             {selectedProblem === "other" && (
-              <div className="mt-4 p-4 bg-slate-50 border border-slate-300 rounded-lg flex flex-col gap-3">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="mt-4 p-4 bg-slate-50 border border-slate-300 dark:bg-gray-800 dark:border-gray-600 rounded-lg flex flex-col gap-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400">
                   📝 Additional Details
                 </p>
                 <div>
-                  <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                     Category of Issue
                   </label>
                   <select
                     value={otherCategory}
                     onChange={(e) => setOtherCategory(e.target.value)}
-                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">— Select —</option>
                     <option>Ghost job (never responds)</option>
@@ -458,17 +458,17 @@ const ReportJob = () => {
             {/* ── SCREENSHOT UPLOAD (shown for any selected problem) ── */}
             {selectedProblem && (
               <div className="mt-4">
-                <label className="text-xs font-semibold uppercase text-gray-600 block mb-1">
+                <label className="text-xs font-semibold uppercase text-gray-600 dark:text-gray-400 block mb-1">
                   Upload Screenshot / Proof{" "}
-                  <span className="normal-case font-normal text-gray-400">
+                  <span className="normal-case font-normal text-gray-400 dark:text-gray-500">
                     (optional · max 3 files · 5MB each)
                   </span>
                 </label>
 
-                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition dark:border-gray-600 dark:hover:border-blue-400 dark:hover:bg-gray-700">
                   <span className="text-2xl mb-1">📎</span>
-                  <span className="text-sm font-semibold text-blue-600">Click or drag & drop</span>
-                  <span className="text-xs text-gray-400 mt-1">Images (JPG, PNG, WEBP) or PDF · Max 5MB each</span>
+                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Click or drag & drop</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Images (JPG, PNG, WEBP) or PDF · Max 5MB each</span>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,application/pdf"
@@ -481,7 +481,7 @@ const ReportJob = () => {
                 {screenshots.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     {screenshots.map((file, idx) => (
-                      <div key={idx} className="relative w-16 h-16 border rounded-lg overflow-hidden bg-gray-100">
+                      <div key={idx} className="relative w-16 h-16 border rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                         {file.type.startsWith("image/") ? (
                           <img
                             src={URL.createObjectURL(file)}
@@ -491,7 +491,7 @@ const ReportJob = () => {
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center text-xl">
                             📄
-                            <span className="text-xs text-gray-500">PDF</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">PDF</span>
                           </div>
                         )}
                         <button
@@ -508,7 +508,7 @@ const ReportJob = () => {
               </div>
             )}
 
-            <label className="block text-gray-700 font-medium">
+            <label className="block text-gray-700 dark:text-gray-300 font-medium">
               Describe your problem:
             </label>
             <textarea
@@ -516,15 +516,15 @@ const ReportJob = () => {
               onChange={handleDescriptionChange}
               maxLength={maxChars}
               rows={4}
-              className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full mt-2 border rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300"
             />
-            <p className="text-right text-sm text-gray-500">
+            <p className="text-right text-sm text-gray-500 dark:text-gray-400">
               {description.length}/{maxChars} characters
             </p>
           </div>
 
-          <div className="mt-4 bg-blue-100 p-3 rounded-lg text-gray-600 text-sm flex gap-2">
-            <BsFillInfoCircleFill size={20} className="text-blue-600" />
+          <div className="mt-4 bg-blue-100 dark:bg-blue-900 p-3 rounded-lg text-gray-600 dark:text-gray-300 text-sm flex gap-2">
+            <BsFillInfoCircleFill size={20} className="text-blue-600 dark:text-blue-400" />
             <span>
               Do not disclose your financial & personal details. Legitimate jobs never ask for payment.
             </span>
@@ -532,7 +532,7 @@ const ReportJob = () => {
 
           <button
             onClick={handleSubmit}
-            className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+            className="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition font-semibold"
           >
             Report to Great Hire
           </button>
