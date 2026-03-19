@@ -47,4 +47,5 @@ export const APPLICATION_API_END_POINT = `${BASE_API}/application`;
 export const REVENUE_API_END_POINT = `${BASE_API}/revenue`;
 export const NOTIFICATION_API_END_POINT = `${BASE_API}/notifications`;
 
+export const EMAIL_API_END_POINT = `${BASE_API}/email`;
 export const BACKEND_URL = import.meta.env.VITE_API_URL;
