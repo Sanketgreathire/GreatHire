@@ -130,4 +130,66 @@ export const sendCompanyProfileReminderEmail = async (recruiterEmail, recruiterN
   }
 };
 
-export default { sendRejectionEmail, sendCompanyProfileReminderEmail };
+export const sendFirstJobReminderEmail = async (recruiterEmail, recruiterName, companyName) => {
+  const dashboardLink = "https://greathire.in/recruiter/dashboard/post-job";
+  const mailOptions = {
+    from: `"GreatHire" <${process.env.EMAIL_USER}>`,
+    to: recruiterEmail,
+    subject: "Get Started with Your First Job Posting 🚀",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2 style="color: #1D4ED8; text-align: center;">Great<span style="color: #333;">Hire</span></h2>
+
+          <p style="color: #555; line-height: 1.6;">Hi <strong>${recruiterName}</strong>,</p>
+
+          <p style="color: #555; line-height: 1.6;">
+            We noticed that your account with <strong>${companyName}</strong> is active, and you're all set to start hiring—great to have you onboard!
+          </p>
+
+          <p style="color: #555; line-height: 1.6;">
+            If you haven't had a chance yet, posting your first job is the best way to connect with top talent and begin building your hiring pipeline.
+          </p>
+
+          <div style="background-color: #f0f7ff; padding: 15px; border-left: 4px solid #1D4ED8; margin: 20px 0; border-radius: 5px;">
+            <p style="color: #333; font-weight: bold; margin: 0 0 8px 0;">Here's what you can do next:</p>
+            <ul style="color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li>Create and publish your first job listing</li>
+              <li>Reach qualified candidates faster</li>
+              <li>Manage applications easily from your dashboard</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${dashboardLink}" target="_blank"
+               style="background-color: #1D4ED8; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              👉 Post Your First Job Now
+            </a>
+          </div>
+
+          <p style="color: #555; line-height: 1.6;">
+            If you need any help getting started, feel free to reach out—we're happy to assist.
+          </p>
+
+          <p style="color: #555; line-height: 1.6; margin-top: 30px;">
+            Best regards,<br/>
+            <strong>Team GreatHire</strong>
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="color: #999; font-size: 12px; text-align: center;">This is an automated message from GreatHire. Please do not reply to this email.</p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ First job reminder email sent to ${recruiterEmail}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Error sending first job reminder to ${recruiterEmail}:`, error.message);
+    return false;
+  }
+};
+
