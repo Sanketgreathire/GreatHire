@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye, Briefcase, UserCheck, XCircle } from "lucide-react";
+import { Trash, Eye, Briefcase, UserCheck, XCircle, Mail } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { FaRegUser } from "react-icons/fa";
 import Navbar from "@/components/admin/Navbar";
@@ -22,13 +22,6 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
-
-/**
- * Rewritten Recruiters.jsx
- * - Removes MUI
- * - Uses Tailwind + existing UI components
- * - Adds skeleton loaders, compact pagination, tooltips
- */
 
 const ITEMS_PER_PAGE = 20;
 
@@ -42,8 +35,13 @@ const StatCard = ({ title, count, icon, bg, color }) => (
   </Card>
 );
 
-const SkeletonRow = () => (
+const SkeletonRow = ({ showCheckbox }) => (
   <TableRow>
+    {showCheckbox && (
+      <TableCell>
+        <div className="h-4 w-4 rounded bg-gray-200 animate-pulse" />
+      </TableCell>
+    )}
     <TableCell>
       <div className="h-4 rounded w-40 bg-gray-200 animate-pulse" />
     </TableCell>
@@ -70,7 +68,6 @@ const SkeletonRow = () => (
 );
 
 const CompactPagination = ({ page, setPage, totalPages }) => {
-  // show up to 5 page buttons centered around current page
   const pageNumbers = useMemo(() => {
     const maxButtons = 5;
     let start = Math.max(1, page - Math.floor(maxButtons / 2));
@@ -143,17 +140,21 @@ const Recruiters = () => {
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All"); // "All" | true | false
+  const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
 
   const [recruiterList, setRecruiterList] = useState([]);
   const [recruiterSummary, setRecruiterSummary] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
-  const [loadingMap, setLoadingMap] = useState({}); // toggles per recruiter
-  const [dloadingMap, setDLoadingMap] = useState({}); // delete loading
+  const [loadingMap, setLoadingMap] = useState({});
+  const [dloadingMap, setDLoadingMap] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
+  
+  // Bulk selection states
+  const [selectedRecruiters, setSelectedRecruiters] = useState([]);
+  const [isSendingBulkEmail, setIsSendingBulkEmail] = useState(false);
 
   const stats = [
     {
@@ -210,7 +211,6 @@ const Recruiters = () => {
 
   useEffect(() => {
     fetchRecruiterList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId]);
 
   // Toggle active
@@ -224,7 +224,6 @@ const Recruiters = () => {
       );
       if (response.data.success) {
         if (isAdmin) {
-          // if admin changed other recruiters, re-fetch to be safe
           fetchRecruiterList();
         } else {
           setRecruiterList((prev) =>
@@ -263,7 +262,6 @@ const Recruiters = () => {
       });
       if (response.data.success) {
         toast.success(response.data.message || "Recruiter deleted");
-        // Refresh list
         fetchRecruiterList();
       } else {
         toast.error(response.data.message || "Failed to delete recruiter");
@@ -297,280 +295,424 @@ const Recruiters = () => {
       recruiter.fullname?.toLowerCase().includes(q) ||
       recruiter.email?.toLowerCase().includes(q) ||
       recruiter.phone?.toLowerCase().includes(q);
-    const matchesStatus =
-      status === "All" ? true : recruiter.isActive === (status === true);
+    
+    let matchesStatus = true;
+    if (status === "Active") {
+      matchesStatus = recruiter.isActive === true;
+    } else if (status === "Deactive") {
+      matchesStatus = recruiter.isActive === false;
+    }
+    
     return matchesSearch && matchesStatus;
   });
+
+  // Get inactive recruiters for bulk selection
+  const inactiveRecruiters = filteredRecruiters.filter(r => !r.isActive);
+  
+  // Determine if we should show checkboxes
+  const showCheckboxColumn = status === "Deactive";
+  
+  // Bulk selection handlers
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedRecruiters(inactiveRecruiters.map(r => r._id));
+    } else {
+      setSelectedRecruiters([]);
+    }
+  };
+
+  const handleSelectRecruiter = (recruiterId, checked) => {
+    if (checked) {
+      setSelectedRecruiters(prev => [...prev, recruiterId]);
+    } else {
+      setSelectedRecruiters(prev => prev.filter(id => id !== recruiterId));
+    }
+  };
+
+  const isAllSelected = inactiveRecruiters.length > 0 && selectedRecruiters.length === inactiveRecruiters.length;
+  const isPartiallySelected = selectedRecruiters.length > 0 && selectedRecruiters.length < inactiveRecruiters.length;
+
+  // Send bulk emails
+  const sendBulkEmails = async () => {
+    if (selectedRecruiters.length === 0) {
+      toast.error("Please select at least one inactive recruiter");
+      return;
+    }
+
+    setIsSendingBulkEmail(true);
+    try {
+      const response = await axios.post(
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-bulk-reminders`,
+        { recruiterIds: selectedRecruiters },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setSelectedRecruiters([]);
+      } else {
+        toast.error(response.data.message || "Failed to send bulk emails");
+      }
+    } catch (error) {
+      console.error("Bulk email error:", error);
+      toast.error("Error sending bulk emails");
+    } finally {
+      setIsSendingBulkEmail(false);
+    }
+  };
 
   const totalPages = Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE) || 1;
 
   useEffect(() => {
-    // If page exceeds total pages after filtering, reset
     if (page > totalPages) setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredRecruiters.length]);
+  }, [filteredRecruiters.length, page, totalPages]);
 
   const paginatedRecruiters = filteredRecruiters.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
+  // Debug logging
+  console.log("=== BULK EMAIL DEBUG ===");
+  console.log("Status:", status);
+  console.log("Show checkboxes:", showCheckboxColumn);
+  console.log("Total recruiters:", recruiterList.length);
+  console.log("Filtered recruiters:", filteredRecruiters.length);
+  console.log("Inactive recruiters:", inactiveRecruiters.length);
+  console.log("========================");
+
   return (
-  <>
-    <Navbar linkName={"Recruiters"} />
+    <>
+      <Navbar linkName={"Recruiters"} />
 
-    {/* Stats */}
-    <div className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((s, idx) => (
-        <StatCard key={idx} {...s} />
-      ))}
-    </div>
-
-    {/* Main Card */}
-    <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white shadow rounded-lg">
-      {/* Filters */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
-          <Input
-            placeholder="Search by name, email, contact"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="w-full"
-          />
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => {
-              setSearch("");
-              setStatus("All");
-              setPage(1);
-            }}
-            title="Reset filters"
-            className="self-start sm:self-auto"
-          >
-            Reset
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <label className="text-sm text-gray-600 whitespace-nowrap">
-            Status
-          </label>
-          <div className="relative w-full sm:w-auto">
-            <select
-              value={status}
-              onChange={(e) => {
-                const val = e.target.value;
-                setStatus(val === "All" ? "All" : val === "true");
-                setPage(1);
-              }}
-              className="h-10 px-3 border rounded-md bg-white focus:outline-none w-full sm:w-auto"
-              aria-label="Filter by status"
-            >
-              <option value="All">All Status</option>
-              <option value="true">Active</option>
-              <option value="false">Deactive</option>
-            </select>
-          </div>
-        </div>
+      {/* Stats */}
+      <div className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((s, idx) => (
+          <StatCard key={idx} {...s} />
+        ))}
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="whitespace-nowrap">Recruiter</TableHead>
-              <TableHead className="whitespace-nowrap">Contact</TableHead>
-              <TableHead className="whitespace-nowrap">Position</TableHead>
-              <TableHead className="whitespace-nowrap">Posted Jobs</TableHead>
-              <TableHead className="whitespace-nowrap">Status</TableHead>
-              <TableHead className="whitespace-nowrap">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+      {/* Main Card */}
+      <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white shadow rounded-lg">
+        {/* Debug Panel - Shows when Deactive is selected */}
+        {status === "Deactive" && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="text-sm text-green-800">
+              <strong>✅ BULK EMAIL MODE ACTIVE</strong><br />
+              Status: "{status}" | Inactive Recruiters: {inactiveRecruiters.length} | Show Checkboxes: {showCheckboxColumn.toString()}
+            </div>
+          </div>
+        )}
 
-          <TableBody>
-            {isFetching
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <SkeletonRow key={i} />
-                ))
-              : paginatedRecruiters.length > 0
-              ? paginatedRecruiters.map((recruiter) => (
-                  <TableRow
-                    key={recruiter._id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <TableCell>
-                      <div className="flex items-start gap-3">
-                        <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
-                          {recruiter.fullname
-                            ? recruiter.fullname.charAt(0).toUpperCase()
-                            : "R"}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-medium flex flex-wrap items-center gap-2">
-                            <span className="break-words">
-                              {recruiter.fullname}
-                            </span>
-                            {recruiter.isAdmin && (
-                              <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
-                                Admin
+        {/* Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
+            <Input
+              placeholder="Search by name, email, contact"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full"
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setSearch("");
+                setStatus("All");
+                setPage(1);
+                setSelectedRecruiters([]);
+              }}
+              title="Reset filters"
+              className="self-start sm:self-auto"
+            >
+              Reset
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            <label className="text-sm text-gray-600 whitespace-nowrap">
+              Status
+            </label>
+            <div className="relative">
+              <select
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                  setPage(1);
+                  setSelectedRecruiters([]);
+                }}
+                className="h-10 px-3 border rounded-md bg-white focus:outline-none"
+                aria-label="Filter by status"
+              >
+                <option value="All">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Deactive">Deactive</option>
+              </select>
+            </div>
+            
+            {/* Select All checkbox - only show for deactive status */}
+            {showCheckboxColumn && (
+              <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded border border-blue-200">
+                <input
+                  type="checkbox"
+                  id="selectAll"
+                  checked={isAllSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = isPartiallySelected;
+                  }}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <label htmlFor="selectAll" className="text-sm text-blue-700 whitespace-nowrap font-medium">
+                  Select All ({inactiveRecruiters.length})
+                </label>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bulk Actions */}
+        {selectedRecruiters.length > 0 && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+            <span className="text-sm text-blue-700">
+              {selectedRecruiters.length} recruiter{selectedRecruiters.length > 1 ? 's' : ''} selected
+            </span>
+            <Button
+              onClick={sendBulkEmails}
+              disabled={isSendingBulkEmail}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              size="sm"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              {isSendingBulkEmail ? "Sending..." : "Send Reminder Emails"}
+            </Button>
+          </div>
+        )}
+
+        {/* Table */}
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {/* Checkbox column header */}
+                {showCheckboxColumn && (
+                  <TableHead className="w-12">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      ref={(el) => {
+                        if (el) el.indeterminate = isPartiallySelected;
+                      }}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="w-4 h-4"
+                      aria-label="Select all recruiters"
+                    />
+                  </TableHead>
+                )}
+                <TableHead className="whitespace-nowrap">Recruiter</TableHead>
+                <TableHead className="whitespace-nowrap">Contact</TableHead>
+                <TableHead className="whitespace-nowrap">Position</TableHead>
+                <TableHead className="whitespace-nowrap">Posted Jobs</TableHead>
+                <TableHead className="whitespace-nowrap">Status</TableHead>
+                <TableHead className="whitespace-nowrap">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {isFetching
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonRow key={i} showCheckbox={showCheckboxColumn} />
+                  ))
+                : paginatedRecruiters.length > 0
+                ? paginatedRecruiters.map((recruiter) => (
+                    <TableRow
+                      key={recruiter._id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      {/* Checkbox cell */}
+                      {showCheckboxColumn && (
+                        <TableCell>
+                          {!recruiter.isActive && (
+                            <input
+                              type="checkbox"
+                              checked={selectedRecruiters.includes(recruiter._id)}
+                              onChange={(e) => handleSelectRecruiter(recruiter._id, e.target.checked)}
+                              className="w-4 h-4"
+                              aria-label={`Select ${recruiter.fullname}`}
+                            />
+                          )}
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <div className="flex items-start gap-3">
+                          <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+                            {recruiter.fullname
+                              ? recruiter.fullname.charAt(0).toUpperCase()
+                              : "R"}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-medium flex flex-wrap items-center gap-2">
+                              <span className="break-words">
+                                {recruiter.fullname}
                               </span>
-                            )}
-                          </div>
-                          <div className="text-sm text-gray-500 break-all">
-                            {recruiter.email}
+                              {recruiter.isAdmin && (
+                                <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
+                                  Admin
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-500 break-all">
+                              {recruiter.email}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell className="whitespace-nowrap">
-                      {recruiter.phone}
-                    </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {recruiter.phone}
+                      </TableCell>
 
-                    <TableCell className="whitespace-nowrap">
-                      {recruiter.position}
-                    </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {recruiter.position}
+                      </TableCell>
 
-                    <TableCell className="text-center">
-                      {recruiter.postedJobs ?? 0}
-                    </TableCell>
+                      <TableCell className="text-center">
+                        {recruiter.postedJobs ?? 0}
+                      </TableCell>
 
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          recruiter.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {recruiter.isActive ? "Active" : "Deactive"}
-                      </span>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        {/* View */}
-                        <button
-                          title="View recruiter details"
-                          onClick={() =>
-                            navigate(
-                              `/admin/recruiter/details/${recruiter._id}`
-                            )
-                          }
-                          className="p-1 rounded hover:bg-gray-100"
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            recruiter.isActive
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                         >
-                          <Eye size={18} className="text-slate-600" />
-                        </button>
+                          {recruiter.isActive ? "Active" : "Deactive"}
+                        </span>
+                      </TableCell>
 
-                        {/* Toggle */}
-                        {loadingMap[recruiter._id] ? (
-                          <div className="text-sm whitespace-nowrap">
-                            Updating...
-                          </div>
-                        ) : (
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {/* View */}
                           <button
-                            title={
-                              recruiter.isActive
-                                ? "Deactivate recruiter"
-                                : "Activate recruiter"
-                            }
+                            title="View recruiter details"
                             onClick={() =>
-                              toggleActive(
-                                recruiter._id,
-                                !recruiter.isActive,
-                                recruiter.isAdmin
+                              navigate(
+                                `/admin/recruiter/details/${recruiter._id}`
                               )
                             }
                             className="p-1 rounded hover:bg-gray-100"
                           >
-                            <input
-                              type="checkbox"
-                              readOnly
-                              checked={Boolean(recruiter.isActive)}
-                              className="w-4 h-4"
-                              aria-label="Active toggle"
-                            />
+                            <Eye size={18} className="text-slate-600" />
                           </button>
-                        )}
 
-                        {/* Delete */}
-                        {dloadingMap[recruiter._id] ? (
-                          <div className="text-sm whitespace-nowrap">
-                            Deleting...
-                          </div>
-                        ) : (
-                          <button
-                            title="Delete recruiter"
-                            onClick={() => {
-                              setSelectedRecruiter(recruiter);
-                              setShowDeleteModal(true);
-                            }}
-                            className="p-1 rounded hover:bg-gray-100"
-                          >
-                            <Trash size={18} className="text-red-500" />
-                          </button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              : (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
-                      <div className="text-gray-500">
-                        No recruiters found.
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-          </TableBody>
-        </Table>
-      </div>
+                          {/* Toggle */}
+                          {loadingMap[recruiter._id] ? (
+                            <div className="text-sm whitespace-nowrap">
+                              Updating...
+                            </div>
+                          ) : (
+                            <button
+                              title={
+                                recruiter.isActive
+                                  ? "Deactivate recruiter"
+                                  : "Activate recruiter"
+                              }
+                              onClick={() =>
+                                toggleActive(
+                                  recruiter._id,
+                                  !recruiter.isActive,
+                                  recruiter.isAdmin
+                                )
+                              }
+                              className="p-1 rounded hover:bg-gray-100"
+                            >
+                              <input
+                                type="checkbox"
+                                readOnly
+                                checked={Boolean(recruiter.isActive)}
+                                className="w-4 h-4"
+                                aria-label="Active toggle"
+                              />
+                            </button>
+                          )}
 
-      {/* Footer */}
-      <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 mt-4">
-        <div className="text-sm text-gray-600 text-center sm:text-left">
-          Showing{" "}
-          {filteredRecruiters.length === 0
-            ? 0
-            : Math.min(
-                (page - 1) * ITEMS_PER_PAGE + 1,
-                filteredRecruiters.length
-              )}{" "}
-          to{" "}
-          {Math.min(
-            page * ITEMS_PER_PAGE,
-            filteredRecruiters.length
-          )}{" "}
-          of {filteredRecruiters.length} results
+                          {/* Delete */}
+                          {dloadingMap[recruiter._id] ? (
+                            <div className="text-sm whitespace-nowrap">
+                              Deleting...
+                            </div>
+                          ) : (
+                            <button
+                              title="Delete recruiter"
+                              onClick={() => {
+                                setSelectedRecruiter(recruiter);
+                                setShowDeleteModal(true);
+                              }}
+                              className="p-1 rounded hover:bg-gray-100"
+                            >
+                              <Trash size={18} className="text-red-500" />
+                            </button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : (
+                    <TableRow>
+                      <TableCell colSpan={showCheckboxColumn ? 7 : 6} className="text-center py-8">
+                        <div className="text-gray-500">
+                          No recruiters found.
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+            </TableBody>
+          </Table>
         </div>
 
-        <CompactPagination
-          page={page}
-          setPage={setPage}
-          totalPages={Math.max(
-            1,
-            Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE)
-          )}
-        />
+        {/* Footer */}
+        <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 mt-4">
+          <div className="text-sm text-gray-600 text-center sm:text-left">
+            Showing{" "}
+            {filteredRecruiters.length === 0
+              ? 0
+              : Math.min(
+                  (page - 1) * ITEMS_PER_PAGE + 1,
+                  filteredRecruiters.length
+                )}{" "}
+            to{" "}
+            {Math.min(
+              page * ITEMS_PER_PAGE,
+              filteredRecruiters.length
+            )}{" "}
+            of {filteredRecruiters.length} results
+          </div>
+
+          <CompactPagination
+            page={page}
+            setPage={setPage}
+            totalPages={Math.max(
+              1,
+              Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE)
+            )}
+          />
+        </div>
       </div>
-    </div>
 
-    {showDeleteModal && (
-      <DeleteConfirmation
-        isOpen={showDeleteModal}
-        onConfirm={onConfirmDelete}
-        onCancel={onCancelDelete}
-      />
-    )}
-  </>
-);
-
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={onConfirmDelete}
+          onCancel={onCancelDelete}
+        />
+      )}
+    </>
+  );
 };
 
 export default Recruiters;
