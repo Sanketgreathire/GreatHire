@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 
 export const sendRejectionEmail = async (applicantEmail, applicantName, jobTitle, companyName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from:  `"GreatHire Support" <${process.env.EMAIL_USER}>`,
     to: applicantEmail,
     subject: `Application Update - ${jobTitle} at ${companyName}`,
     html: `
@@ -71,7 +71,7 @@ export const sendRejectionEmail = async (applicantEmail, applicantName, jobTitle
 
 export const sendCompanyProfileReminderEmail = async (recruiterEmail, recruiterName) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from:  `"GreatHire Support" <${process.env.EMAIL_USER}>`,
     to: recruiterEmail,
     subject: "Complete Your Company Profile - GreatHire",
     html: `

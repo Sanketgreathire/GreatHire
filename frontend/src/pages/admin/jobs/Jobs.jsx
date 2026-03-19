@@ -32,7 +32,7 @@ const Jobs = () => {
   const [dloading, dsetLoading] = useState({});
   const [page, setPage] = useState(1);
   const [jobList, setJobList] = useState([]);
-  const itemsPerPage = 8;
+  const itemsPerPage = 20;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);

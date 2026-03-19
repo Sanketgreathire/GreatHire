@@ -191,7 +191,7 @@ export const sendVerificationStatus = async (req, res) => {
 `;
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from:  `"GreatHire Support" <${process.env.EMAIL_USER}>`,
       to: `${email}, ${adminEmail}`,
       subject: subject,
       html: message,
