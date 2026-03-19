@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Ban,
   CreditCard,
+  Mail,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { FaRegUser } from "react-icons/fa";
@@ -195,6 +196,10 @@ const RecruitersList = () => {
 
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [selectedCreditsRecruiter, setSelectedCreditsRecruiter] = useState(null);
+
+  // Bulk selection states
+  const [selectedRecruiters, setSelectedRecruiters] = useState([]);
+  const [isSendingBulkEmail, setIsSendingBulkEmail] = useState(false);
 
   const stats = [
     {
@@ -440,6 +445,75 @@ const RecruitersList = () => {
     return matchesSearch && matchesStatus;
   });
 
+  // Get inactive recruiters for bulk selection
+  const inactiveRecruiters = filteredRecruiters.filter(r => !r.isActive);
+  const showCheckboxColumn = status === false;
+  
+  // Bulk selection handlers
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      setSelectedRecruiters(inactiveRecruiters.map(r => r._id));
+    } else {
+      setSelectedRecruiters([]);
+    }
+  };
+
+  const handleSelectRecruiter = (recruiterId, checked) => {
+    if (checked) {
+      setSelectedRecruiters(prev => [...prev, recruiterId]);
+    } else {
+      setSelectedRecruiters(prev => prev.filter(id => id !== recruiterId));
+    }
+  };
+
+  const isAllSelected = inactiveRecruiters.length > 0 && selectedRecruiters.length === inactiveRecruiters.length;
+  const isPartiallySelected = selectedRecruiters.length > 0 && selectedRecruiters.length < inactiveRecruiters.length;
+
+  // Send bulk emails
+  const sendBulkEmails = async () => {
+    if (selectedRecruiters.length === 0) {
+      toast.error("Please select at least one inactive recruiter");
+      return;
+    }
+
+    console.log('Sending bulk emails to:', selectedRecruiters);
+    console.log('API endpoint:', `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-bulk-reminders`);
+
+    setIsSendingBulkEmail(true);
+    try {
+      const response = await axios.post(
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-bulk-reminders`,
+        { recruiterIds: selectedRecruiters },
+        { withCredentials: true }
+      );
+
+      console.log('Bulk email response:', response.data);
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setSelectedRecruiters([]);
+      } else {
+        toast.error(response.data.message || "Failed to send bulk emails");
+      }
+    } catch (error) {
+      console.error("Bulk email error:", error);
+      console.error("Error response:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+      
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else if (error.response?.status === 403) {
+        toast.error("Access denied. Only admin can send bulk emails.");
+      } else if (error.response?.status === 404) {
+        toast.error("API endpoint not found. Please check the server.");
+      } else {
+        toast.error("Error sending bulk emails. Check console for details.");
+      }
+    } finally {
+      setIsSendingBulkEmail(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(filteredRecruiters.length / ITEMS_PER_PAGE));
 
   useEffect(() => {
@@ -502,6 +576,7 @@ const RecruitersList = () => {
                   const val = e.target.value;
                   setStatus(val === "All" ? "All" : val === "true");
                   setPage(1);
+                  setSelectedRecruiters([]); // Clear selections when status changes
                 }}
                 className="h-10 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full sm:w-auto transition-colors"
                 aria-label="Filter by status"
@@ -510,14 +585,66 @@ const RecruitersList = () => {
                 <option value="true">Active</option>
                 <option value="false">Deactive</option>
               </select>
+              
+              {/* Select All checkbox - only show for deactive status */}
+              {showCheckboxColumn && (
+                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded border border-blue-200 dark:border-blue-700">
+                  <input
+                    type="checkbox"
+                    id="selectAll"
+                    checked={isAllSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = isPartiallySelected;
+                    }}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                    className="w-4 h-4 text-blue-600"
+                  />
+                  <label htmlFor="selectAll" className="text-sm text-blue-700 dark:text-blue-300 whitespace-nowrap font-medium">
+                    Select All ({inactiveRecruiters.length})
+                  </label>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Bulk Actions */}
+          {selectedRecruiters.length > 0 && (
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg flex items-center justify-between">
+              <span className="text-sm text-blue-700 dark:text-blue-300">
+                {selectedRecruiters.length} recruiter{selectedRecruiters.length > 1 ? 's' : ''} selected
+              </span>
+              <Button
+                onClick={sendBulkEmails}
+                disabled={isSendingBulkEmail}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                size="sm"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {isSendingBulkEmail ? "Sending..." : "Send Reminder Emails"}
+              </Button>
+            </div>
+          )}
 
           {/* Table */}
           <div className="rounded-lg border border-gray-200 dark:border-gray-700">
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-gray-700/50">
                 <TableRow className="border-b border-gray-200 dark:border-gray-700">
+                  {/* Checkbox column header */}
+                  {showCheckboxColumn && (
+                    <TableHead className="w-12 text-sm text-gray-700 dark:text-gray-300 font-semibold">
+                      <input
+                        type="checkbox"
+                        checked={isAllSelected}
+                        ref={(el) => {
+                          if (el) el.indeterminate = isPartiallySelected;
+                        }}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="w-4 h-4"
+                        aria-label="Select all recruiters"
+                      />
+                    </TableHead>
+                  )}
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Recruiter Name</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Company</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
@@ -540,6 +667,20 @@ const RecruitersList = () => {
                         key={r._id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
                       >
+                        {/* Checkbox cell */}
+                        {showCheckboxColumn && (
+                          <TableCell>
+                            {!r.isActive && (
+                              <input
+                                type="checkbox"
+                                checked={selectedRecruiters.includes(r._id)}
+                                onChange={(e) => handleSelectRecruiter(r._id, e.target.checked)}
+                                className="w-4 h-4"
+                                aria-label={`Select ${r.fullname}`}
+                              />
+                            )}
+                          </TableCell>
+                        )}
                         <TableCell>
                           <div className="flex items-start gap-2">
                             <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0 text-sm">
@@ -728,7 +869,7 @@ const RecruitersList = () => {
                     ))
                   : (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8">
+                        <TableCell colSpan={showCheckboxColumn ? 9 : 8} className="text-center py-8">
                           <div className="text-gray-500 dark:text-gray-400">
                             No recruiters found.
                           </div>
