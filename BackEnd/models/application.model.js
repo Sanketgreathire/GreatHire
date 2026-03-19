@@ -18,7 +18,13 @@ const applicationSchema = new mongoose.Schema(
     applicantEmail: { type: String },
     applicantPhone: { type: String },
     applicantProfile: { type: Object }, 
-    resume: { type: String }, // yaha resume ka URL ya filename save hoga
+    resume: { type: String },
+    answers: [
+      {
+        question: { type: String },
+        answer: { type: String },
+      },
+    ],
     status: {
       type: String,
       enum: ["Pending", "Interview Schedule", "Shortlisted", "Rejected"],

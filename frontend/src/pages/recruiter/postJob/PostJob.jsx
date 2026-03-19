@@ -196,6 +196,7 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
+      questions: [],
       anyAmount: "No",
     },
     validationSchema: Yup.object({
@@ -1071,6 +1072,45 @@ const PostJob = () => {
                         {formik.errors.duration}
                       </div>
                     )}
+                  </div>
+
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Custom Questions <span className="text-gray-400 dark:text-gray-500 text-xs">(Optional)</span>
+                    </Label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add questions applicants must answer before applying.</p>
+                    {formik.values.questions.map((q, idx) => (
+                      <div key={idx} className="flex gap-2 mb-2">
+                        <input
+                          type="text"
+                          placeholder={`Question ${idx + 1}`}
+                          className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                          value={q}
+                          onChange={(e) => {
+                            const updated = [...formik.values.questions];
+                            updated[idx] = e.target.value;
+                            formik.setFieldValue("questions", updated);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = formik.values.questions.filter((_, i) => i !== idx);
+                            formik.setFieldValue("questions", updated);
+                          }}
+                          className="text-red-500 hover:text-red-700 px-2"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => formik.setFieldValue("questions", [...formik.values.questions, ""])}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-1"
+                    >
+                      + Add Question
+                    </button>
                   </div>
 
                   <div className="mb-6">
