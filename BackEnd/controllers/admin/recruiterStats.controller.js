@@ -1,6 +1,7 @@
 import { Company } from "../../models/company.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
 import nodemailer from "nodemailer";
+import { sendFirstJobReminderEmail } from "../../utils/emailService.js";
 
 // returning total number of recruiter, total active recruiters, total deactive recruiters
 export const getRecrutierStats = async (req, res) => {
@@ -438,6 +439,105 @@ export const sendMessage = async (req, res) => {
   } catch (error) {
     console.error("Error sending reply:", error);
     return res.status(500).json({ success: false, message: "Server error while sending email." });
+  }
+};
+
+// Get recruiters eligible for first-job reminder (Active, 0 jobs, joined > 1 day ago)
+export const getInactiveJobRecruiters = async (req, res) => {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const recruiters = await Recruiter.aggregate([
+      { $match: { isActive: true, createdAt: { $lt: oneDayAgo } } },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "_id",
+          foreignField: "created_by",
+          as: "jobs",
+        },
+      },
+      { $match: { "jobs.0": { $exists: false } } },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "_id",
+          foreignField: "userId.user",
+          as: "companyDetails",
+        },
+      },
+      { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          fullname: 1,
+          email: "$emailId.email",
+          companyName: { $ifNull: ["$companyDetails.companyName", "$companyName"] },
+          joined: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        },
+      },
+    ]);
+
+    return res.status(200).json({ success: true, count: recruiters.length, recruiters });
+  } catch (error) {
+    console.error("Error fetching inactive job recruiters:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Send first-job reminder emails to all eligible recruiters
+export const sendFirstJobReminderEmails = async (req, res) => {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const recruiters = await Recruiter.aggregate([
+      { $match: { isActive: true, createdAt: { $lt: oneDayAgo } } },
+      {
+        $lookup: {
+          from: "jobs",
+          localField: "_id",
+          foreignField: "created_by",
+          as: "jobs",
+        },
+      },
+      { $match: { "jobs.0": { $exists: false } } },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "_id",
+          foreignField: "userId.user",
+          as: "companyDetails",
+        },
+      },
+      { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          fullname: 1,
+          email: "$emailId.email",
+          companyName: { $ifNull: ["$companyDetails.companyName", "$companyName"] },
+        },
+      },
+    ]);
+
+    if (recruiters.length === 0) {
+      return res.status(200).json({ success: true, message: "No eligible recruiters found.", sent: 0 });
+    }
+
+    let sent = 0;
+    let failed = 0;
+    for (const recruiter of recruiters) {
+      if (!recruiter.email) { failed++; continue; }
+      const result = await sendFirstJobReminderEmail(
+        recruiter.email,
+        recruiter.fullname || "Recruiter",
+        recruiter.companyName || "your company"
+      );
+      result ? sent++ : failed++;
+    }
+
+    return res.status(200).json({ success: true, message: `Emails sent: ${sent}, Failed: ${failed}`, sent, failed });
+  } catch (error) {
+    console.error("Error sending first job reminder emails:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
