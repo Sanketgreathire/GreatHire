@@ -273,6 +273,21 @@ const applicantDetails = ({
                 </a>
               </div>
             )}
+
+            {/* Employer Questions & Answers */}
+            {app?.answers?.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Employer Questions</h2>
+                <div className="mt-3 space-y-3">
+                  {app.answers.map((qa, idx) => (
+                    <div key={idx} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Q: {qa.question}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">A: {qa.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}

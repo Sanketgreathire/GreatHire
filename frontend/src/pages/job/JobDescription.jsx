@@ -24,6 +24,8 @@ const JobDescription = () => {
   const [error, setError] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [questionsModal, setQuestionsModal] = useState(false);
+  const [questionAnswers, setQuestionAnswers] = useState([]);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -125,6 +127,16 @@ const JobDescription = () => {
       return;
     }
 
+    if (job?.questions?.length > 0) {
+      setQuestionAnswers(job.questions.map(q => ({ question: q, answer: "" })));
+      setQuestionsModal(true);
+      return;
+    }
+
+    await submitApply(jobId, []);
+  };
+
+  const submitApply = async (jobId, answers) => {
     try {
       const payload = {
         applicant: user._id,
@@ -132,6 +144,7 @@ const JobDescription = () => {
         applicantEmail: user.email,
         applicantPhone: user.phoneNumber?.number || user.phoneNumber,
         applicantProfile: user.profile,
+        answers,
       };
 
       const response = await axios.post(
@@ -147,6 +160,15 @@ const JobDescription = () => {
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong!");
     }
+  };
+
+  const handleQuestionsSubmit = async () => {
+    if (questionAnswers.some(a => !a.answer.trim())) {
+      toast.error("Please answer all questions before submitting.");
+      return;
+    }
+    setQuestionsModal(false);
+    await submitApply(job._id, questionAnswers);
   };
 
   const handleNavigateToProfile = () => {
@@ -276,6 +298,50 @@ const JobDescription = () => {
       </div>
 
       <Footer />
+
+      {/* Questions Modal */}
+      {questionsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Employer Questions</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Please answer all questions to complete your application.</p>
+            <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
+              {questionAnswers.map((qa, idx) => (
+                <div key={idx}>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Q{idx + 1}: {qa.question}
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your answer"
+                    value={qa.answer}
+                    onChange={(e) => {
+                      const updated = [...questionAnswers];
+                      updated[idx] = { ...updated[idx], answer: e.target.value };
+                      setQuestionAnswers(updated);
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-3 mt-5">
+              <button
+                onClick={() => setQuestionsModal(false)}
+                className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleQuestionsSubmit}
+                className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
+              >
+                Submit & Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
