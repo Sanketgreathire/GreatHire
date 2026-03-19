@@ -1021,7 +1021,8 @@ export const reportJob = async (req, res) => {
       });
 
       await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+        // from: process.env.EMAIL_USER,
+        from: `"Great Hire" <${process.env.EMAIL_USER}>`,
         to: ["sanketbabde@greathire.in", "tanmai.dev077@greathire.in"],
         subject: `🚨 New Job Report: ${reportTitle}`,
         html: `

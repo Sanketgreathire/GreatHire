@@ -32,6 +32,7 @@ export const applyJob = async (req, res) => {
       jobTitle,
       company,
       jobId,
+      answers,
     } = req.body;
     const { resume } = req.files;
 
@@ -115,6 +116,7 @@ export const applyJob = async (req, res) => {
       applicantPhone: user.phoneNumber?.number || "",
       applicantProfile: user.profile || {},
       resume: user.profile?.resume || "",
+      answers: Array.isArray(answers) ? answers : [],
       status: "Pending",
     });
 
@@ -176,6 +178,7 @@ export const getApplicants = async (req, res) => {
         path: "applicant",
         select: "fullname emailId phoneNumber profile address",
       })
+      .select("applicant status answers createdAt")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({ success: true, applicants });
@@ -311,9 +314,16 @@ export const bulkApplyJobs = async (req, res) => {
     const applied = [];
     const skipped = [];
 
+    const { answersMap = {} } = req.body; // { [jobId]: [{question, answer}] }
+
     for (const jobId of jobIds) {
       const job = await Job.findById(jobId);
       if (!job || !job.jobDetails.isActive) { skipped.push(jobId); continue; }
+
+      // Skip jobs with questions that have no answers provided
+      if (job.questions?.length > 0 && !answersMap[jobId]) {
+        skipped.push(jobId); continue;
+      }
 
       const existing = await Application.findOne({ job: jobId, applicant: userId });
       if (existing) { skipped.push(jobId); continue; }
@@ -326,6 +336,7 @@ export const bulkApplyJobs = async (req, res) => {
         applicantPhone: user.phoneNumber?.number || "",
         applicantProfile: user.profile || {},
         resume: user.profile?.resume || "",
+        answers: Array.isArray(answersMap[jobId]) ? answersMap[jobId] : [],
         status: "Pending",
       });
 

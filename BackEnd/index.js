@@ -33,6 +33,7 @@ import adminJobDataRoute from "./routes/admin/jobStats.route.js";
 import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
 import notificationRoute from "./routes/notification.route.js";
 import contactMessageRoute from "./routes/contactMessage.route.js";
+import emailRoute from "./routes/email.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -163,6 +164,7 @@ app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/notifications", notificationRoute);
+app.use("/api/v1/email", emailRoute);
 
 // ================= FRONTEND =================
 app.use(express.static(path.join(__dirname, "../frontend/dist")));

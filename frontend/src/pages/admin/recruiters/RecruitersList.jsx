@@ -28,6 +28,7 @@ import {
   ADMIN_RECRUITER_DATA_API_END_POINT,
   RECRUITER_API_END_POINT,
   ADMIN_API_END_POINT,
+  EMAIL_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -196,10 +197,91 @@ const RecruitersList = () => {
 
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [selectedCreditsRecruiter, setSelectedCreditsRecruiter] = useState(null);
+  const [sendingReminder, setSendingReminder] = useState(false);
 
-  // Bulk selection states
-  const [selectedRecruiters, setSelectedRecruiters] = useState([]);
-  const [isSendingBulkEmail, setIsSendingBulkEmail] = useState(false);
+  // Bulk email state
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [emailModal, setEmailModal] = useState(false);
+  const [emailTarget, setEmailTarget] = useState(null);
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
+
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const openEmailModal = (singleEmail = null) => {
+    setEmailTarget(singleEmail);
+    setEmailSubject("Message from GreatHire Admin");
+    setEmailMessage(
+      `Dear Recruiter,\n\nWe wanted to reach out to you regarding your account on GreatHire.\n\nPlease feel free to contact us if you have any questions.\n\nBest regards,\nThe GreatHire Admin Team`
+    );
+    setEmailModal(true);
+  };
+
+  const handleSendFirstJobReminder = async () => {
+    const emails = filteredRecruiters
+      .filter((r) => selectedIds.has(r._id))
+      .map((r) => r.email)
+      .filter(Boolean);
+
+    if (emails.length === 0) return toast.error("No valid email addresses found.");
+
+    setSendingEmail(true);
+    try {
+      const res = await axios.post(
+        `${EMAIL_API_END_POINT}/send-first-job-reminder`,
+        { emails },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setSelectedIds(new Set());
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to send reminder.");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    const emails = emailTarget
+      ? [emailTarget]
+      : filteredRecruiters
+          .filter((r) => selectedIds.has(r._id))
+          .map((r) => r.email)
+          .filter(Boolean);
+
+    if (emails.length === 0) return toast.error("No valid email addresses found.");
+
+    setSendingEmail(true);
+    try {
+      const res = await axios.post(
+        `${EMAIL_API_END_POINT}/send`,
+        { emails, subject: emailSubject, message: emailMessage },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setEmailModal(false);
+        setSelectedIds(new Set());
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to send email.");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   const stats = [
     {
@@ -231,6 +313,26 @@ const RecruitersList = () => {
       bg: "bg-green-100 dark:bg-green-900/30",
     },
   ];
+
+  const sendFirstJobReminders = async () => {
+    setSendingReminder(true);
+    try {
+      const res = await axios.post(
+        `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-first-job-reminder`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(`Emails sent: ${res.data.sent}, Failed: ${res.data.failed}`);
+      } else {
+        toast.error(res.data.message || "Failed to send reminders");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Error sending reminders");
+    } finally {
+      setSendingReminder(false);
+    }
+  };
 
   // Fetch all recruiters (admin)
   const fetchRecruiterList = async () => {
@@ -540,7 +642,19 @@ const RecruitersList = () => {
 
         <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 transition-colors">
           {/* Filters */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div className="flex flex-col gap-4 mb-4">
+            <div className="flex justify-end">
+              <Button
+                size="sm"
+                onClick={sendFirstJobReminders}
+                disabled={sendingReminder}
+                className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                title="Send reminder emails to active recruiters with 0 jobs posted (joined > 1 day ago)"
+              >
+                {sendingReminder ? "Sending..." : "📧 Send First Job Reminders"}
+              </Button>
+            </div>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
               <Input
                 placeholder="Search by name, email, contact, company"
@@ -605,22 +719,19 @@ const RecruitersList = () => {
                 </div>
               )}
             </div>
-          </div>
+            </div>  {/* end inner filter row */}
+          </div>  {/* end outer filter wrapper */}
 
-          {/* Bulk Actions */}
-          {selectedRecruiters.length > 0 && (
-            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg flex items-center justify-between">
-              <span className="text-sm text-blue-700 dark:text-blue-300">
-                {selectedRecruiters.length} recruiter{selectedRecruiters.length > 1 ? 's' : ''} selected
-              </span>
+          {/* Bulk Email Button */}
+          {selectedIds.size > 0 && (
+            <div className="flex justify-end mb-3">
               <Button
-                onClick={sendBulkEmails}
-                disabled={isSendingBulkEmail}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
                 size="sm"
+                onClick={handleSendFirstJobReminder}
+                disabled={sendingEmail}
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2 disabled:opacity-50"
               >
-                <Mail className="w-4 h-4 mr-2" />
-                {isSendingBulkEmail ? "Sending..." : "Send Reminder Emails"}
+                <Mail size={14} /> {sendingEmail ? "Sending..." : `Send First Job Reminder (${selectedIds.size})`}
               </Button>
             </div>
           )}
@@ -630,21 +741,7 @@ const RecruitersList = () => {
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-gray-700/50">
                 <TableRow className="border-b border-gray-200 dark:border-gray-700">
-                  {/* Checkbox column header */}
-                  {showCheckboxColumn && (
-                    <TableHead className="w-12 text-sm text-gray-700 dark:text-gray-300 font-semibold">
-                      <input
-                        type="checkbox"
-                        checked={isAllSelected}
-                        ref={(el) => {
-                          if (el) el.indeterminate = isPartiallySelected;
-                        }}
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="w-4 h-4"
-                        aria-label="Select all recruiters"
-                      />
-                    </TableHead>
-                  )}
+                  <TableHead className="w-8"></TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Recruiter Name</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Company</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
@@ -667,20 +764,14 @@ const RecruitersList = () => {
                         key={r._id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
                       >
-                        {/* Checkbox cell */}
-                        {showCheckboxColumn && (
-                          <TableCell>
-                            {!r.isActive && (
-                              <input
-                                type="checkbox"
-                                checked={selectedRecruiters.includes(r._id)}
-                                onChange={(e) => handleSelectRecruiter(r._id, e.target.checked)}
-                                className="w-4 h-4"
-                                aria-label={`Select ${r.fullname}`}
-                              />
-                            )}
-                          </TableCell>
-                        )}
+                        <TableCell className="text-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedIds.has(r._id)}
+                            onChange={() => toggleSelect(r._id)}
+                            className="cursor-pointer accent-blue-600"
+                          />
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-start gap-2">
                             <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0 text-sm">
@@ -834,6 +925,18 @@ const RecruitersList = () => {
                               </button>
                             )}
 
+                            {/* Send Email */}
+                            <button
+                              title="Send email"
+                              onClick={() => openEmailModal(r.email)}
+                              className="p-1.5 rounded bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                            >
+                              <Mail
+                                size={14}
+                                className="text-blue-600 dark:text-blue-400"
+                              />
+                            </button>
+
                             {/* Message */}
                             <button
                               title="Send message"
@@ -869,7 +972,7 @@ const RecruitersList = () => {
                     ))
                   : (
                       <TableRow>
-                        <TableCell colSpan={showCheckboxColumn ? 9 : 8} className="text-center py-8">
+                        <TableCell colSpan={9} className="text-center py-8">
                           <div className="text-gray-500 dark:text-gray-400">
                             No recruiters found.
                           </div>
@@ -910,6 +1013,54 @@ const RecruitersList = () => {
           onConfirm={onConfirmDelete}
           onCancel={onCancelDelete}
         />
+      )}
+
+      {/* Email Modal */}
+      {emailModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+              {emailTarget ? "Send Email to Recruiter" : `Send Email to ${selectedIds.size} Recruiter(s)`}
+            </h2>
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm text-gray-600 dark:text-gray-400">Subject</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 dark:text-gray-400">Message</label>
+                <textarea
+                  rows={6}
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="ghost"
+                onClick={() => setEmailModal(false)}
+                disabled={sendingEmail}
+                className="text-gray-700 dark:text-gray-300"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSendEmail}
+                disabled={sendingEmail || !emailSubject.trim() || !emailMessage.trim()}
+                className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+              >
+                {sendingEmail ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Message Modal */}

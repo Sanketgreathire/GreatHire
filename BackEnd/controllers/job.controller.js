@@ -48,7 +48,7 @@ export const postJob = [
         companyName, urgentHiring, title, details, skills, qualifications,
         benefits, responsibilities, experience, salary, jobType,
         workPlaceFlexibility, location, numberOfOpening, respondTime,
-        duration, anyAmount, companyId,
+        duration, anyAmount, companyId, questions,
       } = req.body;
 
       const userId = req.id;
@@ -153,6 +153,7 @@ export const postJob = [
           isActive: jobIsActive,
           status: jobStatus,
         },
+        questions: Array.isArray(questions) ? questions.filter(q => q.trim()) : [],
         created_by: userId,
         company: companyId,
       });
@@ -223,7 +224,8 @@ export const getExternalJobsFromFindwork = async (req, res) => {
 export const applyJob = async (req, res) => {
   try {
     const { jobId } = req.params;
-    const userId = req.id;  // <-- isAuthenticated middleware se aa raha hai
+    const userId = req.id;
+    const { answers } = req.body;
 
     // Job exist check karo
     const job = await Job.findById(jobId).populate('company');
@@ -262,6 +264,7 @@ export const applyJob = async (req, res) => {
       applicantPhone: user.phone || "",
       applicantProfile: user.profile || {},
       resume: user.resume || "",
+      answers: Array.isArray(answers) ? answers : [],
       status: "Pending",
     });
 
