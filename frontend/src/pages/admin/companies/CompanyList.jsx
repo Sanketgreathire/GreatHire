@@ -47,7 +47,7 @@ const CompanyList = () => {
   const [deletedcompanyList, setDeletedCompanyList] = useState([]);
   const [activePage, setActivePage] = useState(1);
   const [deletedPage, setDeletedPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [companyId, setCompanyId] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);

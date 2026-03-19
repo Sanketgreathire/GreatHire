@@ -84,7 +84,7 @@ export const sendContactMessage = async (req, res) => {
 
     // Email content for HR team
     const mailOptionsToHR = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: process.env.EMAIL_FROM || `"Great Hire" <${process.env.EMAIL_USER}>`,
       to: [ "sanketbabde@greathire.in", "tanmai.dev077@greathire.in" ],
       replyTo: email,
       subject: `New Contact Form Submission from ${fullname}`,
@@ -142,7 +142,7 @@ export const sendContactMessage = async (req, res) => {
 
     // Email content for user confirmation
     const mailOptionsToUser = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: process.env.EMAIL_FROM ||  `"Great Hire" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "We've Received Your Message - GreatHire",
       html: `

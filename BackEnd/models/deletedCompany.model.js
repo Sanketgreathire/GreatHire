@@ -5,22 +5,22 @@ const deletedCompanySchema = new mongoose.Schema(
     companyName: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     adminEmail: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     CIN: {
       type: String,
       required: false,
-      unique: true,
+      // unique: true,
       sparse: true,
       trim: true
     },
