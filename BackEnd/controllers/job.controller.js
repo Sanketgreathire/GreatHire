@@ -34,6 +34,7 @@ export const postJob = [
   check("location").notEmpty().withMessage("Location is required"),
   check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
   check("duration").notEmpty().withMessage("Duration is required"),
+  check("shift").notEmpty().withMessage("Shift is required"),
   check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
   check("companyId").notEmpty().withMessage("Company ID is required"),
 
@@ -48,7 +49,7 @@ export const postJob = [
         companyName, urgentHiring, title, details, skills, qualifications,
         benefits, responsibilities, experience, salary, jobType,
         workPlaceFlexibility, location, numberOfOpening, respondTime,
-        duration, anyAmount, companyId, questions,
+        duration, shift, anyAmount, companyId, questions,
       } = req.body;
 
       const userId = req.id;
@@ -149,7 +150,7 @@ export const postJob = [
           skills: splitSkills, benefits: splitBenefits,
           qualifications: splitQualifications, responsibilities: splitResponsibilities,
           salary, experience, jobType, workPlaceFlexibility,
-          location, numberOfOpening, respondTime, duration, anyAmount,
+          location, numberOfOpening, respondTime, duration, shift, anyAmount,
           isActive: jobIsActive,
           status: jobStatus,
         },
@@ -696,6 +697,7 @@ export const updateJob = async (req, res) => {
           "jobDetails.numberOfOpening": jobData.editedJob.numberOfOpening,
           "jobDetails.respondTime": jobData.editedJob.respondTime,
           "jobDetails.duration": jobData.editedJob.duration,
+          "jobDetails.shift": jobData.editedJob.shift,
         },
       },
       { new: true }

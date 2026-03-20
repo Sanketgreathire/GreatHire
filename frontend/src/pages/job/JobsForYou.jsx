@@ -498,7 +498,7 @@ const JobsForYou = ({ jobs = [] }) => {
                   </div>
                 </div>
 
-                {/* Middle Row: Location, Flexibility & Job Type */}
+                {/* Middle Row: Location, Flexibility, Job Type & Shift */}
                 <div className="flex flex-wrap gap-2 items-center mb-2">
                   {/* Location */}
                   <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[150px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
@@ -514,6 +514,13 @@ const JobsForYou = ({ jobs = [] }) => {
                   <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
                     {job.jobDetails?.jobType}
                   </span>
+
+                  {/* Shift */}
+                  {job.jobDetails?.shift && (
+                    <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                      {job.jobDetails?.shift}
+                    </span>
+                  )}
 
                   {/* Applied Status Badge */}
                   {hasAppliedToJob(job._id) && (
@@ -837,6 +844,14 @@ const JobsForYou = ({ jobs = [] }) => {
                     {selectedJob?.jobDetails?.jobType}
                   </span>
                 </p>
+                {selectedJob?.jobDetails?.shift && (
+                  <p className="font-semibold text-gray-700 dark:text-gray-300">
+                    Shift:{" "}
+                    <span className="text-sm text-gray-500 dark:text-gray-400 break-words">
+                      {selectedJob?.jobDetails?.shift}
+                    </span>
+                  </p>
+                )}
                 <p className="font-semibold text-gray-700 dark:text-gray-300">
                   Duration:{" "}
                   <span className="text-sm text-gray-500 dark:text-gray-400 break-words">

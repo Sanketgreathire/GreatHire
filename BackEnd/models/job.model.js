@@ -77,6 +77,10 @@ const jobSchema = new mongoose.Schema(
         type: String, // If it's a text field (e.g., "Monday to Friday")
         required: true,
       },
+      shift: {
+        type: String,
+        required: true,
+      },
       anyAmount:{
         type: String,
         required: true,
