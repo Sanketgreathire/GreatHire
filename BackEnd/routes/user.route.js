@@ -83,7 +83,8 @@ import {
   jobseekerLogin,
   recruiterLogin,
   verifyJobseekerOtp,
-  verifyRecruiterOtp
+  verifyRecruiterOtp,
+  getMe
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -132,8 +133,6 @@ router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
 router.route("/verify-jobseeker-otp").post(verifyJobseekerOtp);
 router.route("/verify-recruiter-otp").post(verifyRecruiterOtp);
-
-
-
+router.route("/me").get(isAuthenticated, getMe);
 
 export default router;
