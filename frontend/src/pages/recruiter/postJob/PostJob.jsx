@@ -196,6 +196,7 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
+      shift: "",
       questions: [],
       anyAmount: "No",
     },
@@ -212,6 +213,7 @@ const PostJob = () => {
       numberOfOpening: Yup.string().required("Number of openings is required"),
       respondTime: Yup.string().required("Response time is required"),
       duration: Yup.string().required("Duration is required"),
+      shift: Yup.string().required("Shift is required"),
       skills: Yup.string().required("Skills are required"),
       benefits: Yup.string().required("Benefits are required"),
       qualifications: Yup.string().required("Qualification is required"),
@@ -278,7 +280,7 @@ const PostJob = () => {
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
-      ["numberOfOpening", "respondTime", "duration", "anyAmount"], // Step 3
+      ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -1074,6 +1076,43 @@ const PostJob = () => {
                     )}
                   </div>
 
+                  {/* Shift */}
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Shift<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                    </Label>
+                    <div className="flex gap-2">
+                      <select
+                        name="shift"
+                        className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                        onChange={(e) => {
+                          formik.setFieldValue("shift", e.target.value);
+                        }}
+                        value={formik.values.shift}
+                      >
+                        <option value="">Select shift</option>
+                        <option value="Day shift">Day shift</option>
+                        <option value="Night shift">Night shift</option>
+                        <option value="Rotational shift">Rotational shift</option>
+                      </select>
+                      <input
+                        name="shiftCustom"
+                        type="text"
+                        placeholder="Or enter custom shift"
+                        className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                        onChange={(e) => {
+                          formik.setFieldValue("shift", e.target.value);
+                        }}
+                        value={formik.values.shift && !["Day shift", "Night shift", "Rotational shift"].includes(formik.values.shift) ? formik.values.shift : ""}
+                      />
+                    </div>
+                    {formik.touched.shift && formik.errors.shift && (
+                      <div className="text-red-500 dark:text-red-400 text-sm">
+                        {formik.errors.shift}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Custom Questions <span className="text-gray-400 dark:text-gray-500 text-xs">(Optional)</span>
@@ -1261,6 +1300,10 @@ const PostJob = () => {
                     <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Duration:</strong>{" "}
                       {formik.values.duration || "N/A"}
+                    </div>
+                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                      <strong>Shift:</strong>{" "}
+                      {formik.values.shift || "N/A"}
                     </div>
                     <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                       <strong>Applicants need to  pay any charges?:</strong>{" "}

@@ -23,7 +23,7 @@ import {
 
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
-  { name: "Users", path: "/admin/users", icon: FaUsers },
+  { name: "Job Seekers", path: "/admin/users", icon: FaUsers },
   { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
   { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
   { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },

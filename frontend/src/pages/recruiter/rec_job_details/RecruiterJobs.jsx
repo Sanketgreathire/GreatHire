@@ -165,6 +165,7 @@ const RecruiterJobs = ({ recruiterId }) => {
                 <th className="py-3 px-5 text-left font-semibold">Company</th>
                 <th className="py-3 px-5 text-left font-semibold">Location</th>
                 <th className="py-3 px-5 text-left font-semibold">Type</th>
+                <th className="py-3 px-5 text-left font-semibold">Shift</th>
                 <th className="py-3 px-5 text-center font-semibold">Status</th>
                 <th className="py-3 px-5 text-center font-semibold">Actions</th>
               </tr>
@@ -178,6 +179,7 @@ const RecruiterJobs = ({ recruiterId }) => {
                     <td className="py-3 px-5">{job.jobDetails.companyName}</td>
                     <td className="py-3 px-5">{job.jobDetails.location}</td>
                     <td className="py-3 px-5">{job.jobDetails.jobType}</td>
+                    <td className="py-3 px-5">{job.jobDetails.shift || "N/A"}</td>
 
                     <td className="py-3 px-5 text-center">
                       <span
@@ -211,7 +213,7 @@ const RecruiterJobs = ({ recruiterId }) => {
                 ))
               ) : (
                 <tr>
-                  <td className="py-5 text-center text-gray-500 dark:text-gray-400" colSpan="6">
+                  <td className="py-5 text-center text-gray-500 dark:text-gray-400" colSpan="7">
                     No jobs found
                   </td>
                 </tr>

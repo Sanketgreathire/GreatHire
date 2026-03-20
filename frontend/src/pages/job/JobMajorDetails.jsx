@@ -79,8 +79,15 @@ const JobMajorDetails = ({ selectedJob }) => {
               </span>
             </h3>
 
-            <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
-              {selectedJob?.jobDetails?.jobType}
+            <div className="flex gap-2 flex-wrap">
+              <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
+                {selectedJob?.jobDetails?.jobType}
+              </div>
+              {selectedJob?.jobDetails?.shift && (
+                <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
+                  {selectedJob?.jobDetails?.shift}
+                </div>
+              )}
             </div>
           </div>
         </div>

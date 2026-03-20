@@ -305,7 +305,7 @@ const Jobs = () => {
                           {job.title}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 break-words">
-                          {job.jobType} • {job.location} • ₹
+                          {job.jobType} • {job.shift ? `${job.shift} • ` : ""}{job.location} • ₹
                           {job.salary.replace(
                             /\B(?=(\d{3})+(?!\d))/g,
                             ","

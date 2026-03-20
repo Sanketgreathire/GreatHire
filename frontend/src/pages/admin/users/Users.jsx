@@ -156,7 +156,7 @@ const Users = () => {
   // Stats Section
   const stats = [
     {
-      title: "Total Users",
+      title: "Total Job Seekers",
       count: userStats?.totalUsers || 0,
       icon: <FaRegUser size={36} className="text-blue-600 dark:text-blue-400" />,
       color: "bg-blue-100 dark:bg-blue-900/30",
@@ -303,7 +303,7 @@ const Users = () => {
                         className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer"
                       />
                     </TableHead>
-                    <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">User</TableHead>
+                    <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Job Seeker</TableHead>
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Applications</TableHead>
@@ -400,7 +400,7 @@ const Users = () => {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-8 text-gray-500 dark:text-gray-400">
-                        No users found
+                        No Job Seekers found
                       </TableCell>
                     </TableRow>
                   )}
