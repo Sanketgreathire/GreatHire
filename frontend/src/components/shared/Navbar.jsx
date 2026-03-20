@@ -138,6 +138,7 @@ const Navbar = () => {
     ? [
         // AFTER LOGIN → only Jobs (students only)
         ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+        ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
       ]
     : [

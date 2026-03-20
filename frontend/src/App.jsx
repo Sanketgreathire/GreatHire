@@ -272,6 +272,7 @@ import InsightsDashboard from "./pages/InsightsDashboard";
 import InsightApproval from "./pages/InsightApproval";
 import CareerAdvice from "./components/CareerAdvice";
 import TheFuture from "./components/TheFuture";
+import ReferAndBoost from "./pages/ReferAndBoost";
 // Other Roles
 import DigitalMarketerLogin from "./components/auth/digitalmarketer/DigitalMarketerLogin";
 import AdminLogin from "./components/auth/admin/AdminLogin";
@@ -281,14 +282,16 @@ import NotificationPage from "./components/notifications/NotificationPage";
 import MessagingPage from "./components/messaging/MessagingPage";
 import ProductDetailPage from "./components/ProductDetailPage";
 
-import { logOut } from "./redux/authSlice.js";
-import { useDispatch } from "react-redux";
+import { logOut, setUser } from "./redux/authSlice.js";
+import { useDispatch, useSelector } from "react-redux";
 
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
 
 import { Worker } from "@react-pdf-viewer/core";
 import usePageTracking from "./usePageTracking";
+import axios from "axios";
+import { USER_API_END_POINT } from "./utils/ApiEndPoint";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -317,6 +320,7 @@ const appRouter = createBrowserRouter([
   
 
 
+  { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
   // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)
   { path: "/jobseeker-login", element: <JobseekerLogin /> },
   { path: "/recruiter-login", element: <RecruiterLogin /> },
@@ -390,8 +394,16 @@ const appRouter = createBrowserRouter([
 
 function App() {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
-  // Removed cookie check - Redux Persist handles session persistence
+  useEffect(() => {
+    if (user) {
+      axios
+        .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+        .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
+        .catch(() => {});
+    }
+  }, []);
 
   // Cleanup service workers
   useEffect(() => {

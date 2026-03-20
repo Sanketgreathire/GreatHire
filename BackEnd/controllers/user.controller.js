@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
+import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { Contact } from "../models/contact.model.js";
@@ -26,7 +27,7 @@ import notificationService from "../utils/notificationService.js";
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password } = req.body;
+    const { fullname, email, phoneNumber, password, inputReferralCode } = req.body;
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {
@@ -85,6 +86,19 @@ export const register = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate unique referral code for new user
+    const referralCode = await createUniqueReferralCode(fullname);
+
+    // Link referrer if valid inputReferralCode provided
+    let referredBy = null;
+    if (inputReferralCode) {
+      const referrer = await User.findOne({ referralCode: inputReferralCode });
+      if (referrer) {
+        referredBy = referrer._id;
+        await User.findByIdAndUpdate(referrer._id, { $inc: { referralCount: 1 } });
+      }
+    }
+
     // Create new user
     const user = await User.create({
       fullname,
@@ -92,6 +106,8 @@ export const register = async (req, res) => {
       phoneNumber: { number: phoneNumber },
       password: hashedPassword,
       lastActiveAt: new Date(),
+      referralCode,
+      referredBy,
     });
 
     // Fetch user without password
@@ -205,6 +221,9 @@ export const login = async (req, res) => {
       isCompanyCreated,
       position,
       isActive,
+      referralCode: user.referralCode || null,
+      referralCount: user.referralCount || 0,
+      isProfileBoosted: user.isProfileBoosted || false,
     };
 
     // sending cookies from server to client with response
@@ -281,6 +300,9 @@ export const jobseekerLogin = async (req, res) => {
       address: user.address,
       lastActiveAt: user.lastActiveAt,
       isFirstLogin: user.isFirstLogin,
+      referralCode: user.referralCode || null,
+      referralCount: user.referralCount || 0,
+      isProfileBoosted: user.isProfileBoosted || false,
     };
 
     return res
@@ -470,21 +492,23 @@ export const googleLogin = async (req, res) => {
     if (!role) role = "student";
 
     // If user doesn't exist, create a new one
+    const newReferralCode = await createUniqueReferralCode(googleUser.name || googleUser.given_name || "USER");
     user = new User({
       fullname: googleUser.name || googleUser.given_name || "No Name",
       emailId: {
-        email: googleUser.email, // Set email from Google user data
-        isVerified: true, // Google-authenticated users are usually verified
+        email: googleUser.email,
+        isVerified: true,
       },
       phoneNumber: {
-        number: "", // No phone number provided by Google
-        isVerified: false, // Default to false since no phone verification
+        number: "",
+        isVerified: false,
       },
-      password: "", // No password for Google-authenticated users
-      role: role, // Use the provided role
+      password: "",
+      role: role,
       profile: {
         profilePhoto: googleUser.picture || "",
       },
+      referralCode: newReferralCode,
     });
 
     await user.save();
@@ -1219,6 +1243,9 @@ export const verifyOtp = async (req, res) => {
           fullname: user.fullname,
           emailId: user.emailId,
           role: user.role,
+          referralCode: user.referralCode || null,
+          referralCount: user.referralCount || 0,
+          isProfileBoosted: user.isProfileBoosted || false,
         },
       });
   } catch (err) {
@@ -1278,6 +1305,9 @@ export const verifyJobseekerOtp = async (req, res) => {
           fullname: user.fullname,
           emailId: user.emailId,
           role: user.role,
+          referralCode: user.referralCode || null,
+          referralCount: user.referralCount || 0,
+          isProfileBoosted: user.isProfileBoosted || false,
         },
       });
   } catch (err) {
@@ -1344,6 +1374,16 @@ export const verifyRecruiterOtp = async (req, res) => {
   } catch (err) {
     console.error("Verify OTP Error:", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.id).select("-password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    return res.status(200).json({ success: true, user });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
