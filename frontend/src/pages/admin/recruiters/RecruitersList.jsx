@@ -199,6 +199,10 @@ const RecruitersList = () => {
   const [selectedCreditsRecruiter, setSelectedCreditsRecruiter] = useState(null);
   const [sendingReminder, setSendingReminder] = useState(false);
 
+  // Bulk selection states
+  const [selectedRecruiters, setSelectedRecruiters] = useState([]);
+  const [isSendingBulkEmail, setIsSendingBulkEmail] = useState(false);
+
   // Bulk email state
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [emailModal, setEmailModal] = useState(false);
@@ -722,6 +726,24 @@ const RecruitersList = () => {
             </div>  {/* end inner filter row */}
           </div>  {/* end outer filter wrapper */}
 
+          {/* Bulk Actions */}
+          {selectedRecruiters.length > 0 && (
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg flex items-center justify-between">
+              <span className="text-sm text-blue-700 dark:text-blue-300">
+                {selectedRecruiters.length} recruiter{selectedRecruiters.length > 1 ? 's' : ''} selected
+              </span>
+              <Button
+                onClick={sendBulkEmails}
+                disabled={isSendingBulkEmail}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                size="sm"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {isSendingBulkEmail ? "Sending..." : "Send Reminder Emails"}
+              </Button>
+            </div>
+          )}
+
           {/* Bulk Email Button */}
           {selectedIds.size > 0 && (
             <div className="flex justify-end mb-3">
@@ -741,6 +763,21 @@ const RecruitersList = () => {
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-gray-700/50">
                 <TableRow className="border-b border-gray-200 dark:border-gray-700">
+                  {/* Checkbox column header */}
+                  {showCheckboxColumn && (
+                    <TableHead className="w-12 text-sm text-gray-700 dark:text-gray-300 font-semibold">
+                      <input
+                        type="checkbox"
+                        checked={isAllSelected}
+                        ref={(el) => {
+                          if (el) el.indeterminate = isPartiallySelected;
+                        }}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="w-4 h-4"
+                        aria-label="Select all recruiters"
+                      />
+                    </TableHead>
+                  )}
                   <TableHead className="w-8"></TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Recruiter Name</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Company</TableHead>
@@ -764,6 +801,20 @@ const RecruitersList = () => {
                         key={r._id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
                       >
+                        {/* Checkbox cell */}
+                        {showCheckboxColumn && (
+                          <TableCell>
+                            {!r.isActive && (
+                              <input
+                                type="checkbox"
+                                checked={selectedRecruiters.includes(r._id)}
+                                onChange={(e) => handleSelectRecruiter(r._id, e.target.checked)}
+                                className="w-4 h-4"
+                                aria-label={`Select ${r.fullname}`}
+                              />
+                            )}
+                          </TableCell>
+                        )}
                         <TableCell className="text-center">
                           <input
                             type="checkbox"
@@ -972,7 +1023,7 @@ const RecruitersList = () => {
                     ))
                   : (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8">
+                        <TableCell colSpan={showCheckboxColumn ? 10 : 9} className="text-center py-8">
                           <div className="text-gray-500 dark:text-gray-400">
                             No recruiters found.
                           </div>
