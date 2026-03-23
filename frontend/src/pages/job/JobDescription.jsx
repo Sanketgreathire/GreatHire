@@ -199,8 +199,8 @@ const JobDescription = () => {
 
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
+        <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8">
 
           {/* Back */}
           <IoIosArrowRoundBack
@@ -216,10 +216,10 @@ const JobDescription = () => {
               <h1 className="text-3xl font-bold">
                 {job?.jobDetails?.title}
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
                 {job?.company?.companyName}
               </p>
-              <p className="text-gray-500">
+              <p className="text-gray-500 dark:text-gray-400">
                 {job?.jobDetails?.location}
               </p>
             </div>
@@ -238,8 +238,8 @@ const JobDescription = () => {
                 onMouseLeave={() => setIsHovered(false)}
                 className={`
                   ${isApplied
-                    ? "bg-green-500 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-800"
+                    ? "bg-green-500 dark:bg-green-600 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900"
                   }
                   ${isClicked ? "scale-95" : "scale-100"}
                   text-white font-semibold px-6 py-3 rounded-lg shadow-md transition-all duration-200
@@ -251,7 +251,7 @@ const JobDescription = () => {
               {/* PROFILE TOOLTIP */}
               {user && !isProfileComplete(user) && !isApplied && (
                 <div className={`absolute right-0 mt-3 w-80 transition-all ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                  <div className="bg-slate-900 text-white rounded-xl p-5 shadow-xl">
+                  <div className="bg-slate-900 text-white dark:bg-gray-700 rounded-xl p-5 shadow-xl">
 
                     <h3 className="font-bold mb-3">Complete Your Profile</h3>
 
@@ -262,7 +262,7 @@ const JobDescription = () => {
                     <div className="space-y-2">
                       {missingFields.map((field, index) => (
                         <div key={index} className="flex items-center gap-2 text-sm">
-                          <AlertCircle size={14} className="text-yellow-400" />
+                          <AlertCircle size={14} className="text-yellow-400 dark:text-yellow-500" />
                           {field.label}
                         </div>
                       ))}
@@ -270,7 +270,7 @@ const JobDescription = () => {
 
                     <button
                       onClick={handleNavigateToProfile}
-                      className="mt-4 w-full bg-purple-600 py-2 rounded-lg"
+                      className="mt-4 w-full bg-purple-600 dark:bg-purple-700 py-2 rounded-lg"
                     >
                       Complete Profile Now
                     </button>
@@ -287,7 +287,7 @@ const JobDescription = () => {
             <h2 className="text-xl font-bold mb-3">Job Description:</h2>
 
             <div
-              className="text-gray-700"
+              className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap"
               dangerouslySetInnerHTML={{
                 __html: sanitizedJobDescription || "No description provided.",
               }}
@@ -301,7 +301,7 @@ const JobDescription = () => {
 
       {/* Questions Modal */}
       {questionsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/70 px-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg p-6">
             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Employer Questions</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Please answer all questions to complete your application.</p>
