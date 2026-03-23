@@ -5,6 +5,7 @@ import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
+
 const HowWeHirePage = () => {
   const [activeStep, setActiveStep] = useState(null);
 
@@ -431,6 +432,7 @@ const HowWeHirePage = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </>
   );
 };

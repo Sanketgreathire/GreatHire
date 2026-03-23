@@ -866,9 +866,9 @@ const JobDetail = () => {
         <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
 
           {/* Back Button and action buttons header */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 py-10">
             <Button variant="ghost" onClick={() => navigate(-1)} className=" bg-green-400 border border-green-900 text-slate-900 hover:bg-green-800 hover:text-white dark:bg-green-800 dark:text-slate-200 dark:hover:bg-green-600 dark:hover:text-white">
-              <ArrowLeft className="h-6 w-8 mr-2" />
+              <ArrowLeft className=" h-6 w-8 mr-2" />
               Back
             </Button>
             {user?.role === "recruiter" && !editMode && (
