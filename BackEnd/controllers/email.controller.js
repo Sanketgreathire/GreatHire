@@ -23,7 +23,7 @@ export const sendFirstJobReminder = async (req, res) => {
           <p style="color: #555; font-size: 15px; line-height: 1.8;">We noticed you haven't posted your first job yet on <strong>GreatHire</strong>.</p>
           <p style="color: #555; font-size: 15px; line-height: 1.8;">Posting a job is quick and easy — reach thousands of qualified candidates today!</p>
           <div style="text-align: center; margin: 28px 0;">
-            <a href="https://greathire.in/recruiter/postjob" style="background-color: #1D4ED8; color: #ffffff; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-size: 15px; font-weight: bold;">Post Your First Job Now</a>
+            <a href="https://greathire.in/recruiter/dashboard/post-job" style="background-color: #1D4ED8; color: #ffffff; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-size: 15px; font-weight: bold;">Post Your First Job Now</a>
           </div>
           <p style="color: #555; font-size: 15px; line-height: 1.8;">If you have any questions, feel free to reach out to our support team.</p>
           <p style="color: #555; font-size: 15px;">Best regards,<br/>The GreatHire Team</p>

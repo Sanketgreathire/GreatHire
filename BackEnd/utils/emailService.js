@@ -103,7 +103,7 @@ export const sendCompanyProfileReminderEmail = async (recruiterEmail, recruiterN
           <div style="background-color: #f0f7ff; padding: 15px; border-left: 4px solid #1D4ED8; margin: 20px 0; border-radius: 5px;">
             <p style="color: #333; margin: 0 0 8px 0; font-weight: bold;">Complete your profile here:</p>
             <p style="color: #1D4ED8; margin: 0;">
-              <a href="https://greathire.in/recruiter/login" style="color: #1D4ED8; text-decoration: none; font-weight: 500;">Recruiter Login: https://greathire.in/recruiter/login</a>
+              <a href="https://greathire.in/recruiter-login" style="color: #1D4ED8; text-decoration: none; font-weight: 500;">Recruiter Login: https://greathire.in/recruiter-login</a>
             </p>
           </div>
           
