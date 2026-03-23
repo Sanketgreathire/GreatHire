@@ -24,9 +24,6 @@ const DashboardNavigations = () => {
   // State for sidebar toggle
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  // State for dropdown toggle
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-
   // Function to apply styles to navigation links
   const navLinkClass = ({ isActive }) =>
   `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
@@ -98,85 +95,30 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
-              <li className="relative group ml-1 ">
-                <span
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                  className="flex gap-2 px-2 py-2 cursor-pointer rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700"
-                >
+              <li className="relative group ml-1">
+                <span className="flex items-center gap-2 px-2 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700 cursor-default">
                   <IoCreateOutline size={25} className="text-blue-600 dark:text-blue-400" />
                   <span>Create New</span>
                 </span>
 
-                <ul
-                  className={`absolute left-5 bg-gray-50 dark:bg-gray-800 shadow-lg rounded-xl py-2 w-full
-                    ${isDropdownOpen ? "block" : "hidden"}  /* Mobile: controlled by state */
-                    md:group-hover:block              /* Desktop: show on hover */
-                  `}
-                >
-                  {/* Conditionally render submenu links */}
+                <ul className="absolute left-0 top-full w-44 z-50
+                  bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
+                  shadow-xl rounded-xl py-2 flex flex-col gap-1
+                  invisible opacity-0 group-hover:visible group-hover:opacity-100
+                  transition-opacity duration-150">
                   {!user?.isCompanyCreated && (
-                    <NavLink
-                      to="/recruiter/dashboard/create-company"
-                      className={navLinkClass}
-                      onClick={() => {
-                        setSidebarOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          <PiBuildingOfficeLight
-                            size={25}
-                            className={iconClass(isActive)}
-                          />
-                          <span>Company</span>
-                        </>
-                      )}
+                    <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><PiBuildingOfficeLight size={25} className={iconClass(isActive)} /><span>Company</span></>)}
                     </NavLink>
                   )}
-
-                  {user?.isActive &&
-                    user?.isCompanyCreated &&
-                    user?.emailId?.email === company?.adminEmail && (
-                      <NavLink
-                        to="/recruiter/dashboard/add-recruiter"
-                        className={navLinkClass}
-                        onClick={() => {
-                          setSidebarOpen(false);
-                          setDropdownOpen(false);
-                        }}
-                      >
-                        {({ isActive }) => (
-                          <>
-                            <BsPersonPlus
-                              size={25}
-                              className={iconClass(isActive)}
-                            />
-                            <span>Add Recruiter</span>
-                          </>
-                        )}
-                      </NavLink>
-                    )}
-
-                  {/* Post Job (Visible if company is created, regardless of verification) */}
+                  {user?.isActive && user?.isCompanyCreated && user?.emailId?.email === company?.adminEmail && (
+                    <NavLink to="/recruiter/dashboard/add-recruiter" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><BsPersonPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
+                    </NavLink>
+                  )}
                   {user?.isCompanyCreated && (
-                    <NavLink
-                      to="/recruiter/dashboard/post-job"
-                      className={navLinkClass}
-                      onClick={() => {
-                        setSidebarOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          <MdPostAdd
-                            size={25}
-                            className={iconClass(isActive)}
-                          />
-                          <span>Post Job</span>
-                        </>
-                      )}
+                    <NavLink to="/recruiter/dashboard/post-job" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><MdPostAdd size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
                     </NavLink>
                   )}
                 </ul>
