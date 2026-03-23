@@ -21,6 +21,7 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
 import notificationService from "../utils/notificationService.js";
+import { createUniqueReferralCode } from "../utils/referralCode.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -73,6 +74,9 @@ export const register = async (req, res) => {
     // Hash the password by performing 10 time hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate unique referral code
+    const referralCode = await createUniqueReferralCode();
+
     // Create new user
     let newUser = await Recruiter.create({
       fullname,
@@ -87,6 +91,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
       plan: "FREE",
       subscriptionStatus: "INACTIVE",
+      referralCode,
     });
 
     // ✅ Send welcome notification for new recruiter registration
@@ -197,6 +202,7 @@ export const googleLogin = async (req, res) => {
     }
 
     // If user doesn't exist, create a new one
+    const newReferralCode = await createUniqueReferralCode();
     user = new Recruiter({
       fullname: googleUser.name || googleUser.given_name || "No Name",
       emailId: {
@@ -207,12 +213,13 @@ export const googleLogin = async (req, res) => {
         number: "",
         isVerified: false,
       },
-      password: "", // No password for Google-authenticated users
+      password: "",
       profile: {
         profilePhoto: googleUser.picture || "",
       },
       plan: "FREE",
       subscriptionStatus: "INACTIVE",
+      referralCode: newReferralCode,
     });
 
     await user.save();

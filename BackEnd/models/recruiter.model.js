@@ -95,6 +95,20 @@ const recruiterSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    remainingJobPosts: {
+      type: Number,
+      default: 0,
+    },
+    candidateReferralsCount: {
+      type: Number,
+      default: 0,
+    },
+    referralCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+      default: null,
+    },
   },
 
   { timestamps: true }

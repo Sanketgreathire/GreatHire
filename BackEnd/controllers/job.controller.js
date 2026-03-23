@@ -77,16 +77,15 @@ export const postJob = [
       });
 
       if (!isVerified) {
+        const hasRemainingPosts = recruiter && recruiter.remainingJobPosts > 0;
         if (pendingJobs > 0) {
-          // If there's already a pending job, block further posting
           return res.status(400).json({
             success: false,
             message: "Your first job is currently under admin review. You can post your next job once your account is verified.",
             requiresVerification: true,
             redirectTo: "/recruiter/dashboard/home",
           });
-        } else if (jobsPostedSoFar >= 1) {
-          // If already posted 1 job and it's not pending (shouldn't happen, but safety check)
+        } else if (jobsPostedSoFar >= 1 && !hasRemainingPosts) {
           return res.status(400).json({
             success: false,
             message: "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
@@ -97,7 +96,12 @@ export const postJob = [
       }
 
       // --- Plan-specific limits (only reached after verification) ---
-      if (companyPlan === "FREE") {
+      console.log("Remaining before post:", recruiter?.remainingJobPosts);
+      if (recruiter && recruiter.remainingJobPosts > 0) {
+        // Consume one referral-earned job post slot (bypasses plan limits)
+        recruiter.remainingJobPosts -= 1;
+        await recruiter.save();
+      } else if (companyPlan === "FREE") {
         // Block if free limit (2 jobs/month) reached
         if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
           return res.status(400).json({

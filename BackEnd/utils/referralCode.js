@@ -1,17 +1,22 @@
 import { User } from "../models/user.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
 
-function generateReferralCode(name) {
-  const base = name.replace(/\s+/g, "").toUpperCase().slice(0, 5);
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return base + random;
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+function generateCode() {
+  let code = "";
+  for (let i = 0; i < 6; i++) code += CHARS[Math.floor(Math.random() * CHARS.length)];
+  return code;
 }
 
-export async function createUniqueReferralCode(name) {
+export async function createUniqueReferralCode() {
   let code;
   let exists = true;
   while (exists) {
-    code = generateReferralCode(name);
-    exists = await User.findOne({ referralCode: code });
+    code = generateCode();
+    const inUsers = await User.findOne({ referralCode: code });
+    const inRecruiters = await Recruiter.findOne({ referralCode: code });
+    exists = inUsers || inRecruiters;
   }
   return code;
 }

@@ -87,15 +87,20 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate unique referral code for new user
-    const referralCode = await createUniqueReferralCode(fullname);
+    const referralCode = await createUniqueReferralCode();
 
-    // Link referrer if valid inputReferralCode provided
+    // Link referrer if valid inputReferralCode provided (check both User and Recruiter)
     let referredBy = null;
     if (inputReferralCode) {
-      const referrer = await User.findOne({ referralCode: inputReferralCode });
+      const referrer =
+        (await User.findOne({ referralCode: inputReferralCode })) ||
+        (await Recruiter.findOne({ referralCode: inputReferralCode }));
       if (referrer) {
         referredBy = referrer._id;
-        await User.findByIdAndUpdate(referrer._id, { $inc: { referralCount: 1 } });
+        // increment referralCount only on User referrers (recruiters don't have this field)
+        if (referrer.role !== "recruiter") {
+          await User.findByIdAndUpdate(referrer._id, { $inc: { referralCount: 1 } });
+        }
       }
     }
 
@@ -354,7 +359,11 @@ export const recruiterLogin = async (req, res) => {
     // Set login tracking and reset email flag for new session
     user.isRecruiterLoggedIn = true;
     user.lastLoginTime = new Date();
-    user.reminderEmailSent = false; // Reset so they can get reminder again if needed
+    user.reminderEmailSent = false;
+    // Safety net: generate referral code if missing
+    if (!user.referralCode) {
+      user.referralCode = await createUniqueReferralCode();
+    }
     await user.save();
 
     try {
@@ -390,6 +399,8 @@ export const recruiterLogin = async (req, res) => {
       isActive,
       plan: user.plan || "FREE",
       subscriptionStatus: user.subscriptionStatus || "INACTIVE",
+      remainingJobPosts: user.remainingJobPosts || 0,
+      referralCode: user.referralCode || null,
     };
 
     return res
@@ -492,7 +503,7 @@ export const googleLogin = async (req, res) => {
     if (!role) role = "student";
 
     // If user doesn't exist, create a new one
-    const newReferralCode = await createUniqueReferralCode(googleUser.name || googleUser.given_name || "USER");
+    const newReferralCode = await createUniqueReferralCode();
     user = new User({
       fullname: googleUser.name || googleUser.given_name || "No Name",
       emailId: {
@@ -814,6 +825,22 @@ export const updateProfile = async (req, res) => {
     }
 
     if (skillsArray.length) user.profile.skills = skillsArray;
+
+    // Referral reward: give recruiter +1 job post every 15 candidate profile completions
+    if (user.referredBy && !user.referralRewardGiven) {
+      const recruiter =
+        (await Recruiter.findById(user.referredBy)) ||
+        (await User.findById(user.referredBy));
+      if (recruiter && recruiter.role === "recruiter") {
+        recruiter.candidateReferralsCount = (recruiter.candidateReferralsCount || 0) + 1;
+        if (recruiter.candidateReferralsCount >= 15) {
+          recruiter.remainingJobPosts = (recruiter.remainingJobPosts || 0) + 1;
+          recruiter.candidateReferralsCount = 0;
+        }
+        await recruiter.save();
+        user.referralRewardGiven = true;
+      }
+    }
 
     // Mark as not first login after profile update
     user.isFirstLogin = false;
@@ -1369,6 +1396,8 @@ export const verifyRecruiterOtp = async (req, res) => {
           role: user.role,
           plan: user.plan || "FREE",
           subscriptionStatus: user.subscriptionStatus || "INACTIVE",
+          remainingJobPosts: user.remainingJobPosts || 0,
+          referralCode: user.referralCode || null,
         },
       });
   } catch (err) {
@@ -1379,7 +1408,9 @@ export const verifyRecruiterOtp = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.id).select("-password");
+    const user =
+      (await User.findById(req.id).select("-password")) ||
+      (await Recruiter.findById(req.id).select("-password"));
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
     return res.status(200).json({ success: true, user });
   } catch (error) {
