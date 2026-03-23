@@ -264,6 +264,7 @@ import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import CandidateDatabase from "./pages/recruiter/candidate/CandidateDatabase";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 import DeleteAccount from "./pages/recruiter/DeleteAccount";
+import InviteAndEarn from "./pages/recruiter/InviteAndEarn";
 import HowWeHire from "./components/HowWeHire";
 import TheFutureTechnology from "./components/TheFutureTechnology";
 import HiringInsights from "./pages/HiringInsights";
@@ -367,6 +368,7 @@ const appRouter = createBrowserRouter([
       { path: "candidate-plans", element: <CandidatePlans /> },
       { path: "your-plans", element: <CurrentPlans /> },
       { path: "delete-account", element: <DeleteAccount /> },
+      { path: "invite-and-earn", element: <InviteAndEarn /> },
       { path: "recruiter-list", element: <RecruiterList /> },
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
@@ -397,12 +399,10 @@ function App() {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user) {
-      axios
-        .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
-        .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
-        .catch(() => {});
-    }
+    axios
+      .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+      .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
+      .catch(() => {});
   }, []);
 
   // Cleanup service workers

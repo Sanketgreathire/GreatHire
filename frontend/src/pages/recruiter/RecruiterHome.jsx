@@ -9,6 +9,8 @@ import {
   FaTrophy,
 } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
+import { FiGift } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { addCompany } from "@/redux/companySlice";
 import { Helmet } from "react-helmet-async";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
@@ -18,6 +20,7 @@ const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
   const { jobPlan } = useSelector((state) => state.jobPlan);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [loading, setLoading] = useState(false);
@@ -88,41 +91,43 @@ const RecruiterHome = () => {
       description: "Jobs that you have posted.",
     },
     {
-      title: "Max Post Jobs",
+      title: "Remaining Job Posts",
       count: (() => {
         const plan = company?.plan || "FREE";
         const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
         const PAID_PLAN_FREE_JOBS = 2;
-        
+        const referralBonus = user?.remainingJobPosts ?? 0;
+
         if (plan === "FREE") {
           const limit = limits[plan] ?? 2;
           const used = company?.freeJobsPosted || 0;
-          return Math.max(0, limit - used);
+          return Math.max(0, limit - used) + referralBonus;
         } else {
-          // For paid plans: include free jobs in total limit
           const paidLimit = limits[plan] ?? 0;
           const totalLimit = paidLimit === Infinity ? Infinity : paidLimit + PAID_PLAN_FREE_JOBS;
-          
+
           if (totalLimit === Infinity) return "∞";
-          
+
           const paidUsed = company?.planJobsPostedThisMonth || 0;
           const freeUsed = company?.paidPlanFreeJobsPosted || 0;
           const totalUsed = paidUsed + freeUsed;
-          
-          return Math.max(0, totalLimit - totalUsed);
+
+          return Math.max(0, totalLimit - totalUsed) + referralBonus;
         }
       })(),
       icon: (
         <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2 transition-colors duration-300" />
       ),
-      description: (() => {
-        const plan = company?.plan || "FREE";
-        if (plan === "FREE") {
-          return "Number of jobs you can post.";
-        } else {
-          return "Number of jobs you can post.";
-        }
-      })(),
+      description: (
+        <span>
+          Number of jobs you can post.
+          {(user?.remainingJobPosts ?? 0) > 0 && (
+            <span className="block text-green-500 text-xs mt-0.5">
+              🎁 Includes referral bonus
+            </span>
+          )}
+        </span>
+      ),
     },
     {
       title: "Active Jobs",
@@ -165,6 +170,15 @@ const RecruiterHome = () => {
         <FaTrophy className="text-4xl text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 rounded-lg p-2 transition-colors duration-300" />
       ),
       description: "Percentage of shortlisted candidates.",
+    },
+    {
+      title: "Invite & Earn",
+      count: <FiGift className="text-3xl text-indigo-500" />,
+      icon: (
+        <FiGift className="text-4xl text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-2 transition-colors duration-300" />
+      ),
+      description: "Refer candidates and earn free job posts.",
+      link: "/recruiter/dashboard/invite-and-earn",
     },
     {
       title: "Credits For Database",
@@ -264,7 +278,10 @@ const RecruiterHome = () => {
             {cards.map((card, index) => (
               <div
                 key={index}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 p-6 hover:shadow-xl dark:hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500 dark:border-blue-400"
+                onClick={() => card.link && navigate(card.link)}
+                className={`bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 p-6 hover:shadow-xl dark:hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500 dark:border-blue-400 ${
+                  card.link ? "cursor-pointer" : ""
+                }`}
               >
                 <div className="mb-3">{card.icon}</div>
                 <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 transition-colors duration-300">

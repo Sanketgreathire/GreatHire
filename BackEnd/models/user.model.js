@@ -176,10 +176,11 @@ const userSchema = new mongoose.Schema(
    ✅ REFERRAL FIELDS – DO NOT REMOVE
    ============================ */
 userSchema.add({
-  referralCode:     { type: String, unique: true, sparse: true, default: null },
-  referredBy:       { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-  referralCount:    { type: Number, default: 0 },
-  isProfileBoosted: { type: Boolean, default: false },
+  referralCode:        { type: String, unique: true, sparse: true, default: null },
+  referredBy:          { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+  referralCount:       { type: Number, default: 0 },
+  isProfileBoosted:    { type: Boolean, default: false },
+  referralRewardGiven: { type: Boolean, default: false },
 });
 
 /* ============================

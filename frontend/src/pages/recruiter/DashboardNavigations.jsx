@@ -12,7 +12,7 @@ import { GiUpgrade } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { FiUsers } from "react-icons/fi";
+import { FiUsers, FiGift } from "react-icons/fi";
 import { CiMenuBurger } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
@@ -196,6 +196,18 @@ const DashboardNavigations = () => {
               <span>Settings</span>
             </h2>
             <ul className="flex flex-col gap-2">
+              <NavLink
+                to="/recruiter/dashboard/invite-and-earn"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FiGift size={25} className={iconClass(isActive)} />
+                    <span>Invite &amp; Earn</span>
+                  </>
+                )}
+              </NavLink>
               <NavLink
                 to="/recruiter/dashboard/recruiter-list"
                 className={navLinkClass}
