@@ -571,7 +571,13 @@ export const logout = async (req, res) => {
       ]);
 
       // Blacklist the token
-      await BlacklistToken.create({ token });
+      // await BlacklistToken.create({ token });
+      // ✅ Replace BlacklistToken.create({ token }) with this:
+      await BlacklistToken.updateOne(
+        { token },
+        { $setOnInsert: { token } },
+        { upsert: true }
+      );
     }
 
     return res
