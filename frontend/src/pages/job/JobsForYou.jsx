@@ -19,7 +19,7 @@ import { Helmet } from "react-helmet-async";
 
 const JobsForYou = ({ jobs = [] }) => {
   // Access functions from context
-  const { selectedJob, setSelectedJob, toggleBookmarkStatus } = useJobDetails();
+  const { selectedJob, setSelectedJob, toggleBookmarkStatus, addApplicationToJob } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -273,7 +273,10 @@ const JobsForYou = ({ jobs = [] }) => {
       );
       if (response.data.success) {
         const { applied, skipped } = response.data;
-        if (applied.length > 0) toast.success(`Applied to ${applied.length} job(s) successfully!`);
+        if (applied.length > 0) {
+          toast.success(`Applied to ${applied.length} job(s) successfully!`);
+          applied.forEach((jobId) => addApplicationToJob(jobId, { applicant: user._id }));
+        }
         if (skipped.length > 0) toast.error(`${skipped.length} job(s) skipped (already applied or inactive).`);
         setSelectedJobs(new Set());
       }
@@ -394,7 +397,7 @@ const JobsForYou = ({ jobs = [] }) => {
                     Clear
                   </button>
                   <button
-                    onClick={handleBulkApply}
+                    onClick={() => handleBulkApply()}
                     disabled={isBulkApplying}
                     className="text-xs px-3 py-1 bg-white text-blue-700 font-bold hover:bg-blue-50 rounded-md transition-colors disabled:opacity-60"
                   >

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { Share2 } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 
@@ -21,6 +22,25 @@ const ReferAndBoost = () => {
       toast.success("Referral link copied!");
       setTimeout(() => setCopied(false), 2500);
     });
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: "Join GreatHire!",
+      text: `Use my referral code ${referralCode} to sign up on GreatHire and kickstart your career! 🚀`,
+      url: referralLink,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if (err.name !== "AbortError") toast.error("Share failed.");
+      }
+    } else {
+      // Fallback: open WhatsApp
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + " " + referralLink)}`;
+      window.open(waUrl, "_blank");
+    }
   };
 
   const progressPercent = Math.min((referralCount / REFERRAL_GOAL) * 100, 100);
@@ -79,6 +99,13 @@ const ReferAndBoost = () => {
                 className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
               >
                 {copied ? "Copied ✓" : "Copy Link"}
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1.5 px-4 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+              >
+                <Share2 size={15} />
+                Share
               </button>
             </div>
           </div>
