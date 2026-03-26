@@ -55,15 +55,11 @@ export const createOrderForJobPlan = async (req, res) => {
       });
     }
 
-    // 🧹 Remove old subscription if exists
-    const existingSubscription = await JobSubscription.findOne({
+    // 🧹 Remove old Hold/Expired subscriptions (keep Active — it will be expired on payment success)
+    await JobSubscription.deleteMany({
       company: companyId,
       status: { $in: ["Hold", "Expired"] },
     });
-
-    if (existingSubscription) {
-      await JobSubscription.deleteOne({ _id: existingSubscription._id });
-    }
 
     // 💳 Create Razorpay order
     const order = await razorpayInstance.orders.create({
