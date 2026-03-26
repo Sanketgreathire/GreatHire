@@ -408,8 +408,14 @@ export const verifyPaymentForJobPlans = async (req, res) => {
         { new: true } // Return the updated document
       ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
 
-      // here remove expired plan of company
-      await JobSubscription.deleteOne({
+      // Expire the previous active plan (if any) before activating the new one
+      await JobSubscription.updateOne(
+        { company: companyId, status: "Active", razorpayOrderId: { $ne: razorpay_order_id } },
+        { $set: { status: "Expired" } }
+      );
+
+      // Remove all expired plans for this company
+      await JobSubscription.deleteMany({
         company: companyId,
         status: "Expired",
       });
@@ -421,17 +427,20 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           .status(404)
           .json({ success: false, message: "Company not found" });
       }
-      
-      // Set credits (not add) - replace old credits with new plan credits
-      company.creditedForCandidates = creditsForCandidates;
-      company.creditedForJobs = creditsForJobs;
-      company.maxJobPosts = "Unlimited"; // Set to Unlimited for paid plans
-      company.hasSubscription = true; // Mark that company has active subscription
-      
-      // Initialize paid plan free jobs tracking
+
+      // Carry forward leftover credits from the previous plan
+      const leftoverJobs = Math.max(0, company.creditedForJobs || 0);
+      const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
+
+      company.creditedForJobs = creditsForJobs + leftoverJobs;
+      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.maxJobPosts = "Unlimited";
+      company.hasSubscription = true;
+
+      // Reset paid plan free jobs tracking for the new plan
       company.paidPlanFreeJobsPosted = 0;
       company.paidPlanFreeJobsRenewal = new Date();
-      
+
       await company.save();
 
       // Determine plan type based on job count
