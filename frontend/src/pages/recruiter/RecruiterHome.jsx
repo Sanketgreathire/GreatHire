@@ -95,7 +95,7 @@ const RecruiterHome = () => {
       count: (() => {
         const plan = company?.plan || "FREE";
         const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-        const PAID_PLAN_FREE_JOBS = 2;
+        // const PAID_PLAN_FREE_JOBS = 2;
         const referralBonus = user?.remainingJobPosts ?? 0;
 
         if (plan === "FREE") {
@@ -104,15 +104,9 @@ const RecruiterHome = () => {
           return Math.max(0, limit - used) + referralBonus;
         } else {
           const paidLimit = limits[plan] ?? 0;
-          const totalLimit = paidLimit === Infinity ? Infinity : paidLimit + PAID_PLAN_FREE_JOBS;
-
-          if (totalLimit === Infinity) return "∞";
-
+          if (paidLimit === Infinity) return "∞";
           const paidUsed = company?.planJobsPostedThisMonth || 0;
-          const freeUsed = company?.paidPlanFreeJobsPosted || 0;
-          const totalUsed = paidUsed + freeUsed;
-
-          return Math.max(0, totalLimit - totalUsed) + referralBonus;
+          return Math.max(0, paidLimit - paidUsed) + referralBonus;
         }
       })(),
       icon: (
@@ -235,7 +229,7 @@ const RecruiterHome = () => {
                     {(() => {
                       const plan = company?.plan || "FREE";
                       const jobsPosted = plan === "FREE" ? (company?.freeJobsPosted || 0) : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
-                      
+
                       if (jobsPosted === 0) {
                         return "Post your first job now. It will be reviewed by admin and published upon approval.";
                       } else {
@@ -262,10 +256,10 @@ const RecruiterHome = () => {
                 Here's an overview of your recruitment activity.
               </p>
             </div>
-            
+
             {/* Badge on the right */}
             <div className="flex items-start">
-              <VerifiedRecruiterBadges 
+              <VerifiedRecruiterBadges
                 plan={recruiterPlan}
                 status={jobPlan?.status}
                 expiryDate={jobPlan?.expiryDate}
@@ -279,9 +273,8 @@ const RecruiterHome = () => {
               <div
                 key={index}
                 onClick={() => card.link && navigate(card.link)}
-                className={`bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 p-6 hover:shadow-xl dark:hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500 dark:border-blue-400 ${
-                  card.link ? "cursor-pointer" : ""
-                }`}
+                className={`bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/50 p-6 hover:shadow-xl dark:hover:shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500 dark:border-blue-400 ${card.link ? "cursor-pointer" : ""
+                  }`}
               >
                 <div className="mb-3">{card.icon}</div>
                 <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 transition-colors duration-300">

@@ -115,9 +115,8 @@ export const sendVerificationStatus = async (req, res) => {
     );
 
     // Prepare the email notification content
-    const subject = `Company Status Update: ${
-      isActive ? "Active" : "Inactive"
-    }`;
+    const subject = `Company Status Update: ${isActive ? "Active" : "Inactive"
+      }`;
     const message = `
 <html>
   <head>
@@ -174,11 +173,10 @@ export const sendVerificationStatus = async (req, res) => {
           We hope you are doing well. We are writing to inform you that the verification status of your company has been updated to: 
           <strong>${isActive ? "Active" : "Inactive"}</strong>.
         </p>
-        ${
-          isActive
-            ? `<p>Great news! With your account now active, all your recruiters and job postings have been successfully activated. Your company is now fully visible on our platform, allowing you to enjoy our comprehensive recruitment services.</p>`
-            : `<p>Please note that since your company status has been set to Inactive, all associated recruiters and job postings have been temporarily deactivated. If you have any questions or need further assistance, our support team is here to help.</p>`
-        }
+        ${isActive
+        ? `<p>Great news! With your account now active, all your recruiters and job postings have been successfully activated. Your company is now fully visible on our platform, allowing you to enjoy our comprehensive recruitment services.</p>`
+        : `<p>Please note that since your company status has been set to Inactive, all associated recruiters and job postings have been temporarily deactivated. If you have any questions or need further assistance, our support team is here to help.</p>`
+      }
         <p>Thank you for choosing <strong><span class="great">Great</span><span class="hire">Hire</span></strong>. We look forward to continuing to support your hiring success.</p>
       </div>
       <div class="footer">
@@ -191,7 +189,7 @@ export const sendVerificationStatus = async (req, res) => {
 `;
 
     const mailOptions = {
-      from:  `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
       to: `${email}, ${adminEmail}`,
       subject: subject,
       html: message,
@@ -428,18 +426,43 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           .json({ success: false, message: "Company not found" });
       }
 
-      // Carry forward leftover credits from the previous plan
-      const leftoverJobs = Math.max(0, company.creditedForJobs || 0);
+      // Carry forward leftover job slots from the previous paid plan
+      const PLAN_LIMITS = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+      // const PAID_PLAN_FREE_JOBS = 2;
+      const prevPlan = company.plan || "FREE";
+
+      let carryoverJobs = 0;
+      if (prevPlan === "FREE") {
+        // Carry forward unused free jobs when upgrading from FREE plan
+        const freeLimit = PLAN_LIMITS["FREE"] ?? 2;
+        const freeUsed = company.freeJobsPosted || 0;
+        carryoverJobs = Math.max(0, freeLimit - freeUsed);
+      } else if (company.hasSubscription) {
+        // Carry forward unused paid slots when upgrading between paid plans
+        const prevLimit = PLAN_LIMITS[prevPlan] ?? 0;
+        if (prevLimit !== Infinity) {
+          // const paidUsed = company.planJobsPostedThisMonth || 0;
+          // carryoverJobs = Math.max(0, prevLimit - Math.max(0, paidUsed));
+          // planJobsPostedThisMonth can be negative (carryover offset from previous plan)
+          // Use it directly so carried-over slots are preserved
+          const paidUsed = company.planJobsPostedThisMonth || 0;
+          carryoverJobs = Math.max(0, prevLimit - paidUsed);
+        }
+      }
+
+      // Carry forward leftover candidate credits
       const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
 
-      company.creditedForJobs = creditsForJobs + leftoverJobs;
+      company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
       company.maxJobPosts = "Unlimited";
       company.hasSubscription = true;
 
-      // Reset paid plan free jobs tracking for the new plan
-      company.paidPlanFreeJobsPosted = 0;
-      company.paidPlanFreeJobsRenewal = new Date();
+      // Apply carryover: start new plan with negative usage offset so leftover slots are available
+      // company.paidPlanFreeJobsPosted = 0;
+      // company.paidPlanFreeJobsRenewal = new Date();
+      // Offset planJobsPostedThisMonth so carryover slots are effectively added to the new plan
+      company.planJobsPostedThisMonth = -carryoverJobs;
 
       await company.save();
 
@@ -463,9 +486,8 @@ export const verifyPaymentForJobPlans = async (req, res) => {
         }
       );
 
-      // Update company plan and reset monthly counter
+      // Update company plan and set monthly counter start (preserve carryover offset)
       company.plan = planType;
-      company.planJobsPostedThisMonth = 0;
       company.planMonthStart = new Date();
       await company.save();
 
