@@ -147,14 +147,14 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
     if (company) {
       console.log(`  ✅ Resetting company ${company.companyName} to free plan`);
       // Reset to free plan credits after paid plan expires
-      company.creditedForJobs = 1000; // 2 free job posts
-      company.creditedForCandidates = 5; // 5 free candidate views
+      company.creditedForJobs = 1000;
+      company.creditedForCandidates = 5;
       company.maxJobPosts = 0;
-      company.lastFreePlanRenewal = new Date(); // Reset renewal date
-      company.hasSubscription = false; // Mark as no longer having subscription
-      company.plan = "FREE"; // Reset plan to FREE
-      
-      // Reset paid plan free jobs tracking
+      company.lastFreePlanRenewal = new Date();
+      company.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      company.hasSubscription = false;
+      company.plan = "FREE";
+      company.freeJobsPosted = 0;
       company.paidPlanFreeJobsPosted = 0;
       company.paidPlanFreeJobsRenewal = null;
       company.planJobsPostedThisMonth = 0;

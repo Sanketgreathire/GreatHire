@@ -457,6 +457,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
       company.maxJobPosts = "Unlimited";
       company.hasSubscription = true;
+      company.freePlanExpiry = null; // No longer on FREE plan — expiry not applicable
 
       // Apply carryover: start new plan with negative usage offset so leftover slots are available
       // company.paidPlanFreeJobsPosted = 0;
