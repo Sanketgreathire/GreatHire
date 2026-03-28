@@ -106,7 +106,8 @@ const RecruiterHome = () => {
           const paidLimit = limits[plan] ?? 0;
           if (paidLimit === Infinity) return "∞";
           const paidUsed = company?.planJobsPostedThisMonth || 0;
-          return Math.max(0, paidLimit - paidUsed) + referralBonus;
+          const carryover = paidUsed < 0 ? Math.abs(paidUsed) : 0;
+          return Math.max(0, paidLimit - Math.max(0, paidUsed)) + carryover + referralBonus;
         }
       })(),
       icon: (

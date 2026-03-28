@@ -97,43 +97,37 @@ export const postJob = [
 
       // --- Plan-specific limits (only reached after verification) ---
       console.log("Remaining before post:", recruiter?.remainingJobPosts);
+
+      // ── Layer 0: Referral bonus slots (bypass all limits) ──
       if (recruiter && recruiter.remainingJobPosts > 0) {
-        // Consume one referral-earned job post slot (bypasses plan limits)
         recruiter.remainingJobPosts -= 1;
         await recruiter.save();
       } else if (companyPlan === "FREE") {
-        // Block if free limit (2 jobs/month) reached
+        // ── FREE plan: check against freeJobsPosted limit ──
         if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
           return res.status(400).json({
             success: false,
-            message: "You have reached the Free plan limit of 2 jobs per month. Please upgrade your plan.",
+            message: "You have used your 2 free monthly job posts. Please upgrade your plan to post more jobs.",
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
       } else {
-        // For paid plans: check both paid plan limit AND free job posts
+        // ── Paid plan: check planJobsPostedThisMonth against plan limit ──
         const now = new Date();
         const monthStart = company.planMonthStart ? new Date(company.planMonthStart) : null;
-        const isSameMonth = monthStart &&
+        const isPaidSameMonth = monthStart &&
           monthStart.getMonth() === now.getMonth() &&
           monthStart.getFullYear() === now.getFullYear();
-
-        // Reset monthly counters if new month
-        if (!isSameMonth) {
+        if (!isPaidSameMonth) {
           company.planJobsPostedThisMonth = 0;
           company.planMonthStart = now;
-          company.paidPlanFreeJobsPosted = 0; // Reset free jobs for paid plans
-          company.paidPlanFreeJobsRenewal = now;
         }
 
         const paidPlanLimit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
-        const totalJobsPosted = company.planJobsPostedThisMonth + company.paidPlanFreeJobsPosted;
-        const totalAllowedJobs = paidPlanLimit === Infinity ? Infinity : paidPlanLimit + PAID_PLAN_FREE_JOBS;
-
-        if (totalAllowedJobs !== Infinity && totalJobsPosted >= totalAllowedJobs) {
+        if (paidPlanLimit !== Infinity && company.planJobsPostedThisMonth >= paidPlanLimit) {
           return res.status(400).json({
             success: false,
-            message: `You have reached the ${companyPlan} plan limit of ${paidPlanLimit === Infinity ? 'unlimited' : paidPlanLimit} paid jobs + ${PAID_PLAN_FREE_JOBS} free jobs (${totalAllowedJobs} total). Please upgrade your plan.`,
+            message: `You have used all ${paidPlanLimit} job posts for this month. Please upgrade your plan.`,
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
@@ -172,12 +166,7 @@ export const postJob = [
           company.hasUsedFreePlan = true;
         }
       } else {
-        // For paid plans: consume free jobs first, then paid jobs
-        if (company.paidPlanFreeJobsPosted < PAID_PLAN_FREE_JOBS) {
-          company.paidPlanFreeJobsPosted += 1;
-        } else {
-          company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
-        }
+        company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
       }
       await company.save();
 

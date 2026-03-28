@@ -80,6 +80,10 @@ const companySchema = new mongoose.Schema(
       type: Date,
       default: Date.now, // Track when free plan was last renewed
     },
+    freePlanExpiry: {
+      type: Date,
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from creation
+    },
     freeJobsPosted: {
       type: Number,
       default: 0, // Track free jobs posted before/after verification
