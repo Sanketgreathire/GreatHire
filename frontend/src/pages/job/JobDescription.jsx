@@ -111,7 +111,7 @@ const JobDescription = () => {
       toast.error("Please signup or login to apply");
 
       setTimeout(() => {
-        navigate("/signup", { state: { from: `/job/${jobId}` } });
+        navigate("/jobseeker-login", { state: { from: `/jobs/${jobId}` } });
       }, 600);
 
       return;
@@ -334,7 +334,7 @@ const JobDescription = () => {
               </button>
               <button
                 onClick={handleQuestionsSubmit}
-                className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
+                className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
               >
                 Submit & Apply
               </button>
