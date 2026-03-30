@@ -14,8 +14,9 @@ const ProtectedUserRoute = ({ children }) => {
     // Delay to allow Redux persist to rehydrate
     const timer = setTimeout(() => {
       if (!user) {
-        navigate("/login", { state: { from: location.pathname }, replace: true });
-      } else if (user?.role !== "student") {
+        // navigate("/login", { state: { from: location.pathname }, replace: true });
+        navigate("/jobseeker-login", { state: { from: location.pathname }, replace: true });
+      } else if (user?.role !== "student" && user?.role !== "candidate") {
         navigate("/page/not/found");
       }
       setIsChecking(false);

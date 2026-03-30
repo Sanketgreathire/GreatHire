@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import axios from "axios";
@@ -16,6 +16,7 @@ const formatTime = (seconds) => {
 const JobseekerLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
@@ -159,18 +160,19 @@ const JobseekerLogin = () => {
         }
 
         const user = response.data.user;
+        const from = location.state?.from; 
         if (user.role === "student" || user.role === "candidate") {
           if (user.isFirstLogin) {
             navigate("/profile");
           } else {
-            navigate("/");
+            navigate(from || "/");
           }
         } else if (user.role === "recruiter") {
           navigate("/recruiter/dashboard");
         } else if (user.role === "admin") {
           navigate("/admin/dashboard");
         } else {
-          navigate("/");
+          navigate(from || "/");
         }
       } else {
         toast.error(response.data.message);

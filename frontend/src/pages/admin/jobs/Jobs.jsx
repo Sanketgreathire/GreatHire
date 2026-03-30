@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
@@ -104,6 +104,15 @@ const Jobs = () => {
     } finally {
       dsetLoading((prev) => ({ ...prev, [jobId]: false }));
     }
+  };
+
+  const copyJobLink = (jobId) => {
+    const url = `${window.location.origin}/jobs/${jobId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success("Job link copied!");
+    }).catch(() => {
+      toast.error("Failed to copy link.");
+    });
   };
 
   const fetchJobList = async () => {
@@ -328,8 +337,8 @@ const Jobs = () => {
                       <TableCell>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${job.isActive
-                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
                             }`}
                         >
                           {job.isActive ? "Active" : "Deactive"}
@@ -344,6 +353,13 @@ const Jobs = () => {
                             onClick={() =>
                               navigate(`/admin/job/details/${job._id}`)
                             }
+                          />
+                          {/* Copy Job link */}
+                          <Link
+                            className="text-gray-500 dark:text-gray-400 cursor-pointer hover:scale-110 transition"
+                            size={20}
+                            onClick={() => copyJobLink(job._id)}
+                            title="Copy job link"
                           />
 
                           {loading[job._id] ? (
