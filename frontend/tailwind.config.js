@@ -7,6 +7,8 @@ export default {
     extend: {
       fontFamily: {
         geometric: ["Poppins", "sans-serif"],
+        syne: ["Syne", "sans-serif"],
+        dm: ["DM Sans", "sans-serif"],
       },
 
       borderRadius: {
@@ -53,6 +55,22 @@ export default {
       },
 
       keyframes: {
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        fadeSlideUp: {
+          "0%": { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
         slide: {
           "0%": { opacity: "0", transform: "translateX(40px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
@@ -72,6 +90,10 @@ export default {
       },
 
       animation: {
+        "spin-linear": "spin 1s linear infinite",
+        "fade-up": "fadeSlideUp .5s cubic-bezier(.22,1,.36,1) both",
+        "fade-fast": "fadeSlideUp .35s cubic-bezier(.22,1,.36,1) both",
+        float: "float 3.5s ease-in-out infinite",
         slide: "slide 0.5s ease-out",
         "slide-in-right": "slideInRight 0.5s ease-out",
         "wave-bounce": "wave 1s infinite ease-in-out",

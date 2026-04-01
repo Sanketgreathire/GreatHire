@@ -236,6 +236,7 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import About from "./pages/services/About";
+import ResumeAnalyzer from "./components/ResumeAnalyzer";
 
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
@@ -317,6 +318,7 @@ const appRouter = createBrowserRouter([
   {path:"/CareerAdvice/:id", element :<CareerAdvice/>},
   {path :"/TheFuture", element:<TheFuture/>},
   {path :"/TheFuture/:id", element:<TheFuture/>},
+  {path :"/ResumeAnalyzer", element:<ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
 
   
 
