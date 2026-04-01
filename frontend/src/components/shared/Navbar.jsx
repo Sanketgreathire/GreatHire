@@ -138,6 +138,7 @@ const Navbar = () => {
     ? [
         // AFTER LOGIN → only Jobs (students only)
         ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+        ...(user && !isRecruiter? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
       ]
@@ -165,6 +166,7 @@ const Navbar = () => {
 
   // Show Jobs only to logged-in job seekers
   ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+  ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
 
   // Recruiter Plans for:  1. Not logged in, 2. Logged in recruiter
   ...(!user || isRecruiter
