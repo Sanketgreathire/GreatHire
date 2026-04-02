@@ -295,6 +295,13 @@ import usePageTracking from "./usePageTracking";
 import axios from "axios";
 import { USER_API_END_POINT } from "./utils/ApiEndPoint";
 
+
+// Campus 
+import CampusPlacementDashboard from '@/components/Campus/campusDashboard';
+import CollegePlacementDashboard from '@/components/Campus/collegePlacementDashboard';
+import collegePlacement from '@/components/Campus/collegePlacementDashboard';
+
+
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/Main_blog_page", element: <Blogs /> },
@@ -388,6 +395,8 @@ const appRouter = createBrowserRouter([
   { path: "/digitalmarketer/login", element: <DigitalMarketerLogin /> },
   { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/*", element: <AdminLayout /> },
+  { path: "/campus-dashboard", element: <CampusPlacementDashboard /> },
+  { path: "/college-placement", element: <CollegePlacementDashboard /> },
   { path: "*", element: <PageNotFound /> }
 ]);
 
