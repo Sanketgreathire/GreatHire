@@ -1,490 +1,633 @@
 import { useState, useMemo } from "react";
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-const candidates = [
+const CANDIDATES = [
   {
-    id: 1, name: "Aditya Sharma", college: "IIT Bombay", stream: "Computer Science",
-    year: "2024", cgpa: 8.9, city: "Mumbai", state: "Maharashtra", type: "Both",
-    status: "Placed", gender: "M", skills: ["Python", "React", "ML", "SQL"],
-    apps: [
-      { company: "Google", role: "SDE Intern", type: "Internship", location: "Bengaluru", date: "Jan 2024", status: "Placed", package: "₹80K/mo", via: "Campus Drive" },
-      { company: "Microsoft", role: "Software Engineer", type: "Job", location: "Hyderabad", date: "Mar 2024", status: "Placed", package: "₹45 LPA", via: "Campus Drive" },
+    id: 1,
+    name: "Aarav Sharma",
+    photo: "AS",
+    email: "aarav.sharma@email.com",
+    phone: "+91 98765 43210",
+    college: "IIT Bombay",
+    collegeType: "IIT",
+    stream: "Computer Science & Engineering",
+    year: "2024",
+    cgpa: 9.2,
+    city: "Mumbai",
+    state: "Maharashtra",
+    skills: ["React", "Node.js", "Python", "ML", "AWS"],
+    status: "Placed",
+    type: "Job",
+    applications: [
+      {
+        company: "Google",
+        role: "Software Engineer",
+        location: "Bangalore",
+        package: "45 LPA",
+        channel: "Campus Drive",
+        status: "Selected",
+        date: "2024-02-15",
+        round: "Completed",
+      },
+      {
+        company: "Microsoft",
+        role: "SDE-2",
+        location: "Hyderabad",
+        package: "38 LPA",
+        channel: "Campus Drive",
+        status: "Offered",
+        date: "2024-01-20",
+        round: "Completed",
+      },
     ],
+    interviews: [
+      { company: "Google", date: "2024-02-10", interviewer: "John D.", feedback: "Excellent", round: "Final" },
+    ],
+    achievements: ["ACM ICPC Finalist", "Smart India Hackathon Winner"],
+    linkedin: "linkedin.com/in/aarav-sharma",
   },
   {
-    id: 2, name: "Priya Menon", college: "NIT Trichy", stream: "Electronics & Comm.",
-    year: "2024", cgpa: 9.1, city: "Trichy", state: "Tamil Nadu", type: "Job",
-    status: "Shortlisted", gender: "F", skills: ["VLSI", "Embedded C", "MATLAB"],
-    apps: [
-      { company: "Texas Instruments", role: "Analog Design Engineer", type: "Job", location: "Bengaluru", date: "Feb 2024", status: "Shortlisted", package: "₹18 LPA", via: "College Placement Cell" },
-      { company: "Qualcomm", role: "Chip Design Engineer", type: "Job", location: "Hyderabad", date: "Mar 2024", status: "Pending", package: "₹22 LPA", via: "College Placement Cell" },
+    id: 2,
+    name: "Priya Patel",
+    photo: "PP",
+    email: "priya.patel@email.com",
+    phone: "+91 87654 32109",
+    college: "NIT Trichy",
+    collegeType: "NIT",
+    stream: "Electronics & Communication",
+    year: "2024",
+    cgpa: 8.7,
+    city: "Trichy",
+    state: "Tamil Nadu",
+    skills: ["VLSI", "Embedded C", "Python", "MATLAB", "IoT"],
+    status: "Shortlisted",
+    type: "Both",
+    applications: [
+      {
+        company: "Texas Instruments",
+        role: "Chip Design Intern",
+        location: "Bangalore",
+        package: "50K/month",
+        channel: "Alumni Referral",
+        status: "Shortlisted",
+        date: "2024-03-01",
+        round: "Round 2",
+      },
+      {
+        company: "Qualcomm",
+        role: "VLSI Engineer",
+        location: "Hyderabad",
+        package: "28 LPA",
+        channel: "Campus Drive",
+        status: "Under Review",
+        date: "2024-02-20",
+        round: "Round 1",
+      },
     ],
+    interviews: [],
+    achievements: ["IEEE Paper Published", "Best Project Award"],
+    linkedin: "linkedin.com/in/priya-patel",
   },
   {
-    id: 3, name: "Rahul Verma", college: "BITS Pilani", stream: "Mechanical",
-    year: "2023", cgpa: 7.6, city: "Pilani", state: "Rajasthan", type: "Internship",
-    status: "Placed", gender: "M", skills: ["AutoCAD", "SolidWorks", "ANSYS"],
-    apps: [
-      { company: "Tata Motors", role: "Product Design Intern", type: "Internship", location: "Pune", date: "Jun 2023", status: "Placed", package: "₹30K/mo", via: "Alumni Network" },
+    id: 3,
+    name: "Rohit Verma",
+    photo: "RV",
+    email: "rohit.verma@email.com",
+    phone: "+91 76543 21098",
+    college: "BITS Pilani",
+    collegeType: "BITS",
+    stream: "Mechanical Engineering",
+    year: "2023",
+    cgpa: 7.9,
+    city: "Pilani",
+    state: "Rajasthan",
+    skills: ["AutoCAD", "SolidWorks", "ANSYS", "Python", "Six Sigma"],
+    status: "Placed",
+    type: "Job",
+    applications: [
+      {
+        company: "Tata Motors",
+        role: "Design Engineer",
+        location: "Pune",
+        package: "12 LPA",
+        channel: "Job Portal",
+        status: "Selected",
+        date: "2023-11-10",
+        round: "Completed",
+      },
     ],
+    interviews: [
+      { company: "Tata Motors", date: "2023-11-05", interviewer: "Ravi K.", feedback: "Good", round: "HR" },
+    ],
+    achievements: ["SAE Baja Participant", "Patent Filed"],
+    linkedin: "linkedin.com/in/rohit-verma",
   },
   {
-    id: 4, name: "Sneha Kulkarni", college: "Pune University", stream: "MBA – Marketing",
-    year: "2024", cgpa: 8.2, city: "Pune", state: "Maharashtra", type: "Both",
-    status: "Pending", gender: "F", skills: ["Marketing", "Analytics", "Excel", "CRM"],
-    apps: [
-      { company: "HUL", role: "Brand Manager Trainee", type: "Job", location: "Mumbai", date: "Mar 2024", status: "Pending", package: "₹12 LPA", via: "Campus Drive" },
-      { company: "Flipkart", role: "Marketing Intern", type: "Internship", location: "Remote", date: "Jan 2024", status: "Placed", package: "₹40K/mo", via: "Online Portal" },
+    id: 4,
+    name: "Sneha Iyer",
+    photo: "SI",
+    email: "sneha.iyer@email.com",
+    phone: "+91 65432 10987",
+    college: "VIT Vellore",
+    collegeType: "Private",
+    stream: "Data Science",
+    year: "2024",
+    cgpa: 9.5,
+    city: "Vellore",
+    state: "Tamil Nadu",
+    skills: ["Python", "TensorFlow", "SQL", "Tableau", "Spark"],
+    status: "Placed",
+    type: "Both",
+    applications: [
+      {
+        company: "Amazon",
+        role: "Data Scientist",
+        location: "Bangalore",
+        package: "32 LPA",
+        channel: "Campus Drive",
+        status: "Selected",
+        date: "2024-01-15",
+        round: "Completed",
+      },
+      {
+        company: "Flipkart",
+        role: "Data Analyst Intern",
+        location: "Bangalore",
+        package: "40K/month",
+        channel: "Online Test",
+        status: "Completed",
+        date: "2023-06-01",
+        round: "Completed",
+      },
     ],
+    interviews: [],
+    achievements: ["Kaggle Expert", "Google WE Scholar"],
+    linkedin: "linkedin.com/in/sneha-iyer",
   },
   {
-    id: 5, name: "Karthik Raja", college: "VIT Vellore", stream: "Information Technology",
-    year: "2024", cgpa: 8.5, city: "Vellore", state: "Tamil Nadu", type: "Job",
-    status: "Placed", gender: "M", skills: ["Java", "Spring Boot", "AWS", "Docker"],
-    apps: [
-      { company: "Infosys", role: "System Engineer", type: "Job", location: "Chennai", date: "Feb 2024", status: "Placed", package: "₹6.5 LPA", via: "Mass Recruitment" },
-      { company: "Zoho", role: "Software Developer", type: "Job", location: "Chennai", date: "Jan 2024", status: "Rejected", package: "₹8 LPA", via: "Campus Drive" },
+    id: 5,
+    name: "Karan Mehta",
+    photo: "KM",
+    email: "karan.mehta@email.com",
+    phone: "+91 54321 09876",
+    college: "DTU Delhi",
+    collegeType: "State",
+    stream: "Information Technology",
+    year: "2025",
+    cgpa: 8.1,
+    city: "Delhi",
+    state: "Delhi",
+    skills: ["Java", "Spring Boot", "Microservices", "Docker", "Kubernetes"],
+    status: "Applied",
+    type: "Internship",
+    applications: [
+      {
+        company: "Infosys",
+        role: "System Engineer Intern",
+        location: "Mysore",
+        package: "30K/month",
+        channel: "Campus Drive",
+        status: "Applied",
+        date: "2024-03-10",
+        round: "Pending",
+      },
+      {
+        company: "Wipro",
+        role: "Turbo Intern",
+        location: "Bangalore",
+        package: "25K/month",
+        channel: "Job Portal",
+        status: "Applied",
+        date: "2024-03-08",
+        round: "Pending",
+      },
     ],
+    interviews: [],
+    achievements: ["Open Source Contributor", "Hackathon Top 10"],
+    linkedin: "linkedin.com/in/karan-mehta",
   },
   {
-    id: 6, name: "Divya Nair", college: "IIM Ahmedabad", stream: "MBA – Finance",
-    year: "2024", cgpa: 9.4, city: "Ahmedabad", state: "Gujarat", type: "Both",
-    status: "Placed", gender: "F", skills: ["Financial Modelling", "Valuation", "Python", "Excel"],
-    apps: [
-      { company: "Goldman Sachs", role: "IB Analyst", type: "Job", location: "Mumbai", date: "Feb 2024", status: "Placed", package: "₹32 LPA", via: "Campus Placement" },
-      { company: "McKinsey", role: "Business Analyst Intern", type: "Internship", location: "Mumbai", date: "Jun 2023", status: "Placed", package: "₹1.8L/mo", via: "Campus Placement" },
+    id: 6,
+    name: "Divya Nair",
+    photo: "DN",
+    email: "divya.nair@email.com",
+    phone: "+91 43210 98765",
+    college: "IIT Madras",
+    collegeType: "IIT",
+    stream: "Chemical Engineering",
+    year: "2024",
+    cgpa: 8.9,
+    city: "Chennai",
+    state: "Tamil Nadu",
+    skills: ["ASPEN", "MATLAB", "Python", "Process Simulation", "Six Sigma"],
+    status: "Shortlisted",
+    type: "Job",
+    applications: [
+      {
+        company: "Reliance Industries",
+        role: "Process Engineer",
+        location: "Mumbai",
+        package: "18 LPA",
+        channel: "Campus Drive",
+        status: "Shortlisted",
+        date: "2024-02-28",
+        round: "Round 3",
+      },
     ],
-  },
-  {
-    id: 7, name: "Arjun Patel", college: "Gujarat Tech University", stream: "Civil Engineering",
-    year: "2023", cgpa: 7.2, city: "Ahmedabad", state: "Gujarat", type: "Internship",
-    status: "Rejected", gender: "M", skills: ["AutoCAD", "SAP 2000", "Primavera"],
-    apps: [
-      { company: "L&T Construction", role: "Site Intern", type: "Internship", location: "Mumbai", date: "May 2023", status: "Rejected", package: "₹15K/mo", via: "Campus Drive" },
+    interviews: [
+      { company: "Reliance", date: "2024-03-05", interviewer: "Suresh M.", feedback: "Very Good", round: "Technical" },
     ],
-  },
-  {
-    id: 8, name: "Meera Iyer", college: "Delhi University", stream: "Economics (Hons)",
-    year: "2024", cgpa: 8.7, city: "Delhi", state: "Delhi", type: "Job",
-    status: "Shortlisted", gender: "F", skills: ["Econometrics", "R", "STATA", "Policy Analysis"],
-    apps: [
-      { company: "RBI", role: "Grade B Officer", type: "Job", location: "Mumbai", date: "Mar 2024", status: "Shortlisted", package: "₹14 LPA", via: "Government Exam" },
-      { company: "NITI Aayog", role: "Research Analyst", type: "Job", location: "Delhi", date: "Feb 2024", status: "Pending", package: "₹10 LPA", via: "Direct Application" },
-    ],
+    achievements: ["Best Thesis Award", "CHEMCON Presenter"],
+    linkedin: "linkedin.com/in/divya-nair",
   },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-const initials = (name) =>
-  name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+const STATUS_CONFIG = {
+  Placed: { bg: "bg-emerald-500/20", text: "text-emerald-300", dot: "bg-emerald-400" },
+  Shortlisted: { bg: "bg-amber-500/20", text: "text-amber-300", dot: "bg-amber-400" },
+  Applied: { bg: "bg-sky-500/20", text: "text-sky-300", dot: "bg-sky-400" },
+  "Under Review": { bg: "bg-violet-500/20", text: "text-violet-300", dot: "bg-violet-400" },
+};
 
-const avatarColors = [
-  { bg: "bg-blue-100", text: "text-blue-800" },
-  { bg: "bg-emerald-100", text: "text-emerald-800" },
-  { bg: "bg-violet-100", text: "text-violet-800" },
-  { bg: "bg-amber-100", text: "text-amber-800" },
-  { bg: "bg-rose-100", text: "text-rose-800" },
-  { bg: "bg-teal-100", text: "text-teal-800" },
-  { bg: "bg-indigo-100", text: "text-indigo-800" },
-  { bg: "bg-orange-100", text: "text-orange-800" },
+const APP_STATUS = {
+  Selected: "bg-emerald-500/20 text-emerald-300",
+  Offered: "bg-teal-500/20 text-teal-300",
+  Shortlisted: "bg-amber-500/20 text-amber-300",
+  "Under Review": "bg-violet-500/20 text-violet-300",
+  Applied: "bg-sky-500/20 text-sky-300",
+  Completed: "bg-slate-500/20 text-slate-300",
+};
+
+const COLLEGE_COLORS = {
+  IIT: "bg-orange-500/20 text-orange-300 border-orange-500/30",
+  NIT: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+  BITS: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+  Private: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+  State: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+};
+
+const AVATAR_COLORS = [
+  "from-violet-500 to-purple-600",
+  "from-rose-500 to-pink-600",
+  "from-sky-500 to-blue-600",
+  "from-emerald-500 to-teal-600",
+  "from-amber-500 to-orange-600",
+  "from-fuchsia-500 to-violet-600",
 ];
 
-const statusConfig = {
-  Placed:      { pill: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200", dot: "bg-emerald-500" },
-  Shortlisted: { pill: "bg-violet-50 text-violet-700 ring-1 ring-violet-200",   dot: "bg-violet-500" },
-  Pending:     { pill: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",       dot: "bg-amber-500" },
-  Rejected:    { pill: "bg-rose-50 text-rose-700 ring-1 ring-rose-200",          dot: "bg-rose-500" },
-};
-
-const typeConfig = {
-  Job:        "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
-  Internship: "bg-teal-50 text-teal-700 ring-1 ring-teal-200",
-  Both:       "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
-};
-
-// ── Sub-components ────────────────────────────────────────────────────────────
-function Avatar({ name, index, size = "md" }) {
-  const c = avatarColors[index % avatarColors.length];
-  const sz = size === "lg" ? "w-14 h-14 text-lg" : "w-9 h-9 text-xs";
+function Avatar({ initials, size = "md", index = 0 }) {
+  const gradient = AVATAR_COLORS[index % AVATAR_COLORS.length];
+  const sizes = { sm: "w-8 h-8 text-xs", md: "w-10 h-10 text-sm", lg: "w-16 h-16 text-xl" };
   return (
-    <div className={`${sz} ${c.bg} ${c.text} rounded-full flex items-center justify-center font-semibold flex-shrink-0`}>
-      {initials(name)}
+    <div className={`${sizes[size]} rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center font-bold text-white flex-shrink-0`}>
+      {initials}
     </div>
   );
 }
 
-function Pill({ label, className }) {
+function StatCard({ label, value, sub, color = "violet" }) {
+  const colors = {
+    violet: "from-violet-500/20 to-purple-500/10 border-violet-500/30 text-violet-300",
+    emerald: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-300",
+    sky: "from-sky-500/20 to-blue-500/10 border-sky-500/30 text-sky-300",
+    amber: "from-amber-500/20 to-orange-500/10 border-amber-500/30 text-amber-300",
+    rose: "from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-300",
+    fuchsia: "from-fuchsia-500/20 to-violet-500/10 border-fuchsia-500/30 text-fuchsia-300",
+  };
   return (
-    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${className}`}>
-      {label}
-    </span>
-  );
-}
-
-function MetricCard({ label, value, sub, accent }) {
-  return (
-    <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
-      <p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-      <p className={`text-2xl font-bold ${accent}`}>{value}</p>
-      {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
+    <div className={`bg-gradient-to-br ${colors[color]} border rounded-2xl p-5 flex flex-col gap-1`}>
+      <span className="text-slate-400 text-xs font-medium uppercase tracking-widest">{label}</span>
+      <span className={`text-3xl font-black ${colors[color].split(" ")[3]}`}>{value}</span>
+      {sub && <span className="text-slate-500 text-xs">{sub}</span>}
     </div>
   );
 }
 
-function AppRow({ app }) {
-  const sc = statusConfig[app.status] || statusConfig.Pending;
+function Badge({ text, className = "" }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-slate-50 last:border-0">
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-slate-800 truncate">{app.company}</p>
-        <p className="text-[11px] text-slate-400 truncate">{app.location} · {app.via}</p>
-      </div>
-      <div className="text-right hidden sm:block">
-        <p className="text-xs text-slate-600">{app.role}</p>
-        <p className="text-[10px] text-slate-400">{app.type}</p>
-      </div>
-      <Pill label={app.status} className={sc.pill} />
-      <div className="text-right min-w-fit">
-        <p className="text-xs font-semibold text-slate-700">{app.package}</p>
-        <p className="text-[10px] text-slate-400">{app.date}</p>
-      </div>
-    </div>
+    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${className}`}>{text}</span>
   );
 }
 
-function CampusDetail({ candidate }) {
-  if (!candidate) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-slate-300 gap-3 py-20">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-        <p className="text-sm">Select a candidate to view profile</p>
-      </div>
-    );
-  }
-
-  const idx = candidates.findIndex((c) => c.id === candidate.id);
-  const sc = statusConfig[candidate.status] || statusConfig.Pending;
-  const tc = typeConfig[candidate.type];
-
-  return (
-    <div className="overflow-y-auto h-full">
-      {/* Header */}
-      <div className="flex items-start gap-4 p-5 border-b border-slate-100">
-        <Avatar name={candidate.name} index={idx} size="lg" />
-        <div className="flex-1 min-w-0">
-          <h2 className="text-base font-bold text-slate-800">{candidate.name}</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{candidate.stream} · {candidate.year} Batch</p>
-          <p className="text-xs text-slate-500">{candidate.college} — {candidate.city}, {candidate.state}</p>
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            <Pill label={candidate.type} className={tc} />
-            <Pill label={candidate.status} className={sc.pill} />
-          </div>
-        </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-2xl font-bold text-slate-800">{candidate.cgpa}</p>
-          <p className="text-[10px] text-slate-400 uppercase tracking-wider">CGPA</p>
-        </div>
-      </div>
-
-      {/* Info grid */}
-      <div className="grid grid-cols-2 gap-3 p-5 border-b border-slate-100">
-        {[
-          ["College", candidate.college],
-          ["Stream", candidate.stream],
-          ["Batch Year", candidate.year],
-          ["Location", `${candidate.city}, ${candidate.state}`],
-          ["Gender", candidate.gender === "M" ? "Male" : "Female"],
-          ["Applications", candidate.apps.length],
-        ].map(([k, v]) => (
-          <div key={k} className="bg-slate-50 rounded-xl p-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-400">{k}</p>
-            <p className="text-xs font-semibold text-slate-700 mt-0.5 truncate">{v}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Skills */}
-      <div className="p-5 border-b border-slate-100">
-        <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">Skills</p>
-        <div className="flex flex-wrap gap-1.5">
-          {candidate.skills.map((s) => (
-            <span key={s} className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-medium">{s}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Applications */}
-      <div className="p-5">
-        <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-3">Application history</p>
-        {candidate.apps.map((a, i) => <AppRow key={i} app={a} />)}
-      </div>
-    </div>
-  );
-}
-
-// ── Mini bar for stream chart ─────────────────────────────────────────────────
-function MiniBar({ label, value, max, color }) {
-  return (
-    <div className="flex items-center gap-2 mb-2">
-      <span className="text-[11px] text-slate-500 w-28 truncate flex-shrink-0">{label}</span>
-      <div className="flex-1 bg-slate-100 rounded-full h-2">
-        <div className={`h-2 rounded-full ${color}`} style={{ width: `${(value / max) * 100}%` }} />
-      </div>
-      <span className="text-[11px] font-semibold text-slate-600 w-4 text-right">{value}</span>
-    </div>
-  );
-}
-
-// ── Main Dashboard ────────────────────────────────────────────────────────────
-export default function CampusPlacementDashboard() {
-  const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
+export default function App() {
   const [selected, setSelected] = useState(null);
-  const [activeTab, setActiveTab] = useState("candidates");
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterCollege, setFilterCollege] = useState("All");
+  const [activeTab, setActiveTab] = useState("profile");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const filtered = useMemo(() => {
-    return candidates.filter((c) => {
-      const q = search.toLowerCase();
-      const matchQ = !q || c.name.toLowerCase().includes(q) || c.college.toLowerCase().includes(q) || c.stream.toLowerCase().includes(q);
-      const matchT = filterType === "all" || c.type === filterType;
-      const matchS = filterStatus === "all" || c.status === filterStatus;
-      return matchQ && matchT && matchS;
-    });
-  }, [search, filterType, filterStatus]);
+  const stats = useMemo(() => ({
+    total: CANDIDATES.length,
+    placed: CANDIDATES.filter(c => c.status === "Placed").length,
+    shortlisted: CANDIDATES.filter(c => c.status === "Shortlisted").length,
+    colleges: [...new Set(CANDIDATES.map(c => c.college))].length,
+    avgCgpa: (CANDIDATES.reduce((a, c) => a + c.cgpa, 0) / CANDIDATES.length).toFixed(1),
+    internships: CANDIDATES.filter(c => c.type === "Internship" || c.type === "Both").length,
+  }), []);
 
-  // Analytics data
-  const totalPlaced = candidates.filter((c) => c.status === "Placed").length;
-  const totalShortlisted = candidates.filter((c) => c.status === "Shortlisted").length;
-  const avgCgpa = (candidates.reduce((s, c) => s + c.cgpa, 0) / candidates.length).toFixed(1);
-  const colleges = new Set(candidates.map((c) => c.college)).size;
+  const filtered = useMemo(() => CANDIDATES.filter(c => {
+    const q = search.toLowerCase();
+    const matchSearch = !q || c.name.toLowerCase().includes(q) || c.college.toLowerCase().includes(q) || c.stream.toLowerCase().includes(q) || c.city.toLowerCase().includes(q);
+    const matchType = filterType === "All" || c.type === filterType;
+    const matchStatus = filterStatus === "All" || c.status === filterStatus;
+    const matchCollege = filterCollege === "All" || c.collegeType === filterCollege;
+    return matchSearch && matchType && matchStatus && matchCollege;
+  }), [search, filterType, filterStatus, filterCollege]);
 
-  const streamCounts = candidates.reduce((acc, c) => {
-    acc[c.stream] = (acc[c.stream] || 0) + 1;
-    return acc;
-  }, {});
-  const maxStream = Math.max(...Object.values(streamCounts));
-
-  const streamColors = ["bg-blue-500", "bg-violet-500", "bg-emerald-500", "bg-amber-500", "bg-rose-500", "bg-teal-500"];
-
-  const statusBreakdown = ["Placed", "Shortlisted", "Pending", "Rejected"].map((s) => ({
-    label: s,
-    count: candidates.filter((c) => c.status === s).length,
-    config: statusConfig[s],
-  }));
+  const candidate = selected ? CANDIDATES.find(c => c.id === selected) : null;
+  const candidateIndex = candidate ? CANDIDATES.findIndex(c => c.id === selected) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-[#080c14] text-slate-100 font-sans flex flex-col" style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif" }}>
       {/* Top Nav */}
-      <header className="bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-20">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
+      <header className="border-b border-slate-800/60 bg-[#0d1420]/80 backdrop-blur-xl sticky top-0 z-40 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
           </div>
           <div>
-            <h1 className="text-sm font-bold text-slate-900 leading-none">Campus Placement</h1>
-            <p className="text-[10px] text-slate-400 mt-0.5">Placement management dashboard</p>
+            <h1 className="text-sm font-bold text-white tracking-tight">PlacementOS</h1>
+            <p className="text-xs text-slate-500">College Placement Command Center</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <input
-            type="text" placeholder="Search candidate, college…"
-            value={search} onChange={(e) => setSearch(e.target.value)}
-            className="text-xs px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300 w-48"
-          />
-          <select
-            value={filterType} onChange={(e) => setFilterType(e.target.value)}
-            className="text-xs px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300"
-          >
-            <option value="all">All types</option>
-            <option value="Job">Job</option>
-            <option value="Internship">Internship</option>
-            <option value="Both">Both</option>
-          </select>
-          <select
-            value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-            className="text-xs px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300"
-          >
-            <option value="all">All status</option>
-            <option value="Placed">Placed</option>
-            <option value="Shortlisted">Shortlisted</option>
-            <option value="Pending">Pending</option>
-            <option value="Rejected">Rejected</option>
-          </select>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:flex items-center gap-2 bg-slate-800/60 border border-slate-700/50 rounded-xl px-3 py-1.5 text-xs text-slate-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Live · Batch 2024–25
+          </span>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center text-xs font-bold">AD</div>
         </div>
       </header>
 
-      <div className="p-6 max-w-screen-xl mx-auto">
-        {/* Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-          <MetricCard label="Total candidates" value={candidates.length} sub="Registered" accent="text-slate-800" />
-          <MetricCard label="Placed" value={totalPlaced} sub="Offer letters issued" accent="text-emerald-600" />
-          <MetricCard label="Shortlisted" value={totalShortlisted} sub="In process" accent="text-violet-600" />
-          <MetricCard label="Colleges" value={colleges} sub="Participating" accent="text-sky-600" />
-          <MetricCard label="Avg CGPA" value={avgCgpa} sub="Batch average" accent="text-amber-600" />
-          <MetricCard label="Placement rate" value={`${Math.round((totalPlaced / candidates.length) * 100)}%`} sub="Overall batch" accent="text-rose-600" />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-1 mb-4 bg-white border border-slate-100 rounded-xl p-1 w-fit shadow-sm">
-          {["candidates", "analytics"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-xs px-4 py-1.5 rounded-lg font-medium transition-all capitalize ${
-                activeTab === tab ? "bg-slate-900 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {activeTab === "candidates" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Candidate list */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-700">Candidates</h2>
-                <span className="text-[11px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{filtered.length} shown</span>
-              </div>
-              <div className="overflow-y-auto" style={{ maxHeight: "560px" }}>
-                {filtered.length === 0 ? (
-                  <p className="text-center text-sm text-slate-400 py-12">No candidates match the filters.</p>
-                ) : (
-                  filtered.map((c, i) => {
-                    const sc = statusConfig[c.status] || statusConfig.Pending;
-                    const tc = typeConfig[c.type];
-                    const isActive = selected?.id === c.id;
-                    return (
-                      <div
-                        key={c.id}
-                        onClick={() => setSelected(c)}
-                        className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-slate-50 transition-colors ${
-                          isActive ? "bg-slate-900" : "hover:bg-slate-50"
-                        }`}
-                      >
-                        <Avatar name={c.name} index={candidates.indexOf(c)} />
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-semibold truncate ${isActive ? "text-white" : "text-slate-800"}`}>{c.name}</p>
-                          <p className={`text-[11px] truncate ${isActive ? "text-slate-300" : "text-slate-400"}`}>{c.college} · {c.stream}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <Pill label={c.type} className={isActive ? "bg-white/20 text-white ring-0" : tc} />
-                          <Pill label={c.status} className={isActive ? "bg-white/20 text-white ring-0" : sc.pill} />
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Panel */}
+        <aside className={`${sidebarOpen ? "w-80" : "w-0"} transition-all duration-300 overflow-hidden flex-shrink-0 border-r border-slate-800/60 bg-[#0d1420]/50 flex flex-col`}>
+          <div className="p-4 flex flex-col gap-3 flex-1 overflow-hidden">
+            {/* Search */}
+            <div className="relative">
+              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+              <input
+                className="w-full bg-slate-800/60 border border-slate-700/50 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-violet-500/70 focus:ring-1 focus:ring-violet-500/30 transition"
+                placeholder="Search candidates…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
             </div>
 
-            {/* Detail pane */}
-            <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden" style={{ minHeight: "400px" }}>
-              <div className="px-4 py-3 border-b border-slate-100">
-                <h2 className="text-sm font-semibold text-slate-700">
-                  {selected ? selected.name : "Candidate profile"}
-                </h2>
-              </div>
-              <div style={{ height: "calc(100% - 48px)" }}>
-                <CampusDetail candidate={selected} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "analytics" && (
-          <div className="space-y-4">
-            {/* Status breakdown + Stream-wise */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-                <h3 className="text-sm font-semibold text-slate-700 mb-4">Status breakdown</h3>
-                {statusBreakdown.map(({ label, count, config }) => (
-                  <div key={label} className="flex items-center gap-3 mb-3 last:mb-0">
-                    <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${config.dot}`} />
-                    <span className="text-xs text-slate-600 flex-1">{label}</span>
-                    <div className="flex-1 bg-slate-100 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${config.dot}`}
-                        style={{ width: `${(count / candidates.length) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-semibold text-slate-700 w-6 text-right">{count}</span>
-                    <span className="text-[11px] text-slate-400 w-8 text-right">{Math.round((count / candidates.length) * 100)}%</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-                <h3 className="text-sm font-semibold text-slate-700 mb-4">Candidates by stream</h3>
-                {Object.entries(streamCounts).map(([stream, count], i) => (
-                  <MiniBar key={stream} label={stream} value={count} max={maxStream} color={streamColors[i % streamColors.length]} />
-                ))}
-              </div>
-            </div>
-
-            {/* College table */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-              <h3 className="text-sm font-semibold text-slate-700 mb-4">College-wise breakdown</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs" style={{ tableLayout: "fixed" }}>
-                  <thead>
-                    <tr className="border-b border-slate-100">
-                      {["College", "Stream", "Candidate", "CGPA", "Type", "Status", "Applications"].map((h) => (
-                        <th key={h} className="text-left py-2 pr-3 text-[10px] uppercase tracking-wider text-slate-400 font-medium">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {candidates.map((c, i) => {
-                      const sc = statusConfig[c.status] || statusConfig.Pending;
-                      const tc = typeConfig[c.type];
-                      return (
-                        <tr
-                          key={c.id}
-                          className="border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors"
-                          onClick={() => { setSelected(c); setActiveTab("candidates"); }}
-                        >
-                          <td className="py-2.5 pr-3 font-semibold text-slate-700 truncate">{c.college}</td>
-                          <td className="py-2.5 pr-3 text-slate-500 truncate">{c.stream}</td>
-                          <td className="py-2.5 pr-3">
-                            <div className="flex items-center gap-1.5">
-                              <Avatar name={c.name} index={i} size="sm" />
-                              <span className="text-slate-700 truncate">{c.name}</span>
-                            </div>
-                          </td>
-                          <td className="py-2.5 pr-3 font-semibold text-slate-700">{c.cgpa}</td>
-                          <td className="py-2.5 pr-3"><Pill label={c.type} className={tc} /></td>
-                          <td className="py-2.5 pr-3"><Pill label={c.status} className={sc.pill} /></td>
-                          <td className="py-2.5 text-slate-500">{c.apps.length} applied</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* CGPA insight cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: "Highest CGPA", value: Math.max(...candidates.map((c) => c.cgpa)).toFixed(1), sub: candidates.find((c) => c.cgpa === Math.max(...candidates.map((cc) => cc.cgpa)))?.name, accent: "text-emerald-600" },
-                { label: "Lowest CGPA", value: Math.min(...candidates.map((c) => c.cgpa)).toFixed(1), sub: candidates.find((c) => c.cgpa === Math.min(...candidates.map((cc) => cc.cgpa)))?.name, accent: "text-rose-500" },
-                { label: "Avg CGPA (placed)", value: (candidates.filter((c) => c.status === "Placed").reduce((s, c) => s + c.cgpa, 0) / totalPlaced).toFixed(1), sub: "Placed candidates", accent: "text-blue-600" },
-                { label: "Total applications", value: candidates.reduce((s, c) => s + c.apps.length, 0), sub: "Across all candidates", accent: "text-violet-600" },
-              ].map((m) => (
-                <MetricCard key={m.label} {...m} />
+            {/* Filters */}
+            <div className="grid grid-cols-3 gap-2">
+              {["All", "Job", "Internship", "Both"].map(t => (
+                <button key={t} onClick={() => setFilterType(t)} className={`text-xs py-1.5 rounded-lg font-medium transition ${filterType === t ? "bg-violet-600 text-white" : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60"}`}>{t}</button>
               ))}
             </div>
+            <div className="grid grid-cols-2 gap-2">
+              {["All", "Placed", "Shortlisted", "Applied"].map(s => (
+                <button key={s} onClick={() => setFilterStatus(s)} className={`text-xs py-1.5 rounded-lg font-medium transition ${filterStatus === s ? "bg-fuchsia-600 text-white" : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60"}`}>{s}</button>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {["All", "IIT", "NIT", "BITS", "State", "Private"].map(ct => (
+                <button key={ct} onClick={() => setFilterCollege(ct)} className={`text-xs py-1.5 rounded-lg font-medium transition ${filterCollege === ct ? "bg-sky-600 text-white" : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60"}`}>{ct}</button>
+              ))}
+            </div>
+
+            <p className="text-xs text-slate-600 font-medium">{filtered.length} of {CANDIDATES.length} candidates</p>
+
+            {/* Candidate List */}
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scroll">
+              {filtered.length === 0 && (
+                <div className="text-center py-10 text-slate-600 text-sm">No candidates match your filters.</div>
+              )}
+              {filtered.map((c, i) => {
+                const sc = STATUS_CONFIG[c.status] || STATUS_CONFIG.Applied;
+                return (
+                  <button key={c.id} onClick={() => { setSelected(c.id); setActiveTab("profile"); }}
+                    className={`w-full text-left p-3 rounded-xl border transition-all ${selected === c.id ? "bg-violet-500/10 border-violet-500/40" : "bg-slate-800/30 border-slate-800/60 hover:bg-slate-800/60 hover:border-slate-700/60"}`}>
+                    <div className="flex items-center gap-3">
+                      <Avatar initials={c.photo} size="sm" index={i} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-sm font-semibold text-slate-100 truncate">{c.name}</span>
+                          <span className={`flex-shrink-0 w-2 h-2 rounded-full ${sc.dot}`}></span>
+                        </div>
+                        <p className="text-xs text-slate-500 truncate">{c.college}</p>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${sc.bg} ${sc.text}`}>{c.status}</span>
+                          <span className="text-xs text-slate-600">·</span>
+                          <span className="text-xs text-slate-500">{c.type}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto">
+          {/* Stats Row */}
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <StatCard label="Total" value={stats.total} sub="Candidates" color="violet" />
+            <StatCard label="Placed" value={stats.placed} sub={`${Math.round(stats.placed/stats.total*100)}% rate`} color="emerald" />
+            <StatCard label="Shortlisted" value={stats.shortlisted} sub="In pipeline" color="amber" />
+            <StatCard label="Colleges" value={stats.colleges} sub="Institutions" color="sky" />
+            <StatCard label="Avg CGPA" value={stats.avgCgpa} sub="Across batch" color="fuchsia" />
+            <StatCard label="Internships" value={stats.internships} sub="Applicants" color="rose" />
+          </div>
+
+          {candidate ? (
+            <div className="p-4 pt-0">
+              {/* Candidate Header */}
+              <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 rounded-2xl p-5 mb-4">
+                <div className="flex flex-wrap items-start gap-4">
+                  <Avatar initials={candidate.photo} size="lg" index={candidateIndex} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h2 className="text-2xl font-black text-white">{candidate.name}</h2>
+                      <Badge text={candidate.status} className={`${STATUS_CONFIG[candidate.status]?.bg} ${STATUS_CONFIG[candidate.status]?.text}`} />
+                      <Badge text={candidate.type} className="bg-violet-500/20 text-violet-300" />
+                    </div>
+                    <p className="text-slate-400 text-sm mb-2">{candidate.stream} · {candidate.year} Batch</p>
+                    <div className="flex flex-wrap gap-2 text-xs text-slate-500">
+                      <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>{candidate.email}</span>
+                      <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>{candidate.phone}</span>
+                      <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>{candidate.city}, {candidate.state}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 text-center">
+                      <p className="text-xs text-slate-500">CGPA</p>
+                      <p className="text-2xl font-black text-violet-300">{candidate.cgpa}</p>
+                    </div>
+                    <Badge text={candidate.collegeType} className={`border ${COLLEGE_COLORS[candidate.collegeType]}`} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {["profile", "applications", "interviews", "achievements"].map(tab => (
+                  <button key={tab} onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition ${activeTab === tab ? "bg-violet-600 text-white" : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60"}`}>
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab Content */}
+              {activeTab === "profile" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Academic Info */}
+                  <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+                    <h3 className="text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest">Academic Details</h3>
+                    <div className="space-y-3">
+                      {[
+                        { label: "College", value: candidate.college },
+                        { label: "Type", value: candidate.collegeType },
+                        { label: "Stream", value: candidate.stream },
+                        { label: "Graduation Year", value: candidate.year },
+                        { label: "CGPA", value: `${candidate.cgpa} / 10.0` },
+                        { label: "Location", value: `${candidate.city}, ${candidate.state}` },
+                      ].map(({ label, value }) => (
+                        <div key={label} className="flex justify-between items-center border-b border-slate-700/30 pb-2">
+                          <span className="text-xs text-slate-500">{label}</span>
+                          <span className="text-sm font-medium text-slate-200">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Skills */}
+                  <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+                    <h3 className="text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest">Skills & Tech Stack</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {candidate.skills.map((s, i) => (
+                        <span key={i} className="px-3 py-1.5 bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-semibold rounded-xl">{s}</span>
+                      ))}
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-slate-700/30">
+                      <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Application Summary</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-slate-900/50 rounded-xl p-3 text-center">
+                          <p className="text-xl font-black text-sky-300">{candidate.applications.length}</p>
+                          <p className="text-xs text-slate-500">Total Applications</p>
+                        </div>
+                        <div className="bg-slate-900/50 rounded-xl p-3 text-center">
+                          <p className="text-xl font-black text-emerald-300">{candidate.applications.filter(a => a.status === "Selected" || a.status === "Offered").length}</p>
+                          <p className="text-xs text-slate-500">Offers Received</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "applications" && (
+                <div className="space-y-3">
+                  {candidate.applications.map((app, i) => (
+                    <div key={i} className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-bold text-white">{app.company}</h4>
+                            <Badge text={app.status} className={APP_STATUS[app.status] || "bg-slate-500/20 text-slate-300"} />
+                          </div>
+                          <p className="text-sm text-violet-300 font-semibold">{app.role}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-black text-emerald-300">{app.package}</p>
+                          <p className="text-xs text-slate-500">Package</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-slate-700/30 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                        {[
+                          { label: "Location", value: app.location },
+                          { label: "Channel", value: app.channel },
+                          { label: "Applied", value: app.date },
+                          { label: "Round", value: app.round },
+                        ].map(({ label, value }) => (
+                          <div key={label}>
+                            <p className="text-slate-600">{label}</p>
+                            <p className="text-slate-300 font-semibold mt-0.5">{value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === "interviews" && (
+                <div>
+                  {candidate.interviews.length === 0 ? (
+                    <div className="text-center py-16 text-slate-600">
+                      <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <p className="text-sm">No interview records yet</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {candidate.interviews.map((iv, i) => (
+                        <div key={i} className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-bold text-white">{iv.company}</h4>
+                              <p className="text-xs text-slate-500 mt-0.5">{iv.round} Round · {iv.date}</p>
+                            </div>
+                            <div className="text-right">
+                              <Badge text={iv.feedback} className="bg-emerald-500/20 text-emerald-300" />
+                              <p className="text-xs text-slate-600 mt-1">by {iv.interviewer}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "achievements" && (
+                <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5">
+                  <h3 className="text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest">Achievements & Highlights</h3>
+                  <div className="space-y-3">
+                    {candidate.achievements.map((a, i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-xl">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        </div>
+                        <span className="text-sm font-semibold text-slate-200">{a}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-700/30">
+                    <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Profile Links</h4>
+                    <a href="#" className="flex items-center gap-2 text-sm text-sky-400 hover:text-sky-300 transition">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                      {candidate.linkedin}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/10 border border-violet-500/30 flex items-center justify-center mb-6">
+                <svg className="w-10 h-10 text-violet-400 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <h3 className="text-xl font-bold text-slate-300 mb-2">Select a Candidate</h3>
+              <p className="text-slate-600 text-sm max-w-xs">Choose a candidate from the list to view their full placement profile, applications, and interview history.</p>
+            </div>
+          )}
+        </main>
       </div>
+
+      <style>{`
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+      `}</style>
     </div>
   );
 }
