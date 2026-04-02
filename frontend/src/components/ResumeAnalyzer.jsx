@@ -174,6 +174,7 @@ function repairSplitWords(text) {
 
 async function extractTextFromFile(file) {
   const ext = file.name.split(".").pop().toLowerCase();
+
   if (ext === "txt") {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -182,6 +183,7 @@ async function extractTextFromFile(file) {
       reader.readAsText(file);
     });
   }
+
   if (ext === "pdf") {
     try {
       const pdfjsLib = await import("pdfjs-dist");
@@ -191,7 +193,10 @@ async function extractTextFromFile(file) {
       let fullText = "";
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        const content = await page.getTextContent({ normalizeWhitespace: true, disableCombineTextItems: false });
+        const content = await page.getTextContent({
+          normalizeWhitespace: true,
+          disableCombineTextItems: false,
+        });
         let pageText = "";
         for (const item of content.items) {
           if (!item.str) continue;
@@ -206,16 +211,20 @@ async function extractTextFromFile(file) {
       throw new Error("Could not parse PDF. Try saving it as a .txt file.");
     }
   }
+
   if (ext === "docx") {
     try {
-      const mammoth = await import("mammoth/mammoth.browser");
+      // FIX: use `mod.default ?? mod` to handle both CJS and ESM mammoth exports
+      const mod = await import("mammoth");
+      const mammoth = mod.default ?? mod;
       const arrayBuffer = await file.arrayBuffer();
-      const { value } = await mammoth.default.extractRawText({ arrayBuffer });
+      const { value } = await mammoth.extractRawText({ arrayBuffer });
       return value.trim();
     } catch {
       throw new Error("Could not parse DOCX. Make sure mammoth is installed.");
     }
   }
+
   throw new Error(`Unsupported file type: .${ext}`);
 }
 
@@ -258,8 +267,12 @@ function extractJSON(raw) {
   );
   text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
   try { return JSON.parse(text); } catch (_) {}
+  // Last-resort safe parse (no eval — uses JSON.parse after aggressive cleanup)
   try {
-    return Function('"use strict"; return (' + text + ")")();
+    const cleaned = text
+      .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
+      .replace(/'/g, '"');
+    return JSON.parse(cleaned);
   } catch {
     throw new Error("Could not parse AI response.");
   }
@@ -275,7 +288,11 @@ async function callGeminiAPI(prompt) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 8192, responseMimeType: "application/json" },
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 8192,
+          responseMimeType: "application/json",
+        },
       }),
     }
   );
@@ -364,7 +381,10 @@ const ScoreRing = ({ score }) => {
   const [animated, setAnimated] = useState(false);
   const r = 52, circ = 2 * Math.PI * r;
   const offset = animated ? circ - (score / 100) * circ : circ;
-  useEffect(() => { const t = setTimeout(() => setAnimated(true), 120); return () => clearTimeout(t); }, [score]);
+  useEffect(() => {
+    const t = setTimeout(() => setAnimated(true), 120);
+    return () => clearTimeout(t);
+  }, [score]);
 
   const color =
     score >= 75 ? "var(--ring-good)" :
@@ -383,12 +403,20 @@ const ScoreRing = ({ score }) => {
           <circle
             cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
             strokeDasharray={circ} strokeDashoffset={offset}
-            style={{ transition: "stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)", filter: `drop-shadow(0 0 8px ${color}66)` }}
+            style={{
+              transition: "stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)",
+              filter: `drop-shadow(0 0 8px ${color}66)`,
+            }}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center font-syne">
           <span style={{ fontSize: "2.1rem", fontWeight: 900, lineHeight: 1, color }}>{score}</span>
-          <span className="text-xs font-bold tracking-widest uppercase text-slate-400 dark:text-slate-600" style={{ fontSize: "0.58rem" }}>/ 100</span>
+          <span
+            className="text-xs font-bold tracking-widest uppercase text-slate-400 dark:text-slate-600"
+            style={{ fontSize: "0.58rem" }}
+          >
+            / 100
+          </span>
         </div>
       </div>
     </>
@@ -398,11 +426,21 @@ const ScoreRing = ({ score }) => {
 // ── Animated Bar ────────────────────────────────────────────
 const AnimBar = ({ value, color }) => {
   const [w, setW] = useState(0);
-  useEffect(() => { const t = setTimeout(() => setW(value), 250); return () => clearTimeout(t); }, [value]);
+  useEffect(() => {
+    const t = setTimeout(() => setW(value), 250);
+    return () => clearTimeout(t);
+  }, [value]);
   return (
     <div className="h-1.5 rounded-full bg-blue-100 dark:bg-[#1f2d45] overflow-hidden">
       <div
-        style={{ height: "100%", borderRadius: 6, background: color, width: `${w}%`, transition: "width 1.1s cubic-bezier(.4,0,.2,1)", boxShadow: `0 0 8px ${color}44` }}
+        style={{
+          height: "100%",
+          borderRadius: 6,
+          background: color,
+          width: `${w}%`,
+          transition: "width 1.1s cubic-bezier(.4,0,.2,1)",
+          boxShadow: `0 0 8px ${color}44`,
+        }}
       />
     </div>
   );
@@ -410,28 +448,27 @@ const AnimBar = ({ value, color }) => {
 
 // ── Keyword Tag ─────────────────────────────────────────────
 const KwTag = ({ label, variant }) => (
-  <span
-    className={`kw-${variant} font-dm inline-block rounded-full px-3.5 py-1 text-xs font-semibold m-0.5`}
-  >
+  <span className={`kw-${variant} font-dm inline-block rounded-full px-3.5 py-1 text-xs font-semibold m-0.5`}>
     {label}
   </span>
 );
 
 // ── Score Card ──────────────────────────────────────────────
 const ScoreCard = ({ name, score, color }) => (
-  <div
-    className="bg-white dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-[18px] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-  >
-    <div className="text-[0.68rem] font-bold tracking-widest uppercase mb-2.5 text-[#7ab3d0] dark:text-[#6b7a99]">{name}</div>
-    <div className="font-syne mb-2.5 leading-none" style={{ fontSize: "2.2rem", fontWeight: 900, color }}>{score}</div>
+  <div className="bg-white dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-[18px] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="text-[0.68rem] font-bold tracking-widest uppercase mb-2.5 text-[#7ab3d0] dark:text-[#6b7a99]">
+      {name}
+    </div>
+    <div className="font-syne mb-2.5 leading-none" style={{ fontSize: "2.2rem", fontWeight: 900, color }}>
+      {score}
+    </div>
     <AnimBar value={score} color={color} />
   </div>
 );
 
 // ── Suggestion Item ─────────────────────────────────────────
 const SuggestionItem = ({ icon, type, text }) => {
-  const typeColor = { critical: "#ef4444", improve: "#f59e0b", tip: "#0284c7" };
-  const typeDarkColor = { critical: "#ef4444", improve: "#f59e0b", tip: "#3b82f6" };
+  const typeColor     = { critical: "#ef4444", improve: "#f59e0b", tip: "#0284c7" };
   return (
     <li className="flex gap-3.5 items-start bg-white dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-2xl p-4 text-sm leading-relaxed list-none shadow-sm">
       <span className="text-xl flex-shrink-0 mt-0.5">{icon}</span>
@@ -462,9 +499,7 @@ const Panel = ({ children, className = "", style = {} }) => (
     className={`panel bg-white dark:bg-[#111827] border border-[#bae0f7] dark:border-[#1f2d45] rounded-[22px] relative overflow-hidden shadow-[0_4px_32px_rgba(14,165,233,.1)] dark:shadow-[0_4px_40px_rgba(0,0,0,.3)] ${className}`}
     style={style}
   >
-    <div
-      className="panel-top-bar absolute top-0 left-0 right-0 h-0.5 rounded-t-[22px] results-stripe"
-    />
+    <div className="panel-top-bar absolute top-0 left-0 right-0 h-0.5 rounded-t-[22px] results-stripe" />
     {children}
   </div>
 );
@@ -508,7 +543,8 @@ export default function ResumeAnalyzer() {
     setFileSize((file.size / 1024).toFixed(1) + " KB");
     try {
       const text = await extractTextFromFile(file);
-      if (!text || text.trim().length < 50) throw new Error("Resume appears empty or could not be read.");
+      if (!text || text.trim().length < 50)
+        throw new Error("Resume appears empty or could not be read.");
       setResumeText(text);
       setPreviewText(text.slice(0, 400) + (text.length > 400 ? "…" : ""));
     } catch (err) {
@@ -535,12 +571,15 @@ export default function ResumeAnalyzer() {
         throw new Error("Incomplete analysis returned. Please try again.");
       }
       parsed.overall_score = Math.min(100, Math.max(0, Math.round(parsed.overall_score)));
-      parsed.suggestions = parsed.suggestions || [];
-      parsed.mistakes     = parsed.mistakes     || [];
-      parsed.keywords     = parsed.keywords     || { found: [], missing: [], suggested: [] };
+      parsed.suggestions   = parsed.suggestions || [];
+      parsed.mistakes      = parsed.mistakes     || [];
+      parsed.keywords      = parsed.keywords     || { found: [], missing: [], suggested: [] };
       setResult(parsed);
       setActiveTab("breakdown");
-      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+      setTimeout(
+        () => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+        150
+      );
       showToast("Analysis complete!", "success");
     } catch (err) {
       console.error("Analysis error:", err);
@@ -583,7 +622,9 @@ export default function ResumeAnalyzer() {
         {/* HERO */}
         <div className="animate-fade-up text-center px-6 pt-[72px] pb-[52px]">
           <div className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full bg-sky-100/80 dark:bg-[#00e5a0]/[0.08] border border-sky-300/60 dark:border-[#00e5a0]/20">
-            <span className="text-[0.65rem] font-extrabold tracking-[0.14em] uppercase text-sky-500 dark:text-[#00e5a0]">✦ Free AI-Powered Analysis</span>
+            <span className="text-[0.65rem] font-extrabold tracking-[0.14em] uppercase text-sky-500 dark:text-[#00e5a0]">
+              ✦ Free AI-Powered Analysis
+            </span>
           </div>
 
           <h1 className="font-syne text-[clamp(2rem,5.5vw,3.5rem)] font-black leading-[1.1] tracking-tight mb-5 text-slate-800 dark:text-[#e8edf5]">
@@ -593,7 +634,8 @@ export default function ResumeAnalyzer() {
           </h1>
 
           <p className="font-dm text-slate-500 dark:text-[#6b7a99] max-w-[500px] mx-auto text-base leading-7">
-            Upload your resume, tell us your target role — get an ATS score, keyword gaps, suggestions &amp; mistake detection.
+            Upload your resume, tell us your target role — get an ATS score, keyword gaps,
+            suggestions &amp; mistake detection.
           </p>
 
           {/* Stats strip */}
@@ -616,7 +658,9 @@ export default function ResumeAnalyzer() {
           {/* ── UPLOAD PANEL ── */}
           <Panel style={{ padding: 30 }}>
             <div className="font-syne font-bold text-base mb-5 flex items-center gap-2.5 text-slate-800 dark:text-[#e8edf5]">
-              <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">📄</span>
+              <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">
+                📄
+              </span>
               Upload Resume
             </div>
 
@@ -632,18 +676,33 @@ export default function ResumeAnalyzer() {
                 {parseError ? "⚠️" : dragging ? "📥" : "⬆️"}
               </div>
               <p className="font-dm text-slate-500 dark:text-[#6b7a99] text-sm leading-relaxed m-0">
-                {parseError
-                  ? <span className="text-red-400">{parseError}</span>
-                  : <><strong className="text-sky-500 dark:text-[#00e5a0]">Click or drag &amp; drop</strong><br />PDF, DOCX, or TXT — max 5 MB</>}
+                {parseError ? (
+                  <span className="text-red-400">{parseError}</span>
+                ) : (
+                  <>
+                    <strong className="text-sky-500 dark:text-[#00e5a0]">Click or drag &amp; drop</strong>
+                    <br />PDF, DOCX, or TXT — max 5 MB
+                  </>
+                )}
               </p>
               <div className="flex justify-center gap-2 mt-3.5">
-                {["PDF", "DOCX", "TXT"].map(f => (
-                  <span key={f} className="font-dm text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full tracking-wide text-slate-500 dark:text-[#6b7a99] bg-sky-50 dark:bg-white/5 border border-[#bae0f7] dark:border-[#1f2d45]">{f}</span>
+                {["PDF", "DOCX", "TXT"].map((f) => (
+                  <span
+                    key={f}
+                    className="font-dm text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full tracking-wide text-slate-500 dark:text-[#6b7a99] bg-sky-50 dark:bg-white/5 border border-[#bae0f7] dark:border-[#1f2d45]"
+                  >
+                    {f}
+                  </span>
                 ))}
               </div>
             </div>
-            <input ref={fileRef} type="file" accept=".pdf,.docx,.txt" className="hidden"
-              onChange={(e) => handleFile(e.target.files[0])} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.docx,.txt"
+              className="hidden"
+              onChange={(e) => handleFile(e.target.files[0])}
+            />
 
             {/* File preview */}
             {fileName && !parseError && (
@@ -653,14 +712,17 @@ export default function ResumeAnalyzer() {
                     {fileName.endsWith(".pdf") ? "📕" : fileName.endsWith(".docx") ? "📘" : "📄"}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] overflow-hidden text-ellipsis whitespace-nowrap">{fileName}</div>
+                    <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] overflow-hidden text-ellipsis whitespace-nowrap">
+                      {fileName}
+                    </div>
                     <div className="font-dm text-xs text-slate-500 dark:text-[#6b7a99]">
                       {fileSize} · {resumeText.split(/\s+/).filter(Boolean).length} words extracted
                     </div>
                   </div>
                   <button
                     className="font-dm bg-transparent border border-[#bae0f7] dark:border-[#1f2d45] rounded-lg text-slate-500 dark:text-[#6b7a99] cursor-pointer px-3 py-1 text-[0.72rem] font-semibold transition-all duration-200 hover:border-sky-400 dark:hover:border-[#00e5a0] hover:text-sky-500 dark:hover:text-[#00e5a0]"
-                    onClick={(e) => { e.stopPropagation(); fileRef.current.click(); }}>
+                    onClick={(e) => { e.stopPropagation(); fileRef.current.click(); }}
+                  >
                     Change
                   </button>
                 </div>
@@ -690,7 +752,9 @@ export default function ResumeAnalyzer() {
             <div className="mt-4">
               <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
                 Job Description{" "}
-                <span className="font-normal normal-case tracking-normal text-slate-400 dark:text-[#3d4f6a]">(optional)</span>
+                <span className="font-normal normal-case tracking-normal text-slate-400 dark:text-[#3d4f6a]">
+                  (optional)
+                </span>
               </label>
               <textarea
                 value={jobDesc}
@@ -705,7 +769,8 @@ export default function ResumeAnalyzer() {
             <button
               className="btn-analyze font-syne mt-6 w-full py-4 rounded-2xl font-black text-base tracking-wide border-none transition-all duration-200"
               disabled={!canAnalyze}
-              onClick={analyzeResume}>
+              onClick={analyzeResume}
+            >
               {loading ? "Analyzing…" : resumeText ? "✦ Analyze My Resume" : "Upload a resume first"}
             </button>
             <p className="font-dm mt-2.5 text-center text-[#a0c8e0] dark:text-[#3d4f6a] text-[0.7rem]">
@@ -718,15 +783,25 @@ export default function ResumeAnalyzer() {
             <div className="bg-white dark:bg-[#111827] border border-[#bae0f7] dark:border-[#1f2d45] rounded-[22px] p-8 min-h-[340px] flex flex-col items-center justify-center gap-6 text-center shadow-[0_4px_32px_rgba(14,165,233,.1)] dark:shadow-[0_4px_40px_rgba(0,0,0,.3)]">
               <div className="spinner w-[60px] h-[60px] rounded-full border-4 animate-spin-custom" />
               <div>
-                <div className="font-syne font-bold text-[1.05rem] text-slate-800 dark:text-[#e8edf5] mb-2.5">Analyzing your resume…</div>
-                <div key={loadingMsg} className="animate-fade-up-fast font-dm text-slate-500 dark:text-[#6b7a99] text-sm">{loadingMsg}</div>
+                <div className="font-syne font-bold text-[1.05rem] text-slate-800 dark:text-[#e8edf5] mb-2.5">
+                  Analyzing your resume…
+                </div>
+                <div key={loadingMsg} className="animate-fade-up-fast font-dm text-slate-500 dark:text-[#6b7a99] text-sm">
+                  {loadingMsg}
+                </div>
               </div>
               <div className="flex gap-2">
                 {LOADING_STEPS.map((s, i) => (
-                  <div key={i} style={{
-                    width: s === loadingMsg ? 20 : 6, height: 6, borderRadius: 3,
-                    transition: "width .3s, background .3s",
-                  }} className={s === loadingMsg ? "bg-sky-400 dark:bg-[#00e5a0]" : "bg-[#bae0f7] dark:bg-[#1f2d45]"} />
+                  <div
+                    key={i}
+                    style={{
+                      width: s === loadingMsg ? 20 : 6,
+                      height: 6,
+                      borderRadius: 3,
+                      transition: "width .3s, background .3s",
+                    }}
+                    className={s === loadingMsg ? "bg-sky-400 dark:bg-[#00e5a0]" : "bg-[#bae0f7] dark:bg-[#1f2d45]"}
+                  />
                 ))}
               </div>
             </div>
@@ -736,7 +811,9 @@ export default function ResumeAnalyzer() {
           {!loading && !result && (
             <Panel style={{ padding: 30 }}>
               <div className="font-syne font-bold text-base mb-6 flex items-center gap-2.5 text-slate-800 dark:text-[#e8edf5]">
-                <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">⚡</span>
+                <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">
+                  ⚡
+                </span>
                 What You Get
               </div>
               <div className="flex flex-col gap-5">
@@ -748,7 +825,9 @@ export default function ResumeAnalyzer() {
                   ["🚨", "Mistake Detection",      "Grammar issues, weak verbs, formatting problems, and missing sections."],
                 ].map(([icon, title, desc]) => (
                   <div key={title} className="flex gap-3.5 items-start">
-                    <div className="w-[38px] h-[38px] rounded-xl flex-shrink-0 flex items-center justify-center text-lg bg-sky-50 dark:bg-white/[0.04] border border-[#bae0f7] dark:border-[#1f2d45]">{icon}</div>
+                    <div className="w-[38px] h-[38px] rounded-xl flex-shrink-0 flex items-center justify-center text-lg bg-sky-50 dark:bg-white/[0.04] border border-[#bae0f7] dark:border-[#1f2d45]">
+                      {icon}
+                    </div>
                     <div>
                       <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] mb-1">{title}</div>
                       <div className="font-dm text-xs text-slate-500 dark:text-[#6b7a99] leading-relaxed">{desc}</div>
@@ -759,7 +838,8 @@ export default function ResumeAnalyzer() {
               <div className="mt-6 rounded-2xl p-3.5 flex gap-3 items-start bg-sky-50/60 dark:bg-blue-900/[0.06] border border-sky-200 dark:border-blue-800/40">
                 <span className="text-base flex-shrink-0">🆓</span>
                 <div className="font-dm text-xs text-sky-600 dark:text-[#6b8ab8] leading-relaxed">
-                  Completely free to use — no hidden fees, Analyze as many resumes as you like, whether you're job hunting or just curious!
+                  Completely free to use — no hidden fees. Analyze as many resumes as you like,
+                  whether you're job hunting or just curious!
                 </div>
               </div>
             </Panel>
@@ -781,8 +861,8 @@ export default function ResumeAnalyzer() {
                   <div
                     className="font-dm inline-block text-[0.65rem] font-extrabold tracking-[0.1em] uppercase mb-2 px-3 py-1 rounded-full border"
                     style={{
-                      color: result.overall_score >= 75 ? "#0284c7" : result.overall_score >= 50 ? "#f59e0b" : "#ef4444",
-                      background: result.overall_score >= 75 ? "rgba(14,165,233,.1)" : result.overall_score >= 50 ? "rgba(245,158,11,.1)" : "rgba(239,68,68,.1)",
+                      color:       result.overall_score >= 75 ? "#0284c7" : result.overall_score >= 50 ? "#f59e0b" : "#ef4444",
+                      background:  result.overall_score >= 75 ? "rgba(14,165,233,.1)" : result.overall_score >= 50 ? "rgba(245,158,11,.1)" : "rgba(239,68,68,.1)",
                       borderColor: result.overall_score >= 75 ? "rgba(14,165,233,.25)" : result.overall_score >= 50 ? "rgba(245,158,11,.25)" : "rgba(239,68,68,.25)",
                     }}
                   >
@@ -798,7 +878,8 @@ export default function ResumeAnalyzer() {
                 </div>
                 <button
                   className="font-dm bg-transparent border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-500 dark:text-[#6b7a99] cursor-pointer px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:border-sky-400 dark:hover:border-[#00e5a0] hover:text-sky-500 dark:hover:text-[#00e5a0]"
-                  onClick={() => setResult(null)}>
+                  onClick={() => setResult(null)}
+                >
                   ↩ New Analysis
                 </button>
               </div>
@@ -813,7 +894,8 @@ export default function ResumeAnalyzer() {
                         ? "tab-active"
                         : "border-[#bae0f7] dark:border-[#1f2d45] text-slate-500 dark:text-[#6b7a99] bg-transparent hover:border-sky-400 dark:hover:border-[#00e5a0] font-medium"
                     }`}
-                    onClick={() => setActiveTab(tab.id)}>
+                    onClick={() => setActiveTab(tab.id)}
+                  >
                     {tab.label}
                   </button>
                 ))}
@@ -841,10 +923,12 @@ export default function ResumeAnalyzer() {
                   {[
                     { label: "✅ Found in your resume", key: "found",     variant: "found"     },
                     { label: "❌ Missing — add these",  key: "missing",   variant: "missing"   },
-                    { label: "💡 Also recommended",      key: "suggested", variant: "suggested" },
+                    { label: "💡 Also recommended",     key: "suggested", variant: "suggested" },
                   ].map(({ label, key, variant }) => (
                     <div key={key}>
-                      <div className="font-dm text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-3">{label}</div>
+                      <div className="font-dm text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-3">
+                        {label}
+                      </div>
                       <div className="flex flex-wrap gap-1.5">
                         {(result.keywords[key] || []).map((kw) => (
                           <KwTag key={kw} label={kw} variant={variant} />
@@ -875,11 +959,12 @@ export default function ResumeAnalyzer() {
       <div
         className="font-dm fixed bottom-8 right-8 z-[100] px-5 py-3.5 rounded-2xl max-w-[360px] text-sm font-semibold text-white flex items-center gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,.25)] transition-all duration-300"
         style={{
-          background: toast.type === "success" ? "#059669" : "#dc2626",
-          transform: toast.show ? "translateY(0) scale(1)" : "translateY(5rem) scale(.95)",
-          opacity: toast.show ? 1 : 0,
+          background:    toast.type === "success" ? "#059669" : "#dc2626",
+          transform:     toast.show ? "translateY(0) scale(1)" : "translateY(5rem) scale(.95)",
+          opacity:       toast.show ? 1 : 0,
           pointerEvents: toast.show ? "auto" : "none",
-        }}>
+        }}
+      >
         <span className="text-lg">{toast.type === "success" ? "✓" : "⚠"}</span>
         {toast.msg}
       </div>
