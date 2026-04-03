@@ -79,7 +79,8 @@ const jobSchema = new mongoose.Schema(
       },
       shift: {
         type: String,
-        required: true,
+        required: false,
+        default: "",
       },
       anyAmount:{
         type: String,

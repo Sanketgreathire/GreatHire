@@ -843,7 +843,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     <Input
                       id="phoneNumber"
                       name="phoneNumber"
-                      value={user?.phoneNumber?.number || ""}
+                      value={input.phoneNumber}
                       onChange={handleChange}
                       className="flex-1"
                       placeholder="Phone Number"
