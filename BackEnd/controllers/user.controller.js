@@ -645,7 +645,7 @@ export const updateProfile = async (req, res) => {
       documents,
     } = req.body;
     console.log(req.body);
-    const { profilePhoto, resume } = req.files; // Access files from req.files
+    const { profilePhoto, resume } = req.files || {}; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
 
@@ -673,8 +673,13 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-     if (documents) {
-      user.profile.documents = Array.isArray(documents) ? documents : [documents];
+    // Normalize documents — frontend sends as 'documents[]' in FormData
+    const rawDocs =
+      req.body["documents[]"] ||
+      req.body["profile[documents][]"] ||
+      documents;
+    if (rawDocs) {
+      user.profile.documents = Array.isArray(rawDocs) ? rawDocs : [rawDocs];
     }
 
     // Upload profile photo if provided
