@@ -173,6 +173,17 @@ const userSchema = new mongoose.Schema(
 );
 
 /* ============================
+   ✅ COLLEGE / ACADEMIC FIELDS
+   ============================ */
+userSchema.add({
+  collegeName: { type: String, default: "" },
+  rollNo:      { type: String, default: "" },
+  cgpa:        { type: Number, default: 0 },
+  stream:      { type: String, default: "" },
+  hometown:    { type: String, default: "" },
+});
+
+/* ============================
    ✅ REFERRAL FIELDS – DO NOT REMOVE
    ============================ */
 userSchema.add({

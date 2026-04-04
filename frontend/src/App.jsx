@@ -299,6 +299,9 @@ import { USER_API_END_POINT } from "./utils/ApiEndPoint";
 // Campus 
 import CampusPlacementDashboard from '@/components/Campus/campusDashboard';
 import CollegeDetails from '@/components/Campus/CollegeDetails';
+import CollegeLogin from '@/components/Campus/CollegeLogin';
+import CollegeSignup from '@/components/Campus/CollegeSignup';
+import StudentSignup from '@/components/Campus/StudentSignup';
 
 
 
@@ -397,6 +400,9 @@ const appRouter = createBrowserRouter([
   { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/*", element: <AdminLayout /> },
   { path: "/campus-dashboard", element: <CampusPlacementDashboard /> },
+  { path: "/college/login", element: <CollegeLogin /> },
+  { path: "/college/signup", element: <CollegeSignup /> },
+  { path: "/student/signup", element: <StudentSignup /> },
   { path: "/college-details", element: <CollegeDetails /> },
   { path: "*", element: <PageNotFound /> }
 ]);
