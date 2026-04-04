@@ -453,20 +453,6 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       // Carry forward leftover candidate credits
       const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
 
-      company.creditedForJobs = creditsForJobs;
-      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
-      company.maxJobPosts = "Unlimited";
-      company.hasSubscription = true;
-      company.freePlanExpiry = null; // No longer on FREE plan — expiry not applicable
-
-      // Apply carryover: start new plan with negative usage offset so leftover slots are available
-      // company.paidPlanFreeJobsPosted = 0;
-      // company.paidPlanFreeJobsRenewal = new Date();
-      // Offset planJobsPostedThisMonth so carryover slots are effectively added to the new plan
-      company.planJobsPostedThisMonth = -carryoverJobs;
-
-      await company.save();
-
       // Determine plan type based on job count
       let planType = "STANDARD";
       if (creditsForJobs >= 999999) {
@@ -477,6 +463,17 @@ export const verifyPaymentForJobPlans = async (req, res) => {
         planType = "STANDARD";
       }
 
+      company.creditedForJobs = creditsForJobs;
+      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.maxJobPosts = "Unlimited";
+      company.hasSubscription = true;
+      company.freePlanExpiry = null;
+      company.planJobsPostedThisMonth = -carryoverJobs;
+      company.plan = planType;
+      company.planMonthStart = new Date();
+
+      await company.save();
+
       // Update all recruiters associated with this company
       const recruiterIds = company.userId.map((u) => u.user);
       await Recruiter.updateMany(
@@ -486,11 +483,6 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           subscriptionStatus: "ACTIVE",
         }
       );
-
-      // Update company plan and set monthly counter start (preserve carryover offset)
-      company.plan = planType;
-      company.planMonthStart = new Date();
-      await company.save();
 
       res.status(200).json({
         success: true,
