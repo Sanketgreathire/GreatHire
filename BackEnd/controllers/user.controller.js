@@ -27,7 +27,7 @@ import notificationService from "../utils/notificationService.js";
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, inputReferralCode } = req.body;
+    const { fullname, email, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {
@@ -113,6 +113,11 @@ export const register = async (req, res) => {
       lastActiveAt: new Date(),
       referralCode,
       referredBy,
+      collegeName: collegeName || "",
+      rollNo: rollNo || "",
+      cgpa: cgpa ? parseFloat(cgpa) : 0,
+      stream: stream || "",
+      hometown: hometown || "",
     });
 
     // Fetch user without password

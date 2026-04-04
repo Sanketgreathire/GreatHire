@@ -13,6 +13,10 @@ const SignupPage = () => {
       navigate("/recruiter/signup");
     } else if (option === "job") {
       navigate("/signup");
+    } else if (option === "college") {
+      navigate("/college/signup");
+    } else if (option === "student") {
+      navigate("/student/signup");
     }
   };
 
@@ -36,7 +40,7 @@ const SignupPage = () => {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 pb-16">
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
 
             {/* Job Seeker Card */}
             <motion.div
@@ -135,6 +139,106 @@ const SignupPage = () => {
                 className="w-full py-4 bg-gray-900 hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-400 dark:focus:ring-gray-600"
               >
                 Sign Up as Recruiter
+              </motion.button>
+            </motion.div>
+
+            {/* College Sign Up Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300"
+            >
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-violet-100 dark:bg-violet-900 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors duration-300">
+                  <span className="text-4xl">🏫</span>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
+                  For Colleges
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-lg transition-colors duration-300">
+                  Connect your students with top recruiters via campus hiring
+                </p>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Manage campus placement drives</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Partner with leading companies</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Track student placement outcomes</p>
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSignupOption("college")}
+                className="w-full py-4 bg-violet-600 hover:bg-violet-700 dark:bg-violet-700 dark:hover:bg-violet-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-violet-300"
+              >
+                Sign Up as College
+              </motion.button>
+            </motion.div>
+
+            {/* Student Sign Up Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 transition-colors duration-300"
+            >
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors duration-300">
+                  <span className="text-4xl">🎓</span>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">
+                  For Students
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-lg transition-colors duration-300">
+                  Kickstart your career through campus placement opportunities
+                </p>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Access exclusive campus job drives</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Get noticed by top recruiters</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-gray-700 dark:text-gray-300">Build your profile and get hired</p>
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSignupOption("student")}
+                className="w-full py-4 bg-blue-700 hover:bg-blue-800 dark:bg-blue-800 dark:hover:bg-blue-700 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300"
+              >
+                Sign Up as Student
               </motion.button>
             </motion.div>
           </div>
