@@ -476,8 +476,38 @@ const RecruitersList = () => {
       );
       if (response.data.success) {
         toast.success("Credits updated successfully");
+        const updatedCompany = response.data.company;
+        // Immediately update the recruiter list with fresh values from the response
+        setRecruiterList((prev) =>
+          prev.map((r) =>
+            r.companyId === updatedCompany._id
+              ? {
+                  ...r,
+                  maxJobPosts: updatedCompany.maxJobPosts,
+                  customMaxJobPosts: updatedCompany.customMaxJobPosts,
+                  creditedForJobs: updatedCompany.creditedForJobs,
+                  creditedForCandidates: updatedCompany.creditedForCandidates,
+                  customCreditsForCandidates: updatedCompany.customCreditsForCandidates,
+                  plan: updatedCompany.plan,
+                  freeJobsPosted: updatedCompany.freeJobsPosted,
+                  planJobsPostedThisMonth: updatedCompany.planJobsPostedThisMonth,
+                }
+              : r
+          )
+        );
+        // Also update selectedCreditsRecruiter so modal shows correct value if reopened
+        setSelectedCreditsRecruiter((prev) =>
+          prev ? {
+            ...prev,
+            maxJobPosts: updatedCompany.maxJobPosts,
+            customMaxJobPosts: updatedCompany.customMaxJobPosts,
+            creditedForCandidates: updatedCompany.creditedForCandidates,
+            plan: updatedCompany.plan,
+            freeJobsPosted: updatedCompany.freeJobsPosted,
+            planJobsPostedThisMonth: updatedCompany.planJobsPostedThisMonth,
+          } : prev
+        );
         setShowCreditsModal(false);
-        fetchRecruiterList();
       } else {
         toast.error(response.data.message || "Failed to update credits");
       }
@@ -784,6 +814,7 @@ const RecruitersList = () => {
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Position</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">Jobs</TableHead>
+                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">Credits</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Status</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Actions</TableHead>
