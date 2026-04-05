@@ -122,9 +122,8 @@ export const applyJob = async (req, res) => {
 
     await newApplication.save();
 
-    // Push application into job
-    job.application.push(newApplication._id);
-    await job.save();
+    // Push application into job (use $push to avoid re-validating required fields on old jobs)
+    await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
     // ✅ Create notifications using the notification service
     await notificationService.notifyApplicationSubmitted({
@@ -302,7 +301,13 @@ export const triggerAutoReject = async (req, res) => {
 export const bulkApplyJobs = async (req, res) => {
   try {
     const userId = req.id;
-    const { jobIds } = req.body;
+    let { jobIds, answersMap } = req.body;
+
+    // answersMap may arrive as a JSON string if sent via FormData
+    if (typeof answersMap === "string") {
+      try { answersMap = JSON.parse(answersMap); } catch { answersMap = {}; }
+    }
+    if (!answersMap || typeof answersMap !== "object") answersMap = {};
 
     if (!Array.isArray(jobIds) || jobIds.length === 0) {
       return res.status(400).json({ success: false, message: "jobIds array is required" });
@@ -314,46 +319,54 @@ export const bulkApplyJobs = async (req, res) => {
     const applied = [];
     const skipped = [];
 
-    const { answersMap = {} } = req.body; // { [jobId]: [{question, answer}] }
-
     for (const jobId of jobIds) {
-      const job = await Job.findById(jobId);
-      if (!job || !job.jobDetails.isActive) { skipped.push(jobId); continue; }
+      try {
+        // Validate ObjectId before querying
+        if (!jobId || !jobId.match(/^[a-fA-F0-9]{24}$/)) { skipped.push(jobId); continue; }
 
-      // Skip jobs with questions that have no answers provided
-      if (job.questions?.length > 0 && !answersMap[jobId]) {
-        skipped.push(jobId); continue;
+        const job = await Job.findById(jobId);
+        if (!job || !job.jobDetails?.isActive) { skipped.push(jobId); continue; }
+
+        // Skip jobs with unanswered questions (answersMap[jobId] must exist and be a non-empty array)
+        if (job.questions?.length > 0 && (!answersMap[jobId] || !Array.isArray(answersMap[jobId]) || answersMap[jobId].length === 0)) { skipped.push(jobId); continue; }
+
+        const existing = await Application.findOne({ job: jobId, applicant: userId });
+        if (existing) { skipped.push(jobId); continue; }
+
+        const newApplication = new Application({
+          job: jobId,
+          applicant: userId,
+          applicantName: user.fullname || "Unknown",
+          applicantEmail: user.emailId?.email || "noemail@example.com",
+          applicantPhone: user.phoneNumber?.number || "",
+          applicantProfile: user.profile || {},
+          resume: user.profile?.resume || "",
+          answers: Array.isArray(answersMap[jobId]) ? answersMap[jobId] : [],
+          status: "Pending",
+        });
+
+        await newApplication.save();
+        await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
+
+        // Notification errors must not crash the loop
+        try {
+          await notificationService.notifyApplicationSubmitted({
+            applicantId: userId,
+            jobId,
+            jobTitle: job.jobDetails.title,
+            companyName: job.jobDetails.companyName,
+            recruiterId: job.created_by,
+            applicationId: newApplication._id,
+          });
+        } catch (notifErr) {
+          console.error("Notification error for jobId", jobId, notifErr.message);
+        }
+
+        applied.push(jobId);
+      } catch (jobErr) {
+        console.error("Error processing jobId", jobId, jobErr.message);
+        skipped.push(jobId);
       }
-
-      const existing = await Application.findOne({ job: jobId, applicant: userId });
-      if (existing) { skipped.push(jobId); continue; }
-
-      const newApplication = new Application({
-        job: jobId,
-        applicant: userId,
-        applicantName: user.fullname || "Unknown",
-        applicantEmail: user.emailId?.email || "noemail@example.com",
-        applicantPhone: user.phoneNumber?.number || "",
-        applicantProfile: user.profile || {},
-        resume: user.profile?.resume || "",
-        answers: Array.isArray(answersMap[jobId]) ? answersMap[jobId] : [],
-        status: "Pending",
-      });
-
-      await newApplication.save();
-      job.application.push(newApplication._id);
-      await job.save();
-
-      await notificationService.notifyApplicationSubmitted({
-        applicantId: userId,
-        jobId,
-        jobTitle: job.jobDetails.title,
-        companyName: job.jobDetails.companyName,
-        recruiterId: job.created_by,
-        applicationId: newApplication._id,
-      });
-
-      applied.push(jobId);
     }
 
     return res.status(201).json({ success: true, applied, skipped });

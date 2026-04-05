@@ -46,6 +46,7 @@ const Signup = () => {
     phoneNumber: "",
     password: "",
     inputReferralCode: "",
+
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);

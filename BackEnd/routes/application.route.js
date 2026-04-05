@@ -19,32 +19,14 @@ import { validateJobApplication } from "../middlewares/jobValidator.js";
 // import { applyJobController } from "../controllers/application.controller.js";
 
 const router = express.Router();
-// Apply job route
-// router.post("/:jobId/apply", isAuthenticated, applyJob);
+
 router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplication, applyJob);
-
-
-// router.route("/apply").post
-(
-  isAuthenticated,
-  (req, res, next) => {
-    singleUpload(req, res, (err) => {
-      if (err) {
-        return res.status(400).json({ error: err.message }); // Handle multer errors
-      }
-      next();
-    });
-  },
-  validateJobApplication,
-  applyJob
-);
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
-router.route("/:id/applicants").get(isAuthenticated, getApplicants);
-router.route("/status/:id/update").post(isAuthenticated, updateStatus);
-// New route for getting individual application details
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
+router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
+router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 
 // Admin routes
 router.route("/admin/applications").get(isAuthenticated, isAdmin, getAllApplications);
