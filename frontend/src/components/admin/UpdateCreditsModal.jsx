@@ -10,8 +10,8 @@ const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
 
   useEffect(() => {
     if (recruiter) {
-      setCustomCreditsForJobs(recruiter.customMaxJobPosts || "");
-      setCustomCreditsForCandidates(recruiter.customCreditsForCandidates || "");
+      setCustomCreditsForJobs("");
+      setCustomCreditsForCandidates("");
     }
   }, [recruiter]);
 
@@ -50,17 +50,37 @@ const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Custom Max Job Posts
+              Add Job Posts
             </label>
             <Input
               type="number"
-              placeholder="Leave empty for default"
+              min="1"
+              placeholder="Enter number of job posts to add"
               value={customCreditsForJobs}
               onChange={(e) => setCustomCreditsForJobs(e.target.value)}
               className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Current: {recruiter?.maxJobPosts || 0} job posts
+              {(() => {
+                const plan = recruiter?.plan || "FREE";
+                const maxJobPosts = recruiter?.maxJobPosts ?? null;
+                const planLimits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+                const used = plan === "FREE"
+                  ? (recruiter?.freeJobsPosted || 0)
+                  : (recruiter?.planJobsPostedThisMonth || 0);
+                const limit = maxJobPosts !== null ? maxJobPosts : (planLimits[plan] ?? 2);
+                const remaining = limit === Infinity ? "∞" : Math.max(0, limit - used);
+                return (
+                  <>
+                    Current remaining: <span className="font-semibold text-gray-700 dark:text-gray-200">{remaining}</span> / {limit === Infinity ? "∞" : limit} job posts
+                    {customCreditsForJobs && Number(customCreditsForJobs) > 0 && limit !== Infinity && (
+                      <span className="ml-2 text-green-600 dark:text-green-400 font-semibold">
+                        → After update: {Math.max(0, limit - used) + Number(customCreditsForJobs)} / {limit + Number(customCreditsForJobs)}
+                      </span>
+                    )}
+                  </>
+                );
+              })()}
             </p>
           </div>
 

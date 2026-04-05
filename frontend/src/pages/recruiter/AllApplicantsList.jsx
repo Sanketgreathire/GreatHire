@@ -240,6 +240,58 @@ const AllApplicantsList = () => {
                     ))}
                   </tbody>
                 </table>
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-xl">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Showing{" "}
+                      <strong>{indexOfFirstItem + 1}–{Math.min(indexOfLastItem, filteredApplicants.length)}</strong>{" "}
+                      of <strong>{filteredApplicants.length}</strong> applicants
+                    </span>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        className="px-3 py-1 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded disabled:opacity-40"
+                      >
+                        ← Prev
+                      </Button>
+
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                        .reduce((acc, p, idx, arr) => {
+                          if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+                          acc.push(p);
+                          return acc;
+                        }, [])
+                        .map((item, idx) =>
+                          item === "..." ? (
+                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">…</span>
+                          ) : (
+                            <button
+                              key={item}
+                              onClick={() => setCurrentPage(item)}
+                              className={`px-3 py-1 text-sm rounded border ${currentPage === item
+                                  ? "bg-blue-600 text-white border-blue-600 font-medium"
+                                  : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                }`}
+                            >
+                              {item}
+                            </button>
+                          )
+                        )}
+
+                      <Button
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        className="px-3 py-1 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded disabled:opacity-40"
+                      >
+                        Next →
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

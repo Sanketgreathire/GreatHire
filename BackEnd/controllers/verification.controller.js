@@ -441,23 +441,24 @@ export const verifyPaymentForJobPlans = async (req, res) => {
         // Carry forward unused paid slots when upgrading between paid plans
         const prevLimit = PLAN_LIMITS[prevPlan] ?? 0;
         if (prevLimit !== Infinity) {
-          // const paidUsed = company.planJobsPostedThisMonth || 0;
-          // carryoverJobs = Math.max(0, prevLimit - Math.max(0, paidUsed));
-          // planJobsPostedThisMonth can be negative (carryover offset from previous plan)
-          // Use it directly so carried-over slots are preserved
           const paidUsed = company.planJobsPostedThisMonth || 0;
           carryoverJobs = Math.max(0, prevLimit - paidUsed);
         }
       }
+
+      // Carry forward admin-added bonus slots (customMaxJobPosts) — always preserved across plan upgrades
+      const adminBonus = Number(company.customMaxJobPosts) || 0;
+      carryoverJobs += adminBonus;
 
       // Carry forward leftover candidate credits
       const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
-      company.maxJobPosts = "Unlimited";
+      company.maxJobPosts = null;
+      company.customMaxJobPosts = 0; // reset after carrying forward into planJobsPostedThisMonth offset
       company.hasSubscription = true;
-      company.freePlanExpiry = null; // No longer on FREE plan — expiry not applicable
+      company.freePlanExpiry = null;
 
       // Apply carryover: start new plan with negative usage offset so leftover slots are available
       // company.paidPlanFreeJobsPosted = 0;
