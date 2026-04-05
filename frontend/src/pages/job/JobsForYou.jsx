@@ -92,7 +92,9 @@ const JobsForYou = ({ jobs = [] }) => {
 
   const isApplied =
     selectedJob?.application?.some(
-      (application) => application.applicant === user?._id
+      (application) =>
+        String(application.applicant) === String(user?._id) ||
+        application.applicant?._id?.toString() === String(user?._id)
     ) || false;
 
   const hasAppliedToJob = (jobId) =>
@@ -100,7 +102,9 @@ const JobsForYou = ({ jobs = [] }) => {
       (job) =>
         job._id === jobId &&
         job?.application?.some(
-          (application) => application.applicant === user?._id
+          (application) =>
+            String(application.applicant) === String(user?._id) ||
+            application.applicant?._id?.toString() === String(user?._id)
         )
     );
 
@@ -323,7 +327,7 @@ const JobsForYou = ({ jobs = [] }) => {
       const payload = {
         applicant: user._id,
         applicantName: user.fullname || user.name,
-        applicantEmail: user.email,
+        applicantEmail: user.emailId?.email || user.email,
         applicantPhone: user.phoneNumber?.number || user.phoneNumber,
         applicantProfile: user.profile,
         answers,

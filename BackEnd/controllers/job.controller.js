@@ -363,7 +363,11 @@ export const getAllJobs = async (req, res) => {
 
     cursor.on("error", (error) => {
       console.error("Error streaming jobs:", error);
-      res.status(500).json({ message: "Internal server error" });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      } else {
+        res.end("]");
+      }
     });
   } catch (error) {
     console.error("Error fetching jobs:", error);

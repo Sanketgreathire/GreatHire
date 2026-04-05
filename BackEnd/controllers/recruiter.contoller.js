@@ -796,6 +796,7 @@ export const toggleActive = async (req, res) => {
       await Recruiter.updateMany({ _id: { $in: recruiterIds } }, { isActive });
       // Toggle all jobs for these recruiters.
       await Job.updateMany({ created_by: { $in: recruiterIds } }, { isActive });
+
     } else {
       // Otherwise, update only the specific recruiter.
       await Recruiter.findByIdAndUpdate(

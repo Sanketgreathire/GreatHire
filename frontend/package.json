@@ -45,6 +45,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^12.23.12",
     "frontend": "file:",
+    "jspdf": "^4.2.1",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.482.0",
     "mammoth": "^1.12.0",

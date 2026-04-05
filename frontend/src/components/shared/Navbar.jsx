@@ -11,6 +11,7 @@ import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 import ThemeToggle from "../ThemeToggle";
+import RoleActionBar from "./RoleActionBar";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -555,6 +556,9 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      <div className="fixed top-[61px] left-0 right-0 z-20">
+        <RoleActionBar />
+      </div>
     </>
   );
 };

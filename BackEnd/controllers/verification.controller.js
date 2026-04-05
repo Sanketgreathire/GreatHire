@@ -478,6 +478,17 @@ export const verifyPaymentForJobPlans = async (req, res) => {
         planType = "STANDARD";
       }
 
+      company.creditedForJobs = creditsForJobs;
+      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.maxJobPosts = "Unlimited";
+      company.hasSubscription = true;
+      company.freePlanExpiry = null;
+      company.planJobsPostedThisMonth = -carryoverJobs;
+      company.plan = planType;
+      company.planMonthStart = new Date();
+
+      await company.save();
+
       // Update all recruiters associated with this company
       const recruiterIds = company.userId.map((u) => u.user);
       await Recruiter.updateMany(
@@ -487,11 +498,6 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           subscriptionStatus: "ACTIVE",
         }
       );
-
-      // Update company plan and set monthly counter start (preserve carryover offset)
-      company.plan = planType;
-      company.planMonthStart = new Date();
-      await company.save();
 
       res.status(200).json({
         success: true,
