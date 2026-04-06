@@ -814,7 +814,6 @@ const RecruitersList = () => {
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Position</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">Jobs</TableHead>
-                  <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">Credits</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Status</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
                   <TableHead className="text-sm text-gray-700 dark:text-gray-300 font-semibold">Actions</TableHead>
