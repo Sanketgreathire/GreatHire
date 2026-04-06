@@ -15,10 +15,11 @@ import axios from "axios";
 
 // Plan limits configuration
 const PLAN_LIMITS = {
-  FREE:       { jobsPerMonth: 2,         resumeCredits: 5 },
-  STANDARD:   { jobsPerMonth: 5,         resumeCredits: 333 },
-  PREMIUM:    { jobsPerMonth: 15,        resumeCredits: 1000 },
-  ENTERPRISE: { jobsPerMonth: Infinity,  resumeCredits: 8333 },
+  FREE:       { jobsPerMonth: 1,         resumeCredits: 20 },
+  STANDARD:   { jobsPerMonth: 5,         resumeCredits: 500 },
+  PREMIUM:    { jobsPerMonth: 10,        resumeCredits: 1500 },
+  PRO:        { jobsPerMonth: 25,        resumeCredits: 5000 },
+  ENTERPRISE: { jobsPerMonth: Infinity,  resumeCredits: Infinity },
 };
 
 // Free job posts for paid plans (monthly)

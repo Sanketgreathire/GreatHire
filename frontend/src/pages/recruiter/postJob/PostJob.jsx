@@ -393,7 +393,7 @@ const PostJob = () => {
                   <p className="text-3xl font-bold">
                     {(() => {
                       const plan = company.plan || "FREE";
-                      const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+                      const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
                       const PAID_PLAN_FREE_JOBS = 2;
                       
                       if (plan === "FREE") {

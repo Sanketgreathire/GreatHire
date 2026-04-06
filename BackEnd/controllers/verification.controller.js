@@ -427,7 +427,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       }
 
       // Carry forward leftover job slots from the previous paid plan
-      const PLAN_LIMITS = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+      const PLAN_LIMITS = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
       // const PAID_PLAN_FREE_JOBS = 2;
       const prevPlan = company.plan || "FREE";
 
@@ -457,7 +457,9 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       let planType = "STANDARD";
       if (creditsForJobs >= 999999) {
         planType = "ENTERPRISE";
-      } else if (creditsForJobs >= 15) {
+      } else if (creditsForJobs >= 25) {
+        planType = "PRO";
+      } else if (creditsForJobs >= 10) {
         planType = "PREMIUM";
       } else if (creditsForJobs >= 5) {
         planType = "STANDARD";
