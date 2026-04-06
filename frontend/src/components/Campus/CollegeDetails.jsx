@@ -12,7 +12,7 @@ const COLLEGE = {
   nirf: 3,
   website: "www.iitb.ac.in",
   address: "Powai, Mumbai – 400076, Maharashtra",
-  tpo: "Dr. Sanjay Mehta",
+  tpo: "Er. Moin Shaikh",
   tpoEmail: "tpo@iitb.ac.in",
   tpoPhone: "+91 22 2576 7010",
   totalEnrolled: 1240,
