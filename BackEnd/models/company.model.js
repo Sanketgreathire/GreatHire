@@ -98,7 +98,7 @@ const companySchema = new mongoose.Schema(
     },
     plan: {
       type: String,
-      enum: ["FREE", "STANDARD", "PREMIUM", "ENTERPRISE"],
+      enum: ["FREE", "STANDARD", "PREMIUM", "PRO", "ENTERPRISE"],
       default: "FREE",
     },
     planJobsPostedThisMonth: {

@@ -26,67 +26,90 @@ import { updateUserPlan } from "@/redux/authSlice";
 /* ================= SUBSCRIPTION PLANS ================= */
 const subscriptionPlans = [
   {
-    id: "launchpad",
-    title: "Free Launchpad",
+    id: "starter",
+    title: "Starter",
     price: 0,
-    billing: "Free",
-    jobs: "2 Jobs",
-    resumes: "5 Credits / month",
+    billing: "Forever Free",
+    jobs: "1 Job / 3 months",
+    resumes: "20 Applications",
     isFree: true,
     features: [
-      "2 Job Postings per month",
-      "Basic ATS",
-      "5 Resume Views / month",
-      "AI-generated Job Descriptions",
+      "1 Job Posting every 3 months",
+      "Access to first 20 applications",
+      "Basic Search Filters",
+      "1 User",
+      "No AI Features",
     ],
     cta: "Start Free",
   },
   {
-    id: "swift-hire",
-    title: "Standard",
-    price: 999,
+    id: "growth",
+    title: "Growth",
+    price: 1999,
     billing: "Monthly",
     jobs: "5 Jobs",
-    resumes: "333 Credits",
+    resumes: "500 Candidates",
     features: [
-      "5 Job Postings (30 days)",
-      "333 Resume Credits",
-      "WhatsApp & Email Invites",
+      "5 Job Postings",
+      "500 Candidates Access",
+      "1 User",
+      "Basic Filters",
+      "Email Support",
     ],
     cta: "Upgrade Now",
   },
   {
-    id: "growth-engine",
-    title: "Premium (Most Popular)",
+    id: "scale",
+    title: "Scale",
     price: 2999,
     billing: "Monthly",
-    jobs: "15 Jobs",
-    resumes: "1000 Credits",
+    jobs: "10 Jobs",
+    resumes: "1,500 Candidates",
     popular: true,
     features: [
-      "15 Job Postings (60 days)",
-      "1000 Resume Credits",
-      "Advanced AI Filters",
-      "Priority Listing (7 days)",
-      "Multi-user Login (3 recruiters)",
-      "HR Tool Integration",
+      "10 Job Postings",
+      "1,500 Candidates Access",
+      "3 Users",
+      "AI Candidate Matching",
+      "AI JD Creation",
+      "Smart Filters & Shortlisting",
     ],
-    cta: "Go Professional",
+    cta: "Get Started",
   },
   {
-    id: "enterprise-elite",
-    title: "Enterprise Elite",
-    price: 24999,
+    id: "pro",
+    title: "Pro",
+    price: 4999,
+    billing: "Monthly",
+    jobs: "25 Jobs",
+    resumes: "5,000 Candidates",
+    features: [
+      "25 Job Postings",
+      "5,000 Candidates Access",
+      "5 Users",
+      "AI JD Creation",
+      "AI Candidate Matching",
+      "Advanced Analytics Dashboard",
+      "Priority Support",
+      "Interview Tracking",
+    ],
+    cta: "Go Pro",
+  },
+  {
+    id: "enterprise",
+    title: "Enterprise",
+    price: 30000,
     billing: "Yearly",
     jobs: "Unlimited",
-    resumes: "8,333 Credits / year",
+    resumes: "Unlimited",
     enterprise: true,
     features: [
       "Unlimited Job Postings",
-      "8,333 Resume Credits / year",
-      "Homepage Employer Branding",
-      "Dedicated Account Manager",
-      "AI Headhunter Reports",
+      "Unlimited Users (Role-based access)",
+      "Dedicated Relationship Manager",
+      "AI JD Creation + AI Matching",
+      "Full Analytics Dashboard",
+      "Custom Hiring Workflows",
     ],
     cta: "Buy Now",
   },
@@ -110,22 +133,6 @@ const subscriptionPlans = [
     ],
     cta: "Contact Sales",
   },
-  // {
-  //   id: "monthly-talent-partner",
-  //   title: "Monthly Talent Partner",
-  //   price: 10000,
-  //   billing: "Monthly Retainer",
-  //   jobs: "Up to 3 Hires",
-  //   resumes: "Managed Hiring",
-  //   features: [
-  //     "Dedicated recruiter",
-  //     "Up to 3 successful hires per month",
-  //     "Fixed predictable cost",
-  //     "Ideal for startups & GCCs",
-  //   ],
-  //   extraInfo: ["₹10,000 per month", "1 month advance required"],
-  //   cta: "Talk to RPO Expert",
-  // },
 ];
 
 const PlanBadge = ({ planId, user }) => {
@@ -142,9 +149,10 @@ const PlanBadge = ({ planId, user }) => {
   if (user.subscriptionStatus !== "ACTIVE") return null;
 
   const planMap = {
-    STANDARD: "swift-hire",
-    PREMIUM: "growth-engine",
-    ENTERPRISE: "enterprise-elite",
+    STANDARD: "growth",
+    PREMIUM: "scale",
+    PRO: "pro",
+    ENTERPRISE: "enterprise",
   };
 
   if (planMap[user.plan] !== planId) return null;
@@ -361,7 +369,7 @@ function RecruiterPlans() {
           );
           if (response?.data.success) {
             dispatch(addCompany(response?.data.company));
-            toast.success("Free plan activated! You now have 2 job posts and 5 candidate views.");
+            toast.success("Free plan activated! You now have 1 job post every 3 months.");
             navigate("/recruiter/dashboard/post-job");
           }
         } catch (err) {
@@ -384,7 +392,7 @@ function RecruiterPlans() {
         title: plan.title,
         price: plan.price,
         creditsForJobs: 999999,
-        creditsForCandidates: 8333,
+        creditsForCandidates: 999999,
       });
       return;
     }
@@ -395,10 +403,11 @@ function RecruiterPlans() {
     }
 
     const planCredits = {
-      "swift-hire":    { creditsForJobs: 5,  creditsForCandidates: 333 },
-      "growth-engine": { creditsForJobs: 15, creditsForCandidates: 1000 },
+      "growth":  { creditsForJobs: 5,  creditsForCandidates: 500 },
+      "scale":   { creditsForJobs: 10, creditsForCandidates: 1500 },
+      "pro":     { creditsForJobs: 25, creditsForCandidates: 5000 },
     };
-    const credits = planCredits[plan.id] || { creditsForJobs: 5, creditsForCandidates: 333 };
+    const credits = planCredits[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
 
     initiateCreditPayment({
       title: plan.title,
