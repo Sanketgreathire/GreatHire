@@ -23,17 +23,19 @@ export const MessageProvider = ({ children }) => {
     if (!user?._id) return;
 
     const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
-      path: '/socket.io',
       withCredentials: true,
+      transports: ['polling', 'websocket'],
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
     });
 
     setSocket(socketInstance);
 
-    // Join user room
-    socketInstance.emit('joinUserRoom', user._id);
-    socketInstance.emit('userOnline', user._id);
+    socketInstance.on('connect', () => {
+      socketInstance.emit('joinUserRoom', user._id);
+      socketInstance.emit('userOnline', user._id);
+    });
 
-    // Fetch conversations when user is authenticated
     fetchConversations();
 
     return () => {

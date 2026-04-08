@@ -11,6 +11,7 @@ import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 import ThemeToggle from "../ThemeToggle";
+import RoleActionBar from "./RoleActionBar";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -328,10 +329,7 @@ const Navbar = () => {
                       aria-haspopup="true"
                     >
                       <img
-                        src={
-                          user?.profile?.profilePhoto ||
-                          "https://github.com/shadcn.png"
-                        }
+                        src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                         alt={`${user.fullname || "User"}'s avatar`}
                         className="h-8 w-8 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                       />
@@ -401,10 +399,7 @@ const Navbar = () => {
               {!isMenuOpen ? (
                 user ? (
                   <img
-                    src={
-                      user?.profile?.profilePhoto ||
-                      "https://github.com/shadcn.png"
-                    }
+                    src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                     alt={`${user?.fullname || "User"}'s avatar`}
                     className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
@@ -438,10 +433,7 @@ const Navbar = () => {
                 {user ? (
                   <div className="flex items-center gap-3">
                     <img
-                      src={
-                        user?.profile?.profilePhoto ||
-                        "https://github.com/shadcn.png"
-                      }
+                      src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                       alt="Profile"
                       className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                     />
@@ -555,6 +547,9 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      <div className="fixed top-[61px] left-0 right-0 z-20">
+        <RoleActionBar />
+      </div>
     </>
   );
 };

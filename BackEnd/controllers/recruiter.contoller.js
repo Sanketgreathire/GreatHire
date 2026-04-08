@@ -328,6 +328,15 @@ export const getRecruiterById = async (req, res) => {
   }
 };
 
+// Plan-based user limits
+const USER_LIMITS = {
+  FREE:       1,
+  STANDARD:   1,
+  PREMIUM:    3,
+  PRO:        5,
+  ENTERPRISE: Infinity,
+};
+
 // add recruiter to company by admin
 export const addRecruiterToCompany = async (req, res) => {
   const { fullname, email, phoneNumber, password, position, companyId } =
@@ -345,6 +354,21 @@ export const addRecruiterToCompany = async (req, res) => {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
+    }
+
+    // Enforce user limit per plan
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+    const planType = company.plan || "FREE";
+    const userLimit = USER_LIMITS[planType] ?? 1;
+    const currentUserCount = company.userId.length;
+    if (userLimit !== Infinity && currentUserCount >= userLimit) {
+      return res.status(400).json({
+        success: false,
+        message: `Your ${planType} plan allows a maximum of ${userLimit} user${userLimit > 1 ? "s" : ""}. Please upgrade your plan to add more recruiters.`,
+      });
     }
 
     // Check if recruiter email already exists
@@ -381,8 +405,7 @@ export const addRecruiterToCompany = async (req, res) => {
     });
 
     // Update company with recruiter's ID
-    const company = await Company.findById(companyId);
-    company.userId.push({ user: recruiter._id });
+    await company.userId.push({ user: recruiter._id });
     await company.save();
 
     // Setup nodemailer

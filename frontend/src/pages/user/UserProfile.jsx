@@ -256,12 +256,8 @@ const UserProfile = () => {
             <div className="flex flex-col items-center text-center border-b pb-8">
               <Avatar className="h-24 w-24 shadow-lg">
                 <AvatarImage
-                  src={
-                    user?.profile?.profilePhoto ||
-                    "https://github.com/shadcn.png"
-                  }
+                  src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                   alt="Profile Photo"
-                  onError={(e) => (e.target.src = "/default-avatar.png")}
                 />
               </Avatar>
               <h1 className="mt-4 text-3xl font-bold text-gray-800 dark:text-gray-100">

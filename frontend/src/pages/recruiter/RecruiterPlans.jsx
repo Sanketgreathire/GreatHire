@@ -27,82 +27,97 @@ import { updateUserPlan } from "@/redux/authSlice";
 const subscriptionPlans = [
   {
     id: "starter",
-    title: "Starter",
+    title: "Starter Plan",
     price: 0,
     billing: "Forever Free",
     jobs: "1 Job / 3 months",
     resumes: "20 Applications",
     isFree: true,
+    bestFor: "Best for trying the platform",
     features: [
       "1 Job Posting every 3 months",
-      "Access to first 20 applications",
+      "Access to first 20 applications per job",
       "Basic Search Filters",
       "1 User",
       "No AI Features",
     ],
     cta: "Start Free",
+    color: "gray",
   },
   {
     id: "growth",
-    title: "Growth",
+    title: "Growth Plan",
     price: 1999,
-    billing: "Monthly",
+    billing: "month",
     jobs: "5 Jobs",
     resumes: "500 Candidates",
+    bestFor: "Best for: Startups hiring 1–3 roles/month",
     features: [
       "5 Job Postings",
-      "500 Candidates Access",
+      "500 Candidates Database Access",
       "1 User",
-      "Basic Filters",
-      "Email Support",
+      "Basic Filters +1",
+      "1,000 Email Support",
     ],
     cta: "Upgrade Now",
+    color: "blue",
   },
   {
     id: "scale",
-    title: "Scale",
+    title: "Scale Plan",
     price: 2999,
-    billing: "Monthly",
+    billing: "month",
     jobs: "10 Jobs",
     resumes: "1,500 Candidates",
     popular: true,
+    bestFor: "Best for: Teams hiring consistently",
     features: [
       "10 Job Postings",
-      "1,500 Candidates Access",
+      "1,500 Candidates Database Access",
       "3 Users",
       "AI Candidate Matching",
       "AI JD Creation",
       "Smart Filters & Shortlisting",
+      "Hire 3x faster",
+      "Save 50–70% hiring cost",
+      "3,000 Email Support",
     ],
     cta: "Get Started",
+    color: "purple",
   },
   {
     id: "pro",
-    title: "Pro",
+    title: "Pro Plan",
     price: 4999,
-    billing: "Monthly",
+    billing: "month",
     jobs: "25 Jobs",
     resumes: "5,000 Candidates",
+    bestFor: "For companies scaling aggressively",
     features: [
       "25 Job Postings",
-      "5,000 Candidates Access",
+      "5,000 Candidates Database Access",
       "5 Users",
       "AI JD Creation",
       "AI Candidate Matching",
       "Advanced Analytics Dashboard",
       "Priority Support",
       "Interview Tracking",
+      "Replace external recruiters",
+      "Build in-house hiring engine",
+      "10,000 Email Support",
     ],
     cta: "Go Pro",
+    color: "orange",
   },
   {
     id: "enterprise",
-    title: "Enterprise",
+    title: "Enterprise Plan",
     price: 30000,
-    billing: "Yearly",
+    billing: "year",
     jobs: "Unlimited",
     resumes: "Unlimited",
     enterprise: true,
+    bestFor: "Best for: High-volume hiring companies",
     features: [
       "Unlimited Job Postings",
       "Unlimited Users (Role-based access)",
@@ -110,8 +125,10 @@ const subscriptionPlans = [
       "AI JD Creation + AI Matching",
       "Full Analytics Dashboard",
       "Custom Hiring Workflows",
+      "Unlimited Email Support",
     ],
     cta: "Buy Now",
+    color: "gold",
   },
   {
     id: "full-cycle-rpo",
@@ -120,18 +137,21 @@ const subscriptionPlans = [
     billing: "Per Hire",
     jobs: "End-to-End Hiring",
     resumes: "Unlimited",
+    bestFor: "For companies that want zero hiring hassle",
     features: [
       "Complete sourcing to offer management",
       "Technical & HR screening",
       "Salary negotiation & closure",
       "Free replacement within 90 days",
       "Dedicated recruitment team",
+      "Unlimited Email Support",
     ],
     extraInfo: [
       "Fee: 8.33% of annual gross CTC",
       "₹5,000 sourcing advance (non-refundable)",
     ],
     cta: "Contact Sales",
+    color: "teal",
   },
 ];
 
@@ -509,80 +529,153 @@ function RecruiterPlans() {
               </div>
             </div>
 
-            {/* ================= PRICING CARDS (ORIGINAL) ================= */}
-            <div className="grid md:grid-cols-4 gap-6 mb-12">
+            {/* ================= PRICING CARDS ================= */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {subscriptionPlans
-                .filter(plan => !(plan.isFree && (company?.hasUsedFreePlan || company?.hasSubscription)))
-                .map((plan) => (
-                  <div
-                    key={plan.id}
-                    onClick={() => setSelectedPlanId(plan.id)}
-                    className="border border-gray-200 dark:border-slate-700 rounded-xl p-6 bg-white dark:bg-slate-900 shadow hover:shadow-lg cursor-pointer transition-all duration-300"
-                  >
-                    {plan.popular && (
-                      <span className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full">
-                        MOST POPULAR
-                      </span>
-                    )}
+                .map((plan) => {
+                  const borderColor = {
+                    gray: "border-gray-300 dark:border-gray-600",
+                    blue: "border-blue-400 dark:border-blue-500",
+                    purple: "border-purple-500 dark:border-purple-400",
+                    orange: "border-orange-400 dark:border-orange-500",
+                    gold: "border-yellow-400 dark:border-yellow-500",
+                    teal: "border-teal-400 dark:border-teal-500",
+                  }[plan.color] || "border-gray-200";
 
-                    <h3 className="text-xl font-semibold mt-3 text-gray-900 dark:text-white transition-colors duration-300">
-                      {plan.title}
-                    </h3>
+                  const badgeBg = {
+                    gray: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+                    blue: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+                    purple: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
+                    orange: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
+                    gold: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
+                    teal: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
+                  }[plan.color] || "bg-gray-100 text-gray-600";
 
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-                      ₹{plan.price}{" "}
-                      <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                        / {plan.billing}
-                      </span>
-                    </p>
+                  return (
+                    <div
+                      key={plan.id}
+                      onClick={() => setSelectedPlanId(plan.id)}
+                      className={`relative border-2 ${borderColor} rounded-2xl p-6 bg-white dark:bg-slate-900 shadow hover:shadow-xl cursor-pointer transition-all duration-300 flex flex-col ${
+                        plan.popular ? "ring-2 ring-purple-500 dark:ring-purple-400" : ""
+                      }`}
+                    >
+                      {/* Popular badge */}
+                      {plan.popular && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                          <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+                            ⭐ MOST POPULAR
+                          </span>
+                        </div>
+                      )}
 
-                    <p className="mt-3 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                      {plan.jobs} • {plan.resumes}
-                    </p>
+                      {/* Current plan badge for starter */}
+                      {plan.isFree && company && !company.hasSubscription && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                          <span className="bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+                            ✓ CURRENT PLAN
+                          </span>
+                        </div>
+                      )}
 
-                    <ul className="mt-4 space-y-2 text-sm">
-                      {plan.features.map((f, i) => (
-                        <li key={i} className="flex gap-2">
-                          <Check size={16} className="text-green-500 flex-shrink-0" />
-                          <span className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
+                      {/* Plan name + bestFor */}
+                      <div className="mb-4">
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeBg}`}>
+                          {plan.title}
+                        </span>
+                        {plan.bestFor && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
+                            {plan.bestFor}
+                          </p>
+                        )}
+                      </div>
 
-                    {plan.enterprise ? (
-                      <div className="mt-6 space-y-2">
+                      {/* Price */}
+                      <div className="mb-4">
+                        {plan.isFree ? (
+                          <div>
+                            <span className="text-4xl">₹0</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">Forever Free</span>
+                          </div>
+                        ) : typeof plan.price === "number" ? (
+                          <div>
+                            <span className="text-4xl">₹{plan.price.toLocaleString()}</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">/ {plan.billing}</span>
+                          </div>
+                        ) : (
+                          <div>
+                            <span className="text-4xl">{plan.price}</span>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">/ {plan.billing}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Jobs & Candidates summary */}
+                      <div className="flex gap-2 mb-4 flex-wrap">
+                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
+                          📋 {plan.jobs}
+                        </span>
+                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
+                          👥 {plan.resumes}
+                        </span>
+                      </div>
+
+                      {/* Features */}
+                      <ul className="space-y-2 text-sm flex-1 mb-4">
+                        {plan.features.map((f, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <Check size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700 dark:text-gray-300">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* Extra info (RPO) */}
+                      {plan.extraInfo && (
+                        <ul className="mb-4 space-y-1">
+                          {plan.extraInfo.map((info, i) => (
+                            <li key={i} className="text-xs text-gray-500 dark:text-gray-400 italic">{info}</li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {/* CTA Button(s) */}
+                      {plan.enterprise ? (
+                        <div className="space-y-2 mt-auto">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleSubscription(plan); }}
+                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-lg transition-colors duration-300"
+                          >
+                            {plan.cta}
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate("/contact"); }}
+                            className="w-full bg-gray-600 dark:bg-slate-700 hover:bg-gray-700 text-white py-2 rounded-lg transition-colors duration-300 text-sm"
+                          >
+                            Contact Sales
+                          </button>
+                        </div>
+                      ) : plan.isFree && company && !company.hasSubscription ? (
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSubscription(plan);
-                          }}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors duration-300"
+                          disabled
+                          className="mt-auto w-full font-semibold py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                        >
+                          ✓ Current Plan
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleSubscription(plan); }}
+                          className={`mt-auto w-full font-semibold py-2.5 rounded-lg transition-colors duration-300 ${
+                            plan.popular
+                              ? "bg-purple-600 hover:bg-purple-700 text-white"
+                              : "bg-blue-600 hover:bg-blue-700 text-white"
+                          }`}
                         >
                           {plan.cta}
                         </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate("/contact");
-                          }}
-                          className="w-full bg-gray-600 dark:bg-slate-700 hover:bg-gray-700 dark:hover:bg-slate-600 text-white py-2 rounded-lg transition-colors duration-300"
-                        >
-                          Contact Sales
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSubscription(plan);
-                        }}
-                        className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors duration-300"
-                      >
-                        {plan.cta}
-                      </button>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  );
+                })}
             </div>
 
             {/* ================= FEATURES HIGHLIGHT ================= */}

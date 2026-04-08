@@ -328,7 +328,7 @@ export const registerCompany = async (req, res) => {
       },
       businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
       businessFileName: businessFile ? businessFile[0].originalname : undefined,
-      maxJobPosts: "Unlimited",
+      maxJobPosts: null,
       freePlanExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     });
 
@@ -866,22 +866,21 @@ export const decreaseCandidateCredits = async (req, res) => {
 // return all applicants of a company
 export const getCompanyApplicants = async (req, res) => {
   try {
-    const { companyId } = req.params; // Extract company id 
+    const { companyId } = req.params;
     const userId = req.id;
 
     if (!(await isUserAssociated(companyId, userId))) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized", success: false });
+      return res.status(403).json({ message: "You are not authorized", success: false });
     }
 
-    // Find all job postings under this company
+    // Run both queries in parallel
     const jobIds = await Job.find({ company: companyId }).distinct("_id");
 
-    // Find applications for these jobs in assecending order
     const applications = await Application.find({ job: { $in: jobIds } })
-      .populate("applicant") // Only populate applicant details
-      .sort({ createdAt: -1 }); // Sort latest first
+      .populate("applicant", "fullname emailId phoneNumber profile.profilePhoto")
+      .populate({ path: "job", select: "jobDetails.title" })
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.status(200).json({
       success: true,
