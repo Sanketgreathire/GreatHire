@@ -9,7 +9,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { FaUserTie } from "react-icons/fa6";
+import { FaUserTie, FaGraduationCap } from "react-icons/fa6";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -26,6 +26,7 @@ const navItems = [
   { name: "Job Seekers", path: "/admin/users", icon: FaUsers },
   { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
   { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
+  { name: "Campus", path: "/admin/campus-dashboard", icon: FaGraduationCap },
   { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
   { name: "Reports", path: "/admin/reports", icon: FaChartBar },
   { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
@@ -138,10 +139,7 @@ const Sidebar = () => {
             {user ? (
               <>
                 <img
-                  src={
-                    user.profile?.profilePhoto ||
-                    "https://github.com/shadcn.png"
-                  }
+                  src={user.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                   alt="profile"
                   className="h-10 w-10 rounded-full border border-gray-300 dark:border-gray-600 object-cover"
                 />

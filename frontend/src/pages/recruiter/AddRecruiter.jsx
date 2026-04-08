@@ -11,6 +11,13 @@ const AddRecruiter = () => {
 
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
+  const { recruiters } = useSelector((state) => state.recruiters);
+
+  const USER_LIMITS = { FREE: 1, STANDARD: 1, PREMIUM: 3, PRO: 5, ENTERPRISE: Infinity };
+  const planType = company?.plan || "FREE";
+  const userLimit = USER_LIMITS[planType] ?? 1;
+  const currentCount = company?.userId?.length ?? 0;
+  const atLimit = userLimit !== Infinity && currentCount >= userLimit;
 
   // State to manage form loading state
   const [loading, setLoading] = useState(false);
@@ -90,10 +97,25 @@ const AddRecruiter = () => {
       
       {company && user?.isActive ? (
         <div className="flex items-center justify-center pt-20 min-h-screen bg-gray-100 dark:bg-gray-950">
-          <form
-            className="w-full p-4 md:w-1/2 space-y-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg"
-            onSubmit={handleSubmit}
-          >
+          {atLimit ? (
+            <div className="w-full md:w-1/2 p-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg text-center">
+              <p className="text-2xl font-bold text-gray-800 dark:text-white mb-2">User Limit Reached</p>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                Your <strong>{planType}</strong> plan allows a maximum of <strong>{userLimit}</strong> user{userLimit > 1 ? "s" : ""}.
+                Upgrade your plan to add more recruiters.
+              </p>
+              <button
+                onClick={() => window.location.href = "/recruiter/dashboard/upgrade-plans"}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold"
+              >
+                Upgrade Plan
+              </button>
+            </div>
+          ) : (
+            <form
+              className="w-full p-4 md:w-1/2 space-y-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg"
+              onSubmit={handleSubmit}
+            >
             <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400">
               {company?.companyName}
             </h1>
@@ -164,6 +186,7 @@ const AddRecruiter = () => {
               {loading ? "Adding..." : "Add Recruiter"}
             </button>
           </form>
+          )}
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">

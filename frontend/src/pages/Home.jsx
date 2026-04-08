@@ -8,21 +8,21 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ First check if user exists
     if (!user) return;
 
-    // ✅ Then check role
     if (user.role === "student" || user.role === "candidate") {
       navigate("/jobs", { replace: true });
+    } else if (user.role === "recruiter") {
+      navigate("/recruiter/dashboard/home", { replace: true });
+    } else if (user.role === "admin") {
+      navigate("/admin/dashboard", { replace: true });
     }
   }, [user, navigate]);
 
-  // 🟦 If user is NOT logged in → Show BeforeLogin
   if (!user) {
     return <BeforeLogin />;
   }
 
-  // 🟦 Logged in users will be redirected by useEffect
   return null;
 };
 

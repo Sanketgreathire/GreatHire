@@ -103,6 +103,18 @@ export const postJob = [
       if (recruiter && recruiter.remainingJobPosts > 0) {
         recruiter.remainingJobPosts -= 1;
         await recruiter.save();
+      } else if (company.maxJobPosts !== null && company.maxJobPosts !== undefined) {
+        // ── Admin-set maxJobPosts: takes priority over plan limits ──
+        const used = companyPlan === "FREE"
+          ? (company.freeJobsPosted || 0)
+          : (company.planJobsPostedThisMonth || 0);
+        if (used >= company.maxJobPosts) {
+          return res.status(400).json({
+            success: false,
+            message: "You have used all your available job posts. Please contact admin for more.",
+            redirectTo: "/recruiter/dashboard/home",
+          });
+        }
       } else if (companyPlan === "FREE") {
         // ── FREE plan: check against freeJobsPosted limit ──
         if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
@@ -352,7 +364,11 @@ export const getAllJobs = async (req, res) => {
 
     cursor.on("error", (error) => {
       console.error("Error streaming jobs:", error);
-      res.status(500).json({ message: "Internal server error" });
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      } else {
+        res.end("]");
+      }
     });
   } catch (error) {
     console.error("Error fetching jobs:", error);

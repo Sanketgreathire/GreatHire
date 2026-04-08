@@ -104,10 +104,7 @@ const Navbar = ({ linkName }) => {
                 aria-haspopup="true"
               >
                 <img
-                  src={
-                    user?.profile?.profilePhoto ||
-                    "https://github.com/shadcn.png"
-                  }
+                  src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                   alt={`${user?.fullname || "User"}'s avatar`}
                   className="h-9 w-9 md:h-10 md:w-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover"
                 />

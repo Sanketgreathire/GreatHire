@@ -11,6 +11,7 @@ import blog from "../../../assets/Animation/blog.json";
 import contact from "../../../assets/Animation/contact-us.json";
 import RecruiterPlans from "@/pages/recruiter/RecruiterPlans";
 import CompactTestimonials from "@/components/ui/CompactTestimonials";
+import RoleActionBar from "@/components/shared/RoleActionBar";
 
 const GreatHireLanding = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -211,9 +212,14 @@ const GreatHireLanding = () => {
             </div>
           </nav>
 
+          {/* Role-Based Action Bar */}
+          <div className="fixed top-[61px] left-0 right-0 z-40">
+            <RoleActionBar />
+          </div>
+
 
           {/* HOME SECTION */}
-          <section id="home" className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300">
+          <section id="home" className="min-h-screen pt-28 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300">
             {/* Animated Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
               <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-400 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
@@ -538,7 +544,7 @@ const GreatHireLanding = () => {
               </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
           @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }

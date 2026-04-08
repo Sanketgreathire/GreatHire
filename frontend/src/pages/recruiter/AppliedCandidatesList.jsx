@@ -35,7 +35,10 @@ const statusBadgeStyles = {
 
 const AppliedCandidatesList = () => {
   const [applicants, setApplicants] = useState([]);
-  const { user } = useSelector((state) => state.auth); // Get the logged-in user details
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+  const isStarterPlan = !company?.hasSubscription && (company?.plan === "FREE" || !company?.plan);
+  const STARTER_LIMIT = 20;
   const [search, setSearch] = useState(""); // State for search input
   const [statusFilter, setStatusFilter] = useState("All"); // State for status filter
   const jobId = useParams().id; // Get job ID from the URL parameters
@@ -116,7 +119,7 @@ const AppliedCandidatesList = () => {
     }
   };
 
-  const filteredApplicants = applicants?.filter((data) => {
+  const filteredApplicants = (isStarterPlan ? applicants.slice(0, STARTER_LIMIT) : applicants)?.filter((data) => {
     const matchesSearch =
       data?.applicant?.fullname?.toLowerCase().includes(search.toLowerCase()) ||
       data?.applicant?.emailId?.email?.toLowerCase().includes(search.toLowerCase());
@@ -167,6 +170,16 @@ const AppliedCandidatesList = () => {
             <h1 className="text-2xl font-bold mb-4 text-center underline">
               Applied Candidates List
             </h1>
+
+            {/* Starter plan limit banner */}
+            {isStarterPlan && applicants.length > STARTER_LIMIT && (
+              <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded">
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  <span className="font-semibold">Starter Plan:</span> Showing first {STARTER_LIMIT} of {applicants.length} applicants.
+                  <button onClick={() => navigate("/recruiter/dashboard/upgrade-plans")} className="ml-2 underline font-semibold">Upgrade to see all</button>
+                </p>
+              </div>
+            )}
 
             {/* Search & Filter Section */}
             <div className="flex flex-wrap justify-between mb-4 gap-4">

@@ -17,8 +17,6 @@ import { BACKEND_URL } from "@/utils/ApiEndPoint";
 import { Helmet } from "react-helmet-async";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
-const socket = io(BACKEND_URL, { transports: ["websocket"] }); // Use your backend URL
-
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
@@ -26,7 +24,8 @@ const RecruiterDashboard = () => {
   const { jobPlan } = useSelector((state) => state.jobPlan);
 
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false); // Loading state for API calls
+  const [loading, setLoading] = useState(false);
+  const socketRef = React.useRef(null);
 
   // Fetch company details by user ID when component mounts or when user changes
   useEffect(() => {
@@ -72,6 +71,14 @@ const RecruiterDashboard = () => {
 
   //  Socket.IO for Real-time Plan Expiration Updates
   useEffect(() => {
+    if (!user?._id || !BACKEND_URL) return;
+
+    const socket = io(BACKEND_URL, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+    });
+    socketRef.current = socket;
+
     socket.on("planExpired", async ({ companyId }) => {
       // Check if the expired plan belongs to the current company
       if (company && companyId === company?._id) {
@@ -95,8 +102,9 @@ const RecruiterDashboard = () => {
 
     return () => {
       socket.off("planExpired");
+      socket.disconnect();
     };
-  }, [company, dispatch, user]);
+  }, [user?._id, company?._id, dispatch]);
 
   return (
     <>

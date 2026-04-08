@@ -56,7 +56,7 @@ const RecruiterProfile = () => {
               
               <Avatar className="h-24 w-24 sm:h-28 sm:w-28 shadow-lg">
                 <AvatarImage
-                  src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                  src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
                   alt="Profile Photo"
                 />
               </Avatar>

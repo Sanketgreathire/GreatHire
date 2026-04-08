@@ -39,6 +39,63 @@ import { jsPDF } from "jspdf"; //run in cmd 'npm install jspdf'
 // import helmet for customized meta tag on head
 import { Helmet } from "react-helmet-async";
 
+// Reusable searchable dropdown
+const SearchableSelect = ({ id, name, value, onChange, options, placeholder, required, className }) => {
+  const [search, setSearch] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const filtered = options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()));
+  const selected = options.find(o => o.value === value);
+
+  return (
+    <div ref={ref} className={`relative w-full ${className || ""}`}>
+      <div
+        onClick={() => setOpen(!open)}
+        className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white cursor-pointer flex justify-between items-center min-h-[40px]"
+      >
+        <span className={selected ? "" : "text-gray-400"}>{selected ? selected.label : placeholder}</span>
+        <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+      </div>
+      {open && (
+        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-52 flex flex-col">
+          <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+            <input
+              autoFocus
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white focus:outline-none"
+            />
+          </div>
+          <div className="overflow-y-auto flex-1">
+            {filtered.length === 0 ? (
+              <p className="text-sm text-gray-400 p-2">No results</p>
+            ) : filtered.map(o => (
+              <div
+                key={o.value}
+                onClick={() => { onChange({ target: { name, value: o.value } }); setOpen(false); setSearch(""); }}
+                className={`px-3 py-2 text-sm cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 ${
+                  o.value === value ? "bg-blue-100 dark:bg-blue-900 font-semibold" : "text-black dark:text-white"
+                }`}
+              >
+                {o.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const UserUpdateProfile = ({ open, setOpen }) => {
   // State for managing loading state, resume URL, and previous resume name
 
@@ -200,7 +257,9 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   // State for profile image preview
   const [previewImage, setPreviewImage] = useState(
-    user?.profile?.profilePhoto || ""
+    user?.profile?.profilePhoto && !user.profile.profilePhoto.includes("github.com") 
+      ? user.profile.profilePhoto 
+      : ""
   );
 
   // Character limits for bio and experience details
@@ -276,6 +335,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
+  const [resumeUploading, setResumeUploading] = useState(false);
+
   // Handles file input change for resume upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -284,15 +345,21 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         toast.error("Resume size should be less than 10 MB.");
         return;
       }
-      setInput((prevData) => ({
-        ...prevData,
-        resume: file,
-        resumeOriginalName: file.name,
-      }));
-      setResumeUrl(file.name);
-      setPrevResumeName(file.name); // Store last uploaded resume name
+      setResumeUploading(true);
+      // Small delay to let the file read complete reliably
+      setTimeout(() => {
+        setInput((prevData) => ({
+          ...prevData,
+          resume: file,
+          resumeOriginalName: file.name,
+        }));
+        setResumeUrl(file.name);
+        setPrevResumeName(file.name);
+        setResumeUploading(false);
+        toast.success(`"${file.name}" selected successfully.`);
+      }, 300);
     }
-    e.target.value = ""; // Reset input value to allow re-upload of the same file
+    e.target.value = "";
   };
 
   // Removes the currently uploaded resume
@@ -561,7 +628,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Check if resume is uploaded
-    if (!input.resume && !user?.profile?.resume) {
+    if (!input.resume) {
       toast.error("Resume is required! Please upload your resume before updating.");
       return;
     }
@@ -779,6 +846,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     {/* Pencil Icon */}
                     <label
                       htmlFor="profilePhoto"
+                      title="Optional"
                       className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-lg cursor-pointer"
                     >
                       <Pencil className="w-5 h-5 text-gray-700" />
@@ -802,7 +870,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       htmlFor="fullname"
                       className="sm:w-24 w-full font-semibold"
                     >
-                      Name
+                      Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="fullname"
@@ -820,7 +888,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       htmlFor="email"
                       className="sm:w-24 w-full font-semibold"
                     >
-                      Email
+                      Email <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="email"
@@ -838,7 +906,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       htmlFor="phoneNumber"
                       className="sm:w-24 w-full font-semibold"
                     >
-                      Phone
+                      Phone <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="phoneNumber"
@@ -864,25 +932,23 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       value={input.alternatePhone}
                       onChange={handleChange}
                       className="flex-1"
-                      placeholder="Alt. Phone"
+                      placeholder="Alt. Phone (Optional)"
                       maxLength={10}
-                    //required
                     />
                   </div>
                   <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
                     <Label htmlFor="gender" className="sm:w-24 w-full font-semibold">
-                      Gender
+                      Gender <span className="text-red-500">*</span>
                     </Label>
                     <select
                       id="gender"
                       name="gender"
-                      value={input.gender} // empty string shows placeholder
+                      value={input.gender}
                       onChange={handleChange}
-                      className="flex-1 w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-
                       required
+                      className="flex-1 w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
                     >
-                      <option value="" disabled>Select Gender</option>
+                      <option value="">Select Gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
@@ -890,40 +956,37 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                   </div>
 
                   <div className="flex sm:flex-row flex-col items-center gap-2 w-full">
-                    <Label htmlFor="qualification" className="sm:w-24 w-full font-semibold">
-                      Qualification
+                    <Label htmlFor="qualification" className="sm:w-24 w-full font-semibold flex items-center gap-1">
+                      Qualification <span className="text-red-500">*</span>
                     </Label>
-                    <select
+                    <SearchableSelect
                       id="qualification"
                       name="qualification"
                       value={input.qualification}
                       onChange={handleChange}
-                      className="w-full sm:flex-1 border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-
-                      //defaultValue={"Select Qualification"}
-                      placeholder="Select"
+                      placeholder="Select Qualification"
                       required
-                    >
-                      <option value="" disabled>Select Qualification</option>
-                      <option value="Post Graduation">Post Graduation</option>
-                      <option value="Under Graduation">Under Graduation</option>
-                      <option value="M.Sc. Computer Science">M.Sc. Computer Science</option>
-                      <option value="B.Sc. Computer Science">B.Sc. Computer Science</option>
-                      <option value="M.Sc. Information Technology">M.Sc. Information Technology</option>
-                      <option value="B.Sc. Information Technology">B.Sc. Information Technology</option>
-                      <option value="M.Tech">M.Tech</option>
-                      <option value="B.Tech">B.Tech</option>
-                      <option value="MBA">MBA</option>
-                      <option value="MCA">MCA</option>
-                      <option value="B.Sc">B.Sc</option>
-                      <option value="M.Sc">M.Sc</option>
-                      <option value="B.Com">B.Com</option>
-                      <option value="M.Com">M.Com</option>
-                      <option value="Diploma">Diploma</option>
-                      <option value="12th Pass">12th Pass</option>
-                      <option value="10th Pass">10th Pass</option>
-                      <option value="Others">Others</option>
-                    </select>
+                      options={[
+                        { value: "Post Graduation", label: "Post Graduation" },
+                        { value: "Under Graduation", label: "Under Graduation" },
+                        { value: "M.Sc. Computer Science", label: "M.Sc. Computer Science" },
+                        { value: "B.Sc. Computer Science", label: "B.Sc. Computer Science" },
+                        { value: "M.Sc. Information Technology", label: "M.Sc. Information Technology" },
+                        { value: "B.Sc. Information Technology", label: "B.Sc. Information Technology" },
+                        { value: "M.Tech", label: "M.Tech" },
+                        { value: "B.Tech", label: "B.Tech" },
+                        { value: "MBA", label: "MBA" },
+                        { value: "MCA", label: "MCA" },
+                        { value: "B.Sc", label: "B.Sc" },
+                        { value: "M.Sc", label: "M.Sc" },
+                        { value: "B.Com", label: "B.Com" },
+                        { value: "M.Com", label: "M.Com" },
+                        { value: "Diploma", label: "Diploma" },
+                        { value: "12th Pass", label: "12th Pass" },
+                        { value: "10th Pass", label: "10th Pass" },
+                        { value: "Others", label: "Others" },
+                      ]}
+                    />
                   </div>
                   {/* If "Others" is selected */}
                   {input.qualification === "Others" && (
@@ -947,75 +1010,44 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
               <div className="grid sm:grid-cols-3 gap-4 mt-3">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                  <Label
-                    htmlFor="country"
-                    className="sm:w-20 w-full font-semibold"
-                  >
-                    Country
-                  </Label>
-                  <select
+                  <Label htmlFor="country" className="sm:w-20 w-full font-semibold flex items-center gap-1">Country <span className="text-red-500">*</span></Label>
+                  <SearchableSelect
                     id="country"
                     name="country"
                     value={input.country}
                     onChange={handleCountryChange}
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white"
-
+                    placeholder="Select Country"
                     required
-                  >
-                    <option value="">Select Country</option>
-                    {countries.map((c) => (
-                      <option key={c.isoCode} value={c.name}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-
+                    options={countries.map(c => ({ value: c.name, label: c.name }))}
+                  />
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                  <Label htmlFor="state" className="sm:w-20 w-full font-semibold">
-                    State
-                  </Label>
-                  <select
+                  <Label htmlFor="state" className="sm:w-20 w-full font-semibold flex items-center gap-1">State <span className="text-red-500">*</span></Label>
+                  <SearchableSelect
                     id="state"
                     name="state"
                     value={input.state}
                     onChange={handleStateChange}
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-
+                    placeholder="Select State"
                     required
-                  >
-                    <option value="">Select State</option>
-                    {states.map((s) => (
-                      <option key={s.isoCode} value={s.name}>
-                        {s.name}
-                      </option>
-                    ))}
-                  </select>
+                    options={states.map(s => ({ value: s.name, label: s.name }))}
+                  />
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                  <Label htmlFor="city" className="sm:w-20 w-full font-semibold">
-                    City
-                  </Label>
-                  <select
+                  <Label htmlFor="city" className="sm:w-20 w-full font-semibold flex items-center gap-1">City <span className="text-red-500">*</span></Label>
+                  <SearchableSelect
                     id="city"
                     name="city"
                     value={input.city}
                     onChange={handleCityChange}
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-
+                    placeholder="Select City"
                     required
-                  >
-                    <option value="">Select City</option>
-                    {cities.map((city) => (
-                      <option key={city.name} value={city.name}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </select>
+                    options={cities.map(c => ({ value: c.name, label: c.name }))}
+                  />
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                  <Label htmlFor="pincode" className="sm:w-20 w-full font-semibold">
-                    Pincode
+                  <Label htmlFor="pincode" className="sm:w-20 w-full font-semibold flex items-center gap-1">
+                    Pincode <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="pincode"
@@ -1252,7 +1284,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 />
                 <div className="w-full">
                   <Label htmlFor="bio" className="block mb-2 font-semibold pt-2">
-                    Bio
+                    Bio <span className="text-red-500">*</span>
                   </Label>
                   <textarea
                     id="bio"
@@ -1272,7 +1304,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
                 <div className="w-full">
                   <Label htmlFor="skills" className="block mb-2 font-semibold">
-                    Skills
+                    Skills <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="skills"
@@ -1288,7 +1320,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
             {/* ✅ New Document Section */}
             <div className="border-b pb-4 pt-4 mt-2">
-              <Label htmlFor="skills" className="block mb-2 font-semibold">ID's / Documents</Label>
+              <Label htmlFor="skills" className="block mb-2 font-semibold">ID's / Documents <span className="text-red-500">*</span></Label>
               <p className="mb-2">Which of these IDs / documents do you have?</p>
               <div className="flex flex-wrap gap-3">
                 {["PAN Card", "Aadhar Card", "Passport", "None of these"].map(
@@ -1314,39 +1346,69 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
             <div className="w-full">
               <Label htmlFor="resume" className="block mb-2 font-semibold">
-                Resume
+                Resume <span className="text-red-500">*</span>
               </Label>
 
-              <div className="relative w-full">
-                {/* File Input */}
-                <Input
-                  id="resume"
-                  name="resume"
-                  type="text"
-                  value={input.resumeOriginalName}
-                  placeholder="Upload your resume"
-                  readOnly
-                  className="pr-10"
-                />
-                <input
-                  type="file"
-                  id="resumeInput"
-                  accept=".pdf, .doc, .docx"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-                <p><strong>Note:</strong> PDF or DOCX  (.pdf , .docx)  are allowed.</p>
+              {/* Hidden file input */}
+              <input
+                type="file"
+                id="resumeInput"
+                accept=".pdf, .doc, .docx"
+                onChange={handleFileChange}
+                className="hidden"
+              />
 
-                {/* Display remove button inside input field */}
-                {resumeUrl && (
-                  <button
-                    type="button"
-                    onClick={removeResume}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500"
-                  >   ✖
-                  </button>
-                )}
+              {/* Browse button + filename display */}
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="resumeInput"
+                  className="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg flex items-center gap-2 whitespace-nowrap"
+                >
+                  {resumeUploading ? (
+                    <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
+                  ) : (
+                    "Browse"
+                  )}
+                </label>
+
+                <div className="flex-1 flex items-center justify-between border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-800 min-h-[40px]">
+                  <span className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                    {input.resumeOriginalName || "No file selected"}
+                  </span>
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                    {/* View button — show for existing URL or newly selected file */}
+                    {(input.resume && typeof input.resume === "string") && (
+                      <a
+                        href={input.resume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-xs font-semibold underline"
+                      >
+                        View
+                      </a>
+                    )}
+                    {input.resume instanceof File && (
+                      <button
+                        type="button"
+                        onClick={() => window.open(URL.createObjectURL(input.resume), "_blank")}
+                        className="text-blue-600 hover:text-blue-800 text-xs font-semibold underline"
+                      >
+                        View
+                      </button>
+                    )}
+                    {input.resumeOriginalName && (
+                      <button
+                        type="button"
+                        onClick={removeResume}
+                        className="text-red-500 hover:text-red-700 text-xs font-bold"
+                      >
+                        ✖ Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
+              <p className="text-xs text-gray-500 mt-1"><strong>Note:</strong> PDF or DOCX (.pdf, .docx) only. Max 10MB.</p>
               {/* Create Resume Section */}
               <div className="border-b pb-4 pt-4 mt-2">
                 <Label className="block mb-2 font-semibold">No Resume? Create One</Label>
@@ -1393,11 +1455,13 @@ const UserUpdateProfile = ({ open, setOpen }) => {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || resumeUploading}
               className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-200"
             >
               {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</>
+              ) : resumeUploading ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading Resume...</>
               ) : (
                 "Update"
               )}

@@ -13,51 +13,44 @@ export const NotificationProvider = ({ children }) => {
 
   // Initialize Socket.IO connection
   useEffect(() => {
-    if (!user) return;
+    if (!user?._id) return;
 
     const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
       withCredentials: true,
-      transports: ['websocket', 'polling']
+      transports: ['polling', 'websocket'],
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
     });
 
-    // ✅ Wait for connection before joining — don't emit before connect
-  socketInstance.on('connect', () => {
-    socketInstance.emit('join', user._id);   // Join user's notification room
+    socketInstance.on('connect', () => {
+      socketInstance.emit('join', user._id);
     });
 
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.off('connect'); // ✅ prevent memory leak
-      if (user?._id) {
-        socketInstance.emit('leave', user._id);
-      }
+      socketInstance.off('connect');
+      socketInstance.emit('leave', user._id);
       socketInstance.disconnect();
     };
-  }, [user]);
+  }, [user?._id]);
 
   // Fetch notifications from API with better error handling
   const loadNotifications = useCallback(async () => {
-    if (!user) return;
-    
-    console.log('📨 Loading notifications for user:', user._id, 'role:', user.role);
-    
+    if (!user?._id) return;
     try {
       const notificationsData = await fetchNotifications();
-      console.log('✅ Notifications loaded:', notificationsData.length, 'notifications');
       setNotifications(notificationsData);
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
     }
-
     try {
       const countData = await getUnreadCount();
-      console.log('🔔 Unread count:', countData);
       setUnreadCount(countData);
     } catch (err) {
       console.error('Failed to fetch unread count:', err);
     }
-  }, [user]);
+  }, [user?._id]);
 
   // Setup Socket.IO listeners
   useEffect(() => {

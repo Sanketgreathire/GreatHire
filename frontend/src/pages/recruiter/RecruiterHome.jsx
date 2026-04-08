@@ -94,9 +94,18 @@ const RecruiterHome = () => {
       title: "Remaining Job Posts",
       count: (() => {
         const plan = company?.plan || "FREE";
+
         const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
-        // const PAID_PLAN_FREE_JOBS = 2;
+       
         const referralBonus = user?.remainingJobPosts ?? 0;
+
+        // If admin has set a custom maxJobPosts, use it (additive on top of plan)
+        if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+          const used = plan === "FREE"
+            ? (company?.freeJobsPosted || 0)
+            : (company?.planJobsPostedThisMonth || 0);
+          return Math.max(0, company.maxJobPosts - used) + referralBonus;
+        }
 
         if (plan === "FREE") {
           const limit = limits[plan] ?? 2;
