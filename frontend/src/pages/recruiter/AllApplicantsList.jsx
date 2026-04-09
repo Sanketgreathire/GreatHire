@@ -186,7 +186,16 @@ const AllApplicantsList = () => {
                   <tbody>
                     {currentApplicants.map((app) => (
                       <tr key={app._id} className="border-b">
-                        <td className="p-4">{app?.applicant?.fullname}</td>
+                        <td className="p-4">
+                          <div className="flex flex-col gap-1">
+                            {app?.applicant?.isProfileBoosted && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-300 w-fit">
+                                ⭐ Most Preferred Candidate
+                              </span>
+                            )}
+                            {app?.applicant?.fullname}
+                          </div>
+                        </td>
                         <td className="p-4">{app?.applicant?.emailId?.email}</td>
                         <td className="p-4">{app?.applicant?.phoneNumber?.number}</td>
                         <td className="p-4 text-center">{app.status}</td>
