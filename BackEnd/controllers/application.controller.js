@@ -172,13 +172,19 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
-    const applicants = await Application.find({ job: jobId })
+    const rawApplicants = await Application.find({ job: jobId })
       .populate({
         path: "applicant",
-        select: "fullname emailId phoneNumber profile address",
+        select: "fullname emailId phoneNumber profile address isProfileBoosted",
       })
       .select("applicant status answers createdAt")
       .sort({ createdAt: -1 });
+
+    // Boosted candidates float to top, order preserved within each group
+    const applicants = [
+      ...rawApplicants.filter((a) => a.applicant?.isProfileBoosted),
+      ...rawApplicants.filter((a) => !a.applicant?.isProfileBoosted),
+    ];
 
     return res.status(200).json({ success: true, applicants });
   } catch (error) {

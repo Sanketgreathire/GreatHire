@@ -200,7 +200,7 @@
 // }
 // export default App;
 import React, { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 import JobDetailsProvider from "./context/JobDetailsContext";
 import { NotificationProvider } from './context/NotificationContext';
@@ -237,6 +237,7 @@ import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import About from "./pages/services/About";
 import ResumeAnalyzer from "./components/ResumeAnalyzer";
+import RecruiterResumeAnalyzer from "./pages/recruiter/ResumeAnalyzer";
 
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
@@ -340,6 +341,7 @@ const appRouter = createBrowserRouter([
   {path :"/TheFuture", element:<TheFuture/>},
   {path :"/TheFuture/:id", element:<TheFuture/>},
   {path :"/ResumeAnalyzer", element:<ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
+  { path: "/recruiter/resume-analyzer", element: <ProtectedRecruiterRoute><Navigate to="/recruiter/dashboard/resume-analyzer" replace /></ProtectedRecruiterRoute> },
 
   
 
@@ -396,6 +398,7 @@ const appRouter = createBrowserRouter([
       { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
       { path: "job-details/:id", element: <JobDetail /> },
       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
+      { path: "resume-analyzer", element: <RecruiterResumeAnalyzer /> },
       { index: true, element: <RecruiterHome /> },
       {
       path: "applications/:jobId/:candidateId",
