@@ -7,12 +7,14 @@ import FilterCard from "@/pages/job/FilterCard";
 import LatestJobs from "./LatestJobs";
 import JobSearch from "@/pages/job/JobSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import { useLocation } from "react-router-dom";
 
 // imported helmet to apply customized meta tags
 import { Helmet } from "react-helmet-async";
 
 const Jobs = () => {
-  const { jobs, resetFilter, error } = useJobDetails();
+  const { jobs, resetFilter, error, setSelectedJob } = useJobDetails();
+  const location = useLocation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -39,6 +41,15 @@ const Jobs = () => {
   useEffect(() => {
     resetFilter?.();
   }, []);
+
+  // Pre-select job when navigating from marquee
+  useEffect(() => {
+    const jobId = location.state?.selectedJobId;
+    if (jobId && jobs?.length > 0) {
+      const job = jobs.find((j) => j._id === jobId);
+      if (job) setSelectedJob(job);
+    }
+  }, [location.state?.selectedJobId, jobs]);
 
   useEffect(() => {
     setIsLoading(!jobs);
@@ -138,7 +149,7 @@ const Jobs = () => {
         <Navbar />
 
         {/* Hero Section */}
-        <div className="pt-20 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="pt-4 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <div className="flex flex-col gap-5 my-10">
             <span className="mx-auto px-2 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium animate-bounce">
               No. 1 Job Hunt Website

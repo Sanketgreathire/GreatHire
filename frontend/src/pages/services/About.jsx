@@ -712,7 +712,7 @@ function App() {
       </Helmet>
 
 
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-300 mt-16 overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-300 overflow-x-hidden">
         <Navbar />
 
         {/* Hero Section - Enhanced */}

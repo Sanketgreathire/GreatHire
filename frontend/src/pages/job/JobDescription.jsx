@@ -199,8 +199,13 @@ const JobDescription = () => {
 
       <Navbar />
 
+{/* <<<<<<< HEAD
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-10 px-4">
         <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 sm:p-8">
+======= */}
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-4">
+        <div className="max-w-6xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8">
+{/* >>>>>>> e7d38b1211f783d95c853e623cd5229ea6ccb9ea */}
 
           {/* Back */}
           <IoIosArrowRoundBack
