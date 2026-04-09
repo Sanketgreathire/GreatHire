@@ -591,11 +591,9 @@ import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
-import Navbar from "@/components/admin/Navbar";
+import Navbar from "@/components/shared/Navbar";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import { useJobDetails } from "@/context/JobDetailsContext";
-// import jobbackg from "../../assets/jobbackg.svg";
-import jobbackg from '../../assets/jobbackg.svg?url';
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 
@@ -853,20 +851,17 @@ const JobDetail = () => {
           content="Detailed descriptions entailing job responsibilities, skills and qualifications required, benefits, salary range, and workplace flexibility can be found on GreatHire. Hyderabad State India-based job platform for recruiters and candidates to make confident hiring and career decisions based on clarity and transparency. GreatHire supports companies, startups, recruiters, and professionals with reliable job management tools, scalable recruitment solutions, and seamless talent connections. Take a closer look at openings, manage postings with ease, and connect with the right candidates through a trusted platform built for modern hiring success, productivity, and growth."
         />
       </Helmet>
-      {user?.role !== "recruiter" && <Navbar linkName={"Job Details"} />}
+      {user?.role !== "recruiter" && <Navbar />}
 
-      {/* --- UI CHANGE START: Main page container with a professional background color and centered layout --- */}
-      <div className=" bg-[#404] min-h-screen font-sans"
-        style={{
-          backgroundImage: `url(${jobbackg})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center"
-        }}>
-        <main className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-50 dark:bg-gray-900 min-h-screen font-sans">
+        <main className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 ${
+          user?.role === "recruiter" || user?.role === "admin" || user?.role === "Owner"
+            ? "pt-6 pb-10"
+            : "pt-20 pb-10"
+        }`}>
 
           {/* Back Button and action buttons header */}
-          <div className="flex justify-between items-center mb-6 py-10">
+          <div className="flex justify-between items-center mb-6 py-2">
             <Button variant="ghost" onClick={() => navigate(-1)} className=" bg-green-400 border border-green-900 text-slate-900 hover:bg-green-800 hover:text-white dark:bg-green-800 dark:text-slate-200 dark:hover:bg-green-600 dark:hover:text-white">
               <ArrowLeft className=" h-6 w-8 mr-2" />
               Back
@@ -1258,7 +1253,7 @@ const JobDetail = () => {
 
             {/* Right Column (Sidebar) */}
             <div className="lg:col-span-1">
-              <div className=" bg-gray-100  dark:bg-slate-800 shadow-lg rounded-xl p-6 md:p-8 sticky top-10">
+              <div className="bg-gray-100 dark:bg-slate-800 shadow-lg rounded-xl p-6 md:p-8 sticky top-20">
                 <h3 className=" text-xl font-bold text-slate-800 dark:text-white mb-6">Job Overview</h3>
                 <ul className="space-y-5">
                   {/* Job Type */}

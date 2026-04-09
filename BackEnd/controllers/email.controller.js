@@ -210,6 +210,7 @@ export const analyzeCandidates = async (req, res) => {
       const totalScore = skillScore + expScore + locationScore + ctcScore;
 
       return {
+        applicationId: app._id.toString(),
         name: candidate?.fullname || "Unknown",
         score: totalScore,
         skillScore, expScore, locationScore, ctcScore,
