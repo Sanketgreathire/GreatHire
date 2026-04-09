@@ -5,9 +5,9 @@ import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
-import { decreaseMaxPostJobs } from "@/redux/companySlice";
+import { decreaseMaxPostJobs, addCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
@@ -21,6 +21,16 @@ const PostJob = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Fetch fresh company data on mount (same as home page)
+  useEffect(() => {
+    if (user?._id) {
+      axios
+        .post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true })
+        .then((res) => { if (res?.data?.success) dispatch(addCompany(res.data.company)); })
+        .catch((err) => console.error("Error refreshing company:", err));
+    }
+  }, [user?._id]);
 
   const handleChange = (e) => {
     const lines = e.target.value.split("\n");
@@ -227,9 +237,26 @@ const PostJob = () => {
       const jobsPostedSoFar = plan === "FREE"
         ? (company?.freeJobsPosted || 0)
         : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
-        
-      if (!company.isActive && jobsPostedSoFar >= 1) {
+
+      // Check remaining posts using same logic as home page
+      const referralBonus = user?.remainingJobPosts ?? 0;
+      let remainingPosts;
+      if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+        const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
+        remainingPosts = Math.max(0, company.maxJobPosts - used) + referralBonus;
+      } else {
+        const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
+        const limit = limits[plan] ?? 2;
+        remainingPosts = Math.max(0, limit - jobsPostedSoFar) + referralBonus;
+      }
+
+      if (!company.isActive && jobsPostedSoFar >= 1 && remainingPosts <= 0) {
         toast.error("Your first job is under admin review. You cannot post additional jobs until your account is verified.");
+        return;
+      }
+
+      if (company.isActive && remainingPosts <= 0) {
+        toast.error("You have no remaining job posts. Please upgrade your plan.");
         return;
       }
 
@@ -394,24 +421,27 @@ const PostJob = () => {
                     {(() => {
                       const plan = company.plan || "FREE";
                       const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-                      const PAID_PLAN_FREE_JOBS = 2;
-                      
+                      const referralBonus = user?.remainingJobPosts ?? 0;
+
+                      // Use same logic as home page — maxJobPosts takes priority
+                      if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+                        const used = plan === "FREE"
+                          ? (company?.freeJobsPosted || 0)
+                          : (company?.planJobsPostedThisMonth || 0);
+                        const remaining = Math.max(0, company.maxJobPosts - used) + referralBonus;
+                        return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
+                      }
+
                       if (plan === "FREE") {
                         const limit = limits[plan] ?? 2;
                         const used = company.freeJobsPosted || 0;
-                        const remaining = Math.max(0, limit - used);
+                        const remaining = Math.max(0, limit - used) + referralBonus;
                         return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
                       } else {
-                        // For paid plans: include free jobs in total limit
                         const paidLimit = limits[plan] ?? 0;
                         if (paidLimit === Infinity) return "Unlimited";
-                        
-                        const totalLimit = paidLimit + PAID_PLAN_FREE_JOBS;
                         const paidUsed = company.planJobsPostedThisMonth || 0;
-                        const freeUsed = company.paidPlanFreeJobsPosted || 0;
-                        const totalUsed = paidUsed + freeUsed;
-                        const remaining = Math.max(0, totalLimit - totalUsed);
-                        
+                        const remaining = Math.max(0, paidLimit - paidUsed) + referralBonus;
                         return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
                       }
                     })()}

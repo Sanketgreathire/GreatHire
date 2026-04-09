@@ -251,7 +251,7 @@ const UserProfile = () => {
         <Navbar />
         <div className="flex-grow">
           {/* Profile Details Section */}
-          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-10 p-8">
+          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-4 p-8">
             {/* User Info Section */}
             <div className="flex flex-col items-center text-center border-b pb-8">
               <Avatar className="h-24 w-24 shadow-lg">

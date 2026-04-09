@@ -256,12 +256,12 @@ const Job = ({ job }) => {
         <div className="flex w-full items-center justify-between gap-4">
           <Button
             onClick={() => {
-              navigate(`/jobs/${job._id}`);
+              user ? navigate(`/jobs/${job._id}`) : navigate("/signup");
             }}
             variant="outline"
             className="w-full text-white bg-blue-700 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white dark:border-blue-600 transition-colors"
           >
-            Details
+            View
           </Button>
         </div>
 

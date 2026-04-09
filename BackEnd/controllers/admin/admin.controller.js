@@ -260,30 +260,46 @@ export const updateRecruiterCredits = async (req, res) => {
     }
 
     const { Company } = await import("../../models/company.model.js");
-    
-    const updateData = {};
-    if (customCreditsForJobs !== undefined) {
-      updateData.customCreditsForJobs = customCreditsForJobs;
-      updateData.creditedForJobs = customCreditsForJobs;
+
+    // Fetch existing to avoid $inc on null fields
+    const existing = await Company.findById(companyId).lean();
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Company not found" });
     }
-    if (customCreditsForCandidates !== undefined) {
-      updateData.customCreditsForCandidates = customCreditsForCandidates;
-      updateData.creditedForCandidates = customCreditsForCandidates;
+
+    const setData = {};
+
+    if (customCreditsForJobs !== null && customCreditsForJobs !== undefined) {
+      const val = Number(customCreditsForJobs);
+      setData.creditedForJobs = (Number(existing.creditedForJobs) || 0) + val;
+      setData.customCreditsForJobs = (Number(existing.customCreditsForJobs) || 0) + val;
     }
-    if (customMaxJobPosts !== undefined) {
-      updateData.customMaxJobPosts = customMaxJobPosts;
-      updateData.maxJobPosts = customMaxJobPosts;
+    if (customCreditsForCandidates !== null && customCreditsForCandidates !== undefined) {
+      const val = Number(customCreditsForCandidates);
+      setData.creditedForCandidates = (Number(existing.creditedForCandidates) || 0) + val;
+      setData.customCreditsForCandidates = (Number(existing.customCreditsForCandidates) || 0) + val;
+    }
+    if (customMaxJobPosts !== null && customMaxJobPosts !== undefined) {
+      const val = Number(customMaxJobPosts);
+      const plan = existing.plan || "FREE";
+      const planLimits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: 999999 };
+      const used = plan === "FREE"
+        ? (Number(existing.freeJobsPosted) || 0)
+        : (Number(existing.planJobsPostedThisMonth) || 0);
+      const currentLimit = existing.maxJobPosts !== null && existing.maxJobPosts !== undefined
+        ? (Number(existing.maxJobPosts) || 0)
+        : (planLimits[plan] ?? 2);
+      const currentRemaining = Math.max(0, currentLimit - used);
+      // new maxJobPosts = used + currentRemaining + adminAdded
+      setData.maxJobPosts = used + currentRemaining + val;
+      setData.customMaxJobPosts = (Number(existing.customMaxJobPosts) || 0) + val;
     }
 
     const company = await Company.findByIdAndUpdate(
       companyId,
-      { $set: updateData },
+      { $set: setData },
       { new: true }
     );
-
-    if (!company) {
-      return res.status(404).json({ success: false, message: "Company not found" });
-    }
 
     return res.status(200).json({
       success: true,
