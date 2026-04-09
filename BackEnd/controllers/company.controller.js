@@ -328,7 +328,7 @@ export const registerCompany = async (req, res) => {
       },
       businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
       businessFileName: businessFile ? businessFile[0].originalname : undefined,
-      maxJobPosts: "Unlimited",
+      maxJobPosts: null,
       freePlanExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     });
 

@@ -122,9 +122,8 @@ export const applyJob = async (req, res) => {
 
     await newApplication.save();
 
-    // Push application into job
-    job.application.push(newApplication._id);
-    await job.save();
+    // Push application into job (use $push to avoid re-validating required fields on old jobs)
+    await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
     // ✅ Create notifications using the notification service
     await notificationService.notifyApplicationSubmitted({
@@ -328,8 +327,8 @@ export const bulkApplyJobs = async (req, res) => {
         const job = await Job.findById(jobId);
         if (!job || !job.jobDetails?.isActive) { skipped.push(jobId); continue; }
 
-        // Skip jobs with unanswered questions
-        if (job.questions?.length > 0 && !answersMap[jobId]) { skipped.push(jobId); continue; }
+        // Skip jobs with unanswered questions (answersMap[jobId] must exist and be a non-empty array)
+        if (job.questions?.length > 0 && (!answersMap[jobId] || !Array.isArray(answersMap[jobId]) || answersMap[jobId].length === 0)) { skipped.push(jobId); continue; }
 
         const existing = await Application.findOne({ job: jobId, applicant: userId });
         if (existing) { skipped.push(jobId); continue; }
@@ -347,8 +346,7 @@ export const bulkApplyJobs = async (req, res) => {
         });
 
         await newApplication.save();
-        job.application.push(newApplication._id);
-        await job.save();
+        await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
         // Notification errors must not crash the loop
         try {

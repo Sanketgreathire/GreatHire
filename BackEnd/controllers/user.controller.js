@@ -27,7 +27,7 @@ import notificationService from "../utils/notificationService.js";
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, inputReferralCode } = req.body;
+    const { fullname, email, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {
@@ -113,6 +113,11 @@ export const register = async (req, res) => {
       lastActiveAt: new Date(),
       referralCode,
       referredBy,
+      collegeName: collegeName || "",
+      rollNo: rollNo || "",
+      cgpa: cgpa ? parseFloat(cgpa) : 0,
+      stream: stream || "",
+      hometown: hometown || "",
     });
 
     // Fetch user without password
@@ -645,7 +650,7 @@ export const updateProfile = async (req, res) => {
       documents,
     } = req.body;
     console.log(req.body);
-    const { profilePhoto, resume } = req.files; // Access files from req.files
+    const { profilePhoto, resume } = req.files || {}; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
 
@@ -673,8 +678,20 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-     if (documents) {
-      user.profile.documents = Array.isArray(documents) ? documents : [documents];
+    // Initialize nested objects if missing
+    if (!user.profile) user.profile = {};
+    if (!user.address) user.address = {};
+    if (!user.emailId) user.emailId = { email: "", isVerified: false };
+    if (!user.phoneNumber) user.phoneNumber = { number: "", isVerified: false };
+    if (!user.alternatePhone) user.alternatePhone = { number: "", isVerified: false };
+
+    // Normalize documents — frontend sends as 'documents[]' in FormData
+    const rawDocs =
+      req.body["documents[]"] ||
+      req.body["profile[documents][]"] ||
+      documents;
+    if (rawDocs) {
+      user.profile.documents = Array.isArray(rawDocs) ? rawDocs : [rawDocs];
     }
 
     // Upload profile photo if provided
@@ -717,6 +734,7 @@ export const updateProfile = async (req, res) => {
 
     if (fullname && user.fullname !== fullname) user.fullname = fullname;
 
+    if (!user.address) user.address = {};
     if (city) user.address.city = city;
     if (state) user.address.state = state;
     if (country) user.address.country = country;
@@ -799,13 +817,9 @@ export const updateProfile = async (req, res) => {
       user.phoneNumber.isVerified = false;
     }
     // Alternate phone update
-    if (alternatePhone && user.alternatePhone?.number !== alternatePhone) {
-      // Make sure alternatePhone object exists
-      if (!user.alternatePhone) {
-        user.alternatePhone = { number: "", isVerified: false };
-      }
+    if (alternatePhone && user.alternatePhone.number !== alternatePhone) {
       user.alternatePhone.number = alternatePhone;
-      user.alternatePhone.isVerified = false; // reset verification for alt number
+      user.alternatePhone.isVerified = false;
     }
 
     if (bio && user.profile.bio !== bio) user.profile.bio = bio;
@@ -861,7 +875,8 @@ export const updateProfile = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Error in updateProfile:", error);
+    console.error("Error in updateProfile:", error.message);
+    console.error("Stack:", error.stack);
     return res.status(500).json({
       message: "An error occurred while updating the profile.",
       error: error.message,
