@@ -238,7 +238,14 @@ const AppliedCandidatesList = () => {
 
                         {/* Name */}
                         <TableCell className="font-medium">
-                          {data.applicant?.fullname}
+                          <div className="flex flex-col items-center gap-1">
+                            {data.applicant?.isProfileBoosted && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-300">
+                                ⭐ Most Preferred Candidate
+                              </span>
+                            )}
+                            {data.applicant?.fullname}
+                          </div>
                         </TableCell>
 
                         {/* Email */}

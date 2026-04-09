@@ -142,6 +142,7 @@ const Navbar = () => {
         ...(user && !isRecruiter? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+        ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
       ]
     : [
         // BEFORE LOGIN → full public navbar
@@ -173,6 +174,9 @@ const Navbar = () => {
   ...(!user || isRecruiter
     ? [{ to: "/packages", label: "Recruiter Plans" }]
     : []),
+
+  // Resume Analyzer for recruiters
+  ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
 
   // Public pages
   ...secondaryNavLinks.filter(link => link.to !== "/packages"),

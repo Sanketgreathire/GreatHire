@@ -731,6 +731,7 @@ export const getCandidateData = async (req, res) => {
       "profile.profilePhoto": 1,
       updatedAt: 1,
       address: 1,
+      isProfileBoosted: 1,
     });
 
     // Add daysAgoLastActive to each candidate
@@ -754,9 +755,11 @@ export const getCandidateData = async (req, res) => {
         };
       })
       .sort((a, b) => {
+        // Boosted candidates always first
+        if (b.isProfileBoosted !== a.isProfileBoosted) return b.isProfileBoosted ? 1 : -1;
         const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
         const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
-        return totalA - totalB; // most recent first
+        return totalA - totalB; // most recent first within each group
       });
 
 
@@ -876,11 +879,24 @@ export const getCompanyApplicants = async (req, res) => {
     // Run both queries in parallel
     const jobIds = await Job.find({ company: companyId }).distinct("_id");
 
+// <<<<<<< HEAD
     const applications = await Application.find({ job: { $in: jobIds } })
       .populate("applicant", "fullname emailId phoneNumber profile.profilePhoto")
       .populate({ path: "job", select: "jobDetails.title" })
       .sort({ createdAt: -1 })
       .lean();
+// =======
+//     // Find applications for these jobs
+//     const rawApplications = await Application.find({ job: { $in: jobIds } })
+//       .populate("applicant") // Only populate applicant details
+//       .sort({ createdAt: -1 });
+
+//     // Boosted candidates float to top
+//     const applications = [
+//       ...rawApplications.filter((a) => a.applicant?.isProfileBoosted),
+//       ...rawApplications.filter((a) => !a.applicant?.isProfileBoosted),
+//     ];
+// >>>>>>> e9983b1a085fb750b4438ab228fdaa7aa88c29a4
 
     res.status(200).json({
       success: true,
