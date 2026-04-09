@@ -99,7 +99,15 @@ export const register = async (req, res) => {
         referredBy = referrer._id;
         // increment referralCount only on User referrers (recruiters don't have this field)
         if (referrer.role !== "recruiter") {
-          await User.findByIdAndUpdate(referrer._id, { $inc: { referralCount: 1 } });
+          const updatedReferrer = await User.findByIdAndUpdate(
+            referrer._id,
+            { $inc: { referralCount: 1 } },
+            { new: true }
+          );
+          // Auto-boost when referralCount reaches 5
+          if (updatedReferrer && updatedReferrer.referralCount >= 5 && !updatedReferrer.isProfileBoosted) {
+            await User.findByIdAndUpdate(referrer._id, { isProfileBoosted: true });
+          }
         }
       }
     }
