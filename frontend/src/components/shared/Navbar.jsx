@@ -250,6 +250,7 @@ const Navbar = () => {
         ...(user && !isRecruiter ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+        ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
       ]
     : [
         { to: "/", label: "Home" },
@@ -277,9 +278,30 @@ const Navbar = () => {
     { to: "/about",                 label: "About Us" },
     { to: "/contact",               label: "Contact Us" },
 
+
+ // Show Jobs only to logged-in job seekers
+  ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+  ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
+
+  // Recruiter Plans for:  1. Not logged in, 2. Logged in recruiter
+  ...(!user || isRecruiter
+    ? [{ to: "/packages", label: "Recruiter Plans" }]
+    : []),
+
+  // Resume Analyzer for recruiters
+  ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
+
+  // Public pages
+  ...secondaryNavLinks.filter(link => link.to !== "/packages"),
+];
+
+
+  const policyLinks = [
+    { to: "/policy/privacy-policy", label: "Privacy Policy" },
+
   ];
 
-  const policyLinks = [{ to: "/policy/privacy-policy", label: "Privacy Policy" }];
+ 
 
   const activeClass = "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300";
   const inactiveClass =

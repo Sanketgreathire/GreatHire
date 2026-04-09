@@ -66,6 +66,8 @@ const CandidateList = () => {
           setMessage("No Candidate found");
         const sortedCandidates = response.data.candidates
           .sort((a, b) => {
+            // Boosted candidates always first
+            if (b.isProfileBoosted !== a.isProfileBoosted) return b.isProfileBoosted ? 1 : -1;
             const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
             const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
             return totalA - totalB;
@@ -230,7 +232,11 @@ const CandidateList = () => {
               <p className="text-center text-2xl text-gray-400">{message}</p>
             ) : (
               currentCandidates.map((candidate) => (
-                <div key={candidate._id} className="p-5 rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition hover:shadow-lg">
+                <div key={candidate._id} className={`p-5 rounded-xl shadow-md bg-white dark:bg-gray-800 border transition hover:shadow-lg ${
+                  candidate.isProfileBoosted
+                    ? "border-amber-400 dark:border-amber-500"
+                    : "border-gray-200 dark:border-gray-700"
+                }`}>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20">
                       <AvatarImage
@@ -238,6 +244,11 @@ const CandidateList = () => {
                       />
                     </Avatar>
                     <div>
+                      {candidate.isProfileBoosted && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-300 mb-1">
+                          ⭐ Most Preferred Candidate
+                        </span>
+                      )}
                       <h1 className="text-lg font-semibold text-gray-800 dark:text-white">{candidate?.fullname ?? "User"}</h1>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{candidate?.profile?.experience?.jobProfile ?? "Not Updated"}</p>
                     </div>
