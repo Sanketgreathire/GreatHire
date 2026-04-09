@@ -272,28 +272,13 @@ const Navbar = () => {
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
     ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
     ...(!user || isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-    { to: "/great-hire/services",   label: "Our Services" },
-    { to: "/Main_blog_page",        label: "Blogs" },
-    { to: "/courses",               label: "Courses" },
-    { to: "/about",                 label: "About Us" },
-    { to: "/contact",               label: "Contact Us" },
-
-
- // Show Jobs only to logged-in job seekers
-  ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
-  ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
-
-  // Recruiter Plans for:  1. Not logged in, 2. Logged in recruiter
-  ...(!user || isRecruiter
-    ? [{ to: "/packages", label: "Recruiter Plans" }]
-    : []),
-
-  // Resume Analyzer for recruiters
-  ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
-
-  // Public pages
-  ...secondaryNavLinks.filter(link => link.to !== "/packages"),
-];
+    ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
+    { to: "/great-hire/services", label: "Our Services" },
+    { to: "/Main_blog_page",      label: "Blogs" },
+    { to: "/courses",             label: "Courses" },
+    { to: "/about",               label: "About Us" },
+    { to: "/contact",             label: "Contact Us" },
+  ];
 
 
   const policyLinks = [
