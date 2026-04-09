@@ -774,23 +774,24 @@ export const deductCandidateCredit = async (req, res) => {
     const { companyId } = req.body;
     const userId = req.id;
 
-    if (!(await isUserAssociated(companyId, userId))) {
-      return res.status(403).json({
-        message: "You are not authorized",
-        success: false
-      });
+    console.log("deductCandidateCredit called:", { companyId, userId });
+
+    if (!companyId) {
+      return res.status(400).json({ message: "companyId is required", success: false });
     }
 
     const company = await Company.findById(companyId);
 
     if (!company) {
-      return res.status(404).json({
-        message: "Company not found",
-        success: false
-      });
+      return res.status(404).json({ message: "Company not found", success: false });
     }
 
-    // Check if company has credits
+    // Check recruiter belongs to company (no isActive check needed)
+    const belongs = company.userId.some(u => u.user.toString() === userId.toString());
+    if (!belongs) {
+      return res.status(403).json({ message: "You are not authorized", success: false });
+    }
+
     if (company.creditedForCandidates <= 0) {
       return res.status(400).json({
         message: "Insufficient candidate credits. Please purchase a plan.",
@@ -798,20 +799,19 @@ export const deductCandidateCredit = async (req, res) => {
       });
     }
 
-    // Deduct 1 credit
-    company.creditedForCandidates -= 1;
-    await company.save();
+    await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
 
     return res.status(200).json({
       success: true,
-      remainingCredits: company.creditedForCandidates,
+      remainingCredits: company.creditedForCandidates - 1,
       message: "Credit deducted successfully"
     });
   } catch (error) {
     console.error("Error deducting candidate credit:", error);
     res.status(500).json({
       message: "Internal Server Error",
-      success: false
+      success: false,
+      error: error.message
     });
   }
 };

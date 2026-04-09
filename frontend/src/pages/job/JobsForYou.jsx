@@ -387,7 +387,7 @@ const JobsForYou = ({ jobs = [] }) => {
         <div className="flex justify-center gap-6 dark:bg-gray-900">
 
           {/* Left: Job Cards List - FIXED WIDTH & OVERFLOW */}
-          <div className="flex flex-col gap-4 w-full md:w-1/3 md:max-w-[600px] m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(152vh-80px)] relative">
+          <div className="flex flex-col gap-4 w-full md:w-2/5 m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(100vh-80px)] relative">
 
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
@@ -574,7 +574,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
           {/* Right: Job Details Panel (Desktop only) - FIXED WIDTH & OVERFLOW */}
           {selectedJob && (
-            <div className="sticky top-[60px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-2/3 md:max-w-[700px] hidden h-[calc(150vh-80px)] dark:border-gray-700 dark:bg-gray-800">
+            <div className="sticky top-[64px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-3/5 hidden h-[calc(100vh-80px)] dark:border-gray-700 dark:bg-gray-800">
 
               {/* Header (Sticky) */}
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">

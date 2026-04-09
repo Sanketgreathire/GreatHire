@@ -125,7 +125,7 @@ export const register = async (req, res) => {
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
         httpsOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
       })
       .json({
         message: "Account created successfully.",
@@ -192,7 +192,7 @@ export const googleLogin = async (req, res) => {
         .cookie("token", token, {
           maxAge: 1 * 24 * 60 * 60 * 1000,
           httpsOnly: true,
-          sameSite: "strict",
+          sameSite: "lax",
         })
         .json({
           message: `Welcome back ${user.fullname}`,
@@ -247,7 +247,7 @@ export const googleLogin = async (req, res) => {
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpsOnly: true,
-        sameSite: "strict",
+        sameSite: "lax",
       })
       .json({
         message: `Welcome ${user.fullname}`,
@@ -640,7 +640,7 @@ export const deleteAccount = async (req, res) => {
           .cookie("token", "", {
             maxAge: 0,
             httpsOnly: true,
-            sameSite: "strict",
+            sameSite: "lax",
           })
           .json({
             success: true,

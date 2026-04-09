@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateCandidateCredits } from "@/redux/companySlice";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,39 +15,71 @@ import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 
 const ALL_STATUSES = ["Pending", "Interview Schedule", "Shortlisted", "Rejected"];
-const FILTER_OPTIONS = ["All", ...ALL_STATUSES];
 
-const statusBadgeStyles = {
-  Pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200",
-  "Interview Schedule": "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200",
-  Shortlisted: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200",
-  Rejected: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200",
-};
+// Module-level cache — survives component remounts
+let _cachedApplicants = [];
+let _cachedScoreMap = {};
+let _cachedSortedIds = []; // stores sorted order of application IDs
+let _unlockedIds = new Set(); // tracks unlocked applicant IDs
+
+const AVATAR_COLORS = [
+  { bg: "bg-blue-100", text: "text-blue-700" },
+  { bg: "bg-emerald-100", text: "text-emerald-700" },
+  { bg: "bg-rose-100", text: "text-rose-700" },
+  { bg: "bg-purple-100", text: "text-purple-700" },
+  { bg: "bg-orange-100", text: "text-orange-700" },
+  { bg: "bg-teal-100", text: "text-teal-700" },
+];
+
+const LocationIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z" stroke="currentColor" strokeWidth="1.3" />
+    <circle cx="8" cy="6" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+  </svg>
+);
+
+function Tag({ children, primary }) {
+  return (
+    <span className={`inline-block text-xs px-2.5 py-0.5 rounded-full border font-medium ${
+      primary ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
+    }`}>{children}</span>
+  );
+}
+
+function Row({ label, children }) {
+  return (
+    <div className="flex items-start gap-3 mb-2">
+      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest min-w-[88px] pt-0.5 shrink-0">{label}</span>
+      <div className="flex flex-wrap gap-1.5 flex-1">{children}</div>
+    </div>
+  );
+}
 
 const AllApplicantsList = () => {
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const companyId = company?._id;
 
-  const [applicants, setApplicants] = useState([]);
-  const [filteredApplicants, setFilteredApplicants] = useState([]);
+  const [applicants, setApplicants] = useState(_cachedApplicants);
+  const [filteredApplicants, setFilteredApplicants] = useState(_cachedApplicants);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   const [applicantDetailsModal, setApplicantDetailsModal] = useState(false);
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
   const [jobId, setJobId] = useState(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!companyId) return;
-    fetchApplicants();
+    if (applicants.length === 0) fetchApplicants();
   }, [companyId]);
 
   const fetchApplicants = async () => {
@@ -60,6 +93,7 @@ const AllApplicantsList = () => {
         const validApplicants = response.data.applications.filter(
           (app) => app.applicant != null
         );
+        _cachedApplicants = validApplicants;
         setApplicants(validApplicants);
         setFilteredApplicants(validApplicants);
       }
@@ -154,6 +188,8 @@ const AllApplicantsList = () => {
   const [aiResults, setAiResults] = useState([]);
   const [aiJobTitle, setAiJobTitle] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [unlockedIds, setUnlockedIds] = useState(new Set(_unlockedIds));
+  const [scoreMap, setScoreMap] = useState(_cachedScoreMap);
 
   const handleAnalyzeCandidates = async () => {
     if (applicants.length === 0) return toast.error("No applicants to analyze.");
@@ -173,6 +209,13 @@ const AllApplicantsList = () => {
       if (res.data.success) {
         setAiResults(res.data.results);
         setAiJobTitle(res.data.jobTitle);
+        // Build scoreMap: { applicationId: score }
+        const map = {};
+        res.data.results.forEach(r => { if (r.applicationId) map[r.applicationId] = r.score; });
+        _cachedScoreMap = map;
+        // Cache the sorted order of IDs
+        _cachedSortedIds = res.data.results.map(r => r.applicationId).filter(Boolean);
+        setScoreMap(map);
       } else {
         toast.error("Analysis failed.");
       }
@@ -189,14 +232,20 @@ const AllApplicantsList = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const visibleApplicants = isStarterPlan ? filteredApplicants.slice(0, STARTER_LIMIT) : filteredApplicants;
-  const currentApplicants = visibleApplicants.slice(indexOfFirstItem, indexOfLastItem);
+  const sortedApplicants = _cachedSortedIds.length > 0
+    ? [
+        ..._cachedSortedIds.map(id => visibleApplicants.find(a => a._id === id)).filter(Boolean),
+        ...visibleApplicants.filter(a => !_cachedSortedIds.includes(a._id))
+      ]
+    : visibleApplicants;
+  const currentApplicants = sortedApplicants.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
       {company && user?.isActive ? (
         !applicantDetailsModal ? (
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-10">
-            <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 mt-6">
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-6">
+            <div className="bg-transparent">
 
               <div className="flex justify-between mb-6">
                 <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -208,6 +257,9 @@ const AllApplicantsList = () => {
                     {selectedStatus === "All" && !searchTerm.trim()
                       ? `Total: ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`
                       : `Showing: ${visibleApplicants.length} of ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`}
+                  </span>
+                  <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
+                    Credits: {company?.creditedForCandidates ?? 0}
                   </span>
                   {applicants.length > 0 && (
                     <Button
@@ -231,133 +283,152 @@ const AllApplicantsList = () => {
                 </div>
               )}
 
-              <div className="overflow-x-auto rounded-xl border max-h-[60vh] overflow-y-auto">
-                <table className="w-full min-w-[950px]">
-                  <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-                    <tr>
-                      <th className="p-4 text-left">Applicant</th>
-                      <th className="p-4 text-left">Job Title</th>
-                      <th className="p-4 text-center">Status</th>
-                      <th className="p-4 text-center">Update Status</th>
-                      <th className="p-4 text-center">Actions</th>
-                    </tr>
-                  </thead>
+              {/* Cards */}
+              <div className="space-y-3">
+                {currentApplicants.map((app, idx) => {
+                  const p = app.applicant?.profile || {};
+                  const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                  const initials = (app.applicant?.fullname || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+                  const skills = Array.isArray(p.skills)
+                    ? p.skills.flatMap(s => s.split(',').map(x => x.trim())).filter(Boolean)
+                    : [];
+                  const languages = Array.isArray(p.language) ? p.language : [];
+                  const documents = Array.isArray(p.documents) ? p.documents.filter(d => d !== "None of these") : [];
+                  const categories = Array.isArray(p.category) ? p.category : [];
+                  const experiences = Array.isArray(p.experiences) ? p.experiences : [];
+                  const expText = experiences.length > 0
+                    ? `${experiences[0].duration || ""} ${experiences[0].duration ? "yr(s)" : ""} experience as ${experiences[0].jobProfile || ""}`
+                    : "Fresher";
+                  const location = [app.applicant?.address?.city, app.applicant?.address?.state].filter(Boolean).join(", ") || "—";
+                  const score = scoreMap[app._id];
 
-                  <tbody>
-                    {currentApplicants.map((app) => (
-                      <tr key={app._id} className="border-b">
-                        <td className="p-4">{app?.applicant?.fullname}</td>
-                        <td className="p-4 text-sm text-gray-600 dark:text-gray-400">{app?.job?.jobDetails?.title || "—"}</td>
-                        <td className="p-4 text-center">{app.status}</td>
+                  return (
+                    <div key={app._id} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-5 shadow-sm hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-700 transition-all duration-200">
+                      {/* Header */}
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-semibold text-sm shrink-0 ${color.bg} ${color.text}`}>
+                          {initials}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-[15px] font-semibold text-gray-900 dark:text-white leading-tight">{app.applicant?.fullname || "—"}</p>
+                            {score != null && (
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                score >= 70 ? "bg-green-100 text-green-700" : score >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-600"
+                              }`}>🤖 {score}%</span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                            <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><LocationIcon /> {location}</span>
+                            {p.qualification && <span className="text-xs text-gray-500 dark:text-gray-400">{p.qualification}</span>}
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              app.status === "Shortlisted" ? "bg-green-100 text-green-700" :
+                              app.status === "Rejected" ? "bg-red-100 text-red-600" :
+                              app.status === "Interview Schedule" ? "bg-purple-100 text-purple-700" :
+                              "bg-yellow-100 text-yellow-700"
+                            }`}>{app.status}</span>
+                          </div>
+                        </div>
+                      </div>
 
-                        <td className="p-4 text-center dark:text-gray-300 rounded">
-                          <select
-                            value={app.status}
-                            onChange={(e) =>
-                              handleStatusChange(app._id, e.target.value)
-                            }
-                            className="border rounded px-2 py-1 dark:bg-gray-700 dark:text-gray-300"
-                          >
-                            {ALL_STATUSES.map((s) => (
-                              <option key={s} value={s}>{s}</option>
-                            ))}
-                          </select>
-                        </td>
+                      {/* Info rows */}
+                      {skills.length > 0 && (
+                        <Row label="Key Skills">
+                          <Tag primary>{skills[0]}</Tag>
+                          {skills.slice(1, 3).map(s => <Tag key={s}>{s}</Tag>)}
+                          {skills.length > 3 && <span className="text-xs text-blue-500 cursor-pointer hover:underline py-0.5">+{skills.length - 3} more</span>}
+                        </Row>
+                      )}
 
-                        {/* ✅ UPDATED ACTIONS */}
-                        <td className="p-4 text-center dark:text-gray-300">
-                          <div className="flex justify-center gap-2">
-                            <Button
-                              className="bg-blue-600 dark:bg-blue-500 text-white dark:text-gray-300 px-3 py-1 rounded"
-                              onClick={() => {
-                                setApplicant(app);
-                                setApplicantId(app?._id);
-                                setApplicantDetailsModal(true);
-                                setJobId(app?.job);
-                              }}
+                      <Row label="Experience">
+                        <span className="text-[13px] text-gray-700 dark:text-gray-300">{expText}</span>
+                      </Row>
+
+                      {app.job?.jobDetails?.title && (
+                        <Row label="Applied For">
+                          <Tag>{app.job.jobDetails.title}</Tag>
+                        </Row>
+                      )}
+
+                      {languages.length > 0 && (
+                        <Row label="Languages">
+                          {languages.map(l => <Tag key={l}>{l}</Tag>)}
+                        </Row>
+                      )}
+
+                      {documents.length > 0 && (
+                        <Row label="Documents">
+                          {documents.map(d => <Tag key={d}>{d}</Tag>)}
+                        </Row>
+                      )}
+
+                      {categories.length > 0 && (
+                        <Row label="Categories">
+                          {categories.slice(0, 3).map(c => <Tag key={c}>{c}</Tag>)}
+                          {categories.length > 3 && <span className="text-xs text-blue-500 cursor-pointer hover:underline py-0.5">+{categories.length - 3} more</span>}
+                        </Row>
+                      )}
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex-wrap gap-2">
+                        <select
+                          value={app.status}
+                          onChange={(e) => handleStatusChange(app._id, e.target.value)}
+                          className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                        >
+                          {ALL_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                        <div className="flex items-center gap-2">
+                          {unlockedIds.has(app._id) ? (
+                            <button
+                              onClick={() => { setApplicant(app); setApplicantId(app?._id); setJobId(app?.job?._id || app?.job); setApplicantDetailsModal(true); }}
+                              className="text-sm font-medium px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all flex items-center gap-1"
                             >
                               👁 View
-                            </Button>
-
-                            <Button
-                              className="bg-green-600 text-white px-3 py-1 rounded"
-                              onClick={() =>
-                                navigate(`/recruiter/dashboard/job-details/${app?.job}`)
-                              }
-                            >
-                              📄 Job
-                            </Button>
-
-                            {/* <Button
-                              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm rounded-lg"
-                              onClick={() => handleDeleteApplicant(app._id)}
-                            >
-                              <FiTrash2 size={16} />
-                              Delete
-                            </Button> */}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-xl">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      Showing{" "}
-                      <strong>{indexOfFirstItem + 1}–{Math.min(indexOfLastItem, filteredApplicants.length)}</strong>{" "}
-                      of <strong>{filteredApplicants.length}</strong> applicants
-                    </span>
-
-                    <div className="flex items-center gap-1">
-                      <Button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage((p) => p - 1)}
-                        className="px-3 py-1 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded disabled:opacity-40"
-                      >
-                        ← Prev
-                      </Button>
-
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                        .reduce((acc, p, idx, arr) => {
-                          if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
-                          acc.push(p);
-                          return acc;
-                        }, [])
-                        .map((item, idx) =>
-                          item === "..." ? (
-                            <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">…</span>
+                            </button>
                           ) : (
                             <button
-                              key={item}
-                              onClick={() => setCurrentPage(item)}
-                              className={`px-3 py-1 text-sm rounded border ${currentPage === item
-                                  ? "bg-blue-600 text-white border-blue-600 font-medium"
-                                  : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                }`}
+                              onClick={async () => {
+                                try {
+                                  const res = await axios.post(
+                                    `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
+                                    { companyId },
+                                    { withCredentials: true }
+                                  );
+                                  if (res.data.success) {
+                                    _unlockedIds.add(app._id);
+                                    setUnlockedIds(new Set(_unlockedIds));
+                                    dispatch(updateCandidateCredits(res.data.remainingCredits));
+                                    toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
+                                    setApplicant(app);
+                                    setApplicantId(app?._id);
+                                    setJobId(app?.job?._id || app?.job);
+                                    setApplicantDetailsModal(true);
+                                  }
+                                } catch (err) {
+                                  toast.error(err?.response?.data?.message || "Failed to unlock.");
+                                }
+                              }}
+                              className="text-sm font-medium px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all flex items-center gap-1"
                             >
-                              {item}
+                              🔓 Unlock
                             </button>
-                          )
-                        )}
-
-                      <Button
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage((p) => p + 1)}
-                        className="px-3 py-1 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded disabled:opacity-40"
-                      >
-                        Next →
-                      </Button>
+                          )}
+                          <button
+                            onClick={() => navigate(`/recruiter/dashboard/job-details/${app?.job?._id || app?.job}`)}
+                            className="text-sm font-medium px-4 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all"
+                          >
+                            📄 Job
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
 
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-6">
+              <div className="flex justify-center items-center gap-2 mt-6">
                   <Button
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={currentPage === 1}
@@ -399,7 +470,6 @@ const AllApplicantsList = () => {
                     Next →
                   </Button>
                 </div>
-              )}
 
             </div>
           </div>

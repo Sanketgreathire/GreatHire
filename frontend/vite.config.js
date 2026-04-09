@@ -18,6 +18,7 @@ export default defineConfig({
         target: "http://localhost:8000", // Your backend server
         changeOrigin: true,
         secure: false,
+        cookieDomainRewrite: "localhost",
       },
       "/socket.io": {  // Add this for WebSocket proxying
         target: "http://localhost:8000", // Same as API target
