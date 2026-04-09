@@ -305,6 +305,16 @@ import CollegeSignup from '@/components/Campus/CollegeSignup';
 import StudentSignup from '@/components/Campus/StudentSignup';
 
 
+// Training Course 
+import TrainingCoursesPage from './pages/course/CourseMain';
+import PythonCoursePage from './pages/course/python';
+import JavaCoursePage from './pages/course/java';
+import DataSciencePage from './pages/course/DataScience';
+import DigitalMarketingPage from './pages/course/DigitalMarketing';
+import DataAnalyticsPage from './pages/course/DataAnalytics';
+import SalesforcePage from './pages/course/saleforcePage';
+
+
 
 
 const appRouter = createBrowserRouter([
@@ -402,11 +412,19 @@ const appRouter = createBrowserRouter([
   { path: "/digitalmarketer/login", element: <DigitalMarketerLogin /> },
   { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/*", element: <AdminLayout /> },
+  { path: "/campus-hiring", element: <CollegeLogin /> },
   { path: "/campus-dashboard", element: <CampusPlacementDashboard /> },
   { path: "/college/login", element: <CollegeLogin /> },
   { path: "/college/signup", element: <CollegeSignup /> },
   { path: "/student/signup", element: <StudentSignup /> },
   { path: "/college-details", element: <CollegeDetails /> },
+  { path: "/courses", element: <TrainingCoursesPage /> },
+  { path: "/courses/python-training", element: <PythonCoursePage /> },
+  { path: "/courses/java-training", element: <JavaCoursePage /> },
+  { path: "/courses/data-science-training", element: <DataSciencePage /> },
+  { path: "/courses/digital-marketing-training", element: <DigitalMarketingPage /> },
+  { path: "/courses/data-analytics-training", element: <DataAnalyticsPage /> },
+  { path: "/courses/saleforce-training", element: <SalesforcePage /> },
   { path: "*", element: <PageNotFound /> }
 ]);
 

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { COLLEGE_API_END_POINT } from "@/utils/ApiEndPoint";
 
 // ─── COLLEGE DATA ─────────────────────────────────────────────────────────────
+
 const DEFAULT_COLLEGE = {
   name: "",
   fullName: "",
@@ -15,6 +16,7 @@ const DEFAULT_COLLEGE = {
   tpo: "",
   tpoEmail: "",
   tpoPhone: "",
+
 };
 
 function currentPlacementSeason() {

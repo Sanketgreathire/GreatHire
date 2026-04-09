@@ -126,7 +126,7 @@ const RecruiterDashboard = () => {
         {/* Main Content */}
         <div className="flex flex-1">
           <DashboardNavigations />
-          <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto pt-16">
+          <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto">
             {loading ? (
               <div className="text-center text-gray-500 py-10">Loading...</div>
             ) : (

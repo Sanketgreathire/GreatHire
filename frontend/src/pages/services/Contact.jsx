@@ -88,7 +88,7 @@ const ContactSection = () => {
         <Navbar />
 
         {/* Enhanced Hero Section with Light Mode Optimized Colors */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-6 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
           {/* Animated background with geometric shapes */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Floating orbs */}

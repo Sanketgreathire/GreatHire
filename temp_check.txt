@@ -1,0 +1,20 @@
+﻿
+                      {isMoreOpen && (
+                        <div className="absolute left-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-1 z-50">
+                          {moreLinks.map((link) => (
+                            <button
+                              key={link.id}
+                              onClick={() => { navigate(link.path); window.scrollTo(0, 0); setIsMoreOpen(false); }}
+                              className="w-full text-left flex items-center px-4 py-2.5 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            >
+                              {link.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Dark Mode Toggle */}
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}

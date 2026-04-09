@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import Navbar from "@/components/admin/Navbar";
 
 const CANDIDATES = [
   {
@@ -341,11 +342,13 @@ export default function App() {
   const candidateIndex = candidate ? CANDIDATES.findIndex(c => c.id === selected) : 0;
 
   return (
-    <div
-      className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col"
-      style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", minHeight: "calc(100vh - 64px)" }}
-    >
-      <div className="flex flex-1 overflow-hidden">
+    <>
+      <Navbar linkName="Campus Dashboard" />
+      <div
+        className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col"
+        style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", height: "calc(100vh - 64px)" }}
+      >
+      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
 
         {/* ── Left Sidebar ── */}
         <aside className={`${sidebarOpen ? "w-80" : "w-0"} transition-all duration-300 overflow-hidden flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex flex-col`}>
@@ -652,6 +655,7 @@ export default function App() {
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .dark .custom-scroll::-webkit-scrollbar-thumb { background: #334155; }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }
