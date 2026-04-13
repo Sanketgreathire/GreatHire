@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoArrowBackSharp } from "react-icons/io5";
-import { Badge } from "@/components/ui/badge";
 import { MdOutlineVerified } from "react-icons/md";
+import { FiMail, FiPhone, FiMapPin, FiBriefcase, FiFileText, FiUser } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
@@ -13,34 +13,76 @@ import {
   COMPANY_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 
-const applicantDetails = ({
+function Tag({ children, primary }) {
+  return (
+    <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium border ${
+      primary
+        ? "bg-blue-600 text-white border-blue-600"
+        : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600"
+    }`}>{children}</span>
+  );
+}
+
+function Divider() {
+  return <div className="border-t border-gray-100 dark:border-gray-700 my-4" />;
+}
+
+function SectionTitle({ children }) {
+  return <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{children}</h3>;
+}
+
+const STATUS_STYLES = {
+  Shortlisted: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  Rejected: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  "Interview Schedule": "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+  Pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+};
+
+const ApplicantDetails = ({
   app,
   setApplicantDetailsModal,
   applicantId,
   jobId,
   user,
   setApplicants,
-  shouldDeductCredit = false, // New prop to control credit deduction
+  shouldDeductCredit = false,
 }) => {
   const [loading, setLoading] = useState(0);
   const [creditDeducted, setCreditDeducted] = useState(false);
+  const [freshApplicant, setFreshApplicant] = useState(null);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
 
-  // Deduct credit when viewing applicant details (only if shouldDeductCredit is true)
+  // Always fetch fresh applicant data on open
+  useEffect(() => {
+    const fetchFresh = async () => {
+      try {
+        const res = await axios.get(
+          `${COMPANY_API_END_POINT}/candidate-information/${app?.applicant?._id}`,
+          { withCredentials: true }
+        );
+        if (res.data.success) setFreshApplicant(res.data.candidate);
+      } catch {}
+    };
+    if (app?.applicant?._id) fetchFresh();
+  }, [app?.applicant?._id]);
+
+  // Merge fresh data over cached app data
+  const mergedApp = freshApplicant
+    ? { ...app, applicant: { ...app.applicant, ...freshApplicant } }
+    : app;
+
   useEffect(() => {
     const deductCredit = async () => {
       if (!shouldDeductCredit || creditDeducted || !company?._id) return;
-      
       try {
-        const response = await axios.post(
+        const res = await axios.post(
           `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
           { companyId: company._id },
           { withCredentials: true }
         );
-        
-        if (response.data.success) {
-          dispatch(updateCandidateCredits(response.data.remainingCredits));
+        if (res.data.success) {
+          dispatch(updateCandidateCredits(res.data.remainingCredits));
           setCreditDeducted(true);
         }
       } catch (error) {
@@ -50,278 +92,322 @@ const applicantDetails = ({
         }
       }
     };
-
     deductCredit();
   }, [company, creditDeducted, dispatch, setApplicantDetailsModal, shouldDeductCredit]);
 
-  // Function to update the application status (Shortlisted or Rejected)
   const updateStatus = async (status) => {
     try {
       setLoading(status);
       const statusString = status === 1 ? "Shortlisted" : "Rejected";
-      const response = await axios.post(
+      const res = await axios.post(
         `${APPLICATION_API_END_POINT}/status/${applicantId}/update`,
         { status: statusString },
         { withCredentials: true }
       );
-      if (response.data.success) {
-        // Send email notification to the applicant about the status update
-        const emailResponse = await axios.post(
+      if (res.data.success) {
+        const emailRes = await axios.post(
           `${VERIFICATION_API_END_POINT}/send-email-applicants/${jobId}`,
-          {
-            email: app?.applicant?.emailId?.email,
-            status: statusString,
-          },
+          { email: app?.applicant?.emailId?.email, status: statusString },
           { withCredentials: true }
         );
-        if (emailResponse.data.success) {
-          setApplicants((prevApp) =>
-            prevApp.map((appl) =>
-              appl._id === app._id ? { ...appl, status: statusString } : appl
-            )
+        if (emailRes.data.success) {
+          setApplicants((prev) =>
+            prev.map((a) => a._id === app._id ? { ...a, status: statusString } : a)
           );
-
-          toast.success("Status Updated"); // Show success toast message
+          toast.success("Status Updated");
         }
       } else {
-        toast.error("Status updation failed"); // Show error toast message if update fails
+        toast.error("Status updation failed");
       }
-    } catch (err) {
-      toast.error("An error occurred while updating the status"); // Show error toast message
-      console.error("Error updating status:", err);
+    } catch {
+      toast.error("An error occurred while updating the status");
     } finally {
       setLoading(0);
     }
   };
 
+  const p = mergedApp?.applicant?.profile || {};
+  const skills = Array.isArray(p.skills) ? p.skills : [];
+  const experiences = Array.isArray(p.experiences) ? p.experiences : [];
+  const languages = Array.isArray(p.language) ? p.language : [];
+  const documents = Array.isArray(p.documents) ? p.documents.filter(d => d !== "None of these") : [];
+  const categories = Array.isArray(p.category) ? p.category : [];
+  const name = mergedApp?.applicant?.fullname || "—";
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  const location = [mergedApp?.applicant?.address?.city, mergedApp?.applicant?.address?.state, mergedApp?.applicant?.address?.country].filter(Boolean).join(", ");
+  const totalExp = experiences.reduce((sum, e) => sum + (parseFloat(e.duration) || 0), 0);
+  const status = mergedApp?.status || "Pending";
+
   return (
     <>
-      <Helmet>
-        {/* Meta Title */}
-        <title>
-          Applicant Details | GreatHire's Candidate Profile Review, and Hiring Insights
-        </title>
+      <Helmet><title>Applicant Details | GreatHire</title></Helmet>
 
-        {/* Meta Description */}
-        <meta
-          name="description"
-          content="Assess the full information of applicants on the recruitment platform, GreatHire, a smart recruitment system functioning in the region of Hyderabad, the India State. The “Applicant Details” interface gives a full briefing on the candidates, comprising their personal information, contacts, application status in a job, and analysis of their profiles. With a focus on exactness, speed, and ease of understanding, GreatHire is designed to give the hiring team the ability to shortlist the most appropriate candidates, decrease the time span for recruiting, and create a better workforce."
-        />
-      </Helmet>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-start md:items-center justify-center px-4 py-6 md:py-8">
-        <div className="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-5 sm:p-8 md:p-12">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-6 pt-2">
-            <IoArrowBackSharp
-              onClick={() => setApplicantDetailsModal(false)}
-              className="cursor-pointer text-gray-800 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400"
-              size={25}
-            />
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-              Applicant Details
-            </h1>
-          </div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-6">
+        <div className="max-w-2xl mx-auto">
 
-          {/* applicant Overview */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left mb-6 gap-4">
-            {app?.applicant?.profile?.profilePhoto && (
-              <img
-                src={app?.applicant?.profile?.profilePhoto}
-                alt="Profile"
-                className="w-20 h-20 rounded-full mr-4 object-cover"
-              />
-            )}
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-                {app?.applicant?.fullname}
-              </h2>
-            </div>
-          </div>
+          {/* Back */}
+          <button
+            onClick={() => setApplicantDetailsModal(false)}
+            className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition mb-4"
+          >
+            <IoArrowBackSharp size={18} /> Back to Applicants
+          </button>
 
-          <div className="space-y-6">
-            {/* Personal Details */}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                Personal Details
-              </h2>
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                  <span className="font-semibold">Full Name:</span>
-                  {app?.applicant?.fullname}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 flex flex-wrap items-center gap-2 break-all">
-                  <span className="font-semibold">Email:</span>
-                  <span className="break-all">{app?.applicant?.emailId?.email}</span>
-                  {app?.applicant?.emailId?.isVerified && (
-                    <MdOutlineVerified size={20} color="green" title="Verified" />
-                  )}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                  <span className="font-semibold">Phone:</span>
-                  <span>{app?.applicant?.phoneNumber?.number}</span>
-                  {app?.applicant?.phoneNumber?.isVerified && (
-                    <MdOutlineVerified size={20} color="green" title="Verified" />
-                  )}
-                </p>
-                <p className="text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold">Address:</span>{" "}
-                  {app?.applicant?.address?.city},{" "}
-                  {app?.applicant?.address?.state},{" "}
-                  {app?.applicant?.address?.country}
-                </p>
-              </div>
-            </div>
+          {/* Single Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
 
-            {/* Salary Details */}
-            {app?.applicant?.profile?.currentCTC &&
-              app?.applicant?.profile?.expectedCTC && (
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                    Salary Details
-                  </h2>
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <p className="text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Current CTC:</span> ₹
-                      {app?.applicant?.profile.currentCTC.toLocaleString()}
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      <span className="font-semibold">Expected CTC:</span> ₹
-                      {app?.applicant?.profile.expectedCTC.toLocaleString()}
-                    </p>
+            {/* Banner + Avatar */}
+            <div className="h-20 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+            <div className="px-6 pb-6">
+              <div className="-mt-10 mb-3 flex items-end justify-between">
+                {p.profilePhoto && !p.profilePhoto.includes("github.com") ? (
+                  <img
+                    src={p.profilePhoto}
+                    alt="Profile"
+                    className="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-gray-800 shadow-md"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-2xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-2xl font-bold text-blue-700 dark:text-blue-300 border-4 border-white dark:border-gray-800 shadow-md">
+                    {initials}
                   </div>
+                )}
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${STATUS_STYLES[status] || STATUS_STYLES.Pending}`}>
+                  {status}
+                </span>
+              </div>
+
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{name}</h2>
+              {p.qualification && <p className="text-sm text-gray-500 dark:text-gray-400">{p.qualification}</p>}
+              {app?.job?.jobDetails?.title && (
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                  Applied for <span className="font-semibold">{app.job.jobDetails.title}</span>
+                </p>
+              )}
+
+              {/* Stats */}
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">{totalExp > 0 ? totalExp : "0"}</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wide">Yrs Exp</p>
+                </div>
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">{skills.length}</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wide">Skills</p>
+                </div>
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 text-center">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">{experiences.length}</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wide">Jobs</p>
+                </div>
+              </div>
+
+              {/* Contact */}
+              <Divider />
+              <SectionTitle>Contact</SectionTitle>
+              <div className="space-y-2">
+                {app?.applicant?.emailId?.email && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <FiMail className="text-blue-500 shrink-0" size={15} />
+                    <span className="text-gray-700 dark:text-gray-300 break-all">{app.applicant.emailId.email}</span>
+                    {app.applicant.emailId.isVerified && <MdOutlineVerified size={15} color="green" />}
+                  </div>
+                )}
+                {app?.applicant?.phoneNumber?.number && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <FiPhone className="text-green-500 shrink-0" size={15} />
+                    <span className="text-gray-700 dark:text-gray-300">{app.applicant.phoneNumber.number}</span>
+                    {app.applicant.phoneNumber.isVerified && <MdOutlineVerified size={15} color="green" />}
+                  </div>
+                )}
+                {location && (
+                  <div className="flex items-center gap-3 text-sm">
+                    <FiMapPin className="text-red-400 shrink-0" size={15} />
+                    <span className="text-gray-700 dark:text-gray-300">{location}</span>
+                  </div>
+                )}
+                {(p.currentCTC || p.expectedCTC) && (
+                  <div className="flex gap-6 pt-2">
+                    {p.currentCTC && (
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide">Current CTC</p>
+                        <p className="text-sm font-semibold text-gray-800 dark:text-white">₹{p.currentCTC}</p>
+                      </div>
+                    )}
+                    {p.expectedCTC && (
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide">Expected CTC</p>
+                        <p className="text-sm font-semibold text-gray-800 dark:text-white">₹{p.expectedCTC}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Skills */}
+              {skills.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Skills</SectionTitle>
+                  <div className="flex flex-wrap gap-2">
+                    {skills.map((s, i) => <Tag key={i} primary={i === 0}>{s}</Tag>)}
+                  </div>
+                </>
+              )}
+
+              {/* Experience */}
+              {experiences.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Experience · <span className="text-blue-600 dark:text-blue-400 normal-case">{totalExp} yr{totalExp !== 1 ? "s" : ""} total</span></SectionTitle>
+                  <div className="space-y-4">
+                    {experiences.map((exp, i) => (
+                      <div key={i} className="flex gap-3">
+                        <div className="mt-1 w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center shrink-0">
+                          <FiBriefcase size={14} className="text-indigo-500" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-800 dark:text-white">{exp.jobProfile || "—"}</p>
+                          {exp.companyName && <p className="text-xs text-gray-500 dark:text-gray-400">{exp.companyName}</p>}
+                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                            {exp.duration && (
+                              <span className="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
+                                {exp.duration} yr{parseFloat(exp.duration) !== 1 ? "s" : ""}
+                              </span>
+                            )}
+                            {exp.currentlyWorking && (
+                              <span className="text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
+                                Currently Working
+                              </span>
+                            )}
+                          </div>
+                          {exp.experienceDetails && (
+                            <p className="text-xs text-gray-400 mt-1 leading-relaxed">{exp.experienceDetails}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Languages */}
+              {languages.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Languages</SectionTitle>
+                  <div className="flex flex-wrap gap-2">{languages.map((l, i) => <Tag key={i}>{l}</Tag>)}</div>
+                </>
+              )}
+
+              {/* Documents */}
+              {documents.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Documents</SectionTitle>
+                  <div className="flex flex-wrap gap-2">{documents.map((d, i) => <Tag key={i}>{d}</Tag>)}</div>
+                </>
+              )}
+
+              {/* Categories */}
+              {categories.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Categories</SectionTitle>
+                  <div className="flex flex-wrap gap-2">{categories.map((c, i) => <Tag key={i}>{c}</Tag>)}</div>
+                </>
+              )}
+
+              {/* Bio */}
+              {(p.bio || p.coverLetter) && (
+                <>
+                  <Divider />
+                  <SectionTitle>About</SectionTitle>
+                  {p.bio && (
+                    <div className="flex gap-3 mb-2">
+                      <FiUser size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{p.bio}</p>
+                    </div>
+                  )}
+                  {p.coverLetter && (
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Cover Letter</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{p.coverLetter}</p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Resume */}
+              {p.resume && (
+                <>
+                  <Divider />
+                  <SectionTitle>Resume</SectionTitle>
+                  <a
+                    href={p.resume}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition group"
+                  >
+                    <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                      <FiFileText size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:underline">
+                        {p.resumeOriginalName || "View Resume"}
+                      </p>
+                      <p className="text-xs text-gray-400">Click to open</p>
+                    </div>
+                  </a>
+                </>
+              )}
+
+              {/* Employer Q&A */}
+              {app?.answers?.length > 0 && (
+                <>
+                  <Divider />
+                  <SectionTitle>Employer Questions</SectionTitle>
+                  <div className="space-y-3">
+                    {app.answers.map((qa, idx) => (
+                      <div key={idx} className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+                        <p className="text-xs font-semibold text-gray-600 dark:text-gray-300">Q: {qa.question}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">A: {qa.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Actions */}
+              <Divider />
+              {user?.role === "recruiter" && app.status === "Pending" ? (
+                <div className="flex gap-3">
+                  <button
+                    className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
+                    disabled={loading === 1 || loading === -1}
+                    onClick={() => updateStatus(1)}
+                  >
+                    {loading === 1 ? "Updating..." : "✅ Shortlist"}
+                  </button>
+                  <button
+                    className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
+                    disabled={loading === 1 || loading === -1}
+                    onClick={() => updateStatus(-1)}
+                  >
+                    {loading === -1 ? "Updating..." : "❌ Reject"}
+                  </button>
+                </div>
+              ) : (
+                <div className={`text-center font-semibold text-sm py-3 rounded-2xl ${STATUS_STYLES[status] || STATUS_STYLES.Pending}`}>
+                  {status}
                 </div>
               )}
 
-            {/* Skills */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 pb-2">Skills</h2>
-              <div className="flex flex-wrap gap-3">
-                {app?.applicant?.profile?.skills?.length > 0 ? (
-                  app?.applicant.profile.skills.map((skill, index) => (
-                    <Badge
-                      key={index}
-                      className="bg-blue-100 hover:bg-blue-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
-                    >
-                      {skill}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-gray-600 dark:text-gray-400">No skills listed</span>
-                )}
-              </div>
             </div>
-
-            {/* Profile Details */}
-            <div className="flex flex-col space-y-2">
-              <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Profile</h2>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">
-                {app?.applicant?.profile?.bio && (
-                  <div className="mb-3">
-                    <span className="font-semibold">Bio: </span>
-                    <span>{app?.applicant.profile.bio}</span>
-                  </div>
-                )}
-                {app?.applicant?.profile?.coverLetter && (
-                  <div>
-                    <span className="font-semibold">Cover Letter: </span>
-                    <span>{app?.applicant.profile.coverLetter}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Experience Details */}
-            {app?.applicant?.profile?.experience && (
-              <div className="flex flex-col space-y-2">
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-                  Experience
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 mt-2 flex flex-col space-y-1">
-                  <span className="font-semibold">Company Name:</span>{" "}
-                  <span>{app?.applicant.profile.experience.companyName}</span>
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 flex flex-col space-y-1">
-                  <span className="font-semibold">Job Profile:</span>{" "}
-                  <span>{app?.applicant?.profile.experience.jobProfile}</span>
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 flex flex-col space-y-1">
-                  <span className="font-semibold">Duration:</span>{" "}
-                  <span>
-                    {app?.applicant?.profile.experience.duration} year(s)
-                  </span>
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 flex flex-col space-y-1">
-                  <span className="font-semibold">Details:</span>{" "}
-                  <span>
-                    {app?.applicant?.profile.experience.experienceDetails}
-                  </span>
-                </p>
-              </div>
-            )}
-
-            {/* Resume */}
-            {app?.applicant?.profile?.resume && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Resume</h2>
-                <a
-                  href={app.applicant.profile.resume}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 underline hover:text-blue-700 dark:hover:text-blue-300"
-                >
-                  {app.applicant.profile.resumeOriginalName || "View Resume"}
-                </a>
-              </div>
-            )}
-
-            {/* Employer Questions & Answers */}
-            {app?.answers?.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Employer Questions</h2>
-                <div className="mt-3 space-y-3">
-                  {app.answers.map((qa, idx) => (
-                    <div key={idx} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Q: {qa.question}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">A: {qa.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Action Buttons */}
-          {user?.role === "recruiter" && app.status === "Pending" ? (
-            <div className="mt-6 flex justify-end gap-4">
-              <button
-                className={`px-6 py-2 bg-green-500 dark:bg-green-600 text-white rounded-lg shadow hover:bg-green-600 dark:hover:bg-green-700 transition-colors ${(loading === 1 || loading === -1) && "cursor-not-allowed opacity-50"
-                  }`}
-                disabled={loading === 1 || loading === -1}
-                onClick={() => updateStatus(1)}
-              >
-                {loading === 1 ? "Updating..." : "Shortlist"}
-              </button>
-              <button
-                className={`px-6 py-2 bg-red-500 text-white dark:bg-red-600 dark:text-white rounded-lg shadow hover:bg-red-600 dark:hover:bg-red-700 transition-colors ${(loading === 1 || loading === -1) && "cursor-not-allowed opacity-50"
-                  }`}
-                disabled={loading === 1 || loading === -1}
-                onClick={() => updateStatus(-1)}
-              >
-                {loading === -1 ? "Updating..." : "Reject"}
-              </button>
-            </div>
-          ) : (
-            <p
-              className={`flex justify-end mt-6 font-semibold ${app.status === "Shortlisted" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-                }`}
-            >
-              {app.status}
-            </p>
-          )}
         </div>
       </div>
     </>
   );
 };
 
-export default applicantDetails;
+export default ApplicantDetails;

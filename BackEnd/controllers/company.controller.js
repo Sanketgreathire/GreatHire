@@ -881,7 +881,7 @@ export const getCompanyApplicants = async (req, res) => {
 
 // <<<<<<< HEAD
     const applications = await Application.find({ job: { $in: jobIds } })
-      .populate("applicant", "fullname emailId phoneNumber profile.profilePhoto")
+      .populate("applicant", "fullname emailId phoneNumber alternatePhone address profile isProfileBoosted")
       .populate({ path: "job", select: "jobDetails.title" })
       .sort({ createdAt: -1 })
       .lean();
