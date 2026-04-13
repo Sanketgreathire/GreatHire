@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { BsSearch } from "react-icons/bs";
-import { COMPANY_API_END_POINT, APPLICATION_API_END_POINT, EMAIL_API_END_POINT } from "@/utils/ApiEndPoint";
+import { COMPANY_API_END_POINT, APPLICATION_API_END_POINT, EMAIL_API_END_POINT, JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { FiUsers, FiTrash2 } from "react-icons/fi";
 import { X } from "lucide-react";
 import ApplicantDetails from "./ApplicantDetails";
@@ -16,11 +16,12 @@ import { toast } from "sonner";
 
 const ALL_STATUSES = ["Pending", "Interview Schedule", "Shortlisted", "Rejected"];
 
-// Module-level cache — survives component remounts
+// Module-level cache — survives component remounts, keyed by companyId
+let _cacheCompanyId = localStorage.getItem("gh_cacheCompanyId") || null;
 let _cachedApplicants = [];
-let _cachedScoreMap = {};
-let _cachedSortedIds = []; // stores sorted order of application IDs
-let _unlockedIds = new Set(); // tracks unlocked applicant IDs
+let _cachedScoreMap = JSON.parse(localStorage.getItem("gh_scoreMap") || "{}");
+let _cachedSortedIds = JSON.parse(localStorage.getItem("gh_sortedIds") || "[]");
+let _unlockedIds = new Set(JSON.parse(localStorage.getItem(`gh_unlockedIds_${localStorage.getItem("gh_cacheCompanyId")}`) || "[]"));
 
 const AVATAR_COLORS = [
   { bg: "bg-blue-100", text: "text-blue-700" },
@@ -64,6 +65,8 @@ const AllApplicantsList = () => {
   const [filteredApplicants, setFilteredApplicants] = useState(_cachedApplicants);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedJob, setSelectedJob] = useState("All");
+  const [jobsList, setJobsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
 
@@ -79,7 +82,33 @@ const AllApplicantsList = () => {
 
   useEffect(() => {
     if (!companyId) return;
-    if (applicants.length === 0) fetchApplicants();
+    // Clear cache if different company
+    if (_cacheCompanyId && _cacheCompanyId !== companyId) {
+      _cachedApplicants = [];
+      _cachedScoreMap = {};
+      _cachedSortedIds = [];
+      _unlockedIds = new Set();
+      localStorage.removeItem("gh_scoreMap");
+      localStorage.removeItem("gh_sortedIds");
+      localStorage.removeItem("gh_cacheCompanyId");
+      _unlockedIds = new Set();
+      setUnlockedIds(new Set());
+      setApplicants([]);
+      setFilteredApplicants([]);
+      setScoreMap({});
+      setSortedIdsCount(0);
+      setUnlockedIds(new Set());
+    }
+    _cacheCompanyId = companyId;
+    localStorage.setItem("gh_cacheCompanyId", companyId);
+    fetchApplicants();
+  }, [companyId]);
+
+  useEffect(() => {
+    if (!companyId) return;
+    axios.get(`${JOB_API_END_POINT}/jobs-list/${companyId}`, { withCredentials: true })
+      .then(res => { if (res.data.success) setJobsList(res.data.jobs || []); })
+      .catch(() => {});
   }, [companyId]);
 
   const fetchApplicants = async () => {
@@ -107,6 +136,10 @@ const AllApplicantsList = () => {
   useEffect(() => {
     let filtered = applicants;
 
+    if (selectedJob !== "All") {
+      filtered = filtered.filter((app) => app.job?.jobDetails?.title === selectedJob);
+    }
+
     if (selectedStatus !== "All") {
       filtered = filtered.filter((app) => app.status === selectedStatus);
     }
@@ -122,7 +155,7 @@ const AllApplicantsList = () => {
 
     setFilteredApplicants(filtered);
     setCurrentPage(1);
-  }, [selectedStatus, searchTerm, applicants]);
+  }, [selectedStatus, selectedJob, searchTerm, applicants]);
 
   const handleStatusChange = async (applicationId, rawValue) => {
     const newStatus = rawValue.trim();
@@ -182,14 +215,16 @@ const AllApplicantsList = () => {
   };
 
   const isStarterPlan = !company?.hasSubscription && (company?.plan === "FREE" || !company?.plan);
+  const hasAIAccess = ["PREMIUM", "PRO", "ENTERPRISE"].includes(company?.plan);
   const STARTER_LIMIT = 20;
 
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiResults, setAiResults] = useState([]);
   const [aiJobTitle, setAiJobTitle] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [unlockedIds, setUnlockedIds] = useState(new Set(_unlockedIds));
-  const [scoreMap, setScoreMap] = useState(_cachedScoreMap);
+  const [unlockedIds, setUnlockedIds] = useState(() => new Set(JSON.parse(localStorage.getItem(`gh_unlockedIds_${localStorage.getItem("gh_cacheCompanyId")}`) || "[]")));
+  const [scoreMap, setScoreMap] = useState(() => JSON.parse(localStorage.getItem("gh_scoreMap") || "{}"));
+  const [sortedIdsCount, setSortedIdsCount] = useState(() => JSON.parse(localStorage.getItem("gh_sortedIds") || "[]").length);
 
   const handleAnalyzeCandidates = async () => {
     if (applicants.length === 0) return toast.error("No applicants to analyze.");
@@ -213,8 +248,10 @@ const AllApplicantsList = () => {
         const map = {};
         res.data.results.forEach(r => { if (r.applicationId) map[r.applicationId] = r.score; });
         _cachedScoreMap = map;
-        // Cache the sorted order of IDs
+        localStorage.setItem("gh_scoreMap", JSON.stringify(map));
         _cachedSortedIds = res.data.results.map(r => r.applicationId).filter(Boolean);
+        localStorage.setItem("gh_sortedIds", JSON.stringify(_cachedSortedIds));
+        setSortedIdsCount(_cachedSortedIds.length);
         setScoreMap(map);
       } else {
         toast.error("Analysis failed.");
@@ -238,7 +275,11 @@ const AllApplicantsList = () => {
         ...visibleApplicants.filter(a => !_cachedSortedIds.includes(a._id))
       ]
     : visibleApplicants;
-  const currentApplicants = sortedApplicants.slice(indexOfFirstItem, indexOfLastItem);
+  const finalApplicants = [
+    ...sortedApplicants.filter(a => a.status !== "Rejected"),
+    ...sortedApplicants.filter(a => a.status === "Rejected"),
+  ];
+  const currentApplicants = finalApplicants.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <>
@@ -258,17 +299,47 @@ const AllApplicantsList = () => {
                       ? `Total: ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`
                       : `Showing: ${visibleApplicants.length} of ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`}
                   </span>
+                  {sortedIdsCount > 0 && applicants.length > sortedIdsCount ? (
+                    <span className="text-sm font-semibold bg-orange-100 text-orange-600 border border-orange-300 px-3 py-2 rounded-full animate-pulse">
+                      +{applicants.length - sortedIdsCount} new applicants
+                    </span>
+                  ) : (
+                    <span className="text-sm font-semibold bg-green-50 text-green-600 border border-green-200 px-3 py-2 rounded-full">
+                      {sortedIdsCount > 0 ? "Up to date" : "Not analyzed yet"}
+                    </span>
+                  )}
                   <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-semibold">
                     Credits: {company?.creditedForCandidates ?? 0}
                   </span>
                   {applicants.length > 0 && (
-                    <Button
-                      onClick={handleAnalyzeCandidates}
-                      disabled={aiLoading}
-                      className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+                    <select
+                      value={selectedJob}
+                      onChange={(e) => setSelectedJob(e.target.value)}
+                      className="text-sm border border-gray-200 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none"
                     >
-                      🤖 {aiLoading ? "Analyzing..." : "Analyze Best Candidates"}
-                    </Button>
+                      <option value="All">All Jobs</option>
+                      {jobsList.map((job) => (
+                        <option key={job._id} value={job.jobDetails?.title}>{job.jobDetails?.title}</option>
+                      ))}
+                    </select>
+                  )}
+                  {applicants.length > 0 && (
+                    hasAIAccess ? (
+                      <Button
+                        onClick={handleAnalyzeCandidates}
+                        disabled={aiLoading}
+                        className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+                      >
+                        🤖 {aiLoading ? "Analyzing..." : "Analyze Best Candidates"}
+                      </Button>
+                    ) : (
+                      <button
+                        onClick={() => navigate("/packages")}
+                        className="flex items-center gap-2 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+                      >
+                        🔒 Unlock AI Candidate Analyzer
+                      </button>
+                    )
                   )}
                 </div>
               </div>
@@ -295,7 +366,11 @@ const AllApplicantsList = () => {
                   const languages = Array.isArray(p.language) ? p.language : [];
                   const documents = Array.isArray(p.documents) ? p.documents.filter(d => d !== "None of these") : [];
                   const categories = Array.isArray(p.category) ? p.category : [];
-                  const experiences = Array.isArray(p.experiences) ? p.experiences : [];
+                  const experiences = Array.isArray(p.experiences) && p.experiences.length > 0
+                    ? p.experiences
+                    : p.experience && p.experience.jobProfile
+                    ? [p.experience]
+                    : [];
                   const expText = experiences.length > 0
                     ? `${experiences[0].duration || ""} ${experiences[0].duration ? "yr(s)" : ""} experience as ${experiences[0].jobProfile || ""}`
                     : "Fresher";
@@ -374,7 +449,8 @@ const AllApplicantsList = () => {
                         <select
                           value={app.status}
                           onChange={(e) => handleStatusChange(app._id, e.target.value)}
-                          className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          disabled={app.status === "Rejected"}
+                          className={`text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 ${app.status === "Rejected" ? "opacity-50 cursor-not-allowed" : ""}`}
                         >
                           {ALL_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
@@ -397,6 +473,7 @@ const AllApplicantsList = () => {
                                   );
                                   if (res.data.success) {
                                     _unlockedIds.add(app._id);
+                                    localStorage.setItem(`gh_unlockedIds_${companyId}`, JSON.stringify([..._unlockedIds]));
                                     setUnlockedIds(new Set(_unlockedIds));
                                     dispatch(updateCandidateCredits(res.data.remainingCredits));
                                     toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);

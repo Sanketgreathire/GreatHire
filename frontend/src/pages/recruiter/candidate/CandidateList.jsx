@@ -339,7 +339,7 @@ const CandidateList = () => {
                   <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20">
                       <AvatarImage
-                        src={candidate?.profile?.profilePhoto && !candidate.profile.profilePhoto.includes("github.com") ? candidate.profile.profilePhoto : undefined}
+                        src={candidate?.profile?.profilePhoto && !candidate.profile.profilePhoto.includes("github.com") ? candidate.profile.profilePhoto : "/src/assets/noprofile.webp"}
                       />
                     </Avatar>
                     <div>
