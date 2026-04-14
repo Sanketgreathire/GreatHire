@@ -62,12 +62,10 @@ const RecruiterDashboard = () => {
         dispatch(fetchRecruiters(company?._id));
       }
       // Fetch job plan if it's not available
-      if (!jobPlan) {
+      // Always fetch latest job plan
         dispatch(fetchCurrentPlan(company?._id));
-      }
     }
-    console.log("jobPlan:", jobPlan); // Debug log
-  }, [company, user, recruiters, jobPlan, dispatch]);
+  }, [company, user, recruiters, dispatch]);
 
   //  Socket.IO for Real-time Plan Expiration Updates
   useEffect(() => {

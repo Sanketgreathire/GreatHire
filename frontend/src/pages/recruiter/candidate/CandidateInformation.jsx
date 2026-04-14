@@ -9,7 +9,6 @@ import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 import {
   COMPANY_API_END_POINT,
-  ADMIN_USER_DATA_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 
 /**
@@ -37,13 +36,13 @@ const CandidateInformation = () => {
 
       try {
         const res = await axios.get(
-          `${ADMIN_USER_DATA_API_END_POINT}/getUser/${id}`,
+          `${COMPANY_API_END_POINT}/candidate-information/${id}`,
           { withCredentials: true }
         );
 
         if (res.data.success) {
-          setCandidate(res.data.data);
-          setShortlisted(Boolean(res.data.data?.isShortlisted));
+          setCandidate(res.data.candidate);
+          setShortlisted(Boolean(res.data.candidate?.isShortlisted));
           setLoading(false);
           return;
         }
@@ -121,9 +120,9 @@ const CandidateInformation = () => {
                   <Avatar className="h-32 w-32 ring-4 ring-gray-100 dark:ring-gray-700">
                     <AvatarImage
                       src={
-                        isValidImageURL(candidate?.profile?.profilePhoto)
+                        isValidImageURL(candidate?.profile?.profilePhoto) && !candidate.profile.profilePhoto.includes('github.com')
                           ? encodeURI(candidate.profile.profilePhoto)
-                          : "https://github.com/shadcn.png"
+                          : "/src/assets/noprofile.webp"
                       }
                     />
 
@@ -163,8 +162,7 @@ const CandidateInformation = () => {
                       <strong className="font-semibold">Last Active:</strong>{" "}
                       <span className="text-gray-700 dark:text-gray-300">
                         {candidate?.lastActiveAgo ||
-                          candidate?.updatedAt ||
-                          "N/A"}
+                          (candidate?.updatedAt ? new Date(candidate.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : "N/A")}
                       </span>
                     </p>
                   </div>

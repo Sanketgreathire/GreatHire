@@ -591,12 +591,11 @@ export const getCurrentPlan = async (req, res) => {
         .json({ message: "You are not authorized", success: false });
     }
 
-    // Find the active subscription for the company
+    // Find the active subscription for the company (latest one)
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
-      status: "Active", // Only get Active plans
-    }).select("jobBoost expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
-    // Select only required fields
+      status: "Active",
+    }).sort({ purchaseDate: -1 }).select("jobBoost expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
 
     res.status(200).json({
       success: true,
