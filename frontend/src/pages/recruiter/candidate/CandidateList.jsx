@@ -11,11 +11,25 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Mail, X } from "lucide-react";
 
+const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
+const getUnlockedCandidates = () => {
+  try { return new Set(JSON.parse(localStorage.getItem(UNLOCKED_CANDIDATES_KEY) || "[]")); }
+  catch { return new Set(); }
+};
+const persistUnlockedCandidate = (id) => {
+  try {
+    const ids = getUnlockedCandidates();
+    ids.add(id);
+    localStorage.setItem(UNLOCKED_CANDIDATES_KEY, JSON.stringify([...ids]));
+  } catch {}
+};
+
 const ITEMS_PER_PAGE = 10;
 
 const CandidateList = () => {
   const [candidates, setCandidates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [unlockedCandidates, setUnlockedCandidates] = useState(getUnlockedCandidates);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -132,30 +146,34 @@ const CandidateList = () => {
     }
   };
   const handleViewInformation = async (candidate) => {
-    try {
-      // Check if company has credits
-      if (company?.creditedForCandidates <= 0) {
-        toast.error("Insufficient credits. Please purchase a plan.");
-        navigate("/recruiter/dashboard/your-plans");
-        return;
-      }
+    // Already unlocked — go directly
+    if (unlockedCandidates.has(candidate._id)) {
+      navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
+      return;
+    }
 
-      // Deduct credit
-      const response = await axios.get(
-        `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
+    // Check credits
+    if (company?.creditedForCandidates <= 0) {
+      toast.error("Insufficient credits. Please purchase a plan.");
+      navigate("/recruiter/dashboard/your-plans");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
+        { companyId: company?._id },
         { withCredentials: true }
       );
-
-      // Update redux
-      if (response.data.success) {
+      if (res.data.success) {
         dispatch(decreaseCandidateCredits(1));
+        persistUnlockedCandidate(candidate._id);
+        setUnlockedCandidates(new Set(getUnlockedCandidates()));
+        toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
+        navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
       }
-
-      // Navigate to candidate information page
-      navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
-
     } catch (error) {
-      toast.error("Failed to view candidate information");
+      toast.error(error?.response?.data?.message || "Failed to view candidate information");
     }
   };
 
@@ -370,11 +388,14 @@ const CandidateList = () => {
                   </div>
 
                   <Button
-                    className="mt-4 w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+                    className={`mt-4 w-full rounded-lg text-white ${
+                      unlockedCandidates.has(candidate._id)
+                        ? "bg-emerald-500 hover:bg-emerald-600"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                     onClick={() => handleViewInformation(candidate)}
-
                   >
-                    View Information
+                    {unlockedCandidates.has(candidate._id) ? "👁 View Profile" : "🔓 Unlock Profile"}
                   </Button>
                 </div>
               ))
