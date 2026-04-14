@@ -3,13 +3,12 @@ import axios from "axios";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { COMPANY_API_END_POINT, EMAIL_API_END_POINT } from "@/utils/ApiEndPoint";
+import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Mail, X } from "lucide-react";
 
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
@@ -53,51 +52,6 @@ const CandidateList = () => {
   const isStarterPlan = !company?.hasSubscription && planType === "FREE";
   const hasAdvancedFilters = ["PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
   const hasLocationFilter = ["STANDARD", "PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
-  const canSendEmail = planType !== "FREE" || company?.hasSubscription;
-
-  // Bulk email state
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailSubject, setEmailSubject] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
-  const [sendingEmail, setSendingEmail] = useState(false);
-
-  const toggleSelect = (id) =>
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-
-  const selectedCandidates = candidates.filter((c) => selectedIds.includes(c._id));
-
-  const handleSendBulkEmail = async () => {
-    const emails = selectedCandidates
-      .map((c) => c?.emailId?.email || c?.email)
-      .filter(Boolean);
-
-    if (emails.length === 0) return toast.error("No valid emails found.");
-    if (!emailSubject.trim() || !emailMessage.trim())
-      return toast.error("Subject and message are required.");
-
-    setSendingEmail(true);
-    try {
-      const res = await axios.post(
-        `${EMAIL_API_END_POINT}/send-bulk-email`,
-        { emails, subject: emailSubject, message: emailMessage },
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        toast.success(`Email sent to ${emails.length} candidate(s)!`);
-        setShowEmailModal(false);
-        setEmailSubject("");
-        setEmailMessage("");
-        setSelectedIds([]);
-      }
-    } catch {
-      toast.error("Failed to send email.");
-    } finally {
-      setSendingEmail(false);
-    }
-  };
 
   useEffect(() => {
     if (company?._id) {
@@ -312,28 +266,6 @@ const CandidateList = () => {
             </Button>
           </div>
 
-          {/* Bulk action bar */}
-          {selectedIds.length > 0 && (
-            <div className="mt-4 flex items-center gap-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-xl px-4 py-3">
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                {selectedIds.length} candidate{selectedIds.length > 1 ? "s" : ""} selected
-              </span>
-              {canSendEmail ? (
-                <Button
-                  onClick={() => setShowEmailModal(true)}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-3 rounded-lg"
-                >
-                  <Mail size={15} /> Send Email
-                </Button>
-              ) : (
-                <span className="text-xs text-gray-400 italic">Email support not available on your plan. <button onClick={() => navigate("/recruiter/dashboard/upgrade-plans")} className="underline text-blue-500">Upgrade</button></span>
-              )}
-              <button onClick={() => setSelectedIds([])} className="ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                <X size={16} />
-              </button>
-            </div>
-          )}
-
           {/* Candidates */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
             {isLoading ? (
@@ -342,18 +274,7 @@ const CandidateList = () => {
               <p className="text-center text-2xl text-gray-400">{message}</p>
             ) : (
               currentCandidates.map((candidate) => (
-                <div key={candidate._id} className={`relative p-5 rounded-xl shadow-md bg-white dark:bg-gray-800 border-2 transition hover:shadow-lg ${
-                  selectedIds.includes(candidate._id)
-                    ? "border-blue-500 dark:border-blue-400"
-                    : "border-gray-200 dark:border-gray-700"
-                }`}>
-                  {/* Selection checkbox */}
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(candidate._id)}
-                    onChange={() => toggleSelect(candidate._id)}
-                    className="absolute top-4 right-4 w-4 h-4 accent-blue-600 cursor-pointer"
-                  />
+                <div key={candidate._id} className={`relative p-5 rounded-xl shadow-md bg-white dark:bg-gray-800 border-2 transition hover:shadow-lg border-gray-200 dark:border-gray-700`}>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20">
                       <AvatarImage
@@ -421,59 +342,6 @@ const CandidateList = () => {
         </p>
       )}
 
-      {/* Bulk Email Modal */}
-      {showEmailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-                Send Email to {selectedIds.length} Candidate{selectedIds.length > 1 ? "s" : ""}
-              </h2>
-              <button onClick={() => setShowEmailModal(false)}>
-                <X size={20} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" />
-              </button>
-            </div>
-
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
-              <input
-                type="text"
-                value={emailSubject}
-                onChange={(e) => setEmailSubject(e.target.value)}
-                placeholder="e.g. Job Opportunity at Our Company"
-                className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
-              <textarea
-                rows={5}
-                value={emailMessage}
-                onChange={(e) => setEmailMessage(e.target.value)}
-                placeholder="Write your message here..."
-                className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleSendBulkEmail}
-                disabled={sendingEmail}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-              >
-                {sendingEmail ? "Sending..." : `Send to ${selectedIds.length} Candidate${selectedIds.length > 1 ? "s" : ""}`}
-              </Button>
-              <Button
-                onClick={() => setShowEmailModal(false)}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
