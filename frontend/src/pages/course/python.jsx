@@ -126,24 +126,24 @@ const HIGHLIGHTS = [
 
 const TESTIMONIALS = [
   {
-    name: "Sai Kiran Reddy",
-    role: "Python Developer @ Infosys",
+    name: "Moin Shaikh",
+    role: "Python Developer",
     avatar: "SK",
     color: "bg-blue-500",
     rating: 5,
     text: "The Full Stack Python course at Great Hire completely changed my career trajectory. Got placed within 45 days of completing the course. The Django + React combination is exactly what companies need.",
   },
   {
-    name: "Anjali Sharma",
-    role: "Full Stack Developer @ TCS",
+    name: "Prasad Margaj",
+    role: "Full Stack Developer",
     avatar: "AS",
     color: "bg-violet-500",
     rating: 5,
     text: "Best decision I made. The trainers are incredibly patient and knowledgeable. The real-world projects helped me crack multiple technical rounds easily.",
   },
   {
-    name: "Mohammed Farhan",
-    role: "Software Engineer @ Wipro",
+    name: "Sudeep Swami",
+    role: "Software Engineer",
     avatar: "MF",
     color: "bg-emerald-500",
     rating: 5,
@@ -176,11 +176,11 @@ const FAQS = [
   },
   {
     q: "What certifications will I receive?",
-    a: "You'll receive a Great Hire Training Certificate and an IIT Guwahati E&ICT Academy recognized certificate upon successful completion of the course.",
+    a: "You'll receive a Great Hire Training Certificate and an upon successful completion of the course.",
   },
   {
     q: "What is the course fee and are EMI options available?",
-    a: "The course fee is ₹25,000 (inclusive of all materials, projects, and placement support). EMI options starting from ₹2,500/month are available. No cost EMI on select cards.",
+    a: "The course fee is ₹38,000 (inclusive of all materials, projects, and placement support). EMI options starting from ₹7,000/month are available. No cost EMI on select cards.",
   },
 ];
 
@@ -387,7 +387,7 @@ export default function PythonCoursePage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button onClick={() => setShowModal(true)}
                   className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
-                  🚀 Enroll Now — ₹25,000
+                  🚀 Enroll Now — ₹38,000
                 </button>
                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">
                   📥 Download Syllabus
@@ -410,8 +410,8 @@ export default function PythonCoursePage() {
                   <span className="text-sm font-bold text-gray-700">4.8</span>
                   <span className="text-xs text-gray-400">(2,400+ reviews)</span>
                 </div>
-                <p className="text-3xl font-black text-blue-600 mb-1">₹25,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹2,500/month · No cost EMI available</p>
+                <p className="text-3xl font-black text-blue-600 mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
 
                 <div className="space-y-2.5 mb-5">
                   {[
@@ -444,8 +444,8 @@ export default function PythonCoursePage() {
       <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div>
-            <p className="text-xl font-black text-blue-600 leading-none">₹25,000</p>
-            <p className="text-xs text-gray-400">EMI from ₹2,500/mo</p>
+            <p className="text-xl font-black text-blue-600 leading-none">₹38,000</p>
+            <p className="text-xs text-gray-400">EMI from ₹7,000/mo</p>
           </div>
           <button onClick={() => setShowModal(true)}
             className="bg-blue-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">
@@ -638,8 +638,8 @@ export default function PythonCoursePage() {
                   <span className="text-sm font-bold text-gray-700">4.8</span>
                   <span className="text-xs text-gray-400">(2,400+)</span>
                 </div>
-                <p className="text-3xl font-black text-blue-600 leading-none mb-1">₹25,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹2,500/month · No cost EMI</p>
+                <p className="text-3xl font-black text-blue-600 leading-none mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
 
                 <div className="space-y-2.5 mb-5 text-sm text-gray-700">
                   {[
