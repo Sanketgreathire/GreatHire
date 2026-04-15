@@ -112,7 +112,7 @@
 // { path: "/signup", element: <JobSeekerSignup /> },
 //   { path: "/recruiter/signup", element: <RecruiterSignup /> },
 //   { path: "/description/:id", element: <JobDetail />},
- 
+
 
 
 
@@ -138,9 +138,9 @@
 //       { path: "job-details/:id", element: <JobDetail /> },
 //       { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
 //       { path: "candidate-information/:userId", element: <CandidateInformation /> },
-  
+
 //       { index: true, element: <RecruiterHome /> },
-      
+
 //     ]
 //   },
 //   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },
@@ -149,8 +149,8 @@
 //   { path: "/admin/login", element: <AdminLogin /> },
 //   { path: "/admin/*", element: <AdminLayout /> },
 //   { path: "*", element: <PageNotFound /> }
-  
-  
+
+
 // ]);
 
 // function App() {
@@ -186,7 +186,7 @@
 //       <JobDetailsProvider>
 //     <NotificationProvider>
 //       <MessageProvider>
-        
+
 //         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
 //           <RouterProvider router={appRouter} />    
 //         </Worker>
@@ -195,7 +195,7 @@
 //     </JobDetailsProvider>
 //     </div>
 //     </div>
-     
+
 //   );
 // }
 // export default App;
@@ -207,7 +207,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
 import Login from "./components/auth/user/Login";
-import JobSeekerSignup from "./components/auth/user/Signup"; 
+import JobSeekerSignup from "./components/auth/user/Signup";
 
 // Auth components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
@@ -313,6 +313,21 @@ import DataSciencePage from './pages/course/DataScience';
 import DigitalMarketingPage from './pages/course/DigitalMarketing';
 import DataAnalyticsPage from './pages/course/DataAnalytics';
 import SalesforcePage from './pages/course/saleforcePage';
+import AWSDevOpsCoursePage from './pages/course/AWSDevOpsCoursePage';
+import BIMCoursePage from './pages/course/BIMCoursePage';
+import MedicalCodingCoursePage from './pages/course/MedicalCodingCoursePage';
+import SAPFICOCoursePage from './pages/course/SAPFICOCoursePage';
+import TestingToolsCoursePage from './pages/course/TestingToolsCoursePage';
+import VLSICoursePage from './pages/course/VLSICoursePage';
+import MultimediaCoursePage from './pages/course/MultimediaCoursePage';
+import AdvancedExcelCoursePage from './pages/course/AdvancedExcelCoursePage';
+import AutoCADCoursePage from './pages/course/AutoCADCoursePage';
+import RevitMEPCoursePage from './pages/course/RevitMEPCoursePage';
+import BusinessAnalystPage from './pages/course/BusinessAnalystPage';
+import GenerativeAIPage from './pages/course/GenerativeAIPage';
+import SAPMMPage from './pages/course/SAPMMPage';
+import CyberSecurityPage from './pages/course/CyberSecurityPage';
+import PMPPage from './pages/course/PMPPage';
 
 
 
@@ -329,21 +344,21 @@ const appRouter = createBrowserRouter([
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/contact", element: <Contact /> },
   // { path: "/packages", element: <Packges /> },
-  {path : "/HowWeHire", element:<HowWeHire/>},
-  {path : "/TheFutureTechnology", element : <TheFutureTechnology/>},
-  {path : "/HiringInsights", element : <HiringInsights/>},
-  {path : "/InsightDetail/:id", element : <InsightDetail/>},
-  {path : "/InsightsDashboard", element : <InsightsDashboard/>},
-  {path: "/InsightApproval", element:<InsightApproval/>},
-  {path:"/hiring-insights/:id", element : <InsightDetail />},
-  {path:"/CareerAdvice", element :<CareerAdvice/>},
-  {path:"/CareerAdvice/:id", element :<CareerAdvice/>},
-  {path :"/TheFuture", element:<TheFuture/>},
-  {path :"/TheFuture/:id", element:<TheFuture/>},
-  {path :"/ResumeAnalyzer", element:<ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
+  { path: "/HowWeHire", element: <HowWeHire /> },
+  { path: "/TheFutureTechnology", element: <TheFutureTechnology /> },
+  { path: "/HiringInsights", element: <HiringInsights /> },
+  { path: "/InsightDetail/:id", element: <InsightDetail /> },
+  { path: "/InsightsDashboard", element: <InsightsDashboard /> },
+  { path: "/InsightApproval", element: <InsightApproval /> },
+  { path: "/hiring-insights/:id", element: <InsightDetail /> },
+  { path: "/CareerAdvice", element: <CareerAdvice /> },
+  { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
+  { path: "/TheFuture", element: <TheFuture /> },
+  { path: "/TheFuture/:id", element: <TheFuture /> },
+  { path: "/ResumeAnalyzer", element: <ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
   { path: "/recruiter/resume-analyzer", element: <ProtectedRecruiterRoute><Navigate to="/recruiter/dashboard/resume-analyzer" replace /></ProtectedRecruiterRoute> },
 
-  
+
 
 
   { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
@@ -353,7 +368,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
-  { path: "/jobs", element:<ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
+  { path: "/jobs", element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
@@ -388,7 +403,7 @@ const appRouter = createBrowserRouter([
       { path: "company-details", element: <CompanyDetails /> },
       { path: "applicants-list", element: <AllApplicantsList /> },
       { path: "candidate-list", element: <CandidateList /> },
-      { path: "candidate-information/:id", element: <CandidateInformation />},
+      { path: "candidate-information/:id", element: <CandidateInformation /> },
       { path: "candidate-database", element: <CandidateDatabase /> },
       { path: "candidate-plans", element: <CandidatePlans /> },
       { path: "your-plans", element: <CurrentPlans /> },
@@ -401,10 +416,10 @@ const appRouter = createBrowserRouter([
       { path: "resume-analyzer", element: <RecruiterResumeAnalyzer /> },
       { index: true, element: <RecruiterHome /> },
       {
-      path: "applications/:jobId/:candidateId",
-      element: <CandidateInformation />
-    },
-    { index: true, element: <RecruiterHome /> },
+        path: "applications/:jobId/:candidateId",
+        element: <CandidateInformation />
+      },
+      { index: true, element: <RecruiterHome /> },
     ]
   },
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },
@@ -425,6 +440,21 @@ const appRouter = createBrowserRouter([
   { path: "/courses/digital-marketing-training", element: <DigitalMarketingPage /> },
   { path: "/courses/data-analytics-training", element: <DataAnalyticsPage /> },
   { path: "/courses/saleforce-training", element: <SalesforcePage /> },
+  { path: "/courses/aws-devops-training", element: <AWSDevOpsCoursePage /> },
+  { path: "/courses/bim-training", element: <BIMCoursePage /> },
+  { path: "/courses/medical-training", element: <MedicalCodingCoursePage /> },
+  { path: "/courses/sap-fico-training", element: <SAPFICOCoursePage /> },
+  { path: "/courses/testing-tools-training", element: <TestingToolsCoursePage /> },
+  { path: "/courses/vlsi-training", element: <VLSICoursePage /> },
+  { path: "/courses/multimedia-training", element: <MultimediaCoursePage /> },
+  { path: "/courses/advanced-excel-training", element: <AdvancedExcelCoursePage /> },
+  { path: "/courses/autocad-training", element: <AutoCADCoursePage /> },
+  { path: "/courses/revit-mep-training", element: <RevitMEPCoursePage /> },
+  { path: "/courses/business-analytics-training", element: <BusinessAnalystPage /> },
+  { path: "/courses/generative-AI-training", element: <GenerativeAIPage /> },
+  { path: "/courses/sap-mm-training", element: <SAPMMPage /> },
+  { path: "/courses/cyber-security-training", element: <CyberSecurityPage /> },
+  { path: "/courses/pmp-training", element: <PMPPage /> },
   { path: "*", element: <PageNotFound /> }
 ]);
 
@@ -441,11 +471,11 @@ function App() {
     axios
       .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
       .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Cleanup service workers
-  useEffect(() => {             
+  useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => registration.unregister());

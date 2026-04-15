@@ -185,7 +185,7 @@ const FAQS = [
     },
     {
         q: "What is the course fee and EMI options?",
-        a: "The course fee is ₹32,000 (inclusive of all materials, developer org access, mock exams & placement support). EMI starts from ₹3,200/month. No cost EMI on select cards.",
+        a: "The course fee is ₹38,000 (inclusive of all materials, developer org access, mock exams & placement support). EMI starts from ₹7,000/month. No cost EMI on select cards.",
     },
 ];
 
@@ -350,7 +350,7 @@ export default function SalesforcePage() {
                             </div>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <button onClick={() => setShowModal(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
-                                    🚀 Enroll Now — ₹32,000
+                                    🚀 Enroll Now — ₹38,000
                                 </button>
                                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">
                                     📥 Download Syllabus
@@ -364,8 +364,8 @@ export default function SalesforcePage() {
                         <div className="hidden lg:block">
                             <div className="bg-white rounded-2xl shadow-2xl p-6 text-gray-900">
                                 <div className="flex items-center gap-2 mb-1"><Stars /><span className="text-sm font-bold text-gray-700">4.9</span><span className="text-xs text-gray-400">(1,200+ reviews)</span></div>
-                                <p className="text-3xl font-black text-sky-600 mb-1">₹32,000</p>
-                                <p className="text-xs text-gray-400 mb-5">EMI from ₹3,200/month · No cost EMI available</p>
+                                <p className="text-3xl font-black text-sky-600 mb-1">₹38,000</p>
+                                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
                                 <div className="space-y-2.5 mb-5">
                                     {["📅 Next batch starts April 14", "⏱ 5 months duration", "🏅 ADM 201 & PD1 Cert Prep", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Lifetime LMS + Dev Org Access"].map((item) => (
                                         <p key={item} className="text-sm text-gray-700 flex items-center gap-2">{item}</p>
@@ -383,7 +383,7 @@ export default function SalesforcePage() {
             {/* Mobile CTA */}
             <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-                    <div><p className="text-xl font-black text-sky-600 leading-none">₹32,000</p><p className="text-xs text-gray-400">EMI from ₹3,200/mo</p></div>
+                    <div><p className="text-xl font-black text-sky-600 leading-none">₹38,000</p><p className="text-xs text-gray-400">EMI from ₹7,000/mo</p></div>
                     <button onClick={() => setShowModal(true)} className="bg-sky-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
                 </div>
             </div>
@@ -515,8 +515,8 @@ export default function SalesforcePage() {
                         <div className="sticky top-24 space-y-5">
                             <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
                                 <div className="flex items-center gap-2 mb-1"><Stars /><span className="text-sm font-bold text-gray-700">4.9</span><span className="text-xs text-gray-400">(1,200+)</span></div>
-                                <p className="text-3xl font-black text-sky-600 leading-none mb-1">₹32,000</p>
-                                <p className="text-xs text-gray-400 mb-5">EMI from ₹3,200/month · No cost EMI</p>
+                                <p className="text-3xl font-black text-sky-600 leading-none mb-1">₹38,000</p>
+                                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
                                 <div className="space-y-2.5 mb-5 text-sm text-gray-700">
                                     {["📅 Next batch: April 14, 2025", "⏱ Duration: 5 months", "🏅 ADM 201 & PD1 Cert Prep", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Dev Org + LMS Access", "👥 Batch size: 15 students"].map((item) => (
                                         <p key={item} className="flex items-start gap-2">{item}</p>

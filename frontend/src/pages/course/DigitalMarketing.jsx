@@ -182,11 +182,11 @@ const FAQS = [
   },
   {
     q: "What certifications will I receive from Great Hire?",
-    a: "You'll receive a Great Hire Training Certificate and an IIT Guwahati E&ICT Academy recognized certificate, in addition to Google & Meta certification preparation.",
+    a: "You'll receive a Great Hire Training Certificate, in addition to Google & Meta certification preparation.",
   },
   {
     q: "What is the course fee and EMI options?",
-    a: "The course fee is ₹20,000 (inclusive of all materials, tools access, projects & placement support). EMI starts from ₹2,000/month. No cost EMI on select cards.",
+    a: "The course fee is ₹38,000 (inclusive of all materials, tools access, projects & placement support). EMI starts from ₹7,000/month. No cost EMI on select cards.",
   },
 ];
 
@@ -351,7 +351,7 @@ export default function DigitalMarketingPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button onClick={() => setShowModal(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
-                  🚀 Enroll Now — ₹20,000
+                  🚀 Enroll Now — ₹38,000
                 </button>
                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">
                   📥 Download Syllabus
@@ -369,8 +369,8 @@ export default function DigitalMarketingPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <Stars /><span className="text-sm font-bold text-gray-700">4.8</span><span className="text-xs text-gray-400">(2,100+ reviews)</span>
                 </div>
-                <p className="text-3xl font-black text-pink-500 mb-1">₹20,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹2,000/month · No cost EMI available</p>
+                <p className="text-3xl font-black text-pink-500 mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
                 <div className="space-y-2.5 mb-5">
                   {["📅 Next batch starts April 14", "⏱ 4 months duration", "🎖 Google & Meta Cert Prep", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Lifetime LMS Access"].map((item) => (
                     <p key={item} className="text-sm text-gray-700 flex items-center gap-2">{item}</p>
@@ -388,7 +388,7 @@ export default function DigitalMarketingPage() {
       {/* Mobile CTA */}
       <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <div><p className="text-xl font-black text-pink-500 leading-none">₹20,000</p><p className="text-xs text-gray-400">EMI from ₹2,000/mo</p></div>
+          <div><p className="text-xl font-black text-pink-500 leading-none">₹38,000</p><p className="text-xs text-gray-400">EMI from ₹7,000/mo</p></div>
           <button onClick={() => setShowModal(true)} className="bg-pink-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
         </div>
       </div>
@@ -520,8 +520,8 @@ export default function DigitalMarketingPage() {
             <div className="sticky top-24 space-y-5">
               <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
                 <div className="flex items-center gap-2 mb-1"><Stars /><span className="text-sm font-bold text-gray-700">4.8</span><span className="text-xs text-gray-400">(2,100+)</span></div>
-                <p className="text-3xl font-black text-pink-500 leading-none mb-1">₹20,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹2,000/month · No cost EMI</p>
+                <p className="text-3xl font-black text-pink-500 leading-none mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
                 <div className="space-y-2.5 mb-5 text-sm text-gray-700">
                   {["📅 Next batch: April 14, 2025", "⏱ Duration: 4 months", "🎖 Google & Meta Cert Prep", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Lifetime LMS Access", "👥 Batch size: 15 students"].map((item) => (
                     <p key={item} className="flex items-start gap-2">{item}</p>
@@ -535,7 +535,7 @@ export default function DigitalMarketingPage() {
               <div className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p>
                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
-                <p className="text-xs text-pink-100 mb-3">Earn ₹2,000 for every successful referral!</p>
+                <p className="text-xs text-pink-100 mb-3">Earn ₹7,000 for every successful referral!</p>
                 <button className="bg-white text-pink-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-pink-50 transition-colors">Share & Earn</button>
               </div>
             </div>
