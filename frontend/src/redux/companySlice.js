@@ -1,0 +1,79 @@
+// Import necessary modules and dependencies
+import { createSlice } from "@reduxjs/toolkit";
+
+const companySlice = createSlice({
+  name: "company",
+  initialState: {
+    loading: false,
+    company: null, // Initial state is null
+    searchedQuery: "", // Added searchedQuery field
+  },
+  reducers: {
+    // Existing actions
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    addCompany: (state, action) => {
+      state.company = action.payload;
+    },
+    removeCompany: (state) => {
+      state.company = null;
+    },
+    // Remove user from company by user ID
+    removeUserFromCompany: (state, action) => {
+      if (state.company) {
+        state.company.userId = state.company.userId.filter(
+          (user) => user.user.toString() !== action.payload
+        );
+      }
+    },
+    // change company admin
+    changeAdminUser: (state, action) => {
+      state.company.adminEmail = action.payload;
+    },
+
+    // reducer function to update maxJobpost data
+    updateMaxPostJobs: (state, action) => {
+      state.company.maxJobPosts = state.company.maxJobPosts + action.payload;
+    },
+
+    // reducer function to decrease max job posts
+    decreaseMaxPostJobs: (state, action) => {
+      if (typeof state.company.maxJobPosts === 'number' && state.company.maxJobPosts > 0) {
+        state.company.maxJobPosts = state.company.maxJobPosts - action.payload;
+      }
+    },
+
+    // reducer function to update candidate credits (set to specific value)
+    updateCandidateCredits: (state, action) => {
+      state.company.creditedForCandidates = action.payload;
+    },
+    
+    // reducer function to decrease candidate credits
+    decreaseCandidateCredits: (state, action) => {
+      state.company.creditedForCandidates =
+        state.company.creditedForCandidates - action.payload;
+    },
+    
+    // reducer function to decrease job credits
+    decreaseJobCredits: (state, action) => {
+      state.company.creditedForJobs =
+        state.company.creditedForJobs - action.payload;
+    },
+  },
+});
+
+export const {
+  setLoading,
+  addCompany,
+  removeCompany,
+  removeUserFromCompany,
+  changeAdminUser,
+  updateMaxPostJobs,
+  decreaseMaxPostJobs,
+  updateCandidateCredits,
+  decreaseCandidateCredits,
+  decreaseJobCredits,
+} = companySlice.actions;
+
+export default companySlice.reducer;

@@ -1,0 +1,268 @@
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { RiHome4Line, RiCloseFill } from "react-icons/ri";
+import { IoCreateOutline, IoSettingsOutline } from "react-icons/io5";
+import { MdWorkOutline, MdPostAdd } from "react-icons/md";
+import {
+  PiBuildingOffice,
+  PiBuildingOfficeLight,
+  PiStudent,
+} from "react-icons/pi";
+import { GiUpgrade } from "react-icons/gi";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { BsPersonPlus } from "react-icons/bs";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { FiUsers, FiGift } from "react-icons/fi";
+import { CiMenuBurger } from "react-icons/ci";
+import { useSelector } from "react-redux";
+import { Helmet } from "react-helmet-async";
+
+const DashboardNavigations = () => {
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+
+  // State for sidebar toggle
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  // Function to apply styles to navigation links
+  const navLinkClass = ({ isActive }) =>
+  `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
+   ${
+     isActive
+       ? "bg-blue-600 text-white dark:bg-blue-700"
+       : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
+   }`;
+
+  const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600 dark:text-blue-400");
+
+  return (
+    <>
+    <Helmet>
+  {/* Meta Title */}
+  <title>
+    Dashboard Navigation | GreatHire's Hiring, Jobs, and Teams Management
+  </title>
+
+  {/* Meta Description */}
+  <meta
+    name="description"
+    content="This intuitive Hyderabad State-powered dashboard by GreatHire allows modern companies to manage recruitment effectively from a single centralized platform. It helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. GreatHire is purpose-built for startups, enterprises, HR teams, and staffing agencies to simplify complex hiring workflows with the assurance of speed, security, and scalability. The smart navigation, real-time insights, and role-based access enable recruiters to make quicker decisions, manage candidates more smoothly, and scale up their hiring confidently across India."
+  />
+</Helmet>
+      {/*  Hamburger Button (Visible on Small Screens) */}
+      <button
+        className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm  text-gray-700 dark:text-gray-200"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <CiMenuBurger size={24} />
+      </button>
+
+      {/*  Sidebar */}
+      <div 
+      className={`fixed top-0 left-0 z-50 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200
+                  shadow-lg dark:shadow-gray-800 transition-transform duration-300 ease-in-out
+                  w-64 h-screen transform
+                  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                  lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:w-52 lg:translate-x-0 lg:z-30
+               `}
+      >
+
+        {/* Close Button (Only for Mobile) */}
+        <button
+          className="lg:hidden absolute top-4 right-4 text-gray-600 dark:text-gray-300"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <RiCloseFill size={24} />
+        </button>
+
+        <div className="flex flex-col h-full p-4 justify-between ">
+          {/* Main Navigation */}
+          <section>
+            <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">
+              <LuLayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
+              <span>Dashboard</span>
+            </h2>
+            <ul className="w-full flex flex-col gap-2">
+              <NavLink
+                to="/recruiter/dashboard/home"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <RiHome4Line size={25} className={iconClass(isActive)} />
+                    <span>Home</span>
+                  </>
+                )}
+              </NavLink>
+              <li className="relative group ml-1">
+                <span className="flex items-center gap-2 px-2 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700 cursor-default">
+                  <IoCreateOutline size={25} className="text-blue-600 dark:text-blue-400" />
+                  <span>Create New</span>
+                </span>
+
+                <ul className="absolute left-0 top-full w-44 z-50
+                  bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
+                  shadow-xl rounded-xl py-2 flex flex-col gap-1
+                  invisible opacity-0 group-hover:visible group-hover:opacity-100
+                  transition-opacity duration-150">
+                  {!user?.isCompanyCreated && (
+                    <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><PiBuildingOfficeLight size={25} className={iconClass(isActive)} /><span>Company</span></>)}
+                    </NavLink>
+                  )}
+                  {user?.isActive && user?.isCompanyCreated && user?.emailId?.email === company?.adminEmail && (
+                    <NavLink to="/recruiter/dashboard/add-recruiter" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><BsPersonPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
+                    </NavLink>
+                  )}
+                  {user?.isCompanyCreated && (
+                    <NavLink to="/recruiter/dashboard/post-job" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
+                      {({ isActive }) => (<><MdPostAdd size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
+                    </NavLink>
+                  )}
+                </ul>
+              </li>
+              <NavLink
+                to="/recruiter/dashboard/jobs"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <MdWorkOutline size={25} className={iconClass(isActive)} />
+                    <span>Jobs</span>
+                  </>
+                )}
+              </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/applicants-list"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FiUsers size={25} className={iconClass(isActive)} />
+                    <span>Applicants</span>
+                  </>
+                )}
+              </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/company-details"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <PiBuildingOffice
+                      size={25}
+                      className={iconClass(isActive)}
+                    />
+                    <span>Company Details</span>
+                  </>
+                )}
+              </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/candidate-list"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <PiStudent size={25} className={iconClass(isActive)} />
+                    <span>Find Candidates</span>
+                  </>
+                )}
+              </NavLink>
+              {/* <NavLink
+                to="/recruiter/dashboard/candidate-database"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FaDatabase size={25} className={iconClass(isActive)} />
+                    <span>Candidate Database</span>
+                  </>
+                )}
+              </NavLink> */}
+            </ul>
+          </section>
+
+          {/* Footer Navigation */}
+          <section>
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
+              <IoSettingsOutline size={25} className="text-blue-700 dark:text-blue-500"/>
+              <span>Settings</span>
+            </h2>
+            <ul className="flex flex-col gap-2">
+              <NavLink
+                to="/recruiter/dashboard/invite-and-earn"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FiGift size={25} className={iconClass(isActive)} />
+                    <span>Invite &amp; Earn</span>
+                  </>
+                )}
+              </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/recruiter-list"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FiUsers size={25} className={iconClass(isActive)} />
+                    <span>Recruiters</span>
+                  </>
+                )} 
+              </NavLink>
+              <NavLink
+                      to={
+                        company?.maxPostJobs === 0
+                          ? "/recruiter/dashboard/packages"
+                          : "/recruiter/dashboard/your-plans"
+                      }
+                      className={navLinkClass}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                   {({ isActive }) => (
+                  <>
+                    <GiUpgrade size={25} className={iconClass(isActive)} />
+                    <span>
+                      {company?.maxPostJobs === 0
+                        ? "Upgrade Plans"
+                        : "Current Plan"}
+                    </span>
+                  </>
+                )}
+              </NavLink>
+              {user?.emailId?.email === company?.adminEmail && (
+                <NavLink
+                  to="/recruiter/dashboard/delete-account"
+                  className={navLinkClass}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <RiDeleteBin6Line
+                        size={25}
+                        className={iconClass(isActive)}
+                      />
+                      <span>Delete Account</span>
+                    </>
+                  )}
+                </NavLink>
+              )}
+            </ul>
+          </section>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default DashboardNavigations;

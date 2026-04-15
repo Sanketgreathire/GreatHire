@@ -1,0 +1,1025 @@
+================================================================================
+                    GREATHIRE WEBSITE - COMPLETE DOCUMENTATION
+================================================================================
+
+PROJECT NAME: GreatHire
+PROJECT TYPE: Job Portal Platform (Recruitment & Job Seeking)
+WEBSITE: https://greathire.in / https://www.greathire.in
+CONTACT: hr@babde.tech
+
+================================================================================
+                              TABLE OF CONTENTS
+================================================================================
+
+1. PROJECT OVERVIEW
+2. TECHNOLOGY STACK
+3. PROJECT STRUCTURE
+4. BACKEND TECHNOLOGIES
+5. FRONTEND TECHNOLOGIES
+6. DATABASE MODELS & FEATURES
+7. CORE FEATURES
+8. USER ROLES & CAPABILITIES
+9. PAYMENT & SUBSCRIPTION SYSTEM
+10. AUTOMATION FEATURES
+11. SECURITY FEATURES
+12. API ENDPOINTS
+13. THIRD-PARTY INTEGRATIONS
+14. DEPLOYMENT & CONFIGURATION
+15. TESTING & SCRIPTS
+
+================================================================================
+                            1. PROJECT OVERVIEW
+================================================================================
+
+GreatHire is a comprehensive job portal platform that connects job seekers with 
+recruiters and companies. The platform provides:
+
+- Job posting and application management
+- Recruiter dashboard with analytics
+- Candidate database and search
+- Subscription-based credit system
+- Real-time notifications and messaging
+- Admin panel for platform management
+- Blog and insights section
+- Automated application processing
+
+================================================================================
+                          2. TECHNOLOGY STACK
+================================================================================
+
+FRONTEND:
+---------
+- React 18.3.1
+- Vite 6.3.2 (Build Tool)
+- React Router DOM 7.11.0
+- Redux Toolkit 2.5.1 (State Management)
+- Tailwind CSS 3.4.17 (Styling)
+- Shadcn UI (Component Library)
+
+BACKEND:
+--------
+- Node.js
+- Express.js 4.22.0
+- MongoDB (Database)
+- Mongoose 8.21.1 (ODM)
+- Socket.IO 4.8.1 (Real-time Communication)
+
+PROGRAMMING LANGUAGES:
+---------------------
+- JavaScript (ES6+)
+- JSX (React)
+- HTML5
+- CSS3
+
+================================================================================
+                          3. PROJECT STRUCTURE
+================================================================================
+
+GreatHire/
+├── BackEnd/                    # Backend server
+│   ├── controllers/            # Business logic
+│   ├── models/                 # Database schemas
+│   ├── routes/                 # API routes
+│   ├── middlewares/            # Authentication, validation
+│   ├── utils/                  # Helper functions
+│   ├── public/                 # Static files
+│   ├── scripts/                # Database scripts
+│   └── index.js                # Server entry point
+│
+├── frontend/                   # Frontend application
+│   ├── src/
+│   │   ├── components/         # React components
+│   │   ├── pages/              # Page components
+│   │   ├── redux/              # State management
+│   │   ├── context/            # React context
+│   │   ├── hooks/              # Custom hooks
+│   │   ├── utils/              # Helper functions
+│   │   └── assets/             # Images, videos, animations
+│   └── public/                 # Public assets
+│
+└── Documentation Files         # Feature docs, guides
+
+================================================================================
+                        4. BACKEND TECHNOLOGIES
+================================================================================
+
+CORE DEPENDENCIES:
+------------------
+1. express (4.22.0) - Web framework
+2. mongoose (8.21.1) - MongoDB ODM
+3. socket.io (4.8.1) - Real-time communication
+4. bcryptjs (2.4.3) - Password hashing
+5. jsonwebtoken (9.0.2) - JWT authentication
+6. cookie-parser (1.4.7) - Cookie handling
+7. cors (2.8.5) - Cross-origin resource sharing
+8. dotenv (16.6.1) - Environment variables
+9. nodemailer (7.0.10) - Email service
+10. multer (2.0.2) - File upload handling
+
+SECURITY:
+---------
+1. helmet (8.0.0) - Security headers
+2. express-rate-limit (7.5.0) - Rate limiting
+3. express-validator (7.2.1) - Input validation
+4. csurf (1.2.2) - CSRF protection
+
+PAYMENT & SERVICES:
+-------------------
+1. razorpay (2.9.6) - Payment gateway
+2. twilio (5.4.2) - SMS service
+3. googleapis (144.0.0) - Google OAuth
+4. cloudinary (2.5.1) - Image/file storage
+
+AI & AUTOMATION:
+----------------
+1. @google/generative-ai (0.24.0) - Gemini AI integration
+2. node-cron (3.0.3) - Scheduled tasks
+
+UTILITIES:
+----------
+1. axios (1.8.4) - HTTP client
+2. date-fns (4.1.0) - Date manipulation
+3. json2csv (6.0.0-alpha.2) - CSV export
+4. datauri (4.1.0) - Data URI conversion
+5. randomstring (1.3.1) - Random string generation
+6. sitemap (8.0.2) - Sitemap generation
+
+================================================================================
+                        5. FRONTEND TECHNOLOGIES
+================================================================================
+
+CORE LIBRARIES:
+---------------
+1. react (18.3.1) - UI library
+2. react-dom (18.3.1) - DOM rendering
+3. react-router-dom (7.11.0) - Routing
+4. @reduxjs/toolkit (2.5.1) - State management
+5. redux-persist (6.0.0) - State persistence
+
+UI COMPONENTS:
+--------------
+1. @shadcn/ui (0.0.4) - Component library
+2. @radix-ui/* - Headless UI components
+3. @mui/material (6.4.12) - Material UI
+4. lucide-react (0.482.0) - Icons
+5. react-icons (5.4.0) - Icon library
+6. framer-motion (12.23.12) - Animations
+7. lottie-react (2.4.1) - Lottie animations
+
+STYLING:
+--------
+1. tailwindcss (3.4.17) - Utility-first CSS
+2. tailwindcss-animate (1.0.7) - Animations
+3. tailwind-merge (2.5.5) - Class merging
+4. styled-components (6.1.19) - CSS-in-JS
+5. @emotion/react (11.14.0) - CSS-in-JS
+6. postcss (8.5.3) - CSS processing
+7. autoprefixer (10.4.21) - CSS prefixing
+
+FORMS & VALIDATION:
+-------------------
+1. formik (2.4.6) - Form management
+2. yup (1.6.1) - Schema validation
+3. react-dropzone (14.3.5) - File upload
+
+DATA VISUALIZATION:
+-------------------
+1. chart.js (4.5.1) - Charts
+2. react-chartjs-2 (5.3.0) - React wrapper
+3. recharts (2.15.1) - Charts library
+4. react-circular-progressbar (2.1.0) - Progress bars
+5. react-countup (6.5.3) - Number animations
+
+UTILITIES:
+----------
+1. axios (1.7.9) - HTTP client
+2. date-fns (4.1.0) - Date utilities
+3. dompurify (3.3.1) - HTML sanitization
+4. react-hot-toast (2.4.1) - Toast notifications
+5. sonner (1.7.4) - Toast notifications
+6. socket.io-client (4.8.1) - WebSocket client
+7. react-helmet-async (2.0.5) - SEO management
+8. react-markdown (10.1.0) - Markdown rendering
+
+PDF & DOCUMENTS:
+----------------
+1. react-pdf (10.2.0) - PDF viewer
+2. @react-pdf-viewer/core (3.12.0) - PDF viewer
+3. pdfjs-dist (3.4.120) - PDF.js library
+
+MAPS & LOCATION:
+----------------
+1. @react-google-maps/api (2.20.3) - Google Maps
+2. country-state-city (3.2.1) - Location data
+
+AUTHENTICATION:
+---------------
+1. @react-oauth/google (0.12.1) - Google OAuth
+
+OTHER:
+------
+1. swiper (11.2.6) - Carousel/slider
+2. embla-carousel-react (8.5.1) - Carousel
+3. react-slider (2.0.6) - Slider component
+4. react-step-progress-bar (1.0.3) - Progress bar
+5. @react-three/fiber (8.15.16) - 3D graphics
+6. three (0.179.1) - 3D library
+
+================================================================================
+                      6. DATABASE MODELS & FEATURES
+================================================================================
+
+DATABASE: MongoDB (NoSQL)
+
+MODELS:
+-------
+
+1. USER MODEL (user.model.js)
+   - Job seekers/candidates
+   - Fields: fullname, email, phone, password, address, profile
+   - Profile: bio, skills, experience, resume, qualifications
+   - Experience tracking with current CTC and notice period
+   - Document storage support
+   - Email and phone verification
+
+2. RECRUITER MODEL (recruiter.model.js)
+   - Company recruiters
+   - Fields: fullname, email, phone, password, position, company
+   - Subscription plans: FREE, STANDARD, PREMIUM, ENTERPRISE
+   - Account status: active/blocked
+   - Profile photo support
+
+3. COMPANY MODEL (company.model.js)
+   - Company profiles
+   - Fields: name, website, industry, address, email, phone, CIN
+   - Credit system:
+     * creditedForJobs (500 credits per job post)
+     * creditedForCandidates (1 credit per candidate view)
+     * customCredits (admin-set custom credits)
+   - Free plan: 1000 job credits, 5 candidate credits
+   - Monthly free plan renewal
+   - Subscription tracking
+
+4. JOB MODEL (job.model.js)
+   - Job postings
+   - Fields: title, details, skills, qualifications, benefits
+   - Responsibilities, experience, salary, location
+   - Job type, workplace flexibility, duration
+   - Urgent hiring flag
+   - Active/inactive status
+   - Save and hide functionality
+
+5. APPLICATION MODEL (application.model.js)
+   - Job applications
+   - Fields: job, applicant, resume, status
+   - Status: Pending, Interview Schedule, Shortlisted, Rejected
+   - Applicant details snapshot
+   - Timestamps for tracking
+
+6. NOTIFICATION MODEL (notification.model.js)
+   - In-app notifications
+   - Types: application updates, job matches, messages, interviews
+   - Priority levels: low, medium, high, urgent
+   - Read/unread tracking
+   - Action URLs and metadata
+   - Support for User, Recruiter, Admin, Company
+
+7. MESSAGE/CONVERSATION MODEL
+   - Real-time messaging
+   - Conversation threads
+   - Message history
+
+8. JOB SUBSCRIPTION MODEL (jobSubscription.model.js)
+   - Subscription plans
+   - Plans: 1x, 5x, 10x Premium Jobs
+   - Credit allocation
+   - Expiry tracking
+   - Payment integration (Razorpay)
+   - Auto-expiry handling
+
+9. CANDIDATE SUBSCRIPTION MODEL
+   - Candidate access plans
+   - Credit-based system
+
+10. BLOG MODEL (blog.model.js)
+    - Blog posts
+    - Fields: title, slug, content, status
+    - Draft/published status
+
+11. REVENUE MODEL (revenue.model.js)
+    - Revenue tracking
+    - Item details, pricing
+    - User and company information
+
+12. ADMIN MODEL (admin.model.js)
+    - Admin users
+    - Platform management
+
+13. CONTACT MODEL (contact.model.js)
+    - Contact form submissions
+
+14. JOB REPORT MODEL (jobReport.model.js)
+    - Job reporting system
+
+15. BLACKLISTED MODELS
+    - blacklistedCompany.model.js
+    - blacklistedtoken.model.js
+    - deletedCompany.model.js
+
+================================================================================
+                            7. CORE FEATURES
+================================================================================
+
+FOR JOB SEEKERS:
+----------------
+1. User Registration & Login
+   - Email/password authentication
+   - Google OAuth integration
+   - Email and phone verification (OTP)
+   - Password reset functionality
+
+2. Profile Management
+   - Personal information
+   - Resume upload (PDF)
+   - Skills and qualifications
+   - Work experience tracking
+   - Current CTC and notice period
+   - Multiple document uploads
+   - Profile photo
+
+3. Job Search & Discovery
+   - Advanced job search
+   - Filter by location, salary, experience
+   - Job recommendations
+   - Save jobs for later
+   - Hide unwanted jobs
+   - AI-powered job matching (Gemini AI)
+
+4. Job Application
+   - One-click apply
+   - Application tracking
+   - Application status updates
+   - Interview scheduling notifications
+
+5. Notifications
+   - Real-time in-app notifications
+   - Email notifications
+   - Application status updates
+   - Job recommendations
+   - Interview reminders
+
+6. Messaging
+   - Direct messaging with recruiters
+   - Real-time chat (Socket.IO)
+   - Message history
+
+FOR RECRUITERS:
+---------------
+1. Recruiter Registration & Login
+   - Email/password authentication
+   - Company association
+   - Email verification
+
+2. Company Management
+   - Create company profile
+   - Company details (CIN, business documents)
+   - Multiple recruiters per company
+   - Company verification
+
+3. Job Posting
+   - Create job listings
+   - Rich job descriptions
+   - Skills and qualifications
+   - Salary and benefits
+   - Urgent hiring flag
+   - Job activation/deactivation
+   - Credit-based posting (500 credits per job)
+
+4. Applicant Management
+   - View all applicants
+   - Filter and search candidates
+   - Application status management
+   - Shortlist candidates
+   - Schedule interviews
+   - Reject applications
+   - Credit-based candidate viewing (1 credit per view)
+
+5. Candidate Database
+   - Search candidate profiles
+   - Filter by skills, experience, location
+   - View candidate details
+   - Credit-based access
+
+6. Dashboard & Analytics
+   - Total jobs posted
+   - Total applications received
+   - Active jobs count
+   - Available credits
+   - Max job posts calculation
+   - Application statistics
+
+7. Subscription Plans
+   - FREE Plan: 1000 job credits, 5 candidate credits
+   - STANDARD Plan: 2,500 credits
+   - PREMIUM Plan: 7,500 credits
+   - ENTERPRISE Plan: Custom credits
+   - Monthly free plan renewal
+   - Payment integration (Razorpay)
+
+8. Recruiter Team Management
+   - Add multiple recruiters
+   - Manage recruiter access
+   - Team collaboration
+
+FOR ADMIN:
+----------
+1. Admin Dashboard
+   - Platform statistics
+   - User management
+   - Company management
+   - Job management
+   - Application statistics
+
+2. User Management
+   - View all users
+   - Block/unblock users
+   - User analytics
+
+3. Company Management
+   - Approve/reject companies
+   - Verify company documents
+   - Blacklist companies
+   - Custom credit allocation
+   - Bulk operations
+
+4. Job Management
+   - View all jobs
+   - Activate/deactivate jobs
+   - Job statistics
+   - Job reports handling
+
+5. Revenue Management
+   - Track all payments
+   - Revenue analytics
+   - Subscription management
+
+6. Content Management
+   - Blog management
+   - Insights approval
+   - Contact message handling
+
+7. Subscription Management
+   - Check subscription status
+   - Expire subscriptions
+   - Renewal management
+
+8. Reports & Analytics
+   - User statistics
+   - Company statistics
+   - Job statistics
+   - Application statistics
+   - Revenue reports (CSV export)
+
+================================================================================
+                        8. USER ROLES & CAPABILITIES
+================================================================================
+
+ROLES:
+------
+1. Job Seeker (student/candidate)
+2. Recruiter
+3. Admin
+4. Digital Marketer
+
+AUTHENTICATION:
+---------------
+- JWT-based authentication
+- Cookie-based session management
+- Role-based access control
+- Protected routes (frontend & backend)
+
+AUTHORIZATION:
+--------------
+- isAuthenticated middleware
+- isAdmin middleware
+- Company-recruiter association validation
+- Token blacklisting on logout
+
+================================================================================
+                    9. PAYMENT & SUBSCRIPTION SYSTEM
+================================================================================
+
+PAYMENT GATEWAY:
+----------------
+- Razorpay Integration
+- Secure payment processing
+- Order creation and verification
+- Payment signature validation
+
+SUBSCRIPTION PLANS:
+-------------------
+
+FREE PLAN:
+- 1000 job credits (2 job posts)
+- 5 candidate view credits
+- Monthly renewal
+- Auto-renewal on 1st of each month
+
+STANDARD PLAN:
+- 2,500 credits
+- 5 job posts
+- 50 candidate views
+- One-time purchase
+
+PREMIUM PLAN:
+- 7,500 credits
+- 15 job posts
+- 150 candidate views
+- One-time purchase
+
+ENTERPRISE PLAN:
+- Custom credits
+- Admin-set allocation
+- Unlimited flexibility
+
+CREDIT SYSTEM:
+--------------
+- Job Posting: 500 credits per job
+- Candidate View: 1 credit per view
+- Credits deducted automatically
+- Real-time credit tracking
+- Insufficient credit handling
+- Custom credits by admin
+
+PAYMENT FLOW:
+-------------
+1. Select plan
+2. Create Razorpay order
+3. Payment processing
+4. Payment verification
+5. Credit allocation
+6. Subscription activation
+7. Revenue tracking
+
+================================================================================
+                        10. AUTOMATION FEATURES
+================================================================================
+
+1. AUTO-REJECT OLD APPLICATIONS
+   - Automatically rejects applications older than 30 days (configurable)
+   - Runs daily at 2:00 AM (cron job)
+   - Sends professional rejection emails
+   - Creates in-app notifications
+   - Configurable via AUTO_REJECT_DAYS environment variable
+   - Manual trigger endpoint available
+   - Comprehensive logging
+
+2. MONTHLY FREE PLAN RENEWAL
+   - Automatically renews free plan credits
+   - Runs on 1st of each month at 2:00 AM
+   - Resets job credits to 1000
+   - Resets candidate credits to 5
+   - Only for companies without active subscriptions
+   - Prevents abuse (hasUsedFreePlan flag)
+
+3. SUBSCRIPTION EXPIRY HANDLING
+   - Automatic subscription expiry check
+   - Resets to free plan after expiry
+   - Credit restoration
+   - Status updates
+
+4. CRON JOBS
+   - node-cron for scheduling
+   - Auto-reject applications
+   - Free plan renewal
+   - Subscription expiry checks
+
+================================================================================
+                          11. SECURITY FEATURES
+================================================================================
+
+1. AUTHENTICATION & AUTHORIZATION
+   - JWT tokens with expiry
+   - HTTP-only cookies
+   - Password hashing (bcryptjs)
+   - Token blacklisting
+   - Role-based access control
+
+2. INPUT VALIDATION
+   - express-validator
+   - Custom validators
+   - Email validation
+   - Phone validation
+   - File upload validation
+
+3. SECURITY HEADERS
+   - Helmet.js integration
+   - CORS configuration
+   - CSRF protection
+   - XSS prevention
+
+4. RATE LIMITING
+   - express-rate-limit
+   - 200 requests per 15 minutes
+   - IP-based limiting
+   - API protection
+
+5. DATA SANITIZATION
+   - DOMPurify (frontend)
+   - Input sanitization
+   - SQL injection prevention
+   - NoSQL injection prevention
+
+6. FILE UPLOAD SECURITY
+   - Multer configuration
+   - File type validation
+   - File size limits
+   - Cloudinary integration
+
+7. ENVIRONMENT VARIABLES
+   - Sensitive data in .env
+   - No credentials in code
+   - Separate dev/prod configs
+
+================================================================================
+                            12. API ENDPOINTS
+================================================================================
+
+USER ENDPOINTS:
+---------------
+POST   /api/v1/user/register
+POST   /api/v1/user/login
+POST   /api/v1/user/logout
+GET    /api/v1/user/profile
+PUT    /api/v1/user/profile/update
+POST   /api/v1/user/forgot-password
+POST   /api/v1/user/reset-password/:token
+
+RECRUITER ENDPOINTS:
+--------------------
+POST   /api/v1/recruiter/register
+POST   /api/v1/recruiter/login
+POST   /api/v1/recruiter/logout
+GET    /api/v1/recruiter/profile
+PUT    /api/v1/recruiter/profile/update
+
+COMPANY ENDPOINTS:
+------------------
+POST   /api/v1/company/register
+GET    /api/v1/company/:id
+PUT    /api/v1/company/update
+POST   /api/v1/company/deduct-candidate-credit
+GET    /api/v1/company/list
+
+JOB ENDPOINTS:
+--------------
+POST   /api/v1/job/post
+GET    /api/v1/job/get
+GET    /api/v1/job/:id
+PUT    /api/v1/job/update/:id
+DELETE /api/v1/job/delete/:id
+GET    /api/v1/job/recruiter/jobs
+GET    /api/v1/job/search
+
+APPLICATION ENDPOINTS:
+----------------------
+POST   /api/v1/application/apply/:id
+GET    /api/v1/application/get
+GET    /api/v1/application/:id/applicants
+PUT    /api/v1/application/status/:id/update
+POST   /api/v1/application/auto-reject/trigger
+
+NOTIFICATION ENDPOINTS:
+-----------------------
+GET    /api/v1/notifications
+PUT    /api/v1/notifications/:id/read
+PUT    /api/v1/notifications/mark-all-read
+DELETE /api/v1/notifications/:id
+
+ORDER/PAYMENT ENDPOINTS:
+------------------------
+POST   /api/v1/order/create
+POST   /api/v1/order/verify
+
+ADMIN ENDPOINTS:
+----------------
+POST   /api/v1/admin/login
+GET    /api/v1/admin/stat/*
+GET    /api/v1/admin/user/data/*
+GET    /api/v1/admin/company/data/*
+GET    /api/v1/admin/recruiter/data/*
+GET    /api/v1/admin/job/data/*
+GET    /api/v1/admin/application/data/*
+
+VERIFICATION ENDPOINTS:
+-----------------------
+POST   /api/v1/verification/send-otp
+POST   /api/v1/verification/verify-otp
+
+CONTACT ENDPOINTS:
+------------------
+POST   /api/contact
+
+REVENUE ENDPOINTS:
+------------------
+GET    /api/v1/revenue/total
+
+SEO ENDPOINTS:
+--------------
+GET    /sitemap.xml
+GET    /robots.txt
+
+================================================================================
+                      13. THIRD-PARTY INTEGRATIONS
+================================================================================
+
+1. CLOUDINARY
+   - Image and file storage
+   - Resume uploads
+   - Profile photos
+   - Company documents
+   - Automatic optimization
+
+2. RAZORPAY
+   - Payment processing
+   - Order creation
+   - Payment verification
+   - Webhook handling
+
+3. GOOGLE SERVICES
+   - Google OAuth (Login)
+   - Google Generative AI (Gemini)
+   - Gmail API (Email sending)
+
+4. TWILIO
+   - SMS/OTP service
+   - Phone verification
+
+5. NODEMAILER
+   - Email service
+   - Application notifications
+   - Password reset emails
+   - Rejection emails
+   - System notifications
+
+6. SOCKET.IO
+   - Real-time messaging
+   - Live notifications
+   - Online status
+   - Typing indicators
+
+7. GOOGLE ANALYTICS
+   - Page tracking
+   - User analytics
+   - Conversion tracking
+
+================================================================================
+                      14. DEPLOYMENT & CONFIGURATION
+================================================================================
+
+ENVIRONMENT VARIABLES (.env):
+-----------------------------
+
+# Server
+PORT=8000
+NODE_ENV=production
+
+# Database
+MONGO_URI=mongodb://...
+
+# JWT
+JWT_SECRET=your_secret_key
+JWT_EXPIRE=7d
+
+# Email
+EMAIL_USER=babdegreathire2025@gmail.com
+EMAIL_PASS=igqtjixwvwtyjijr
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+
+# Razorpay
+RAZORPAY_KEY_ID=...
+RAZORPAY_KEY_SECRET=...
+
+# Google
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GEMINI_API_KEY=...
+
+# Twilio
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_PHONE_NUMBER=...
+
+# Features
+AUTO_REJECT_DAYS=30
+
+# Frontend URL
+FRONTEND_URL=https://greathire.in
+
+DEPLOYMENT:
+-----------
+- Frontend: Vite build (npm run build)
+- Backend: Node.js server
+- Database: MongoDB Atlas
+- Hosting: Production server
+- SSL: HTTPS enabled
+- Domain: greathire.in
+
+PRODUCTION SETUP:
+-----------------
+1. Install dependencies: npm install
+2. Configure environment variables
+3. Build frontend: cd frontend && npm run build
+4. Start backend: cd BackEnd && npm run dev
+5. Server runs on port 8000
+6. Frontend served from backend
+
+PROCESS MANAGEMENT:
+-------------------
+- PM2 ecosystem configuration
+- Auto-restart on crash
+- Log management
+- Cluster mode support
+
+================================================================================
+                        15. TESTING & SCRIPTS
+================================================================================
+
+BACKEND SCRIPTS:
+----------------
+npm run dev                    # Start development server
+npm run test:email             # Test email service
+npm run test:auto-reject       # Test auto-reject feature
+npm run backdate:applications  # Create test data
+npm run check:auto-reject      # Check auto-reject status
+
+FRONTEND SCRIPTS:
+-----------------
+npm run dev                    # Start development server
+npm run build                  # Build for production
+npm run preview                # Preview production build
+npm run lint                   # Lint code
+
+TEST FILES:
+-----------
+- test-email.js
+- test-auto-reject.js
+- test-notifications.js
+- backdate-applications.js
+- check-auto-reject-status.js
+
+================================================================================
+                          16. KEY FEATURES SUMMARY
+================================================================================
+
+✅ User authentication (Email, Google OAuth)
+✅ Email and phone verification (OTP)
+✅ Job posting and management
+✅ Job search with filters
+✅ AI-powered job recommendations (Gemini)
+✅ Application tracking system
+✅ Real-time notifications (Socket.IO)
+✅ Real-time messaging
+✅ Credit-based subscription system
+✅ Payment integration (Razorpay)
+✅ Recruiter dashboard with analytics
+✅ Candidate database
+✅ Admin panel
+✅ Auto-reject old applications (30 days)
+✅ Monthly free plan renewal
+✅ Email notifications
+✅ Resume upload and management
+✅ Company verification
+✅ Blog system
+✅ SEO optimization (sitemap, robots.txt)
+✅ Dark mode support
+✅ Responsive design
+✅ File upload (Cloudinary)
+✅ CSV export (reports)
+✅ Rate limiting
+✅ Security headers
+✅ CORS protection
+✅ Password reset
+✅ Profile management
+✅ Team collaboration
+✅ Revenue tracking
+✅ Subscription management
+
+================================================================================
+                          17. DESIGN & UI FEATURES
+================================================================================
+
+STYLING:
+--------
+- Tailwind CSS utility classes
+- Custom animations (wave, slide, scroll)
+- Dark mode support
+- Responsive design (mobile-first)
+- Custom color scheme
+- Geometric font (Poppins)
+
+COMPONENTS:
+-----------
+- Shadcn UI components
+- Radix UI primitives
+- Material UI components
+- Custom React components
+- Lottie animations
+- Framer Motion animations
+
+UI/UX FEATURES:
+---------------
+- Toast notifications
+- Loading states
+- Error handling
+- Form validation
+- Modal dialogs
+- Dropdown menus
+- Carousels/sliders
+- Progress bars
+- Charts and graphs
+- PDF viewer
+- Image optimization
+- Lazy loading
+
+================================================================================
+                          18. PERFORMANCE FEATURES
+================================================================================
+
+- Code splitting (React.lazy)
+- Image optimization (WebP format)
+- Lazy loading
+- Caching strategies
+- Redux state persistence
+- Debouncing and throttling
+- Pagination
+- Infinite scroll
+- Optimized database queries
+- Indexed database fields
+- CDN for static assets
+- Minified production builds
+- Tree shaking
+- Gzip compression
+
+================================================================================
+                          19. MONITORING & LOGGING
+================================================================================
+
+- Console logging
+- Error tracking
+- API request logging
+- Cron job logging
+- Payment transaction logging
+- Email delivery logging
+- Application status tracking
+- User activity tracking
+
+================================================================================
+                          20. FUTURE ENHANCEMENTS
+================================================================================
+
+- Video interviews
+- AI resume parsing
+- Advanced analytics
+- Mobile app
+- Bulk operations
+- Advanced search filters
+- Candidate assessments
+- Interview scheduling calendar
+- Email templates customization
+- Multi-language support
+- Social media integration
+- Referral system
+- Job alerts
+- Salary insights
+- Company reviews
+
+================================================================================
+                              END OF DOCUMENTATION
+================================================================================
+
+This documentation covers all aspects of the GreatHire website including:
+- Complete technology stack
+- All features and functionalities
+- Database models and relationships
+- API endpoints
+- Third-party integrations
+- Security measures
+- Deployment configuration
+- Testing procedures
+
+For more detailed information on specific features, refer to:
+- AUTO_REJECT_FEATURE.md
+- FEATURE_SUMMARY.md
+- NEW_FEATURES_SUMMARY.md
+- CUSTOM_CREDITS_FEATURE.md
+- PAYMENT_FIX_SUMMARY.md
+
+Contact: hr@babde.tech
+Website: https://greathire.in
+
+================================================================================

@@ -1,0 +1,31 @@
+import path from "path";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  assetsInclude: ["**/*.lottie"],
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "Campus": path.resolve(__dirname, "./Campus"),
+    },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000", // Your backend server
+        changeOrigin: true,
+        secure: false,
+        cookieDomainRewrite: "localhost",
+      },
+      "/socket.io": {  // Add this for WebSocket proxying
+        target: "http://localhost:8000", // Same as API target
+        ws: true,  // Enable WebSocket proxying
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+});

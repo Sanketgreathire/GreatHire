@@ -1,0 +1,50 @@
+              {user && <NotificationDropdown />}
+              <button
+D
+              className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-expanded={isMenuOpen}
+              aria-label="Toggle navigation menu"
+            >
+              {!isMenuOpen ? (
+                user ? (
+                  <img
+                    src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
+                    alt={`${user?.fullname || "User"}'s avatar`}
+                    className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
+                  />
+
+                ) : (
+                  <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ))}
+              </button>
+            </div>
+          </div>
+
+          {/* ── MOBILE NAVIGATION OVERLAY ── */}
+          <div
+            className={`fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity ${
+              isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {/* Mobile Menu Panel */}
+            <div
+              ref={mobileMenuRef}
+              className={`fixed top-0 right-0 h-full w-72 z-20 bg-white dark:bg-gray-800 shadow-lg transform transition-transform ${
+                isMenuOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Mobile User Section */}
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <img
+
+                      src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
+
+                      alt="Profile"
+                      className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"

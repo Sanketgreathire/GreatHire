@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /login
+Disallow: /dashboard
+Disallow: /api
+
+Sitemap: https://www.greathire.in/sitemap.xml

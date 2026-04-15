@@ -1,0 +1,22 @@
+# Ignore node_modules
+/node_modules
+
+# Ignore environment files
+Frontend.env
+.env
+front.env
+
+# Ignore logs
+logs
+*.log
+npm-debug.log*
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore IDE/Editor config files
+.vscode/
+.idea/
+*.swp
+
