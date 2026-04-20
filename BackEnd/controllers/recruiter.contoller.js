@@ -124,7 +124,7 @@ export const register = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "lax",
       })
       .json({
@@ -191,7 +191,7 @@ export const googleLogin = async (req, res) => {
         .status(200)
         .cookie("token", token, {
           maxAge: 1 * 24 * 60 * 60 * 1000,
-          httpsOnly: true,
+          httpOnly: true,
           sameSite: "lax",
         })
         .json({
@@ -246,7 +246,7 @@ export const googleLogin = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "lax",
       })
       .json({
@@ -639,7 +639,7 @@ export const deleteAccount = async (req, res) => {
           .status(200)
           .cookie("token", "", {
             maxAge: 0,
-            httpsOnly: true,
+            httpOnly: true,
             sameSite: "lax",
           })
           .json({

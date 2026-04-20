@@ -1,6 +1,7 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
+import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -413,9 +414,63 @@ function IITCertificationSection({ onEnroll }) {
 }
 
 // ─── Enroll Modal ─────────────────────────────────────────────────────────────
+function DemoModal({ onClose }) {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
+  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.phone) return;
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: "BIM", type: "demo" }),
+      });
+    } catch (_) {}
+    setLoading(false); setDone(true);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
+        {done ? (
+          <div className="p-8 text-center"><div className="text-5xl mb-4">🎓</div><h3 className="text-xl font-black text-gray-900 mb-2">Demo Booked!</h3><p className="text-gray-500 text-sm mb-6">Our counsellor will contact you within 2 hours to confirm your free demo session.</p><button onClick={onClose} className="bg-rose-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-rose-700">Got it!</button></div>
+        ) : (
+          <div className="p-6">
+            <div className="mb-5 pb-4 border-b border-gray-100"><p className="text-xs text-rose-600 font-bold uppercase tracking-widest mb-1">Book Free Demo</p><h3 className="text-xl font-black text-gray-900">BIM</h3><p className="text-sm text-gray-500 mt-1">🎯 Free demo class — no commitment required!</p></div>
+            <div className="space-y-4">
+              {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (
+                <div key={key}><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label><input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500" /></div>
+              ))}
+              <div><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Preferred Mode</label><select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"><option>Online</option><option>Offline</option><option>Hybrid</option></select></div>
+              <button onClick={handleSubmit} disabled={loading} className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
+              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function EnrollModal({ onClose, isIIT = false }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.phone) return;
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: isIIT ? "BIM - IIT Program" : "BIM", type: "enrollment" }),
+      });
+    } catch (_) {}
+    setLoading(false);
+    setDone(true);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -449,7 +504,7 @@ function EnrollModal({ onClose, isIIT = false }) {
                 <>
                   <p className="text-xs text-teal-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p>
                   <h3 className="text-xl font-black text-gray-900">BIM (Revit + Navisworks)</h3>
-                  <p className="text-sm text-gray-500 mt-1">⚡ Limited seats — next batch starts soon!</p>
+                  <p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-rose-600">₹25,000</span> · EMI from ₹7,000/mo</p>
                 </>
               )}
             </div>
@@ -499,10 +554,11 @@ function EnrollModal({ onClose, isIIT = false }) {
               </div>
 
               <button
-                onClick={() => form.name && form.email && form.phone && setDone(true)}
-                className={`w-full text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 ${isIIT ? "bg-orange-500 hover:bg-orange-600" : "bg-teal-600 hover:bg-teal-700"}`}
+                onClick={handleSubmit}
+                disabled={loading}
+                className={`w-full text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60 ${isIIT ? "bg-orange-500 hover:bg-orange-600" : "bg-teal-600 hover:bg-teal-700"}`}
               >
-                {isIIT ? "Book Free Consultation →" : "Book Free Demo Class →"}
+                {loading ? "Submitting..." : (isIIT ? "Book Free Consultation →" : "Book Free Demo Class →")}
               </button>
               <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
             </div>
@@ -516,12 +572,14 @@ function EnrollModal({ onClose, isIIT = false }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function BIMCoursePage() {
   const [openModule, setOpenModule] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [showEnroll, setShowEnroll] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
+  const [showCounsellor, setShowCounsellor] = useState(false);
   const [isIITModal, setIsIITModal] = useState(false);
 
   const openEnroll = (iit = false) => {
     setIsIITModal(iit);
-    setShowModal(true);
+    setShowEnroll(true);
   };
 
   return (
@@ -627,7 +685,7 @@ export default function BIMCoursePage() {
                 >
                   Book Free Demo Class
                 </button>
-                <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
+                <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
                   📞 Talk to a Counsellor
                 </button>
                 <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure payment · Cancel anytime</p>
