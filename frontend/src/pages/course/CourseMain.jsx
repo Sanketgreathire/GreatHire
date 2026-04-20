@@ -1,6 +1,7 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
+import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
 import { Link } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -207,7 +208,7 @@ const COURSES = [
     skills: ["VLSI"],
     color: "border-rose-500",
     iconBg: "bg-rose-50",
-    link: "/courses/ai-business-analyst",
+    link: "/courses/vlsi-training",
     tab: "employment",
   },
   {
@@ -634,12 +635,22 @@ function CourseCard({ course, onEnroll }) {
 
 // ─── Enroll Modal ─────────────────────────────────────────────────────────────
 
-function EnrollModal({ course, onClose }) {
+function EnrollModal({ course, onClose, type = "enquiry" }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: course.title, fee: type === "enrollment" ? (course.fee || "") : "", type }),
+      });
+    } catch (_) {}
+    setLoading(false);
     setSubmitted(true);
   };
 
@@ -722,9 +733,10 @@ function EnrollModal({ course, onClose }) {
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors duration-200 mt-2"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors duration-200 mt-2 disabled:opacity-60"
               >
-                Submit Enrollment Request
+                {loading ? "Submitting..." : "Submit Enrollment Request"}
               </button>
             </form>
           </div>
@@ -740,6 +752,12 @@ export default function TrainingCoursesPage() {
   const [activeTab, setActiveTab] = useState("employment");
   const [activeCategory, setActiveCategory] = useState("All");
   const [enrollCourse, setEnrollCourse] = useState(null);
+  const [enrollType, setEnrollType] = useState("enquiry");
+
+  const openModal = (course, type = "enquiry") => {
+    setEnrollCourse(course);
+    setEnrollType(type);
+  };
   const [searchQuery, setSearchQuery] = useState("");
 
   // Reset category filter when switching tabs
@@ -870,7 +888,7 @@ export default function TrainingCoursesPage() {
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((course) => (
-              <CourseCard key={course.id} course={course} onEnroll={setEnrollCourse} />
+              <CourseCard key={course.id} course={course} onEnroll={(c) => openModal(c, "enquiry")} />
             ))}
           </div>
         ) : (
@@ -960,7 +978,7 @@ export default function TrainingCoursesPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => setEnrollCourse(COURSES[0])}
+              onClick={() => openModal(COURSES[0], "enrollment")}
               className="bg-white text-blue-600 hover:bg-blue-50 font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap"
             >
               🚀 Enroll Now — Free Demo
@@ -980,7 +998,7 @@ export default function TrainingCoursesPage() {
 
       {/* ── Enroll Modal ── */}
       {enrollCourse && (
-        <EnrollModal course={enrollCourse} onClose={() => setEnrollCourse(null)} />
+        <EnrollModal course={enrollCourse} type={enrollType} onClose={() => { setEnrollCourse(null); setEnrollType("enquiry"); }} />
       )}
     </div>
   );
