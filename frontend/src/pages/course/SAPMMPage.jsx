@@ -1,6 +1,7 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
+import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
 
 
 const CURRICULUM = [
@@ -225,23 +226,77 @@ function FaqItem({ item }) {
   );
 }
 
+function DemoModal({ onClose }) {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
+  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.phone) return;
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: "SAP MM", type: "demo" }),
+      });
+    } catch (_) {}
+    setLoading(false); setDone(true);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
+        {done ? (
+          <div className="p-8 text-center"><div className="text-5xl mb-4">🎓</div><h3 className="text-xl font-black text-gray-900 mb-2">Demo Booked!</h3><p className="text-gray-500 text-sm mb-6">Our counsellor will contact you within 2 hours to confirm your free demo session.</p><button onClick={onClose} className="bg-rose-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-rose-700">Got it!</button></div>
+        ) : (
+          <div className="p-6">
+            <div className="mb-5 pb-4 border-b border-gray-100"><p className="text-xs text-rose-600 font-bold uppercase tracking-widest mb-1">Book Free Demo</p><h3 className="text-xl font-black text-gray-900">SAP MM</h3><p className="text-sm text-gray-500 mt-1">🎯 Free demo class — no commitment required!</p></div>
+            <div className="space-y-4">
+              {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (
+                <div key={key}><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label><input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500" /></div>
+              ))}
+              <div><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Preferred Mode</label><select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"><option>Online</option><option>Offline</option><option>Hybrid</option></select></div>
+              <button onClick={handleSubmit} disabled={loading} className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
+              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function EnrollModal({ onClose }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
   const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.phone) return;
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: "SAP MM", fee: "₹38,000", type: "enrollment" }),
+      });
+    } catch (_) {}
+    setLoading(false);
+    setDone(true);
+  };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
         <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
         {done ? (<div className="p-8 text-center"><div className="text-5xl mb-4">🎉</div><h3 className="text-xl font-black text-gray-900 mb-2">You're in!</h3><p className="text-gray-500 text-sm mb-6">Our counsellor will call you within 2 hours.</p><button onClick={onClose} className="bg-cyan-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-cyan-700">Got it!</button></div>) : (
           <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100"><p className="text-xs text-cyan-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p><h3 className="text-xl font-black text-gray-900">SAP MM Course</h3><p className="text-sm text-gray-500 mt-1">⚡ Limited seats — next batch starts soon!</p></div>
+            <div className="mb-5 pb-4 border-b border-gray-100"><p className="text-xs text-cyan-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p><h3 className="text-xl font-black text-gray-900">SAP MM Course</h3><p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-rose-600">₹38,000</span> · EMI from ₹7,000/mo</p></div>
             <div className="space-y-4">
               {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (<div key={key}><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label><input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500" /></div>))}
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Batch</label><select value={form.batch} onChange={(e) => setForm({ ...form, batch: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"><option>Weekday Batch</option><option>Weekend Batch</option><option>Fast Track</option></select></div>
                 <div><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Mode</label><select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"><option>Online</option><option>Offline</option><option>Hybrid</option></select></div>
               </div>
-              <button onClick={() => form.name && form.email && form.phone && setDone(true)} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1">Book Free Demo Class →</button>
+              <button onClick={handleSubmit} disabled={loading} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
               <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
             </div>
           </div>
@@ -253,7 +308,9 @@ function EnrollModal({ onClose }) {
 
 export default function SAPMMPage() {
   const [openModule, setOpenModule] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [showEnroll, setShowEnroll] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
+  const [showCounsellor, setShowCounsellor] = useState(false);
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -277,7 +334,7 @@ export default function SAPMMPage() {
                 {[{ val: "4.8★", label: "Rating" }, { val: "1,100+", label: "Students" }, { val: "3 Months", label: "Duration" }, { val: "100%", label: "Placement" }].map((s) => (<div key={s.label}><p className="text-xl font-black text-yellow-300">{s.val}</p><p className="text-xs text-cyan-200 font-medium">{s.label}</p></div>))}
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => setShowModal(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">🚀 Enroll Now — ₹38,000</button>
+                <button onClick={() => setShowEnroll(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">🚀 Enroll Now — ₹38,000</button>
                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">📥 Download Syllabus</button>
               </div>
               <div className="flex flex-wrap gap-4 mt-6 text-xs text-cyan-200"><span>✅ No Cost EMI Available</span><span>✅ SAP C_TSCM52 Cert Prep</span><span>✅ Free Demo Class</span></div>
@@ -288,8 +345,10 @@ export default function SAPMMPage() {
                 <p className="text-3xl font-black text-cyan-600 mb-1">₹38,000</p>
                 <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
                 <div className="space-y-2.5 mb-5">{["📅 Next batch starts April 14", "⏱ 3 months duration", "🎖 Dual Certification", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Live SAP System Access"].map((item) => (<p key={item} className="text-sm text-gray-700 flex items-center gap-2">{item}</p>))}</div>
-                <button onClick={() => setShowModal(true)} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mb-3">Book Free Demo Class</button>
-                <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">📞 Talk to a Counsellor</button>
+                <button onClick={() => setShowDemo(true)} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mb-3">
+                  Book Free Demo Class
+                </button>
+                <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">📞 Talk to a Counsellor</button>
                 <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure payment · Cancel anytime</p>
               </div>
             </div>
@@ -300,7 +359,7 @@ export default function SAPMMPage() {
       <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div><p className="text-xl font-black text-cyan-600 leading-none">₹38,000</p><p className="text-xs text-gray-400">EMI from ₹7,000/mo</p></div>
-          <button onClick={() => setShowModal(true)} className="bg-cyan-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
+          <button onClick={() => setShowEnroll(true)} className="bg-cyan-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
         </div>
       </div>
 
@@ -327,7 +386,7 @@ export default function SAPMMPage() {
             <section><h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2"><span className="w-1 h-7 bg-cyan-600 rounded-full inline-block"></span>Tools & Technologies</h2><div className="flex flex-wrap gap-3">{TOOLS.map((t) => (<span key={t.name} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${t.color}`}><span className="text-base">{t.icon}</span>{t.name}</span>))}</div></section>
             <section>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2"><span className="w-1 h-7 bg-cyan-600 rounded-full inline-block"></span>Upcoming Batches</h2>
-              <div className="space-y-4">{BATCHES.map((b) => (<div key={b.type} className={`flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border gap-4 ${b.urgent ? "border-cyan-300 bg-cyan-50" : "border-gray-200 bg-white"}`}><div className="flex items-center gap-4"><div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 ${b.urgent ? "bg-cyan-100" : "bg-gray-100"}`}>📅</div><div><div className="flex items-center gap-2 flex-wrap"><p className="font-bold text-gray-900">{b.type}</p>{b.urgent && <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">Filling Fast</span>}</div><p className="text-sm text-gray-500 mt-0.5">{b.schedule} · {b.time} · {b.mode}</p></div></div><div className="flex items-center gap-3 sm:flex-col sm:items-end"><p className="text-xs text-gray-500 font-medium">{b.seats}</p><button onClick={() => setShowModal(true)} className="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">Enroll →</button></div></div>))}</div>
+              <div className="space-y-4">{BATCHES.map((b) => (<div key={b.type} className={`flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border gap-4 ${b.urgent ? "border-cyan-300 bg-cyan-50" : "border-gray-200 bg-white"}`}><div className="flex items-center gap-4"><div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 ${b.urgent ? "bg-cyan-100" : "bg-gray-100"}`}>📅</div><div><div className="flex items-center gap-2 flex-wrap"><p className="font-bold text-gray-900">{b.type}</p>{b.urgent && <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">Filling Fast</span>}</div><p className="text-sm text-gray-500 mt-0.5">{b.schedule} · {b.time} · {b.mode}</p></div></div><div className="flex items-center gap-3 sm:flex-col sm:items-end"><p className="text-xs text-gray-500 font-medium">{b.seats}</p><button onClick={() => setShowEnroll(true)} className="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">Enroll →</button></div></div>))}</div>
             </section>
             <section>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2"><span className="w-1 h-7 bg-cyan-600 rounded-full inline-block"></span>Student Reviews</h2>
@@ -343,7 +402,9 @@ export default function SAPMMPage() {
                 <p className="text-3xl font-black text-cyan-600 leading-none mb-1">₹38,000</p>
                 <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
                 <div className="space-y-2.5 mb-5 text-sm text-gray-700">{["📅 Next batch: April 14, 2025", "⏱ Duration: 3 months", "🎖 Dual Certification", "💼 100% Placement Support", "🔄 Online + Offline modes", "🎁 Live SAP System Access", "👥 Batch size: 15 students"].map((item) => (<p key={item} className="flex items-start gap-2">{item}</p>))}</div>
-                <button onClick={() => setShowModal(true)} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm mb-3 transition-colors">Book Free Demo Class</button>
+                <button onClick={() => setShowDemo(true)} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3.5 rounded-xl text-sm mb-3 transition-colors">
+                  Book Free Demo Class
+                </button>
                 <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm mb-3 transition-colors">📥 Download Syllabus</button>
                 <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">📞 Talk to Counsellor</button>
                 <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure · No spam · Cancel anytime</p>
@@ -363,13 +424,14 @@ export default function SAPMMPage() {
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Start Your SAP MM Career Today</h2>
           <p className="text-cyan-100 text-base sm:text-lg mb-8 leading-relaxed">Join 1,100+ students who've built rewarding SAP careers with Great Hire's hands-on MM program.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => setShowModal(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">🚀 Enroll Now — Free Demo</button>
+            <button onClick={() => setShowEnroll(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">🚀 Enroll Now — Free Demo</button>
             <button className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">📞 Call: +91 90000 12345</button>
           </div>
         </div>
       </section>
       <Footer />
-      {showModal && <EnrollModal onClose={() => setShowModal(false)} />}
+      {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
+      {showEnroll && <EnrollModal onClose={() => setShowEnroll(false)} />}
     </div>
   );
 }
