@@ -1,4 +1,3 @@
-
 import { Job } from "../models/job.model.js";
 import  {Application } from "../models/application.model.js";
 import { Company } from "../models/company.model.js";
@@ -10,6 +9,7 @@ import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
 import notificationService from "../utils/notificationService.js";
+import Notification from "../models/notification.model.js";
 import axios from "axios";
 
 
@@ -54,11 +54,17 @@ export const postJob = [
       } = req.body;
 
       const userId = req.id;
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId).lean();
       const recruiter = await Recruiter.findById(userId);
 
       if (!company) {
         return res.status(404).json({ success: false, message: "Company not found. Please create a company first." });
+      }
+
+      // Fix bad data: "Unlimited" string stored in DB should be null
+      if (company.maxJobPosts === "Unlimited" || (typeof company.maxJobPosts === "string" && isNaN(company.maxJobPosts))) {
+        await Company.findByIdAndUpdate(companyId, { maxJobPosts: null });
+        company.maxJobPosts = null;
       }
 
       const companyPlan = company.plan || "FREE";
@@ -132,8 +138,8 @@ export const postJob = [
           monthStart.getMonth() === now.getMonth() &&
           monthStart.getFullYear() === now.getFullYear();
         if (!isPaidSameMonth) {
+          await Company.findByIdAndUpdate(companyId, { planJobsPostedThisMonth: 0, planMonthStart: now });
           company.planJobsPostedThisMonth = 0;
-          company.planMonthStart = now;
         }
 
         const paidPlanLimit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
@@ -174,14 +180,18 @@ export const postJob = [
 
       // Update counters
       if (companyPlan === "FREE") {
-        company.freeJobsPosted += 1;
-        if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
-          company.hasUsedFreePlan = true;
+        const newFreeJobsPosted = (company.freeJobsPosted || 0) + 1;
+        const updateData = { freeJobsPosted: newFreeJobsPosted };
+        if (newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
+          updateData.hasUsedFreePlan = true;
         }
+        await Company.findByIdAndUpdate(companyId, updateData);
       } else {
-        company.planJobsPostedThisMonth = (company.planJobsPostedThisMonth || 0) + 1;
+        await Company.findByIdAndUpdate(companyId, {
+          planJobsPostedThisMonth: (company.planJobsPostedThisMonth || 0) + 1,
+          ...(company.planMonthStart === null ? { planMonthStart: new Date() } : {}),
+        });
       }
-      await company.save();
 
       // Notify recruiter
       try {
@@ -503,7 +513,7 @@ export const getJobByCompanyId = async (req, res) => {
     const companyId = req.params.id;
     const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res.status(403).json({
         message: "You are not authorized.",
         success: false,
