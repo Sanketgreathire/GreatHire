@@ -46,7 +46,7 @@ const Jobs = () => {
   // Track dark mode changes
   useEffect(() => {
     const checkDarkMode = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark'));
+      setIsDarkMode(document.documentElement.classList.contains("dark"));
     };
 
     checkDarkMode();
@@ -54,7 +54,7 @@ const Jobs = () => {
     const observer = new MutationObserver(checkDarkMode);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class'],
+      attributeFilter: ["class"],
     });
 
     return () => observer.disconnect();
@@ -108,11 +108,14 @@ const Jobs = () => {
 
   const copyJobLink = (jobId) => {
     const url = `${window.location.origin}/jobs/${jobId}`;
-    navigator.clipboard.writeText(url).then(() => {
-      toast.success("Job link copied!");
-    }).catch(() => {
-      toast.error("Failed to copy link.");
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Job link copied!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy link.");
+      });
   };
 
   const fetchJobList = async () => {
@@ -122,14 +125,12 @@ const Jobs = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        const sorted = [...response.data.jobs].sort(
-          (a, b) => {
-            // Extract timestamp from MongoDB ObjectId (first 4 bytes)
-            const timeA = parseInt(a._id.substring(0, 8), 16);
-            const timeB = parseInt(b._id.substring(0, 8), 16);
-            return timeB - timeA; // newest first
-          }
-        );
+        const sorted = [...response.data.jobs].sort((a, b) => {
+          // Extract timestamp from MongoDB ObjectId (first 4 bytes)
+          const timeA = parseInt(a._id.substring(0, 8), 16);
+          const timeB = parseInt(b._id.substring(0, 8), 16);
+          return timeB - timeA; // newest first
+        });
         setJobList(sorted);
       }
     } catch (err) {
@@ -140,6 +141,17 @@ const Jobs = () => {
   useEffect(() => {
     if (user) fetchJobList();
   }, [user]);
+
+  // Helper to format experience value
+  const formatExperience = (experience) => {
+    if (experience === null || experience === undefined || experience === "") {
+      return "Not specified";
+    }
+    if (!isNaN(experience)) {
+      return `${experience} yr${Number(experience) === 1 ? "" : "s"}`;
+    }
+    return experience;
+  };
 
   const stats = [
     {
@@ -183,6 +195,7 @@ const Jobs = () => {
       <Navbar linkName="Jobs" />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+
         {/* Stats Section */}
         <div className="px-4 sm:px-6 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
@@ -221,38 +234,38 @@ const Jobs = () => {
             onChange={(e) => setStatus(e.target.value)}
             className="w-full sm:w-1/3 lg:w-1/5 bg-white rounded-md"
             sx={{
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: isDarkMode ? '#4b5563' : '#d1d5db',
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
               },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: isDarkMode ? '#6b7280' : '#9ca3af',
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: isDarkMode ? "#6b7280" : "#9ca3af",
               },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: isDarkMode ? '#3b82f6' : '#2563eb',
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: isDarkMode ? "#3b82f6" : "#2563eb",
               },
-              '& .MuiSelect-select': {
-                color: isDarkMode ? '#f3f4f6' : '#111827',
-                backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+              "& .MuiSelect-select": {
+                color: isDarkMode ? "#f3f4f6" : "#111827",
+                backgroundColor: isDarkMode ? "#374151" : "#ffffff",
               },
-              '& .MuiSvgIcon-root': {
-                color: isDarkMode ? '#9ca3af' : '#6b7280',
+              "& .MuiSvgIcon-root": {
+                color: isDarkMode ? "#9ca3af" : "#6b7280",
               },
-              backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-              borderRadius: '0.375rem',
+              backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+              borderRadius: "0.375rem",
             }}
             MenuProps={{
               PaperProps: {
                 sx: {
-                  bgcolor: isDarkMode ? '#374151' : '#ffffff',
-                  color: isDarkMode ? '#f3f4f6' : '#111827',
-                  '& .MuiMenuItem-root': {
-                    '&:hover': {
-                      bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6',
+                  bgcolor: isDarkMode ? "#374151" : "#ffffff",
+                  color: isDarkMode ? "#f3f4f6" : "#111827",
+                  "& .MuiMenuItem-root": {
+                    "&:hover": {
+                      bgcolor: isDarkMode ? "#4b5563" : "#f3f4f6",
                     },
-                    '&.Mui-selected': {
-                      bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb',
-                      '&:hover': {
-                        bgcolor: isDarkMode ? '#6b7280' : '#d1d5db',
+                    "&.Mui-selected": {
+                      bgcolor: isDarkMode ? "#4b5563" : "#e5e7eb",
+                      "&:hover": {
+                        bgcolor: isDarkMode ? "#6b7280" : "#d1d5db",
                       },
                     },
                   },
@@ -274,6 +287,10 @@ const Jobs = () => {
                 <TableRow className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700">
                   <TableHead className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                     Job Details
+                  </TableHead>
+                  {/* ✅ Experience Column Header */}
+                  <TableHead className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                    Experience
                   </TableHead>
                   <TableHead className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                     Company
@@ -297,7 +314,7 @@ const Jobs = () => {
                 {paginatedJobs.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan="6"
+                      colSpan="7"
                       className="text-center py-10 text-gray-400 dark:text-gray-500"
                     >
                       No jobs found
@@ -309,52 +326,62 @@ const Jobs = () => {
                       key={job._id}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition border-b border-gray-200 dark:border-gray-700"
                     >
+                      {/* Job Details */}
                       <TableCell className="min-w-[260px]">
                         <p className="font-medium text-gray-800 dark:text-gray-100 break-words">
                           {job.title}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400 break-words">
-                          {job.jobType} • {job.shift ? `${job.shift} • ` : ""}{job.location} • ₹
-                          {job.salary.replace(
-                            /\B(?=(\d{3})+(?!\d))/g,
-                            ","
-                          )}
+                          {job.jobType} • {job.shift ? `${job.shift} • ` : ""}
+                          {job.location} • ₹
+                          {job.salary.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </p>
                       </TableCell>
 
+                      {/* ✅ Experience Column Cell */}
+                      <TableCell className="whitespace-nowrap">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {formatExperience(job.experience)}
+                        </span>
+                      </TableCell>
+
+                      {/* Company */}
                       <TableCell className="whitespace-nowrap text-gray-700 dark:text-gray-300">
                         {job.companyName}
                       </TableCell>
 
+                      {/* Posted Date */}
                       <TableCell className="whitespace-nowrap text-gray-700 dark:text-gray-300">
                         {job.postedDate}
                       </TableCell>
 
+                      {/* Applications */}
                       <TableCell className="text-center text-gray-700 dark:text-gray-300">
                         {job.numberOfApplications}
                       </TableCell>
 
+                      {/* Status Badge */}
                       <TableCell>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${job.isActive
-                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
-                            }`}
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            job.isActive
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
+                          }`}
                         >
                           {job.isActive ? "Active" : "Deactive"}
                         </span>
                       </TableCell>
 
+                      {/* Actions */}
                       <TableCell>
                         <div className="flex flex-wrap justify-center items-center gap-3 min-w-[160px]">
                           <Eye
                             className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
                             size={20}
-                            onClick={() =>
-                              navigate(`/admin/job/details/${job._id}`)
-                            }
+                            onClick={() => navigate(`/admin/job/details/${job._id}`)}
                           />
-                          {/* Copy Job link */}
+
                           <Link
                             className="text-gray-500 dark:text-gray-400 cursor-pointer hover:scale-110 transition"
                             size={20}
@@ -363,23 +390,23 @@ const Jobs = () => {
                           />
 
                           {loading[job._id] ? (
-                            <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
+                            <span className="text-gray-400 dark:text-gray-500 text-sm">
+                              ...
+                            </span>
                           ) : (
                             <Switch
                               checked={job.isActive}
                               onChange={() =>
-                                toggleActive(
-                                  job._id,
-                                  !job.isActive,
-                                  job.companyId
-                                )
+                                toggleActive(job._id, !job.isActive, job.companyId)
                               }
                               color="primary"
                             />
                           )}
 
                           {dloading[job._id] ? (
-                            <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
+                            <span className="text-gray-400 dark:text-gray-500 text-sm">
+                              ...
+                            </span>
                           ) : (
                             <Trash
                               className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition"

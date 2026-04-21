@@ -26,9 +26,9 @@ const navItems = [
   { name: "Job Seekers", path: "/admin/users", icon: FaUsers },
   { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
   { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
+  { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
   { name: "Campus", path: "/admin/campus-dashboard", icon: FaGraduationCap },
   { name: "Courses", path: "/admin/courses", icon: FaBookOpen },
-  { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
   { name: "Reports", path: "/admin/reports", icon: FaChartBar },
   { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
 ];
