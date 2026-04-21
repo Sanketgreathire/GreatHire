@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 const COURSES = [
-  { id: 1, title: "Full Stack Java Developer", category: "Full Stack", link: "/courses/java-developer" },
+  { id: 1, title: "Full Stack Java Developer", category: "Full Stack", link: "/courses/java-training" },
   { id: 2, title: "Full Stack Python Developer", category: "Full Stack", link: "/courses/python-training" },
   { id: 3, title: "Data Science", category: "Data Science", link: "/courses/data-science-training" },
   { id: 4, title: "AWS & DevOps", category: "Cloud", link: "/courses/aws-devops-training" },
