@@ -1,34 +1,36 @@
-// Import necessary modules and dependencies
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import Job from "./Job";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-
-// imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
+
+const JOBS_PER_PAGE = 9;
 
 const SavedJobs = () => {
   const { getSaveJobs, saveJobsList, error, jobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 9;
+
   useEffect(() => {
-    if (user && jobs) {
-      getSaveJobs(user?._id);
-    }
-  }, [user, jobs]);
+    if (user?._id && jobs) getSaveJobs(user._id);
+  }, [user?._id, jobs]);
 
-  if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
-  }
+  const { currentJobs, totalPages, indexOfLastJob } = useMemo(() => {
+    const last = currentPage * JOBS_PER_PAGE;
+    const first = last - JOBS_PER_PAGE;
+    return {
+      currentJobs: saveJobsList.slice(first, last),
+      totalPages: Math.ceil(saveJobsList.length / JOBS_PER_PAGE),
+      indexOfLastJob: last,
+    };
+  }, [saveJobsList, currentPage]);
 
-  // Pagination Logic
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = saveJobsList.slice(indexOfFirstJob, indexOfLastJob);
+  const handlePrev = useCallback(() => setCurrentPage((p) => p - 1), []);
+  const handleNext = useCallback(() => setCurrentPage((p) => p + 1), []);
+
+  if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
     <>
@@ -101,7 +103,7 @@ const SavedJobs = () => {
                             shadow-md border border-blue-100/50
                             dark:border-blue-900/30 gap-2">
                 <button
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  onClick={handlePrev}
                   disabled={currentPage === 1}
                   className={`px-3 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${currentPage === 1
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
@@ -116,11 +118,11 @@ const SavedJobs = () => {
                                bg-gradient-to-r from-blue-600 to-indigo-600
                                dark:from-blue-400 dark:to-indigo-400
                                text-transparent bg-clip-text">
-                  Page {currentPage} of {Math.ceil(saveJobsList.length / jobsPerPage)}
+                  Page {currentPage} of {totalPages}
                 </span>
 
                 <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  onClick={handleNext}
                   disabled={indexOfLastJob >= saveJobsList.length}
                   className={`px-3 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${indexOfLastJob >= saveJobsList.length
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"

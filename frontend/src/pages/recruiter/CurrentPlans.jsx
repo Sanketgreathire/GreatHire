@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AiFillSafetyCertificate } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,14 +6,39 @@ import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import { Helmet } from "react-helmet-async";
 
+const PLAN_LIMITS = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
+
 const CurrentPlans = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const { jobPlan } = useSelector((state) => state.jobPlan);
-  console.log("CurrentPlans", user, company, jobPlan);
-  // Show loading message if user or company data is not available
+
   if (!user || !company) return <p className="dark:text-gray-300">Loading...</p>;
+
+  const isAdmin = user?.emailId?.email === company?.adminEmail;
+
+  const jobPostsRemaining = useMemo(() => {
+    const plan = company?.plan || "FREE";
+    if (plan === "FREE") {
+      return Math.max(0, (PLAN_LIMITS.FREE ?? 1) - (company?.freeJobsPosted || 0));
+    }
+    const limit = PLAN_LIMITS[plan] ?? 0;
+    if (limit === Infinity) return "Unlimited";
+    return `${Math.max(0, limit - (company?.planJobsPostedThisMonth || 0))}/${limit}`;
+  }, [company?.plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth]);
+
+  const purchaseDateStr = useMemo(() =>
+    jobPlan?.purchaseDate ? format(new Date(jobPlan.purchaseDate), "dd MMM yyyy") : "N/A"
+  , [jobPlan?.purchaseDate]);
+
+  const expiryDateStr = useMemo(() =>
+    jobPlan?.expiryDate ? format(new Date(jobPlan.expiryDate), "dd MMM yyyy") : "N/A"
+  , [jobPlan?.expiryDate]);
+
+  const isExpired = useMemo(() =>
+    jobPlan?.expiryDate && new Date(jobPlan.expiryDate) < new Date()
+  , [jobPlan?.expiryDate]);
 
   return (
     <>
@@ -30,9 +55,8 @@ const CurrentPlans = () => {
         />
       </Helmet>
       {/* Check if the company exists */}
-      {company ? (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 pt-20">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 pt-20">
+        <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
 
             {/* Verification pending banner for unverified recruiters with a paid plan */}
             {!user?.isActive && company?.hasSubscription && (
@@ -91,26 +115,7 @@ const CurrentPlans = () => {
                     </div>
                     <div className="flex justify-between p-3 bg-white dark:bg-gray-700 rounded-lg shadow">
                       <span className="font-medium">Max Job Posts Remaining:</span>
-                      <span className="font-semibold">
-                        {(() => {
-                          const plan = company?.plan || "FREE";
-                          const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
-                          // const PAID_PLAN_FREE_JOBS = 2;
-                          
-                          if (plan === "FREE") {
-                            const limit = limits[plan] ?? 2;
-                            const used = company?.freeJobsPosted || 0;
-                            return Math.max(0, limit - used);
-                          } else {
-                            const paidLimit = limits[plan] ?? 0;
-                            if (paidLimit === Infinity) return "Unlimited";
-                            
-                          const paidUsed = company?.planJobsPostedThisMonth || 0;
-                          return `${Math.max(0, paidLimit - paidUsed)}/${paidLimit}`;
-                          }
-                        })()
-                        }
-                      </span>
+                      <span className="font-semibold">{jobPostsRemaining}</span>
                     </div>
                     <div className="flex justify-between p-3 bg-white dark:bg-gray-700 rounded-lg shadow">
                       <span className="font-medium">Credits For Database:</span>
@@ -118,25 +123,12 @@ const CurrentPlans = () => {
                     </div>
                     <div className="flex justify-between p-3 bg-white dark:bg-gray-700 rounded-lg shadow">
                       <span className="font-medium">Purchase Date:</span>
-                      <span className="font-semibold">
-                        {jobPlan.purchaseDate 
-                          ? format(new Date(jobPlan.purchaseDate), "dd MMM yyyy")
-                          : "N/A"
-                        }
-                      </span>
+                      <span className="font-semibold">{purchaseDateStr}</span>
                     </div>
                     <div className="flex justify-between p-3 bg-white dark:bg-gray-700 rounded-lg shadow">
                       <span className="font-medium">Expiry Date:</span>
-                      <span
-                        className={`font-semibold ${jobPlan.expiryDate && new Date(jobPlan.expiryDate) < new Date()
-                            ? "text-red-500 dark:text-red-400"
-                            : "text-green-600 dark:text-green-400"
-                          }`}
-                      >
-                        {jobPlan.expiryDate
-                          ? format(new Date(jobPlan.expiryDate), "dd MMM yyyy")
-                          : "N/A"
-                        }
+                      <span className={`font-semibold ${isExpired ? "text-red-500 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}>
+                        {expiryDateStr}
                       </span>
                     </div>
                   </div>
@@ -149,7 +141,7 @@ const CurrentPlans = () => {
               )}
 
               {/* Upgrade Button - Always show for admin */}
-              {user?.emailId?.email === company?.adminEmail && (
+              {isAdmin && (
                 <div className="text-center mt-4">
                   <Button
                     onClick={() =>
@@ -163,12 +155,7 @@ const CurrentPlans = () => {
               )}
             </div>
           </div>
-        </div>
-      ) : !company ? (
-        <p className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-          <span className="text-4xl text-gray-400 dark:text-gray-500">Company not created</span>
-        </p>
-      ) : null}
+      </div>
     </>
   );
 };

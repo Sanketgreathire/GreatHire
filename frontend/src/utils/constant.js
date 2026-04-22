@@ -67,7 +67,6 @@ export const jobTitles = [
     "Nurse",
     "Pharmacist",
     "Dentist",
-    "Physiotherapist",
     "Radiologist",
     "Veterinarian",
     "Surgeon",
@@ -111,7 +110,6 @@ export const jobTitles = [
     "Athlete",
     "Fitness Trainer",
     "Sports Coach",
-    "Physiotherapist",
   
     // Government & Public Sector
     "Police Officer",

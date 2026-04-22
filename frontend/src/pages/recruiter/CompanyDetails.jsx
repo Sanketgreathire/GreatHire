@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { BACKEND_URL, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -38,38 +38,25 @@ const CompanyDetails = () => {
     phone: company?.phone,
   });
 
-  // Toggle between edit and view mode
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
+  const toggleEdit = useCallback(() => setIsEditing((v) => !v), []);
 
-  // Handle input changes for regular form fields
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  // Handle input changes for address fields
-  const handleAddressChange = (e) => {
+  const handleAddressChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      address: {
-        ...formData.address,
-        [name]: value,
-      },
-    });
-  };
-  // Submit updated company details
-  const handleFormSubmit = async (e) => {
+    setFormData((prev) => ({ ...prev, address: { ...prev.address, [name]: value } }));
+  }, []);
+
+  const handleFormSubmit = useCallback(async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       const response = await axios.put(
         `${COMPANY_API_END_POINT}/update/${company?._id}`,
-        {
-          ...formData,
-        },
+        { ...formData },
         { withCredentials: true }
       );
       if (response.data.success) {
@@ -77,54 +64,42 @@ const CompanyDetails = () => {
         toast.success("Company details updated successfully!");
         setIsEditing(false);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update company details. Please try again.");
-      console.error("Error updating company details", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData, company?._id, dispatch]);
 
-  // Delete company and log out the user
-  const handleDeleteCompany = async () => {
+  const handleDeleteCompany = useCallback(async () => {
     try {
       dSetLoading(true);
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
-        data: {
-          userEmail: user?.emailId.email,
-          companyId: company?._id,
-        },
+        data: { userEmail: user?.emailId.email, companyId: company?._id },
         withCredentials: true,
       });
       if (response.data.success) {
-        dispatch(cleanRecruiterRedux()); // Ensure this action is defined
-        dispatch(removeCompany()); // Ensure this action is defined
+        dispatch(cleanRecruiterRedux());
+        dispatch(removeCompany());
         dispatch(logOut());
         toast.success(response.data.message);
-        navigate("/");
+        window.location.href = "/";
       } else {
         toast.error(response.data.message);
       }
-    } catch (err) {
-      console.error("Error deleting company:", err);
-      toast.error(
-        "There was an error deleting the company. Please try again later."
-      );
+    } catch {
+      toast.error("There was an error deleting the company. Please try again later.");
     } finally {
       dSetLoading(false);
     }
-  };
+  }, [user?.emailId.email, company?._id, dispatch]);
 
-  // Confirm and proceed with company deletion
-  const onConfirmDelete = () => {
+  const onConfirmDelete = useCallback(() => {
     setShowDeleteModal(false);
     handleDeleteCompany();
-  };
+  }, [handleDeleteCompany]);
 
-  // Cancel company deletion
-  const onCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
+  const onCancelDelete = useCallback(() => setShowDeleteModal(false), []);
 
   return (
     <>

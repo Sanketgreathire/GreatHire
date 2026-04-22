@@ -1,5 +1,4 @@
 // Import necessary modules and dependencies
-import React from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { useNavigate } from "react-router-dom";
@@ -11,91 +10,20 @@ import { Helmet } from "react-helmet-async";
 
 import ServicesHeroBg from "./ServicesHeroBg.png";
 
+const SERVICES = [
+  { title: "Job Posting & Candidate Database Services", description: "Publish job for your organization or find best candidate that fits with you goal .", icon: "🔍", url: "/packages", gradient: "from-blue-500 to-cyan-500", darkGradient: "from-blue-600 to-cyan-600" },
+  { title: "Accounts and Payroll", description: "Streamline your financial operations and payroll management with precision.", icon: "💼", url: "/contact", gradient: "from-green-500 to-emerald-500", darkGradient: "from-green-600 to-emerald-600" },
+  { title: "Digital Marketing", description: "Enhance your online presence and connect with your audience effectively.", icon: "📈", url: "/Main_blog_page", gradient: "from-purple-500 to-pink-500", darkGradient: "from-purple-600 to-pink-600" },
+  { title: "Staffing", description: "Find the right talent for your organization with our expert staffing solutions.", icon: "🤝", url: "/contact", gradient: "from-orange-500 to-red-500", darkGradient: "from-orange-600 to-red-600" },
+  { title: "Web & Mobile App Development", description: "Develop and maintain high-quality web and mobile applications tailored to your needs.", icon: "📱", url: "/contact", gradient: "from-indigo-500 to-blue-500", darkGradient: "from-indigo-600 to-blue-600" },
+  { title: "BPO", description: "Optimize business processes and reduce operational costs with our BPO services.", icon: "📞", url: "/contact", gradient: "from-cyan-500 to-blue-500", darkGradient: "from-cyan-600 to-blue-600" },
+  { title: "Cybersecurity Services", description: "Protect your business with advanced cybersecurity solutions.", icon: "🔒", url: "/contact", gradient: "from-red-500 to-pink-500", darkGradient: "from-red-600 to-pink-600" },
+  { title: "Cloud Computing Services", description: "Leverage cloud technologies to improve scalability and flexibility.", icon: "☁️", url: "/contact", gradient: "from-sky-500 to-cyan-500", darkGradient: "from-sky-600 to-cyan-600" },
+  { title: "AI & Machine Learning", description: "Integrate AI and ML to automate processes and drive innovation.", icon: "🤖", url: "/Main_blog_page", gradient: "from-violet-500 to-purple-500", darkGradient: "from-violet-600 to-purple-600" },
+];
+
 const OurService = () => {
   const navigate = useNavigate();
-  const services = [
-    {
-      title: "Job Posting & Candidate Database Services",
-      description:
-        "Publish job for your organization or find best candidate that fits with you goal .",
-      icon: "🔍",
-      url: "/packages",
-      gradient: "from-blue-500 to-cyan-500",
-      darkGradient: "from-blue-600 to-cyan-600",
-    },
-    {
-      title: "Accounts and Payroll",
-      description:
-        "Streamline your financial operations and payroll management with precision.",
-      icon: "💼",
-      url: "/contact",
-      gradient: "from-green-500 to-emerald-500",
-      darkGradient: "from-green-600 to-emerald-600",
-    },
-    {
-      title: "Digital Marketing",
-      description:
-        "Enhance your online presence and connect with your audience effectively.",
-      icon: "📈",
-      url: "/Main_blog_page",
-      gradient: "from-purple-500 to-pink-500",
-      darkGradient: "from-purple-600 to-pink-600",
-    },
-    {
-      title: "Staffing",
-      description:
-        "Find the right talent for your organization with our expert staffing solutions.",
-      icon: "🤝",
-      url: "/contact",
-      gradient: "from-orange-500 to-red-500",
-      darkGradient: "from-orange-600 to-red-600",
-    },
-    {
-      title: "Web & Mobile App Development",
-      description:
-        "Develop and maintain high-quality web and mobile applications tailored to your needs.",
-      icon: "📱",
-      url: "/contact",
-      gradient: "from-indigo-500 to-blue-500",
-      darkGradient: "from-indigo-600 to-blue-600",
-    },
-    {
-      title: "BPO",
-      description:
-        "Optimize business processes and reduce operational costs with our BPO services.",
-      icon: "📞",
-      url: "/contact",
-      gradient: "from-cyan-500 to-blue-500",
-      darkGradient: "from-cyan-600 to-blue-600",
-    },
-    {
-      title: "Cybersecurity Services",
-      description:
-        "Protect your business with advanced cybersecurity solutions.",
-      icon: "🔒",
-      url: "/contact",
-      gradient: "from-red-500 to-pink-500",
-      darkGradient: "from-red-600 to-pink-600",
-    },
-    {
-      title: "Cloud Computing Services",
-      description:
-        "Leverage cloud technologies to improve scalability and flexibility.",
-      icon: "☁️",
-      url: "/contact",
-      gradient: "from-sky-500 to-cyan-500",
-      darkGradient: "from-sky-600 to-cyan-600",
-    },
-    {
-      title: "AI & Machine Learning",
-      description:
-        "Integrate AI and ML to automate processes and drive innovation.",
-      icon: "🤖",
-      url: "/Main_blog_page",
-      gradient: "from-violet-500 to-purple-500",
-      darkGradient: "from-violet-600 to-purple-600",
-    },
-  ];
 
   return (
     <>
@@ -221,7 +149,7 @@ const OurService = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
-              {services.map((service, index) => (
+              {SERVICES.map((service, index) => (
                 <div
                   key={index}
                   className="

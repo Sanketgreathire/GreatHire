@@ -1913,7 +1913,7 @@ color: rgb(160, 67, 246);
 
       {/* ================= VIDEO BANNER SECTION ================= */}
       {/* Banner Section */}
-      <section className="video-banner-section mt-20 mb-24 dark:bg-gray-900">
+      <section className="video-banner-section -mt-[117px] pt-[117px] mb-24 dark:bg-gray-900">
         <img
           className="video-background w-full h-[100px] object-cover"
           src={bannerBlog}

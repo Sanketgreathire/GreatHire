@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Users, Target, Award, Building2, Briefcase, ChevronRight, Sparkles, Crown, BadgeCheck, Linkedin } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
@@ -645,28 +645,24 @@ function App() {
 
   const [isCenter, setIsCenter] = useState(false);
 
-  // Internship auto growth logic
   const baseInterns = 150;
   const growthPerMonth = 10;
   const startDate = new Date("2024-01-01");
 
-  const now = new Date();
+  const currentInternCount = useMemo(() => {
+    const now = new Date();
+    const monthsPassed = (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth());
+    return baseInterns + (monthsPassed * growthPerMonth);
+  }, []);
 
-  const monthsPassed =
-    (now.getFullYear() - startDate.getFullYear()) * 12 +
-    (now.getMonth() - startDate.getMonth());
-
-  const currentInternCount =
-    baseInterns + (monthsPassed * growthPerMonth);
-
-  const allTeamMembers = departments.flatMap((dept) =>
+  const allTeamMembers = useMemo(() => departments.flatMap((dept) =>
     dept.members.map((member) => ({
       ...member,
       department: dept.name,
       verified: true,
       isLeader: member.name === "Tanmai"
     }))
-  );
+  ), []);
 
   const getDepartmentBadge = (department) => {
 
@@ -716,7 +712,7 @@ function App() {
         <Navbar />
 
         {/* Hero Section - Enhanced */}
-        <div className="relative w-full h-[300px] overflow-hidden bg-gradient-to-b from-blue-300 to-blue-600 dark:from-blue-900 dark:to-purple-900 shadow-2xl max-w-full">
+        <div className="relative w-full overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 shadow-2xl max-w-full py-16 -mt-[117px]">
           {/* <div className="absolute inset-0">
             <Silk
               speed={5}
@@ -734,7 +730,7 @@ function App() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-[500px] sm:h-[500px] bg-blue-400/10 dark:bg-blue-600/20 rounded-full blur-3xl"></div>
           </div>
 
-          <div className="relative z-10 text-white h-full flex items-center">
+          <div className="relative z-10 text-white w-full pt-[117px]">
             <div className="container mx-auto px-4 sm:px-6 lg:px-12 max-w-full">
               <div className="max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 sm:px-4 py-2 rounded-full mb-2 animate-fade-in">
@@ -845,6 +841,7 @@ function App() {
 
                       <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white dark:border-gray-900 shadow-md">
                         <img
+                          loading="lazy"
                           src={leader.image}
                           alt={leader.name}
                           className="w-full h-full object-cover"
@@ -1040,7 +1037,8 @@ function App() {
                     <img
                       src={client.logo}
                       alt={client.name}
-                      className="max-h-full max-w-full object-contain transition-all duration-300 group-hover:scale-110"
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain group-hover:scale-110"
                     />
                   </div>
                 </SwiperSlide>
@@ -1191,6 +1189,7 @@ function App() {
                 <img
                   src={member.image}
                   alt={member.name}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
 

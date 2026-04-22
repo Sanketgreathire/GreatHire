@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCandidateCredits } from "@/redux/companySlice";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
-import { BsSearch } from "react-icons/bs";
 import { COMPANY_API_END_POINT, APPLICATION_API_END_POINT, EMAIL_API_END_POINT, JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { FiUsers, FiTrash2 } from "react-icons/fi";
 import { X } from "lucide-react";
@@ -13,6 +10,8 @@ import ApplicantDetails from "./ApplicantDetails";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
+import { logOut } from "@/redux/authSlice";
+import { removeCompany } from "@/redux/companySlice";
 
 const ALL_STATUSES = ["Pending", "Interview Schedule", "Shortlisted", "Rejected"];
 
@@ -61,8 +60,13 @@ const AllApplicantsList = () => {
   const { user } = useSelector((state) => state.auth);
   const companyId = company?._id;
 
+  const handle401 = () => {
+    dispatch(logOut());
+    dispatch(removeCompany());
+    navigate("/recruiter/login");
+  };
+
   const [applicants, setApplicants] = useState(_cachedApplicants);
-  const [filteredApplicants, setFilteredApplicants] = useState(_cachedApplicants);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedJob, setSelectedJob] = useState("All");
@@ -82,7 +86,6 @@ const AllApplicantsList = () => {
 
   useEffect(() => {
     if (!companyId) return;
-    // Clear cache if different company
     if (_cacheCompanyId && _cacheCompanyId !== companyId) {
       _cachedApplicants = [];
       _cachedScoreMap = {};
@@ -91,71 +94,53 @@ const AllApplicantsList = () => {
       localStorage.removeItem("gh_scoreMap");
       localStorage.removeItem("gh_sortedIds");
       localStorage.removeItem("gh_cacheCompanyId");
-      _unlockedIds = new Set();
       setUnlockedIds(new Set());
       setApplicants([]);
-      setFilteredApplicants([]);
       setScoreMap({});
       setSortedIdsCount(0);
-      setUnlockedIds(new Set());
     }
     _cacheCompanyId = companyId;
     localStorage.setItem("gh_cacheCompanyId", companyId);
-    fetchApplicants();
-  }, [companyId]);
 
-  useEffect(() => {
-    if (!companyId) return;
-    axios.get(`${JOB_API_END_POINT}/jobs-list/${companyId}`, { withCredentials: true })
-      .then(res => { if (res.data.success) setJobsList(res.data.jobs || []); })
-      .catch(() => {});
-  }, [companyId]);
-
-  const fetchApplicants = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${COMPANY_API_END_POINT}/applicants/${companyId}`,
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        const validApplicants = response.data.applications.filter(
-          (app) => app.applicant != null
-        );
-        _cachedApplicants = validApplicants;
-        setApplicants(validApplicants);
-        setFilteredApplicants(validApplicants);
+    // Fetch both in parallel
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+        const [appRes, jobRes] = await Promise.all([
+          axios.get(`${COMPANY_API_END_POINT}/applicants/${companyId}`, { withCredentials: true }),
+          axios.get(`${JOB_API_END_POINT}/jobs-list/${companyId}`, { withCredentials: true }),
+        ]);
+        if (appRes.data.success) {
+          const valid = appRes.data.applications.filter(a => a.applicant != null);
+          _cachedApplicants = valid;
+          setApplicants(valid);
+        }
+        if (jobRes.data.success) setJobsList(jobRes.data.jobs || []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (error?.response?.status === 401) handle401();
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching applicants:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchAll();
+  }, [companyId]);
 
-  useEffect(() => {
+  const filteredApplicants = useMemo(() => {
+    setCurrentPage(1);
     let filtered = applicants;
-
-    if (selectedJob !== "All") {
-      filtered = filtered.filter((app) => app.job?.jobDetails?.title === selectedJob);
-    }
-
-    if (selectedStatus !== "All") {
-      filtered = filtered.filter((app) => app.status === selectedStatus);
-    }
-
+    if (selectedJob !== "All") filtered = filtered.filter(a => a.job?.jobDetails?.title === selectedJob);
+    if (selectedStatus !== "All") filtered = filtered.filter(a => a.status === selectedStatus);
     if (searchTerm.trim()) {
-      filtered = filtered.filter(
-        (app) =>
-          app.applicant?.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.applicant?.emailId?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          app.applicant?.phoneNumber?.number?.includes(searchTerm)
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(a =>
+        a.applicant?.fullname?.toLowerCase().includes(term) ||
+        a.applicant?.emailId?.email?.toLowerCase().includes(term) ||
+        a.applicant?.phoneNumber?.number?.includes(searchTerm)
       );
     }
-
-    setFilteredApplicants(filtered);
-    setCurrentPage(1);
-  }, [selectedStatus, selectedJob, searchTerm, applicants]);
+    return filtered;
+  }, [applicants, selectedJob, selectedStatus, searchTerm]);
 
   const handleStatusChange = async (applicationId, rawValue) => {
     const newStatus = rawValue.trim();
@@ -265,21 +250,28 @@ const AllApplicantsList = () => {
     }
   };
 
-  const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage);
+  const totalPages = useMemo(() => Math.ceil(filteredApplicants.length / itemsPerPage), [filteredApplicants, itemsPerPage]);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const visibleApplicants = isStarterPlan ? filteredApplicants.slice(0, STARTER_LIMIT) : filteredApplicants;
-  const sortedApplicants = _cachedSortedIds.length > 0
-    ? [
-        ..._cachedSortedIds.map(id => visibleApplicants.find(a => a._id === id)).filter(Boolean),
-        ...visibleApplicants.filter(a => !_cachedSortedIds.includes(a._id))
-      ]
-    : visibleApplicants;
-  const finalApplicants = [
-    ...sortedApplicants.filter(a => a.status !== "Rejected"),
-    ...sortedApplicants.filter(a => a.status === "Rejected"),
-  ];
-  const currentApplicants = finalApplicants.slice(indexOfFirstItem, indexOfLastItem);
+
+  const visibleApplicants = useMemo(() =>
+    isStarterPlan ? filteredApplicants.slice(0, STARTER_LIMIT) : filteredApplicants,
+    [filteredApplicants, isStarterPlan]
+  );
+
+  const currentApplicants = useMemo(() => {
+    const sorted = _cachedSortedIds.length > 0
+      ? [
+          ..._cachedSortedIds.map(id => visibleApplicants.find(a => a._id === id)).filter(Boolean),
+          ...visibleApplicants.filter(a => !_cachedSortedIds.includes(a._id))
+        ]
+      : visibleApplicants;
+    const final = [
+      ...sorted.filter(a => a.status !== "Rejected"),
+      ...sorted.filter(a => a.status === "Rejected"),
+    ];
+    return final.slice(indexOfFirstItem, indexOfLastItem);
+  }, [visibleApplicants, indexOfFirstItem, indexOfLastItem]);
 
   return (
     <>

@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* Root CSS Variables */
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -32,7 +31,6 @@
     --radius: 0.5rem;
   }
 
-  /* Dark mode adjustments */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -60,114 +58,36 @@
     --chart-5: 340 75% 55%;
   }
 
-  /* Default CSS reset */
-  * {
-    border-color: hsl(var(--border));
-  }
-
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-
-  html {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-
-  .paused {
-    animation-play-state: paused !important;
-  }
+  * { border-color: hsl(var(--border)); }
+  body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); overflow-x: hidden; max-width: 100vw; }
+  html { overflow-x: hidden; max-width: 100vw; }
 }
 
-/* Keyframes for continuous scrolling animation */
-@keyframes scrollLoop {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%); /* Move by the entire width (effectively wrapping content) */
-  }
+@layer utilities {
+  .filter-scrollbar::-webkit-scrollbar { width: 6px; }
+  .filter-scrollbar::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 9999px; }
+  .filter-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+  .filter-scrollbar { scrollbar-width: thin; scrollbar-color: #93c5fd #f1f5f9; scrollbar-gutter: stable; }
 }
 
-/* Apply scrolling animation */
-.carousel {
-  display: flex;
-  flex-wrap: nowrap;
-  animation-name: scrollLoop;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
+@keyframes scrollLoop { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.carousel { display: flex; flex-wrap: nowrap; animation: scrollLoop linear infinite; }
+.carousel-wrapper:hover .carousel { animation-play-state: paused; }
+.paused { animation-play-state: paused !important; }
 
-/* Pause animation on hover */
-.carousel-wrapper:hover .carousel {
-  animation-play-state: paused;
-}
+@keyframes premiumGlow { 0%, 100% { filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4)); } 50% { filter: drop-shadow(0 0 14px rgba(14, 165, 233, 0.9)); } }
+.premium-glow { animation: premiumGlow 2s ease-in-out infinite; }
 
-.paused {
-  animation-play-state: paused !important;
-}
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.animate-scroll { animation: scroll 30s linear infinite; }
+.animate-scroll:hover { animation-play-state: paused; }
 
-/* Scoped custom scrollbar only for FilterCard */
-.filter-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
+@keyframes leaderGlow { 0%, 100% { box-shadow: 0 0 20px rgba(234,179,8,0.4); } 50% { box-shadow: 0 0 40px rgba(234,179,8,0.8); } }
+.leader-glow { animation: leaderGlow 3s infinite ease-in-out; }
 
-.filter-scrollbar::-webkit-scrollbar-thumb {
-  background: #93c5fd; /* blue-300 */
-  border-radius: 9999px;
-}
+/* Marquee scroll animation */
+@keyframes scrollInfinite { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.animate-scroll-infinite { animation: scrollInfinite 30s linear infinite; }
 
-.filter-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9; /* slate-100 */
-}
-
-.filter-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #93c5fd #f1f5f9;
-  scrollbar-gutter: stable;
-}
-
-@keyframes premiumGlow {
-  0% {
-    filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4));
-  }
-  50% {
-    filter: drop-shadow(0 0 14px rgba(14, 165, 233, 0.9));
-  }
-  100% {
-    filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4));
-  }
-}
-
-.premium-glow {
-  animation: premiumGlow 2s ease-in-out infinite;
-}
-
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-scroll {
-  animation: scroll 30s linear infinite;
-}
-
-.animate-scroll:hover {
-  animation-play-state: paused;
-}
-
-.leader-glow {
-  animation: leaderGlow 3s infinite ease-in-out;
-}
-
-@keyframes leaderGlow {
-  0%,100% { box-shadow: 0 0 20px rgba(234,179,8,0.4); }
-  50% { box-shadow: 0 0 40px rgba(234,179,8,0.8); }
-}
+/* Below-fold content visibility optimization */
+.content-below-fold { content-visibility: auto; contain-intrinsic-size: 0 500px; }

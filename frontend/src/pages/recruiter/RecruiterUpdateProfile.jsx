@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,11 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
 
   const dispatch = useDispatch();
 
-  // Handles input field changes
-  const changeEventHandler = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-  };
+  const changeEventHandler = useCallback((e) => {
+    setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }, []);
 
-  // Handles profile image selection and preview
-  const handleImageChange = (e) => {
+  const handleImageChange = useCallback((e) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
@@ -48,34 +46,26 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
       reader.readAsDataURL(file);
       setInput((prev) => ({ ...prev, profilePhoto: file }));
     }
-  };
+  }, []);
 
-  // Handles form submission to update recruiter profile
-  const submitHandler = async (e) => {
+  const submitHandler = useCallback(async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("position", input.position);
-
-    if (input.profilePhoto) {
-      formData.append("profilePhoto", input.profilePhoto);
-    }
+    if (input.profilePhoto) formData.append("profilePhoto", input.profilePhoto);
 
     try {
       setLoading(true);
       const res = await axios.put(
         `${RECRUITER_API_END_POINT}/profile/update`,
         formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
+        { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
       );
-
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        setOpen(false); // Close modal after successful update
+        setOpen(false);
       }
       toast.success(res.data.message);
     } catch (error) {
@@ -83,7 +73,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, dispatch, setOpen]);
 
   // Return null if modal is not open
   if (!open) return null;

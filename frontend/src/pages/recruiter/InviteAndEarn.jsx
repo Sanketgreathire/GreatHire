@@ -1,8 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { FiCopy, FiCheck, FiGift, FiBriefcase, FiShare2 } from "react-icons/fi";
 import { Helmet } from "react-helmet-async";
+
+const REFERRAL_GOAL = 15;
+
+const STEPS = [
+  { icon: "🔗", title: "Share your link", desc: "Send your unique referral link to candidates." },
+  { icon: "✅", title: "They sign up", desc: "Candidate registers using your referral link." },
+  { icon: "📝", title: "They complete profile", desc: "Candidate fills in their full profile." },
+  { icon: "🎁", title: "You earn +1 job post", desc: "Every 15 completed profiles earns you 1 free job post." },
+];
 
 const InviteAndEarn = () => {
   const { user } = useSelector((state) => state.auth);
@@ -11,20 +20,22 @@ const InviteAndEarn = () => {
   const referralCode = user?.referralCode || "—";
   const remainingJobPosts = user?.remainingJobPosts ?? 0;
   const candidateReferralsCount = user?.candidateReferralsCount ?? 0;
-  const REFERRAL_GOAL = 15;
-  const referralsLeft = REFERRAL_GOAL - candidateReferralsCount;
-  const progressPercent = Math.round((candidateReferralsCount / REFERRAL_GOAL) * 100);
-  const referralLink = `${window.location.origin}/signup?ref=${referralCode}`;
 
-  const handleCopy = () => {
+  const { referralsLeft, progressPercent, referralLink } = useMemo(() => ({
+    referralsLeft: REFERRAL_GOAL - candidateReferralsCount,
+    progressPercent: Math.min(Math.round((candidateReferralsCount / REFERRAL_GOAL) * 100), 100),
+    referralLink: `${window.location.origin}/signup?ref=${referralCode}`,
+  }), [candidateReferralsCount, referralCode]);
+
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(referralLink).then(() => {
       setCopied(true);
       toast.success("Referral link copied!");
       setTimeout(() => setCopied(false), 2500);
     });
-  };
+  }, [referralLink]);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     if (navigator.share) {
       try {
         await navigator.share({
@@ -36,14 +47,7 @@ const InviteAndEarn = () => {
     } else {
       handleCopy();
     }
-  };
-
-  const steps = [
-    { icon: "🔗", title: "Share your link", desc: "Send your unique referral link to candidates." },
-    { icon: "✅", title: "They sign up", desc: "Candidate registers using your referral link." },
-    { icon: "📝", title: "They complete profile", desc: "Candidate fills in their full profile." },
-    { icon: "🎁", title: "You earn +1 job post", desc: "Every 15 completed profiles earns you 1 free job post." },
-  ];
+  }, [referralLink, handleCopy]);
 
   return (
     <>
@@ -139,7 +143,7 @@ const InviteAndEarn = () => {
               <FiGift className="text-blue-500" /> How it works
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {steps.map((step, i) => (
+              {STEPS.map((step, i) => (
                 <div
                   key={i}
                   className="flex items-start gap-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4"

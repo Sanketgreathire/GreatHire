@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -167,7 +167,7 @@ const RecruiterResumeAnalyzer = () => {
   }, [company?._id]);
 
   // ── Fetch applicants when job selected ───────────────────
-  const fetchApplicants = async (jobId) => {
+  const fetchApplicants = useCallback(async (jobId) => {
     setApplicantsLoading(true);
     setApplicants([]);
     setResults(null);
@@ -200,41 +200,26 @@ const RecruiterResumeAnalyzer = () => {
     } finally {
       setApplicantsLoading(false);
     }
-  };
+  }, []);
 
   // ── Resume upload handler ─────────────────────────────────
-  const handleResumeUpload = async (applicantId, file) => {
+  const handleResumeUpload = useCallback(async (applicantId, file) => {
     if (!file) return;
-    setUploadedResumes((prev) => ({
-      ...prev,
-      [applicantId]: { file, text: "", loading: true, error: "" },
-    }));
+    setUploadedResumes((prev) => ({ ...prev, [applicantId]: { file, text: "", loading: true, error: "" } }));
     try {
       const text = await extractTextFromFile(file);
-      setUploadedResumes((prev) => ({
-        ...prev,
-        [applicantId]: { file, text, loading: false, error: "" },
-      }));
+      setUploadedResumes((prev) => ({ ...prev, [applicantId]: { file, text, loading: false, error: "" } }));
     } catch (err) {
-      setUploadedResumes((prev) => ({
-        ...prev,
-        [applicantId]: { file, text: "", loading: false, error: err.message },
-      }));
+      setUploadedResumes((prev) => ({ ...prev, [applicantId]: { file, text: "", loading: false, error: err.message } }));
     }
-  };
+  }, []);
 
-  const removeUploadedResume = (applicantId) => {
-    setUploadedResumes((prev) => {
-      const next = { ...prev };
-      delete next[applicantId];
-      return next;
-    });
-    if (fileInputRefs.current[applicantId]) {
-      fileInputRefs.current[applicantId].value = "";
-    }
-  };
+  const removeUploadedResume = useCallback((applicantId) => {
+    setUploadedResumes((prev) => { const next = { ...prev }; delete next[applicantId]; return next; });
+    if (fileInputRefs.current[applicantId]) fileInputRefs.current[applicantId].value = "";
+  }, []);
 
-  const handleJobSelect = (jobId) => {
+  const handleJobSelect = useCallback((jobId) => {
     const job = jobs.find((j) => j._id === jobId);
     setSelectedJob(job || null);
     setResults(null);
@@ -242,10 +227,10 @@ const RecruiterResumeAnalyzer = () => {
     setApplicants([]);
     setUploadedResumes({});
     if (job) fetchApplicants(jobId);
-  };
+  }, [jobs, fetchApplicants]);
 
   // ── Analyze ───────────────────────────────────────────────
-  const analyze = async () => {
+  const analyze = useCallback(async () => {
     if (!selectedJob) { setError("Please select a job first."); return; }
     if (applicants.length === 0) { setError("No applicants to analyze."); return; }
     setError("");
@@ -254,41 +239,31 @@ const RecruiterResumeAnalyzer = () => {
     try {
       const jobTitle = selectedJob.jobDetails?.title || "Job Role";
       const jobDesc = jobDescOverride.trim() || selectedJob.jobDetails?.description || "";
-
-      // Merge uploaded resume text into applicant profiles
       const enrichedApplicants = applicants.map((a) => {
         const uploaded = uploadedResumes[a._id];
-        return {
-          ...a,
-          bio: uploaded?.text
-            ? `RESUME TEXT:\n${uploaded.text.slice(0, 3000)}`
-            : a.bio,
-        };
+        return { ...a, bio: uploaded?.text ? `RESUME TEXT:\n${uploaded.text.slice(0, 3000)}` : a.bio };
       });
-
       const raw = await callGemini(buildPrompt(enrichedApplicants, jobTitle, jobDesc));
       const parsed = extractJSON(raw);
       if (!Array.isArray(parsed.results)) throw new Error("Invalid AI response format.");
-
       const merged = parsed.results
         .map((r) => ({ ...r, applicant: applicants[r.index] }))
         .filter((r) => r.applicant);
-
       setResults(merged);
     } catch (err) {
       setError(err.message || "Analysis failed. Please try again.");
     } finally {
       setAnalyzing(false);
     }
-  };
+  }, [selectedJob, applicants, jobDescOverride, uploadedResumes]);
 
-  const sorted = results
-    ? [...results].sort((a, b) =>
-        sortBy === "score"
-          ? b.score - a.score
-          : a.applicant.name.localeCompare(b.applicant.name)
-      )
-    : [];
+  const sorted = useMemo(() =>
+    results
+      ? [...results].sort((a, b) =>
+          sortBy === "score" ? b.score - a.score : a.applicant.name.localeCompare(b.applicant.name)
+        )
+      : []
+  , [results, sortBy]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6 pt-20">

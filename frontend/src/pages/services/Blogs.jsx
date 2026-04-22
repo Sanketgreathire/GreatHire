@@ -659,7 +659,7 @@ const Blogs = () => {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
         {/* Hero Section - Reduced Padding */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white -mt-[117px] pt-[117px]">
           <div className="absolute inset-0 bg-black opacity-10"></div>
           <div className="absolute inset-0">
             <div className="absolute top-10 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>

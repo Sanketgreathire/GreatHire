@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Share2 } from "lucide-react";
@@ -14,36 +14,33 @@ const ReferAndBoost = () => {
   const referralCode = user?.referralCode || "—";
   const referralCount = user?.referralCount || 0;
   const isProfileBoosted = user?.isProfileBoosted || false;
-  const referralLink = `${window.location.origin}/signup?ref=${referralCode}`;
 
-  const handleCopy = () => {
+  const { referralLink, progressPercent, remaining } = useMemo(() => ({
+    referralLink: `${window.location.origin}/signup?ref=${referralCode}`,
+    progressPercent: Math.min((referralCount / REFERRAL_GOAL) * 100, 100),
+    remaining: REFERRAL_GOAL - referralCount,
+  }), [referralCode, referralCount]);
+
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(referralLink).then(() => {
       setCopied(true);
       toast.success("Referral link copied!");
       setTimeout(() => setCopied(false), 2500);
     });
-  };
+  }, [referralLink]);
 
-  const handleShare = async () => {
-    const shareData = {
-      title: "Join GreatHire!",
-      text: `Use my referral code ${referralCode} to sign up on GreatHire and kickstart your career! 🚀`,
-      url: referralLink,
-    };
+  const handleShare = useCallback(async () => {
+    const text = `Use my referral code ${referralCode} to sign up on GreatHire and kickstart your career! 🚀`;
     if (navigator.share) {
       try {
-        await navigator.share(shareData);
+        await navigator.share({ title: "Join GreatHire!", text, url: referralLink });
       } catch (err) {
         if (err.name !== "AbortError") toast.error("Share failed.");
       }
     } else {
-      // Fallback: open WhatsApp
-      const waUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + " " + referralLink)}`;
-      window.open(waUrl, "_blank");
+      window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + referralLink)}`, "_blank");
     }
-  };
-
-  const progressPercent = Math.min((referralCount / REFERRAL_GOAL) * 100, 100);
+  }, [referralCode, referralLink]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors duration-300">
@@ -124,7 +121,7 @@ const ReferAndBoost = () => {
             </div>
             {referralCount < REFERRAL_GOAL && (
               <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-                {REFERRAL_GOAL - referralCount} more referral{REFERRAL_GOAL - referralCount !== 1 ? "s" : ""} to unlock profile boost!
+                {remaining} more referral{remaining !== 1 ? "s" : ""} to unlock profile boost!
               </p>
             )}
           </div>

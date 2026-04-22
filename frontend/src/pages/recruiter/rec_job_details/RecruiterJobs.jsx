@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Eye, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -26,7 +26,7 @@ const RecruiterJobs = ({ recruiterId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const getJobsByRecruiter = async (recruiterId, page = 1) => {
+  const getJobsByRecruiter = useCallback(async (recruiterId, page = 1) => {
     try {
       setLoading(true);
       const res = await axios.get(
@@ -42,19 +42,19 @@ const RecruiterJobs = ({ recruiterId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (recruiterId) getJobsByRecruiter(recruiterId, currentPage);
-  }, [recruiterId, currentPage]);
+  }, [recruiterId, currentPage, getJobsByRecruiter]);
 
-  const handleJobDetailsClick = (jobId) => {
+  const handleJobDetailsClick = useCallback((jobId) => {
     if (user?.role === "recruiter")
       navigate(`/recruiter/dashboard/job-details/${jobId}`);
     else navigate(`/admin/job/details/${jobId}`);
-  };
+  }, [user?.role, navigate]);
 
-  const toggleActive = async (jobId, isActive) => {
+  const toggleActive = useCallback(async (jobId, isActive) => {
     try {
       setLoading((p) => ({ ...p, [jobId]: true }));
       const res = await axios.put(
@@ -62,7 +62,6 @@ const RecruiterJobs = ({ recruiterId }) => {
         { jobId, isActive, companyId: company?._id },
         { withCredentials: true }
       );
-
       if (res.data.success) {
         setJobs((jobs) =>
           jobs.map((j) =>
@@ -77,9 +76,9 @@ const RecruiterJobs = ({ recruiterId }) => {
     } finally {
       setLoading((p) => ({ ...p, [jobId]: false }));
     }
-  };
+  }, [company?._id, user?.role, dispatch]);
 
-  const deleteJob = async (jobId) => {
+  const deleteJob = useCallback(async (jobId) => {
     try {
       dsetLoading((p) => ({ ...p, [jobId]: true }));
       const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
@@ -97,22 +96,21 @@ const RecruiterJobs = ({ recruiterId }) => {
     } finally {
       dsetLoading((p) => ({ ...p, [jobId]: false }));
     }
-  };
+  }, [company?._id, dispatch]);
 
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = useMemo(() => jobs.filter((job) => {
     const t = searchTerm.toLowerCase();
-    const match =
+    const match = !searchTerm.trim() || (
       job.jobDetails.title.toLowerCase().includes(t) ||
       job.jobDetails.companyName.toLowerCase().includes(t) ||
-      job.jobDetails.jobType.toLowerCase().includes(t);
-
+      job.jobDetails.jobType.toLowerCase().includes(t)
+    );
     const statusMatch =
       filterStatus === "all" ||
       (filterStatus === "active" && job.jobDetails.isActive) ||
       (filterStatus === "inactive" && !job.jobDetails.isActive);
-
     return match && statusMatch;
-  });
+  }), [jobs, searchTerm, filterStatus]);
 
   return (
     <>

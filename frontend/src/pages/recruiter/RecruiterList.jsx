@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { FiMail } from "react-icons/fi";
@@ -30,24 +30,43 @@ const RecruiterList = () => {
   const [emailMessage, setEmailMessage] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
 
-  const toggleSelect = (id) => {
+  const isAdmin = user?.emailId?.email === company?.adminEmail;
+
+  const filteredRecruiters = useMemo(() => (
+    (recruiters || []).filter((recruiter) => {
+      if (!recruiter || typeof recruiter !== "object" || !recruiter.fullname) return false;
+      const searchLower = searchTerm.toLowerCase();
+      const searchMatch = !searchTerm.trim() || (
+        recruiter.fullname.toLowerCase().includes(searchLower) ||
+        recruiter.emailId?.email?.toLowerCase().includes(searchLower) ||
+        (recruiter.phoneNumber?.number || "").includes(searchTerm)
+      );
+      const statusMatch =
+        filterStatus === "all" ||
+        (filterStatus === "active" && recruiter.isActive) ||
+        (filterStatus === "inactive" && !recruiter.isActive);
+      return searchMatch && statusMatch;
+    })
+  ), [recruiters, searchTerm, filterStatus]);
+
+  const toggleSelect = useCallback((id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
-  };
+  }, []);
 
-  const openEmailModal = (singleEmail = null) => {
+  const openEmailModal = useCallback((singleEmail = null) => {
     setEmailTarget(singleEmail);
     setEmailSubject("Message from GreatHire Recruitment Team");
     setEmailMessage(
       `Dear Recruiter,\n\nWe wanted to reach out to you regarding your account on GreatHire.\n\nPlease feel free to contact us if you have any questions.\n\nBest regards,\nThe GreatHire Team`
     );
     setEmailModal(true);
-  };
+  }, []);
 
-  const handleSendEmail = async () => {
+  const handleSendEmail = useCallback(async () => {
     const emails = emailTarget
       ? [emailTarget]
       : filteredRecruiters
@@ -76,23 +95,17 @@ const RecruiterList = () => {
     } finally {
       setSendingEmail(false);
     }
-  };
+  }, [emailTarget, emailSubject, emailMessage, filteredRecruiters, selectedIds]);
 
-  // Function to toggle the active status of a recruiter
-  const toggleActive = async (event, recruiterId, isActive) => {
-    event.stopPropagation(); // Prevents event bubbling
+  const toggleActive = useCallback(async (event, recruiterId, isActive) => {
+    event.stopPropagation();
+    setLoading((prev) => ({ ...prev, [recruiterId]: true }));
     try {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.put(
         `${RECRUITER_API_END_POINT}/toggle-active`,
-        {
-          recruiterId,
-          companyId: company?._id,
-          isActive,
-        },
+        { recruiterId, companyId: company?._id, isActive },
         { withCredentials: true }
       );
-
       if (response.data.success) {
         dispatch(toggleActiveStatus({ recruiterId, isActive }));
         toast.success(response.data.message);
@@ -100,24 +113,19 @@ const RecruiterList = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error toggling recruiter:", error);
-      toast.error(
-        "There was an error toggling the recruiter. Please try again later."
-      );
+      toast.error("There was an error toggling the recruiter. Please try again later.");
     } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+      setLoading((prev) => ({ ...prev, [recruiterId]: false }));
     }
-  };
+  }, [company?._id, dispatch]);
 
-  // Function to delete a recruiter
-  const deleteRecruiter = async (recruiterId, userEmail, companyId) => {
+  const deleteRecruiter = useCallback(async (recruiterId, userEmail, companyId) => {
+    setLoading((prev) => ({ ...prev, [recruiterId]: true }));
     try {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: { userEmail, companyId },
         withCredentials: true,
       });
-
       if (response.data.success) {
         dispatch(removeUserFromCompany(recruiterId));
         dispatch(removeRecruiter(recruiterId));
@@ -126,51 +134,18 @@ const RecruiterList = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error deleting recruiter:", error);
-      toast.error(
-        "There was an error deleting the recruiter. Please try again later."
-      );
+      toast.error("There was an error deleting the recruiter. Please try again later.");
     } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: false }));
+      setLoading((prev) => ({ ...prev, [recruiterId]: false }));
     }
-  };
+  }, [dispatch]);
 
-  // Confirm deletion of recruiter
-  const onConfirmDelete = () => {
+  const onConfirmDelete = useCallback(() => {
     setShowDeleteModal(false);
-    deleteRecruiter(
-      selectedRecruiter._id,
-      selectedRecruiter.emailId.email,
-      company._id
-    );
-  };
+    deleteRecruiter(selectedRecruiter._id, selectedRecruiter.emailId.email, company._id);
+  }, [selectedRecruiter, company?._id, deleteRecruiter]);
 
-  // Cancel deletion of recruiter
-  const onCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
-
-  // Filtering recruiters based on search term and status
-  const filteredRecruiters = (recruiters || []).filter((recruiter) => {
-    // Ensure recruiter is a valid object before accessing its properties
-    if (!recruiter || typeof recruiter !== "object" || !recruiter.fullname) {
-      return false;
-    }
-    console.log("recruiter", recruiter);
-    const searchMatch =
-      recruiter.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recruiter.emailId.email
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      (recruiter.phoneNumber?.number || "").includes(searchTerm);
-
-    const statusMatch =
-      filterStatus === "all" ||
-      (filterStatus === "active" && recruiter.isActive) ||
-      (filterStatus === "inactive" && !recruiter.isActive);
-
-    return searchMatch && statusMatch;
-  });
+  const onCancelDelete = useCallback(() => setShowDeleteModal(false), []);
 
   return (
     <>
@@ -234,7 +209,7 @@ const RecruiterList = () => {
                 <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                   Position
                 </th>
-                {user?.emailId.email === company?.adminEmail && (
+                {isAdmin && (
                   <>
                     <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
                       Active
@@ -271,7 +246,7 @@ const RecruiterList = () => {
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.emailId.email}</td>
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.phoneNumber?.number || "N/A"}</td>
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.position}</td>
-                    {user?.emailId.email === company?.adminEmail && (
+                    {isAdmin && (
                       <>
                         {recruiter?.emailId.email === company?.adminEmail ? (
                           <>

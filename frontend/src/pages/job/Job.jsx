@@ -1,144 +1,60 @@
-// Import necessary modules and dependencies
-import React, { useState, useEffect } from "react";
-
-// Axios for making API requests
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
-
-// Button component for UI
 import { Button } from "@/components/ui/button";
-
-// Hook for navigation
 import { useNavigate } from "react-router-dom";
-
-// Icon for job application
 import { AiOutlineThunderbolt } from "react-icons/ai";
-
-// Redux hook to access global state
 import { useSelector } from "react-redux";
-
-// Unbookmarked icon
 import { CiBookmark } from "react-icons/ci";
-
-// Bookmarked icon
 import { FaBookmark } from "react-icons/fa";
-
-// API endpoint for job-related actions
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
-
-// Toast notifications for user feedback
 import toast from "react-hot-toast";
-
-// Context for managing job details
 import { useJobDetails } from "@/context/JobDetailsContext";
-
-// Share Job using ShareJob.jsx
 import ShareCard from "./ShareJob";
 import { FiShare2 } from "react-icons/fi";
 
-// imported helmet to apply customized meta tags 
-import { Helmet } from "react-helmet-async";
 
-
-// Job Component - Displays job details and handles bookmarking functionality
 const Job = ({ job }) => {
-
-  // Hook for programmatic navigation
   const navigate = useNavigate();
-
-
-  // Share Jobs
   const [showShareCard, setShowShareCard] = useState(false);
-
-  useEffect(() => {
-    const handleCloseAll = (e) => {
-      if (e.detail !== job._id) {
-        setShowShareCard(false);
-      }
-    };
-
-    window.addEventListener("close-all-share-cards", handleCloseAll);
-    return () => {
-      window.removeEventListener("close-all-share-cards", handleCloseAll);
-    };
-  }, [job._id]);
-
-  const handleShareClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Close others first
-    window.dispatchEvent(new CustomEvent("close-all-share-cards", { detail: job._id }));
-    // Toggle current
-    setShowShareCard((prev) => !prev);
-  };
-
-
-
-  // Functions to manage job bookmarks and selection
-  const { toggleBookmarkStatus, setSelectedJob } = useJobDetails();
-
-  // Get authenticated user details from Redux store
+  const { toggleBookmarkStatus } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
 
-  // Check if the job is bookmarked by the user
-  const isBookmarked = job?.saveJob?.includes(user?._id) || false;
+  const isBookmarked = useMemo(() => job?.saveJob?.includes(user?._id) || false, [job?.saveJob, user?._id]);
+  const isApplied = useMemo(() => job?.application?.some((a) => a.applicant === user?._id) || false, [job?.application, user?._id]);
+  const activeDays = useMemo(() => Math.floor((Date.now() - new Date(job?.createdAt)) / 86400000), [job?.createdAt]);
 
-  // Function to calculate the number of active days since job posting
-  const calculateActiveDays = (createdAt) => {
-    const jobCreatedDate = new Date(createdAt);
-    const currentDate = new Date();
+  useEffect(() => {
+    const handleCloseAll = (e) => { if (e.detail !== job._id) setShowShareCard(false); };
+    window.addEventListener("close-all-share-cards", handleCloseAll);
+    return () => window.removeEventListener("close-all-share-cards", handleCloseAll);
+  }, [job._id]);
 
-    // Time difference in milliseconds
-    const timeDifference = currentDate - jobCreatedDate;
+  const handleShareClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent("close-all-share-cards", { detail: job._id }));
+    setShowShareCard((prev) => !prev);
+  }, [job._id]);
 
-    // Convert milliseconds to days
-    const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    return activeDays;
-  };
-
-  // Check if the user has already applied for this job
-  const isApplied =
-    job?.application?.some(
-      (application) => application.applicant === user?._id
-    ) || false;
-
-  // Function to handle bookmarking a job
-  const handleBookmark = async (jobId) => {
+  const handleBookmark = useCallback(async (jobId) => {
     try {
-      const response = await axios.get(
-        `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
-        {
-          withCredentials: true, // Include credentials for authentication
-        }
-      );
-
-      // If the request is successful, update the bookmark status and show success message
+      const response = await axios.get(`${JOB_API_END_POINT}/bookmark-job/${jobId}`, { withCredentials: true });
       if (response.data.success) {
-        toggleBookmarkStatus(jobId, user?._id); // Toggle bookmark status in context
-        toast.success(response.data.message); // Display success notification
+        toggleBookmarkStatus(jobId, user?._id);
+        toast.success(response.data.message);
       }
-    } catch (error) {
-      console.error(
-        "Error bookmarking job:",
-        error.response?.data?.message || error.message
-      );
-      toast.error("Failed to bookmark the job. Please try again."); // Show error message
+    } catch {
+      toast.error("Failed to bookmark the job. Please try again.");
     }
-  };
+  }, [user?._id, toggleBookmarkStatus]);
+
+  const handleView = useCallback(() => {
+    user ? navigate(`/jobs/${job._id}`) : navigate("/signup");
+  }, [user, navigate, job._id]);
 
 
   return (
-    <>
-
-      <Helmet>
-        <title>Current Job Openings | Easily Apply, Save, and Share Jobs - GreatHire</title>
-        <meta
-          name="description"
-          content="Find the most updated authentic job listings on GreatHire and manage your job search experience. View the entire job description on GreatHire and then apply to jobs confidently. You can save the jobs for later and share job listings with others instantly. GreatHire operates from the state of Hyderabad, India, and is rapidly expanding as a job portal bringing qualified job seekers and reliable companies together from various business segments and locations. It might be that you are looking for a job or applying to various job postings; GreatHire will enable you to find the most suitable jobs quicker and smarter"
-        />
-      </Helmet>
-
-
-      <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 border">
+    <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 border">
         
         {/* Header Section with Badge and Icons */}
         <div className="flex justify-between items-center mb-2 min-h-[28px]">
@@ -244,7 +160,7 @@ const Job = ({ job }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Active {calculateActiveDays(job?.createdAt)} days ago
+              Active {activeDays} days ago
             </p>
           </div>
           <div className="flex items-center text-sm text-blue-700 dark:text-blue-400 gap-2">
@@ -254,19 +170,11 @@ const Job = ({ job }) => {
 
         {/* Details Button */}
         <div className="flex w-full items-center justify-between gap-4">
-          <Button
-            onClick={() => {
-              user ? navigate(`/jobs/${job._id}`) : navigate("/signup");
-            }}
-            variant="outline"
-            className="w-full text-white bg-blue-700 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white dark:border-blue-600 transition-colors"
-          >
+          <Button onClick={handleView} variant="outline" className="w-full text-white bg-blue-700 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600 dark:text-white dark:border-blue-600 transition-colors">
             View
           </Button>
         </div>
-
       </div>
-    </>
   );
 };
 

@@ -201,6 +201,16 @@ userSchema.add({
 // ✅ Index for correct email lookup
 //userSchema.index({ "emailId.email": 1 }, { unique: true });
 
+// ✅ Performance indexes for candidate search
+userSchema.index({ "profile.skills": 1 });
+userSchema.index({ "profile.experience.jobProfile": 1 });
+userSchema.index({ "profile.gender": 1 });
+userSchema.index({ "profile.qualification": 1 });
+userSchema.index({ "address.city": 1 });
+userSchema.index({ "address.state": 1 });
+userSchema.index({ updatedAt: -1 });
+userSchema.index({ isProfileBoosted: -1, updatedAt: -1 });
+
 // ✅ Virtual field so `user.email` works safely
 userSchema.virtual("email").get(function () {
   return this.emailId?.email;
