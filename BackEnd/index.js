@@ -180,7 +180,6 @@ import { setIO } from "./utils/socket.js";
 import notificationService from "./utils/notificationService.js";
 import { startMonthlyFreePlanRenewal } from "./utils/monthlyFreePlanRenewal.js";
 import { startAutoRejectCron } from "./utils/autoRejectApplications.js";
-import { startCompanyProfileReminderJobs } from "./utils/companyProfileReminder.js";
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
@@ -223,9 +222,6 @@ startMonthlyFreePlanRenewal();
 
 // Start auto-reject old applications cron job
 startAutoRejectCron();
-
-// Start company profile reminder cron jobs
-startCompanyProfileReminderJobs();
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);

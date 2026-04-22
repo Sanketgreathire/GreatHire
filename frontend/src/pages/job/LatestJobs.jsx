@@ -1,43 +1,23 @@
-
-import { useEffect, useState, useRef } from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useEffect, useRef } from "react";
 import JobsForYou from "./JobsForYou.jsx";
 import { useJobDetails } from "@/context/JobDetailsContext";
-
-// imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
 
 const LatestJobs = ({ jobs = [] }) => {
   const { setSelectedJob } = useJobDetails();
-  // State to manage loading status
-  const [loading, setLoading] = useState(true);
-  const [firstLoad, setFirstLoad] = useState(true); // track initial load
   const prevJobsRef = useRef();
 
-  // Auto-select first job on initial load or when jobs array changes (pagination)
   useEffect(() => {
     if (jobs.length > 0) {
-      // Check if jobs array actually changed (pagination)
-      const jobsChanged = !prevJobsRef.current || 
+      const jobsChanged = !prevJobsRef.current ||
         prevJobsRef.current.length !== jobs.length ||
         prevJobsRef.current[0]?._id !== jobs[0]?._id;
-      
       if (jobsChanged) {
         setSelectedJob(jobs[0]);
         prevJobsRef.current = jobs;
       }
-      
-      if (firstLoad) setFirstLoad(false);
     }
-  }, [jobs, setSelectedJob, firstLoad]);
-
-  // Simulate a loading delay for a better user experience
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [jobs, firstLoad]);
+  }, [jobs, setSelectedJob]);
 
   return (
     <>
@@ -64,17 +44,7 @@ const LatestJobs = ({ jobs = [] }) => {
           <span className="text-[#384ac2] dark:text-gray-100">Latest  &  Top</span> Job Openings
         </h1> */}
 
-        {/* Display loading animation while fetching jobs */}
-        {loading ? (
-          <div className="flex justify-center items-center h-40 dark:text-gray-100">
-            <DotLottieReact
-              src="https://lottie.host/09b5a31e-9d2e-474f-b6a6-a041c2bba007/uz23eyZvbM.lottie"
-              loop
-              autoplay
-              style={{ width: "300px", height: "300px" }}
-            />
-          </div>
-        ) : jobs.length === 0 ? (
+        {jobs.length === 0 ? (
           /* Display message if no jobs are available */
           <div className="text-center text-gray-500 mt-24 mb-20 dark:gray-100">
             <p className="text-xl font-semibold text-gray-700 dark:gray-100">Uh Oh!</p>

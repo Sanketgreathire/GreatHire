@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Check, ArrowLeft, ChevronDown, TrendingUp, Award, Users, Zap, Shield, Clock, BarChart3, Target } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Check, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -10,7 +10,6 @@ import RecruiterFAQ from "../../components/RecruiterFAQ";
 import Navbar from "@/components/shared/Navbar";
 import DashboardNavigations from "./DashboardNavigations";
 import Footer from "@/components/shared/Footer";
-
 import {
   ORDER_API_END_POINT,
   VERIFICATION_API_END_POINT,
@@ -23,7 +22,34 @@ import { addJobPlan } from "@/redux/jobPlanSlice";
 import { addCompany } from "@/redux/companySlice";
 import { updateUserPlan } from "@/redux/authSlice";
 
-/* ================= SUBSCRIPTION PLANS ================= */
+/* ================= COLOR MAPS (module-level, never recreated) ================= */
+const BORDER_COLOR = {
+  gray:   "border-gray-300 dark:border-gray-600",
+  blue:   "border-blue-400 dark:border-blue-500",
+  purple: "border-purple-500 dark:border-purple-400",
+  orange: "border-orange-400 dark:border-orange-500",
+  gold:   "border-yellow-400 dark:border-yellow-500",
+  teal:   "border-teal-400 dark:border-teal-500",
+};
+
+const BADGE_BG = {
+  gray:   "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+  blue:   "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+  purple: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
+  orange: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
+  gold:   "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
+  teal:   "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
+};
+
+const PLAN_CREDITS = {
+  growth: { creditsForJobs: 5,  creditsForCandidates: 500  },
+  scale:  { creditsForJobs: 10, creditsForCandidates: 1500 },
+  pro:    { creditsForJobs: 25, creditsForCandidates: 5000 },
+};
+
+const PLAN_MAP = { STANDARD: "growth", PREMIUM: "scale", PRO: "pro", ENTERPRISE: "enterprise" };
+
+const RPO_IDS = new Set(["full-cycle-rpo", "monthly-talent-partner", "partnership"]);
 const subscriptionPlans = [
   {
     id: "starter",
@@ -156,51 +182,19 @@ const subscriptionPlans = [
 ];
 
 const PlanBadge = ({ planId, user }) => {
-  if (window.location.pathname.startsWith("/admin")) {
-    return null;
-  }
-
-  if (!user) return null;
-
-  if (user.role && String(user.role).toUpperCase() === "ADMIN") {
-    return null;
-  }
-
+  if (!user || String(user.role).toUpperCase() === "ADMIN") return null;
   if (user.subscriptionStatus !== "ACTIVE") return null;
+  if (PLAN_MAP[user.plan] !== planId) return null;
 
-  const planMap = {
-    STANDARD: "growth",
-    PREMIUM: "scale",
-    PRO: "pro",
-    ENTERPRISE: "enterprise",
-  };
-
-  if (planMap[user.plan] !== planId) return null;
-
-  if (user.plan === "STANDARD") {
-    return (
-      <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">
-        VERIFIED
-      </span>
-    );
-  }
-
-  if (user.plan === "PREMIUM") {
-    return (
-      <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">
-        ⭐ MOST POPULAR
-      </span>
-    );
-  }
-
-  if (user.plan === "ENTERPRISE") {
-    return (
-      <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">
-        👑 ENTERPRISE ELITE
-      </span>
-    );
-  }
-
+  if (user.plan === "STANDARD") return (
+    <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">VERIFIED</span>
+  );
+  if (user.plan === "PREMIUM") return (
+    <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">⭐ MOST POPULAR</span>
+  );
+  if (user.plan === "ENTERPRISE") return (
+    <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">👑 ENTERPRISE ELITE</span>
+  );
   return null;
 };
 
@@ -215,67 +209,44 @@ function RecruiterPlans() {
   const [selectedPlanId, setSelectedPlanId] = useState(
     subscriptionPlans.find((p) => p.popular)?.id
   );
-  const [showComparison, setShowComparison] = useState(false);
   const [showVerificationBanner, setShowVerificationBanner] = useState(false);
 
-  // Refresh user data when component mounts to get latest plan info
+  // Refresh user plan info once on mount — only if recruiter and plan not yet loaded
   useEffect(() => {
-    const refreshUserData = async () => {
-      if (user && user.role === "recruiter" && user._id) {
-        try {
-          const response = await axios.get(
-            `${RECRUITER_API_END_POINT}/recruiter-by-id/${user._id}`,
-            { withCredentials: true }
-          );
-          if (response?.data?.success && response?.data?.recruiter) {
-            const recruiter = response.data.recruiter;
-            dispatch(updateUserPlan({
-              plan: recruiter.plan || "FREE",
-              subscriptionStatus: recruiter.subscriptionStatus || "INACTIVE"
-            }));
-          }
-        } catch (error) {
-          console.error("Error refreshing user data:", error);
+    if (!user || user.role !== "recruiter" || !user._id) return;
+    if (user.subscriptionStatus === "ACTIVE") return; // already up to date
+    axios.get(`${RECRUITER_API_END_POINT}/recruiter-by-id/${user._id}`, { withCredentials: true })
+      .then(res => {
+        if (res?.data?.success && res?.data?.recruiter) {
+          dispatch(updateUserPlan({
+            plan: res.data.recruiter.plan || "FREE",
+            subscriptionStatus: res.data.recruiter.subscriptionStatus || "INACTIVE"
+          }));
         }
-      }
-    };
-    refreshUserData();
-  }, []);
+      })
+      .catch(() => {});
+  }, [user?._id]);
 
-  const loadRazorpayScript = () => {
+  const loadRazorpayScript = useCallback(() => {
     return new Promise((resolve) => {
-      if (window.Razorpay) {
-        resolve(true);
-        return;
-      }
-
+      if (window.Razorpay) { resolve(true); return; }
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
-
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
-
       document.body.appendChild(script);
     });
-  };
+  }, []);
 
-  const initiateCreditPayment = async (plan) => {
+  const initiateCreditPayment = useCallback(async (plan) => {
     try {
       const sdkLoaded = await loadRazorpayScript();
-      if (!sdkLoaded) {
-        toast.error("Razorpay SDK failed to load.");
-        return;
-      }
+      if (!sdkLoaded) { toast.error("Razorpay SDK failed to load."); return; }
+
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
-        {
-          planName: plan.title,
-          companyId: company._id,
-          amount: plan.price,
-          creditsForJobs: plan.creditsForJobs,
-          creditsForCandidates: plan.creditsForCandidates,
-        },
+        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
         { withCredentials: true }
       );
 
@@ -288,54 +259,27 @@ function RecruiterPlans() {
         handler: async (response) => {
           const verify = await axios.post(
             `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
-            {
-              ...response,
-              companyId: company._id,
-              creditsForJobs: plan.creditsForJobs,
-              creditsForCandidates: plan.creditsForCandidates,
-            },
+            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
             { withCredentials: true }
           );
-
           if (verify.data.success) {
             dispatch(addJobPlan(verify.data.plan));
+            if (verify.data.userPlan) dispatch(updateUserPlan({ plan: verify.data.userPlan, subscriptionStatus: "ACTIVE" }));
 
-            // Update user plan in Redux
-            if (verify.data.userPlan) {
-              dispatch(updateUserPlan({
-                plan: verify.data.userPlan,
-                subscriptionStatus: "ACTIVE"
-              }));
-            }
-
-            // Refresh company data to update credits
             const companyRes = await axios.post(
               `${COMPANY_API_END_POINT}/company-by-userid`,
               { userId: user._id },
               { withCredentials: true }
             );
-            if (companyRes?.data.success) {
-              dispatch(addCompany(companyRes.data.company));
-            }
+            if (companyRes?.data.success) dispatch(addCompany(companyRes.data.company));
 
-            // Store revenue record
             await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
-              itemDetails: {
-                itemType: "Job Plan",
-                itemName: plan.title,
-                price: plan.price,
-              },
+              itemDetails: { itemType: "Job Plan", itemName: plan.title, price: plan.price },
               companyName: company?.companyName,
-              userDetails: {
-                userName: user?.fullname,
-                email: user.emailId.email,
-                phoneNumber: user.phoneNumber.number,
-              },
+              userDetails: { userName: user?.fullname, email: user.emailId.email, phoneNumber: user.phoneNumber.number },
             });
 
             toast.success("Payment Successful");
-
-            // If not yet verified, show banner instead of navigating away
             if (!user.isActive || !companyRes?.data?.company?.isActive) {
               setShowVerificationBanner(true);
             } else {
@@ -344,97 +288,45 @@ function RecruiterPlans() {
           }
         },
       };
-
       new window.Razorpay(options).open();
     } catch {
       toast.error("Payment failed");
     }
-  };
+  }, [company, user, dispatch, navigate, loadRazorpayScript]);
 
-  const handleSubscription = async (plan) => {
-    if (["full-cycle-rpo", "monthly-talent-partner", "partnership"].includes(plan.id)) {
-      navigate("/contact");
-      return;
-    }
-    if (!user) {
-      toast.error("Please login to purchase a plan.");
-      navigate("/recruiter/signup");
-      return;
-    }
+  const handleSubscription = useCallback(async (plan) => {
+    if (RPO_IDS.has(plan.id)) { navigate("/contact"); return; }
+    if (!user) { toast.error("Please login to purchase a plan."); navigate("/recruiter/signup"); return; }
+    if (!company) { toast.error("Please complete company profile first."); navigate("/recruiter/company-profile"); return; }
 
-    if (!company) {
-      toast.error("Please complete company profile first.");
-      navigate("/recruiter/company-profile");
-      return;
-    }
-
-    // Block free plan if recruiter already has a paid subscription
-    if (plan.isFree && company.hasSubscription) {
-      toast.error("You already have a paid plan. Free plan is not available.");
-      return;
-    }
+    if (plan.isFree && company.hasSubscription) { toast.error("You already have a paid plan. Free plan is not available."); return; }
 
     if (plan.isFree) {
-      if (company.hasUsedFreePlan) {
-        toast.error("You have already used the free plan. Please purchase a paid plan.");
-        return;
-      }
-
+      if (company.hasUsedFreePlan) { toast.error("You have already used the free plan. Please purchase a paid plan."); return; }
       if (company.creditedForJobs === 0 && company.creditedForCandidates === 0) {
         try {
-          const response = await axios.post(
-            `${COMPANY_API_END_POINT}/company-by-userid`,
-            { userId: user._id },
-            { withCredentials: true }
-          );
+          const response = await axios.post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true });
           if (response?.data.success) {
             dispatch(addCompany(response?.data.company));
             toast.success("Free plan activated! You now have 1 job post every 3 months.");
             navigate("/recruiter/dashboard/post-job");
           }
-        } catch (err) {
-          console.error("Error fetching company:", err);
-          toast.error("Failed to activate free plan. Please try again.");
-        }
+        } catch { toast.error("Failed to activate free plan. Please try again."); }
         return;
       }
-
-      if (company.creditedForJobs < 500) {
-        toast.error("Insufficient credits. Please purchase a plan to post jobs.");
-        return;
-      }
+      if (company.creditedForJobs < 500) { toast.error("Insufficient credits. Please purchase a plan to post jobs."); return; }
       navigate("/recruiter/dashboard/post-job");
       return;
     }
 
     if (plan.enterprise) {
-      initiateCreditPayment({
-        title: plan.title,
-        price: plan.price,
-        creditsForJobs: 999999,
-        creditsForCandidates: 999999,
-      });
+      initiateCreditPayment({ title: plan.title, price: plan.price, creditsForJobs: 999999, creditsForCandidates: 999999 });
       return;
     }
 
-    if (["full-cycle-rpo", "monthly-talent-partner", "partnership"].includes(plan.id)) {
-      navigate("/contact");
-      return;
-    }
-
-    const planCredits = {
-      "growth":  { creditsForJobs: 5,  creditsForCandidates: 500 },
-      "scale":   { creditsForJobs: 10, creditsForCandidates: 1500 },
-      "pro":     { creditsForJobs: 25, creditsForCandidates: 5000 },
-    };
-    const credits = planCredits[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
-
-    initiateCreditPayment({
-      title: plan.title,
-      price: plan.price,
-      ...credits,
-    });
-  };
+    const credits = PLAN_CREDITS[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
+    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits });
+  }, [company, user, dispatch, navigate, initiateCreditPayment]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
@@ -471,9 +363,9 @@ function RecruiterPlans() {
         {isRecruiter && <DashboardNavigations />}
 
         {/* Main Content */}
-        <div className="flex-1">
+        <div className={`flex-1 min-w-0 ${isRecruiter ? "lg:ml-52" : ""}`}>
           {/* ================= ANIMATED HERO SECTION ================= */}
-          <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white pt-20 pb-6 overflow-hidden transition-colors duration-300">
+          <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white -mt-[117px] pt-[117px] pb-6 overflow-hidden">
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
@@ -531,25 +423,9 @@ function RecruiterPlans() {
 
             {/* ================= PRICING CARDS ================= */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {subscriptionPlans
-                .map((plan) => {
-                  const borderColor = {
-                    gray: "border-gray-300 dark:border-gray-600",
-                    blue: "border-blue-400 dark:border-blue-500",
-                    purple: "border-purple-500 dark:border-purple-400",
-                    orange: "border-orange-400 dark:border-orange-500",
-                    gold: "border-yellow-400 dark:border-yellow-500",
-                    teal: "border-teal-400 dark:border-teal-500",
-                  }[plan.color] || "border-gray-200";
-
-                  const badgeBg = {
-                    gray: "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
-                    blue: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
-                    purple: "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
-                    orange: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
-                    gold: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
-                    teal: "bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
-                  }[plan.color] || "bg-gray-100 text-gray-600";
+              {subscriptionPlans.map((plan) => {
+                  const borderColor = BORDER_COLOR[plan.color] || "border-gray-200";
+                  const badgeBg = BADGE_BG[plan.color] || "bg-gray-100 text-gray-600";
 
                   return (
                     <div

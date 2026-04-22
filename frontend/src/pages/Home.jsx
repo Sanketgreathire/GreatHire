@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import BeforeLogin from "../components/auth/user/beforelogin";
+
+const BeforeLogin = lazy(() => import("../components/auth/user/beforelogin"));
 
 const Home = () => {
   const { user } = useSelector((state) => state.auth);
@@ -20,7 +21,11 @@ const Home = () => {
   }, [user, navigate]);
 
   if (!user) {
-    return <BeforeLogin />;
+    return (
+      <Suspense fallback={null}>
+        <BeforeLogin />
+      </Suspense>
+    );
   }
 
   return null;

@@ -149,11 +149,9 @@ const CandidateInformation = () => {
                   <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <p className="text-gray-900 dark:text-gray-100">
                       <strong className="font-semibold">Location:</strong>{" "}
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {candidate?.address?.city ||
-                          candidate?.address?.state ||
-                          candidate?.address?.country ||
-                          "Not provided"}
+                      <span className="text-gray-700 dark:text-gray-300 break-words">
+                        {[candidate?.address?.streetAddress, candidate?.address?.city, candidate?.address?.state, candidate?.address?.country]
+                          .filter(Boolean).join(", ") || "Not provided"}
                       </span>
                     </p>
                   </div>

@@ -25,26 +25,16 @@ const JobDetailsProvider = ({ children }) => {
     tenth: ["10th Pass", "Matriculation"],
   };
 
-  // Fetch job listings from the API when the component mounts
+  // Fetch job listings — deferred so it doesn't block initial paint
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        // const response = await fetch(`${JOB_API_END_POINT}/get`);
-  
-        // If API call fails, throw an error
         const response = await fetch(`${JOB_API_END_POINT}/jobs`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch jobs: ${response.statusText}`);
-        }
-
+        if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.statusText}`);
         const jobs = await response.json();
-
         setJobsList(jobs);
         setOriginalJobsList(jobs);
         setSelectedJob(jobs[0] || null);
@@ -54,7 +44,9 @@ const JobDetailsProvider = ({ children }) => {
       }
     };
 
-    fetchJobs();
+    // Defer fetch by 1 tick so it doesn't compete with initial render
+    const t = setTimeout(fetchJobs, 0);
+    return () => clearTimeout(t);
   }, []);
 
   // Function to toggle bookmark status of a job

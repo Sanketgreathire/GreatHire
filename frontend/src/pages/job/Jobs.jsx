@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Navbar from "@/components/shared/Navbar";
 // import Footer from "@/components/shared/Footer";
 import { FiFilter } from "react-icons/fi";
@@ -59,26 +59,23 @@ const Jobs = () => {
     setCurrentPage(1);
   }, [filters]);
 
-  // Called by JobSearch (title input or LocationSearch input)
-  const handleSearchUpdate = (updates) => {
+  const handleSearchUpdate = useCallback((updates) => {
     setSearchInfo((prev) => ({ ...prev, ...updates }));
     setFilters((prev) => ({
       ...prev,
       jobTitle: updates.titleKeyword !== undefined ? updates.titleKeyword : prev.jobTitle,
       location: updates.location !== undefined ? updates.location : prev.location,
     }));
-  };
+  }, []);
 
-  // Called by FilterCard — also syncs location & jobTitle back to searchInfo
-  // so LocationSearch input reflects the FilterCard dropdown selection
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
     setSearchInfo((prev) => ({
       ...prev,
       location: newFilters.location ?? prev.location,
       titleKeyword: newFilters.jobTitle ?? prev.titleKeyword,
     }));
-  };
+  }, []);
 
   const filteredJobs = useMemo(() => {
     if (!jobs) return [];
@@ -121,21 +118,19 @@ const Jobs = () => {
   const totalPages = Math.max(1, Math.ceil(totalFilteredJobs / jobsPerPage));
   const displayedJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
-  const handleResetFilters = () => {
+  const handleResetFilters = useCallback(() => {
     setFilters({ jobTitle: "", location: "", jobType: [], workPlace: [], company: "", datePosted: [] });
     setSearchInfo({ titleKeyword: "", location: "" });
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = useCallback((pageNumber) => {
     setCurrentPage(pageNumber);
     if (jobListingsRef.current) {
-      const yOffset = -100;
-      const element = jobListingsRef.current;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      const y = jobListingsRef.current.getBoundingClientRect().top + window.pageYOffset - 100;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
-  };
+  }, []);
 
 
   return (

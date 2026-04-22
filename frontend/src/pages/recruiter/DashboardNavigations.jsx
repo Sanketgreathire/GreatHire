@@ -63,7 +63,7 @@ const DashboardNavigations = () => {
                   shadow-lg dark:shadow-gray-800 transition-transform duration-300 ease-in-out
                   w-64 h-screen transform
                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                  lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:w-52 lg:translate-x-0 lg:z-30
+                  lg:fixed lg:top-[64px] lg:left-0 lg:h-[calc(100vh-64px)] lg:w-52 lg:translate-x-0 lg:z-30 lg:overflow-y-auto
                `}
       >
 
@@ -75,14 +75,14 @@ const DashboardNavigations = () => {
           <RiCloseFill size={24} />
         </button>
 
-        <div className="flex flex-col h-full p-4 justify-between ">
+        <div className="flex flex-col h-full p-3 justify-between">
           {/* Main Navigation */}
           <section>
-            <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">
+            <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
               <LuLayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
               <span>Dashboard</span>
             </h2>
-            <ul className="w-full flex flex-col gap-2">
+            <ul className="w-full flex flex-col gap-1">
               <NavLink
                 to="/recruiter/dashboard/home"
                 className={navLinkClass}
@@ -191,11 +191,11 @@ const DashboardNavigations = () => {
 
           {/* Footer Navigation */}
           <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <IoSettingsOutline size={25} className="text-blue-700 dark:text-blue-500"/>
               <span>Settings</span>
             </h2>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-1">
               <NavLink
                 to="/recruiter/dashboard/invite-and-earn"
                 className={navLinkClass}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -6,79 +6,49 @@ import { useSelector, useDispatch } from "react-redux";
 import { addRecruiter } from "@/redux/recruiterSlice";
 import { Helmet } from "react-helmet-async";
 
+const USER_LIMITS = { FREE: 1, STANDARD: 1, PREMIUM: 3, PRO: 5, ENTERPRISE: Infinity };
+
 const AddRecruiter = () => {
   const dispatch = useDispatch();
-
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
-  const { recruiters } = useSelector((state) => state.recruiters);
 
-  const USER_LIMITS = { FREE: 1, STANDARD: 1, PREMIUM: 3, PRO: 5, ENTERPRISE: Infinity };
   const planType = company?.plan || "FREE";
   const userLimit = USER_LIMITS[planType] ?? 1;
-  const currentCount = company?.userId?.length ?? 0;
-  const atLimit = userLimit !== Infinity && currentCount >= userLimit;
+  const atLimit = userLimit !== Infinity && (company?.userId?.length ?? 0) >= userLimit;
 
-  // State to manage form loading state
   const [loading, setLoading] = useState(false);
-
-  // State to store form data
   const [formData, setFormData] = useState({
-    fullname: "",
-    email: "",
-    phoneNumber: "",
-    position: "",
-    password: "",
+    fullname: "", email: "", phoneNumber: "", position: "", password: "",
   });
 
-  // Function to handle form input changes
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  // Function to handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Sending a POST request to add a new recruiter
       const response = await axios.post(
         `${RECRUITER_API_END_POINT}/add-recruiter`,
-        {
-          ...formData,
-          companyId: company?._id, // Attaching company ID
-        },
+        { ...formData, companyId: company?._id },
         { withCredentials: true }
       );
-
-      // If the request is successful
       if (response.data.success) {
         dispatch(addRecruiter(response.data.recruiter));
-        toast.success(response.data.message); // Showing success notification
-
-        setFormData({
-          fullName: "",
-          email: "",
-          phoneNumber: "",
-          position: "",
-          password: "",
-        });
+        toast.success(response.data.message);
+        setFormData({ fullname: "", email: "", phoneNumber: "", position: "", password: "" });
       } else {
-        toast.error(response.data.message); // Showing error notification
+        toast.error(response.data.message);
       }
     } catch (err) {
-      console.error(err);
-      const errorMessage =
-        err.response?.data?.message || "Something went wrong";
-      toast.error(errorMessage);
+      toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData, company?._id, dispatch]);
 
   return (
     <>

@@ -587,7 +587,7 @@
 
 // export default GreatHireLanding;
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
   Users,
   Target,
@@ -603,16 +603,21 @@ import {
 } from "lucide-react";
 import Footer from "@/components/shared/Footer";
 import { useNavigate, Link } from "react-router-dom";
-import JobsHiringSlider from "./JobSlider";
-import Lottie from "lottie-react";
 import { Helmet } from "react-helmet-async";
-import service from "../../../assets/Animation/services.json";
-import about from "../../../assets/Animation/about-s.json";
-import blog from "../../../assets/Animation/blog.json";
-import contact from "../../../assets/Animation/contact-us.json";
-import CompactTestimonials from "@/components/ui/CompactTestimonials";
 import InternshipMarquee from "@/components/shared/InternshipMarquee";
 import { useJobDetails } from "@/context/JobDetailsContext";
+
+const JobsHiringSlider = lazy(() => import("./JobSlider"));
+const Lottie = lazy(() => import("lottie-react"));
+const CompactTestimonials = lazy(() => import("@/components/ui/CompactTestimonials"));
+
+// Lazy load heavy animation JSONs only when needed
+const tabAnimations = {
+  service: () => import("../../../assets/Animation/services.json"),
+  implementation: () => import("../../../assets/Animation/blog.json"),
+  support: () => import("../../../assets/Animation/about-s.json"),
+  scalable: () => import("../../../assets/Animation/contact-us.json"),
+};
 
 const GreatHireLanding = () => {
   const { jobs } = useJobDetails();
@@ -620,6 +625,8 @@ const GreatHireLanding = () => {
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
+  const [tabAnimData, setTabAnimData] = useState({});
+  const [showBelow, setShowBelow] = useState(false);
   const moreRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
@@ -694,38 +701,10 @@ const GreatHireLanding = () => {
   ];
 
   const tabs = [
-    {
-      id: "service",
-      title: "Our Services",
-      animation: service,
-      path: "/great-hire/services",
-      content:
-        "We provide end-to-end business solutions to help you grow and succeed. Our services include job posting and staffing, accounts and payroll management, digital marketing, and web and mobile app development. We also offer BPO, cybersecurity, and cloud computing services to improve efficiency and security.",
-    },
-    {
-      id: "implementation",
-      title: "Blogs",
-      animation: blog,
-      path: "/Main_blog_page",
-      content:
-        "GreatHire is your all-in-one career hub designed to connect talent with the right opportunities. With AI-powered matching, expert career insights, and hiring guidance, we help job seekers grow and employers hire smarter. From resume building and interview preparation to industry trends and future skills, we support every stage of your career journey.",
-    },
-    {
-      id: "support",
-      title: "About Us",
-      animation: about,
-      path: "/about",
-      content:
-        "GreatHire Business Solutions is a technology-driven recruitment and workforce solutions company connecting top talent with growing businesses. We specialize in AI-powered hiring, IT staffing, and strategic workforce solutions focused on efficiency and cultural fit.",
-    },
-    {
-      id: "scalable",
-      title: "Contact Us",
-      animation: contact,
-      path: "/contact",
-      content:
-        "Have questions or want to collaborate with us? Reach out to GreatHire through our FAQs, support phone number, or email for quick assistance. You can also fill out the contact form, and our team will get back to you within 24 hours.",
-    },
+    { id: "service", title: "Our Services", path: "/great-hire/services", content: "We provide end-to-end business solutions to help you grow and succeed. Our services include job posting and staffing, accounts and payroll management, digital marketing, and web and mobile app development. We also offer BPO, cybersecurity, and cloud computing services to improve efficiency and security." },
+    { id: "implementation", title: "Blogs", path: "/Main_blog_page", content: "GreatHire is your all-in-one career hub designed to connect talent with the right opportunities. With AI-powered matching, expert career insights, and hiring guidance, we help job seekers grow and employers hire smarter. From resume building and interview preparation to industry trends and future skills, we support every stage of your career journey." },
+    { id: "support", title: "About Us", path: "/about", content: "GreatHire Business Solutions is a technology-driven recruitment and workforce solutions company connecting top talent with growing businesses. We specialize in AI-powered hiring, IT staffing, and strategic workforce solutions focused on efficiency and cultural fit." },
+    { id: "scalable", title: "Contact Us", path: "/contact", content: "Have questions or want to collaborate with us? Reach out to GreatHire through our FAQs, support phone number, or email for quick assistance. You can also fill out the contact form, and our team will get back to you within 24 hours." },
   ];
 
   useEffect(() => {
@@ -734,6 +713,38 @@ const GreatHireLanding = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Defer below-fold content after initial paint
+  useEffect(() => {
+    const t = setTimeout(() => setShowBelow(true), 500);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Load animation for active tab on demand
+  useEffect(() => {
+    const id = tabs[index]?.id;
+    if (id && !tabAnimData[id]) {
+      tabAnimations[id]().then(mod => {
+        setTabAnimData(prev => ({ ...prev, [id]: mod.default }));
+      });
+    }
+  }, [index]);
+
+  // Load below-fold content after initial paint
+  useEffect(() => {
+    const t = setTimeout(() => setShowBelow(true), 300);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Load animation for current tab on demand
+  useEffect(() => {
+    const id = tabs[index]?.id;
+    if (id && !tabAnimData[id]) {
+      tabAnimations[id]().then(mod => {
+        setTabAnimData(prev => ({ ...prev, [id]: mod.default }));
+      });
+    }
+  }, [index]);
 
   return (
     <>
@@ -1140,9 +1151,9 @@ const GreatHireLanding = () => {
               </div>
 
               {/* Job Slider */}
-              <div className="mt-2 mb-0">
+              <Suspense fallback={<div className="h-16 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse mt-2" />}>
                 <JobsHiringSlider />
-              </div>
+              </Suspense>
 
               {/* Why Choose GreatHire */}
               <div className="mb-10">
@@ -1213,7 +1224,13 @@ const GreatHireLanding = () => {
                       <div key={tab.id} className="min-w-full px-1 sm:px-6">
                         <div className="relative bg-gradient-to-r from-purple-300 to-purple-350 dark:from-purple-900 dark:to-purple-800 rounded-3xl shadow-xl p-5 sm:p-10 flex flex-col md:flex-row items-center gap-4 sm:gap-10 min-h-[12rem] sm:min-h-[16rem]">
                           <div className="flex-shrink-0">
-                            <Lottie animationData={tab.animation} loop autoplay className="w-32 h-32 sm:w-64 sm:h-64" />
+                            {tabAnimData[tab.id] ? (
+                              <Suspense fallback={<div className="w-32 h-32 sm:w-64 sm:h-64" />}>
+                                <Lottie animationData={tabAnimData[tab.id]} loop autoplay className="w-32 h-32 sm:w-64 sm:h-64" />
+                              </Suspense>
+                            ) : (
+                              <div className="w-32 h-32 sm:w-64 sm:h-64 bg-purple-200 dark:bg-purple-800 rounded-2xl animate-pulse" />
+                            )}
                           </div>
                           <div className="flex-1 pb-10 md:pb-0">
                             <p className="text-sm sm:text-lg text-gray-900 dark:text-gray-100 leading-relaxed">{tab.content}</p>
@@ -1243,7 +1260,11 @@ const GreatHireLanding = () => {
               </div>
 
               {/* Testimonials */}
-              <CompactTestimonials />
+              {showBelow && (
+                <Suspense fallback={null}>
+                  <CompactTestimonials />
+                </Suspense>
+              )}
 
               {/* CTA */}
               <div className="mt-3">
@@ -1281,42 +1302,7 @@ const GreatHireLanding = () => {
               </div>
             </div>
 
-{/* <<<<<<< HEAD
             <style>{`
-          @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-          }
-          @keyframes blob {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-          }
-          @keyframes gradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-          }
-          @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes fade-in-right {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          .animate-float { animation: float 3s ease-in-out infinite; }
-          .animate-float-delay { animation: float 3s ease-in-out infinite; animation-delay: 1s; }
-          .animate-float-slow { animation: float 4s ease-in-out infinite; animation-delay: 2s; }
-          .animate-blob { animation: blob 7s infinite; }
-          .animation-delay-2000 { animation-delay: 2s; }
-          .animation-delay-4000 { animation-delay: 4s; }
-          .animate-gradient { background-size: 200% 200%; animation: gradient 3s ease infinite; }
-          .animate-fade-in-up { animation: fade-in-up 1s ease-out; }
-          .animate-fade-in-right { animation: fade-in-right 1s ease-out; }
-          .animate-bounce-slow { animation: bounce 2s infinite; }
-        `}</style>
-======= */}
-            <style jsx>{`
               @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
               @keyframes blob { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
               @keyframes gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
@@ -1333,7 +1319,6 @@ const GreatHireLanding = () => {
               .animate-fade-in-right { animation: fade-in-right 1s ease-out; }
               .animate-bounce-slow { animation: bounce 2s infinite; }
             `}</style>
-{/* >>>>>>> e7d38b1211f783d95c853e623cd5229ea6ccb9ea */}
           </section>
 
           <Footer />

@@ -582,20 +582,20 @@ export const changeAdmin = async (req, res) => {
 // return current job plan if company purchased
 export const getCurrentPlan = async (req, res) => {
   try {
-    const companyId = req.params.id; // Get company ID from request parameters
+    const companyId = req.params.id;
     const userId = req.id;
 
-    if (!(await isUserAssociated(companyId, userId))) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized", success: false });
-    }
+    const company = await Company.findById(companyId).select("userId").lean();
+    if (!company) return res.status(404).json({ message: "Company not found", success: false });
+    const belongs = company.userId.some(u => u.user.toString() === userId);
+    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
 
-    // Find the active subscription for the company (latest one)
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
       status: "Active",
-    }).sort({ purchaseDate: -1 }).select("jobBoost expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
+    }).sort({ purchaseDate: -1 })
+      .select("jobBoost expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates")
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -604,73 +604,53 @@ export const getCurrentPlan = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-// This controller will help to get candiadate data mean recruiter can find user or candidate according to their need
+// This controller will help to get candidate data — recruiter can find users/candidates
 export const getCandidateData = async (req, res) => {
   try {
     const {
-      jobTitle,
-      experience,
-      salaryBudget,
-      gender,
-      qualification,
-      lastActive,
-      location,
-      skills,
-      companyId,
+      jobTitle, experience, salaryBudget, gender, qualification,
+      lastActive, location, skills, companyId,
     } = req.query;
-    console.log(req.query); // for testing purpose
 
     const userId = req.id;
 
-    if (!(await isUserAssociated(companyId, userId))) {
-      return res.status(403).json({
-        message: "You are not authorized",
-        success: false,
-      });
-    }
+    // Fast auth check: single query, no Recruiter lookup
+    const company = await Company.findById(companyId).select("userId").lean();
+    if (!company) return res.status(403).json({ message: "Company not found", success: false });
+    const belongs = company.userId.some(u => u.user.toString() === userId);
+    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
 
     const escapeRegex = (str) =>
-      typeof str === "string"
-        ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&")
-        : "";
+      typeof str === "string" ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&") : "";
 
     const query = {};
-    // Job Title
+
     if (jobTitle?.trim()) {
-      const sanitizedJobTitle = escapeRegex(jobTitle.trim());
-      query["profile.experience.jobProfile"] = {
-        $regex: new RegExp(`^${sanitizedJobTitle}$`, "i"),
+      query["profile.experiences.jobProfile"] = {
+        $regex: new RegExp(escapeRegex(jobTitle.trim()), "i"),
       };
     }
 
-    // Experience
     if (experience) {
-      query["profile.experience.duration"] = experience;
+      query["profile.experiences.duration"] = experience;
     }
 
-    // Salary
     if (salaryBudget) {
       query["profile.expectedCTC"] = salaryBudget;
     }
 
-    // Gender (Assuming you have added gender in schema under profile or user directly)
     if (gender) {
       query["profile.gender"] = new RegExp(`^${escapeRegex(gender)}$`, "i");
     }
 
-    // Qualification (Assuming stored in profile.bio or new field you add)
     if (qualification) {
-      query["profile.qualification"] = new RegExp(escapeRegex(qualification), "i");
+      query["profile.qualification"] = qualification;
     }
 
-    // Last Active - days based filter
     if (lastActive) {
       const daysAgo = parseInt(lastActive);
       if (!isNaN(daysAgo)) {
@@ -680,87 +660,55 @@ export const getCandidateData = async (req, res) => {
       }
     }
 
-    // Location (assumes city/state/country)
     if (location) {
-      const sanitizedLocation = escapeRegex(location.trim().toLowerCase());
-      const locationRegex = new RegExp(sanitizedLocation, "i");
-
+      const locationRegex = new RegExp(escapeRegex(location.trim()), "i");
       query.$or = [
         { "address.city": locationRegex },
         { "address.state": locationRegex },
-        { "address.country": locationRegex },
       ];
     }
 
-
-    // Skills (array match)
     if (skills) {
-      let skillArray = [];
-
-      if (typeof skills === "string") {
-        skillArray = skills.split(",").map((s) => s.trim().toLowerCase());
-      } else if (Array.isArray(skills)) {
-        skillArray = skills.map((s) => String(s).trim().toLowerCase());
-      }
-
+      const skillArray = (Array.isArray(skills) ? skills : skills.split(","))
+        .map(s => s.trim().toLowerCase()).filter(Boolean);
       if (skillArray.length > 0) {
-        // Using aggregation expression to match lowercased DB skills
-        query.$expr = {
-          $setIsSubset: [
-            skillArray,
-            {
-              $map: {
-                input: "$profile.skills",
-                as: "skill",
-                in: { $toLower: "$$skill" },
-              },
-            },
-          ],
+        // Use $in for index-friendly skill matching (any skill match)
+        query["profile.skills"] = {
+          $in: skillArray.map(s => new RegExp(`^${escapeRegex(s)}$`, "i")),
         };
       }
     }
 
-    const candidates = await User.find(query).select({
-      fullname: 1,
-      "profile.experience.jobProfile": 1,
-      "profile.skills": 1,
-      "profile.experience.duration": 1,
-      "profile.expectedCTC": 1,
-      "profile.resume": 1,
-      "profile.profilePhoto": 1,
-      updatedAt: 1,
-      address: 1,
-      isProfileBoosted: 1,
-    });
+    const LIMIT = 200;
+    const now = new Date();
 
-    // Add daysAgoLastActive to each candidate
-    const enhancedCandidates = candidates
-      .map((candidate) => {
-        const lastActiveDate = new Date(candidate.updatedAt);
-        const now = new Date();
-        const diffMs = now - lastActiveDate;
-
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffHours = Math.floor(
-          (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-
-        return {
-          ...candidate.toObject(),
-          daysAgoLastActive: diffDays,
-          hoursAgoLastActive: diffHours,
-          lastActiveAgo: `${diffDays} day${diffDays !== 1 ? "s" : ""} ${diffHours
-            } hour${diffHours !== 1 ? "s" : ""} ago`,
-        };
+    const candidates = await User.find(query)
+      .select({
+        fullname: 1,
+        "profile.experiences": { $slice: 1 }, // only first experience
+        "profile.skills": 1,
+        "profile.expectedCTC": 1,
+        "profile.resume": 1,
+        "profile.profilePhoto": 1,
+        updatedAt: 1,
+        address: 1,
+        isProfileBoosted: 1,
       })
-      .sort((a, b) => {
-        // Boosted candidates always first
-        if (b.isProfileBoosted !== a.isProfileBoosted) return b.isProfileBoosted ? 1 : -1;
-        const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
-        const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
-        return totalA - totalB; // most recent first within each group
-      });
+      .sort({ isProfileBoosted: -1, updatedAt: -1 })
+      .limit(LIMIT)
+      .lean();
 
+    const enhancedCandidates = candidates.map((candidate) => {
+      const diffMs = now - new Date(candidate.updatedAt);
+      const diffDays = Math.floor(diffMs / 86400000);
+      const diffHours = Math.floor((diffMs % 86400000) / 3600000);
+      return {
+        ...candidate,
+        daysAgoLastActive: diffDays,
+        hoursAgoLastActive: diffHours,
+        lastActiveAgo: `${diffDays} day${diffDays !== 1 ? "s" : ""} ${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`,
+      };
+    });
 
     res.status(200).json({ success: true, candidates: enhancedCandidates });
   } catch (error) {
@@ -776,29 +724,18 @@ export const deductCandidateCredit = async (req, res) => {
     const { companyId } = req.body;
     const userId = req.id;
 
-    console.log("deductCandidateCredit called:", { companyId, userId });
-
     if (!companyId) {
       return res.status(400).json({ message: "companyId is required", success: false });
     }
 
-    const company = await Company.findById(companyId);
+    const company = await Company.findById(companyId).select("userId creditedForCandidates").lean();
+    if (!company) return res.status(404).json({ message: "Company not found", success: false });
 
-    if (!company) {
-      return res.status(404).json({ message: "Company not found", success: false });
-    }
-
-    // Check recruiter belongs to company (no isActive check needed)
     const belongs = company.userId.some(u => u.user.toString() === userId.toString());
-    if (!belongs) {
-      return res.status(403).json({ message: "You are not authorized", success: false });
-    }
+    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
 
     if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({
-        message: "Insufficient candidate credits. Please purchase a plan.",
-        success: false
-      });
+      return res.status(400).json({ message: "Insufficient candidate credits. Please purchase a plan.", success: false });
     }
 
     await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
@@ -810,58 +747,32 @@ export const deductCandidateCredit = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deducting candidate credit:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-      success: false,
-      error: error.message
-    });
+    res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
   }
 };
 
-// if recruiter finding the candidate and if they view the resume of candidate then one credit decrease 1 Resume === 1 credit
+// if recruiter finding the candidate and if they view the resume of candidate then one credit decrease
 export const decreaseCandidateCredits = async (req, res) => {
   try {
     const companyId = req.params.id;
     const userId = req.id;
 
-    if (!(await isUserAssociated(companyId, userId))) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized", success: false });
-    }
+    const company = await Company.findById(companyId).select("userId creditedForCandidates").lean();
+    if (!company) return res.status(404).json({ message: "Company not found", success: false });
 
-    const company = await Company.findById(companyId);
+    const belongs = company.userId.some(u => u.user.toString() === userId);
+    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
 
-    if (!company) {
-      return res.status(404).json({
-        message: "Company not found",
-        success: false
-      });
-    }
-
-    // Check if company has credits
     if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({
-        message: "Insufficient credits",
-        success: false
-      });
+      return res.status(400).json({ message: "Insufficient credits", success: false });
     }
 
-    // Deduct 1 credit
-    company.creditedForCandidates -= 1;
-    await company.save();
+    await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
 
-    return res.status(200).json({
-      success: true,
-      remainingCredits: company.creditedForCandidates
-    });
+    return res.status(200).json({ success: true, remainingCredits: company.creditedForCandidates - 1 });
   } catch (error) {
     console.error("Error decreasing candidate credits:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-      success: false,
-      error: error.message
-    });
+    res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
   }
 };
 
@@ -911,8 +822,6 @@ export const getCompanyApplicants = async (req, res) => {
 // this controller report to a particular job by a user if a job found invalid 
 export const reportJob = async (req, res) => {
   try {
-    console.log("BODY:", req.body);        // 👈 add this
-    console.log("FILES:", req.files);      // 👈 add this
     const { jobId, reportTitle, reportType, description, offensiveType, offensiveWhere,
       feeAmount, paymentMode, feeReason, didPay, wrongFields, correctInfo,
       sellingWhat, askedToBuy, otherCategory } = req.body;

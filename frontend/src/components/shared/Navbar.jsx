@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { CiMenuBurger } from "react-icons/ci";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
@@ -568,7 +567,9 @@ const Navbar = () => {
                     className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
                 ) : (
-                  <CiMenuBurger size={20} className="text-gray-700 dark:text-gray-300" />
+                  <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
                 )
               ) : (
                 <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -735,7 +736,7 @@ const Navbar = () => {
 
       {/* Internship Marquee — fixed below navbar */}
       <div className="fixed top-[61px] left-0 right-0 z-20 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-        <InternshipMarquee jobs={jobs} />
+        {isRecruiter ? (<div className="flex items-center justify-center gap-3"><span className="text-white text-sm font-medium text-center">Introducing AI Calling Agent! </span><button onClick={() => window.open("https://greathire.in/contact", "_blank")} className="flex-shrink-0 bg-white text-purple-700 text-xs font-bold px-4 py-1.5 rounded-full hover:bg-purple-50 transition-colors">Know more</button></div>) : (<InternshipMarquee jobs={jobs} />)}
       </div>
 
       {/* Spacer — pushes page content below fixed navbar + marquee */}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
@@ -53,12 +53,6 @@ const CandidateList = () => {
   const hasAdvancedFilters = ["PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
   const hasLocationFilter = ["STANDARD", "PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
 
-  useEffect(() => {
-    if (company?._id) {
-      fetchCandidates();
-    }
-  }, [company?._id]);
-
   const fetchCandidates = async () => {
     try {
       setIsLoading(true);
@@ -81,16 +75,9 @@ const CandidateList = () => {
       );
 
       if (response.data.success) {
-        if (response.data.candidates.length === 0)
-          setMessage("No Candidate found");
-        const sortedCandidates = response.data.candidates
-          .sort((a, b) => {
-            const totalA = a.daysAgoLastActive * 24 + a.hoursAgoLastActive;
-            const totalB = b.daysAgoLastActive * 24 + b.hoursAgoLastActive;
-            return totalA - totalB;
-          })
-          .slice(0, 1000);
-        setCandidates(sortedCandidates);
+        if (response.data.candidates.length === 0) setMessage("No Candidate found");
+        // Backend already sorts: boosted first, then most recent — no JS sort needed
+        setCandidates(response.data.candidates.slice(0, 1000));
         setCurrentPage(1);
       }
     } catch (error) {
@@ -99,7 +86,7 @@ const CandidateList = () => {
       setIsLoading(false);
     }
   };
-  const handleViewInformation = async (candidate) => {
+  const handleViewInformation = useCallback(async (candidate) => {
     // Already unlocked — go directly
     if (unlockedCandidates.has(candidate._id)) {
       navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
@@ -129,7 +116,7 @@ const CandidateList = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to view candidate information");
     }
-  };
+  }, [company, dispatch, navigate, unlockedCandidates]);
 
 
   const handleViewCandidate = async (candidate) => {
@@ -151,11 +138,23 @@ const CandidateList = () => {
     }
   };
 
-  const totalPages = Math.ceil(candidates.length / ITEMS_PER_PAGE);
-  const currentCandidates = candidates.slice(
+  const totalPages = useMemo(() => Math.ceil(candidates.length / ITEMS_PER_PAGE), [candidates.length]);
+  const currentCandidates = useMemo(() => candidates.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
-  );
+  ), [candidates, currentPage]);
+
+  const filterFields = useMemo(() => [
+    { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
+    { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
+    { label: "Skills", name: "skills", placeholder: "React, Node.js" },
+    { label: "Experience", name: "experience", placeholder: "e.g. 1,2,3", advanced: true },
+    { label: "Qualification", name: "qualification", type: "select", options: ["", "Post Graduation", "Under Graduation", "B.Tech", "Diploma", "MBA", "Others"], advanced: true },
+    { label: "Last Active", name: "lastActive", placeholder: "Days e.g. 3", advanced: true },
+    { label: "Location", name: "location", placeholder: "Bangalore", locationFilter: true },
+    { label: "Expected CTC", name: "salaryBudget", placeholder: "50000", advanced: true }
+  ].filter(f => (!f.advanced || hasAdvancedFilters) && (!f.locationFilter || hasLocationFilter)),
+  [hasAdvancedFilters, hasLocationFilter]);
 
   return (
     <>
@@ -213,19 +212,7 @@ const CandidateList = () => {
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
-                { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
-                { label: "Skills", name: "skills", placeholder: "React, Node.js" },
-                { label: "Experience", name: "experience", placeholder: "e.g. 1,2,3", advanced: true },
-                { label: "Qualification", name: "qualification", type: "select",
-                  options: ["", "Post Graduation", "Under Graduation", "B.Tech", "Diploma", "MBA", "Others"],
-                  advanced: true
-                },
-                { label: "Last Active", name: "lastActive", placeholder: "Days e.g. 3", advanced: true },
-                { label: "Location", name: "location", placeholder: "Bangalore", locationFilter: true },
-                { label: "Expected CTC", name: "salaryBudget", placeholder: "50000", advanced: true }
-              ].filter(field => (!field.advanced || hasAdvancedFilters) && (!field.locationFilter || hasLocationFilter)).map((field, idx) => (
+              {filterFields.map((field, idx) => (
                 <div key={idx}>
                   <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">{field.label}</label>
                   {field.type === "select" ? (
@@ -288,7 +275,7 @@ const CandidateList = () => {
                   </div>
 
                   <div className="mt-4 space-y-2 text-sm">
-                    <p><strong>Experience:</strong> {candidate?.profile?.experience?.duration ?? "0"} Years</p>
+                    <p><strong>Experience:</strong> {candidate?.profile?.experiences?.[0]?.duration ?? candidate?.profile?.experience?.duration ?? "0"} Years</p>
                     <p><strong>Expected CTC:</strong> ₹ {candidate?.profile?.expectedCTC ?? "Not Provided"}</p>
                     <p><strong>Last Active:</strong> {candidate?.lastActiveAgo ?? "N/A"}</p>
                   </div>

@@ -2,30 +2,25 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
+  FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // Defaults to localStorage for web
+import storage from "redux-persist/lib/storage";
 
-// Import your slices
 import authSlice from "./authSlice";
 import companySlice from "./companySlice";
 import recruiterSlice from "./recruiterSlice.js";
 import jobPlanSlice from "./jobPlanSlice.js";
 import statsSlice from "./admin/statsSlice.js";
 
-// Configure persist settings
 const persistConfig = {
-  key: "root", // Key for the persisted data
+  key: "root",
   version: 1,
-  storage, // Define the storage engine (localStorage in this case)
+  storage,
+  // stats is large admin data — no need to persist it, saves localStorage space
+  // and reduces rehydration time on every page load
+  blacklist: ["stats"],
 };
 
-// Combine reducers
 const rootReducer = combineReducers({
   auth: authSlice,
   company: companySlice,
@@ -34,10 +29,8 @@ const rootReducer = combineReducers({
   stats: statsSlice,
 });
 
-// Wrap the root reducer with persistReducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// Configure the store
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -48,6 +41,5 @@ const store = configureStore({
     }),
 });
 
-// Persistor to persist the store
 export const persistor = persistStore(store);
 export default store;

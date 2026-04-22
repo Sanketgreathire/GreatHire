@@ -11,27 +11,33 @@ export const NotificationProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const { user } = useSelector((state) => state.auth);
 
-  // Initialize Socket.IO connection
+  // Initialize Socket.IO connection — deferred so it doesn't block initial paint
   useEffect(() => {
     if (!user?._id) return;
 
-    const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
-      withCredentials: true,
-      transports: ['polling', 'websocket'],
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
-    });
+    let socketInstance;
+    const t = setTimeout(() => {
+      socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
+        withCredentials: true,
+        transports: ['polling', 'websocket'],
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+      });
 
-    socketInstance.on('connect', () => {
-      socketInstance.emit('join', user._id);
-    });
+      socketInstance.on('connect', () => {
+        socketInstance.emit('join', user._id);
+      });
 
-    setSocket(socketInstance);
+      setSocket(socketInstance);
+    }, 500);
 
     return () => {
-      socketInstance.off('connect');
-      socketInstance.emit('leave', user._id);
-      socketInstance.disconnect();
+      clearTimeout(t);
+      if (socketInstance) {
+        socketInstance.off('connect');
+        socketInstance.emit('leave', user._id);
+        socketInstance.disconnect();
+      }
     };
   }, [user?._id]);
 
@@ -86,9 +92,11 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [socket, user]);
 
-  // Load notifications on mount
+  // Load notifications on mount — deferred so it doesn't block initial paint
   useEffect(() => {
-    loadNotifications();
+    if (!user?._id) return;
+    const t = setTimeout(loadNotifications, 800);
+    return () => clearTimeout(t);
   }, [loadNotifications]);
 
   // Mark notification as read

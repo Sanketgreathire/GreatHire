@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
@@ -35,17 +34,15 @@ const sections = [
       "GreatHire connects job seekers and recruiters through a secure and transparent hiring platform.",
     points: [
       "This Privacy Policy outlines how we collect, use, and protect your personal information to connect job seekers with recruiters effectively and securely.",
-"At GreatHire, we prioritize your privacy and are committed to safeguarding your data while maintaining transparency and trust.",
-" Our platform facilitates seamless job matching and recruitment while adhering to strict data protection standards, including GDPR and CCPA compliance.",
-" By using GreatHire, you consent to the practices outlined in this policy. Please review it carefully to understand your rights and our responsibilities.",
-" This policy applies to all GreatHire services, including our website, mobile applications, and communication tools.",
-" We regularly update this policy to reflect legal requirements and service enhancements. We encourage periodic review for the latest updates.",
-" Your data is collected to enhance user experience, optimize job matching, and support recruiters in hiring efficiently.",
-" We employ robust technical safeguards and strict access controls to ensure the security of your personal information.",
-" GreatHire does not sell or rent user data to third parties. Your trust remains our top priority.",
-" For inquiries or concerns, please contact us at hr@babde.tech."
-
-
+      "At GreatHire, we prioritize your privacy and are committed to safeguarding your data while maintaining transparency and trust.",
+      "Our platform facilitates seamless job matching and recruitment while adhering to strict data protection standards, including GDPR and CCPA compliance.",
+      "By using GreatHire, you consent to the practices outlined in this policy. Please review it carefully to understand your rights and our responsibilities.",
+      "This policy applies to all GreatHire services, including our website, mobile applications, and communication tools.",
+      "We regularly update this policy to reflect legal requirements and service enhancements. We encourage periodic review for the latest updates.",
+      "Your data is collected to enhance user experience, optimize job matching, and support recruiters in hiring efficiently.",
+      "We employ robust technical safeguards and strict access controls to ensure the security of your personal information.",
+      "GreatHire does not sell or rent user data to third parties. Your trust remains our top priority.",
+      "For inquiries or concerns, please contact us at hr@babde.tech.",
     ],
   },
   {
@@ -55,14 +52,15 @@ const sections = [
     intro: "This policy explains how and why we collect, use, and protect personal data.",
     points: [
       "The purpose of this Privacy Policy is to inform users of GreatHire about the collection, processing, storage, and sharing of their data.",
-"We ensure transparency about your data rights and maintain strict confidentiality throughout the hiring process.",
-" Personal data is collected to match job seekers with opportunities and assist recruiters in finding the best candidates.",
-" This policy promotes informed decision-making and builds trust through ethical and lawful data usage.",
-" We foster a privacy-first culture, empowering users while adhering to global data protection standards like GDPR and CCPA.",
-" Data is used only for outlined purposes or with user consent, ensuring accountability and clarity.",
-" We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks.",
-" GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security.",
-"or inquiries, contact us at privacy@greathire.com."    ],
+      "We ensure transparency about your data rights and maintain strict confidentiality throughout the hiring process.",
+      "Personal data is collected to match job seekers with opportunities and assist recruiters in finding the best candidates.",
+      "This policy promotes informed decision-making and builds trust through ethical and lawful data usage.",
+      "We foster a privacy-first culture, empowering users while adhering to global data protection standards like GDPR and CCPA.",
+      "Data is used only for outlined purposes or with user consent, ensuring accountability and clarity.",
+      "We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks.",
+      "GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security.",
+      "For inquiries, contact us at privacy@greathire.com.",
+    ],
   },
   {
     id: "eligibility",
@@ -276,18 +274,20 @@ const quickFacts = [
   },
 ];
 
+// ── SectionCard is defined OUTSIDE PrivacyPolicy ──────────────────────────────
 function SectionCard({ section, isOpen, onToggle }) {
   const Icon = section.icon;
+  const contentRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(isOpen ? contentRef.current.scrollHeight : 0);
+    }
+  }, [isOpen]);
 
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.35 }}
-      className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/80"
-    >
+    <article className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
       <button
         type="button"
         onClick={onToggle}
@@ -307,50 +307,44 @@ function SectionCard({ section, isOpen, onToggle }) {
             </span>
           </span>
         </span>
-
-        <motion.span
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="shrink-0 text-slate-500 dark:text-slate-400"
+        <span
+          className="shrink-0 text-slate-500 dark:text-slate-400 transition-transform duration-200"
+          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
         >
           <ChevronDown className="h-5 w-5" />
-        </motion.span>
+        </span>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="border-t border-slate-200/70 px-5 pb-5 pt-4 dark:border-slate-700">
-              <ul className="space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-                {section.points.map((point) => (
-                  <li key={point} className="flex items-start gap-2">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.article>
+      <div
+        ref={contentRef}
+        className="overflow-hidden transition-all duration-250"
+        style={{ height }}
+      >
+        <div className="border-t border-slate-200/70 px-5 pb-5 pt-4 dark:border-slate-700">
+          <ul className="space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+            {section.points.map((point) => (
+              <li key={point} className="flex items-start gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500" />
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </article>
   );
 }
 
+// ── Single PrivacyPolicy component ────────────────────────────────────────────
 function PrivacyPolicy() {
   const [expandedSection, setExpandedSection] = useState(sections[0].id);
 
-  const activeSection = useMemo(
-    () => sections.find((section) => section.id === expandedSection),
-    [expandedSection]
-  );
+  // Derive active section object from expandedSection id
+  const activeSection = sections.find((s) => s.id === expandedSection);
+
+  const handleToggle = useCallback((id) => {
+    setExpandedSection((current) => (current === id ? "" : id));
+  }, []);
 
   return (
     <div
@@ -478,11 +472,7 @@ function PrivacyPolicy() {
                 key={section.id}
                 section={section}
                 isOpen={expandedSection === section.id}
-                onToggle={() =>
-                  setExpandedSection((current) =>
-                    current === section.id ? "" : section.id
-                  )
-                }
+                onToggle={() => handleToggle(section.id)}
               />
             ))}
 

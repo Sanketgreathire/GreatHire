@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   FaQuestionCircle,
   FaPhoneAlt,
@@ -35,34 +35,23 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-
     if (name === "message" && value.length > maxChars) {
       toast.error("Message cannot exceed 500 characters");
       return;
     }
-
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }, [maxChars]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const { data } = await axios.post("/api/sendMessage", {
-        ...formData,
-      });
-
+      const { data } = await axios.post("/api/sendMessage", { ...formData });
       if (data.success) {
         toast.success(data.message);
-        setFormData({
-          fullname: "",
-          email: "",
-          phoneNumber: "",
-          message: "",
-        });
+        setFormData({ fullname: "", email: "", phoneNumber: "", message: "" });
       } else {
         toast.error(data.message);
       }
@@ -72,7 +61,7 @@ const ContactSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData]);
 
   return (
     <>
@@ -88,7 +77,7 @@ const ContactSection = () => {
         <Navbar />
 
         {/* Enhanced Hero Section with Light Mode Optimized Colors */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 pt-6 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950 -mt-[117px] pt-[117px] pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8">
           {/* Animated background with geometric shapes */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Floating orbs */}

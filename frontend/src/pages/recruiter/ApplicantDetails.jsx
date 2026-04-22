@@ -219,9 +219,9 @@ const ApplicantDetails = ({
                   </div>
                 )}
                 {location && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <FiMapPin className="text-red-400 shrink-0" size={15} />
-                    <span className="text-gray-700 dark:text-gray-300">{location}</span>
+                  <div className="flex items-start gap-3 text-sm">
+                    <FiMapPin className="text-red-400 shrink-0 mt-0.5" size={15} />
+                    <span className="text-gray-700 dark:text-gray-300 break-words min-w-0">{location}</span>
                   </div>
                 )}
                 {(p.currentCTC || p.expectedCTC) && (

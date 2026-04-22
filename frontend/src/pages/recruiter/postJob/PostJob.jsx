@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 // import Stepper from "react-stepper-horizontal";
@@ -7,12 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
-import { decreaseMaxPostJobs, addCompany } from "@/redux/companySlice";
+import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
-import { allLocations } from "@/utils/constant";
+import { allLocations, jobTitles } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
 import { useRef } from "react";
 import DOMPurify from "dompurify";
+
+const flatLocations = Object.values(allLocations).flat();
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
@@ -22,15 +24,31 @@ const PostJob = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Fetch fresh company data on mount (same as home page)
-  useEffect(() => {
-    if (user?._id) {
-      axios
-        .post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true })
-        .then((res) => { if (res?.data?.success) dispatch(addCompany(res.data.company)); })
-        .catch((err) => console.error("Error refreshing company:", err));
+  const plan = company?.plan || "FREE";
+  const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
+  const referralBonus = user?.remainingJobPosts ?? 0;
+
+  const jobsPosted = useMemo(() => plan === "FREE"
+    ? (company?.freeJobsPosted || 0)
+    : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)),
+    [plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth, company?.paidPlanFreeJobsPosted]
+  );
+
+  const remainingPosts = useMemo(() => {
+    if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+      const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
+      return Math.max(0, company.maxJobPosts - used) + referralBonus;
     }
-  }, [user?._id]);
+    if (plan === "FREE") return Math.max(0, (limits[plan] ?? 1) - (company?.freeJobsPosted || 0)) + referralBonus;
+    const paidLimit = limits[plan] ?? 0;
+    if (paidLimit === Infinity) return Infinity;
+    return Math.max(0, paidLimit - (company?.planJobsPostedThisMonth || 0)) + referralBonus;
+  }, [company, plan, referralBonus]);
+
+  const remainingPostsLabel = useMemo(() => {
+    if (remainingPosts === Infinity) return "Unlimited";
+    return `${remainingPosts} Job${remainingPosts !== 1 ? "s" : ""}`;
+  }, [remainingPosts]);
 
   const handleChange = (e) => {
     const lines = e.target.value.split("\n");
@@ -233,28 +251,11 @@ const PostJob = () => {
 
     onSubmit: async (values) => {
       // Block 2nd+ job for ALL plans until admin verifies
-      const plan = company?.plan || "FREE";
-      const jobsPostedSoFar = plan === "FREE"
-        ? (company?.freeJobsPosted || 0)
-        : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
-
-      // Check remaining posts using same logic as home page
-      const referralBonus = user?.remainingJobPosts ?? 0;
-      let remainingPosts;
-      if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
-        const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
-        remainingPosts = Math.max(0, company.maxJobPosts - used) + referralBonus;
-      } else {
-        const limits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-        const limit = limits[plan] ?? 2;
-        remainingPosts = Math.max(0, limit - jobsPostedSoFar) + referralBonus;
-      }
-
+      const jobsPostedSoFar = jobsPosted;
       if (!company.isActive && jobsPostedSoFar >= 1 && remainingPosts <= 0) {
         toast.error("Your first job is under admin review. You cannot post additional jobs until your account is verified.");
         return;
       }
-
       if (company.isActive && remainingPosts <= 0) {
         toast.error("You have no remaining job posts. Please upgrade your plan.");
         return;
@@ -358,13 +359,7 @@ const PostJob = () => {
       {company ? (
         <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           {/* Verification Status Banner - shown after 1st job, not yet verified (free or paid plan) */}
-          {!company?.isActive && (() => {
-            const plan = company?.plan || "FREE";
-            const jobsPosted = plan === "FREE" 
-              ? (company?.freeJobsPosted || 0) 
-              : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
-            return jobsPosted >= 1;
-          })() && (
+          {!company?.isActive && jobsPosted >= 1 && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded">
                 <div className="flex items-center">
@@ -385,13 +380,8 @@ const PostJob = () => {
 
           {/* Verified banner - shown after verification with 1 job already posted */}
           {company?.isActive && (() => {
-            const plan = company?.plan || "FREE";
-            if (plan === "FREE") {
-              return company.freeJobsPosted === 1;
-            } else {
-              const totalPosted = (company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0);
-              return totalPosted === 1;
-            }
+            if (plan === "FREE") return company.freeJobsPosted === 1;
+            return ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)) === 1;
           })() && (
             <div className="max-w-3xl mx-auto mb-4 px-4">
               <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded">
@@ -417,26 +407,7 @@ const PostJob = () => {
               <div className="flex items-center justify-center">
                 <div className="text-center">
                   <p className="text-sm font-medium">Remaining Job Posts</p>
-                  <p className="text-3xl font-bold">
-                    {(() => {
-                      const plan = company.plan || "FREE";
-                      const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
-                      const referralBonus = user?.remainingJobPosts ?? 0;
-
-                      if (plan === "FREE") {
-                        const limit = limits[plan] ?? 1;
-                        const used = company.freeJobsPosted || 0;
-                        const remaining = Math.max(0, limit - used) + referralBonus;
-                        return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
-                      } else {
-                        const paidLimit = limits[plan] ?? 0;
-                        if (paidLimit === Infinity) return "Unlimited";
-                        const paidUsed = company.planJobsPostedThisMonth || 0;
-                        const remaining = Math.max(0, paidLimit - paidUsed) + referralBonus;
-                        return `${remaining} Job${remaining !== 1 ? "s" : ""}`;
-                      }
-                    })()}
-                  </p>
+                  <p className="text-3xl font-bold">{remainingPostsLabel}</p>
                   <p className="text-xs mt-1 opacity-80">{company.plan || "FREE"} Plan</p>
                 </div>
               </div>
@@ -445,13 +416,7 @@ const PostJob = () => {
 
           <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
             {/* Lock form for ALL recruiters (free or paid) after 1st job until verified */}
-            {!company?.isActive && (() => {
-              const plan = company?.plan || "FREE";
-              const jobsPosted = plan === "FREE" 
-                ? (company?.freeJobsPosted || 0) 
-                : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
-              return jobsPosted >= 1;
-            })() ? (
+            {!company?.isActive && jobsPosted >= 1 ? (
               <div className="text-center py-12">
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -471,12 +436,9 @@ const PostJob = () => {
               </div>
             ) : (
               <>
-            <h1>
-              {/* Display only the title of the current step */}
-              <h2 className="md:hidden font-bold text-2xl text-blue-700 dark:text-blue-400 py-7 transition-colors duration-300">
-                {steps[step].title}
-              </h2>
-            </h1>
+            <h2 className="md:hidden font-bold text-2xl text-blue-700 dark:text-blue-400 py-7 transition-colors duration-300">
+              {steps[step].title}
+            </h2>
 
             <form onSubmit={formik.handleSubmit}>
               {step === 0 && (
@@ -527,14 +489,33 @@ const PostJob = () => {
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Job Title<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
-                    <input
-                      name="title"
-                      type="text"
-                      placeholder="Enter job title"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.title}
-                    />
+                    <div className="relative">
+                      <input
+                        name="title"
+                        type="text"
+                        placeholder="Search or enter job title"
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                        onChange={formik.handleChange}
+                        value={formik.values.title}
+                        onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
+                        onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                        autoComplete="off"
+                      />
+                      <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-48 overflow-y-auto hidden">
+                        {jobTitles
+                          .filter(t => t.toLowerCase().includes((formik.values.title || "").toLowerCase()))
+                          .map(title => (
+                            <div
+                              key={title}
+                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 text-sm"
+                              onMouseDown={() => formik.setFieldValue("title", title)}
+                            >
+                              {title}
+                            </div>
+                          ))
+                        }
+                      </div>
+                    </div>
                     {formik.touched.title && formik.errors.title && (
                       <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.title}
@@ -973,19 +954,9 @@ const PostJob = () => {
                       onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
                     />
                     <div className="absolute w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden transition-colors duration-300">
-                      {[
-                        ...Object.values(allLocations)
-                          .flat()
-                          .filter((location) =>
-                            location.toLowerCase().includes(formik.values.location.toLowerCase())
-                          ),
-                        ...Object.values(allLocations)
-                          .flat()
-                          .filter(
-                            (location) =>
-                              !location.toLowerCase().includes(formik.values.location.toLowerCase())
-                          ),
-                      ].map((location) => (
+                      {flatLocations
+                          .filter((loc) => loc.toLowerCase().includes(formik.values.location.toLowerCase()))
+                          .map((location) => (
                         <div
                           key={location}
                           className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 transition-colors duration-300"

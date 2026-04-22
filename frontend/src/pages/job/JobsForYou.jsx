@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { CiBookmark } from "react-icons/ci";
@@ -82,292 +82,167 @@ const JobsForYou = ({ jobs = [] }) => {
     }
   }, [selectedJob]);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (jobContainerRef.current) {
       setScrollPosition(jobContainerRef.current.scrollTop);
     }
-  };
+  }, []);
 
   // ========== UTILITY FUNCTIONS ==========
 
-  const isApplied =
+  const isApplied = useMemo(() =>
     selectedJob?.application?.some(
-      (application) =>
-        String(application.applicant) === String(user?._id) ||
-        application.applicant?._id?.toString() === String(user?._id)
-    ) || false;
+      (app) => String(app.applicant) === String(user?._id) ||
+               app.applicant?._id?.toString() === String(user?._id)
+    ) || false
+  , [selectedJob?.application, user?._id]);
 
-  const hasAppliedToJob = (jobId) =>
-    jobs.some(
-      (job) =>
-        job._id === jobId &&
-        job?.application?.some(
-          (application) =>
-            String(application.applicant) === String(user?._id) ||
-            application.applicant?._id?.toString() === String(user?._id)
-        )
+  const appliedJobIds = useMemo(() => {
+    if (!user?._id) return new Set();
+    return new Set(
+      jobs
+        .filter(job => job?.application?.some(
+          app => String(app.applicant) === String(user._id) ||
+                 app.applicant?._id?.toString() === String(user._id)
+        ))
+        .map(job => job._id)
     );
+  }, [jobs, user?._id]);
 
-  const isJobBookmarked = (userId) =>
-    selectedJob?.saveJob?.includes(userId);
+  const hasAppliedToJob = useCallback((jobId) => appliedJobIds.has(jobId), [appliedJobIds]);
 
-  const calculateActiveDays = (createdAt) => {
-    const jobCreatedDate = new Date(createdAt);
-    const currentDate = new Date();
-    const timeDifference = currentDate - jobCreatedDate;
-    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-  };
+  const isJobBookmarked = useCallback((userId) =>
+    selectedJob?.saveJob?.includes(userId)
+  , [selectedJob?.saveJob]);
 
-  // ========== BOOKMARK HANDLER ==========
-  const handleBookmark = async (jobId) => {
-    try {
-      const response = await axios.get(
-        `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.data.success) {
-        toggleBookmarkStatus(jobId, user?._id);
-        toast.success(response.data.message);
-      }
-    } catch (error) {
-      console.error(
-        "Error bookmarking job:",
-        error.response?.data?.message || error.message
-      );
-    }
-  };
-
-  // ========== JOB CLICK HANDLER ==========
-  const handleJobClick = (job) => {
-    setSelectedJob(job);
-    setShareJobId(null);
-    if (window.innerWidth < 768) {
-      setShowJobDetails(true);
-    }
-  };
-  const handleNavigateToProfile = () => {
-    navigate('/profile');
-  };
+  const calculateActiveDays = useCallback((createdAt) => {
+    return Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+  }, []);
 
   // --- PROFILE COMPLETION CHECK LOGIC ---
   const getMissingProfileFields = (userData = user) => {
     if (!userData) return [{ label: "Login / User Data", icon: User }];
-
-    const missingFields = [];
-
-    // Email
+    const missing = [];
     const email = userData?.emailId?.email || userData?.email;
-    if (!email || String(email).trim() === "") {
-      missingFields.push({ label: "Email Address", icon: Mail });
-    }
-
-    // Phone
+    if (!email || String(email).trim() === "") missing.push({ label: "Email Address", icon: Mail });
     const phone = userData?.phoneNumber?.number || userData?.phoneNumber;
-    if (!phone || String(phone).trim() === "") {
-      missingFields.push({ label: "Contact Number", icon: Phone });
-    }
-
-    // Resume
+    if (!phone || String(phone).trim() === "") missing.push({ label: "Contact Number", icon: Phone });
     const resume = userData?.profile?.resume;
-    if (!resume || String(resume).trim() === "") {
-      missingFields.push({ label: "Resume/CV", icon: FileText });
-    }
-
-    // Gender
+    if (!resume || String(resume).trim() === "") missing.push({ label: "Resume/CV", icon: FileText });
     const gender = userData?.profile?.gender || userData?.gender;
-    if (!gender || String(gender).trim() === "") {
-      missingFields.push({ label: "Gender", icon: User });
-    }
-
-    // Qualification
+    if (!gender || String(gender).trim() === "") missing.push({ label: "Gender", icon: User });
     const qualification = userData?.profile?.qualification;
     const otherQualification = userData?.profile?.otherQualification;
     if (!qualification || String(qualification).trim() === "") {
-      missingFields.push({ label: "Highest Qualification", icon: GraduationCap });
-    } else if (
-      qualification === "Others" &&
-      (!otherQualification || String(otherQualification).trim() === "")
-    ) {
-      missingFields.push({ label: "Other Qualification Details", icon: GraduationCap });
+      missing.push({ label: "Highest Qualification", icon: GraduationCap });
+    } else if (qualification === "Others" && (!otherQualification || String(otherQualification).trim() === "")) {
+      missing.push({ label: "Other Qualification Details", icon: GraduationCap });
     }
-
-    // Skills
-    const skillsArr =
-      Array.isArray(userData?.profile?.skills) && userData.profile.skills.length > 0
-        ? userData.profile.skills
-        : typeof userData?.profile?.skills === "string" &&
-          userData.profile.skills.trim().length > 0
-          ? userData.profile.skills
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
-          : [];
-
-    if (!skillsArr || skillsArr.length === 0) {
-      missingFields.push({ label: "Skills", icon: Briefcase });
-    }
-
-    // Bio
+    const skillsArr = Array.isArray(userData?.profile?.skills) && userData.profile.skills.length > 0
+      ? userData.profile.skills
+      : typeof userData?.profile?.skills === "string" && userData.profile.skills.trim().length > 0
+        ? userData.profile.skills.split(",").map(s => s.trim()).filter(Boolean)
+        : [];
+    if (!skillsArr || skillsArr.length === 0) missing.push({ label: "Skills", icon: Briefcase });
     const bio = userData?.profile?.bio;
-    if (!bio || String(bio).trim() === "") {
-      missingFields.push({ label: "Profile Summary/Bio", icon: FileText });
-    }
-
-    return missingFields;
+    if (!bio || String(bio).trim() === "") missing.push({ label: "Profile Summary/Bio", icon: FileText });
+    return missing;
   };
 
-  const isProfileComplete = (userData = user) => {
-    return getMissingProfileFields(userData).length === 0;
-  };
+  const missingFields = useMemo(() => getMissingProfileFields(user), [user]);
+  const profileComplete = useMemo(() => missingFields.length === 0, [missingFields]);
+  const completionPercentage = useMemo(() => Math.round(((7 - missingFields.length) / 7) * 100), [missingFields]);
 
-  // Calculate completion percentage
-  const missingFields = getMissingProfileFields(user);
-  const totalFields = 7; // Total profile fields to complete
-  const completionPercentage = Math.round(
-    ((totalFields - missingFields.length) / totalFields) * 100
-  );
+  const handleBookmark = useCallback(async (jobId) => {
+    try {
+      const response = await axios.get(`${JOB_API_END_POINT}/bookmark-job/${jobId}`, { withCredentials: true });
+      if (response.data.success) { toggleBookmarkStatus(jobId, user?._id); toast.success(response.data.message); }
+    } catch {}
+  }, [user?._id, toggleBookmarkStatus]);
 
-  // ========== BULK APPLY HANDLERS ==========
-  const toggleJobSelection = (e, jobId) => {
+  const handleJobClick = useCallback((job) => {
+    setSelectedJob(job); setShareJobId(null);
+    if (window.innerWidth < 768) setShowJobDetails(true);
+  }, [setSelectedJob]);
+
+  const handleNavigateToProfile = useCallback(() => navigate('/profile'), [navigate]);
+
+  const toggleJobSelection = useCallback((e, jobId) => {
     e.stopPropagation();
     if (hasAppliedToJob(jobId)) return;
-    setSelectedJobs((prev) => {
-      const next = new Set(prev);
-      next.has(jobId) ? next.delete(jobId) : next.add(jobId);
-      return next;
-    });
-  };
+    setSelectedJobs((prev) => { const next = new Set(prev); next.has(jobId) ? next.delete(jobId) : next.add(jobId); return next; });
+  }, [hasAppliedToJob]);
 
-  const handleBulkApply = async (answersMap = {}) => {
+  const submitApply = useCallback(async (jobId, answers) => {
+    try {
+      const response = await axios.post(`${JOB_API_END_POINT}/apply-job/${jobId}`,
+        { applicant: user._id, applicantName: user.fullname || user.name, applicantEmail: user.emailId?.email || user.email, applicantPhone: user.phoneNumber?.number || user.phoneNumber, applicantProfile: user.profile, answers },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        toast.success("Applied Successfully");
+        setSelectedJob((prev) => ({ ...prev, application: [...(prev.application || []), { applicant: user._id }] }));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong!");
+    }
+  }, [user, setSelectedJob]);
+
+  const handleBulkApply = useCallback(async (answersMap = {}) => {
     if (!user) { toast.error("Please login to apply"); return; }
     if (selectedJobs.size === 0) { toast.error("No jobs selected"); return; }
-
-    const missingFieldsList = getMissingProfileFields(user);
-    if (missingFieldsList.length > 0) {
-      toast.error(`Complete your profile before applying: ${missingFieldsList.map((f) => f.label).join(", ")}.`, { duration: 6000 });
+    if (missingFields.length > 0) {
+      toast.error(`Complete your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
       return;
     }
-
-    // Check if any selected job has questions without answers
     const jobsNeedingAnswers = [];
     for (const jobId of selectedJobs) {
       const job = jobs.find(j => j._id === jobId);
-      if (job?.questions?.length > 0 && !answersMap[jobId]) {
-        jobsNeedingAnswers.push(job);
-      }
+      if (job?.questions?.length > 0 && !answersMap[jobId]) jobsNeedingAnswers.push(job);
     }
-
     if (jobsNeedingAnswers.length > 0) {
-      // Prompt for the first unanswered job with questions
       const job = jobsNeedingAnswers[0];
       setQuestionAnswers(job.questions.map(q => ({ question: q, answer: "" })));
       setQuestionsModal({ jobId: job._id, questions: job.questions, isBulk: true, pendingAnswersMap: answersMap });
       return;
     }
-
     setIsBulkApplying(true);
     try {
-      const response = await axios.post(
-        `${APPLICATION_API_END_POINT}/bulk-apply`,
-        { jobIds: Array.from(selectedJobs), answersMap },
-        { withCredentials: true }
-      );
+      const response = await axios.post(`${APPLICATION_API_END_POINT}/bulk-apply`, { jobIds: Array.from(selectedJobs), answersMap }, { withCredentials: true });
       if (response.data.success) {
         const { applied, skipped } = response.data;
-        if (applied.length > 0) {
-          toast.success(`Applied to ${applied.length} job(s) successfully!`);
-          applied.forEach((jobId) => addApplicationToJob(jobId, { applicant: user._id }));
-        }
+        if (applied.length > 0) { toast.success(`Applied to ${applied.length} job(s) successfully!`); applied.forEach(jobId => addApplicationToJob(jobId, { applicant: user._id })); }
         if (skipped.length > 0) toast.error(`${skipped.length} job(s) skipped (already applied or inactive).`);
         setSelectedJobs(new Set());
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Bulk apply failed. Try again.");
-    } finally {
-      setIsBulkApplying(false);
-    }
-  };
+    } finally { setIsBulkApplying(false); }
+  }, [user, selectedJobs, jobs, missingFields, addApplicationToJob]);
 
-  // ========== APPLY JOB HANDLER ==========
-  const handleApply = async (jobId) => {
-    if (!user) {
-      toast.error("Please login to apply");
+  const handleApply = useCallback(async (jobId) => {
+    if (!user) { toast.error("Please login to apply"); return; }
+    if (hasAppliedToJob(jobId)) { toast.error("Already applied"); return; }
+    if (missingFields.length > 0) {
+      toast.error(`Please complete the following details in your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
       return;
     }
-
-    if (hasAppliedToJob(jobId)) {
-      toast.error("Already applied");
-      return;
-    }
-
-    const missingFieldsList = getMissingProfileFields(user);
-    if (missingFieldsList.length > 0) {
-      const missingMessage = `Please complete the following details in your profile before applying: ${missingFieldsList
-        .map((f) => f.label)
-        .join(", ")}.`;
-      toast.error(missingMessage, { duration: 6000 });
-      return;
-    }
-
     const job = jobs.find(j => j._id === jobId);
     if (job?.questions?.length > 0) {
       setQuestionAnswers(job.questions.map(q => ({ question: q, answer: "" })));
       setQuestionsModal({ jobId, questions: job.questions, isBulk: false });
       return;
     }
-
     await submitApply(jobId, []);
-  };
+  }, [user, hasAppliedToJob, missingFields, jobs, submitApply]);
 
-  const submitApply = async (jobId, answers) => {
-    try {
-      const payload = {
-        applicant: user._id,
-        applicantName: user.fullname || user.name,
-        applicantEmail: user.emailId?.email || user.email,
-        applicantPhone: user.phoneNumber?.number || user.phoneNumber,
-        applicantProfile: user.profile,
-        answers,
-      };
-
-      const response = await axios.post(
-        `${JOB_API_END_POINT}/apply-job/${jobId}`,
-        payload,
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        toast.success("Applied Successfully");
-        setSelectedJob((prev) => ({
-          ...prev,
-          application: [...(prev.application || []), { applicant: user._id }],
-        }));
-      }
-    } catch (error) {
-      console.error("Error applying job:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Something went wrong!");
-    }
-  };
-
-  const handleQuestionsSubmit = async () => {
-    if (questionAnswers.some(a => !a.answer.trim())) {
-      toast.error("Please answer all questions before submitting.");
-      return;
-    }
-
+  const handleQuestionsSubmit = useCallback(async () => {
+    if (questionAnswers.some(a => !a.answer.trim())) { toast.error("Please answer all questions before submitting."); return; }
     const { jobId, isBulk, pendingAnswersMap } = questionsModal;
     setQuestionsModal(null);
-
-    if (isBulk) {
-      const updatedMap = { ...pendingAnswersMap, [jobId]: questionAnswers };
-      await handleBulkApply(updatedMap);
-    } else {
-      await submitApply(jobId, questionAnswers);
-    }
-  };
+    if (isBulk) { await handleBulkApply({ ...pendingAnswersMap, [jobId]: questionAnswers }); }
+    else { await submitApply(jobId, questionAnswers); }
+  }, [questionAnswers, questionsModal, handleBulkApply, submitApply]);
 
   // ========== RENDER ==========
   return (
@@ -659,18 +534,18 @@ const JobsForYou = ({ jobs = [] }) => {
                         onMouseLeave={() => setIsHovered(false)}
                       >
                         <button
-                          className={`w-full flex items-center justify-center gap-2 ${!isProfileComplete(user)
+                          className={`w-full flex items-center justify-center gap-2 ${!profileComplete
                             ? "cursor-not-allowed"
                             : ""
                             }`}
                           onClick={() => handleApply(selectedJob._id)}
-                          disabled={!isProfileComplete(user)}
+                          disabled={!profileComplete}
                         >
                           Apply Now
                         </button>
 
                         {/* Beautiful Tooltip */}
-                        {!isProfileComplete(user) && (
+                        {!profileComplete && (
                           <div
                             className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${isHovered
                               ? "opacity-100 visible translate-y-0"
@@ -881,18 +756,18 @@ const JobsForYou = ({ jobs = [] }) => {
               ) : (
                 <div className="relative group w-full max-w-md">
                   <button
-                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${!isProfileComplete(user)
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${!profileComplete
                       ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
                       : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
                       }`}
                     onClick={() => handleApply(selectedJob._id)}
-                    disabled={!isProfileComplete(user)}
+                    disabled={!profileComplete}
                   >
                     Apply Now
                   </button>
 
                   {/* Tooltip for incomplete profile - Mobile */}
-                  {!isProfileComplete(user) && (
+                  {!profileComplete && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-3 bg-gray-900 dark:bg-gray-950 text-white text-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 w-64 z-50">
                       <p className="font-semibold mb-2">Complete Your Profile:</p>
                       <ul className="list-disc list-inside space-y-1">

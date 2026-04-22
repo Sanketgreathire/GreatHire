@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -17,6 +17,7 @@ import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 
 const statusOptions = ["All", "Active", "Expired"];
+const dateFormatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 
 const PostedJobList = () => {
   const navigate = useNavigate();
@@ -30,112 +31,71 @@ const PostedJobList = () => {
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const jobsPerPage = 10; // Number of jobs per page
 
-  // Navigate to post a new job
-  const handlePostJob = () => {
-    navigate("/recruiter/dashboard/post-job");
-  };
-
-  // Navigate to job details page
-  const handleJobDetailsClick = (jobId) => {
-    navigate(`/recruiter/dashboard/job-details/${jobId}`);
-  };
-
-  // Navigate to applicants list for a specific job
-  const handleApplicantsClick = (jobId) => {
-    navigate(`/recruiter/dashboard/applicants-details/${jobId}`);
-  };
+  const handlePostJob = useCallback(() => navigate("/recruiter/dashboard/post-job"), [navigate]);
+  const handleJobDetailsClick = useCallback((jobId) => navigate(`/recruiter/dashboard/job-details/${jobId}`), [navigate]);
+  const handleApplicantsClick = useCallback((jobId) => navigate(`/recruiter/dashboard/applicants-details/${jobId}`), [navigate]);
+  const handlePageChange = useCallback((newPage) => setCurrentPage(newPage), []);
 
   // Fetch all jobs for the logged-in company's ID
-  const fetchAllJobs = async (companyId) => {
+  const fetchAllJobs = useCallback(async (companyId) => {
     try {
       setLoading(true);
       const response = await axios.get(
         `${JOB_API_END_POINT}/jobs-list/${companyId}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
-      if (response.data.success) {
-        setJobs(response.data.jobs);
-      } else {
-        console.error("Error: Unable to fetch jobs.");
-      }
+      if (response.data.success) setJobs(response.data.jobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Filtering jobs based on search and status filter
-  const filteredJobs = jobs.filter((job) => {
-    const matchesSearch = job?.jobDetails?.title
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "All" ||
+  const filteredJobs = useMemo(() => jobs.filter((job) => {
+    const matchesSearch = job?.jobDetails?.title?.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "All" ||
       (statusFilter === "Active" && job.jobDetails.isActive) ||
       (statusFilter === "Expired" && !job.jobDetails.isActive);
     return matchesSearch && matchesStatus;
-  });
+  }), [jobs, search, statusFilter]);
 
-  // Implementing pagination
-  const currentJobs = filteredJobs.slice(
+  const currentJobs = useMemo(() => filteredJobs.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage
-  );
+  ), [filteredJobs, currentPage]);
 
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const totalPages = useMemo(() => Math.ceil(filteredJobs.length / jobsPerPage), [filteredJobs]);
 
-  // Toggle job status (Active/Expired)
-  const toggleActive = async (event, jobId, isActive) => {
+  const toggleActive = useCallback(async (event, jobId, isActive) => {
     event.stopPropagation();
     try {
-      setStatusLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
+      setStatusLoading((prev) => ({ ...prev, [jobId]: true }));
       const response = await axios.put(
         `${JOB_API_END_POINT}/toggle-active`,
-        {
-          jobId,
-          isActive,
-          companyId: company?._id,
-        },
+        { jobId, isActive, companyId: company?._id },
         { withCredentials: true }
       );
-
       if (response.data.success) {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) =>
-            job._id === jobId
-              ? { ...job, jobDetails: { ...job.jobDetails, isActive } }
-              : job
+        setJobs((prev) =>
+          prev.map((job) =>
+            job._id === jobId ? { ...job, jobDetails: { ...job.jobDetails, isActive } } : job
           )
         );
-
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
       }
-    } catch (error) {
-      console.error("Error toggling job status:", error);
-      toast.error(
-        "There was an error toggling the job status. Please try again later."
-      );
+    } catch {
+      toast.error("There was an error toggling the job status. Please try again later.");
     } finally {
-      setStatusLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+      setStatusLoading((prev) => ({ ...prev, [jobId]: false }));
     }
-  };
+  }, [company?._id]);
 
-  // Fetch jobs when component mounts or when user/company data changes
   useEffect(() => {
-    if (user && company) {
-      fetchAllJobs(company?._id);
-    }
-  }, [user, company]);
-
-  // Handle page change for pagination
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+    if (user && company?._id) fetchAllJobs(company._id);
+  }, [user, company?._id, fetchAllJobs]);
 
   return (
     <>
@@ -215,14 +175,7 @@ const PostedJobList = () => {
                               {(currentPage - 1) * jobsPerPage + index + 1}
                             </TableCell>
                             <TableCell className="text-gray-900 dark:text-gray-100">
-                              {new Date(job.createdAt).toLocaleDateString(
-                                "en-GB",
-                                {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                }
-                              )}
+                              {dateFormatter.format(new Date(job.createdAt))}
                             </TableCell>
                             <TableCell className="text-gray-900 dark:text-gray-100">{job.jobDetails.title}</TableCell>
                             {job?.created_by === user?._id ||

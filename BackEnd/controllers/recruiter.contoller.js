@@ -268,63 +268,40 @@ export const getAllRecruiters = async (req, res) => {
   try {
     const { companyId } = req.body;
 
-    const company = await Company.findById(companyId);
+    const company = await Company.findById(companyId).select("userId").lean();
     if (!company) {
-      res.status(400).json({
-        success: false,
-        message: "Company Not found!",
-      });
+      return res.status(400).json({ success: false, message: "Company Not found!" });
     }
 
-    // get all recruiter ids of a company
-    const recruiterIds = company?.userId.map((userObj) => userObj.user._id);
-    // fetching all recruiter according to recruiter ids
-    const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
+    const recruiterIds = company.userId.map((u) => u.user);
+    const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } })
+      .select("-password")
+      .lean();
 
-    return res.status(200).json({
-      recruiters,
-      success: true,
-    });
+    return res.status(200).json({ recruiters, success: true });
   } catch (error) {
     console.error("Error in fetching recruiters:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error." });
+    return res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
 
 export const getRecruiterById = async (req, res) => {
-  const { id } = req.params; // recruiter id
+  const { id } = req.params;
 
   try {
-    // Find the recruiter by ID
-    const recruiter = await Recruiter.findById(id);
+    const recruiter = await Recruiter.findById(id).select("-password").lean();
+    if (!recruiter) return res.status(404).json({ message: "Recruiter not found" });
 
-    if (!recruiter) {
-      return res.status(404).json({ message: "Recruiter not found" });
-    }
+    const company = await Company.findOne(
+      { adminEmail: recruiter.emailId.email },
+      { companyName: 1 }
+    ).lean();
 
+    if (company) recruiter.companyName = company.companyName;
 
-    const email = recruiter.emailId.email;
-    // Fetch company details by admin email
-    const company = await Company.findOne({ adminEmail: email });
-
-    if (company) {
-      const companyName = company.companyName;
-      console.log(companyName);
-      recruiter.companyName = companyName;
-    }
-
-    console.log(recruiter);
-    res.status(200).json({
-      message: "Recruiter fetched successfully",
-      recruiter,
-      success: true,
-    });
+    res.status(200).json({ message: "Recruiter fetched successfully", recruiter, success: true });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -560,203 +537,135 @@ export const updateProfile = async (req, res) => {
 // delete account of recruiter by admin or company admin
 export const deleteAccount = async (req, res) => {
   const { userEmail, companyId } = req.body;
-  console.log(req.body);
 
   try {
-    // Check if the logged-in user is an admin first
-    const admin = await Admin.findById(req.id);
-    
-    const user = await Recruiter.findOne({ "emailId.email": userEmail });
-    let userId;
-    if (user) userId = user._id;
-    else userId = req.id;
+    const [admin, user] = await Promise.all([
+      Admin.findById(req.id).select("_id").lean(),
+      Recruiter.findOne({ "emailId.email": userEmail }).select("_id emailId").lean(),
+    ]);
 
-    // if user not admin or not recruiter then we will not allowed to delete recruiter
-    // Skip isUserAssociated check if user is admin
+    const userId = user?._id || req.id;
+
     if (!admin) {
-      const isAssociated = await isUserAssociated(companyId, userId);
-      if (!isAssociated) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized", success: false });
+      const company = await Company.findById(companyId).select("userId").lean();
+      const belongs = company?.userId.some(u => u.user.toString() === userId.toString());
+      const recruiterActive = belongs
+        ? (await Recruiter.findById(userId).select("isActive").lean())?.isActive
+        : false;
+      if (!belongs || !recruiterActive) {
+        return res.status(403).json({ message: "You are not authorized", success: false });
       }
     }
 
-    const company = await Company.findById(companyId);
+    const company = await Company.findById(companyId).lean();
     if (!company) {
-      // If admin and company doesn't exist, just delete the recruiter directly
       if (admin && user) {
         await Recruiter.findByIdAndDelete(user._id);
-        return res.status(200).json({
-          success: true,
-          message: "Recruiter deleted successfully",
-        });
+        return res.status(200).json({ success: true, message: "Recruiter deleted successfully" });
       }
       return res.status(404).json({ message: "Company not found", success: false });
     }
 
-    // if admin delete recruiter or recruiter admin deleted the account
     if (userEmail === company.adminEmail || admin) {
-      // Fetch jobs before deleting
-      const jobs = await Job.find({ company: companyId });
+      const recruiterIds = company.userId.map((u) => u.user);
+      const jobs = await Job.find({ company: companyId }).select("_id").lean();
+      const jobIds = jobs.map(j => j._id);
 
-      // Delete all jobs associated with the company
-      await Job.deleteMany({ company: companyId });
+      await Promise.all([
+        Job.deleteMany({ company: companyId }),
+        jobIds.length > 0 ? Application.deleteMany({ job: { $in: jobIds } }) : Promise.resolve(),
+        Recruiter.deleteMany({ _id: { $in: recruiterIds } }),
+        deletedCompany.create({
+          companyName: company.companyName,
+          email: company.email,
+          adminEmail: company.adminEmail,
+          CIN: company.CIN,
+          phone: company.phone,
+        }),
+      ]);
 
-      // Remove applications associated with the deleted jobs
-      if (jobs.length > 0) {
-        const jobIds = jobs.map((job) => job._id);
-        await Application.deleteMany({ job: { $in: jobIds } });
-      }
+      await Promise.all([
+        Company.findByIdAndDelete(companyId),
+        CandidateSubscription.findOneAndDelete({ company: companyId }),
+        JobSubscription.findOneAndDelete({ company: companyId }),
+      ]);
 
-      // Remove all recruiters associated with the company
-      await Recruiter.deleteMany({
-        _id: { $in: company.userId.map((u) => u.user) },
-      });
-
-      // Save the unique fields into the Deleted Company collection
-      const deletedData = {
-        companyName: company.companyName,
-        email: company.email,
-        adminEmail: company.adminEmail,
-        CIN: company.CIN,
-        phone: company.phone,
-      };
-
-      // we blacklisted the company if delete by recruiter so that they will not take advantage of free credits of job posting and candidate database
-      // if recrutier want to create again need permission of admin
-      await deletedCompany.create(deletedData);
-
-      // Remove the company
-      await Company.findByIdAndDelete(companyId);
-      // delete subscription of company
-      await CandidateSubscription.findOneAndDelete({ company: companyId });
-      await JobSubscription.findOneAndDelete({ company: companyId });
-
-      // if not admin mean recruiter admin and deleted own account
       if (!admin) {
-        return res
-          .status(200)
-          .cookie("token", "", {
-            maxAge: 0,
-            httpsOnly: true,
-            sameSite: "lax",
-          })
-          .json({
-            success: true,
-            message: "Company deleted successfully",
-          });
-      } else {
-        return res.status(200).json({
-          success: true,
-          message: "Company deleted successfully",
-        });
+        return res.status(200).cookie("token", "", { maxAge: 0, httpsOnly: true, sameSite: "lax" })
+          .json({ success: true, message: "Company deleted successfully" });
       }
-    } else { // if simple recruiter
+      return res.status(200).json({ success: true, message: "Company deleted successfully" });
+    } else {
+      const jobs = await Job.find({ created_by: userId }).select("_id").lean();
+      const jobIds = jobs.map(j => j._id);
 
-      // Remove the user from the userId array in the Company model
-      await Company.findByIdAndUpdate(
-        companyId,
-        { $pull: { userId: { user: userId } } },
-        { new: true }
-      );
+      await Promise.all([
+        Company.findByIdAndUpdate(companyId, { $pull: { userId: { user: userId } } }),
+        Recruiter.findByIdAndDelete(userId),
+        Job.deleteMany({ created_by: userId }),
+        jobIds.length > 0 ? Application.deleteMany({ job: { $in: jobIds } }) : Promise.resolve(),
+      ]);
 
-      // Remove the recruiter from the Recruiter collection
-      await Recruiter.findByIdAndDelete(userId);
-
-      // Fetch jobs created by this recruiter before deleting
-      const jobs = await Job.find({ created_by: userId });
-
-      // Delete jobs created by this recruiter
-      await Job.deleteMany({ created_by: userId });
-
-      // Remove applications associated with the deleted jobs
-      if (jobs.length > 0) {
-        const jobIds = jobs.map((job) => job._id);
-        await Application.deleteMany({ job: { $in: jobIds } });
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "Recruiter removed",
-      });
+      return res.status(200).json({ success: true, message: "Recruiter removed" });
     }
   } catch (err) {
     console.error("Error deleting account:", err);
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: err.message });
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };
 
 export const toggleBlock = async (req, res) => {
-  console.log("🟢 Received toggle-block request:", req.body);
-
-  const { recruiterId, companyId, isBlocked } = req.body; // ✅ Use recruiterId instead of email
-  const userId = req.id; // Assuming authenticated user ID
+  const { recruiterId, companyId, isBlocked } = req.body;
+  const userId = req.id;
 
   try {
-    // Find the admin making the request (if any)
-    const admin = await Admin.findById(userId);
+    const [admin, recruiter, company] = await Promise.all([
+      Admin.findById(userId).select("_id").lean(),
+      Recruiter.findById(recruiterId).select("_id emailId isBlocked"),
+      Company.findById(companyId).select("userId adminEmail companyName email CIN").lean(),
+    ]);
 
-    // Check authorization: Either the user is an admin, or they are associated with the company.
-    // Skip isUserAssociated check if user is admin
-    if (!admin) {
-      const isAssociated = await isUserAssociated(companyId, userId);
-      if (!isAssociated) {
-        return res.status(403).json({
-          success: false,
-          message: "You are not authorized",
-        });
-      }
-    }
-
-    // Find the recruiter by ID
-    const recruiter = await Recruiter.findById(recruiterId);
-    if (!recruiter) {
-      return res.status(404).json({ success: false, message: "Recruiter not found" });
-    }
-
-    // Find the company by ID
-    const company = await Company.findById(companyId);
-    if (!company || !company.userId.some((u) => u.user.equals(recruiter._id))) {
+    if (!recruiter) return res.status(404).json({ success: false, message: "Recruiter not found" });
+    if (!company || !company.userId.some((u) => u.user.toString() === recruiterId)) {
       return res.status(403).json({ success: false, message: "Unauthorized action" });
     }
 
-    // Update recruiter blocked status
+    if (!admin) {
+      const belongs = company.userId.some(u => u.user.toString() === userId);
+      const callerActive = belongs
+        ? (await Recruiter.findById(userId).select("isActive").lean())?.isActive
+        : false;
+      if (!belongs || !callerActive) {
+        return res.status(403).json({ success: false, message: "You are not authorized" });
+      }
+    }
+
     recruiter.isBlocked = isBlocked;
     await recruiter.save();
 
+    const recruiterIds = company.userId.map(u => u.user);
+
     if (isBlocked) {
-      // If recruiter is blocked, add the company to the blacklist
-      const blacklistedData = {
-        companyName: company.companyName,
-        email: company.email,
-        adminEmail: company.adminEmail,
-        CIN: company.CIN || null,
-      };
-
-      // 🔥 If CIN exists use CIN, otherwise use companyId
-      const existingBlacklist = company.CIN
-        ? await BlacklistedCompany.findOne({ CIN: company.CIN })
-        : await BlacklistedCompany.findOne({ companyName: company.companyName });
-
-      if (!existingBlacklist) {
-        await BlacklistedCompany.create(blacklistedData);
-      }
-
-      // 🔴 Deactivate all recruiters associated with this company
-      await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: false } });
+      const blacklistQuery = company.CIN
+        ? { CIN: company.CIN }
+        : { companyName: company.companyName };
+      const [existing] = await Promise.all([
+        BlacklistedCompany.findOne(blacklistQuery).select("_id").lean(),
+      ]);
+      await Promise.all([
+        existing ? Promise.resolve() : BlacklistedCompany.create({
+          companyName: company.companyName, email: company.email,
+          adminEmail: company.adminEmail, CIN: company.CIN || null,
+        }),
+        Recruiter.updateMany({ _id: { $in: recruiterIds } }, { $set: { isActive: false } }),
+      ]);
     } else {
-      // If recruiter is unblocked, remove the company from the blacklist
-      if (company.CIN) {
-        await BlacklistedCompany.deleteOne({ CIN: company.CIN });
-      } else {
-        await BlacklistedCompany.deleteOne({ companyName: company.companyName });
-      }
-
-      // 🟢 Activate all recruiters associated with this company
-      await Recruiter.updateMany({ companyName: company.companyName }, { $set: { isActive: true } });
+      await Promise.all([
+        company.CIN
+          ? BlacklistedCompany.deleteOne({ CIN: company.CIN })
+          : BlacklistedCompany.deleteOne({ companyName: company.companyName }),
+        Recruiter.updateMany({ _id: { $in: recruiterIds } }, { $set: { isActive: true } }),
+      ]);
     }
 
     res.status(200).json({
@@ -764,7 +673,7 @@ export const toggleBlock = async (req, res) => {
       message: `Recruiter ${isBlocked ? "blocked and company blacklisted" : "unblocked and company removed from blacklist"} successfully`,
     });
   } catch (err) {
-    console.error("❌ Error toggling recruiter block status:", err);
+    console.error("Error toggling recruiter block status:", err);
     res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };
@@ -774,71 +683,41 @@ export const toggleBlock = async (req, res) => {
 // change the status of recruiter
 export const toggleActive = async (req, res) => {
   const { recruiterId, companyId, isActive } = req.body;
-  console.log("Received toggle-active request:", req.body);
   const userId = req.id;
 
   try {
-    // Find the admin making the request (if any)
-    const admin = await Admin.findById(userId);
+    // Run admin check + fetch company + fetch recruiter in parallel
+    const [admin, company, recruiter] = await Promise.all([
+      Admin.findById(userId).select("_id").lean(),
+      Company.findById(companyId).select("userId adminEmail").lean(),
+      Recruiter.findById(recruiterId).select("emailId isActive").lean(),
+    ]);
 
-    // Check authorization: Either the user is an admin, or they are associated with the company.
-    // Skip isUserAssociated check if user is admin
+    if (!company) return res.status(404).json({ message: "Company not found", success: false });
+    if (!recruiter) return res.status(404).json({ message: "Recruiter not found", success: false });
+
     if (!admin) {
-      const isAssociated = await isUserAssociated(companyId, userId);
-      if (!isAssociated) {
-        return res.status(403).json({
-          message: "You are not authorized",
-          success: false,
-        });
+      const belongs = company.userId.some(u => u.user.toString() === userId);
+      const isRecruiterActive = (await Recruiter.findById(userId).select("isActive").lean())?.isActive;
+      if (!belongs || !isRecruiterActive) {
+        return res.status(403).json({ message: "You are not authorized", success: false });
       }
     }
 
-    // Fetch the targeted recruiter
-    const recruiter = await Recruiter.findById(recruiterId);
-    if (!recruiter) {
-      return res
-        .status(404)
-        .json({ message: "Recruiter not found", success: false });
-    }
+    const recruiterIds = company.userId.map((u) => u.user);
 
-    // Fetch the company details
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res
-        .status(404)
-        .json({ message: "Company not found", success: false });
-    }
-
-    // If the toggled recruiter's email matches the company's adminEmail,
-    // update the isActive status for all recruiters and all jobs of that company.
     if (recruiter.emailId.email === company.adminEmail) {
-      // Extract recruiter IDs associated with the company.
-      const recruiterIds = company.userId.map((u) => u.user);
-
-      // Update all recruiters belonging to the company.
-      await Recruiter.updateMany({ _id: { $in: recruiterIds } }, { isActive });
-      // Toggle all jobs for these recruiters.
-      await Job.updateMany({ created_by: { $in: recruiterIds } }, { isActive });
-
+      await Promise.all([
+        Recruiter.updateMany({ _id: { $in: recruiterIds } }, { isActive }),
+        Job.updateMany({ created_by: { $in: recruiterIds } }, { isActive }),
+      ]);
     } else {
-      // Otherwise, update only the specific recruiter.
-      await Recruiter.findByIdAndUpdate(
-        recruiterId,
-        { isActive },
-        { new: true }
-      );
+      await Recruiter.findByIdAndUpdate(recruiterId, { isActive });
     }
 
-    res.status(200).json({
-      message: "Recruiter status updated successfully",
-      success: true,
-    });
+    res.status(200).json({ message: "Recruiter status updated successfully", success: true });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 

@@ -1,0 +1,18 @@
+
+> frontend@0.0.0 build
+> vite build
+
+[36mvite v6.4.1 [32mbuilding for production...[36m[39m
+transforming...
+[33m../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/pdfjs-dist/build/pdf.js (1982:23): Use of eval in "../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/pdfjs-dist/build/pdf.js" is strongly discouraged as it poses security risks and may cause issues with minification.[39m
+[33m../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/lottie-web/build/player/lottie.js (14422:32): Use of eval in "../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/lottie-web/build/player/lottie.js" is strongly discouraged as it poses security risks and may cause issues with minification.[39m
+[33m../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/bluebird/js/release/util.js (165:2): Use of eval in "../../../../../../D:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/bluebird/js/release/util.js" is strongly discouraged as it poses security risks and may cause issues with minification.[39m
+[32m✓[39m 5074 modules transformed.
+[31m✗[39m Build failed in 54.57s
+[31merror during build:
+[31m[vite:terser] terser not found. Since Vite v3, terser has become an optional dependency. You need to install it.[31m
+    at loadTerserPath (file:///d:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:9752:13)
+    at Object.renderChunk (file:///d:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:9793:27)
+    at Object.handler (file:///d:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:46558:15)
+    at file:///d:/Worknew/GREATHIRE/REAL/GreatHire/frontend/node_modules/rollup/dist/es/shared/node-entry.js:22156:40
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
