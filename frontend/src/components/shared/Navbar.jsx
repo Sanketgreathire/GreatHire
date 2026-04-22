@@ -386,7 +386,7 @@ const Navbar = () => {
                             location={location}
                             onLinkClick={() => setIsExploreMenuOpen(false)}
                             onCampusClick={() => closePanelAndNavigate("/campus-hiring")}
-                            onStudentClick={() => closePanelAndNavigate("/signup")}
+                            onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
                       </li>
@@ -424,7 +424,7 @@ const Navbar = () => {
                             location={location}
                             onLinkClick={() => setIsMoreMenuOpen(false)}
                             onCampusClick={() => closePanelAndNavigate("/campus-hiring")}
-                            onStudentClick={() => closePanelAndNavigate("/signup")}
+                            onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
                       </li>

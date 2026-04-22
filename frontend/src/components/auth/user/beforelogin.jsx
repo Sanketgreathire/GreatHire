@@ -697,7 +697,7 @@ const GreatHireLanding = () => {
     { id: "privacy", label: "Privacy Policy", path: "/policy/privacy-policy" },
     { id: "packages", label: "Recruiter Plans", path: "/packages" },
     { id: "campus", label: "Campus Hiring", path: "/campus-hiring" },
-    { id: "student", label: "Student Sign Up", path: "/signup" },
+    { id: "student", label: "Student Sign Up", path: "/student/signup" },
   ];
 
   const tabs = [
@@ -855,7 +855,7 @@ const GreatHireLanding = () => {
                                 </button>
 
                                 <button
-                                  onClick={() => { navigate("/signup"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
+                                  onClick={() => { navigate("/student/signup"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
                                   className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
                                 >
                                   <span className="flex items-center gap-2"><span className="text-lg">🚀</span>Student Sign Up</span>
@@ -1027,7 +1027,7 @@ const GreatHireLanding = () => {
 
                 {/* Student Sign Up — purple/indigo */}
                 <button
-                  onClick={() => { navigate("/signup"); setMobileMenuOpen(false); }}
+                  onClick={() => { navigate("/student/signup"); setMobileMenuOpen(false); }}
                   className="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all text-sm"
                 >
                   Student Sign Up

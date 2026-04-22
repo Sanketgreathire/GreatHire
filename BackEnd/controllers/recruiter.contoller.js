@@ -124,7 +124,7 @@ export const register = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "lax",
       })
       .json({
@@ -191,7 +191,7 @@ export const googleLogin = async (req, res) => {
         .status(200)
         .cookie("token", token, {
           maxAge: 1 * 24 * 60 * 60 * 1000,
-          httpsOnly: true,
+          httpOnly: true,
           sameSite: "lax",
         })
         .json({
@@ -246,7 +246,7 @@ export const googleLogin = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpsOnly: true,
+        httpOnly: true,
         sameSite: "lax",
       })
       .json({
@@ -593,7 +593,25 @@ export const deleteAccount = async (req, res) => {
       if (!admin) {
         return res.status(200).cookie("token", "", { maxAge: 0, httpsOnly: true, sameSite: "lax" })
           .json({ success: true, message: "Company deleted successfully" });
-      }
+
+//         return res
+//           .status(200)
+//           .cookie("token", "", {
+//             maxAge: 0,
+//             httpOnly: true,
+//             sameSite: "lax",
+//           })
+//           .json({
+//             success: true,
+//             message: "Company deleted successfully",
+//           });
+//       } else {
+//         return res.status(200).json({
+//           success: true,
+//           message: "Company deleted successfully",
+//         });
+// >>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
+//       }
       return res.status(200).json({ success: true, message: "Company deleted successfully" });
     } else {
       const jobs = await Job.find({ created_by: userId }).select("_id").lean();

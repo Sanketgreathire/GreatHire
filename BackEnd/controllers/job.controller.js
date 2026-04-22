@@ -1,4 +1,3 @@
-
 import { Job } from "../models/job.model.js";
 import  {Application } from "../models/application.model.js";
 import { Company } from "../models/company.model.js";

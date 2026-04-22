@@ -24,6 +24,7 @@ import AdminList from "@/pages/admin/settings/AdminList";
 import MessageList from "@/pages/admin/MessageList";
 import ReportedJobList from "@/pages/admin/settings/ReportedJobList";
 import CampusDashboard from "@/components/Campus/campusDashboard";
+import Courses from "@/pages/admin/courses/Courses";
 
 const AdminLayout = () => {
   return (
@@ -75,6 +76,7 @@ const AdminLayout = () => {
               <Route path="settings/reported-job-list" element={<ReportedJobList />} />
               <Route path="profile" element={<Profile />} />
               <Route path="campus-dashboard" element={<CampusDashboard />} />
+              <Route path="courses" element={<Courses />} />
               <Route path="users" element={<Users />} />
               <Route path="user-details/:userId" element={<UserDetails />} />
             </Routes>

@@ -1,4 +1,6 @@
+
 import React, { useEffect, lazy, Suspense } from 'react';
+
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -9,7 +11,11 @@ import JobDetailsProvider from "./context/JobDetailsContext";
 import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
-// ── Eagerly loaded (needed on first paint for any route) ──
+
+import Login from "./components/auth/user/Login";
+import JobSeekerSignup from "./components/auth/user/Signup";
+
+// Auth components
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 
@@ -83,10 +89,50 @@ const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccoun
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
 
-// Admin / other roles
-const DigitalMarketerLogin   = lazy(() => import("./components/auth/digitalmarketer/DigitalMarketerLogin"));
-const AdminLogin             = lazy(() => import("./components/auth/admin/AdminLogin"));
-const AdminLayout            = lazy(() => import("./components/admin/AdminLayout"));
+
+import { logOut, setUser } from "./redux/authSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+
+import VerifyEmail from "./components/VerifyEmail";
+import VerifyNumber from "./components/VerifyNumber";
+
+import { Worker } from "@react-pdf-viewer/core";
+import usePageTracking from "./usePageTracking";
+import axios from "axios";
+import { USER_API_END_POINT } from "./utils/ApiEndPoint";
+
+
+// Campus 
+import CampusPlacementDashboard from '@/components/Campus/campusDashboard';
+import CollegeDetails from '@/components/Campus/CollegeDetails';
+import CollegeLogin from '@/components/Campus/CollegeLogin';
+import CollegeSignup from '@/components/Campus/CollegeSignup';
+import StudentSignup from '@/components/Campus/StudentSignup';
+
+
+// Training Course 
+import TrainingCoursesPage from './pages/course/CourseMain';
+import PythonCoursePage from './pages/course/python';
+import JavaCoursePage from './pages/course/java';
+import DataSciencePage from './pages/course/DataScience';
+import DigitalMarketingPage from './pages/course/DigitalMarketing';
+import DataAnalyticsPage from './pages/course/DataAnalytics';
+import SalesforcePage from './pages/course/saleforcePage';
+import AWSDevOpsCoursePage from './pages/course/AWSDevOpsCoursePage';
+import BIMCoursePage from './pages/course/BIMCoursePage';
+import MedicalCodingCoursePage from './pages/course/MedicalCodingCoursePage';
+import SAPFICOCoursePage from './pages/course/SAPFICOCoursePage';
+import TestingToolsCoursePage from './pages/course/TestingToolsCoursePage';
+import VLSICoursePage from './pages/course/VLSICoursePage';
+import MultimediaCoursePage from './pages/course/MultimediaCoursePage';
+import AdvancedExcelCoursePage from './pages/course/AdvancedExcelCoursePage';
+import AutoCADCoursePage from './pages/course/AutoCADCoursePage';
+import RevitMEPCoursePage from './pages/course/RevitMEPCoursePage';
+import BusinessAnalystPage from './pages/course/BusinessAnalystPage';
+import GenerativeAIPage from './pages/course/GenerativeAIPage';
+import SAPMMPage from './pages/course/SAPMMPage';
+import CyberSecurityPage from './pages/course/CyberSecurityPage';
+import PMPPage from './pages/course/PMPPage';
 
 // Campus
 const CampusPlacementDashboard = lazy(() => import('@/components/Campus/campusDashboard'));
@@ -112,45 +158,52 @@ const PageLoader = () => (
 );
 
 const appRouter = createBrowserRouter([
-  { path: "/",                        element: <Home /> },
-  { path: "/Main_blog_page",          element: <Blogs /> },
-  { path: "/blogs/:slug",             element: <Blogs /> },
-  { path: "/blog/:id",                element: <BlogDetail /> },
-  { path: "/about",                   element: <About /> },
-  { path: "/auth",                    element: <AuthPage /> },
-  { path: "/login",                   element: <AuthPage /> },
-  { path: "/signup",                  element: <AuthPage /> },
-  { path: "/great-hire/services",     element: <OurService /> },
-  { path: "/contact",                 element: <Contact /> },
-  { path: "/HowWeHire",               element: <HowWeHire /> },
-  { path: "/TheFutureTechnology",     element: <TheFutureTechnology /> },
-  { path: "/HiringInsights",          element: <HiringInsights /> },
-  { path: "/InsightDetail/:id",       element: <InsightDetail /> },
-  { path: "/InsightsDashboard",       element: <InsightsDashboard /> },
-  { path: "/InsightApproval",         element: <InsightApproval /> },
-  { path: "/hiring-insights/:id",     element: <InsightDetail /> },
-  { path: "/CareerAdvice",            element: <CareerAdvice /> },
-  { path: "/CareerAdvice/:id",        element: <CareerAdvice /> },
-  { path: "/TheFuture",               element: <TheFuture /> },
-  { path: "/TheFuture/:id",           element: <TheFuture /> },
-  { path: "/ResumeAnalyzer",          element: <ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
+
+  { path: "/", element: <Home /> },
+  { path: "/Main_blog_page", element: <Blogs /> },
+  { path: "/blogs/:slug", element: <Blogs /> },
+  { path: "/blog/:id", element: <BlogDetail /> },
+  { path: "/about", element: <About /> },
+  { path: "/auth", element: <AuthPage /> },
+  { path: "/login", element: <AuthPage /> },
+  { path: "/signup", element: <AuthPage /> },
+  { path: "/great-hire/services", element: <OurService /> },
+  { path: "/contact", element: <Contact /> },
+  // { path: "/packages", element: <Packges /> },
+  { path: "/HowWeHire", element: <HowWeHire /> },
+  { path: "/TheFutureTechnology", element: <TheFutureTechnology /> },
+  { path: "/HiringInsights", element: <HiringInsights /> },
+  { path: "/InsightDetail/:id", element: <InsightDetail /> },
+  { path: "/InsightsDashboard", element: <InsightsDashboard /> },
+  { path: "/InsightApproval", element: <InsightApproval /> },
+  { path: "/hiring-insights/:id", element: <InsightDetail /> },
+  { path: "/CareerAdvice", element: <CareerAdvice /> },
+  { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
+  { path: "/TheFuture", element: <TheFuture /> },
+  { path: "/TheFuture/:id", element: <TheFuture /> },
+  { path: "/ResumeAnalyzer", element: <ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
   { path: "/recruiter/resume-analyzer", element: <ProtectedRecruiterRoute><Navigate to="/recruiter/dashboard/resume-analyzer" replace /></ProtectedRecruiterRoute> },
-  { path: "/refer-and-boost",         element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
-  { path: "/jobseeker-login",         element: <JobseekerLogin /> },
-  { path: "/recruiter-login",         element: <RecruiterLogin /> },
-  { path: "/signup-choice",           element: <SignupPage /> },
-  { path: "/verify-email",            element: <VerifyEmail /> },
-  { path: "/verify-number",           element: <VerifyNumber /> },
-  { path: "/jobs",                    element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
-  { path: "/jobs/:jobId",             element: <JobDescription /> },
-  { path: "/description",             element: <JobDescription /> },
-  { path: "/saved-jobs",              element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
-  { path: "/apply/:jobId",            element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
-  { path: "/profile",                 element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
-  { path: "/report-job",              element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
-  { path: "/success",                 element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
-  { path: "/policy/privacy-policy",   element: <PrivacyPolicy /> },
-  { path: "/policy/refund-policy",    element: <RefundAndReturnPolicy /> },
+
+
+
+
+  { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
+  // ➕ NEW LOGIN ROUTES (ADDED EXACTLY HERE)
+  { path: "/jobseeker-login", element: <JobseekerLogin /> },
+  { path: "/recruiter-login", element: <RecruiterLogin /> },
+  { path: "/signup-choice", element: <SignupPage /> },
+  { path: "/verify-email", element: <VerifyEmail /> },
+  { path: "/verify-number", element: <VerifyNumber /> },
+  { path: "/jobs", element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
+  { path: "/jobs/:jobId", element: <JobDescription /> },
+  { path: "/description", element: <JobDescription /> },
+  { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
+  { path: "/apply/:jobId", element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
+  { path: "/profile", element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
+  { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
+  { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
+  { path: "/policy/privacy-policy", element: <PrivacyPolicy /> },
+  { path: "/policy/refund-policy", element: <RefundAndReturnPolicy /> },
   { path: "/policy/terms-and-conditions", element: <TermsAndConditions /> },
   { path: "/packages",                element: <RecruiterPlans /> },
   { path: "/forgot-password",         element: <ForgotPassword /> },
@@ -164,29 +217,33 @@ const appRouter = createBrowserRouter([
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,
     children: [
-      { index: true,                                    element: <RecruiterHome /> },
-      { path: "home",                                   element: <RecruiterHome /> },
-      { path: "create-company",                         element: <CreateCompany /> },
-      { path: "add-recruiter",                          element: <AddRecruiter /> },
-      { path: "post-job",                               element: <PostJob /> },
-      { path: "jobs",                                   element: <PostedJobList /> },
-      { path: "company-details",                        element: <CompanyDetails /> },
-      { path: "applicants-list",                        element: <AllApplicantsList /> },
-      { path: "candidate-list",                         element: <CandidateList /> },
-      { path: "candidate-information/:id",              element: <CandidateInformation /> },
-      { path: "candidate-database",                     element: <CandidateDatabase /> },
-      { path: "candidate-plans",                        element: <CandidatePlans /> },
-      { path: "your-plans",                             element: <CurrentPlans /> },
-      { path: "upgrade-plans",                          element: <RecruiterPlans /> },
-      { path: "delete-account",                         element: <DeleteAccount /> },
-      { path: "invite-and-earn",                        element: <InviteAndEarn /> },
-      { path: "recruiter-list",                         element: <RecruiterList /> },
-      { path: "recruiter-details/:recruiterId",         element: <RecruitersDetails /> },
-      { path: "job-details/:id",                        element: <JobDetail /> },
-      { path: "applicants-details/:id",                 element: <AppliedCandidatesList /> },
-      { path: "resume-analyzer",                        element: <RecruiterResumeAnalyzer /> },
-      { path: "applications/:jobId/:candidateId",       element: <CandidateInformation /> },
-    ],
+
+      { path: "home", element: <RecruiterHome /> },
+      { path: "create-company", element: <CreateCompany /> },
+      { path: "add-recruiter", element: <AddRecruiter /> },
+      { path: "post-job", element: <PostJob /> },
+      { path: "jobs", element: <PostedJobList /> },
+      { path: "company-details", element: <CompanyDetails /> },
+      { path: "applicants-list", element: <AllApplicantsList /> },
+      { path: "candidate-list", element: <CandidateList /> },
+      { path: "candidate-information/:id", element: <CandidateInformation /> },
+      { path: "candidate-database", element: <CandidateDatabase /> },
+      { path: "candidate-plans", element: <CandidatePlans /> },
+      { path: "your-plans", element: <CurrentPlans /> },
+      { path: "delete-account", element: <DeleteAccount /> },
+      { path: "invite-and-earn", element: <InviteAndEarn /> },
+      { path: "recruiter-list", element: <RecruiterList /> },
+      { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
+      { path: "job-details/:id", element: <JobDetail /> },
+      { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
+      { path: "resume-analyzer", element: <RecruiterResumeAnalyzer /> },
+      { index: true, element: <RecruiterHome /> },
+      {
+        path: "applications/:jobId/:candidateId",
+        element: <CandidateInformation />
+      },
+      { index: true, element: <RecruiterHome /> },
+    ]
   },
   { path: "/recruiter/profile",       element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },
   { path: "/recruiter/add-user",      element: <ProtectedRecruiterRoute><AddRecruiter /></ProtectedRecruiterRoute> },
@@ -204,9 +261,25 @@ const appRouter = createBrowserRouter([
   { path: "/courses/java-training",             element: <JavaCoursePage /> },
   { path: "/courses/data-science-training",     element: <DataSciencePage /> },
   { path: "/courses/digital-marketing-training", element: <DigitalMarketingPage /> },
-  { path: "/courses/data-analytics-training",   element: <DataAnalyticsPage /> },
-  { path: "/courses/saleforce-training",        element: <SalesforcePage /> },
-  { path: "*",                        element: <PageNotFound /> },
+
+  { path: "/courses/data-analytics-training", element: <DataAnalyticsPage /> },
+  { path: "/courses/saleforce-training", element: <SalesforcePage /> },
+  { path: "/courses/aws-devops-training", element: <AWSDevOpsCoursePage /> },
+  { path: "/courses/bim-training", element: <BIMCoursePage /> },
+  { path: "/courses/medical-training", element: <MedicalCodingCoursePage /> },
+  { path: "/courses/sap-fico-training", element: <SAPFICOCoursePage /> },
+  { path: "/courses/testing-tools-training", element: <TestingToolsCoursePage /> },
+  { path: "/courses/vlsi-training", element: <VLSICoursePage /> },
+  { path: "/courses/multimedia-training", element: <MultimediaCoursePage /> },
+  { path: "/courses/advanced-excel-training", element: <AdvancedExcelCoursePage /> },
+  { path: "/courses/autocad-training", element: <AutoCADCoursePage /> },
+  { path: "/courses/revit-mep-training", element: <RevitMEPCoursePage /> },
+  { path: "/courses/business-analytics-training", element: <BusinessAnalystPage /> },
+  { path: "/courses/generative-AI-training", element: <GenerativeAIPage /> },
+  { path: "/courses/sap-mm-training", element: <SAPMMPage /> },
+  { path: "/courses/cyber-security-training", element: <CyberSecurityPage /> },
+  { path: "/courses/pmp-training", element: <PMPPage /> },
+  { path: "*", element: <PageNotFound /> }
 ]);
 
 function App() {
@@ -216,9 +289,10 @@ function App() {
     axios
       .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
       .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
+  // Cleanup service workers
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {

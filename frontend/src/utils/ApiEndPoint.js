@@ -50,3 +50,4 @@ export const NOTIFICATION_API_END_POINT = `${BASE_API}/notifications`;
 export const EMAIL_API_END_POINT = `${BASE_API}/email`;
 export const COLLEGE_API_END_POINT = `${BASE_API}/college`;
 export const BACKEND_URL = import.meta.env.VITE_API_URL;
+export const COURSE_API_END_POINT = `${BASE_API}/courses`;

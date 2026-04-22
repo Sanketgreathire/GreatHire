@@ -1,6 +1,11 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+<<<<<<< HEAD
 import { useState, useMemo } from "react";
+=======
+import { useState } from "react";
+import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
+>>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
 import { Link } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -12,16 +17,16 @@ const COURSES = [
     image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
     category: "Full Stack",
     title: "Full Stack Java Developer",
-    desc: "Master front-end, back-end, and database management with Java, Spring Boot, React, and more.",
-    duration: "6 Months",
+    desc: "Gain expertise in Core Java, Spring Boot, Hibernate, SQL, and REST APIs to build enterprise-level apps. Teks guides you toward high-demand roles like Java Developer and DevOps Engineer.",
     mode: "Online / Offline",
-    fee: "₹25,000",
+    fee: "₹38,000",
     badge: "Most Popular",
     badgeColor: "bg-blue-100 text-blue-700",
     skills: ["Java", "Spring Boot", "React", "MySQL", "REST APIs"],
     color: "border-blue-500",
     iconBg: "bg-blue-50",
-    link: "/courses/java-training"
+    link: "/courses/java-training",
+    tab: "employment",
   },
   {
     id: 2,
@@ -29,50 +34,50 @@ const COURSES = [
     image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&h=200&fit=crop",
     category: "Full Stack",
     title: "Full Stack Python Developer",
-    desc: "Build scalable web apps using Python, Django/Flask, React, and cloud deployment.",
-    duration: "6 Months",
+    desc: "Crack Python with Django, Flask, React, and MySQL to build powerful and robust web applications. Get an exclusive opportunity to learn from decades of industry-experienced faculty.",
     mode: "Online / Offline",
-    fee: "₹25,000",
+    fee: "₹38,000",
     badge: "Trending",
     badgeColor: "bg-emerald-100 text-emerald-700",
     skills: ["Python", "Django", "React", "PostgreSQL", "AWS"],
     color: "border-emerald-500",
     iconBg: "bg-emerald-50",
     link: "/courses/python-training",
+    tab: "employment",
   },
   {
     id: 3,
     icon: "📊",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop",
     category: "Data Science",
-    title: "Data Science & AI",
-    desc: "Learn big data, machine learning, deep learning, and AI with real-world projects.",
-    duration: "5 Months",
+    title: "Data Science",
+    desc: "Learn most simplified and Advanced data science with AI, Machine Learning, Python, Deep Learning, and Big Data to solve real-world challenges. Let's step into the future of data innovations.",
     mode: "Online / Offline",
-    fee: "₹25,000",
+    fee: "₹38,000",
     badge: "High Demand",
     badgeColor: "bg-violet-100 text-violet-700",
     skills: ["Python", "ML", "TensorFlow", "Power BI", "Statistics"],
     color: "border-violet-500",
     iconBg: "bg-violet-50",
     link: "/courses/data-science-training",
+    tab: "employment",
   },
   {
     id: 4,
     icon: "☁️",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=200&fit=crop",
     category: "Cloud",
-    title: "AWS Cloud Practitioner",
-    desc: "Get certified in AWS core services, cloud architecture, security, and deployment.",
-    duration: "3 Months",
+    title: "AWS & DevOps",
+    desc: "Explore the power of AWS, CI/CD, Docker, Kubernetes, and Automation to build resilient, cloud-native systems. Gain practical expertise in DevOps tools and practices and build futuristic skills.",
     mode: "Online / Offline",
-    fee: "₹18,000",
+    fee: "₹38,000",
     badge: "Certified",
     badgeColor: "bg-orange-100 text-orange-700",
     skills: ["EC2", "S3", "Lambda", "RDS", "CloudFormation"],
     color: "border-orange-500",
     iconBg: "bg-orange-50",
-    link: "/courses/aws-cloud",
+    link: "/courses/aws-devops-training",
+    tab: "employment",
   },
   {
     id: 5,
@@ -80,16 +85,16 @@ const COURSES = [
     image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=200&fit=crop",
     category: "Digital Marketing",
     title: "Digital Marketing",
-    desc: "Master SEO, SEM, social media marketing, email marketing and Google Analytics.",
-    duration: "3 Months",
+    desc: "Become a digital marketer with advanced SEO techniques, high-impact Google Ads strategies, dynamic social media management, data-driven content strategy, and in-depth marketing analytics.",
     mode: "Online / Offline",
-    fee: "₹15,000",
+    fee: "₹38,000",
     badge: null,
     badgeColor: "",
     skills: ["SEO", "Google Ads", "Meta Ads", "Email", "Analytics"],
     color: "border-pink-500",
     iconBg: "bg-pink-50",
     link: "/courses/digital-marketing-training",
+    tab: "employment",
   },
   {
     id: 6,
@@ -98,15 +103,15 @@ const COURSES = [
     category: "Testing",
     title: "Data Analytics",
     desc: "Learn Python, SQL, Power BI, and Machine Learning for data-driven decision-making. Master data visualization, predictive analytics, and real-world projects to boost your Data Analytics career.",
-    duration: "4 Months",
     mode: "Online / Offline",
     fee: "₹30,499",
     badge: null,
     badgeColor: "",
-    skills: ["Selenium", "TestNG", "Postman", "JIRA", "Cucumber"],
+    skills: ["Data Analytics"],
     color: "border-teal-500",
     iconBg: "bg-teal-50",
     link: "/courses/data-analytics-training",
+    tab: "employment",
   },
   {
     id: 7,
@@ -115,43 +120,419 @@ const COURSES = [
     category: "SAP",
     title: "Saleforce",
     desc: "The course covers CRM fundamentals, automation, and data management using the latest Salesforce tools. Offering hands-on training in Salesforce Administration, Apex, Lightning, and Integration techniques.",
-    duration: "4 Months",
     mode: "Online / Offline",
-    fee: "₹20,000",
+    fee: "₹38,000",
     badge: null,
     badgeColor: "",
-    skills: ["SAP FI", "SAP CO", "FICO Config", "S/4HANA", "Reporting"],
+    skills: ["Saleforce"],
     color: "border-yellow-500",
     iconBg: "bg-yellow-50",
     link: "/courses/saleforce-training",
+    tab: "employment",
   },
   {
     id: 8,
     icon: "🤖",
     image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
-    category: "AI & BA",
-    title: "AI & Business Analyst",
-    desc: "Combine AI tools with business analytics to drive data-driven decision making.",
-    duration: "4 Months",
+    category: "SAP FICO",
+    title: "SAP FICO",
+    desc: "Make your career with SAP FICO Training, designed for high-paying jobs in financial accounting and controlling. Learn SAP ERP, ledger management and AI tools.",
     mode: "Online / Offline",
     fee: "₹25,000",
     badge: "New",
     badgeColor: "bg-rose-100 text-rose-700",
-    skills: ["ChatGPT APIs", "Power BI", "SQL", "Excel", "Tableau"],
+    skills: ["SAP FICO"],
     color: "border-rose-500",
     iconBg: "bg-rose-50",
-    link: "/courses/ai-business-analyst",
+    link: "/courses/sap-fico-training",
+    tab: "employment",
+  },
+  {
+    id: 9,
+    icon: "🏗️",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "BIM",
+    title: "BIM",
+    desc: "Learn Building Information Modeling (BIM) under guidance of most experienced trainers in AutoCAD, Revit, 3D Visualization, and Construction Technology. Join the best BIM Course!",
+    mode: "Online / Offline",
+    fee: "₹25,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["AutoCAD", "Revit", "3D Visualization"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/bim-training",
+    tab: "employment",
+  },
+  {
+    id: 10,
+    icon: "🏥",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Medical Coding",
+    title: "Medical Coding",
+    desc: "Want to become a certified medical coder? Our best medical coding course at Teks is the right choice. Learn ICD-10, CPT, HCPCS, insurance claims, and more to be a medicoder.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Medical Coding"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/medical-training",
+    tab: "employment",
+  },
+  {
+    id: 11,
+    icon: "🧰",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Testing Tools",
+    title: "Testing Tools",
+    desc: "Become an expert in Manual & Automation Testing with industry-leading tools- Selenium, JIRA, LoadRunner, and QTP. Work on real-time QA and software testing projects.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Testing Tools"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/testing-tools-training",
+    tab: "employment",
+  },
+  {
+    id: 12,
+    icon: "🔬",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "VLSI",
+    title: "VLSI",
+    desc: "Master best VLSI training with practical training in HDL, FPGA, ASIC design, and verification. Semiconductor technology awaits! Secure jobs in electronics and chip design industry.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["VLSI"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/vlsi-training",
+    tab: "employment",
+  },
+  {
+    id: 13,
+    icon: "🎨",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Multimedia",
+    title: "Multimedia",
+    desc: "Turn your passion into a profession with mesmerizing Multimedia Training in Hyderabad. Expertise in graphic design, video editing, 3D animation, and VFX.",
+    mode: "Online / Offline",
+    fee: "₹25,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Graphic Design", "Video Editing", "3D Animation", "VFX"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/multimedia-training",
+    tab: "employment",
+  },
+  {
+    id: 14,
+    icon: "📈",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Advance Excel",
+    title: "Advance Excel",
+    desc: "Excel with Advanced Excel Training and become proficient in pivot tables, macros, VBA, and data visualization. Gain financial modeling, dashboard creation, and business analytics.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Excel"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/advanced-excel-training",
+    tab: "employment",
+  },
+  {
+    id: 15,
+    icon: "📐",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "AutoCAD",
+    title: "AutoCAD",
+    desc: "With the best AutoCAD training institute, you will become an expert with practical training in architectural drafting, 3D modeling, and automation. Learn industry-standard tools for building designs.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["AutoCAD"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/autocad-training",
+    tab: "employment",
+  },
+  {
+    id: 16,
+    icon: "🔧",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Revit MEP",
+    title: "Revit MEP",
+    desc: "Master Revit MEP for Mechanical, Electrical, and Plumbing Design by doing hands-on projects. Gain expertise in BIM workflows, 3D modeling, and coordination with the top Revit MEP training.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Revit MEP"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/revit-mep-training",
+    tab: "employment",
+  },
+  {
+    id: 17,
+    icon: "📊",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Business Analytics",
+    title: "Business Analytics",
+    desc: "Master Excel, SQL, Power BI & data-driven decisions. This analytics program prepares you for analyst roles with hands-on tools and business intelligence techniques.",
+    mode: "Online / Offline",
+    fee: "₹25,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Business Analytics"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/business-analytics-training",
+    tab: "employment",
+  },
+  {
+    id: 18,
+    icon: "🤖",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Generative AI",
+    title: "Generative AI",
+    desc: "Master GenAI tools like ChatGPT, DALL·E & NLP. Learn prompt engineering and AI content creation with hands-on projects and expert mentoring at Teks Academy.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Generative AI"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/generative-AI-training",
+    tab: "employment",
+  },
+  {
+    id: 19,
+    icon: "🗄️",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "SAP MM",
+    title: "SAP MM",
+    desc: "Learn procurement, inventory management, invoice verification, and SAP tools from experts. Get real-time system access and job-ready training in SAP Materials Management.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["SAP MM"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/sap-mm-training",
+    tab: "employment",
+  },
+  {
+    id: 20,
+    icon: "🔐",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "Cyber Security",
+    title: "Cyber Security",
+    desc: "Gain skills in ethical hacking, firewalls, and network security. Learn tools like Wireshark, Metasploit, and SOC operations from certified trainers with placement support.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["Cyber Security"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/cyber-security-training",
+    tab: "employment",
+  },
+  {
+    id: 21,
+    icon: "📋",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "PMP",
+    title: "PMP",
+    desc: "Master leadership, team management, risk analysis, and communication with modules in governance, budgeting, negotiation, and conflict resolution to lead modern projects.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["PMP"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/pmp-training",
+    tab: "employment",
+  },
+  // ── TIH-IIT Certification Program courses ────────────────────────────────
+  // Add your IIT certification courses here with tab: "certification"
+  // Example placeholder:
+  {
+    id: 22,
+    icon: "💻",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=200&fit=crop",
+    category: "Full Stack",
+    title: "Full Stack Java Developer",
+    desc: "Gain expertise in Core Java, Spring Boot, Hibernate, SQL, and REST APIs to build enterprise-level apps. Teks guides you toward high-demand roles like Java Developer and DevOps Engineer.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "Most Popular",
+    badgeColor: "bg-blue-100 text-blue-700",
+    skills: ["Java", "Spring Boot", "React", "MySQL", "REST APIs"],
+    color: "border-blue-500",
+    iconBg: "bg-blue-50",
+    link: "/courses/java-training",
+    tab: "certification",
+  },
+  {
+    id: 23,
+    icon: "🐍",
+    image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&h=200&fit=crop",
+    category: "Full Stack",
+    title: "Full Stack Python Developer",
+    desc: "Crack Python with Django, Flask, React, and MySQL to build powerful and robust web applications. Get an exclusive opportunity to learn from decades of industry-experienced faculty.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "Trending",
+    badgeColor: "bg-emerald-100 text-emerald-700",
+    skills: ["Python", "Django", "React", "PostgreSQL", "AWS"],
+    color: "border-emerald-500",
+    iconBg: "bg-emerald-50",
+    link: "/courses/python-training",
+    tab: "certification",
+  },
+  {
+    id: 24,
+    icon: "📊",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop",
+    category: "Data Science",
+    title: "Data Science",
+    desc: "Learn most simplified and Advanced data science with AI, Machine Learning, Python, Deep Learning, and Big Data to solve real-world challenges. Let's step into the future of data innovations.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "High Demand",
+    badgeColor: "bg-violet-100 text-violet-700",
+    skills: ["Python", "ML", "TensorFlow", "Power BI", "Statistics"],
+    color: "border-violet-500",
+    iconBg: "bg-violet-50",
+    link: "/courses/data-science-training",
+    tab: "certification",
+  },
+  {
+    id: 25,
+    icon: "📱",
+    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=200&fit=crop",
+    category: "Digital Marketing",
+    title: "Digital Marketing",
+    desc: "Become a digital marketer with advanced SEO techniques, high-impact Google Ads strategies, dynamic social media management, data-driven content strategy, and in-depth marketing analytics.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: null,
+    badgeColor: "",
+    skills: ["SEO", "Google Ads", "Meta Ads", "Email", "Analytics"],
+    color: "border-pink-500",
+    iconBg: "bg-pink-50",
+    link: "/courses/digital-marketing-training",
+    tab: "certification",
+  },
+  {
+    id: 26,
+    icon: "☁️",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=200&fit=crop",
+    category: "Cloud",
+    title: "AWS & DevOps",
+    desc: "Explore the power of AWS, CI/CD, Docker, Kubernetes, and Automation to build resilient, cloud-native systems. Gain practical expertise in DevOps tools and practices and build futuristic skills.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "Certified",
+    badgeColor: "bg-orange-100 text-orange-700",
+    skills: ["EC2", "S3", "Lambda", "RDS", "CloudFormation"],
+    color: "border-orange-500",
+    iconBg: "bg-orange-50",
+    link: "/courses/aws-devops-training",
+    tab: "certification",
+  },
+  {
+    id: 27,
+    icon: "🏗️",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=200&fit=crop",
+    category: "BIM",
+    title: "BIM",
+    desc: "Learn Building Information Modeling (BIM) under guidance of most experienced trainers in AutoCAD, Revit, 3D Visualization, and Construction Technology. Join the best BIM Course!",
+    mode: "Online / Offline",
+    fee: "₹25,000",
+    badge: "New",
+    badgeColor: "bg-rose-100 text-rose-700",
+    skills: ["AutoCAD", "Revit", "3D Visualization"],
+    color: "border-rose-500",
+    iconBg: "bg-rose-50",
+    link: "/courses/bim-training",
+   tab: "certification",
+  },
+  {
+    id: 28,
+    icon: "☁️",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=200&fit=crop",
+    category: "Cloud",
+    title: "AWS & DevOps",
+    desc: "Explore the power of AWS, CI/CD, Docker, Kubernetes, and Automation to build resilient, cloud-native systems. Gain practical expertise in DevOps tools and practices and build futuristic skills.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "Certified",
+    badgeColor: "bg-orange-100 text-orange-700",
+    skills: ["EC2", "S3", "Lambda", "RDS", "CloudFormation"],
+    color: "border-orange-500",
+    iconBg: "bg-orange-50",
+    link: "/courses/aws-devops-training",
+    tab: "certification",
+  },
+  {
+    id: 29,
+    icon: "☁️",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=200&fit=crop",
+    category: "Cloud",
+    title: "AWS & DevOps",
+    desc: "Explore the power of AWS, CI/CD, Docker, Kubernetes, and Automation to build resilient, cloud-native systems. Gain practical expertise in DevOps tools and practices and build futuristic skills.",
+    mode: "Online / Offline",
+    fee: "₹38,000",
+    badge: "Certified",
+    badgeColor: "bg-orange-100 text-orange-700",
+    skills: ["EC2", "S3", "Lambda", "RDS", "CloudFormation"],
+    color: "border-orange-500",
+    iconBg: "bg-orange-50",
+    link: "/courses/aws-devops-training",
+    tab: "certification",
   },
 ];
 
-const CATEGORIES = ["All", "Full Stack", "Data Science", "Cloud", "Digital Marketing", "Testing", "SAP", "AI & BA"];
-
-// const STATS = [
-//   { value: "50+", label: "Courses Offered" },
-//   { value: "15,000+", label: "Students Trained" },
-//   { value: "95%", label: "Placement Rate" },
-//   { value: "500+", label: "Hiring Partners" },
-// ];
+const CATEGORIES = [
+  "All",
+  "Python Full Stack",
+  "Java FUll Stack",
+  "Data Science",
+  "AWS & DevOps",
+  "Digital Marketing",
+  "Data Analytics",
+  "Saleforce",
+  "BIM",
+  "SAP FICO",
+  "Medical Coding",
+  "Testing Tools",
+  "VLSI",
+  "Multimedia",
+  "Advanced Excel",
+  "AutoCAD",
+  "Revit MEP",
+  "Business Analytics",
+  "Generative AI",
+  "SAP MM",
+  "Cyber Security",
+  "PMP",
+];
 
 const FEATURES = [
   { icon: "🎓", title: "Industry Expert Trainers", desc: "Learn from professionals with 10+ years of real-world industry experience." },
@@ -165,7 +546,7 @@ const FEATURES = [
 const TESTIMONIALS = [
   {
     name: "Arjun Sharma",
-    role: "Full Stack Developer @ TCS",
+    role: "Full Stack Developer",
     course: "Full Stack Java",
     text: "The training quality was exceptional. I got placed within 2 months of completing the course. The hands-on projects really made the difference.",
     rating: 5,
@@ -174,7 +555,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Priya Reddy",
-    role: "Data Analyst @ Infosys",
+    role: "Data Analyst",
     course: "Data Science & AI",
     text: "Best investment of my life. The instructors are extremely knowledgeable and the placement support is top-notch.",
     rating: 5,
@@ -183,7 +564,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Rahul Mehta",
-    role: "AWS Cloud Engineer @ Wipro",
+    role: "AWS Cloud Engineer",
     course: "AWS Cloud",
     text: "I cleared my AWS certification in the first attempt. The study material and mock tests were perfectly aligned with the exam.",
     rating: 5,
@@ -211,29 +592,30 @@ function StarRating({ count }) {
 function CourseCard({ course, onEnroll }) {
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
-      
       {/* Image Section */}
       <div className="relative h-44 mb-8 overflow-visible">
+<<<<<<< HEAD
         <img
           src={course.image}
           alt=""
           loading="lazy"
           className="w-full h-full object-cover"
         />
+=======
+        <img src={course.image} alt="" className="w-full h-full object-cover" />
+>>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
 
-        {/* Center overlapping box (FIXED) */}
+        {/* Center overlapping logo box */}
         <div className="absolute left-1/2 -bottom-6 transform -translate-x-1/2">
-          <div className="sm:text-6xl lg:text-2xl font-bold hover:text-blue-600 transition duration-300 ease-in-out bg-white rounded-xl px-5 py-2.5 shadow-lg flex items-center">
-              <span className="text-black dark:text-white">Great</span>
-              <span className="text-blue-600">Hire</span>
-            </div>
+          <div className="font-bold hover:text-blue-600 transition duration-300 ease-in-out bg-white rounded-xl px-5 py-2.5 shadow-lg flex items-center text-2xl">
+            <span className="text-black dark:text-white">Great</span>
+            <span className="text-blue-600">Hire</span>
+          </div>
         </div>
 
         {/* Badge */}
         {course.badge && (
-          <span
-            className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full ${course.badgeColor} shadow-sm`}
-          >
+          <span className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-full ${course.badgeColor} shadow-sm`}>
             {course.badge}
           </span>
         )}
@@ -241,13 +623,8 @@ function CourseCard({ course, onEnroll }) {
 
       {/* Content */}
       <div className="p-5 pt-6 flex flex-col flex-1">
-        <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug">
-          {course.title}
-        </h3>
-
-        <p className="text-gray-500 text-sm leading-relaxed flex-1">
-          {course.desc}
-        </p>
+        <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug">{course.title}</h3>
+        <p className="text-gray-500 text-sm leading-relaxed flex-1">{course.desc}</p>
 
         {/* Actions */}
         <div className="flex gap-3 mt-5">
@@ -257,7 +634,6 @@ function CourseCard({ course, onEnroll }) {
           >
             Enquiry Now
           </button>
-
           {course.link && (
             <Link
               to={course.link}
@@ -274,12 +650,22 @@ function CourseCard({ course, onEnroll }) {
 
 // ─── Enroll Modal ─────────────────────────────────────────────────────────────
 
-function EnrollModal({ course, onClose }) {
+function EnrollModal({ course, onClose, type = "enquiry" }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: course.title, fee: type === "enrollment" ? (course.fee || "") : "", type }),
+      });
+    } catch (_) {}
+    setLoading(false);
     setSubmitted(true);
   };
 
@@ -362,9 +748,10 @@ function EnrollModal({ course, onClose }) {
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors duration-200 mt-2"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors duration-200 mt-2 disabled:opacity-60"
               >
-                Submit Enrollment Request
+                {loading ? "Submitting..." : "Submit Enrollment Request"}
               </button>
             </form>
           </div>
@@ -377,27 +764,51 @@ function EnrollModal({ course, onClose }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function TrainingCoursesPage() {
+  const [activeTab, setActiveTab] = useState("employment");
   const [activeCategory, setActiveCategory] = useState("All");
   const [enrollCourse, setEnrollCourse] = useState(null);
+  const [enrollType, setEnrollType] = useState("enquiry");
+
+  const openModal = (course, type = "enquiry") => {
+    setEnrollCourse(course);
+    setEnrollType(type);
+  };
   const [searchQuery, setSearchQuery] = useState("");
 
+<<<<<<< HEAD
   const filtered = useMemo(() => COURSES.filter((c) => {
+=======
+  // Reset category filter when switching tabs
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    setActiveCategory("All");
+    setSearchQuery("");
+  };
+
+  const filtered = COURSES.filter((c) => {
+    const matchTab = c.tab === activeTab;
+>>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
     const matchCat = activeCategory === "All" || c.category === activeCategory;
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.skills.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
+<<<<<<< HEAD
     return matchCat && matchSearch;
   }), [activeCategory, searchQuery]);
+=======
+    return matchTab && matchCat && matchSearch;
+  });
+>>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
 
       {/* ── Navbar ── */}
-      <Navbar/>
+      <Navbar />
+
       {/* ── Hero ── */}
       <section className="relative bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 text-white overflow-hidden">
-        {/* decorative circles */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
@@ -434,26 +845,41 @@ export default function TrainingCoursesPage() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
-      {/* <section className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100">
-            {STATS.map((s) => (
-              <div key={s.label} className="py-8 px-6 text-center">
-                <p className="text-3xl sm:text-4xl font-black text-blue-600 mb-1">{s.value}</p>
-                <p className="text-sm text-gray-500 font-medium">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* ── Courses ── */}
+      {/* ── Courses Section ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        {/* Section Heading */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">
-            Explore Our Courses
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">
+            Our Courses
           </h2>
+          {/* Orange underline accent — matches screenshot */}
+          <div className="w-16 h-1 bg-orange-500 rounded-full mx-auto mb-8" />
+
+          {/* ── Tab Switcher ── */}
+          <div className="flex flex-wrap gap-3 justify-center mb-8">
+            <button
+              onClick={() => handleTabSwitch("employment")}
+              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
+                activeTab === "employment"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-transparent text-blue-600 hover:bg-blue-50"
+              }`}
+            >
+              Employment Program
+            </button>
+            <button
+              onClick={() => handleTabSwitch("certification")}
+              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
+                activeTab === "certification"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-transparent text-blue-600 hover:bg-blue-50"
+              }`}
+            >
+              TIH-IIT Certification Program
+            </button>
+          </div>
+
           <p className="text-gray-500 text-lg max-w-xl mx-auto">
             50+ industry-recognized programs designed with leading companies to get you job-ready.
           </p>
@@ -482,20 +908,21 @@ export default function TrainingCoursesPage() {
           {activeCategory !== "All" ? ` in ${activeCategory}` : ""}
         </p>
 
-        {/* Grid */}
+        {/* Course Grid */}
         {filtered.length > 0 ? (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filtered.map((course) => (
-                <CourseCard key={course.id} course={course} onEnroll={setEnrollCourse} />
-              ))}
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filtered.map((course) => (
+              <CourseCard key={course.id} course={course} onEnroll={(c) => openModal(c, "enquiry")} />
+            ))}
           </div>
         ) : (
           <div className="text-center py-20">
             <p className="text-5xl mb-4">🔍</p>
-            <p className="text-gray-500 text-lg font-medium">No courses found for "{searchQuery}"</p>
+            <p className="text-gray-500 text-lg font-medium">
+              {activeTab === "certification"
+                ? "TIH-IIT Certification courses coming soon!"
+                : `No courses found for "${searchQuery}"`}
+            </p>
             <button
               onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
               className="mt-4 text-blue-600 text-sm font-semibold hover:underline"
@@ -575,7 +1002,7 @@ export default function TrainingCoursesPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => setEnrollCourse(COURSES[0])}
+              onClick={() => openModal(COURSES[0], "enrollment")}
               className="bg-white text-blue-600 hover:bg-blue-50 font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap"
             >
               🚀 Enroll Now — Free Demo
@@ -591,15 +1018,12 @@ export default function TrainingCoursesPage() {
       </section>
 
       {/* ── Footer ── */}
-      <Footer/>
+      <Footer />
 
       {/* ── Enroll Modal ── */}
       {enrollCourse && (
-        <EnrollModal course={enrollCourse} onClose={() => setEnrollCourse(null)} />
+        <EnrollModal course={enrollCourse} type={enrollType} onClose={() => { setEnrollCourse(null); setEnrollType("enquiry"); }} />
       )}
     </div>
   );
 }
-
-
-
