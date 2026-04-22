@@ -100,6 +100,7 @@ export const getAllJobList = async (req, res) => {
           jobType: "$jobDetails.jobType",
           location: "$jobDetails.location",
           salary: "$jobDetails.salary",
+          experience: "$jobDetails.experience",
           companyName: "$jobDetails.companyName",
           postedDate: "$postedFormatted", // using our formatted posted date
           numberOfApplications: 1,

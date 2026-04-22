@@ -36,6 +36,7 @@ import contactMessageRoute from "./routes/contactMessage.route.js";
 import emailRoute from "./routes/email.route.js";
 import messageRoute from "./routes/message.route.js";
 import collegeRoute from "./routes/college.route.js"; // college auth + students
+import courseRoute from "./routes/course.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -169,6 +170,7 @@ app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/email", emailRoute);
 app.use("/api/v1/messages", messageRoute);
 app.use("/api/v1/college", collegeRoute);
+app.use("/api/v1/courses", courseRoute);
 
 // ================= FRONTEND =================
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
