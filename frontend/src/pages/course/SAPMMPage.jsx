@@ -373,7 +373,13 @@ export default function SAPMMPage() {
               <div className="bg-gradient-to-br from-cyan-600 to-blue-700 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p><p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-cyan-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-cyan-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-cyan-50 transition-colors">Share & Earn</button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("📦 Check out this SAP MM Course at Great Hire! Master Procure-to-Pay on live S/4HANA with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-cyan-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-cyan-50 transition-colors">
+                  Share & Earn
+                </a>
               </div>
             </div>
           </div>

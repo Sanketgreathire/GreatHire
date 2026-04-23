@@ -846,9 +846,13 @@ export default function DataSciencePage() {
                 <p className="text-2xl mb-2">👫</p>
                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-violet-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-violet-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-violet-50 transition-colors">
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("📊 Check out this Data Science & AI Course at Great Hire! Get placed in top analytics & AI companies with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-violet-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-violet-50 transition-colors">
                   Share & Earn
-                </button>
+                </a>
               </div>
             </div>
           </div>

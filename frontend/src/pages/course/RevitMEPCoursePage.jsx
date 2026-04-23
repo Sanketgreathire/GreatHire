@@ -473,7 +473,13 @@ export default function RevitMEPCoursePage() {
                 <p className="text-2xl mb-2">👫</p>
                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-teal-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-teal-700 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition-colors">Share & Earn</button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("🏗️ Check out this Revit MEP Course at Great Hire! Master HVAC, Electrical & Plumbing BIM with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-teal-700 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition-colors">
+                  Share & Earn
+                </a>
               </div>
             </div>
           </div>
