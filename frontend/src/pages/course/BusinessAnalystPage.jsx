@@ -437,7 +437,13 @@ export default function BusinessAnalystPage() {
               <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p><p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-indigo-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-indigo-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors">Share & Earn</button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("📋 Check out this Business Analyst Course at Great Hire! Get placed as a BA at top MNCs with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-indigo-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
+                  Share & Earn
+                </a>
               </div>
             </div>
           </div>

@@ -351,7 +351,13 @@ export default function CyberSecurityPage() {
               <div className="bg-gradient-to-br from-red-600 to-slate-700 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p><p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-red-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-red-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">Share & Earn</button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("🛡️ Check out this Cybersecurity Course at Great Hire! Prepare for CEH & Security+ with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-red-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">
+                  Share & Earn
+                </a>
               </div>
             </div>
           </div>

@@ -519,7 +519,13 @@ export default function SalesforcePage() {
                                 <p className="text-2xl mb-2">👫</p>
                                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
                                 <p className="text-xs text-sky-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                                <button className="bg-white text-sky-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-sky-50 transition-colors">Share & Earn</button>
+                                <a
+                                  href={`https://wa.me/?text=${encodeURIComponent("☁️ Check out this Salesforce Admin & Developer Course at Great Hire! Get ADM 201 & PD1 certified with 100% placement support.\n" + window.location.href)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-block bg-white text-sky-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-sky-50 transition-colors">
+                                  Share & Earn
+                                </a>
                             </div>
                         </div>
                     </div>
