@@ -351,7 +351,13 @@ export default function PMPPage() {
               <div className="bg-gradient-to-br from-amber-500 to-yellow-600 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p><p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-amber-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-amber-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors">Share & Earn</button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("🏅 Check out this PMP Certification Course at Great Hire! Get 35 PDU hours and crack PMP on your first attempt.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-amber-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-amber-50 transition-colors">
+                  Share & Earn
+                </a>
               </div>
             </div>
           </div>
