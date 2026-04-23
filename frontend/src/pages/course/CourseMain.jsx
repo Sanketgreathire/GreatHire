@@ -505,30 +505,30 @@ const COURSES = [
   },
 ];
 
-const CATEGORIES = [
-  "All",
-  "Python Full Stack",
-  "Java FUll Stack",
-  "Data Science",
-  "AWS & DevOps",
-  "Digital Marketing",
-  "Data Analytics",
-  "Saleforce",
-  "BIM",
-  "SAP FICO",
-  "Medical Coding",
-  "Testing Tools",
-  "VLSI",
-  "Multimedia",
-  "Advanced Excel",
-  "AutoCAD",
-  "Revit MEP",
-  "Business Analytics",
-  "Generative AI",
-  "SAP MM",
-  "Cyber Security",
-  "PMP",
-];
+// const CATEGORIES = [
+//   "All",
+//   "Python Full Stack",
+//   "Java FUll Stack",
+//   "Data Science",
+//   "AWS & DevOps",
+//   "Digital Marketing",
+//   "Data Analytics",
+//   "Saleforce",
+//   "BIM",
+//   "SAP FICO",
+//   "Medical Coding",
+//   "Testing Tools",
+//   "VLSI",
+//   "Multimedia",
+//   "Advanced Excel",
+//   "AutoCAD",
+//   "Revit MEP",
+//   "Business Analytics",
+//   "Generative AI",
+//   "SAP MM",
+//   "Cyber Security",
+//   "PMP",
+// ];
 
 const FEATURES = [
   { icon: "🎓", title: "Industry Expert Trainers", desc: "Learn from professionals with 10+ years of real-world industry experience." },
@@ -862,7 +862,7 @@ export default function TrainingCoursesPage() {
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 justify-center mb-10">
+        {/* <div className="flex flex-wrap gap-2 justify-center mb-10">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -876,7 +876,7 @@ export default function TrainingCoursesPage() {
               {cat}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Results count */}
         <p className="text-sm text-gray-400 mb-6 text-center">

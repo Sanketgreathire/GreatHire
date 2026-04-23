@@ -22,7 +22,7 @@ import {
 import { DollarSign, Users, Briefcase, CheckCircle } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
+import { ADMIN_STAT_API_END_POINT, COURSE_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Dialog } from "@mui/material";
 
 
@@ -313,6 +313,11 @@ ${csvUrl}
   const [purchasePage, setPurchasePage] = useState(1);
   const [showAllPurchases, setShowAllPurchases] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [courseEnquiries, setCourseEnquiries] = useState([]);
+  const [courseSearch, setCourseSearch] = useState("");
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  const [courseTypeFilter, setCourseTypeFilter] = useState("");
+  const [courseLoading, setCourseLoading] = useState(false);
   const PURCHASES_PER_PAGE = 20;
   const csvData = statsData
   ? [
@@ -372,6 +377,21 @@ ${csvUrl}
     }
   };
 
+  const fetchCourseEnquiries = async () => {
+    setCourseLoading(true);
+    try {
+      const { data } = await axios.get(`${COURSE_API_END_POINT}/admin/all`, {
+        params: { limit: 1000 },
+        withCredentials: true,
+      });
+      if (data?.success) setCourseEnquiries(data.data);
+    } catch (err) {
+      console.error("Error fetching course enquiries:", err);
+    } finally {
+      setCourseLoading(false);
+    }
+  };
+
   const fetchRecentPurchases = async () => {
     try {
       const timestamp = new Date().getTime();
@@ -403,6 +423,7 @@ ${csvUrl}
     if (user) {
       fetchStatistics();
       fetchRecentPurchases();
+      fetchCourseEnquiries();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -792,6 +813,149 @@ ${csvUrl}
                 </Button>
               </div>
             )}
+          </Card>
+        </section>
+
+        {/* Course Reports */}
+        <section className="mt-8">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 transition-colors">
+            <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Course Reports</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  All course enquiries, demos, enrollments &amp; counsellor requests
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <select
+                  value={courseTypeFilter}
+                  onChange={(e) => setCourseTypeFilter(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Types</option>
+                  <option value="enquiry">Enquiry</option>
+                  <option value="demo">Demo</option>
+                  <option value="enrollment">Enrollment</option>
+                  <option value="counsellor">Counsellor</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Search name, email, phone, course..."
+                  value={courseSearch}
+                  onChange={(e) => setCourseSearch(e.target.value)}
+                  className="flex-1 sm:w-64 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <Button size="sm" onClick={fetchCourseEnquiries} className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600">
+                  Refresh
+                </Button>
+              </div>
+            </div>
+
+            {/* Summary badges */}
+            {courseEnquiries.length > 0 && (() => {
+              const counts = courseEnquiries.reduce((acc, e) => { acc[e.type] = (acc[e.type] || 0) + 1; return acc; }, {});
+              return (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[{label:"Enquiry",key:"enquiry",color:"bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"},{label:"Demo",key:"demo",color:"bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"},{label:"Enrollment",key:"enrollment",color:"bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"},{label:"Counsellor",key:"counsellor",color:"bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"}].map(b => (
+                    <span key={b.key} className={`px-3 py-1 rounded-full text-xs font-medium ${b.color}`}>
+                      {b.label}: {counts[b.key] || 0}
+                    </span>
+                  ))}
+                </div>
+              );
+            })()}
+
+            <div className="overflow-x-auto">
+              {courseLoading ? (
+                <div className="py-8 text-center text-gray-400 dark:text-gray-500">Loading...</div>
+              ) : (() => {
+                const filtered = courseEnquiries.filter(e => {
+                  const matchType = !courseTypeFilter || e.type === courseTypeFilter;
+                  const q = courseSearch.toLowerCase();
+                  const matchSearch = !q || e.name?.toLowerCase().includes(q) || e.email?.toLowerCase().includes(q) || e.phone?.toLowerCase().includes(q) || e.courseName?.toLowerCase().includes(q);
+                  return matchType && matchSearch;
+                });
+                const displayed = showAllCourses ? filtered : filtered.slice(0, 10);
+                return (
+                  <>
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-200 dark:border-gray-700">
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">#</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Name</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Course</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Fee</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Mode</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Batch</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Type</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                          <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Payment</th>
+                          <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {displayed.length > 0 ? displayed.map((e, idx) => (
+                          <tr key={e._id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{idx + 1}</td>
+                            <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100 font-medium">{e.name}</td>
+                            <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.email}</td>
+                            <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.phone}</td>
+                            <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">{e.courseName}</td>
+                            <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.fee || "—"}</td>
+                            <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.mode}</td>
+                            <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.batch || "—"}</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                e.type === "enrollment" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                e.type === "demo" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" :
+                                e.type === "counsellor" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" :
+                                "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                              }`}>{e.type}</span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                e.status === "enrolled" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                e.status === "contacted" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" :
+                                e.status === "closed" ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400" :
+                                "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
+                              }`}>{e.status}</span>
+                            </td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                                e.paymentStatus === "paid" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                e.paymentStatus === "failed" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300" :
+                                "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                              }`}>{e.paymentStatus}</span>
+                            </td>
+                            <td className="py-3 px-4 text-sm text-right text-gray-500 dark:text-gray-400">
+                              {new Date(e.createdAt).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" })}
+                            </td>
+                          </tr>
+                        )) : (
+                          <tr><td colSpan={12} className="py-8 text-center text-gray-400 dark:text-gray-500">No records found</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                    {!showAllCourses && filtered.length > 10 && (
+                      <div className="mt-4 text-center">
+                        <Button onClick={() => setShowAllCourses(true)} className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 px-6 py-2">
+                          See More ({filtered.length - 10} more)
+                        </Button>
+                      </div>
+                    )}
+                    {showAllCourses && filtered.length > 10 && (
+                      <div className="mt-4 text-center">
+                        <Button onClick={() => setShowAllCourses(false)} className="bg-gray-600 dark:bg-gray-500 text-white hover:bg-gray-700 dark:hover:bg-gray-600 px-6 py-2">
+                          Show Less
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
           </Card>
         </section>
       </div>

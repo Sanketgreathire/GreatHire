@@ -1,3 +1,4 @@
+import CourseEnrollModal from "@/components/CourseEnrollModal";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
@@ -119,7 +120,7 @@ const HIGHLIGHTS = [
   { icon: "🛠️", title: "Hands-On Projects", desc: "Build 3+ real-world projects that go straight into your portfolio." },
   { icon: "👨‍🏫", title: "Industry Expert Trainers", desc: "Learn from developers with 10+ years of product & service experience." },
   { icon: "📋", title: "Regular Mock Tests", desc: "Weekly assessments and coding challenges to track your progress." },
-  { icon: "🎖️", title: "Dual Certification", desc: "Great Hire + IIT Guwahati E&ICT Academy recognized certificate." },
+  { icon: "🎖️", title: "Dual Certification", desc: "Great Hire + IIT  Academy recognized certificate." },
   { icon: "🔄", title: "Flexible Batches", desc: "Weekday, weekend, online & offline options to suit your schedule." },
   { icon: "💻", title: "LMS Access", desc: "Lifetime access to recorded sessions, notes, and interview material." },
   { icon: "🤝", title: "1-on-1 Mentoring", desc: "Dedicated mentor for doubt resolution and career guidance." },
@@ -330,84 +331,143 @@ function DemoModal({ onClose }) {
   );
 }
 
-// ─── Enroll Modal ─────────────────────────────────────────────────────────────
+// ─── Pricing Plans Data ───────────────────────────────────────────────────────
 
-function EnrollModal({ onClose }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
+const PRICING_PLANS = [
+  {
+    id: "iit",
+    badge: "IIT Certification Program",
+    headerBg: "bg-blue-700",
+    isIIT: true,
+    price: "₹60,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "3 months 100% paid Internship",
+      "Advanced Certification from IIT's",
+      "Guest lectures from IIT faculty",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "Deadline extension of 6 months for entering TEKS Career Track & Dual Certification",
+    ],
+    highlight: false,
+  },
+  {
+    id: "employment",
+    badge: "Employment Program",
+    headerBg: "bg-blue-600",
+    isIIT: false,
+    price: "₹38,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "Intensive Full-Stack Python curriculum covering basic to advanced concepts",
+      "100+ Live Full-Stack Python classes, Lifetime access",
+      "20+ capstone Full-Stack Python projects & 1000+ coding problems and assessments",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "50+ mock interviews with dedicated career coaches",
+    ],
+    highlight: true,
+  },
+];
 
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "Full Stack Python Developer", fee: "₹38,000", type: "enrollment" }),
-      });
-    } catch (_) {}
-    setLoading(false);
-    setDone(true);
-  };
+// ─── Pricing Plans Section ────────────────────────────────────────────────────
 
+function PricingPlans({ onEnroll, onCounsellor }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
-        {done ? (
-          <div className="p-8 text-center">
-            <div className="text-5xl mb-4">🎉</div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">You're in!</h3>
-            <p className="text-gray-500 text-sm mb-6">Our counsellor will call you within 2 hours to confirm your batch and share details.</p>
-            <button onClick={onClose} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-blue-700">Got it!</button>
-          </div>
-        ) : (
-          <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100">
-              <p className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p>
-              <h3 className="text-xl font-black text-gray-900">Full Stack Python Developer</h3>
-              <p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-blue-600">₹38,000</span> · EMI from ₹7,000/mo</p>
-            </div>
-            <div className="space-y-4">
-              {[
-                { label: "Full Name", key: "name", type: "text", placeholder: "Your full name" },
-                { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" },
-                { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" },
-              ].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label>
-                  <input required type={type} placeholder={placeholder} value={form[key]}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-              ))}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Batch</label>
-                  <select value={form.batch} onChange={(e) => setForm({ ...form, batch: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Weekday Batch</option><option>Weekend Batch</option><option>Fast Track</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Mode</label>
-                  <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Online</option><option>Offline</option><option>Hybrid</option>
-                  </select>
-                </div>
+    <section className="py-14 bg-gray-50 border-t border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
+            Choose Your Learning Path
+          </h2>
+          <p className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto mt-2">
+            Select the program that best fits your career goals — both include placement support and lifetime LMS access.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {PRICING_PLANS.map((plan) => (
+            <div
+              key={plan.id}
+              className={`rounded-2xl overflow-hidden border-2 shadow-lg flex flex-col transition-transform hover:-translate-y-1 duration-200 ${
+                plan.highlight ? "border-blue-400 shadow-blue-100" : "border-blue-300 shadow-blue-50"
+              }`}
+            >
+              <div className={`${plan.headerBg} px-6 py-4`}>
+                <h3 className="text-white font-black text-lg sm:text-xl text-center tracking-wide">{plan.badge}</h3>
               </div>
-              <button onClick={handleSubmit} disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">
-                {loading ? "Submitting..." : "Confirm Enrollment →"}
-              </button>
-              <p className="text-center text-xs text-gray-400">No cost EMI available · Cancel anytime</p>
+              <div className="bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-center gap-4 flex-wrap min-h-[64px]">
+                {plan.isIIT ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-blue-600 font-black text-base">L</span>
+                      <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                      <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                    </div>
+                    <span className="text-gray-400 font-bold text-xl">+</span>
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center gap-1">
+                        <span className="bg-blue-600 text-white font-black text-xs px-1 rounded">in</span>
+                        <span className="font-bold text-gray-800 text-sm">LinkedIn Learning</span>
+                      </div>
+                      <span className="text-xs text-gray-400 mt-0.5">Knowledge Partner</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-blue-600 font-black text-base">L</span>
+                    <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                    <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                  </div>
+                )}
+              </div>
+              <div className="bg-white px-6 pt-5 pb-2">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className={`text-4xl font-black ${plan.highlight ? "text-blue-600" : "text-blue-700"}`}>{plan.price}</span>
+                  <span className="text-gray-500 text-sm font-medium">{plan.gst}</span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1 italic">{plan.emi}</p>
+              </div>
+              <div className={`mx-6 my-3 border-t ${plan.highlight ? "border-blue-100" : "border-blue-100"}`} />
+              <div className="bg-white px-6 pb-6 flex-1">
+                <ul className="space-y-3">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                      <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-blue-600" : "bg-blue-700"}`}>
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white px-6 pb-6 pt-2 space-y-3">
+                <button
+                  onClick={() => onEnroll(plan.id)}
+                  className={`w-full font-bold py-3.5 rounded-xl text-sm transition-colors ${
+                    plan.highlight ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-700 hover:bg-blue-800 text-white"
+                  }`}
+                >
+                  Enroll Now
+                </button>
+                <button
+                  onClick={onCounsellor}
+                  className={`w-full font-semibold py-3 rounded-xl text-sm border-2 transition-colors bg-white ${
+                    plan.highlight ? "border-blue-400 text-blue-600 hover:bg-blue-50" : "border-blue-400 text-blue-700 hover:bg-blue-50"
+                  }`}
+                >
+                  Talk to our Admission Team
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -416,8 +476,19 @@ function EnrollModal({ onClose }) {
 export default function PythonCoursePage() {
   const [openModule, setOpenModule] = useState(0);
   const [showEnroll, setShowEnroll] = useState(false);
+  const [showIITEnroll, setShowIITEnroll] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [showCounsellor, setShowCounsellor] = useState(false);
+
+  const handlePricingEnroll = (planId) => {
+    if (planId === "iit") setShowIITEnroll(true);
+    else setShowEnroll(true);
+  };
+
+  const openEnroll = (isIIT) => {
+    if (isIIT) setShowIITEnroll(true);
+    else setShowEnroll(true);
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -472,6 +543,10 @@ export default function PythonCoursePage() {
                   className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
                   🚀 Enroll Now — ₹38,000
                 </button>
+                <button onClick={() => openEnroll(true)}
+                  className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
+                  🚀 Enroll Now — ₹60,000
+                </button>
                 <button onClick={() => setShowDemo(true)}
                   className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">
                   🎯 Book Free Demo
@@ -481,7 +556,7 @@ export default function PythonCoursePage() {
               {/* Trust badges */}
               <div className="flex flex-wrap gap-4 mt-6 text-xs text-blue-200">
                 <span className="flex items-center gap-1.5">✅ No Cost EMI Available</span>
-                <span className="flex items-center gap-1.5">✅ IIT Guwahati Certified</span>
+                <span className="flex items-center gap-1.5">✅ IIT  Certified</span>
                 <span className="flex items-center gap-1.5">✅ Free Demo Class</span>
               </div>
             </div>
@@ -754,6 +829,7 @@ export default function PythonCoursePage() {
                   className="w-full bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-3 rounded-xl text-sm mb-3 transition-colors">
                   🚀 Enroll Now — ₹38,000
                 </button>
+
                 <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
                   📞 Talk to Counsellor
                 </button>
@@ -774,6 +850,12 @@ export default function PythonCoursePage() {
         </div>
       </div>
 
+       {/* ── Pricing Plans Section ── */}
+      <PricingPlans
+        onEnroll={handlePricingEnroll}
+        onCounsellor={() => setShowCounsellor(true)}
+      />
+
       {/* ── CTA Banner ── */}
       <section className="bg-gradient-to-r from-blue-700 to-indigo-700 py-14 mt-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
@@ -788,6 +870,10 @@ export default function PythonCoursePage() {
               className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">
               🚀 Enroll Now — ₹38,000
             </button>
+            <button onClick={() => openEnroll(true)}
+                  className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
+                  🚀 Enroll Now — ₹60,000
+                </button>
             <button onClick={() => setShowDemo(true)}
               className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">
               🎯 Book Free Demo
@@ -801,7 +887,8 @@ export default function PythonCoursePage() {
 
       {/* ── Modal ── */}
       {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
-      {showEnroll && <EnrollModal onClose={() => setShowEnroll(false)} />}
+      {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName="Full Stack Python Developer" amount={38000} accentColor="blue" />}
+      {showIITEnroll && <CourseEnrollModal onClose={() => setShowIITEnroll(false)} courseName="Full Stack Python Developer — IIT Certification" amount={60000} accentColor="indigo" />}
       {showCounsellor && <TalkToCounsellorModal courseName="Full Stack Python Developer" onClose={() => setShowCounsellor(false)} />}
     </div>
   );
