@@ -1,3 +1,4 @@
+﻿import CourseEnrollModal from "@/components/CourseEnrollModal";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
@@ -128,7 +129,7 @@ const HIGHLIGHTS = [
 const TESTIMONIALS = [
   {
     name: "Arun Kumar Rao",
-    role: "DevOps Engineer @ Amazon",
+    role: "DevOps Engineer",
     avatar: "AK",
     color: "bg-orange-500",
     rating: 5,
@@ -136,7 +137,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Sneha Reddy",
-    role: "Cloud Engineer @ Microsoft",
+    role: "Cloud Engineer",
     avatar: "SR",
     color: "bg-blue-500",
     rating: 5,
@@ -144,7 +145,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Venkat Narasimha",
-    role: "SRE @ Flipkart",
+    role: "SRE ",
     avatar: "VN",
     color: "bg-green-500",
     rating: 5,
@@ -184,6 +185,48 @@ const FAQS = [
     a: "The course fee is ₹38,000 including AWS lab access, all tools & project environments, certification prep, and placement support. EMI from ₹7,000/month available.",
   },
 ];
+
+// ─── Pricing Plans Data ───────────────────────────────────────────────────────
+
+const PRICING_PLANS = [
+  {
+    id: "iit",
+    badge: "IIT Certification Program",
+    headerBg: "bg-blue-700",
+    isIIT: true,
+    price: "₹60,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "3 months 100% paid Internship",
+      "Advanced Certification from IIT's",
+      "Guest lectures from IIT faculty",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "Deadline extension of 6 months for entering TEKS Career Track & Dual Certification",
+    ],
+    highlight: false,
+  },
+  {
+    id: "employment",
+    badge: "Employment Program",
+    headerBg: "bg-orange-500",
+    isIIT: false,
+    price: "₹38,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "Intensive AWS-plus-Devops curriculum covering basic to advanced concepts",
+      "100+ Live AWS-plus-Devops classes, Lifetime access",
+      "20+ capstone AWS-plus-Devops projects & 1000+ coding problems and assessments",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "50+ mock interviews with dedicated career coaches",
+    ],
+    highlight: true,
+  },
+];
+
 
 function Stars({ count = 5 }) {
   return (
@@ -254,7 +297,7 @@ function DemoModal({ onClose }) {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, courseName: "AWS & DevOps", type: "demo" }),
       });
-    } catch (_) {}
+    } catch (_) { }
     setLoading(false); setDone(true);
   };
   return (
@@ -281,79 +324,149 @@ function DemoModal({ onClose }) {
   );
 }
 
-function EnrollModal({ onClose }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
+// ─── Pricing Plans Section ────────────────────────────────────────────────────
 
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "AWS & DevOps", fee: "₹38,000", type: "enrollment" }),
-      });
-    } catch (_) {}
-    setLoading(false);
-    setDone(true);
-  };
+function PricingPlans({ onEnroll, onCounsellor }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
-        {done ? (
-          <div className="p-8 text-center">
-            <div className="text-5xl mb-4">🎉</div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">You're in!</h3>
-            <p className="text-gray-500 text-sm mb-6">Our counsellor will call you within 2 hours to confirm your batch.</p>
-            <button onClick={onClose} className="bg-orange-500 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-orange-600">Got it!</button>
-          </div>
-        ) : (
-          <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100">
-              <p className="text-xs text-orange-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p>
-              <h3 className="text-xl font-black text-gray-900">AWS & DevOps Course</h3>
-              <p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-orange-600">₹38,000</span> · EMI from ₹7,000/mo</p>
-            </div>
-            <div className="space-y-4">
-              {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label>
-                  <input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-                </div>
-              ))}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Batch</label>
-                  <select value={form.batch} onChange={(e) => setForm({ ...form, batch: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400">
-                    <option>Weekday Batch</option><option>Weekend Batch</option><option>Fast Track</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Mode</label>
-                  <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400">
-                    <option>Online</option><option>Offline</option><option>Hybrid</option>
-                  </select>
-                </div>
+    <section className="py-14 bg-gray-50 border-t border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <span className="w-1 h-7 bg-orange-500 rounded-full inline-block"></span>
+            Choose Your Learning Path
+          </h2>
+          <p className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto mt-2">
+            Select the program that best fits your career goals — both include placement support and lifetime LMS access.
+          </p>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {PRICING_PLANS.map((plan) => (
+            <div
+              key={plan.id}
+              className={`rounded-2xl overflow-hidden border-2 shadow-lg flex flex-col transition-transform hover:-translate-y-1 duration-200 ${
+                plan.highlight
+                  ? "border-orange-400 shadow-orange-100"
+                  : "border-blue-300 shadow-blue-50"
+              }`}
+            >
+              {/* Card Header */}
+              <div className={`${plan.headerBg} px-6 py-4`}>
+                <h3 className="text-white font-black text-lg sm:text-xl text-center tracking-wide">
+                  {plan.badge}
+                </h3>
               </div>
-              <button onClick={handleSubmit} disabled={loading} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
-              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
+
+              {/* Partners Row */}
+              <div className="bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-center gap-4 flex-wrap min-h-[64px]">
+                {plan.isIIT ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange-500 font-black text-base">L</span>
+                      <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                      <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                    </div>
+                    <span className="text-gray-400 font-bold text-xl">+</span>
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center gap-1">
+                        <span className="bg-blue-600 text-white font-black text-xs px-1 rounded">in</span>
+                        <span className="font-bold text-gray-800 text-sm">LinkedIn Learning</span>
+                      </div>
+                      <span className="text-xs text-gray-400 mt-0.5">Knowledge Partner</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-500 font-black text-base">L</span>
+                    <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                    <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing */}
+              <div className="bg-white px-6 pt-5 pb-2">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className={`text-4xl font-black ${plan.highlight ? "text-orange-500" : "text-blue-700"}`}>
+                    {plan.price}
+                  </span>
+                  <span className="text-gray-500 text-sm font-medium">{plan.gst}</span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1 italic">{plan.emi}</p>
+              </div>
+
+              {/* Divider */}
+              <div className={`mx-6 my-3 border-t ${plan.highlight ? "border-orange-100" : "border-blue-100"}`} />
+
+              {/* Features */}
+              <div className="bg-white px-6 pb-6 flex-1">
+                <ul className="space-y-3">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                      <span
+                        className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
+                          plan.highlight ? "bg-orange-500" : "bg-blue-600"
+                        }`}
+                      >
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="bg-white px-6 pb-6 pt-2 space-y-3">
+                <button
+                  onClick={() => onEnroll(plan.id)}
+                  className={`w-full font-bold py-3.5 rounded-xl text-sm transition-colors ${
+                    plan.highlight
+                      ? "bg-orange-500 hover:bg-orange-600 text-white"
+                      : "bg-blue-700 hover:bg-blue-800 text-white"
+                  }`}
+                >
+                  Enroll Now
+                </button>
+                <button
+                  onClick={onCounsellor}
+                  className={`w-full font-semibold py-3 rounded-xl text-sm border-2 transition-colors bg-white ${
+                    plan.highlight
+                      ? "border-orange-400 text-orange-500 hover:bg-orange-50"
+                      : "border-blue-400 text-blue-700 hover:bg-blue-50"
+                  }`}
+                >
+                  Talk to our Admission Team
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 export default function AWSDevOpsCoursePage() {
   const [openModule, setOpenModule] = useState(0);
   const [showEnroll, setShowEnroll] = useState(false);
+  const [enrollPlan, setEnrollPlan] = useState("employment");
   const [showDemo, setShowDemo] = useState(false);
   const [showCounsellor, setShowCounsellor] = useState(false);
+
+  const openEnroll = (planId = "employment") => {
+    setEnrollPlan(planId);
+    setShowEnroll(true);
+  };
+
+  const handlePricingEnroll = (planId) => openEnroll(planId);
+
+  const enrollAmount = enrollPlan === "iit" ? 60000 : 38000;
+  const enrollCourseName = enrollPlan === "iit" ? "AWS DevOps – IIT Certification Program" : "AWS DevOps";
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
@@ -383,7 +496,8 @@ export default function AWSDevOpsCoursePage() {
                 ))}
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => setShowEnroll(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">🚀 Enroll Now — ₹38,000</button>
+                <button onClick={() => openEnroll("employment")} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">🚀 Enroll Now — ₹38,000</button>
+                <button onClick={() => openEnroll("iit")} className="bg-white/20 hover:bg-white/30 border border-yellow-300 text-yellow-200 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">🎓 IIT Program — ₹60,000</button>
                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">📥 Download Syllabus</button>
               </div>
               <div className="flex flex-wrap gap-4 mt-6 text-xs text-orange-200">
@@ -414,7 +528,8 @@ export default function AWSDevOpsCoursePage() {
       <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div><p className="text-xl font-black text-orange-500 leading-none">₹38,000</p><p className="text-xs text-gray-400">EMI from ₹7,000/mo</p></div>
-          <button onClick={() => setShowEnroll(true)} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
+          <button onClick={() => openEnroll("employment")} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">Enroll Now</button>
+          
         </div>
       </div>
 
@@ -488,7 +603,7 @@ export default function AWSDevOpsCoursePage() {
                     </div>
                     <div className="flex items-center gap-3 sm:flex-col sm:items-end">
                       <p className="text-xs text-gray-500 font-medium">{b.seats}</p>
-                      <button onClick={() => setShowEnroll(true)} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">Enroll →</button>
+                      <button onClick={() => openEnroll("employment")} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">Enroll →</button>
                     </div>
                   </div>
                 ))}
@@ -547,19 +662,27 @@ export default function AWSDevOpsCoursePage() {
         </div>
       </div>
 
+
+      {/* ── Pricing Plans Section ── */}
+      <PricingPlans
+        onEnroll={handlePricingEnroll}
+        onCounsellor={() => setShowCounsellor(true)}
+      />
+
       <section className="bg-gradient-to-r from-orange-600 to-orange-800 py-14 mt-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Launch Your Cloud & DevOps Career</h2>
           <p className="text-orange-100 text-base sm:text-lg mb-8 leading-relaxed">Join 3,200+ students who've secured high-paying cloud roles at Amazon, Microsoft, Flipkart & more with Great Hire.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => setShowEnroll(true)} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">🚀 Enroll Now — Free Demo</button>
+            <button onClick={() => openEnroll("employment")} className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">🚀 Enroll Now — Free Demo</button>
             <button className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">📞 Call: +91 90000 12345</button>
           </div>
         </div>
       </section>
       <Footer />
       {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
-      {showEnroll && <EnrollModal onClose={() => setShowEnroll(false)} />}
+      {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName={enrollCourseName} amount={enrollAmount} accentColor="orange" />}
+         {showCounsellor && <TalkToCounsellorModal courseName="AWS DevOps" onClose={() => setShowCounsellor(false)} />}
     </div>
   );
 }
