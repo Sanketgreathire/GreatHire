@@ -1,3 +1,4 @@
+﻿import CourseEnrollModal from "@/components/CourseEnrollModal";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useState } from "react";
@@ -281,73 +282,6 @@ function DemoModal({ onClose }) {
   );
 }
 
-function EnrollModal({ onClose }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "Testing Tools", fee: "₹38,000", type: "enrollment" }),
-      });
-    } catch (_) {}
-    setLoading(false);
-    setDone(true);
-  };
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
-        {done ? (
-          <div className="p-8 text-center">
-            <div className="text-5xl mb-4">🎉</div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">You're in!</h3>
-            <p className="text-gray-500 text-sm mb-6">Our counsellor will call you within 2 hours to confirm your batch.</p>
-            <button onClick={onClose} className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-green-700">Got it!</button>
-          </div>
-        ) : (
-          <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100">
-              <p className="text-xs text-green-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p>
-              <h3 className="text-xl font-black text-gray-900">Testing Tools Course</h3>
-              <p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-teal-600">₹38,000</span> · EMI from ₹7,000/mo</p>
-            </div>
-            <div className="space-y-4">
-              {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label>
-                  <input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-                </div>
-              ))}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Batch</label>
-                  <select value={form.batch} onChange={(e) => setForm({ ...form, batch: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option>Weekday Batch</option><option>Weekend Batch</option><option>Fast Track</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Mode</label>
-                  <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option>Online</option><option>Offline</option><option>Hybrid</option>
-                  </select>
-                </div>
-              </div>
-              <button onClick={handleSubmit} disabled={loading} className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
-              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function TestingToolsCoursePage() {
   const [openModule, setOpenModule] = useState(0);
@@ -559,7 +493,7 @@ export default function TestingToolsCoursePage() {
       </section>
       <Footer />
       {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
-      {showEnroll && <EnrollModal onClose={() => setShowEnroll(false)} />}
+      {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName="Testing Tools" amount={38000} accentColor="green" />}
     </div>
   );
 }
