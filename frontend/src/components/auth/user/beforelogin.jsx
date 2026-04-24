@@ -730,22 +730,6 @@ const GreatHireLanding = () => {
     }
   }, [index]);
 
-  // Load below-fold content after initial paint
-  useEffect(() => {
-    const t = setTimeout(() => setShowBelow(true), 300);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Load animation for current tab on demand
-  useEffect(() => {
-    const id = tabs[index]?.id;
-    if (id && !tabAnimData[id]) {
-      tabAnimations[id]().then(mod => {
-        setTabAnimData(prev => ({ ...prev, [id]: mod.default }));
-      });
-    }
-  }, [index]);
-
   return (
     <>
       <Helmet>
@@ -1044,21 +1028,20 @@ const GreatHireLanding = () => {
             id="home"
             className="min-h-screen pt-[117px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300"
           >
-            {/* Animated bg blobs */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-              <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-400 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob" />
-              <div className="absolute top-40 -right-20 w-96 h-96 bg-purple-400 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-              <div className="absolute -bottom-20 left-1/3 w-96 h-96 bg-pink-400 dark:bg-pink-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+            {/* Animated bg blobs — GPU composited */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none" aria-hidden="true">
+              <div className="absolute top-20 -left-20 w-96 h-96 bg-blue-400 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 will-change-transform" />
+              <div className="absolute top-40 -right-20 w-96 h-96 bg-purple-400 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 will-change-transform" />
             </div>
 
             <div className="container mx-auto px-4 py-8 relative z-10">
               {/* Hero */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-8">
                 {/* Left */}
-                <div className="space-y-6 animate-fade-in-up">
+                <div className="space-y-6 ">
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
                     Find Your
-                    <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-2 animate-gradient">
+                    <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-2">
                       Dream Career
                     </span>
                   </h1>

@@ -770,7 +770,7 @@ function App() {
               src="AboutusBanner.png"
               alt="Real estate team meeting"
               className="w-full h-[500px] object-cover"
-            />
+            loading="lazy" />
           </div> */}
 
         {/* Content */}

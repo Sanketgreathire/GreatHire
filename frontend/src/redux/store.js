@@ -16,9 +16,9 @@ const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  // stats is large admin data — no need to persist it, saves localStorage space
-  // and reduces rehydration time on every page load
-  blacklist: ["stats"],
+  // Only persist auth — company/recruiters/jobPlan are re-fetched on dashboard mount
+  // Persisting large slices slows down rehydration on every page load
+  whitelist: ["auth"],
 };
 
 const rootReducer = combineReducers({

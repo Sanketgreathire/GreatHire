@@ -1,6 +1,6 @@
-// Import necessary modules and dependencies
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useMemo } from "react";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useSelector } from "react-redux";
 
 // Creating a context to manage job details globally
 const JobDetailsContext = createContext();
@@ -9,7 +9,9 @@ const JobDetailsContext = createContext();
 export const useJobDetails = () => useContext(JobDetailsContext);
 
 const JobDetailsProvider = ({ children }) => {
-  // State to store the list of jobs
+  const { user } = useSelector((state) => state.auth);
+  const isRecruiterOrAdmin = user?.role === "recruiter" || user?.role === "admin";
+
   const [jobsList, setJobsList] = useState([]);
   const [originalJobsList, setOriginalJobsList] = useState([]);
   const [saveJobsList, setSaveJobsList] = useState([]);
@@ -25,8 +27,10 @@ const JobDetailsProvider = ({ children }) => {
     tenth: ["10th Pass", "Matriculation"],
   };
 
-  // Fetch job listings — deferred so it doesn't block initial paint
+  // Fetch job listings — only for job seekers, deferred so it doesn't block initial paint
   useEffect(() => {
+    if (isRecruiterOrAdmin) return;
+
     const fetchJobs = async () => {
       try {
         const response = await fetch(`${JOB_API_END_POINT}/jobs`, {
@@ -44,10 +48,9 @@ const JobDetailsProvider = ({ children }) => {
       }
     };
 
-    // Defer fetch by 1 tick so it doesn't compete with initial render
     const t = setTimeout(fetchJobs, 0);
     return () => clearTimeout(t);
-  }, []);
+  }, [isRecruiterOrAdmin]);
 
   // Function to toggle bookmark status of a job
   const toggleBookmarkStatus = (jobId, userId) => {
@@ -251,21 +254,21 @@ const JobDetailsProvider = ({ children }) => {
     setSelectedJob(originalJobsList[0] || null);
   };
 
+  const contextValue = useMemo(() => ({
+    jobs: jobsList,
+    selectedJob,
+    setSelectedJob,
+    filterJobs,
+    resetFilter,
+    toggleBookmarkStatus,
+    addApplicationToJob,
+    getSaveJobs,
+    saveJobsList,
+    error,
+  }), [jobsList, selectedJob, saveJobsList, error]);
+
   return (
-    <JobDetailsContext.Provider
-      value={{
-        jobs: jobsList,
-        selectedJob,
-        setSelectedJob,
-        filterJobs,
-        resetFilter,
-        toggleBookmarkStatus,
-        addApplicationToJob,
-        getSaveJobs,
-        saveJobsList,
-        error,
-      }}
-    >
+    <JobDetailsContext.Provider value={contextValue}>
       {children}
     </JobDetailsContext.Provider>
   );

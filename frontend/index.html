@@ -7,13 +7,12 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- DNS prefetch for external services -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <!-- Preconnect for critical external origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
 
     <!-- Google Fonts non-blocking -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -32,41 +31,49 @@
         }catch(e){}
       })();
     </script>
-
-    <!-- GA4 deferred to not block render -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-HF6ZHEW1PV"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-HF6ZHEW1PV');
-    </script>
-
-    <script type="module" src="/src/main.jsx"></script>
   </head>
 
   <body>
     <div id="root"></div>
 
+    <script type="module" src="/src/main.jsx"></script>
 
-    <!-- Razorpay Integration -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- GA4 deferred after page load -->
+    <script>
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-HF6ZHEW1PV';
+        s.async = true;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-HF6ZHEW1PV');
+      });
+    </script>
 
+    <!-- Razorpay loaded on demand only when needed -->
+    <script>
+      window.loadRazorpay = function() {
+        return new Promise(function(resolve) {
+          if (window.Razorpay) { resolve(); return; }
+          var s = document.createElement('script');
+          s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          s.onload = resolve;
+          document.body.appendChild(s);
+        });
+      };
+    </script>
 
-    <!-- ✅ Microsoft Clarity -->
-    <script type="text/javascript">
-      (function (c, l, a, r, i, t, y) {
-        c[a] =
-          c[a] ||
-          function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
-        t = l.createElement(r);
-        t.async = 1;
-        t.src = "https://www.clarity.ms/tag/" + i;
-        y = l.getElementsByTagName(r)[0];
-        y.parentNode.insertBefore(t, y);
-      })(window, document, "clarity", "script", "uu36ks7vrm");
+    <!-- Microsoft Clarity deferred after load -->
+    <script>
+      window.addEventListener('load', function() {
+        (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window,document,'clarity','script','uu36ks7vrm');
+      });
     </script>
   </body>
 </html>

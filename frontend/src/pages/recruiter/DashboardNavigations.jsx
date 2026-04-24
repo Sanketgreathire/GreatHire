@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { RiHome4Line, RiCloseFill } from "react-icons/ri";
-import { IoCreateOutline, IoSettingsOutline } from "react-icons/io5";
-import { MdWorkOutline, MdPostAdd } from "react-icons/md";
 import {
-  PiBuildingOffice,
-  PiBuildingOfficeLight,
-  PiStudent,
-} from "react-icons/pi";
-import { GiUpgrade } from "react-icons/gi";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { BsPersonPlus } from "react-icons/bs";
-import { LuLayoutDashboard } from "react-icons/lu";
-import { FiUsers, FiGift } from "react-icons/fi";
-import { CiMenuBurger } from "react-icons/ci";
+  Home, X, PenSquare, Settings, Briefcase, PlusSquare,
+  Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
+  LayoutDashboard, Users, Gift, Menu, FileText, Search
+} from "lucide-react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 
@@ -54,7 +45,7 @@ const DashboardNavigations = () => {
         className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm  text-gray-700 dark:text-gray-200"
         onClick={() => setSidebarOpen(true)}
       >
-        <CiMenuBurger size={24} />
+        <Menu size={24} />
       </button>
 
       {/*  Sidebar */}
@@ -72,14 +63,14 @@ const DashboardNavigations = () => {
           className="lg:hidden absolute top-4 right-4 text-gray-600 dark:text-gray-300"
           onClick={() => setSidebarOpen(false)}
         >
-          <RiCloseFill size={24} />
+          <X size={24} />
         </button>
 
         <div className="flex flex-col h-full p-3 justify-between">
           {/* Main Navigation */}
           <section>
             <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              <LuLayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
+              <LayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
               <span>Dashboard</span>
             </h2>
             <ul className="w-full flex flex-col gap-1">
@@ -90,14 +81,14 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <RiHome4Line size={25} className={iconClass(isActive)} />
+                    <Home size={25} className={iconClass(isActive)} />
                     <span>Home</span>
                   </>
                 )}
               </NavLink>
               <li className="relative group ml-1">
                 <span className="flex items-center gap-2 px-2 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700 cursor-default">
-                  <IoCreateOutline size={25} className="text-blue-600 dark:text-blue-400" />
+                  <PenSquare size={25} className="text-blue-600 dark:text-blue-400" />
                   <span>Create New</span>
                 </span>
 
@@ -108,17 +99,17 @@ const DashboardNavigations = () => {
                   transition-opacity duration-150">
                   {!user?.isCompanyCreated && (
                     <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><PiBuildingOfficeLight size={25} className={iconClass(isActive)} /><span>Company</span></>)}
+                      {({ isActive }) => (<><Building2 size={25} className={iconClass(isActive)} /><span>Company</span></>)}
                     </NavLink>
                   )}
                   {user?.isActive && user?.isCompanyCreated && user?.emailId?.email === company?.adminEmail && (
                     <NavLink to="/recruiter/dashboard/add-recruiter" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><BsPersonPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
+                      {({ isActive }) => (<><UserPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
                     </NavLink>
                   )}
                   {user?.isCompanyCreated && (
                     <NavLink to="/recruiter/dashboard/post-job" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><MdPostAdd size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
+                      {({ isActive }) => (<><PlusSquare size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
                     </NavLink>
                   )}
                 </ul>
@@ -130,7 +121,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <MdWorkOutline size={25} className={iconClass(isActive)} />
+                    <Briefcase size={25} className={iconClass(isActive)} />
                     <span>Jobs</span>
                   </>
                 )}
@@ -142,7 +133,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <FiUsers size={25} className={iconClass(isActive)} />
+                    <Users size={25} className={iconClass(isActive)} />
                     <span>Applicants</span>
                   </>
                 )}
@@ -154,7 +145,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <PiBuildingOffice
+                    <Building2
                       size={25}
                       className={iconClass(isActive)}
                     />
@@ -169,7 +160,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <PiStudent size={25} className={iconClass(isActive)} />
+                    <GraduationCap size={25} className={iconClass(isActive)} />
                     <span>Find Candidates</span>
                   </>
                 )}
@@ -192,7 +183,7 @@ const DashboardNavigations = () => {
           {/* Footer Navigation */}
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              <IoSettingsOutline size={25} className="text-blue-700 dark:text-blue-500"/>
+              <Settings size={25} className="text-blue-700 dark:text-blue-500"/>
               <span>Settings</span>
             </h2>
             <ul className="flex flex-col gap-1">
@@ -203,7 +194,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <FiGift size={25} className={iconClass(isActive)} />
+                    <Gift size={25} className={iconClass(isActive)} />
                     <span>Invite &amp; Earn</span>
                   </>
                 )}
@@ -215,7 +206,7 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <FiUsers size={25} className={iconClass(isActive)} />
+                    <Users size={25} className={iconClass(isActive)} />
                     <span>Recruiters</span>
                   </>
                 )} 
@@ -231,7 +222,7 @@ const DashboardNavigations = () => {
                     >
                    {({ isActive }) => (
                   <>
-                    <GiUpgrade size={25} className={iconClass(isActive)} />
+                    <TrendingUp size={25} className={iconClass(isActive)} />
                     <span>
                       {company?.maxPostJobs === 0
                         ? "Upgrade Plans"
@@ -248,7 +239,7 @@ const DashboardNavigations = () => {
                 >
                   {({ isActive }) => (
                     <>
-                      <RiDeleteBin6Line
+                      <Trash2
                         size={25}
                         className={iconClass(isActive)}
                       />

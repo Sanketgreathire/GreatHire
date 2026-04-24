@@ -17,7 +17,7 @@ const BlogPage = () => {
       date: "Jan 12, 2025",
       description:
         "Making a good impression during an interview requires careful preparation, confidence, and clear communication. Begin by thoroughly researching the organization and the role you are applying for. Understanding the company’s mission, values, products, and culture allows you to align your answers with what the employer is looking for and demonstrate genuine interest in the position.Practice answering common interview questions such as “Tell me about yourself,” “Why should we hire you?” and “What are your strengths and weaknesses?” Structuring your responses using the STAR method (Situation, Task, Action, Result) helps you clearly explain your experiences, highlight your problem-solving abilities, and showcase measurable achievements.",
-      image: "/interview_tips_01.png",
+      image: "/interview_tips_01.webp",
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ const BlogPage = () => {
       date: "Jan 18, 2025",
       description:
         "Sending a thank-you email within 24 hours of an interview demonstrates professionalism and reaffirms your interest in the position. This simple yet powerful gesture shows appreciation for the interviewer’s time and leaves a positive, lasting impression. It also reinforces your enthusiasm for the role and highlights your strong communication skills.A well-written follow-up email provides an excellent opportunity to briefly restate your key qualifications and connect them to the requirements of the job. You can reference a specific topic discussed during the interview to personalize your message, which helps you stand out from other candidates. This approach shows attentiveness and genuine engagement with the conversation.",
-      image: "/interview_tips_02.png",
+      image: "/interview_tips_02.webp",
     },
     {
       id: 3,
@@ -37,7 +37,7 @@ const BlogPage = () => {
       date: "Jan 25, 2025",
       description:
         "In 2025, major international corporations such as Amazon, Google, Microsoft, and GE Aerospace are expanding significantly, creating a wide range of job opportunities across multiple industries. These organizations are actively hiring talent in areas like software development, artificial intelligence, cloud computing, data analytics, aerospace engineering, supply chain management, and digital marketing to support innovation and global growth.Technology companies continue to lead hiring trends, with a strong focus on AI-driven solutions, automation, cybersecurity, and cloud infrastructure. Meanwhile, aerospace and manufacturing giants are investing heavily in research, sustainability, and advanced engineering, opening doors for skilled professionals in both technical and managerial roles.",
-      image: "/company_insight_01.png",
+      image: "/company_insight_01.webp",
     },
   ];
 
@@ -84,7 +84,7 @@ const BlogPage = () => {
               src={currentBlog.image}
               alt={currentBlog.title}
               className="w-full h-full object-cover"
-              onError={(e) => (e.target.src = "/bannerImage2.png")}
+              onError={(e) = loading="lazy"> (e.target.src = "/bannerImage2.png")}
             />
           </div>
 
@@ -163,7 +163,7 @@ const BlogPage = () => {
                   src={blog.image}
                   alt={blog.title}
                   className="h-56 w-full object-cover"
-                />
+                loading="lazy" />
 
                 <div className="p-6">
                   <span className="text-sm text-blue-600 dark:text-blue-400 font-semibold">{blog.category}</span>
