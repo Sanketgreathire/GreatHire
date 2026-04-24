@@ -201,13 +201,7 @@ const ContactSection = () => {
                       <span className="group-hover/link:translate-x-2 transition-transform duration-300">→</span>
                     </a>
                     <br />
-                    <a
-                      href="mailto:tanmai.dev077@greathire.in"
-                      className="inline-flex items-center gap-2 text-pink-600 dark:text-pink-300 hover:text-pink-700 dark:hover:text-white font-semibold transition-colors group/link break-all"
-                    >
-                      tanmai.dev077@greathire.in
-                      <span className="group-hover/link:translate-x-2 transition-transform duration-300">→</span>
-                    </a>
+                    
                   </div>
                 </div>
               </div>

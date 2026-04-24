@@ -365,7 +365,7 @@ function RecruiterPlans() {
         {/* Main Content */}
         <div className={`flex-1 min-w-0 ${isRecruiter ? "lg:ml-52" : ""}`}>
           {/* ================= ANIMATED HERO SECTION ================= */}
-          <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white -mt-[117px] pt-[117px] pb-6 overflow-hidden">
+          <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 text-white -mt-[117px] pt-[117px] pb-6 overflow-hidden">
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>

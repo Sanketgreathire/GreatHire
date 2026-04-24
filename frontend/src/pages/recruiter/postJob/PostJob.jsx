@@ -16,11 +16,29 @@ import DOMPurify from "dompurify";
 
 const flatLocations = Object.values(allLocations).flat();
 
+// Build a map: location string → state name for fuzzy state-name matching
+const locationStateMap = Object.entries(allLocations).reduce((acc, [state, cities]) => {
+  cities.forEach(city => { acc[city] = state; });
+  return acc;
+}, {});
+
+const filterLocations = (query) => {
+  if (!query) return flatLocations;
+  const q = query.toLowerCase();
+  return flatLocations.filter(loc =>
+    loc.toLowerCase().includes(q) ||
+    (locationStateMap[loc] || "").toLowerCase().includes(q)
+  );
+};
+
 const PostJob = () => {
   const [step, setStep] = useState(0);
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
+  const [langSearch, setLangSearch] = useState("");
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [locationSearch, setLocationSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -211,6 +229,7 @@ const PostJob = () => {
       details: "",
 
       skills: [],
+      languages: [],
       benefits: [],
       qualifications: [],
       responsibilities: [],
@@ -225,6 +244,7 @@ const PostJob = () => {
       respondTime: "",
       duration: "",
       shift: "",
+      noticePeriod: "",
       questions: [],
       anyAmount: "No",
     },
@@ -262,8 +282,6 @@ const PostJob = () => {
       }
 
       setLoading(true);
-      console.log("Form values being submitted:", values);
-      console.log("anyAmount value:", values.anyAmount);
       try {
         const response = await axios.post(
           `${JOB_API_END_POINT}/post-job`,
@@ -324,16 +342,18 @@ const PostJob = () => {
     );
 
     if (hasErrors) {
-      console.log(
-        "Validation failed. Please fill all required fields before proceeding."
-      );
-      return; // Block navigation if there are errors or blank fields
+      return;
     }
     // Move to the next step if all fields are valid
     setStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
+
+  const filteredLocations = useMemo(
+    () => filterLocations(locationSearch),
+    [locationSearch]
+  );
 
   const steps = [
     { title: "Basic Info" },
@@ -654,6 +674,62 @@ const PostJob = () => {
                     )}
                   </div>
 
+                  {/* Languages */}
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Languages<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                    </Label>
+                    <div className="flex gap-3 items-start">
+                      {/* Searchable dropdown */}
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          placeholder="Search language"
+                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                          value={langSearch}
+                          onChange={(e) => setLangSearch(e.target.value)}
+                          onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
+                          onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                          autoComplete="off"
+                        />
+                        <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-48 overflow-y-auto hidden">
+                          {[
+                            "English", "Hindi", "Telugu", "Tamil", "Kannada",
+                            "Malayalam", "Marathi", "Bengali", "Gujarati", "Punjabi",
+                            "Urdu", "Odia", "Arabic", "French", "German",
+                          ]
+                            .filter(l => l.toLowerCase().includes(langSearch.toLowerCase()) && !formik.values.languages.includes(l))
+                            .map(lang => (
+                              <div
+                                key={lang}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 text-sm"
+                                onMouseDown={() => {
+                                  formik.setFieldValue("languages", [...formik.values.languages, lang]);
+                                  setLangSearch("");
+                                }}
+                              >
+                                {lang}
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </div>
+                      {/* Selected tags */}
+                      <div className="flex flex-wrap gap-2 flex-1">
+                        {formik.values.languages.map(lang => (
+                          <span key={lang} className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-2 py-1 rounded-full">
+                            {lang}
+                            <button
+                              type="button"
+                              className="text-blue-500 hover:text-red-500 font-bold leading-none"
+                              onClick={() => formik.setFieldValue("languages", formik.values.languages.filter(l => l !== lang))}
+                            >×</button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Benefits */}
                   <div className="mb-6">
                     <Label htmlFor="benefits" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
@@ -945,30 +1021,35 @@ const PostJob = () => {
                       name="location"
                       className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
                       placeholder="Enter location manually or select from dropdown"
-                      value={formik.values.location}
+                      value={locationSearch || formik.values.location}
                       onChange={(e) => {
-                        formik.handleChange(e);
-                        e.target.nextSibling.classList.remove("hidden");
+                        setLocationSearch(e.target.value);
+                        formik.setFieldValue("location", e.target.value);
                       }}
-                      onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
-                      onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                      onFocus={() => {
+                        setLocationSearch(formik.values.location);
+                        setShowLocationDropdown(true);
+                      }}
+                      onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
+                      autoComplete="off"
                     />
-                    <div className="absolute w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-40 overflow-y-auto hidden transition-colors duration-300">
-                      {flatLocations
-                          .filter((loc) => loc.toLowerCase().includes(formik.values.location.toLowerCase()))
-                          .map((location) => (
-                        <div
-                          key={location}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                          onMouseDown={(e) => {
-                            formik.setFieldValue("location", location);
-                            e.target.parentNode.classList.add("hidden");
-                          }}
-                        >
-                          {location}
-                        </div>
-                      ))}
-                    </div>
+                    {showLocationDropdown && filteredLocations.length > 0 && (
+                      <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-40 overflow-y-auto transition-colors duration-300">
+                        {filteredLocations.map((loc) => (
+                          <div
+                            key={loc}
+                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                            onMouseDown={() => {
+                              formik.setFieldValue("location", loc);
+                              setLocationSearch(loc);
+                              setShowLocationDropdown(false);
+                            }}
+                          >
+                            {loc}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {formik.touched.location && formik.errors.location && (
                       <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.location}</div>
                     )}
@@ -1103,6 +1184,25 @@ const PostJob = () => {
                         {formik.errors.shift}
                       </div>
                     )}
+                  </div>
+
+                  {/* Notice Period */}
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Notice Period
+                    </Label>
+                    <select
+                      name="noticePeriod"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                      onChange={formik.handleChange}
+                      value={formik.values.noticePeriod || ""}
+                    >
+                      <option value="">Select notice period</option>
+                      <option value="30 days">30 days</option>
+                      <option value="45 days">45 days</option>
+                      <option value="60 days">60 days</option>
+                      <option value="90 days">90 days</option>
+                    </select>
                   </div>
 
                   <div className="mb-6">
