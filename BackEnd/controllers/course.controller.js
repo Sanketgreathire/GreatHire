@@ -1,6 +1,13 @@
 import { CourseEnquiry } from "../models/courseEnquiry.model.js";
 import { OtpModel } from "../models/otp.model.js";
 import nodemailer from "nodemailer";
+import Razorpay from "razorpay";
+import crypto from "crypto";
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 // POST /api/v1/courses/counsellor/send-otp  (public)
 export const sendCounsellorOtp = async (req, res) => {
@@ -127,6 +134,19 @@ export const getAllEnquiries = async (req, res) => {
   }
 };
 
+// DELETE /api/v1/courses/admin/:id  (admin)
+export const deleteEnquiry = async (req, res) => {
+  try {
+    const entry = await CourseEnquiry.findByIdAndDelete(req.params.id);
+    if (!entry)
+      return res.status(404).json({ success: false, message: "Enquiry not found" });
+    return res.status(200).json({ success: true, message: "Deleted successfully" });
+  } catch (error) {
+    console.error("deleteEnquiry error:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // PATCH /api/v1/courses/admin/:id/status  (admin)
 export const updateStatus = async (req, res) => {
   try {
@@ -149,5 +169,67 @@ export const updateStatus = async (req, res) => {
   } catch (error) {
     console.error("updateStatus error:", error);
     return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// POST /api/v1/courses/payment/create-order  (public)
+export const createCourseOrder = async (req, res) => {
+  try {
+    const { name, email, phone, courseName, amount, batch, mode } = req.body;
+    if (!name || !email || !phone || !courseName || !amount)
+      return res.status(400).json({ success: false, message: "Required fields missing" });
+
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `course_${Date.now()}`,
+    });
+
+    const entry = await CourseEnquiry.create({
+      name, email, phone, courseName,
+      fee: `₹${amount.toLocaleString("en-IN")}`,
+      batch: batch || "",
+      mode: mode || "Online",
+      type: "enrollment",
+      razorpayOrderId: order.id,
+      paymentStatus: "pending",
+    });
+
+    return res.status(200).json({
+      success: true,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      enrollmentId: entry._id,
+    });
+  } catch (error) {
+    console.error("createCourseOrder error:", error);
+    return res.status(500).json({ success: false, message: "Failed to create order" });
+  }
+};
+
+// POST /api/v1/courses/payment/verify  (public)
+export const verifyCoursePayment = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, enrollmentId } = req.body;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature)
+      return res.status(400).json({ success: false, message: "Payment verification failed" });
+
+    await CourseEnquiry.findByIdAndUpdate(enrollmentId, {
+      paymentId: razorpay_payment_id,
+      paymentStatus: "paid",
+      status: "enrolled",
+    });
+
+    return res.status(200).json({ success: true, message: "Payment verified successfully" });
+  } catch (error) {
+    console.error("verifyCoursePayment error:", error);
+    return res.status(500).json({ success: false, message: "Verification failed" });
   }
 };

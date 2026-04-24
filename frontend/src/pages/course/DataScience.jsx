@@ -1,3 +1,4 @@
+import CourseEnrollModal from "@/components/CourseEnrollModal";
 import { useState } from "react";
 import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
 import Navbar from "@/components/shared/Navbar";
@@ -132,7 +133,7 @@ const HIGHLIGHTS = [
 const TESTIMONIALS = [
   {
     name: "Kavitha Rao",
-    role: "Data Analyst @ Amazon",
+    role: "Data Analyst",
     avatar: "KR",
     color: "bg-violet-500",
     rating: 5,
@@ -140,7 +141,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Arjun Mehta",
-    role: "ML Engineer @ Flipkart",
+    role: "ML Engineer",
     avatar: "AM",
     color: "bg-blue-500",
     rating: 5,
@@ -148,7 +149,7 @@ const TESTIMONIALS = [
   },
   {
     name: "Divya Lakshmi",
-    role: "Data Scientist @ Deloitte",
+    role: "Data Scientist",
     avatar: "DL",
     color: "bg-pink-500",
     rating: 5,
@@ -181,13 +182,55 @@ const FAQS = [
   },
   {
     q: "What certifications will I receive?",
-    a: "You'll receive a Great Hire Training Certificate and an IIT Guwahati E&ICT Academy recognized certificate upon successful course completion.",
+    a: "You'll receive a Great Hire Training Certificate and an IIT  certificate upon successful course completion.",
   },
   {
     q: "What is the course fee and EMI options?",
     a: "The course fee is ₹38,000 (inclusive of all materials, datasets, projects & placement support). EMI starts from ₹7,000/month. No cost EMI available on select cards.",
   },
 ];
+
+// ─── Pricing Plans Data ───────────────────────────────────────────────────────
+
+const PRICING_PLANS = [
+  {
+    id: "iit",
+    badge: "IIT Certification Program",
+    headerBg: "bg-blue-700",
+    isIIT: true,
+    price: "₹60,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "3 months 100% paid Internship",
+      "Advanced Certification from IIT's",
+      "Guest lectures from IIT faculty",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "Deadline extension of 6 months for entering TEKS Career Track & Dual Certification",
+    ],
+    highlight: false,
+  },
+  {
+    id: "employment",
+    badge: "Employment Program",
+    headerBg: "bg-orange-500",
+    isIIT: false,
+    price: "₹38,000",
+    gst: "+ 18% GST",
+    emi: "*Pay in easy EMIs starting at INR 7000 per month.",
+    features: [
+      "Intensive Data Science curriculum covering basic to advanced concepts",
+      "100+ Live Data Science classes, Lifetime access",
+      "20+ capstone Data Science projects & 1000+ coding problems and assessments",
+      "Access to 20,000 + courses from top MNC's",
+      "Unlimited AI-driven mock interviews",
+      "50+ mock interviews with dedicated career coaches",
+    ],
+    highlight: true,
+  },
+];
+
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -264,66 +307,15 @@ function FaqItem({ item }) {
 
 // ─── Enroll Modal ─────────────────────────────────────────────────────────────
 
-function DemoModal({ onClose }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "Data Science & AI", type: "demo" }),
-      });
-    } catch (_) {}
-    setLoading(false); setDone(true);
-  };
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
-        {done ? (
-          <div className="p-8 text-center"><div className="text-5xl mb-4">🎓</div><h3 className="text-xl font-black text-gray-900 mb-2">Demo Booked!</h3><p className="text-gray-500 text-sm mb-6">Our counsellor will contact you within 2 hours to confirm your free demo session.</p><button onClick={onClose} className="bg-violet-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-violet-700">Got it!</button></div>
-        ) : (
-          <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100"><p className="text-xs text-violet-600 font-bold uppercase tracking-widest mb-1">Book Free Demo</p><h3 className="text-xl font-black text-gray-900">Data Science & AI</h3><p className="text-sm text-gray-500 mt-1">🎯 Free demo class — no commitment required!</p></div>
-            <div className="space-y-4">
-              {[{ label: "Full Name", key: "name", type: "text", placeholder: "Your full name" }, { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" }, { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" }].map(({ label, key, type, placeholder }) => (
-                <div key={key}><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label><input required type={type} placeholder={placeholder} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" /></div>
-              ))}
-              <div><label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Preferred Mode</label><select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"><option>Online</option><option>Offline</option><option>Hybrid</option></select></div>
-              <button onClick={handleSubmit} disabled={loading} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">{loading ? "Submitting..." : "Book Free Demo Class →"}</button>
-              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function EnrollModal({ onClose }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", batch: "Weekday Batch", mode: "Online" });
   const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "Data Science & AI", fee: "₹38,000", type: "enrollment" }),
-      });
-    } catch (_) {}
-    setLoading(false);
-    setDone(true);
-  };
 
   return (
+
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+
+
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
         <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
         {done ? (
@@ -338,7 +330,7 @@ function EnrollModal({ onClose }) {
             <div className="mb-5 pb-4 border-b border-gray-100">
               <p className="text-xs text-violet-600 font-bold uppercase tracking-widest mb-1">Enroll Now</p>
               <h3 className="text-xl font-black text-gray-900">Data Science & AI Course</h3>
-              <p className="text-sm text-gray-500 mt-1">⚡ Course Fee: <span className="font-bold text-violet-600">₹38,000</span> · EMI from ₹7,000/mo</p>
+              <p className="text-sm text-gray-500 mt-1">⚡ Limited seats — next batch starts soon!</p>
             </div>
             <div className="space-y-4">
               {[
@@ -376,9 +368,9 @@ function EnrollModal({ onClose }) {
                   </select>
                 </div>
               </div>
-              <button onClick={handleSubmit} disabled={loading}
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">
-                {loading ? "Submitting..." : "Book Free Demo Class →"}
+              <button onClick={() => form.name && form.email && form.phone && setDone(true)}
+                className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1">
+                Book Free Demo Class →
               </button>
               <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
             </div>
@@ -389,19 +381,150 @@ function EnrollModal({ onClose }) {
   );
 }
 
+
+// ─── Pricing Plans Section ────────────────────────────────────────────────────
+
+function PricingPlans({ onEnroll, onCounsellor }) {
+  return (
+    <section className="py-14 bg-gray-50 border-t border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <span className="w-1 h-7 bg-orange-500 rounded-full inline-block"></span>
+            Choose Your Learning Path
+          </h2>
+          <p className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto mt-2">
+            Select the program that best fits your career goals — both include placement support and lifetime LMS access.
+          </p>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {PRICING_PLANS.map((plan) => (
+            <div
+              key={plan.id}
+              className={`rounded-2xl overflow-hidden border-2 shadow-lg flex flex-col transition-transform hover:-translate-y-1 duration-200 ${plan.highlight
+                ? "border-orange-400 shadow-orange-100"
+                : "border-blue-300 shadow-blue-50"
+                }`}
+            >
+              {/* Card Header */}
+              <div className={`${plan.headerBg} px-6 py-4`}>
+                <h3 className="text-white font-black text-lg sm:text-xl text-center tracking-wide">
+                  {plan.badge}
+                </h3>
+              </div>
+
+              {/* Partners Row */}
+              <div className="bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-center gap-4 flex-wrap min-h-[64px]">
+                {plan.isIIT ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange-500 font-black text-base">L</span>
+                      <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                      <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                    </div>
+                    <span className="text-gray-400 font-bold text-xl">+</span>
+                    <div className="flex flex-col items-center">
+                      <div className="flex items-center gap-1">
+                        <span className="bg-blue-600 text-white font-black text-xs px-1 rounded">in</span>
+                        <span className="font-bold text-gray-800 text-sm">LinkedIn Learning</span>
+                      </div>
+                      <span className="text-xs text-gray-400 mt-0.5">Knowledge Partner</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-orange-500 font-black text-base">L</span>
+                    <span className="font-bold text-gray-800 text-sm">Great Hire</span>
+                    <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing */}
+              <div className="bg-white px-6 pt-5 pb-2">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className={`text-4xl font-black ${plan.highlight ? "text-orange-500" : "text-blue-700"}`}>
+                    {plan.price}
+                  </span>
+                  <span className="text-gray-500 text-sm font-medium">{plan.gst}</span>
+                </div>
+                <p className="text-xs text-gray-400 mt-1 italic">{plan.emi}</p>
+              </div>
+
+              {/* Divider */}
+              <div className={`mx-6 my-3 border-t ${plan.highlight ? "border-orange-100" : "border-blue-100"}`} />
+
+              {/* Features */}
+              <div className="bg-white px-6 pb-6 flex-1">
+                <ul className="space-y-3">
+                  {plan.features.map((feat, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                      <span
+                        className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-orange-500" : "bg-blue-600"
+                          }`}
+                      >
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="bg-white px-6 pb-6 pt-2 space-y-3">
+                <button
+                  onClick={() => onEnroll(plan.id)}
+                  className={`w-full font-bold py-3.5 rounded-xl text-sm transition-colors ${plan.highlight
+                    ? "bg-orange-500 hover:bg-orange-600 text-white"
+                    : "bg-blue-700 hover:bg-blue-800 text-white"
+                    }`}
+                >
+                  Enroll Now
+                </button>
+                <button
+                  onClick={onCounsellor}
+                  className={`w-full font-semibold py-3 rounded-xl text-sm border-2 transition-colors bg-white ${plan.highlight
+                    ? "border-orange-400 text-orange-500 hover:bg-orange-50"
+                    : "border-blue-400 text-blue-700 hover:bg-blue-50"
+                    }`}
+                >
+                  Talk to our Admission Team
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function DataSciencePage() {
   const [openModule, setOpenModule] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const [showEnroll, setShowEnroll] = useState(false);
-  const [showDemo, setShowDemo] = useState(false);
+  const [enrollAmount, setEnrollAmount] = useState(38000);
   const [showCounsellor, setShowCounsellor] = useState(false);
+
+  const handlePricingEnroll = (planId) => {
+    setEnrollAmount(planId === "iit" ? 60000 : 38000);
+    setShowEnroll(true);
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
 
       {/* ── Navbar ── */}
-       <Navbar />
+      <Navbar />
 
       {/* ── Hero ── */}
       <section className="bg-gradient-to-br from-slate-900 via-violet-950 to-violet-900 text-white relative overflow-hidden">
@@ -443,9 +566,13 @@ export default function DataSciencePage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => setShowEnroll(true)}
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                   className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
                   🚀 Enroll Now — ₹38,000
+                </button>
+                <button onClick={() => { setEnrollAmount(60000); setShowEnroll(true); }}
+                  className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
+                  🚀 Enroll Now — ₹60,000
                 </button>
                 <button className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-6 py-4 rounded-xl text-sm transition-colors whitespace-nowrap">
                   📥 Download Syllabus
@@ -454,7 +581,7 @@ export default function DataSciencePage() {
 
               <div className="flex flex-wrap gap-4 mt-6 text-xs text-violet-200">
                 <span>✅ No Cost EMI Available</span>
-                <span>✅ IIT Guwahati Certified</span>
+                <span>✅ IIT  Certified</span>
                 <span>✅ Free Demo Class</span>
               </div>
             </div>
@@ -467,7 +594,7 @@ export default function DataSciencePage() {
                   <span className="text-sm font-bold text-gray-700">4.9</span>
                   <span className="text-xs text-gray-400">(1,800+ reviews)</span>
                 </div>
-                <p className="text-3xl font-black text-violet-600 mb-1">₹38,000</p>
+                <p className="text-3xl font-black text-violet-600 mb-1">₹38,000 + ₹6,000 (GST)</p>
                 <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
                 <div className="space-y-2.5 mb-5">
                   {[
@@ -481,7 +608,7 @@ export default function DataSciencePage() {
                     <p key={item} className="text-sm text-gray-700 flex items-center gap-2">{item}</p>
                   ))}
                 </div>
-                <button onClick={() => setShowDemo(true)}
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                   className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mb-3">
                   Book Free Demo Class
                 </button>
@@ -502,7 +629,7 @@ export default function DataSciencePage() {
             <p className="text-xl font-black text-violet-600 leading-none">₹38,000</p>
             <p className="text-xs text-gray-400">EMI from ₹7,000/mo</p>
           </div>
-          <button onClick={() => setShowEnroll(true)}
+          <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
             className="bg-violet-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">
             Enroll Now
           </button>
@@ -629,7 +756,7 @@ export default function DataSciencePage() {
                     </div>
                     <div className="flex items-center gap-3 sm:flex-col sm:items-end">
                       <p className="text-xs text-gray-500 font-medium">{b.seats}</p>
-                      <button onClick={() => setShowEnroll(true)}
+                      <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                         className="bg-violet-600 hover:bg-violet-700 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">
                         Enroll →
                       </button>
@@ -687,7 +814,7 @@ export default function DataSciencePage() {
                   <span className="text-sm font-bold text-gray-700">4.9</span>
                   <span className="text-xs text-gray-400">(1,800+)</span>
                 </div>
-                <p className="text-3xl font-black text-violet-600 leading-none mb-1">₹38,000</p>
+                <p className="text-3xl font-black text-violet-600 leading-none mb-1">₹38,000 + 18% GST</p>
                 <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
                 <div className="space-y-2.5 mb-5 text-sm text-gray-700">
                   {[
@@ -702,14 +829,14 @@ export default function DataSciencePage() {
                     <p key={item} className="flex items-start gap-2">{item}</p>
                   ))}
                 </div>
-                <button onClick={() => setShowDemo(true)}
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                   className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3.5 rounded-xl text-sm mb-3 transition-colors">
                   Book Free Demo Class
                 </button>
                 <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm mb-3 transition-colors">
                   📥 Download Syllabus
                 </button>
-                <button className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
+                <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
                   📞 Talk to Counsellor
                 </button>
                 <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure · No spam · Cancel anytime</p>
@@ -719,14 +846,24 @@ export default function DataSciencePage() {
                 <p className="text-2xl mb-2">👫</p>
                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-violet-100 mb-3">Earn ₹2,000 for every successful referral!</p>
-                <button className="bg-white text-violet-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-violet-50 transition-colors">
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent("📊 Check out this Data Science & AI Course at Great Hire! Get placed in top analytics & AI companies with 100% placement support.\n" + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-violet-600 font-bold text-xs px-4 py-2 rounded-lg hover:bg-violet-50 transition-colors">
                   Share & Earn
-                </button>
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ── Pricing Plans Section ── */}
+      <PricingPlans
+        onEnroll={handlePricingEnroll}
+        onCounsellor={() => setShowCounsellor(true)}
+      />
 
       {/* ── CTA Banner ── */}
       <section className="bg-gradient-to-r from-violet-700 to-indigo-700 py-14 mt-10">
@@ -738,7 +875,7 @@ export default function DataSciencePage() {
             Join 1,800+ students who've already transformed their careers with Great Hire's Data Science & AI course.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => setShowEnroll(true)}
+            <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
               className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">
               🚀 Enroll Now — Free Demo
             </button>
@@ -752,8 +889,9 @@ export default function DataSciencePage() {
       {/* ── Footer ── */}
       <Footer />
 
-      {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
-      {showEnroll && <EnrollModal onClose={() => setShowEnroll(false)} />}
+      {showModal && <EnrollModal onClose={() => setShowModal(false)} />}
+      {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName="Data Science & AI" amount={enrollAmount} accentColor="violet" />}
+      {showCounsellor && <TalkToCounsellorModal courseName="Data Science & AI" onClose={() => setShowCounsellor(false)} />}
     </div>
   );
 }

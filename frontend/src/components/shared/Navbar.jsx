@@ -734,13 +734,16 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Internship Marquee — fixed below navbar */}
-      <div className="fixed top-[61px] left-0 right-0 z-20 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-        {isRecruiter ? (<div className="flex items-center justify-center gap-3"><span className="text-white text-sm font-medium text-center">Introducing AI Calling Agent! </span><button onClick={() => window.open("https://greathire.in/contact", "_blank")} className="flex-shrink-0 bg-white text-purple-700 text-xs font-bold px-4 py-1.5 rounded-full hover:bg-purple-50 transition-colors">Know more</button></div>) : (<InternshipMarquee jobs={jobs} />)}
-      </div>
 
-      {/* Spacer — pushes page content below fixed navbar + marquee */}
-      <div className="h-[117px]" />
+      {/* Internship Marquee — fixed below navbar, hidden for recruiters */}
+      {!isRecruiter && (
+        <div className="fixed top-[61px] left-0 right-0 z-20 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+          <InternshipMarquee jobs={jobs} />
+        </div>
+      )}
+
+      {/* Spacer — pushes page content below fixed navbar (+ marquee for non-recruiters) */}
+      <div className={isRecruiter ? "h-[61px]" : "h-[117px]"} />
     </>
   );
 };
