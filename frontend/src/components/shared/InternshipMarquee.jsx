@@ -1,29 +1,16 @@
 import { Link } from "react-router-dom";
 
 const COURSES = [
-<<<<<<< HEAD
-  { id: 1,  title: "Full Stack Java Developer",        category: "Full Stack",        link: "/courses/java-developer" },
-  { id: 2,  title: "Full Stack Python Developer",      category: "Full Stack",        link: "/courses/python-training" },
-  { id: 3,  title: "Data Science & AI",                category: "Data Science",      link: "/courses/data-science" },
-  { id: 4,  title: "AWS Cloud Practitioner",           category: "Cloud",             link: "/courses/aws-cloud" },
-  { id: 5,  title: "Digital Marketing",               category: "Digital Marketing", link: "/courses/digital-marketing" },
-  { id: 6,  title: "Software Testing",                category: "Testing",           link: "/courses/software-testing" },
-  { id: 7,  title: "SAP FICO",                        category: "SAP",               link: "/courses/sap-fico" },
-  { id: 8,  title: "AI & Business Analyst",           category: "AI & BA",           link: "/courses/ai-business-analyst" },
-  { id: 9,  title: "Business Development Executive",  category: "BDE",               link: "/courses/bde" },
-  { id: 10, title: "Software Testing (Manual + Auto)",category: "Testing",           link: "/courses/software-testing" },
-=======
-  { id: 1, title: "Full Stack Java Developer", category: "Full Stack", link: "/courses/java-training" },
-  { id: 2, title: "Full Stack Python Developer", category: "Full Stack", link: "/courses/python-training" },
-  { id: 3, title: "Data Science", category: "Data Science", link: "/courses/data-science-training" },
-  { id: 4, title: "AWS & DevOps", category: "Cloud", link: "/courses/aws-devops-training" },
-  { id: 5, title: "Digital Marketing", category: "Digital Marketing", link: "/courses/digital-marketing-training" },
-  { id: 6, title: "Testing Tools", category: "Testing", link: "/courses/testing-tools-training" },
-  { id: 7, title: "SAP FICO", category: "SAP", link: "/courses/sap-fico-training" },
-  { id: 8, title: "Business Analyst", category: "Business Analyst", link: "/courses/business-analytics-training" },
-  { id: 9, title: "BIM", category: "BIM", link: "/courses/bim-training" },
-  { id: 10,title: "Medical Training", category: "Medical Training", link: "/courses/medical-training" },
->>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
+  { id: 1,  title: "Full Stack Java Developer",       category: "Full Stack",        link: "/courses/java-training" },
+  { id: 2,  title: "Full Stack Python Developer",     category: "Full Stack",        link: "/courses/python-training" },
+  { id: 3,  title: "Data Science & AI",               category: "Data Science",      link: "/courses/data-science-training" },
+  { id: 4,  title: "AWS & DevOps",                    category: "Cloud",             link: "/courses/aws-devops-training" },
+  { id: 5,  title: "Digital Marketing",               category: "Digital Marketing", link: "/courses/digital-marketing-training" },
+  { id: 6,  title: "Testing Tools",                   category: "Testing",           link: "/courses/testing-tools-training" },
+  { id: 7,  title: "SAP FICO",                        category: "SAP",               link: "/courses/sap-fico-training" },
+  { id: 8,  title: "AI & Business Analyst",           category: "AI & BA",           link: "/courses/business-analytics-training" },
+  { id: 9,  title: "BIM",                             category: "BIM",               link: "/courses/bim-training" },
+  { id: 10, title: "Medical Coding",                  category: "Medical Training",  link: "/courses/medical-training" },
 ];
 
 const doubled = [...COURSES, ...COURSES];

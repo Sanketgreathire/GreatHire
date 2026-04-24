@@ -6,7 +6,6 @@ export const fetchNotifications = async () => {
     const res = await API.get("/v1/notifications");
     return res.data.notifications || [];
   } catch (error) {
-    console.error("Error fetching notifications:", error);
     throw error;
   }
 };
@@ -17,7 +16,6 @@ export const getUnreadCount = async () => {
     const res = await API.get("/v1/notifications/unread-count");
     return res.data.count || 0;
   } catch (error) {
-    console.error("Error fetching unread count:", error);
     throw error;
   }
 };

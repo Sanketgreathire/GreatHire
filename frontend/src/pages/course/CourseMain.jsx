@@ -1,11 +1,7 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-<<<<<<< HEAD
 import { useState, useMemo } from "react";
-=======
-import { useState } from "react";
 import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
->>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
 import { Link } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -594,16 +590,12 @@ function CourseCard({ course, onEnroll }) {
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
       {/* Image Section */}
       <div className="relative h-44 mb-8 overflow-visible">
-<<<<<<< HEAD
         <img
           src={course.image}
           alt=""
           loading="lazy"
           className="w-full h-full object-cover"
         />
-=======
-        <img src={course.image} alt="" className="w-full h-full object-cover" />
->>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
 
         {/* Center overlapping logo box */}
         <div className="absolute left-1/2 -bottom-6 transform -translate-x-1/2">
@@ -775,9 +767,6 @@ export default function TrainingCoursesPage() {
   };
   const [searchQuery, setSearchQuery] = useState("");
 
-<<<<<<< HEAD
-  const filtered = useMemo(() => COURSES.filter((c) => {
-=======
   // Reset category filter when switching tabs
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
@@ -785,21 +774,15 @@ export default function TrainingCoursesPage() {
     setSearchQuery("");
   };
 
-  const filtered = COURSES.filter((c) => {
+  const filtered = useMemo(() => COURSES.filter((c) => {
     const matchTab = c.tab === activeTab;
->>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
     const matchCat = activeCategory === "All" || c.category === activeCategory;
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.skills.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
-<<<<<<< HEAD
-    return matchCat && matchSearch;
-  }), [activeCategory, searchQuery]);
-=======
     return matchTab && matchCat && matchSearch;
-  });
->>>>>>> e5c8431189ec89ae57f2ab2ea0a67b1e9d2fbfdd
+  }), [activeTab, activeCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
@@ -808,7 +791,7 @@ export default function TrainingCoursesPage() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 text-white overflow-hidden">
+      <section className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900 text-white overflow-hidden -mt-[117px] pt-[117px]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 

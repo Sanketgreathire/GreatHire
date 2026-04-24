@@ -789,24 +789,11 @@ export const getCompanyApplicants = async (req, res) => {
     // Run both queries in parallel
     const jobIds = await Job.find({ company: companyId }).distinct("_id");
 
-// <<<<<<< HEAD
     const applications = await Application.find({ job: { $in: jobIds } })
       .populate("applicant", "fullname emailId phoneNumber alternatePhone address profile isProfileBoosted")
       .populate({ path: "job", select: "jobDetails.title" })
       .sort({ createdAt: -1 })
       .lean();
-// =======
-//     // Find applications for these jobs
-//     const rawApplications = await Application.find({ job: { $in: jobIds } })
-//       .populate("applicant") // Only populate applicant details
-//       .sort({ createdAt: -1 });
-
-//     // Boosted candidates float to top
-//     const applications = [
-//       ...rawApplications.filter((a) => a.applicant?.isProfileBoosted),
-//       ...rawApplications.filter((a) => !a.applicant?.isProfileBoosted),
-//     ];
-// >>>>>>> e9983b1a085fb750b4438ab228fdaa7aa88c29a4
 
     res.status(200).json({
       success: true,
