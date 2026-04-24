@@ -59,7 +59,7 @@
   }
 
   * { border-color: hsl(var(--border)); }
-  body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); overflow-x: hidden; max-width: 100vw; }
+  body { background-color: hsl(var(--background)); color: hsl(var(--foreground)); overflow-x: hidden; max-width: 100vw; font-display: swap; }
   html { overflow-x: hidden; max-width: 100vw; }
 }
 
@@ -68,26 +68,26 @@
   .filter-scrollbar::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 9999px; }
   .filter-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
   .filter-scrollbar { scrollbar-width: thin; scrollbar-color: #93c5fd #f1f5f9; scrollbar-gutter: stable; }
+  .content-below-fold { content-visibility: auto; contain-intrinsic-size: 0 500px; }
 }
 
 @keyframes scrollLoop { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-.carousel { display: flex; flex-wrap: nowrap; animation: scrollLoop linear infinite; }
+.carousel { display: flex; flex-wrap: nowrap; animation: scrollLoop linear infinite; will-change: transform; }
 .carousel-wrapper:hover .carousel { animation-play-state: paused; }
 .paused { animation-play-state: paused !important; }
 
 @keyframes premiumGlow { 0%, 100% { filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.4)); } 50% { filter: drop-shadow(0 0 14px rgba(14, 165, 233, 0.9)); } }
-.premium-glow { animation: premiumGlow 2s ease-in-out infinite; }
+.premium-glow { animation: premiumGlow 2s ease-in-out infinite; will-change: filter; }
 
 @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.animate-scroll { animation: scroll 30s linear infinite; }
+.animate-scroll { animation: scroll 30s linear infinite; will-change: transform; }
 .animate-scroll:hover { animation-play-state: paused; }
 
 @keyframes leaderGlow { 0%, 100% { box-shadow: 0 0 20px rgba(234,179,8,0.4); } 50% { box-shadow: 0 0 40px rgba(234,179,8,0.8); } }
-.leader-glow { animation: leaderGlow 3s infinite ease-in-out; }
+.leader-glow { animation: leaderGlow 3s infinite ease-in-out; will-change: box-shadow; }
 
-/* Marquee scroll animation */
 @keyframes scrollInfinite { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.animate-scroll-infinite { animation: scrollInfinite 30s linear infinite; }
+.animate-scroll-infinite { animation: scrollInfinite 30s linear infinite; will-change: transform; }
 
 /* Below-fold content visibility optimization */
 .content-below-fold { content-visibility: auto; contain-intrinsic-size: 0 500px; }

@@ -1,10 +1,17 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import compression from "vite-plugin-compression";
 
 export default defineConfig({
   assetsInclude: ["**/*.lottie"],
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Gzip for broad compatibility
+    compression({ algorithm: "gzip", ext: ".gz", threshold: 1024 }),
+    // Brotli for modern browsers (better ratio)
+    compression({ algorithm: "brotliCompress", ext: ".br", threshold: 1024 }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -12,6 +19,9 @@ export default defineConfig({
     },
   },
   build: {
+    target: "es2015",
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096, // inline assets < 4KB as base64
     rollupOptions: {
       external: ["mongoose"],
       output: {
@@ -104,10 +114,9 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1000,
     minify: "esbuild",
-    // esbuild is built into Vite — no extra install needed
-    // drop console/debugger via esbuild options
     esbuildOptions: {
       drop: ["console", "debugger"],
+      legalComments: "none",
     },
   },
   server: {

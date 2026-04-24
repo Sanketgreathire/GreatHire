@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
@@ -18,7 +18,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 // Left  → nav links with icons + descriptions
 // Right → Campus Hiring & Student Sign Up action cards
 // ─────────────────────────────────────────────────────────────
-const ExploreDropdownPanel = ({ links, location, onLinkClick, onCampusClick, onStudentClick, dark = false }) => {
+const ExploreDropdownPanel = memo(({ links, location, onLinkClick, onCampusClick, onStudentClick }) => {
   const linkIcons = {
     Blogs: "✍️",
     Courses: "🎓",
@@ -143,7 +143,7 @@ const ExploreDropdownPanel = ({ links, location, onLinkClick, onCampusClick, onS
       </div>
     </div>
   );
-};
+});
 
 // ─────────────────────────────────────────────────────────────
 // Main Navbar
@@ -203,7 +203,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       const response = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
@@ -237,7 +237,7 @@ const Navbar = () => {
       toast.success("Logged out successfully");
       navigate("/");
     }
-  };
+  }, [dispatch, navigate, user]);
 
   const primaryNavLinks = [
     ...(isRecruiter ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }] : []),
@@ -292,13 +292,13 @@ const Navbar = () => {
     "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:text-blue-400 dark:hover:bg-gray-700";
 
   // Shared handler to close all dropdowns + navigate
-  const closePanelAndNavigate = (path) => {
+  const closePanelAndNavigate = useCallback((path) => {
     setIsMoreMenuOpen(false);
     setIsExploreMenuOpen(false);
     setIsMenuOpen(false);
     navigate(path);
     window.scrollTo(0, 0);
-  };
+  }, [navigate]);
 
   return (
     <>
@@ -494,7 +494,7 @@ const Navbar = () => {
                       aria-haspopup="true"
                     >
                       <img
-                        src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
+                        src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
                         alt={`${user.fullname || "User"}'s avatar`}
                         className="h-8 w-8 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                       />
@@ -562,7 +562,7 @@ const Navbar = () => {
               {!isMenuOpen ? (
                 user ? (
                   <img
-                    src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
+                    src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
                     alt={`${user?.fullname || "User"}'s avatar`}
                     className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
@@ -601,7 +601,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-3">
                     <img
 
-                      src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
+                      src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
 
                       alt="Profile"
                       className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
