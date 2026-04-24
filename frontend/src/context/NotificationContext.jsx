@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { io } from 'socket.io-client';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount, deleteNotification } from '../service/notificationservice';
+import { logOut } from '../redux/authSlice';
 
 const NotificationContext = createContext();
 
@@ -10,10 +11,12 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   // Initialize Socket.IO connection — deferred so it doesn't block initial paint
   useEffect(() => {
-    if (!user?._id) return;
+    if (!user?._id || !user?.role) return;
+    if (!document.cookie.includes('token')) return;
 
     let socketInstance;
     const t = setTimeout(() => {
@@ -43,20 +46,28 @@ export const NotificationProvider = ({ children }) => {
 
   // Fetch notifications from API with better error handling
   const loadNotifications = useCallback(async () => {
-    if (!user?._id) return;
+    if (!user?._id || !user?.role) return;
     try {
       const notificationsData = await fetchNotifications();
       setNotifications(notificationsData);
     } catch (err) {
+      if (err?.response?.status === 401) {
+        dispatch(logOut());
+        return;
+      }
       console.error('Failed to fetch notifications:', err);
     }
     try {
       const countData = await getUnreadCount();
       setUnreadCount(countData);
     } catch (err) {
+      if (err?.response?.status === 401) {
+        dispatch(logOut());
+        return;
+      }
       console.error('Failed to fetch unread count:', err);
     }
-  }, [user?._id]);
+  }, [user?._id, user?.role, dispatch]);
 
   // Setup Socket.IO listeners
   useEffect(() => {
@@ -92,12 +103,12 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [socket, user]);
 
-  // Load notifications on mount — deferred so it doesn't block initial paint
+  // Load notifications on mount — only when user is fully authenticated in Redux
   useEffect(() => {
-    if (!user?._id) return;
-    const t = setTimeout(loadNotifications, 800);
+    if (!user?._id || !user?.role) return;
+    const t = setTimeout(loadNotifications, 300);
     return () => clearTimeout(t);
-  }, [loadNotifications]);
+  }, [user?._id, user?.role]);
 
   // Mark notification as read
   const handleMarkAsRead = useCallback(async (notificationId) => {
