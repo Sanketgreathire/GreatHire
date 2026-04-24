@@ -16,7 +16,7 @@ const ProductDetailPage = () => {
       category: "Interview Tips",
       description:
         "Thorough preparation is the foundation of a successful job interview. Researching the company, understanding the role, and practicing responses using the STAR method — Situation, Task, Action, Result — allows candidates to present their experience with clarity and confidence. GreatHire.in provides expert guidance and interview preparation resources to help candidates perform at their best and make a lasting impression on employers.",
-      image: "/interview_tips_01.png",
+      image: "/interview_tips_01.webp",
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ const ProductDetailPage = () => {
       category: "Interview Tips",
       description:
         "Sending a thoughtful thank-you email within 24 hours of an interview is a simple yet powerful way to reinforce your professionalism. A well-crafted follow-up message allows you to restate your key qualifications, reaffirm your enthusiasm for the role, and politely inquire about the next steps in the hiring process — leaving a positive and memorable impression on the employer.",
-      image: "/interview_tips_02.png",
+      image: "/interview_tips_02.webp",
     },
     {
       id: 3,
@@ -32,7 +32,7 @@ const ProductDetailPage = () => {
       category: "Interview Tips",
       description:
         "Preparing for commonly asked interview questions — such as 'Tell me about yourself,' 'Why do you want to work here?' and 'What are your strengths and weaknesses?' — gives candidates a significant advantage. Thoughtful, well-rehearsed answers demonstrate self-awareness and clear communication, helping candidates present their skills, experiences, and goals in a way that resonates with interviewers.",
-      image: "/interview_tips_03.png",
+      image: "/interview_tips_03.webp",
     },
     {
       id: 4,
@@ -40,7 +40,7 @@ const ProductDetailPage = () => {
       category: "Company Insights",
       description:
         "In 2025, leading global organizations including Amazon, Google, and GE Aerospace are expanding their teams across technology, engineering, finance, and operations. Alongside these industry giants, fast-growing startups and mid-sized firms are actively recruiting in fields such as Artificial Intelligence, Data Science, and Cybersecurity. GreatHire.in provides real-time job updates and personalized recommendations to help you discover opportunities that align with your skills, career goals, and preferred work style.",
-      image: "/company_insight_01.png",
+      image: "/company_insight_01.webp",
     },
     {
       id: 5,
@@ -48,7 +48,7 @@ const ProductDetailPage = () => {
       category: "Company Insights",
       description:
         "Emerging industry trends — including AI-driven automation, the rise of remote and hybrid work models, and a growing focus on sustainable business practices — are reshaping how organizations operate. Companies that invest in digital transformation and advanced technologies are better equipped to boost productivity, protect data, and foster innovation. Staying informed about these shifts is essential for professionals and organizations looking to remain competitive.",
-      image: "/company_insight_02.png",
+      image: "/company_insight_02.webp",
     },
     {
       id: 6,
@@ -56,7 +56,7 @@ const ProductDetailPage = () => {
       category: "Company Insights",
       description:
         "Leading organizations recognize that investing in employee development is key to long-term success. Through technical certifications, leadership training, mentorship programs, and continuous learning initiatives, companies equip their workforce with the skills needed to grow and adapt. A strong commitment to professional development not only enhances individual performance but also drives higher engagement, retention, and organizational resilience.",
-      image: "/company_insight_03.png",
+      image: "/company_insight_03.webp",
     },
   ];
 
@@ -113,7 +113,7 @@ const ProductDetailPage = () => {
             src={currentProduct.image}
             alt={currentProduct.name}
             className="w-full h-full object-cover"
-            onError={(e) => (e.target.src = "/bannerImage2.png")}
+            onError={(e) = loading="lazy"> (e.target.src = "/bannerImage2.png")}
           />
         </div>
 

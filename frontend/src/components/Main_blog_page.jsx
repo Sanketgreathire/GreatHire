@@ -24,28 +24,28 @@ const slides = [
     title: "The future technology",
     description:
       "The future of technology is shaped by bold ideas and the courage to act on them. At GreatHire, we believe that innovation begins with people — the right talent, in the right roles, driving meaningful change across industries.",
-    image: "./3320008.jpg",
+    image: "./3320008.webp",
   },
   {
     id: 2,
     title: "Innovation drives growth",
     description:
       "Innovation is the engine behind every thriving organization. By embracing forward-thinking strategies and emerging technologies, businesses can unlock new opportunities, improve efficiency, and build a competitive edge that lasts.",
-    image: "./innovation-bg.png",
+    image: "./innovation-bg.webp",
   },
   {
     id: 3,
     title: "Digital transformation",
     description:
       "Digital transformation is no longer optional — it is the foundation of modern business success. Organizations that adapt to evolving technologies and digital workflows are better positioned to serve their customers and grow sustainably.",
-    image: "./digital_bg.jpg",
+    image: "./digital_bg.webp",
   },
   {
     id: 4,
     title: "Technology solutions",
     description:
       "Scalable, secure, and sustainable technology platforms are the backbone of tomorrow's enterprises. Building with the right tools and the right talent ensures that organizations remain resilient, agile, and ready for what comes next.",
-    image: "./technology-solutions_bg.jpg",
+    image: "./technology-solutions_bg.webp",
   },
 ];
 
@@ -105,7 +105,7 @@ function Moin_blog_page() {
     subtitle: "Articles",
     description:
       "Stay updated with the latest trends, tips, and insights in the job market. Explore our featured articles to enhance your career journey with GreatHire.in.",
-    image: "./feature_article.png",
+    image: "./feature_article.webp",
     date: "December 24, 2024",
   };
 
@@ -116,7 +116,7 @@ function Moin_blog_page() {
       subtitle: "remote work",
       description:
         "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
-      image: "./vector.png",
+      image: "./vector.webp",
       date: "December 20, 2024",
       category: "Featured",
     },
@@ -125,7 +125,7 @@ function Moin_blog_page() {
       subtitle: "Recruitment",
       description:
         "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in",
-      image: "./19276.jpg",
+      image: "./19276.webp",
       date: "December 18, 2024",
       category: "Featured",
     },
@@ -134,7 +134,7 @@ function Moin_blog_page() {
       subtitle: "Winning Resumes",
       description:
         "Make a strong first impression with a standout resume with key skills and clean formatting, optimized for ATS. GreatHire.in helps you land your ideal job by connecting you with the best opportunities.",
-      image: "./Resume_bg.png",
+      image: "./Resume_bg.webp",
       date: "December 15, 2024",
       category: "Trending",
     },
@@ -143,7 +143,7 @@ function Moin_blog_page() {
       subtitle: "Preparations",
       description:
         "Research the company, practice questions, and present yourself professionally. GreatHire.in provides expert tips and top job opportunities to help you succeed and make a lasting impression.",
-      image: "./Interview_bg.png",
+      image: "./Interview_bg.webp",
       date: "December 12, 2024",
       category: "Featured",
     },
@@ -161,7 +161,7 @@ function Moin_blog_page() {
       subtitle: "Career Growth",
       description:
         "Continuous learning is essential for career advancement, with in-demand skills shifting toward AI, cloud computing, and data analytics. Investing in online courses, certifications.",
-      image: "./trendingz-topic_02.png",
+      image: "./trendingz-topic_02.webp",
       date: "December 10, 2024",
       category: "Trending",
     },
@@ -187,7 +187,7 @@ function Moin_blog_page() {
       title: "Advance Your Career in Tech",
       description:
         "Explore top opportunities with GreatHire.in, gain expert insights, and access resources to accelerate your growth. Stay ahead by upskilling, following industry trends, and landing your dream job.",
-      image: "./971.jpg",
+      image: "./971.webp",
       category: "Business",
       author: "Moin Shaikh",
       date: "December 20, 2024",
@@ -197,7 +197,7 @@ function Moin_blog_page() {
       title: "Work-Life Balance Tips",
       description:
         "Balancing work and personal life is essential for success. Set realistic boundaries, take breaks, and manage time to reduce stress. GreatHire.in offers flexible job opportunities for a healthy work-life balance.",
-      image: "./feature_article.png",
+      image: "./feature_article.webp",
       category: "Technology",
       author: "Moin Shaikh",
       date: "December 18, 2024",
@@ -207,7 +207,7 @@ function Moin_blog_page() {
       title: "Networking For Career Growth",
       description:
         "Networking opens doors to career growth engage on LinkedIn, attend events, and build meaningful connections. GreatHire.in helps you find the right opportunities and insights to advance your career.",
-      image: "./networking_bg.png",
+      image: "./networking_bg.webp",
       category: "Network",
       author: "Moin Shaikh",
       date: "December 15, 2024",
@@ -220,7 +220,7 @@ function Moin_blog_page() {
       title: "Mastering Remote Work",
       description:
         "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
-      image: "./Mastering_remote_work.png",
+      image: "./Mastering_remote_work.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -230,7 +230,7 @@ function Moin_blog_page() {
       title: "AI For Recruitment",
       description:
         "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
-      image: "./AI_recruitment.jpg",
+      image: "./AI_recruitment.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -240,7 +240,7 @@ function Moin_blog_page() {
       title: "Industry-Specific Hiring",
       description:
         "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
-      image: "./Industry_work.png",
+      image: "./Industry_work.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -253,7 +253,7 @@ function Moin_blog_page() {
       title: "The Future of Work",
       description:
         "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.",
-      image: "./future_of_work.png",
+      image: "./future_of_work.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -263,7 +263,7 @@ function Moin_blog_page() {
       title: "Future Skills for Job Seekers",
       description:
         "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.",
-      image: "./trendingz-topic_02.png",
+      image: "./trendingz-topic_02.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -273,7 +273,7 @@ function Moin_blog_page() {
       title: "Impact of Global Events on Workforce",
       description:
         "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
-      image: "./trendingz_topic_03.png",
+      image: "./trendingz_topic_03.webp",
       link: "",
       overlayText: "",
       overlaySubtext: "",
@@ -289,7 +289,7 @@ function Moin_blog_page() {
       category: "Resume Tips",
       title: "Creating a Successful CV",
       date: "19 Dec, 2025",
-      image: "./Resume_bg.png",
+      image: "./Resume_bg.webp",
       description:
         "A well-crafted resume is your first opportunity to make a lasting impression on a potential employer. It should clearly highlight your skills, accomplishments, and professional experience using a clean, consistent structure and relevant keywords. GreatHire.in supports candidates by offering ATS-friendly resume guidance, ensuring your profile gains maximum visibility and reaches the right recruiters faster.",
       link: "#",
@@ -299,7 +299,7 @@ function Moin_blog_page() {
       category: "Resume Tips",
       title: "ATS Optimization",
       date: "18 Dec, 2025",
-      image: "./ATS_bg.png",
+      image: "./ATS_bg.webp",
       description:
         "Gaining awareness in the competitive job market of today requires an ATS-friendly resume. Applicant tracking systems (ATS) automatically analyze and assess resumes based on predetermined criteria, including pertinent keywords, abilities, job titles, and formatting, before they are sent to a recruiter. Regardless of a candidate's qualifications, resumes that are not suited for applicant tracking systems may be eliminated early in the process. Making an ATS-compliant resume guarantees that recruiting experts analyze your profile and improves your chances of passing first screenings.",
       link: "#",
@@ -311,7 +311,7 @@ function Moin_blog_page() {
       date: "17 Dec, 2025",
       description:
         "Strategically incorporating industry-specific keywords into your resume can significantly improve its visibility to Applicant Tracking Systems. By carefully reviewing job descriptions, you can identify the skills, phrases, and qualifications that employers prioritize. Naturally weaving these keywords throughout your resume improves ATS matching accuracy and increases the likelihood of your profile being shortlisted.",
-      image: "./Keyword_bg.png",
+      image: "./Keyword_bg.webp",
       link: "#",
     },
     {
@@ -321,7 +321,7 @@ function Moin_blog_page() {
       date: "16 Dec, 2025",
       description:
         "A structured interview process helps employers evaluate candidates across key dimensions, including problem-solving ability, cultural alignment, and behavioral competencies. GreatHire.in enhances this process with AI-powered tools and professional insights, enabling recruiters to make faster, more informed hiring decisions and connect with the talent best suited for their organization.",
-      image: "./Interview_bg.png",
+      image: "./Interview_bg.webp",
       link: "#",
     },
     {
@@ -331,7 +331,7 @@ function Moin_blog_page() {
       date: "16 Dec, 2025",
       description:
         "Behavioral interview techniques are designed to assess how candidates have handled real-world situations in the past, offering valuable insight into their future performance. By evaluating responses to structured questions around teamwork, conflict resolution, and decision-making, employers can identify candidates who are not only skilled but also a strong fit for the team. GreatHire.in provides AI-powered tools and expert insights to help streamline this process.",
-      image: "./HR_Insight_02.png",
+      image: "./HR_Insight_02.webp",
       link: "#",
     },
     {
@@ -341,7 +341,7 @@ function Moin_blog_page() {
       date: "16 Dec, 2025",
       description:
         "A cultural fit assessment evaluates how well a candidate aligns with an organization's values, team dynamics, and workplace environment. Beyond technical qualifications, it examines communication styles, work ethics, and behavioral tendencies to determine whether a candidate's approach to collaboration and decision-making complements the company's long-term vision. Organizations that prioritize cultural alignment tend to see stronger employee engagement, higher retention, and greater overall performance.",
-      image: "./HR_Insight_03.png",
+      image: "./HR_Insight_03.webp",
       link: "#",
     },
   ];
@@ -385,7 +385,7 @@ function Moin_blog_page() {
       description:
         "Thorough preparation is the foundation of a successful job interview. Researching the company, understanding the role, and practicing responses using the STAR method — Situation, Task, Action, Result — allows candidates to present their experience with clarity and confidence. GreatHire.in provides expert guidance and interview preparation resources to help candidates perform at their best and make a lasting impression on employers.",
       readMore: "Read More",
-      image: "./interview_tips_01.png",
+      image: "./interview_tips_01.webp",
     },
     {
       id: 2,
@@ -393,7 +393,7 @@ function Moin_blog_page() {
       category: "Interview Tips",
       description:
         "Sending a thoughtful thank-you email within 24 hours of an interview is a simple yet powerful way to reinforce your professionalism. A well-crafted follow-up message allows you to restate your key qualifications, reaffirm your enthusiasm for the role, and politely inquire about the next steps in the hiring process — leaving a positive and memorable impression on the employer.",
-      image: "./interview_tips_02.png",
+      image: "./interview_tips_02.webp",
       readMore: "Read More",
     },
     {
@@ -403,7 +403,7 @@ function Moin_blog_page() {
       description:
         "Preparing for commonly asked interview questions — such as 'Tell me about yourself,' 'Why do you want to work here?' and 'What are your strengths and weaknesses?' — gives candidates a significant advantage. Thoughtful, well-rehearsed answers demonstrate self-awareness and clear communication, helping candidates present their skills, experiences, and goals in a way that resonates with interviewers.",
       readMore: "Read More",
-      image: "./interview_tips_03.png",
+      image: "./interview_tips_03.webp",
     },
     {
       id: 4,
@@ -412,7 +412,7 @@ function Moin_blog_page() {
       description:
         "In 2025, leading global organizations including Amazon, Google, and GE Aerospace are expanding their teams across technology, engineering, finance, and operations. Alongside these industry giants, fast-growing startups and mid-sized firms are actively recruiting in fields such as Artificial Intelligence, Data Science, and Cybersecurity. GreatHire.in provides real-time job updates and personalized recommendations to help you discover opportunities that align with your skills, career goals, and preferred work style.",
       readMore: "Read More",
-      image: "./company_insight_01.png",
+      image: "./company_insight_01.webp",
     },
     {
       id: 5,
@@ -421,7 +421,7 @@ function Moin_blog_page() {
       description:
         "Emerging industry trends — including AI-driven automation, the rise of remote and hybrid work models, and a growing focus on sustainable business practices — are reshaping how organizations operate. Companies that invest in digital transformation and advanced technologies are better equipped to boost productivity, protect data, and foster innovation. Staying informed about these shifts is essential for professionals and organizations looking to remain competitive.",
       readMore: "Read More",
-      image: "./company_insight_02.png",
+      image: "./company_insight_02.webp",
     },
     {
       id: 6,
@@ -430,7 +430,7 @@ function Moin_blog_page() {
       description:
         "Leading organizations recognize that investing in employee development is key to long-term success. Through technical certifications, leadership training, mentorship programs, and continuous learning initiatives, companies equip their workforce with the skills needed to grow and adapt. A strong commitment to professional development not only enhances individual performance but also drives higher engagement, retention, and organizational resilience.",
       readMore: "Read More",
-      image: "./company_insight_03.png",
+      image: "./company_insight_03.webp",
     },
   ];
 
@@ -1918,6 +1918,8 @@ color: rgb(160, 67, 246);
           className="video-background w-full h-[100px] object-cover"
           src={bannerBlog}
           alt="GreatHire Banner"
+          fetchpriority="high"
+          decoding="async"
         />
 
 
@@ -1995,6 +1997,8 @@ color: rgb(160, 67, 246);
             src={slides[currentSlide]?.image}
             alt={slides[currentSlide]?.title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 dark:from-black/90 dark:via-black/70 dark:to-black/40"></div>
@@ -2087,6 +2091,8 @@ color: rgb(160, 67, 246);
                   src={staticProduct.image}
                   alt={staticProduct.title}
                   className="product-image-hover w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
                 
                 <span className="absolute top-4 left-4 bg-white/95 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
@@ -2867,7 +2873,7 @@ color: rgb(160, 67, 246);
         <div
           className="conversations-background"
           style={{
-            backgroundImage: "url(./971.jpg)", // Replace with your image
+            backgroundImage: "url(./971.webp)", // Replace with your image
           }}
         ></div>
 

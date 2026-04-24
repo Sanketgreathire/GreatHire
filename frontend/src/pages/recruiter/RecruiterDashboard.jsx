@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom"; // Use Outlet for nested routing
 import Navbar from "@/components/shared/Navbar";
@@ -31,11 +31,10 @@ const RecruiterDashboard = () => {
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
       try {
-        setLoading(true);
         const response = await axios.post(
           `${COMPANY_API_END_POINT}/company-by-userid`,
-          { userId: user?._id }, // Sending user ID in request body
-          { withCredentials: true } // Include credentials (cookies) in request
+          { userId: user?._id },
+          { withCredentials: true }
         );
         if (response?.data.success) {
           dispatch(addCompany(response?.data.company));
@@ -48,7 +47,7 @@ const RecruiterDashboard = () => {
     };
 
     if (user) fetchCompanyByUserId();
-  }, [user, dispatch]);
+  }, [user?._id, dispatch]);
 
   // Fetch recruiters and job plan if company exists
   useEffect(() => {
@@ -125,11 +124,7 @@ const RecruiterDashboard = () => {
         <div className="flex flex-1">
           <DashboardNavigations />
           <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto lg:ml-52">
-            {loading ? (
-              <div className="text-center text-gray-500 py-10">Loading...</div>
-            ) : (
-              <Outlet /> // Render nested routes
-            )}
+            <Outlet />
           </div>
         </div>
       </div>
