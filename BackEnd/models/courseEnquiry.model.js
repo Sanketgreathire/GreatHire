@@ -19,6 +19,9 @@ const courseEnquirySchema = new mongoose.Schema(
       enum: ["new", "contacted", "enrolled", "closed"],
       default: "new",
     },
+    razorpayOrderId: { type: String, default: "" },
+    paymentId: { type: String, default: "" },
+    paymentStatus: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
   },
   { timestamps: true }
 );

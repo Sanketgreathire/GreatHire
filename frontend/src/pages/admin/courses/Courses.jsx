@@ -6,9 +6,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Search, MessageSquare, Monitor, GraduationCap, PhoneCall, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search, MessageSquare, Monitor, GraduationCap, PhoneCall,
+  ChevronLeft, ChevronRight, Trash2,
+} from "lucide-react";
 import axios from "axios";
 import { COURSE_API_END_POINT } from "@/utils/ApiEndPoint";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const TABS = [
   { key: "enquiry",    label: "Enquiries",          icon: <MessageSquare size={16} /> },
@@ -27,14 +31,17 @@ const STATUS_COLORS = {
 const ITEMS_PER_PAGE = 15;
 
 const Courses = () => {
-  const [activeTab, setActiveTab]   = useState("enquiry");
-  const [search, setSearch]         = useState("");
-  const [page, setPage]             = useState(1);
-  const [data, setData]             = useState([]);
-  const [total, setTotal]           = useState(0);
-  const [summary, setSummary]       = useState({ enquiry: 0, demo: 0, enrollment: 0, counsellor: 0 });
-  const [loading, setLoading]       = useState(false);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [activeTab, setActiveTab]         = useState("enquiry");
+  const [search, setSearch]               = useState("");
+  const [page, setPage]                   = useState(1);
+  const [data, setData]                   = useState([]);
+  const [total, setTotal]                 = useState(0);
+  const [summary, setSummary]             = useState({ enquiry: 0, demo: 0, enrollment: 0, counsellor: 0 });
+  const [loading, setLoading]             = useState(false);
+  const [updatingId, setUpdatingId]       = useState(null);
+  const [deletingId, setDeletingId]       = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRecord, setSelectedRecord]  = useState(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -62,12 +69,35 @@ const Courses = () => {
   const handleStatusChange = async (id, status) => {
     setUpdatingId(id);
     try {
-      await axios.patch(`${COURSE_API_END_POINT}/admin/${id}/status`, { status }, { withCredentials: true });
+      await axios.patch(
+        `${COURSE_API_END_POINT}/admin/${id}/status`,
+        { status },
+        { withCredentials: true }
+      );
       setData((prev) => prev.map((r) => r._id === id ? { ...r, status } : r));
     } catch (err) {
       console.error(err);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    setDeletingId(id);
+    try {
+      const res = await axios.delete(
+        `${COURSE_API_END_POINT}/admin/${id}`,
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setData((prev) => prev.filter((r) => r._id !== id));
+        setTotal((prev) => prev - 1);
+        setSummary((prev) => ({ ...prev, [activeTab]: Math.max(0, prev[activeTab] - 1) }));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -159,38 +189,76 @@ const Courses = () => {
                       <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Batch</TableHead>
                     )}
                     {activeTab === "enrollment" && (
-                      <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Fee</TableHead>
+                      <>
+                        <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Fee</TableHead>
+                        <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Payment ID</TableHead>
+                      </>
                     )}
                     <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Date</TableHead>
                     <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Status</TableHead>
+                    {/* ✅ Delete column header */}
+                    <TableHead className="text-gray-700 dark:text-gray-300 font-semibold text-center">
+                      Action
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-10 text-gray-400">Loading...</TableCell>
+                      <TableCell colSpan={10} className="text-center py-10 text-gray-400">
+                        Loading...
+                      </TableCell>
                     </TableRow>
                   ) : filtered.length > 0 ? (
                     filtered.map((row, idx) => (
-                      <TableRow key={row._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                        <TableCell className="text-gray-500 text-sm">{(page - 1) * ITEMS_PER_PAGE + idx + 1}</TableCell>
-                        <TableCell className="font-semibold text-gray-800 dark:text-gray-200">{row.name}</TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">{row.email}</TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">{row.phone}</TableCell>
+                      <TableRow
+                        key={row._id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
+                      >
+                        <TableCell className="text-gray-500 text-sm">
+                          {(page - 1) * ITEMS_PER_PAGE + idx + 1}
+                        </TableCell>
+                        <TableCell className="font-semibold text-gray-800 dark:text-gray-200">
+                          {row.name}
+                        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                          {row.email}
+                        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                          {row.phone}
+                        </TableCell>
                         <TableCell>
                           <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded-full font-medium">
                             {row.courseName}
                           </span>
                         </TableCell>
-                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">{row.mode}</TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                          {row.mode}
+                        </TableCell>
                         {activeTab === "demo" && (
-                          <TableCell className="text-gray-600 dark:text-gray-400 text-sm">{row.batch || "—"}</TableCell>
+                          <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                            {row.batch || "—"}
+                          </TableCell>
                         )}
                         {activeTab === "enrollment" && (
-                          <TableCell className="text-gray-600 dark:text-gray-400 text-sm font-semibold text-green-600">{row.fee || "—"}</TableCell>
+                          <>
+                            <TableCell className="text-gray-600 dark:text-gray-400 text-sm font-semibold text-green-600">
+                              {row.fee || "—"}
+                            </TableCell>
+                            <TableCell className="text-gray-500 text-xs font-mono">
+                              {row.paymentId ? (
+                                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{row.paymentId}</span>
+                              ) : (
+                                <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full">Pending</span>
+                              )}
+                            </TableCell>
+                          </>
                         )}
                         <TableCell className="text-gray-500 text-xs whitespace-nowrap">
-                          {new Date(row.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                          {new Date(row.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit", month: "short", year: "numeric",
+                          })}
                         </TableCell>
                         <TableCell>
                           <select
@@ -205,11 +273,27 @@ const Courses = () => {
                             <option value="closed">Closed</option>
                           </select>
                         </TableCell>
+
+                        {/* ✅ Delete icon cell */}
+                        <TableCell className="text-center">
+                          {deletingId === row._id ? (
+                            <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
+                          ) : (
+                            <Trash2
+                              size={18}
+                              className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition mx-auto"
+                              onClick={() => {
+                                setSelectedRecord(row);
+                                setShowDeleteModal(true);
+                              }}
+                            />
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-10 text-gray-500 dark:text-gray-400">
+                      <TableCell colSpan={10} className="text-center py-10 text-gray-500 dark:text-gray-400">
                         No {TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} found
                       </TableCell>
                     </TableRow>
@@ -281,6 +365,21 @@ const Courses = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <DeleteConfirmation
+          isOpen={showDeleteModal}
+          onConfirm={() => {
+            setShowDeleteModal(false);
+            handleDelete(selectedRecord._id);
+          }}
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setSelectedRecord(null);
+          }}
+        />
+      )}
     </>
   );
 };
