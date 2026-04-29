@@ -1,3 +1,5 @@
+import compression from "compression";
+import expressStaticGzip from "express-static-gzip";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -79,6 +81,15 @@ app.use(
   })
 );
 
+// ================= COMPRESSION =================
+app.use(compression({ level: 6, threshold: 1024 }));
+
+// Ensure Vary header for proper CDN caching
+app.use((req, res, next) => {
+  res.setHeader("Vary", "Accept-Encoding");
+  next();
+});
+
 // ================= MIDDLEWARE =================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -93,12 +104,6 @@ const apiLimiter = rateLimit({
   keyGenerator: (req) => req.ip,
 });
 app.use("/api", apiLimiter);
-
-// ================= LOGGER =================
-app.use((req, res, next) => {
-  console.log(`➡️ ${req.method} ${req.url}`);
-  next();
-});
 
 // ================= SEO FILES =================
 app.get("/sitemap.xml", async (req, res) => {
@@ -173,8 +178,41 @@ app.use("/api/v1/college", collegeRoute);
 app.use("/api/v1/courses", courseRoute);
 
 // ================= FRONTEND =================
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// Serve pre-compressed brotli/gzip assets with 1-year cache
+app.use("/assets", expressStaticGzip(path.join(__dirname, "../frontend/dist/assets"), {
+  enableBrotli: true,
+  orderPreference: ["br", "gz"],
+  customCompressions: [
+    {
+      encodingName: "br",
+      fileExtension: "br",
+    },
+  ],
+  serveStatic: {
+    maxAge: 31536000,
+    immutable: true,
+    etag: false,
+    lastModified: false,
+    setHeaders: (res) => {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    },
+  },
+}));
+
+// Other public files (images, fonts, manifest etc)
+app.use(express.static(path.join(__dirname, "../frontend/dist"), {
+  maxAge: "1d",
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache");
+    }
+  },
+}));
+
 app.get("*", (req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 

@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -18,10 +17,11 @@ export const MessageProvider = ({ children }) => {
   const { user } = useSelector(store => store.auth);
   const typingTimeoutRef = useRef({});
 
-  // Initialize Socket.IO connection
-  useEffect(() => {
-    if (!user?._id) return;
+  // Initialize Socket.IO connection — only when user visits /messages
+  const initializeSocket = async () => {
+    if (!user?._id || socket) return;
 
+    const { io } = await import('socket.io-client');
     const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
       withCredentials: true,
       transports: ['polling', 'websocket'],
@@ -42,6 +42,13 @@ export const MessageProvider = ({ children }) => {
       socketInstance.emit('userOffline', user._id);
       socketInstance.disconnect();
     };
+  };
+
+  useEffect(() => {
+    if (!user?._id) return;
+    // Defer socket init — don't block initial page render
+    const t = setTimeout(initializeSocket, 2000);
+    return () => clearTimeout(t);
   }, [user?._id]);
 
   // Setup Socket.IO listeners
@@ -287,6 +294,7 @@ export const MessageProvider = ({ children }) => {
     startConversation,
     setActiveConversation: setActiveConversationHandler,
     sendTypingIndicator,
+    initializeSocket,
     deleteMessage,
     editMessage,
   };

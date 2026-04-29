@@ -1,8 +1,4 @@
 import React from 'react';
-import career from "../assets/Career Animation.json";
-import hiring from "../assets/Human-Resources-Approval-Animation.json";
-import resume from "../assets/Recolored job proposal review animation.json";
-import remoteWork from "../assets/Work from Home.json";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 // imported helmet to apply customized meta tags 

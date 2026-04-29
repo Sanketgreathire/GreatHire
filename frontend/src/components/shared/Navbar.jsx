@@ -135,6 +135,7 @@ const ExploreDropdownPanel = memo(({ links, location, onLinkClick, onCampusClick
               to="/jobseeker-login"
               onClick={onLinkClick}
               className="text-blue-500 hover:underline font-medium"
+              aria-label="Sign in to your account"
             >
               Sign in →
             </Link>
@@ -306,7 +307,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between w-full">
 
           {/* Logo */}
-          <Link to={logoRedirectPath} className="cursor-pointer pl-2">
+          <Link to={logoRedirectPath} className="cursor-pointer pl-2" aria-label="GreatHire home">
             <h2 className="text-3xl sm:text-6xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out">
               <span className="text-black dark:text-white">Great</span>
               <span className="text-blue-600">Hire</span>
@@ -442,6 +443,7 @@ const Navbar = () => {
                         <Link
                           to="/saved-jobs"
                           className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                          aria-label="Saved Jobs"
                           title="Saved Jobs"
                         >
                           <svg
@@ -492,10 +494,11 @@ const Navbar = () => {
                       className="flex items-center gap-2 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       aria-expanded={isProfileMenuOpen}
                       aria-haspopup="true"
+                      aria-label="User profile menu"
                     >
                       <img
                         src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
-                        alt={`${user.fullname || "User"}'s avatar`}
+                        alt={`${user.fullname || "User"} profile photo`}
                         className="h-8 w-8 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                       />
                       <span className="font-medium text-gray-700 dark:text-gray-200 text-sm hidden xl:block">
@@ -563,7 +566,7 @@ const Navbar = () => {
                 user ? (
                   <img
                     src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
-                    alt={`${user?.fullname || "User"}'s avatar`}
+                    alt={`${user?.fullname || "User"} profile photo`}
                     className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
                 ) : (
@@ -603,7 +606,7 @@ const Navbar = () => {
 
                       src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
 
-                      alt="Profile"
+                      alt={`${user?.fullname || "User"} profile photo`}
                       className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                     />
                     <div>

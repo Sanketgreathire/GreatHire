@@ -12,7 +12,6 @@ import 'swiper/css/navigation';
 // imported to customize the meta tag 
 import { Helmet } from "react-helmet-async";
 
-import Silk from "../../components/ui/silk";
 
 //logos from assets folder
 import a1townshipImg from "../../assets/clientLogos/a1township.png";
@@ -41,60 +40,41 @@ import tataImg from "../../assets/clientLogos/tata.png";
 
 // Import User-Team Photos
 //import SujithImg from "../../assets/user_photos/G-Sujith.jpeg";
-import NazirImg from "../../assets/user_photos/Nazir.jpeg";
-import SujeethImg from "../../assets/user_photos/Sujeeth.jpeg";
-import DhanshreeImg from "../../assets/user_photos/Dhanshree.jpeg";
-import KOIImg from "../../assets/user_photos/KOI.jpeg";
-import MaheshImg from "../../assets/user_photos/Mahesh.jpg";
-import MoizImg from "../../assets/user_photos/MoizImg.jpg";
-import AmanImg from "../../assets/user_photos/Aman.jpeg";
-import eswarImg from "../../assets/user_photos/Eswar.jpeg";
-import CharanImg from "../../assets/user_photos/Charan.jpeg";
-import nabhayImg from "../../assets/user_photos/Nabhay.jpeg";
-import NavaneethImg from "../../assets/user_photos/Navaneeth.jpeg";
-import VirendarImg from "../../assets/user_photos/Virendar.jpeg";
-import santhoshImg from "../../assets/user_photos/Santhosh.jpeg";
-import MounikaImg from "../../assets/user_photos/Mounika.jpeg";
-import lahariImg from "../../assets/user_photos/Lahari.jpeg";
-import riyaImg from "../../assets/user_photos/Riya.jpeg";
-import sushmaImg from "../../assets/user_photos/Sushma.jpeg";
-import janakiImg from "../../assets/user_photos/Janki.jpeg";
-import madhuImg from "../../assets/user_photos/madhu.jpeg";
-import mansiImg from "../../assets/user_photos/Mansi.jpeg";
-import tanmaiImg from "../../assets/user_photos/Tanmai.jpeg";
-import BlankImg from "../../assets/user_photos/Blank.jpg";
-import Gen1Img from "../../assets/user_photos/Gen1.jpeg";
-import Gen2Img from "../../assets/user_photos/Gen2.jpeg";
-import Gen3Img from "../../assets/user_photos/Gen3.jpeg";
-import Gen4Img from "../../assets/user_photos/Gen4.jpeg";
-import Gen5Img from "../../assets/user_photos/Gen5.jpeg";
-import Gen6Img from "../../assets/user_photos/Gen6.jpeg";
-import Gen7Img from "../../assets/user_photos/Gen7.jpeg";
-import Gen8Img from "../../assets/user_photos/Gen8.jpeg";
-import Gen9Img from "../../assets/user_photos/Gen9.jpeg";
-import Gen10Img from "../../assets/user_photos/Gen10.jpeg";
-import Gen11Img from "../../assets/user_photos/Gen11.jpeg";
-import Gen12Img from "../../assets/user_photos/Gen12.jpeg";
-import Gen13Img from "../../assets/user_photos/Gen13.jpeg";
-import Gen14Img from "../../assets/user_photos/Gen14.jpeg";
-import Gen15Img from "../../assets/user_photos/Gen15.jpg";
-import Gen16Img from "../../assets/user_photos/Gen16.jpg";
-import Gen17Img from "../../assets/user_photos/Gen17.jpg";
-import Gen18Img from "../../assets/user_photos/Gen18.jpg";
-import Gen19Img from "../../assets/user_photos/Gen19.jpg";
-import RashiImg from "../../assets/user_photos/Rashi.jpg";
+import NazirImg from "../../assets/user_photos/webpuser/Nazir.webp";
+import SujeethImg from "../../assets/user_photos/webpuser/Sujeeth.webp";
+import DhanshreeImg from "../../assets/user_photos/webpuser/Dhanshree.webp";
+import KOIImg from "../../assets/user_photos/webpuser/KOI.webp";
+import MaheshImg from "../../assets/user_photos/webpuser/Mahesh.webp";
+import MoizImg from "../../assets/user_photos/webpuser/MoizImg.webp";
+import AmanImg from "../../assets/user_photos/webpuser/Aman.webp";
+import eswarImg from "../../assets/user_photos/webpuser/Eswar.webp";
+import CharanImg from "../../assets/user_photos/webpuser/Charan.webp";
+import nabhayImg from "../../assets/user_photos/webpuser/Nabhay.webp";
+import NavaneethImg from "../../assets/user_photos/webpuser/Navaneeth.webp";
+import VirendarImg from "../../assets/user_photos/webpuser/Virendar.webp";
+import santhoshImg from "../../assets/user_photos/webpuser/Santhosh.webp";
+import MounikaImg from "../../assets/user_photos/webpuser/Mounika.webp";
+import lahariImg from "../../assets/user_photos/webpuser/Lahari.webp";
+import riyaImg from "../../assets/user_photos/webpuser/Riya.webp";
+import sushmaImg from "../../assets/user_photos/webpuser/Sushma.webp";
+import janakiImg from "../../assets/user_photos/webpuser/Janki.webp";
+import madhuImg from "../../assets/user_photos/webpuser/madhu.webp";
+import mansiImg from "../../assets/user_photos/webpuser/Mansi.webp";
+import tanmaiImg from "../../assets/user_photos/webpuser/Tanmai.webp";
+import BlankImg from "../../assets/user_photos/webpuser/Blank.webp";
+import RashiImg from "../../assets/user_photos/webpuser/Rashi.jpg";
 import NumberCounter from '@/components/ui/NumberCounter';
-import Pratibhaimg from '../../assets/user_photos/Pratibhaimg.jpg';
-import Saumya from '../../assets/user_photos/Saumya.jpg';
-import Jitendraimg from '../../assets/user_photos/Jitendraimg.jpg'
-import sakshiimg from '../../assets/user_photos/sakshi.jpeg';
-import swapnil from "../../assets/user_photos/Swapnil.jpeg";
-import sam from "../../assets/user_photos/sam.jpeg";
-import prasad from "../../assets/user_photos/Prasad.jpeg";
-import moin from "../../assets/user_photos/Moins.jpeg";
-import krishna from "../../assets/user_photos/Krishna.jpeg";
-import afraimg from "../../assets/user_photos/afraimg.jpeg";
-import sadaabimg from "../../assets/user_photos/sadaabimg.jpeg";
+import Pratibhaimg from '../../assets/user_photos/webpuser/Pratibhaimg.webp';
+import Saumya from '../../assets/user_photos/webpuser/Saumya.webp';
+import Jitendraimg from '../../assets/user_photos/webpuser/Jitendraimg.webp';
+import sakshiimg from '../../assets/user_photos/webpuser/sakshi.webp';
+import swapnil from "../../assets/user_photos/webpuser/Swapnil.webp";
+import sam from "../../assets/user_photos/webpuser/sam.webp";
+import prasad from "../../assets/user_photos/webpuser/Prasad.webp";
+import moin from "../../assets/user_photos/webpuser/Moins.webp";
+import krishna from "../../assets/user_photos/webpuser/Krishna.webp";
+import afraimg from "../../assets/user_photos/webpuser/afraimg.webp";
+import sadaabimg from "../../assets/user_photos/webpuser/sadaabimg.webp";
 
 
 function App() {
@@ -316,14 +296,14 @@ function App() {
     },
     {
       name: "Rohit",
-      image: Gen17Img,
+      image: BlankImg,
       role: "Interviewer",
       expertise: "Interviewing, Assessment",
       about: "An Interviewer experienced in structured technical and behavioral assessments. Skilled in competency-based evaluation and candidate feedback. Strong understanding of fair hiring practices. Focused on identifying top-performing and culturally aligned talent.",
     },
     {
       name: "Dikshita",
-      image: Gen2Img,
+      image: BlankImg,
       role: "Hiring Specialist",
       expertise: "Hiring, Team Management",
       about: "A Hiring Specialist managing end-to-end recruitment workflows. Skilled in team coordination and workforce planning. Strong understanding of recruitment analytics and process optimization. Focused on aligning hiring decisions with business objectives.",
@@ -350,35 +330,35 @@ function App() {
   members: [
     {
       name: "Vikram",
-      image: Gen18Img,
+      image: BlankImg,
       role: "Digital Marketing Specialist",
       expertise: "SEO, SEM, Content Marketing",
       about: "A Digital Marketing Specialist skilled in SEO, SEM, and content strategies. Experienced in improving search rankings and brand visibility. Strong in campaign optimization and performance analytics. Focused on delivering measurable digital growth.",
     },
     {
       name: "Alekhya",
-      image: Gen3Img,
+      image: BlankImg,
       role: "Digital Marketing Executive",
       expertise: "Social media strategy, content creation",
       about: "A Digital Marketing Executive experienced in social media strategy and content development. Skilled in audience engagement and campaign tracking. Strong understanding of brand positioning. Focused on building consistent digital presence.",
     },
     {
       name: "Darshini",
-      image: Gen4Img,
+      image: BlankImg,
       role: "Digital Marketing Manager",
       expertise: "Content Marketing, conversion rate optimization",
       about: "A Digital Marketing Manager specializing in content strategy and CRO. Experienced in managing performance-driven campaigns. Skilled in ROI analysis and marketing leadership. Focused on maximizing engagement and conversions.",
     },
     {
       name: "Anuskha",
-      image: Gen5Img,
+      image: BlankImg,
       role: "Digital Marketing",
       expertise: "Multi-channel marketing, team leadership",
       about: "A Digital Marketing professional experienced in multi-channel campaigns. Skilled in team coordination and performance optimization. Strong understanding of engagement metrics. Focused on scalable brand growth strategies.",
     },
     {
       name: "Anil",
-      image: Gen19Img,
+      image: BlankImg,
       role: "Content & Digital Marketing Strategist",
       expertise: "Content marketing, email campaigns",
       about: "A Content Strategist experienced in email campaigns and audience engagement. Skilled in automation and conversion funnels. Strong blend of creativity and analytics. Focused on driving measurable marketing success.",
@@ -440,42 +420,42 @@ function App() {
   members: [
     {
       name: "Chirag",
-      image: Gen16Img,
+      image: BlankImg,
       role: "Sales Manager",
       expertise: "B2B Sales, Account Management, campaign strategy",
       about: "A Sales Manager experienced in driving B2B growth and strategic account management. Skilled in revenue planning and contract negotiations. Strong in client acquisition and retention strategies. Focused on expanding market presence and profitability.",
     },
     {
       name: "Divya",
-      image: Gen6Img,
+      image: BlankImg,
       role: "Sales Executive",
       expertise: "Solution Sales, Negotiations",
       about: "A Sales Executive specializing in solution-based selling and negotiations. Skilled in understanding client needs and delivering tailored solutions. Strong in relationship management and closing deals. Focused on achieving consistent sales targets.",
     },
     {
       name: "Riya",
-      image: Gen12Img,
+      image: BlankImg,
       role: "Sales and Marketing",
       expertise: "Market Research, Lead Generation",
       about: "A Sales and Marketing professional skilled in market research and lead generation. Experienced in identifying new business opportunities. Strong in campaign coordination and client engagement. Focused on driving revenue growth.",
     },
     {
       name: "Anita Sharma",
-      image: Gen8Img,
+      image: BlankImg,
       role: "Sales and Marketing Executive",
       expertise: "Lead generation, client relationship management",
       about: "A Sales and Marketing Executive experienced in generating qualified leads. Skilled in client relationship management and promotional strategies. Strong understanding of customer lifecycle management. Focused on measurable business growth.",
     },
     {
       name: "Aditi Mishra",
-      image: Gen9Img,
+      image: BlankImg,
       role: "Digital Marketing & Sales Strategist",
       expertise: "SEO, content marketing, email campaigns",
       about: "A Digital Marketing and Sales Strategist blending creativity with analytics. Skilled in SEO, content marketing, and conversion optimization. Strong understanding of customer journey mapping. Focused on turning prospects into loyal clients.",
     },
     {
       name: "Tanaya Suchak",
-      image: Gen10Img,
+      image: BlankImg,
       role: "Sales Representative & Marketing Coordinator",
       expertise: "Customer engagement, promotional planning",
       about: "A Sales Representative and Marketing Coordinator skilled in client engagement and promotional planning. Experienced in managing sales pipelines and marketing initiatives. Strong in customer communication. Focused on strengthening brand presence and loyalty.",
@@ -487,35 +467,35 @@ function App() {
   members: [
     {
       name: "Neha",
-      image: Gen11Img,
+      image: BlankImg,
       role: "Bench Sales Specialist",
       expertise: "B2B Sales, Account Management",
       about: "A Bench Sales Specialist experienced in marketing IT consultants to vendors and clients. Skilled in B2B negotiations and contract management. Strong understanding of US staffing processes. Focused on maximizing consultant placements and revenue.",
     },
     {
       name: "Babitha",
-      image: Gen2Img,
+      image: BlankImg,
       role: "Bench Sales Recruiter",
       expertise: "Marketing IT consultants to clients and vendors, handling Negotiations",
       about: "A Bench Sales Recruiter skilled in consultant marketing and vendor coordination. Experienced in handling negotiations and resume positioning. Strong understanding of US IT requirements. Focused on increasing placement opportunities.",
     },
     {
       name: "Cherry",
-      image: Gen3Img,
+      image: BlankImg,
       role: "US IT Bench Sales Executive",
       expertise: "Expertise in sourcing requirements, closing deals with implementation",
       about: "A US IT Bench Sales Executive experienced in sourcing requirements and closing deals. Skilled in vendor networking and consultant marketing. Strong understanding of staffing workflows. Focused on quick turnaround placements.",
     },
     {
       name: "Dakshitha",
-      image: Gen4Img,
+      image: BlankImg,
       role: "Technical Bench Sales Specialist",
       expertise: "Skilled in promoting bench candidates, resume formatting",
       about: "A Technical Bench Sales Specialist skilled in promoting bench candidates effectively. Experienced in resume optimization and vendor communication. Strong in consultant positioning strategies. Focused on consistent placement success.",
     },
     {
       name: "Gunjana",
-      image: Gen5Img,
+      image: BlankImg,
       role: "IT Bench Sales Executive",
       expertise: "Candidate profiling, vendor networking",
       about: "An IT Bench Sales Executive experienced in candidate profiling and vendor networking. Skilled in consultant marketing and negotiations. Strong understanding of staffing cycles. Focused on accelerating placements and revenue growth.",
@@ -535,28 +515,28 @@ function App() {
     },
     {
       name: "Mani kumar",
-      image: Gen15Img,
+      image: BlankImg,
       role: "Business Development Manager",
       expertise: "Lead generation, client relationship management",
       about: "A Business Development Manager experienced in expanding operations through strategic initiatives. Skilled in client relationship management and revenue planning. Strong in competitive positioning and deal closures. Focused on long-term growth.",
     },
     {
       name: "Dharshini",
-      image: Gen5Img,
+      image: BlankImg,
       role: "Business Development",
       expertise: "Process Management, Analytics",
       about: "A Business Development professional skilled in process management and analytics-driven strategies. Experienced in client engagement and growth planning. Strong in performance tracking and operational improvements. Focused on closing strategic deals.",
     },
     {
       name: "Shobita",
-      image: Gen13Img,
+      image: BlankImg,
       role: "Business Development Executive",
       expertise: "Market Expansion, Partnerships",
       about: "A Business Development Executive experienced in market expansion and partnership development. Skilled in competitive analysis and opportunity identification. Strong in sales strategy execution. Focused on strengthening brand presence.",
     },
     {
       name: "Aina",
-      image: Gen1Img,
+      image: BlankImg,
       role: "Business Development Associate",
       expertise: "Account Management, Growth",
       about: "A Business Development Associate skilled in account management and client retention. Experienced in supporting revenue growth initiatives. Strong in cross-team coordination and customer satisfaction. Focused on building long-term partnerships.",

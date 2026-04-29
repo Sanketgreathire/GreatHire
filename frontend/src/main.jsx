@@ -9,18 +9,14 @@ import store, { persistor } from "./redux/store";
 import { Toaster } from "react-hot-toast";
 import "./index.css";
 
-// Minimal loading fallback shown only during redux-persist rehydration
-const PersistLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
-    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-  </div>
-);
+const root = document.getElementById("root");
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+// Use createRoot with concurrent features for better scheduling
+ReactDOM.createRoot(root).render(
   <ThemeProvider>
     <HelmetProvider>
       <Provider store={store}>
-        <PersistGate loading={<PersistLoader />} persistor={persistor}>
+        <PersistGate loading={null} persistor={persistor}>
           <App />
           <Toaster
             position="bottom-right"

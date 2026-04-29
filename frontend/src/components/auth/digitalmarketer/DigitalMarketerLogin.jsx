@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import img from "../../../assets/img10.png";
+import img from "../../../assets/webp/img10.webp";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
