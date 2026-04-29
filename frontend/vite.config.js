@@ -7,9 +7,7 @@ export default defineConfig({
   assetsInclude: ["**/*.lottie"],
   plugins: [
     react(),
-    // Gzip for broad compatibility
     compression({ algorithm: "gzip", ext: ".gz", threshold: 1024 }),
-    // Brotli for modern browsers (better ratio)
     compression({ algorithm: "brotliCompress", ext: ".br", threshold: 1024 }),
   ],
   resolve: {
@@ -18,18 +16,35 @@ export default defineConfig({
       "Campus": path.resolve(__dirname, "./Campus"),
     },
   },
+  // Speed up dev server cold start
+  optimizeDeps: {
+    include: [
+      "react", "react-dom", "react-router-dom",
+      "react-redux", "redux-persist/integration/react",
+      "axios", "react-helmet-async",
+      "lottie-react", "lottie-web",
+    ],
+    exclude: [
+      "pdfjs-dist", "mammoth", "jspdf",
+      "country-state-city", "html2canvas",
+      "chart.js", "recharts",
+    ],
+  },
   build: {
     target: "es2015",
     cssCodeSplit: true,
-    assetsInlineLimit: 4096, // inline assets < 4KB as base64
+    assetsInlineLimit: 4096,
+    reportCompressedSize: false,
     rollupOptions: {
       external: ["mongoose"],
       output: {
         manualChunks(id) {
-          // Core React — smallest possible initial chunk
+          // Core React — keep small
           if (id.includes("node_modules/react/") ||
               id.includes("node_modules/react-dom/") ||
               id.includes("node_modules/react-router-dom/") ||
+              id.includes("node_modules/react-router/") ||
+              id.includes("node_modules/@remix-run/") ||
               id.includes("node_modules/scheduler/")) {
             return "react-vendor";
           }
@@ -40,29 +55,32 @@ export default defineConfig({
               id.includes("node_modules/redux/")) {
             return "redux-vendor";
           }
-          // PDF — very heavy, only used on specific pages
+          // PDF
           if (id.includes("node_modules/pdfjs-dist/") ||
               id.includes("node_modules/@react-pdf-viewer/") ||
               id.includes("node_modules/react-pdf/")) {
             return "pdf-vendor";
           }
-          // Lottie animations
+          // Lottie — group lottie-web + lottie-react together
           if (id.includes("node_modules/lottie-react/") ||
+              id.includes("node_modules/lottie-web/") ||
               id.includes("node_modules/@lottiefiles/")) {
             return "lottie-vendor";
           }
           // Charts
           if (id.includes("node_modules/chart.js/") ||
               id.includes("node_modules/react-chartjs-2/") ||
-              id.includes("node_modules/recharts/")) {
+              id.includes("node_modules/recharts/") ||
+              id.includes("node_modules/victory-vendor/") ||
+              id.includes("node_modules/d3-")) {
             return "chart-vendor";
           }
-          // MUI — heavy, split separately
+          // MUI
           if (id.includes("node_modules/@mui/") ||
               id.includes("node_modules/@emotion/")) {
             return "mui-vendor";
           }
-          // Three.js — very heavy 3D library
+          // Three.js
           if (id.includes("node_modules/three/") ||
               id.includes("node_modules/@react-three/")) {
             return "three-vendor";
@@ -89,7 +107,7 @@ export default defineConfig({
           if (id.includes("node_modules/swiper/")) {
             return "swiper-vendor";
           }
-          // Mammoth (docx parser) — heavy
+          // Mammoth
           if (id.includes("node_modules/mammoth/")) {
             return "mammoth-vendor";
           }
@@ -97,7 +115,11 @@ export default defineConfig({
           if (id.includes("node_modules/jspdf/")) {
             return "jspdf-vendor";
           }
-          // react-icons — large icon library
+          // html2canvas — separate chunk
+          if (id.includes("node_modules/html2canvas")) {
+            return "html2canvas-vendor";
+          }
+          // react-icons
           if (id.includes("node_modules/react-icons/")) {
             return "icons-vendor";
           }
@@ -105,7 +127,7 @@ export default defineConfig({
           if (id.includes("node_modules/lucide-react/")) {
             return "lucide-vendor";
           }
-          // country-state-city — large data library
+          // country-state-city
           if (id.includes("node_modules/country-state-city/")) {
             return "geo-vendor";
           }
@@ -114,6 +136,26 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 1000,
     minify: "esbuild",
+    modulePreload: {
+      // Only preload critical chunks, not heavy vendor chunks
+      resolveDependencies: (filename, deps) => {
+        return deps.filter(dep =>
+          !dep.includes('chart-vendor') &&
+          !dep.includes('jspdf-vendor') &&
+          !dep.includes('socket-vendor') &&
+          !dep.includes('pdf-vendor') &&
+          !dep.includes('mammoth-vendor') &&
+          !dep.includes('lottie-vendor') &&
+          !dep.includes('geo-vendor') &&
+          !dep.includes('three-vendor') &&
+          !dep.includes('motion-vendor') &&
+          !dep.includes('mui-vendor') &&
+          !dep.includes('html2canvas-vendor') &&
+          !dep.includes('CourseEnrollModal') &&
+          !dep.includes('TalkToCounsellorModal')
+        );
+      },
+    },
     esbuildOptions: {
       drop: ["console", "debugger"],
       legalComments: "none",
@@ -121,6 +163,25 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: true,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        secure: false,
+        cookieDomainRewrite: "localhost",
+      },
+      "/socket.io": {
+        target: "http://localhost:8000",
+        ws: true,
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+  preview: {
+    port: 4173,
+    host: true,
     proxy: {
       "/api": {
         target: "http://localhost:8000",

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Import background image for the page
-import img4 from "../assets/img4.png";
+import img4 from "../assets/webp/img4.webp";
 
 // Import navigation bar component
 import Navbar from "@/components/shared/Navbar";

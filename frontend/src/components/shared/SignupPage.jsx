@@ -2,7 +2,6 @@ import ReviewsSection from "../ui/ReviewsCarousel";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -43,7 +42,7 @@ const SignupPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch min-w-0">
 
             {/* Job Seeker Card */}
-            <motion.div
+            <div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -76,18 +75,18 @@ const SignupPage = () => {
                   ))}
                 </div>
               </div>
-              <motion.button
+              <button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSignupOption("job")}
                 className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm shadow-lg whitespace-nowrap"
               >
                 Sign Up as Job Seeker
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
 
             {/* Recruiter Card */}
-            <motion.div
+            <div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -120,18 +119,18 @@ const SignupPage = () => {
                   ))}
                 </div>
               </div>
-              <motion.button
+              <button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSignupOption("recruiter")}
                 className="w-full py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl font-semibold text-sm shadow-lg whitespace-nowrap"
               >
                 Sign Up as Recruiter
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
 
             {/* College TPO Card */}
-            <motion.div
+            <div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -164,18 +163,18 @@ const SignupPage = () => {
                   ))}
                 </div>
               </div>
-              <motion.button
+              <button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSignupOption("college")}
                 className="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-semibold text-sm shadow-lg whitespace-nowrap"
               >
                 Sign Up as College TPO
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
 
             {/* Student Card */}
-            <motion.div
+            <div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -208,20 +207,20 @@ const SignupPage = () => {
                   ))}
                 </div>
               </div>
-              <motion.button
+              <button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSignupOption("student")}
                 className="w-full py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-semibold text-sm shadow-lg whitespace-nowrap"
               >
                 College / Student Signup
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
 
           </div>
 
           {/* Success Stats */}
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -244,7 +243,7 @@ const SignupPage = () => {
                 <p className="text-blue-100 dark:text-blue-200">Success Rate</p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Reviews Section */}

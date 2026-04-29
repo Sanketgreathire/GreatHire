@@ -1,4 +1,5 @@
-import Lottie from "lottie-react";
+import { lazy, Suspense } from "react";
+const Lottie = lazy(() => import("lottie-react"));
 
 import animPOS from "./assets/Chagee.json";
 import animOnline from "./assets/Sushi.json";
