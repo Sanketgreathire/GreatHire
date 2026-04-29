@@ -1,7 +1,6 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-import { useState, useMemo } from "react";
-import TalkToCounsellorModal from "@/components/TalkToCounsellorModal";
+import { useState, useMemo, lazy, Suspense, memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -585,7 +584,7 @@ function StarRating({ count }) {
   );
 }
 
-function CourseCard({ course, onEnroll }) {
+const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
       {/* Image Section */}
@@ -593,7 +592,10 @@ function CourseCard({ course, onEnroll }) {
         <img
           src={course.image}
           alt=""
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchpriority={priority ? "high" : "low"}
+          width={400}
+          height={176}
           className="w-full h-full object-cover"
         />
 
@@ -638,7 +640,7 @@ function CourseCard({ course, onEnroll }) {
       </div>
     </div>
   );
-}
+});
 
 // ─── Enroll Modal ─────────────────────────────────────────────────────────────
 
@@ -761,10 +763,10 @@ export default function TrainingCoursesPage() {
   const [enrollCourse, setEnrollCourse] = useState(null);
   const [enrollType, setEnrollType] = useState("enquiry");
 
-  const openModal = (course, type = "enquiry") => {
+  const openModal = useCallback((course, type = "enquiry") => {
     setEnrollCourse(course);
     setEnrollType(type);
-  };
+  }, []);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Reset category filter when switching tabs
@@ -894,8 +896,8 @@ export default function TrainingCoursesPage() {
         {/* Course Grid */}
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map((course) => (
-              <CourseCard key={course.id} course={course} onEnroll={(c) => openModal(c, "enquiry")} />
+            {filtered.map((course, idx) => (
+              <CourseCard key={course.id} course={course} onEnroll={openModal} priority={idx < 4} />
             ))}
           </div>
         ) : (

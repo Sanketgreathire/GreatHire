@@ -36,26 +36,6 @@ const JobMajorDetails = ({ selectedJob }) => {
             Job details
           </h1>
 
-          {/* Pay Section */}
-          <div className="space-y-2">
-            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
-              <PiMoneyWavyFill />
-              <span className="font-bold text-black dark:text-gray-100">Pay</span>
-            </h3>
-
-            <div className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
-              {selectedJob?.jobDetails?.salary
-                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                .split("-")
-                .map((part, index) => (
-                  <span key={index}>
-                    ₹{part.trim()}
-                    {index === 0 ? " - " : ""}
-                  </span>
-                ))}
-            </div>
-          </div>
-
           {/* Experience Section */}
           <div className="space-y-2">
             <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
@@ -88,6 +68,26 @@ const JobMajorDetails = ({ selectedJob }) => {
                   {selectedJob?.jobDetails?.shift}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Pay Section */}
+          <div className="space-y-2">
+            <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
+              <PiMoneyWavyFill />
+              <span className="font-bold text-black dark:text-gray-100">Pay</span>
+            </h3>
+
+            <div className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
+              {selectedJob?.jobDetails?.salary
+                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                .split("-")
+                .map((part, index) => (
+                  <span key={index}>
+                    ₹{part.trim()}
+                    {index === 0 ? " - " : ""}
+                  </span>
+                ))}
             </div>
           </div>
         </div>

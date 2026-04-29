@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import img from "../../assets/img7.png";
+import img from "../../assets/webp/img7.webp";
 import { useDropzone } from "react-dropzone";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import Navbar from "@/components/shared/Navbar";

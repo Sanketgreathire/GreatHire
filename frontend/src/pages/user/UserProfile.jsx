@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
 import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
 import { Mail, Pen, IdCard, FileText } from "lucide-react";
@@ -6,7 +6,7 @@ import { LuPhoneIncoming, LuMapPin } from "react-icons/lu";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import AppliedJobTable from "../job/AppliedJobTable";
-import UserUpdateProfile from "./UserUpdateProfile";
+const UserUpdateProfile = lazy(() => import("./UserUpdateProfile"));
 import { useSelector, useDispatch } from "react-redux";
 import Footer from "@/components/shared/Footer";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -328,7 +328,9 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <UserUpdateProfile open={open} setOpen={setOpen} />
+        <Suspense fallback={null}>
+          <UserUpdateProfile open={open} setOpen={setOpen} />
+        </Suspense>
         <Footer className="mt-auto" />
 
         {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />}

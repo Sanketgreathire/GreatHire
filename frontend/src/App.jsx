@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -43,7 +43,8 @@ const MessagingPage          = lazy(() => import("./components/messaging/Messagi
 const About                  = lazy(() => import("./pages/services/About"));
 const Contact                = lazy(() => import("./pages/services/Contact"));
 const OurService             = lazy(() => import("./pages/services/OurService"));
-const Blogs                  = lazy(() => import("./components/Main_blog_page"));
+const MainBlogPage = lazy(() => import("./components/Main_blog_page"));
+const BlogsPage              = lazy(() => import("./pages/services/Blogs"));
 const BlogDetail             = lazy(() => import("./pages/services/BlogDetail"));
 const PrivacyPolicy          = lazy(() => import("./pages/policies/PrivacyPolicy"));
 const RefundAndReturnPolicy  = lazy(() => import("./pages/policies/RefundAndReturnPolicy"));
@@ -124,11 +125,13 @@ const PageLoader = () => (
   </div>
 );
 
+// Router defined outside component — never recreated on re-render
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/Main_blog_page", element: <Blogs /> },
-  { path: "/blogs/:slug", element: <Blogs /> },
-  { path: "/blog/:id", element: <BlogDetail /> },
+  { path: "/Main_blog_page",  element: <MainBlogPage /> },
+{ path: "/blogs",           element: <BlogsPage /> },
+{ path: "/blogs/:slug",     element: <MainBlogPage /> },  // or BlogsPage — whichever is intended
+{ path: "/blog/:id",        element: <BlogDetail /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },
@@ -175,7 +178,7 @@ const appRouter = createBrowserRouter([
   { path: "/ProductDetailPage/:id", element: <ProductDetailPage /> },
   {
     path: "/recruiter/dashboard",
-    element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,
+    element: <ProtectedRecruiterRoute><Suspense fallback={<PageLoader />}><RecruiterDashboard /></Suspense></ProtectedRecruiterRoute>,
     children: [
       { index: true, element: <RecruiterHome /> },
       { path: "home", element: <RecruiterHome /> },
@@ -205,7 +208,7 @@ const appRouter = createBrowserRouter([
   { path: "/recruiter/add-user", element: <ProtectedRecruiterRoute><AddRecruiter /></ProtectedRecruiterRoute> },
   { path: "/digitalmarketer/login", element: <DigitalMarketerLogin /> },
   { path: "/admin/login", element: <AdminLogin /> },
-  { path: "/admin/*", element: <AdminLayout /> },
+  { path: "/admin/*", element: <Suspense fallback={<PageLoader />}><AdminLayout /></Suspense> },
   { path: "/campus-hiring", element: <CollegeLogin /> },
   { path: "/campus-dashboard", element: <CampusPlacementDashboard /> },
   { path: "/college/login", element: <CollegeLogin /> },
@@ -241,10 +244,19 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
-      .then((res) => { if (res.data.success) dispatch(setUser(res.data.user)); })
-      .catch(() => {});
+    // Defer session validation — wait for first paint to complete
+    // 100ms was too fast and competed with initial render
+    const t = setTimeout(() => {
+      axios
+        .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+        .then((res) => {
+          if (res.data.success) {
+            startTransition(() => dispatch(setUser(res.data.user)));
+          }
+        })
+        .catch(() => {});
+    }, 800);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -260,7 +272,8 @@ function App() {
       <JobDetailsProvider>
         <NotificationProvider>
           <MessageProvider>
-            <Suspense fallback={<PageLoader />}>
+            {/* null fallback for Home — critical CSS in index.html prevents blank flash */}
+            <Suspense fallback={null}>
               <RouterProvider router={appRouter} />
             </Suspense>
           </MessageProvider>

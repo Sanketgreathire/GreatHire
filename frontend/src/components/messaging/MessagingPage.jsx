@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageProvider } from '../../context/MessageContext';
 import ConversationList from './ConversationList';
 import ChatInterface from './ChatInterface';
 import { useMessages } from '../../context/MessageContext';
 
 const MessagingContent = () => {
-  const { setActiveConversation } = useMessages();
+  const { setActiveConversation, initializeSocket } = useMessages();
+
+  // Trigger socket immediately when user opens messaging page
+  useEffect(() => {
+    if (initializeSocket) initializeSocket();
+  }, []);
 
   const handleSelectConversation = (conversation) => {
     setActiveConversation(conversation);

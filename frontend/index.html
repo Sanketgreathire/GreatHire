@@ -6,19 +6,89 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)" />
 
-    <!-- Preconnect for critical external origins -->
+    <!-- Critical preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+    <link rel="dns-prefetch" href="https://www.clarity.ms" />
 
     <!-- Google Fonts non-blocking -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
 
-    <title>Great Hire</title>
+    <title>GreatHire | Find Jobs, Hire Talent &amp; Advance Your Career in India</title>
+
+    <!-- Primary SEO meta -->
+    <meta name="description" content="GreatHire is India's trusted job search and hiring platform connecting talent with top companies. Explore thousands of IT, non-IT, fresher and experienced jobs across India. AI-powered matching, fast hiring, and career growth tools for job seekers and recruiters." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="GreatHire Business Solutions" />
+    <link rel="canonical" href="https://greathire.in/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://greathire.in/" />
+    <meta property="og:title" content="GreatHire | Find Jobs, Hire Talent &amp; Advance Your Career in India" />
+    <meta property="og:description" content="India's trusted job search and hiring platform. Explore thousands of jobs, connect with top companies, and grow your career with GreatHire." />
+    <meta property="og:image" content="https://greathire.in/og-image.png" />
+    <meta property="og:site_name" content="GreatHire" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GreatHire | Find Jobs &amp; Hire Talent in India" />
+    <meta name="twitter:description" content="India's trusted job search and hiring platform. AI-powered matching for job seekers and recruiters." />
+    <meta name="twitter:image" content="https://greathire.in/og-image.png" />
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GreatHire",
+      "alternateName": "GreatHire Business Solutions",
+      "url": "https://greathire.in",
+      "logo": "https://greathire.in/logo.png",
+      "description": "India's trusted job search and hiring platform connecting talent with top companies.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IN",
+        "addressRegion": "Telangana",
+        "addressLocality": "Hyderabad"
+      },
+      "sameAs": [
+        "https://www.facebook.com/share/15WGT743qv/",
+        "https://twitter.com/GreatHireIn",
+        "https://www.linkedin.com/company/greathire/",
+        "https://www.instagram.com/great_hire",
+        "https://www.threads.net/@great_hire"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "availableLanguage": ["English", "Hindi", "Telugu"]
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "GreatHire",
+      "url": "https://greathire.in",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://greathire.in/jobs?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
 
     <!-- Apply theme before React to prevent flash -->
     <script>
@@ -31,6 +101,28 @@
         }catch(e){}
       })();
     </script>
+
+    <!-- Critical above-the-fold CSS — prevents FOUC and speeds up FCP -->
+    <style>
+      *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Poppins,ui-sans-serif,system-ui,sans-serif}
+      body{margin:0;line-height:inherit;background:#fff}
+      .dark body{background:#030712}
+      #root{min-height:100vh}
+      /* Navbar skeleton — prevents layout shift */
+      nav{position:fixed;top:0;width:100%;z-index:50;background:rgba(255,255,255,.95);border-bottom:1px solid #f3f4f6;height:61px}
+      .dark nav{background:rgba(17,24,39,.95);border-color:#1f2937}
+      /* Hero section base — prevents CLS */
+      section#home{min-height:100vh;padding-top:117px;background:linear-gradient(to bottom right,#f8fafc,#eff6ff,#eef2ff)}
+      .dark section#home{background:linear-gradient(to bottom right,#030712,#111827,#1e1b4b)}
+      /* Spinner for Suspense fallback */
+      .page-loader{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#fff}
+      .dark .page-loader{background:#030712}
+      .page-loader-spin{width:2rem;height:2rem;border:4px solid #2563eb;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      /* Marquee strip placeholder */
+      .marquee-strip{position:fixed;top:61px;left:0;right:0;z-index:40;height:36px;background:linear-gradient(to right,#2563eb,#7c3aed,#db2777)}
+    </style>
   </head>
 
   <body>
@@ -41,14 +133,16 @@
     <!-- GA4 deferred after page load -->
     <script>
       window.addEventListener('load', function() {
-        var s = document.createElement('script');
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-HF6ZHEW1PV';
-        s.async = true;
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){ dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-HF6ZHEW1PV');
+        setTimeout(function() {
+          var s = document.createElement('script');
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-HF6ZHEW1PV';
+          s.async = true;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-HF6ZHEW1PV', { send_page_view: false });
+        }, 3000);
       });
     </script>
 
@@ -65,14 +159,16 @@
       };
     </script>
 
-    <!-- Microsoft Clarity deferred after load -->
+    <!-- Microsoft Clarity deferred 5s after load -->
     <script>
       window.addEventListener('load', function() {
-        (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window,document,'clarity','script','uu36ks7vrm');
+        setTimeout(function() {
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window,document,'clarity','script','uu36ks7vrm');
+        }, 5000);
       });
     </script>
   </body>

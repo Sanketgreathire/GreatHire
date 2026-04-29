@@ -604,12 +604,12 @@ import {
 import Footer from "@/components/shared/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import InternshipMarquee from "@/components/shared/InternshipMarquee";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobsHiringSlider = lazy(() => import("./JobSlider"));
 const Lottie = lazy(() => import("lottie-react"));
 const CompactTestimonials = lazy(() => import("@/components/ui/CompactTestimonials"));
+const InternshipMarquee = lazy(() => import("@/components/shared/InternshipMarquee"));
 
 // Lazy load heavy animation JSONs only when needed
 const tabAnimations = {
@@ -736,8 +736,10 @@ const GreatHireLanding = () => {
         <title>GreatHire | Locate Jobs, Employ Talent, and Advance Your Career in India</title>
         <meta
           name="description"
-          content="India's cutting-edge job search and hiring platform connecting talent and companies with safe and open hiring solutions."
+          content="GreatHire is India's cutting-edge job search and hiring platform connecting talent and companies with safe and open hiring solutions. AI-powered matching helps job seekers explore thousands of IT, non-IT, fresher and experienced roles daily. Recruiters get fast hiring, validated profiles and effective workforce solutions. From career counseling and resume creation to quick job applications — GreatHire makes recruiting easy, dependable and future-ready throughout India."
         />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://greathire.in/" />
       </Helmet>
 
       <div className="[&_.hide-section]:hidden">
@@ -751,10 +753,10 @@ const GreatHireLanding = () => {
               <div className="flex items-center justify-between w-full">
 
                 {/* Logo */}
-                <Link to="/" className="cursor-pointer flex-shrink-0">
-                  <h1 className="text-4xl font-bold text-black dark:text-white whitespace-nowrap">
+                <Link to="/" className="cursor-pointer flex-shrink-0" aria-label="GreatHire home">
+                  <span className="text-4xl font-bold text-black dark:text-white whitespace-nowrap">
                     Great<span className="text-blue-600">Hire</span>
-                  </h1>
+                  </span>
                 </Link>
 
                 {/* ── DESKTOP RIGHT SIDE ── */}
@@ -849,7 +851,7 @@ const GreatHireLanding = () => {
 
                               <p className="text-[10px] text-gray-400 dark:text-gray-500 px-1 pt-2 border-t border-gray-100 dark:border-gray-700">
                                 Already have an account?{" "}
-                                <button onClick={() => { navigate("/jobseeker-login"); setIsMoreOpen(false); }} className="text-blue-500 hover:underline font-medium">Sign in →</button>
+                                <button onClick={() => { navigate("/jobseeker-login"); setIsMoreOpen(false); }} className="text-blue-500 hover:underline font-medium" aria-label="Sign in to your account">Sign in →</button>
                               </p>
                             </div>
                           </div>
@@ -898,7 +900,7 @@ const GreatHireLanding = () => {
                   <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className="p-2 rounded-md text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    aria-label="Toggle mobile menu"
+                    aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                     aria-expanded={mobileMenuOpen}
                   >
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -915,7 +917,9 @@ const GreatHireLanding = () => {
               INTERNSHIP MARQUEE — fixed below navbar
           ══════════════════════════════════════ */}
           <div className="fixed top-[61px] left-0 right-0 z-40 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-            <InternshipMarquee jobs={jobs} />
+            <Suspense fallback={<div className="h-8" />}>
+              <InternshipMarquee jobs={jobs} />
+            </Suspense>
           </div>
 
           {/* ══════════════════════════════════════
@@ -937,9 +941,9 @@ const GreatHireLanding = () => {
           >
             {/* Panel Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-              <h1 className="text-2xl font-bold text-black dark:text-white">
+              <span className="text-2xl font-bold text-black dark:text-white">
                 Great<span className="text-blue-600">Hire</span>
-              </h1>
+              </span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setDarkMode(!darkMode)}
@@ -1106,13 +1110,13 @@ const GreatHireLanding = () => {
                       <div className="bg-white dark:bg-gray-900 rounded-[2.3rem] p-6">
                         <div className="space-y-4">
                           {[
-                            { icon: <Briefcase className="w-6 h-6 text-white" />, title: "Software Developer", company: "TCS • Bangalore", salary: "₹12-18 LPA", badge: "New", badgeBg: "bg-green-100 dark:bg-green-900", badgeText: "text-green-700 dark:text-green-300", cardBg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900", border: "border-blue-200 dark:border-blue-700", iconBg: "from-blue-500 to-blue-600", salaryColor: "text-blue-600 dark:text-blue-400", anim: "animate-float", ml: "" },
-                            { icon: <Users className="w-6 h-6 text-white" />, title: "HR Manager", company: "Infosys • Mumbai", salary: "₹8-15 LPA", badge: "Hot", badgeBg: "bg-yellow-100 dark:bg-yellow-900", badgeText: "text-yellow-700 dark:text-yellow-300", cardBg: "from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900", border: "border-purple-200 dark:border-purple-700", iconBg: "from-purple-500 to-purple-600", salaryColor: "text-purple-600 dark:text-purple-400", anim: "animate-float-delay", ml: "" },
-                            { icon: <Target className="w-6 h-6 text-white" />, title: "Marketing Lead", company: "Flipkart • Delhi", salary: "₹15-25 LPA", badge: "Apply", badgeBg: "bg-blue-100 dark:bg-blue-900", badgeText: "text-blue-700 dark:text-blue-300", cardBg: "from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900", border: "border-pink-200 dark:border-pink-700", iconBg: "from-pink-500 to-pink-600", salaryColor: "text-pink-600 dark:text-pink-400", anim: "animate-float-slow", ml: "" },
+                            { Icon: Briefcase, title: "Software Developer", company: "TCS • Bangalore", salary: "₹12-18 LPA", badge: "New", badgeBg: "bg-green-100 dark:bg-green-900", badgeText: "text-green-700 dark:text-green-300", cardBg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900", border: "border-blue-200 dark:border-blue-700", iconBg: "from-blue-500 to-blue-600", salaryColor: "text-blue-600 dark:text-blue-400", anim: "animate-float" },
+                            { Icon: Users, title: "HR Manager", company: "Infosys • Mumbai", salary: "₹8-15 LPA", badge: "Hot", badgeBg: "bg-yellow-100 dark:bg-yellow-900", badgeText: "text-yellow-700 dark:text-yellow-300", cardBg: "from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900", border: "border-purple-200 dark:border-purple-700", iconBg: "from-purple-500 to-purple-600", salaryColor: "text-purple-600 dark:text-purple-400", anim: "animate-float-delay" },
+                            { Icon: Target, title: "Marketing Lead", company: "Flipkart • Delhi", salary: "₹15-25 LPA", badge: "Apply", badgeBg: "bg-blue-100 dark:bg-blue-900", badgeText: "text-blue-700 dark:text-blue-300", cardBg: "from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900", border: "border-pink-200 dark:border-pink-700", iconBg: "from-pink-500 to-pink-600", salaryColor: "text-pink-600 dark:text-pink-400", anim: "animate-float-slow" },
                           ].map((job) => (
-                            <div key={job.title} className={`bg-gradient-to-r ${job.cardBg} rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all ${job.anim} border-2 ${job.border} ${job.ml}`}>
+                            <div key={job.title} className={`bg-gradient-to-r ${job.cardBg} rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all ${job.anim} border-2 ${job.border}`}>
                               <div className={`w-12 h-12 bg-gradient-to-br ${job.iconBg} rounded-xl flex items-center justify-center shadow-lg flex-shrink-0`}>
-                                {job.icon}
+                                <job.Icon className="w-6 h-6 text-white" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="font-bold text-gray-900 dark:text-white text-base truncate">{job.title}</p>
@@ -1139,7 +1143,7 @@ const GreatHireLanding = () => {
               </Suspense>
 
               {/* Why Choose GreatHire */}
-              <div className="mb-10">
+              <div className="mb-10 content-below-fold">
                 <div className="text-center mb-8 md:mb-12 px-2">
                   <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black text-gray-900 dark:text-white mb-3">
                     Why Choose{" "}
@@ -1151,17 +1155,17 @@ const GreatHireLanding = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
                   {[
-                    { icon: <TrendingUp />, title: "Latest Jobs", desc: "10K+ fresh opportunities every day", gradient: "from-blue-500 to-cyan-500", bg: "from-blue-50 to-cyan-50", darkBg: "dark:from-blue-950 dark:to-cyan-950" },
-                    { icon: <Zap />, title: "Easy Apply", desc: "One-click instant applications", gradient: "from-purple-500 to-pink-500", bg: "from-purple-50 to-pink-50", darkBg: "dark:from-purple-950 dark:to-pink-950" },
-                    { icon: <Target />, title: "Smart Match", desc: "AI-powered job recommendations", gradient: "from-pink-500 to-red-500", bg: "from-pink-50 to-red-50", darkBg: "dark:from-pink-950 dark:to-red-950" },
-                    { icon: <Shield />, title: "Verified Companies", desc: "500+ trusted hiring partners", gradient: "from-green-500 to-emerald-500", bg: "from-green-50 to-emerald-50", darkBg: "dark:from-green-950 dark:to-emerald-950" },
+                    { Icon: TrendingUp, title: "Latest Jobs", desc: "10K+ fresh opportunities every day", gradient: "from-blue-500 to-cyan-500", bg: "from-blue-50 to-cyan-50", darkBg: "dark:from-blue-950 dark:to-cyan-950" },
+                    { Icon: Zap, title: "Easy Apply", desc: "One-click instant applications", gradient: "from-purple-500 to-pink-500", bg: "from-purple-50 to-pink-50", darkBg: "dark:from-purple-950 dark:to-pink-950" },
+                    { Icon: Target, title: "Smart Match", desc: "AI-powered job recommendations", gradient: "from-pink-500 to-red-500", bg: "from-pink-50 to-red-50", darkBg: "dark:from-pink-950 dark:to-red-950" },
+                    { Icon: Shield, title: "Verified Companies", desc: "500+ trusted hiring partners", gradient: "from-green-500 to-emerald-500", bg: "from-green-50 to-emerald-50", darkBg: "dark:from-green-950 dark:to-emerald-950" },
                   ].map((feature, i) => (
                     <div key={i} className="group relative">
                       <div className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-3xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
                       <div className={`relative bg-gradient-to-br ${feature.bg} ${feature.darkBg} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent group-hover:border-white dark:group-hover:border-gray-700 hover:-translate-y-3`}>
                         <div className="flex md:hidden items-start gap-4">
                           <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0`}>
-                            <div className="text-white">{feature.icon}</div>
+                            <div className="text-white"><feature.Icon /></div>
                           </div>
                           <div>
                             <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1">{feature.title}</h3>
@@ -1170,7 +1174,7 @@ const GreatHireLanding = () => {
                         </div>
                         <div className="hidden md:block">
                           <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg`}>
-                            <div className="text-white">{feature.icon}</div>
+                            <div className="text-white"><feature.Icon /></div>
                           </div>
                           <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{feature.title}</h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
@@ -1182,12 +1186,14 @@ const GreatHireLanding = () => {
               </div>
 
               {/* Tabs and Carousel */}
-              <div className="max-w-7xl mx-auto px-2 sm:px-6 py-4 mt-4">
+              <div className="max-w-7xl mx-auto px-2 sm:px-6 py-4 mt-4 content-below-fold">
                 <div className="flex flex-wrap justify-center gap-2 sm:gap-8 mb-4 sm:mb-8">
                   {tabs.map((tab, i) => (
                     <button
                       key={tab.id}
                       onClick={() => setIndex(i)}
+                      aria-label={`View ${tab.title}`}
+                      aria-pressed={index === i}
                       className={`px-4 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 ${index === i
                           ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
                           : "text-gray-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
@@ -1231,10 +1237,11 @@ const GreatHireLanding = () => {
                 </div>
 
                 <div className="flex justify-center gap-3 mt-4 mb-4">
-                  {tabs.map((_, i) => (
+                  {tabs.map((tab, i) => (
                     <button
                       key={i}
                       onClick={() => setIndex(i)}
+                      aria-label={`Go to ${tab.title} slide`}
                       className={`w-3 h-3 rounded-full transition-all ${index === i ? "bg-blue-600 dark:bg-blue-400" : "bg-gray-300 dark:bg-gray-600"
                         }`}
                     />
@@ -1250,7 +1257,7 @@ const GreatHireLanding = () => {
               )}
 
               {/* CTA */}
-              <div className="mt-3">
+              <div className="mt-3 content-below-fold">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] blur-2xl opacity-30" />
                   <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-[2.5rem] p-6 sm:p-10 md:p-16 shadow-2xl overflow-hidden">
@@ -1288,19 +1295,17 @@ const GreatHireLanding = () => {
             <style>{`
               @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
               @keyframes blob { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
-              @keyframes gradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
               @keyframes fade-in-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
               @keyframes fade-in-right { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-              .animate-float { animation: float 3s ease-in-out infinite; }
-              .animate-float-delay { animation: float 3s ease-in-out infinite; animation-delay: 1s; }
-              .animate-float-slow { animation: float 4s ease-in-out infinite; animation-delay: 2s; }
-              .animate-blob { animation: blob 7s infinite; }
+              .animate-float { animation: float 3s ease-in-out infinite; will-change: transform; }
+              .animate-float-delay { animation: float 3s ease-in-out infinite; animation-delay: 1s; will-change: transform; }
+              .animate-float-slow { animation: float 4s ease-in-out infinite; animation-delay: 2s; will-change: transform; }
+              .animate-blob { animation: blob 7s infinite; will-change: transform; }
               .animation-delay-2000 { animation-delay: 2s; }
               .animation-delay-4000 { animation-delay: 4s; }
-              .animate-gradient { background-size: 200% 200%; animation: gradient 3s ease infinite; }
               .animate-fade-in-up { animation: fade-in-up 1s ease-out; }
               .animate-fade-in-right { animation: fade-in-right 1s ease-out; }
-              .animate-bounce-slow { animation: bounce 2s infinite; }
+              .animate-bounce-slow { animation: float 2s ease-in-out infinite; will-change: transform; }
             `}</style>
           </section>
 

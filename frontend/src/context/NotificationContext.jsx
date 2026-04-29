@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { io } from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount, deleteNotification } from '../service/notificationservice';
 import { logOut } from '../redux/authSlice';
@@ -19,7 +18,8 @@ export const NotificationProvider = ({ children }) => {
     if (!document.cookie.includes('token')) return;
 
     let socketInstance;
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
+      const { io } = await import('socket.io-client');
       socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
         withCredentials: true,
         transports: ['polling', 'websocket'],

@@ -15,10 +15,10 @@ import { COURSE_API_END_POINT } from "@/utils/ApiEndPoint";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const TABS = [
-  { key: "enquiry",    label: "Enquiries",          icon: <MessageSquare size={16} /> },
-  { key: "demo",       label: "Demo Sessions",      icon: <Monitor size={16} /> },
-  { key: "enrollment", label: "Enrollments",        icon: <GraduationCap size={16} /> },
-  { key: "counsellor", label: "Talk to Counsellor", icon: <PhoneCall size={16} /> },
+  { key: "enquiry",    label: "Enquiries",          Icon: MessageSquare },
+  { key: "demo",       label: "Demo Sessions",      Icon: Monitor },
+  { key: "enrollment", label: "Enrollments",        Icon: GraduationCap },
+  { key: "counsellor", label: "Talk to Counsellor", Icon: PhoneCall },
 ];
 
 const STATUS_COLORS = {
@@ -110,10 +110,10 @@ const Courses = () => {
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   const stats = [
-    { title: "Total Enquiries",    count: summary.enquiry,    icon: <MessageSquare size={26} />, color: "text-blue-600",   bg: "bg-blue-100",   tab: "enquiry" },
-    { title: "Demo Sessions",      count: summary.demo,       icon: <Monitor size={26} />,       color: "text-green-600",  bg: "bg-green-100",  tab: "demo" },
-    { title: "Enrollments",        count: summary.enrollment, icon: <GraduationCap size={26} />, color: "text-purple-600", bg: "bg-purple-100", tab: "enrollment" },
-    { title: "Talk to Counsellor", count: summary.counsellor, icon: <PhoneCall size={26} />,     color: "text-orange-600", bg: "bg-orange-100", tab: "counsellor" },
+    { title: "Total Enquiries",    count: summary.enquiry,    Icon: MessageSquare, color: "text-blue-600",   bg: "bg-blue-100",   tab: "enquiry" },
+    { title: "Demo Sessions",      count: summary.demo,       Icon: Monitor,       color: "text-green-600",  bg: "bg-green-100",  tab: "demo" },
+    { title: "Enrollments",        count: summary.enrollment, Icon: GraduationCap, color: "text-purple-600", bg: "bg-purple-100", tab: "enrollment" },
+    { title: "Talk to Counsellor", count: summary.counsellor, Icon: PhoneCall,     color: "text-orange-600", bg: "bg-orange-100", tab: "counsellor" },
   ];
 
   return (
@@ -137,7 +137,7 @@ const Courses = () => {
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{s.title}</p>
                 <p className="text-3xl font-semibold text-gray-900 dark:text-white mt-1">{s.count}</p>
               </div>
-              <div className={`p-3 rounded-lg ${s.bg} ${s.color}`}>{s.icon}</div>
+              <div className={`p-3 rounded-lg ${s.bg} ${s.color}`}><s.Icon size={26} /></div>
             </Card>
           ))}
         </div>
@@ -149,7 +149,7 @@ const Courses = () => {
             {/* Filters */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div className="flex gap-2 flex-wrap">
-                {TABS.map(({ key, label, icon }) => (
+                {TABS.map(({ key, label, Icon }) => (
                   <button
                     key={key}
                     onClick={() => handleTabChange(key)}
@@ -159,7 +159,7 @@ const Courses = () => {
                         : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-blue-400"
                     }`}
                   >
-                    {icon} {label}
+                    <Icon size={16} /> {label}
                   </button>
                 ))}
               </div>

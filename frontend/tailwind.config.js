@@ -5,6 +5,19 @@ export default {
   future: {
     hoverOnlyWhenSupported: true,
   },
+  // Disable unused core plugins to reduce CSS output
+  corePlugins: {
+    float: false,
+    clear: false,
+    skew: false,
+    caretColor: false,
+    sepia: false,
+    hueRotate: false,
+    saturate: false,
+    brightness: false,
+    contrast: false,
+    invert: false,
+  },
 
   theme: {
     extend: {

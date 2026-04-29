@@ -14,7 +14,17 @@ import { Briefcase, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
-import "chart.js/auto";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 import { useSelector } from "react-redux";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";

@@ -43,14 +43,15 @@ const JobDetailsProvider = ({ children }) => {
         setOriginalJobsList(jobs);
         setSelectedJob(jobs[0] || null);
       } catch (err) {
-        console.error("Error fetching jobs:", err);
         setError("An error occurred while fetching jobs.");
       }
     };
 
-    const t = setTimeout(fetchJobs, 0);
+    // Defer 1.5s for unauthenticated users — lets critical render finish first
+    const delay = user ? 300 : 1500;
+    const t = setTimeout(fetchJobs, delay);
     return () => clearTimeout(t);
-  }, [isRecruiterOrAdmin]);
+  }, [isRecruiterOrAdmin, user]);
 
   // Function to toggle bookmark status of a job
   const toggleBookmarkStatus = (jobId, userId) => {

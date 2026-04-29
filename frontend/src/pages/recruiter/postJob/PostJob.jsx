@@ -859,7 +859,13 @@ const PostJob = () => {
                         "1-2 years",
                         "2-3 years",
                         "3-4 years",
-                        "More than 5 years",
+                        "4-5 years",
+                        "5-6 years",
+                        "6-7 years",
+                        "7-8 years",
+                        "8-9 years",
+                        "9-10 years",
+                        "More than 10 years",
                       ].map((option) => {
                         // Convert the current string value into an array for easier handling
                         const selectedOptions = formik.values.experience
