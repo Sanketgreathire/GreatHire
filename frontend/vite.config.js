@@ -14,20 +14,23 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "Campus": path.resolve(__dirname, "./Campus"),
+      "lodash": "lodash-es",
     },
   },
-  // Speed up dev server cold start
   optimizeDeps: {
     include: [
       "react", "react-dom", "react-router-dom",
       "react-redux", "redux-persist/integration/react",
       "axios", "react-helmet-async",
       "lottie-react", "lottie-web",
+      "lodash-es",
+      "recharts",
+      "recharts/node_modules/react-is",
     ],
     exclude: [
       "pdfjs-dist", "mammoth", "jspdf",
       "country-state-city", "html2canvas",
-      "chart.js", "recharts",
+      "chart.js",
     ],
   },
   build: {
