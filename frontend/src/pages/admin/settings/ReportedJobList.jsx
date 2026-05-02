@@ -119,7 +119,7 @@ const ReportedJobList = () => {
   return (
     <>
       <Navbar linkName="Reported Job List" />
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-6 max-w-7xl mx-auto rounded-lg shadow-lg relative">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-950 px-4 sm:px-6 pt-6 pb-6 max-w-7xl mx-auto">
         <button
           onClick={() => navigate(-1)}
           className="absolute top-6 left-6 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white text-xl transition-colors duration-200 mt-2"

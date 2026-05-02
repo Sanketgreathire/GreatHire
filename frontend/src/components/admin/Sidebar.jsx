@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
-import {
-  FaUsers,
-  FaBriefcase,
-  FaChartBar,
-  FaUser,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { FaUserTie, FaGraduationCap, FaBookOpen } from "react-icons/fa6";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { useSelector, useDispatch } from "react-redux";
-
 import {
   fetchCompanyStats,
   fetchRecruiterStats,
@@ -22,147 +14,173 @@ import {
 } from "@/redux/admin/statsSlice";
 
 const navItems = [
-  { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
-  { name: "Job Seekers", path: "/admin/users", icon: FaUsers },
-  { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
-  { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
-  { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
-  { name: "Campus", path: "/admin/campus-dashboard", icon: FaGraduationCap },
-  { name: "Courses", path: "/admin/courses", icon: FaBookOpen },
-  { name: "Reports", path: "/admin/reports", icon: FaChartBar },
-  { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
+  { name: "Dashboard",   path: "/admin/dashboard",       icon: AiOutlineDashboard      },
+  { name: "Job Seekers", path: "/admin/users",            icon: FaUsers                 },
+  { name: "Companies",   path: "/admin/companies",        icon: PiBuildingOfficeDuotone },
+  { name: "Recruiters",  path: "/admin/recruiters-list",  icon: FaUserTie               },
+  { name: "Jobs",        path: "/admin/jobs",             icon: FaBriefcase             },
+  { name: "Campus",      path: "/admin/campus-dashboard", icon: FaGraduationCap         },
+  { name: "Courses",     path: "/admin/courses",          icon: FaBookOpen              },
+  { name: "Reports",     path: "/admin/reports",          icon: FaChartBar              },
+  { name: "Settings",    path: "/admin/settings",         icon: AiOutlineSetting        },
 ];
 
-const Sidebar = () => {
+const NavItem = memo(({ item, onClick }) => (
+  <li>
+    <NavLink
+      to={item.path}
+      onClick={onClick}
+      className={({ isActive }) =>
+        `flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-150 ${
+          isActive
+            ? "bg-blue-700 dark:bg-blue-600 text-white"
+            : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <item.icon
+            size={20}
+            aria-hidden="true"
+            className={isActive ? "text-white shrink-0" : "text-blue-700 dark:text-blue-400 shrink-0"}
+          />
+          <span>{item.name}</span>
+        </>
+      )}
+    </NavLink>
+  </li>
+));
+NavItem.displayName = "NavItem";
+
+const Sidebar = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
-  const [sidebarNavClicked, setSidebarNavClicked] = useState(false);
+  const [navClicked, setNavClicked] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const location = useLocation();
 
+  useEffect(() => { setIsOpen(false); }, [location.pathname]);
+
   useEffect(() => {
-    if (sidebarNavClicked) {
-      dispatch(fetchCompanyStats());
-      dispatch(fetchRecruiterStats());
-      dispatch(fetchJobStats());
-      dispatch(fetchApplicationStats());
-      dispatch(fetchUserStats());
-      setSidebarNavClicked(false);
-    }
-  }, [location.pathname, user]);
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!navClicked) return;
+    dispatch(fetchCompanyStats());
+    dispatch(fetchRecruiterStats());
+    dispatch(fetchJobStats());
+    dispatch(fetchApplicationStats());
+    dispatch(fetchUserStats());
+    setNavClicked(false);
+  }, [location.pathname, navClicked, dispatch]);
+
+  const handleNavClick = useCallback(() => setNavClicked(true), []);
+  const openSidebar    = useCallback(() => setIsOpen(true),  []);
+  const closeSidebar   = useCallback(() => setIsOpen(false), []);
+
+  const profilePhoto =
+    user?.profile?.profilePhoto && !user.profile.profilePhoto.includes("github.com")
+      ? user.profile.profilePhoto
+      : "/src/assets/noprofile.webp";
 
   return (
     <>
-      {/* ✅ MOBILE TOGGLE BUTTON */}
+      {/* Mobile hamburger */}
       <button
-        className="fixed top-4 left-4 z-40 md:hidden bg-blue-700 dark:bg-blue-600 text-white p-3 rounded-lg shadow-lg hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors"
-        onClick={() => setIsOpen(true)}
+        className="fixed top-0 left-0 z-40 md:hidden h-16 w-14 flex items-center justify-center text-blue-700 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        onClick={openSidebar}
+        aria-label="Open navigation menu"
       >
         <FaBars size={20} />
       </button>
 
-      {/* ✅ BACKDROP */}
+      {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 dark:bg-black/60 z-30 md:hidden transition-opacity"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 md:hidden"
+          onClick={closeSidebar}
+          aria-hidden="true"
         />
       )}
 
-      {/* SIDEBAR */}
-      <div
+      {/* Sidebar */}
+      <aside
+        aria-label="Admin navigation"
         className={`
-          fixed inset-y-0 left-0 z-40 bg-white dark:bg-gray-800 flex flex-col
-          transition-all duration-300 ease-in-out
+          fixed top-16 left-0 bottom-0 z-50
           w-52
+          bg-white dark:bg-gray-800
+          border-r border-gray-200 dark:border-gray-700
+          flex flex-col justify-between
+          transition-transform duration-300 ease-in-out
+          will-change-transform
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
-          md:w-52
-          border-r border-gray-200 dark:border-gray-700
         `}
       >
-        {/* HEADER */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-300 dark:border-gray-700">
-          <div className="text-2xl font-bold hidden md:flex">
-            <span className="text-gray-900 dark:text-gray-100">Great</span>
-            <span className="text-blue-700 dark:text-blue-500">Hire</span>
+        {/* TOP: mobile close row + nav */}
+        <div className="flex flex-col min-h-0 overflow-hidden">
+          {/* Mobile close row */}
+          <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">Menu</span>
+            <button
+              onClick={closeSidebar}
+              className="p-1 rounded text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              aria-label="Close navigation menu"
+            >
+              <FaTimes size={16} />
+            </button>
           </div>
 
-          <button
-            className="md:hidden text-blue-700 dark:text-blue-500 text-2xl hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
-            onClick={() => setIsOpen(false)}
-          >
-            <FaTimes />
-          </button>
+          {/* Nav items */}
+          <nav className="py-3 px-3" aria-label="Main navigation">
+            <ul className="space-y-1">
+              {navItems.map((item) => (
+                <NavItem key={item.path} item={item} onClick={handleNavClick} />
+              ))}
+            </ul>
+          </nav>
         </div>
 
-        {/* NAV */}
-        <nav className="flex-1 p-4 pt-6 overflow-y-auto">
-          <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  onClick={() => {
-                    setSidebarNavClicked(true);
-                    setIsOpen(false);
-                  }}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 py-2 px-4 rounded-lg transition-colors ${
-                      isActive
-                        ? "bg-blue-700 dark:bg-blue-600 text-white"
-                        : "hover:bg-blue-100 dark:hover:bg-gray-700"
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <item.icon
-                        size={24}
-                        className={isActive ? "text-white" : "text-blue-700 dark:text-blue-500"}
-                      />
-                      <span>{item.name}</span>
-                    </>
-                  )}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* PROFILE */}
-        <div className="border-t border-gray-300 dark:border-gray-700 p-4">
+        {/* BOTTOM: profile — always at the very bottom */}
+        <div className="shrink-0 border-t border-gray-200 dark:border-gray-700 p-3">
           <NavLink
             to={user ? "/admin/profile" : "/admin/login"}
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
           >
             {user ? (
               <>
                 <img
-                  src={user.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
-                  alt="profile"
-                  className="h-10 w-10 rounded-full border border-gray-300 dark:border-gray-600 object-cover"
+                  src={profilePhoto}
+                  alt={user.fullname || "Admin"}
+                  className="h-9 w-9 rounded-full border border-gray-300 dark:border-gray-600 object-cover shrink-0"
+                  loading="lazy"
+                  decoding="async"
                 />
-                <div>
-                  <p className="font-bold text-gray-900 dark:text-gray-100">{user.fullname}</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">{user.role}</p>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate leading-tight">
+                    {user.fullname}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 truncate capitalize">
+                    {user.role}
+                  </p>
                 </div>
               </>
             ) : (
               <>
-                <FaUser
-                  className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full text-blue-700 dark:text-blue-400"
-                  size={36}
-                />
-                <span className="text-gray-900 dark:text-gray-100">Login</span>
+                <FaUser size={20} aria-hidden="true" className="text-blue-700 dark:text-blue-400 shrink-0" />
+                <span className="text-sm text-gray-900 dark:text-gray-100">Login</span>
               </>
             )}
           </NavLink>
         </div>
-      </div>
+      </aside>
     </>
   );
-};
+});
 
+Sidebar.displayName = "AdminSidebar";
 export default Sidebar;

@@ -668,7 +668,7 @@ const RecruitersList = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         {/* Stats */}
-        <div className="px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="px-4 sm:px-6 pt-6 pb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((s, idx) => (
             <StatCard key={idx} {...s} />
           ))}

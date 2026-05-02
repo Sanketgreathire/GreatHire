@@ -108,7 +108,7 @@ const MessageList = () => {
   return (
     <>
       <Navbar linkName={"Messages"} />
-      <div className="min-h-screen bg-gray-100 p-4">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 pt-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-thin">Messages</h1>

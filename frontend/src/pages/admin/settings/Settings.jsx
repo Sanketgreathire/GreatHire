@@ -8,7 +8,7 @@ const Settings = () => {
     <>
       <Navbar linkName="Settings" />
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 pt-24 sm:pt-28 lg:pt-52 pb-8 transition-colors">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-6 pt-6 pb-8 transition-colors">
         <div className="w-full max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Add Admin Card */}
