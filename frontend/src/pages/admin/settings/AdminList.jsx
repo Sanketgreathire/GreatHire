@@ -137,7 +137,7 @@ const AdminList = () => {
   return (
     <>
       <Navbar linkName="Admin List" />
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors p-4">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 pt-6 transition-colors">
         <div className="bg-white dark:bg-gray-800 relative transition-colors rounded-lg shadow-lg p-6">
           {/* Back Button */}
           <button

@@ -77,7 +77,7 @@ const AddAdmin = () => {
   return (
     <>
       <Navbar linkName="Add Admin" />
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 relative px-4 sm:px-0 transition-colors">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 pt-6 pb-8 transition-colors">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
