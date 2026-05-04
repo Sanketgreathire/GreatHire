@@ -113,7 +113,8 @@ const ProductDetailPage = () => {
             src={currentProduct.image}
             alt={currentProduct.name}
             className="w-full h-full object-cover"
-            onError={(e) = loading="lazy"> (e.target.src = "/bannerImage2.png")}
+            loading="lazy"
+            onError={(e) => (e.target.src = "/bannerImage2.png")}
           />
         </div>
 

@@ -39,6 +39,16 @@ const BlogPage = () => {
         "In 2025, major international corporations such as Amazon, Google, Microsoft, and GE Aerospace are expanding significantly, creating a wide range of job opportunities across multiple industries. These organizations are actively hiring talent in areas like software development, artificial intelligence, cloud computing, data analytics, aerospace engineering, supply chain management, and digital marketing to support innovation and global growth.Technology companies continue to lead hiring trends, with a strong focus on AI-driven solutions, automation, cybersecurity, and cloud infrastructure. Meanwhile, aerospace and manufacturing giants are investing heavily in research, sustainability, and advanced engineering, opening doors for skilled professionals in both technical and managerial roles.",
       image: "/company_insight_01.webp",
     },
+    {
+      id: 4,
+      title: "Top 10 IT Jobs for",
+      subtitle: " Freshers in India",
+      category: "Career Advice",
+      date: "Dec 15, 2024",
+      description:
+        "India's IT sector is one of the fastest-growing industries in the world, offering a wealth of opportunities for fresh graduates. Whether you have a background in computer science, information technology, or a related field, there are numerous entry-level roles that can kickstart your career in tech.\n\nHere are the top 10 IT jobs for freshers in India that are in high demand in 2025:\n\n1. Software Developer / Software Engineer — One of the most sought-after roles, software developers design, build, and maintain applications. Freshers with strong programming skills in Java, Python, or JavaScript are highly valued. Starting salaries range from ₹3.5 to ₹7 LPA.\n\n2. Web Developer (Frontend / Backend / Full Stack) — Web developers build and maintain websites and web applications. Frontend developers work with HTML, CSS, and JavaScript, while backend developers handle server-side logic. Full stack developers do both. Entry-level packages typically range from ₹3 to ₹6 LPA.\n\n3. Data Analyst — Data analysts collect, process, and analyze data to help organizations make informed decisions. Skills in Excel, SQL, Python, and data visualization tools like Power BI or Tableau are essential. Freshers can expect ₹3.5 to ₹6 LPA.\n\n4. Quality Assurance (QA) / Software Tester — QA engineers ensure software products meet quality standards by identifying bugs and issues before release. Knowledge of manual and automated testing tools like Selenium is a plus. Starting salaries range from ₹2.5 to ₹5 LPA.\n\n5. Network Engineer — Network engineers design, implement, and manage computer networks. Certifications like CCNA (Cisco Certified Network Associate) can give freshers a competitive edge. Entry-level salaries range from ₹2.5 to ₹5 LPA.\n\n6. Cybersecurity Analyst — With the rise in cyber threats, cybersecurity professionals are in high demand. Freshers with knowledge of ethical hacking, network security, and certifications like CEH or CompTIA Security+ can land roles paying ₹3.5 to ₹7 LPA.\n\n7. Cloud Computing Engineer — Cloud engineers work with platforms like AWS, Azure, and Google Cloud to deploy and manage cloud infrastructure. Certifications from AWS or Azure significantly boost employability. Starting packages range from ₹4 to ₹8 LPA.\n\n8. DevOps Engineer — DevOps engineers bridge the gap between development and operations teams, automating deployment pipelines and managing infrastructure. Skills in Docker, Kubernetes, Jenkins, and CI/CD are key. Freshers can earn ₹4 to ₹8 LPA.\n\n9. Machine Learning / AI Engineer — With AI transforming every industry, ML engineers who can build and deploy machine learning models are in high demand. Python, TensorFlow, and data science fundamentals are essential. Entry-level salaries range from ₹4.5 to ₹9 LPA.\n\n10. IT Support / Systems Administrator — IT support professionals help organizations maintain their hardware, software, and network systems. This is a great entry point into the IT industry, with salaries ranging from ₹2 to ₹4.5 LPA.\n\nHow to Land Your First IT Job:\n- Build a strong portfolio with personal or open-source projects\n- Earn relevant certifications (AWS, Google, Microsoft, Cisco)\n- Practice coding on platforms like LeetCode, HackerRank, or CodeChef\n- Network on LinkedIn and attend tech meetups\n- Apply through platforms like GreatHire.in for curated IT job listings\n\nThe IT industry in India is booming, and with the right skills and preparation, freshers have an excellent chance of securing a rewarding career in technology.",
+      image: "/networking_bg.webp",
+    },
   ];
 
   const blog = blogs.find((b) => b.id === Number(id));
@@ -71,7 +81,7 @@ const BlogPage = () => {
     return (
       <>
         <Helmet>
-          <title>GreatHire - {currentBlog.title}</title>
+          <title>GreatHire - {currentBlog.title}{currentBlog.subtitle}</title>
           <meta name="description" content={currentBlog.description.slice(0, 160)} />
         </Helmet>
 
@@ -84,7 +94,8 @@ const BlogPage = () => {
               src={currentBlog.image}
               alt={currentBlog.title}
               className="w-full h-full object-cover"
-              onError={(e) = loading="lazy"> (e.target.src = "/bannerImage2.png")}
+              loading="lazy"
+              onError={(e) => (e.target.src = "/bannerImage2.png")}
             />
           </div>
 
@@ -95,11 +106,18 @@ const BlogPage = () => {
           </h1>
 
           {/* Description split into paragraphs */}
-          {currentBlog.description.split(". ").map((para, index) => (
-            <p key={index} className="mt-4 text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
-              {para}.
-            </p>
-          ))}
+          {currentBlog.id === 4
+            ? currentBlog.description.split("\n\n").map((para, index) => (
+                <p key={index} className="mt-4 text-gray-600 dark:text-gray-300 text-lg leading-relaxed whitespace-pre-line">
+                  {para}
+                </p>
+              ))
+            : currentBlog.description.split(". ").map((para, index) => (
+                <p key={index} className="mt-4 text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                  {para}.
+                </p>
+              ))
+          }
 
           {/* Key Highlights / Callout Box */}
           <div className="mt-8 p-6 bg-blue-50 dark:bg-blue-950/40 border-l-4 border-blue-600 dark:border-blue-400 rounded-lg shadow">
@@ -107,10 +125,22 @@ const BlogPage = () => {
               Key Takeaways
             </h2>
             <ul className="list-disc list-inside text-gray-800 dark:text-gray-300">
-              <li>Prepare thoroughly and research the company before interviews.</li>
-              <li>Follow structured response methods like STAR for clarity.</li>
-              <li>Post-interview follow-ups reinforce professionalism and interest.</li>
-              <li>Top companies actively seek talent in AI, cloud, and engineering.</li>
+              {currentBlog.id === 4 ? (
+                <>
+                  <li>India's IT sector offers 10+ high-demand entry-level roles for freshers.</li>
+                  <li>Cloud, AI/ML, and Cybersecurity roles offer the highest starting salaries.</li>
+                  <li>Certifications (AWS, CCNA, CEH) significantly boost employability.</li>
+                  <li>Build a portfolio and practice coding to stand out in the job market.</li>
+                  <li>Use GreatHire.in to find curated IT job listings tailored for freshers.</li>
+                </>
+              ) : (
+                <>
+                  <li>Prepare thoroughly and research the company before interviews.</li>
+                  <li>Follow structured response methods like STAR for clarity.</li>
+                  <li>Post-interview follow-ups reinforce professionalism and interest.</li>
+                  <li>Top companies actively seek talent in AI, cloud, and engineering.</li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -122,12 +152,14 @@ const BlogPage = () => {
             >
               ← Back
             </button>
-            <button
-              onClick={() => navigate(`/CareerAdvice/${currentBlog.id + 1}`)}
-              className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            >
-              Next →
-            </button>
+            {currentBlog.id < blogs.length && (
+              <button
+                onClick={() => navigate(`/CareerAdvice/${currentBlog.id + 1}`)}
+                className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Next →
+              </button>
+            )}
           </div>
         </section>
 
