@@ -325,7 +325,7 @@ const Signup = () => {
                       )}
                     </div>
 
-                    {/* Referral Code (Optional) */}
+                    {/* Referral Code (Optional)
                     <div>
                       <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
                         Referral Code <span className="text-gray-400 dark:text-gray-500 font-normal">(Optional)</span>
@@ -338,7 +338,7 @@ const Signup = () => {
                         placeholder="Enter referral code if you have one"
                         className="block w-full pl-3 pr-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
                       />
-                    </div>
+                    </div> */}
 
                     {/* Submit */}
                     <button
