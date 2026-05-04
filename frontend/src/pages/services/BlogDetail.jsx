@@ -78,7 +78,7 @@ const BlogDetail = () => {
           <div className="absolute inset-0 bg-black opacity-10"></div>
           <div className="relative container mx-auto px-6">
             <button
-              onClick={() => navigate('/blogs')}
+              onClick={() => navigate('/Main_blog_page')}
               className="flex items-center gap-2 text-white/90 hover:text-white mb-8 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

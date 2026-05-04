@@ -212,6 +212,16 @@ function Moin_blog_page() {
       author: "Moin Shaikh",
       date: "December 15, 2024",
     },
+    {
+      id: 4,
+      title: "Top 10 IT Jobs for Freshers in India",
+      description:
+        "The complete roadmap — from choosing the right role to cracking your first offer. No fluff, just real guidance for the class of 2026.",
+      image: "./networking_bg.webp",
+      category: "Network",
+      author: "Moin Shaikh",
+      date: "December 15, 2024",
+    },
   ];
 
   const HiringAdvices = [
@@ -221,9 +231,7 @@ function Moin_blog_page() {
       description:
         "Successful remote hiring needs clear communication, strong collaboration tools, and structured onboarding. GreatHire.in helps you find top remote talent and build strong, engaged teams effortlessly.",
       image: "./Mastering_remote_work.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/mastering-remote-work",
     },
     {
       id: 2,
@@ -231,9 +239,7 @@ function Moin_blog_page() {
       description:
         "AI is revolutionizing recruitment by enabling faster, smarter hiring with resume screening, Job seekers gain personalized job recommendations and quicker interview processes with GreatHire.in.",
       image: "./AI_recruitment.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/ai-recruitment",
     },
     {
       id: 3,
@@ -241,9 +247,7 @@ function Moin_blog_page() {
       description:
         "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
       image: "./Industry_work.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/mastering-remote-work",
     },
   ];
 
@@ -254,9 +258,7 @@ function Moin_blog_page() {
       description:
         "The workplace is shifting with AI-driven hiring, remote work, and flexible roles, making upskilling essential. GreatHire.in keeps you updated on trends and connects you with top career opportunities.",
       image: "./future_of_work.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/future-of-work",
     },
     {
       id: 2,
@@ -264,9 +266,7 @@ function Moin_blog_page() {
       description:
         "With automation and AI reshaping industries, in-demand skills include cloud computing, cybersecurity, data analytics, and digital marketing. Soft skills like adaptability, problem-solving, and collaboration are also becoming essential.",
       image: "./trendingz-topic_02.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/upskilling-career-growth",
     },
     {
       id: 3,
@@ -274,9 +274,7 @@ function Moin_blog_page() {
       description:
         "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
       image: "./trendingz_topic_03.webp",
-      link: "",
-      overlayText: "",
-      overlaySubtext: "",
+      link: "/blog/mastering-remote-work",
     },
   ];
 
@@ -2067,7 +2065,7 @@ color: rgb(160, 67, 246);
       </section>
 
 
-      {/* ================= CAREER ADVICE SECTION ================= */}
+      {/* ================= Our Blog SECTION ================= */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
@@ -2248,7 +2246,8 @@ color: rgb(160, 67, 246);
           </div>
         </div>
       </section>
-      {/* ================= INSIGHTS SLIDER SECTION ================= */}
+
+      {/* ================= CAREER ADVISE SECTION ================= */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
@@ -2393,12 +2392,12 @@ color: rgb(160, 67, 246);
                   </p>
 
                   {/* Read More Link */}
-                  <a
-                    href={article.link}
-                    className="article-read-more-link text-cyan-400 text-sm font-normal hover:text-cyan-300 transition-colors"
+                  <Link
+                    to={article.link}
+                    className="article-read-more-link text-cyan-400 text-sm font-semibold hover:text-cyan-300 transition-colors"
                   >
-                    {article.link}
-                  </a>
+                    Read More →
+                  </Link>
                 </div>
               </div>
             ))}
@@ -2459,12 +2458,12 @@ color: rgb(160, 67, 246);
                   </p>
 
                   {/* Read More Link */}
-                  <a
-                    href={article.link}
-                    className="article-read-more-link text-cyan-400 text-sm font-normal hover:text-cyan-300 transition-colors"
+                  <Link
+                    to={article.link}
+                    className="article-read-more-link text-cyan-400 text-sm font-semibold hover:text-cyan-300 transition-colors"
                   >
-                    {article.link}
-                  </a>
+                    Read More →
+                  </Link>
                 </div>
               </div>
             ))}

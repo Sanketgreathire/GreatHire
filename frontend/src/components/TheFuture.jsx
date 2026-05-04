@@ -72,7 +72,8 @@ const TheFuture = () => {
             src={currentSlide.image}
             alt={currentSlide.title}
             className="w-full h-full object-cover"
-            onError={(e) = loading="lazy"> (e.target.src = "/bannerImage2.png")}
+            loading="lazy"
+            onError={(e) => (e.target.src = "/bannerImage2.png")}
           />
         </div>
 
