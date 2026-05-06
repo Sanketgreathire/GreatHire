@@ -222,6 +222,46 @@ function Moin_blog_page() {
       author: "Moin Shaikh",
       date: "December 15, 2024",
     },
+    {
+      id: 5,
+      title: "How to Get a Job as a Fresher Without Experience",
+      description:
+        "Breaking into the job market as a fresher can be challenging, but with the right approach and preparation, you can land your dream job. Here are some tips to help you get started.",
+      image: "./fresher_jobs.webp",
+      category: "Career Advice",
+      author: "Moin Shaikh",
+      date: "December 20, 2024",
+    },
+    {
+      id: 6,
+      title: "Best Resume Format for Freshers (With Free Template)",
+      description:
+        "A well-crafted resume is crucial for freshers to make a strong first impression on potential employers. The best resume format for freshers typically includes a clear and concise layout, highlighting key sections such as contact information, objective statement, education, skills, and any relevant internships or projects. Using a clean design with bullet points and appropriate keywords can help your resume stand out in applicant tracking systems (ATS) and increase your chances of landing an interview.",
+      image: "./fresher_jobs.webp",
+      category: "Career Advice",
+      author: "Moin Shaikh",
+      date: "December 20, 2024",
+    },
+    {
+      id: 7,
+      title: "Top Skills Companies Look for in Freshers in 2026",
+      description:
+        "In 2026, companies are seeking freshers with a blend of technical and soft skills. Key technical skills include proficiency in programming languages, data analysis, and digital literacy. Soft skills such as communication, adaptability, problem-solving, and teamwork are equally important. Freshers who demonstrate a willingness to learn and a proactive attitude towards upskilling will have a competitive edge in the job market.",
+      image: "./fresher_jobs.webp",
+      category: "Career Advice",
+      author: "Moin Shaikh",
+      date: "December 20, 2024",
+    },
+     {
+      id: 8,
+      title: "How to Crack Your First HR Interview",
+      description:
+        "Cracking your first HR interview requires preparation and confidence. Research the company, understand the role, and practice common HR questions. Focus on showcasing your skills, experiences, and cultural fit. GreatHire.in provides resources and job opportunities to help you succeed in your career journey.",
+      image: "./fresher_jobs.webp",
+      category: "Career Advice",
+      author: "Moin Shaikh",
+      date: "December 20, 2024",
+    },
   ];
 
   const HiringAdvices = [
@@ -248,6 +288,22 @@ function Moin_blog_page() {
         "Tech hiring emphasizes AI, cloud computing, and cybersecurity skills, while non-tech sectors focus on adaptability, customer experience. Remote work and gig economy roles are growing across both industries.",
       image: "./Industry_work.webp",
       link: "/blog/mastering-remote-work",
+    },
+     {
+      id: 4,
+      title: "How to Find Jobs in Hyderabad Fast (Complete Guide)",
+      description:
+        "Finding jobs in Hyderabad quickly requires a strategic approach. Start by updating your resume and LinkedIn profile, and utilize job portals like GreatHire.in to access the latest opportunities. Networking with local professionals, attending job fairs, and connecting with recruiters can also accelerate your job search in Hyderabad's competitive market.",
+      image: "./Industry_work.webp",
+      link: "/HiringAdvice/4",
+    },
+     {
+      id: 5,
+      title: "Top Job Portals in India Compared",
+      description:
+        "Finding the right job portal in India can significantly impact your job search. GreatHire.in stands out with its user-friendly interface, personalized job recommendations, and real-time updates. Compared to other portals, GreatHire.in offers a more tailored experience, connecting you with opportunities that align with your skills and career goals.",
+      image: "./Industry_work.webp",
+      link: "/HiringAdvice/5",
     },
   ];
 
@@ -276,6 +332,7 @@ function Moin_blog_page() {
       image: "./trendingz_topic_03.webp",
       link: "/blog/mastering-remote-work",
     },
+    
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
