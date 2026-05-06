@@ -56,6 +56,13 @@ const InsightDetail          = lazy(() => import("./pages/InsightDetail"));
 const InsightsDashboard      = lazy(() => import("./pages/InsightsDashboard"));
 const InsightApproval        = lazy(() => import("./pages/InsightApproval"));
 const CareerAdvice           = lazy(() => import("./components/CareerAdvice"));
+const ITJobsBlog             = lazy(() => import("./components/Itjobsblog "));
+const FresherNExp            = lazy(() => import("./components/Fresher_N_Exp"));
+const ResumeFresherGuide     = lazy(() => import("./components/ResumeFresherGuide"));
+const SkillsFreshers         = lazy(() => import("./components/SkillsFreshers"));
+const HRInterviewBlog        = lazy(() => import("./components/HRInterviewblog"));
+const HyderabadJobsBlog      = lazy(() => import("./components/Hyderabadjobsblog"));
+const JobPortalsBlog         = lazy(() => import("./components/Jobportalsblog"));
 const TheFuture              = lazy(() => import("./components/TheFuture"));
 const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
 
@@ -146,6 +153,13 @@ const appRouter = createBrowserRouter([
   { path: "/InsightApproval", element: <InsightApproval /> },
   { path: "/hiring-insights/:id", element: <InsightDetail /> },
   { path: "/CareerAdvice", element: <CareerAdvice /> },
+  { path: "/CareerAdvice/4", element: <ITJobsBlog /> },
+  { path: "/CareerAdvice/5", element: <FresherNExp /> },
+  { path: "/CareerAdvice/6", element: <ResumeFresherGuide /> },
+  { path: "/CareerAdvice/7", element: <SkillsFreshers /> },
+  { path: "/CareerAdvice/8", element: <HRInterviewBlog /> },
+  { path: "/HiringAdvice/4", element: <HyderabadJobsBlog /> },
+  { path: "/HiringAdvice/5", element: <JobPortalsBlog /> },
   { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
   { path: "/TheFuture", element: <TheFuture /> },
   { path: "/TheFuture/:id", element: <TheFuture /> },
