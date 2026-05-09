@@ -11,6 +11,8 @@ import { MessageProvider } from './context/MessageContext';
 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
+import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
+import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
 
 // ── Auth ──
 const Home                   = lazy(() => import("./pages/Home"));
@@ -43,7 +45,7 @@ const MessagingPage          = lazy(() => import("./components/messaging/Messagi
 const About                  = lazy(() => import("./pages/services/About"));
 const Contact                = lazy(() => import("./pages/services/Contact"));
 const OurService             = lazy(() => import("./pages/services/OurService"));
-const MainBlogPage = lazy(() => import("./components/Main_blog_page"));
+const MainBlogPage           = lazy(() => import("./components/Main_blog_page"));
 const BlogsPage              = lazy(() => import("./pages/services/Blogs"));
 const BlogDetail             = lazy(() => import("./pages/services/BlogDetail"));
 const PrivacyPolicy          = lazy(() => import("./pages/policies/PrivacyPolicy"));
@@ -63,6 +65,19 @@ const SkillsFreshers         = lazy(() => import("./components/SkillsFreshers"))
 const HRInterviewBlog        = lazy(() => import("./components/HRInterviewblog"));
 const HyderabadJobsBlog      = lazy(() => import("./components/Hyderabadjobsblog"));
 const JobPortalsBlog         = lazy(() => import("./components/Jobportalsblog"));
+const RemoteJobsBlog         = lazy(() => import("./components/Remotejobspost"));
+const WalkInInterviewsBlog   = lazy(() => import("./components/Walkinhyderabadblog"));
+const Apply50JobsBlog        = lazy(() => import("./components/Apply50jobsblog"));
+const CareerAfterGraduation  = lazy(() => import("./components/Careeroptionaftergraduationblog"));
+const ITvsNonITJobs          = lazy(() => import("./components/ITvsNonITJobs"));
+const HighPayingSkills3Months = lazy(() => import("./components/HighPayingSkills3Months"));
+const HireRightCandidateFaster = lazy(() => import("./components/HireRightCandidateFaster"));
+const HiringMistakeBlog      = lazy(() => import("./components/HiringMistakesBlog"));
+const ResumeMistakeBlog      = lazy(() => import("./components/ResumeMistakesBlog"));
+const ResumATSFriendlyBlog   = lazy(() => import("./components/ResumATSFriendlyBlog"));
+const InterviewQuestionsBlog = lazy(() => import("./components/InterviewQuestionsBlog"));
+const SwitchToITNoCoding      = lazy(() => import("./components/SwitchToITNoCoding"));
+
 const TheFuture              = lazy(() => import("./components/TheFuture"));
 const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
 
@@ -158,8 +173,22 @@ const appRouter = createBrowserRouter([
   { path: "/CareerAdvice/6", element: <ResumeFresherGuide /> },
   { path: "/CareerAdvice/7", element: <SkillsFreshers /> },
   { path: "/CareerAdvice/8", element: <HRInterviewBlog /> },
+  { path: "/TrendingTopics/9", element: <ResumATSFriendlyBlog /> },
+  { path: "/TrendingTopics/10", element: <InterviewQuestionsBlog /> },
+
   { path: "/HiringAdvice/4", element: <HyderabadJobsBlog /> },
   { path: "/HiringAdvice/5", element: <JobPortalsBlog /> },
+  { path: "/HiringAdvice/6", element: <RemoteJobsBlog /> },
+  { path: "/HiringAdvice/7", element: <WalkInHyderabadBlog /> },
+  { path: "/HiringAdvice/8", element: <Apply50JobsBlog /> },
+  { path: "/TrendingTopics/8", element: <ResumeMistakeBlog /> },
+  { path: "/TrendingTopics/4", element: <CareerAfterGraduation /> },
+  { path: "/TrendingTopics/5", element: <ITvsNonITJobs /> },
+  { path: "/TrendingTopics/6", element: <HighPayingSkills3Months /> },
+  { path: "/CarouselItems/1", element: <HireRightCandidateFaster /> },
+  { path: "/CarouselItems/2", element: <HiringMistakeBlog /> },
+  { path: "/CarouselItems/3", element: <CandidateScreeningBlog /> },
+  { path: "/TrendingTopics/7", element: <SwitchToITNoCoding /> },
   { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
   { path: "/TheFuture", element: <TheFuture /> },
   { path: "/TheFuture/:id", element: <TheFuture /> },
