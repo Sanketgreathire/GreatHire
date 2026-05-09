@@ -22,10 +22,9 @@ const CreateCompany = () => {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user && user.isCompanyCreated) {
-      navigate("/recruiter/dashboard/post-job");
-    } else if (!user) navigate("/login");
-  }, []);
+    if (!user) { navigate("/login"); return; }
+    if (user.isCompanyCreated) navigate("/recruiter/dashboard/post-job");
+  }, [user]);
 
   // State for form fields
   const [formData, setFormData] = useState({
