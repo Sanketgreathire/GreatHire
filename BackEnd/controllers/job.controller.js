@@ -255,6 +255,11 @@ export const applyJob = async (req, res) => {
       return res.status(400).json({ success: false, message: "This job is not active" });
     }
 
+    // Check if company is verified
+    if (!job.company?.isActive) {
+      return res.status(403).json({ success: false, message: "This job is no longer available" });
+    }
+
     // User exist check karo
     const user = await User.findById(userId);
     console.log("Applying job user check kro :", user);
@@ -336,49 +341,36 @@ export const applyJob = async (req, res) => {
 /** get all jobs for home page in stream manner like
 this controller does not return all jobs at once. Instead, it uses streaming to send jobs to the client incrementally, which is particularly useful when dealing with large datasets. */
 export const getAllJobs = async (req, res) => {
-  // this one specify returnable content type as JSON with UTF-8 encoding
   res.setHeader("Content-Type", "application/json; charset=utf-8");
-  // preventing the caching of the response 
   res.setHeader("Cache-Control", "no-cache");
 
   try {
-    // Using cursor to stream the data in LIFO order (newest to oldest)
-    const cursor = Job.find()
+    // Only stream jobs whose company is verified (isActive: true)
+    const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+
+    const cursor = Job.find({ company: { $in: verifiedCompanyIds }, "jobDetails.isActive": true })
       .sort({ createdAt: -1 })
-      .populate({
-        path: "application",
-      })
+      .populate({ path: "application" })
       .cursor();
 
-    res.write("["); // Start the JSON array
+    res.write("[");
 
     let isFirst = true;
     cursor.on("data", (doc) => {
-      // add comma to all json object but not be first document
-      if (!isFirst) {
-        res.write(",");
-      } else {
-        isFirst = false;
-      }
- // convert document into plain object
-      res.write(JSON.stringify(doc.toObject())); // Write the job with application status to response stream
+      if (!isFirst) res.write(",");
+      else isFirst = false;
+      res.write(JSON.stringify(doc.toObject()));
     });
 
-//     "end" event: Triggered when all documents are streamed.
-// Finalizes the JSON array and ends the response.
-
     cursor.on("end", () => {
-      res.write("]"); // End the JSON array
+      res.write("]");
       res.end();
     });
 
     cursor.on("error", (error) => {
       console.error("Error streaming jobs:", error);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Internal server error" });
-      } else {
-        res.end("]");
-      }
+      if (!res.headersSent) res.status(500).json({ message: "Internal server error" });
+      else res.end("]");
     });
   } catch (error) {
     console.error("Error fetching jobs:", error);
@@ -390,25 +382,22 @@ export const getAllJobs = async (req, res) => {
 // Get latest 20 jobs for slider/carousel - lightweight function
 export const getLatestJobsForSlider = async (req, res) => {
   try {
-    const latestJobs = await Job.find({ "jobDetails.isActive": true })
+    const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+
+    const latestJobs = await Job.find({
+      "jobDetails.isActive": true,
+      company: { $in: verifiedCompanyIds },
+    })
       .select("jobDetails company created_by createdAt saveJob")
       .populate("company", "name logo")
       .sort({ createdAt: -1 })
       .limit(20)
       .lean();
 
-    return res.status(200).json({
-      success: true,
-      jobs: latestJobs,
-      count: latestJobs.length
-    });
+    return res.status(200).json({ success: true, jobs: latestJobs, count: latestJobs.length });
   } catch (error) {
     console.error("Error fetching latest jobs for slider:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching jobs for slider",
-      error: error.message
-    });
+    return res.status(500).json({ success: false, message: "Error fetching jobs for slider", error: error.message });
   }
 };
 
@@ -479,17 +468,19 @@ export const getJobById = async (req, res) => {
     const jobId = req.params.id;
 
     const job = await Job.findById(jobId)
-      .populate("company") // company details populate
+      .populate("company")
       .populate({
         path: "application",
-        populate: { path: "applicant" }, // applicants ke details
+        populate: { path: "applicant" },
       });
 
     if (!job) {
-      return res.status(404).json({
-        success: false,
-        message: "Job not found.",
-      });
+      return res.status(404).json({ success: false, message: "Job not found." });
+    }
+
+    // Block public access to jobs from unverified companies
+    if (!job.company?.isActive || !job.jobDetails.isActive) {
+      return res.status(404).json({ success: false, message: "Job not found." });
     }
 
     return res.status(200).json({

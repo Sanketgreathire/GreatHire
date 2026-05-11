@@ -96,13 +96,8 @@ const RecruiterHome = () => {
       : "Your first job is under admin review. You cannot post additional jobs until your account is verified.";
   }, [company?.plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth, company?.paidPlanFreeJobsPosted]);
 
-  if (!company) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <p className="text-4xl text-gray-400 dark:text-gray-500">Company not created</p>
-      </div>
-    );
-  }
+  // RequireCompany guard in App.jsx redirects before this renders if !company
+  if (!company) return null;
 
   return (
     <>
