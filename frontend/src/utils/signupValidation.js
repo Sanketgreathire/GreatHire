@@ -20,5 +20,11 @@ export const validateSignupForm = (formData) => {
     errors.password = "Password must be at least 8 characters long.";
   }
 
+  if (!formData.confirmPassword) {
+    errors.confirmPassword = "Please confirm your password.";
+  } else if (formData.password !== formData.confirmPassword) {
+    errors.confirmPassword = "Passwords do not match.";
+  }
+
   return errors;
 };

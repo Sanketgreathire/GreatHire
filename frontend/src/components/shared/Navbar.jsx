@@ -152,7 +152,10 @@ const ExploreDropdownPanel = memo(({ links, location, onLinkClick, onCampusClick
 const Navbar = () => {
   const { jobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
   const isRecruiter = user?.role?.includes("recruiter");
+  // hasCompany: dual source — login-time flag OR live fetched company object
+  const hasCompany = !!(user?.isCompanyCreated || company);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -241,7 +244,8 @@ const Navbar = () => {
   }, [dispatch, navigate, user]);
 
   const primaryNavLinks = [
-    ...(isRecruiter ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }] : []),
+    // Dashboard only visible after company is created
+    ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }] : []),
   ];
 
   const rightNavLinks = user
@@ -249,8 +253,8 @@ const Navbar = () => {
         ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
         ...(user && !isRecruiter ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
-        ...(isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-        ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
+        ...(isRecruiter && hasCompany ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+        ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
       ]
     : [
         { to: "/", label: "Home" },
@@ -271,14 +275,25 @@ const Navbar = () => {
     ...primaryNavLinks,
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
     ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
-    ...(!user || isRecruiter ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-    ...(isRecruiter ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
+    ...(!user || (isRecruiter && hasCompany) ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+    ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/Main_blog_page",      label: "Blogs" },
     { to: "/courses",             label: "Courses" },
     { to: "/about",               label: "About Us" },
     { to: "/contact",             label: "Contact Us" },
   ];
+
+  // Campus Hiring click: redirect recruiter without company to create-company
+  const handleCampusClick = useCallback((closePanel) => {
+    closePanel();
+    if (isRecruiter && !hasCompany) {
+      navigate("/recruiter/dashboard/create-company");
+    } else {
+      navigate("/campus-hiring");
+    }
+    window.scrollTo(0, 0);
+  }, [isRecruiter, hasCompany, navigate]);
 
 
   const policyLinks = [
@@ -386,7 +401,7 @@ const Navbar = () => {
                             links={moreDropdownLinks}
                             location={location}
                             onLinkClick={() => setIsExploreMenuOpen(false)}
-                            onCampusClick={() => closePanelAndNavigate("/campus-hiring")}
+                            onCampusClick={() => handleCampusClick(() => setIsExploreMenuOpen(false))}
                             onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
@@ -424,7 +439,7 @@ const Navbar = () => {
                             links={moreDropdownLinks}
                             location={location}
                             onLinkClick={() => setIsMoreMenuOpen(false)}
-                            onCampusClick={() => closePanelAndNavigate("/campus-hiring")}
+                            onCampusClick={() => handleCampusClick(() => setIsMoreMenuOpen(false))}
                             onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
