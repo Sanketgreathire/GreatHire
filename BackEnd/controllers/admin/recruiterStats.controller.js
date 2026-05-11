@@ -16,6 +16,8 @@ export const getRecrutierStats = async (req, res) => {
     const totalDeactiveRecruiters = await Recruiter.countDocuments({
       isActive: false,
     });
+    const totalReminderSent = await Recruiter.countDocuments({ reminderSent: true });
+    const totalReminderPending = await Recruiter.countDocuments({ reminderSent: { $ne: true } });
 
     return res.status(200).json({
       success: true,
@@ -23,6 +25,8 @@ export const getRecrutierStats = async (req, res) => {
         totalRecruiters,
         totalActiveRecruiters,
         totalDeactiveRecruiters,
+        totalReminderSent,
+        totalReminderPending,
       },
     });
   } catch (err) {
@@ -232,11 +236,13 @@ export const getRecruitersList = async (req, res) => {
               },
               joined: {
                 $dateToString: {
-                  format: "%Y-%m-%d",   // ✅ VALID
+                  format: "%Y-%m-%d",
                   date: "$createdAt",
                 },
               },
               createdAt: 1,
+              reminderSent: 1,
+              reminderSentAt: 1,
             },
           },
           {
@@ -494,6 +500,18 @@ export const sendBulkCompanyProfileReminders = async (req, res) => {
     console.log('Email user:', process.env.EMAIL_USER ? 'Set' : 'Not set');
     console.log('Email pass:', process.env.EMAIL_PASS ? 'Set' : 'Not set');
 
+    // Filter valid emails only and skip already-sent
+    const validRecruiters = recruiters.filter(
+      r => r.emailId?.email && r.emailId.email.includes("@") && !r.reminderSent
+    );
+
+    if (validRecruiters.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No recruiters with valid email addresses found",
+      });
+    }
+
     // Setup nodemailer - Fix the function name
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -512,7 +530,7 @@ export const sendBulkCompanyProfileReminders = async (req, res) => {
     let failedEmails = [];
 
     // Send emails to each recruiter
-    for (const recruiter of recruiters) {
+    for (const recruiter of validRecruiters) {
       try {
         console.log(`📧 Sending email to: ${recruiter.emailId?.email}`);
         
@@ -573,6 +591,10 @@ export const sendBulkCompanyProfileReminders = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
+        await Recruiter.findByIdAndUpdate(recruiter._id, {
+          reminderSent: true,
+          reminderSentAt: new Date(),
+        });
         successCount++;
         console.log(`✅ Bulk reminder email sent to ${recruiter.emailId.email}`);
       } catch (emailError) {

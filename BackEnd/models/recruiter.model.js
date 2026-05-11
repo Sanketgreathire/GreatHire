@@ -95,6 +95,13 @@ const recruiterSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    reminderSent: {
+      type: Boolean,
+      default: false,
+    },
+    reminderSentAt: {
+      type: Date,
+    },
     remainingJobPosts: {
       type: Number,
       default: 0,
