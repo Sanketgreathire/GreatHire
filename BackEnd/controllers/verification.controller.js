@@ -482,7 +482,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
-      company.maxJobPosts = "Unlimited";
+      company.maxJobPosts = "9999999";
       company.hasSubscription = true;
       company.freePlanExpiry = null;
       company.planJobsPostedThisMonth = -carryoverJobs;
