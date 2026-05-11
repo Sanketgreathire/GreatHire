@@ -1,9 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const SLIDES = [
-  { img: "/19276.webp",     stats: { top: "98%", topLabel: "Success Rate", bottom: "50k+", bottomLabel: "Active Jobs" } },
-  { img: "/3320008.webp",  stats: { top: "10K+", topLabel: "Companies",    bottom: "1M+",  bottomLabel: "Candidates"  } },
-  { img: "/971.webp",      stats: { top: "24/7", topLabel: "Support",      bottom: "98%",  bottomLabel: "Placement"   } },
+  {
+    img: "/signup_1.webp",
+    title: "Streamline Recruitment",
+    subtitle: "Use intelligent tools to shortlist candidates and save valuable time.",
+    stats: "AI-Powered Matching",
+  },
+  {
+    img: "/signup_2.webp",
+    title: "Grow Your Team",
+    subtitle: "Connect with skilled professionals and build a strong workforce.",
+    stats: "50,000+ Job Seekers",
+  },
+  {
+    img: "/signup_3.webp",
+    title: "Find Top Talent Fast",
+    subtitle: "Post jobs, manage applications, and hire efficiently with GreatHire Recruiter.",
+    stats: "1,000+ Companies Hiring",
+  },
 ];
 
 const LeftCarousel = () => {
@@ -12,59 +27,63 @@ const LeftCarousel = () => {
     const t = setInterval(() => setActive((p) => (p + 1) % SLIDES.length), 3500);
     return () => clearInterval(t);
   }, []);
-  const s = SLIDES[active];
   return (
-    <div className="hidden md:flex w-[42%] relative overflow-hidden rounded-l-2xl">
-      {/* Carousel images */}
-      {SLIDES.map((slide, i) => (
-        <img
-          key={i}
-          src={slide.img}
-          alt=""
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-            i === active ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+    <div className="hidden md:flex w-1/2 relative bg-white dark:bg-gray-900 p-6">
+      <div className="relative w-full flex items-center justify-center">
+        {/* Pill-shaped image container with fixed height */}
+        <div className="relative w-full rounded-l-2xl rounded-r-[80px] shadow-md" style={{ height: "580px" }}>
+          <div className="absolute inset-0 rounded-l-2xl rounded-r-[80px] overflow-hidden">
+            {SLIDES.map((slide, i) => (
+              <div
+                key={i}
+                className={`absolute inset-0 transition-opacity duration-700 ${i === active ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+              >
+                <img
+                  src={slide.img}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-6">
+                  <div className="text-center max-w-xs">
+                    <h2 className="text-2xl font-bold mb-2">{slide.title}</h2>
+                    <p className="text-sm opacity-90 leading-relaxed mb-2">{slide.subtitle}</p>
+                    <div className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">
+                      {slide.stats}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {/* Slide Dots */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex space-x-2">
+              {SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActive(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${i === active ? "bg-white w-5" : "bg-white/50 w-2"}`}
+                />
+              ))}
+            </div>
+          </div>
 
-      {/* Top-right stat badge */}
-      <div className="absolute top-6 right-6 bg-white rounded-2xl px-4 py-3 shadow-xl z-20">
-        <h2 className="text-2xl font-bold text-[#2563eb]">{s.stats.top}</h2>
-        <p className="text-xs text-gray-500">{s.stats.topLabel}</p>
-      </div>
+          {/* Top-right floating badge */}
+          <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">98%</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Success Rate</div>
+            </div>
+          </div>
 
-      {/* Bottom-left stat badge */}
-      <div className="absolute bottom-6 left-6 bg-white rounded-2xl px-4 py-3 shadow-xl z-20">
-        <h2 className="text-2xl font-bold text-[#22c55e]">{s.stats.bottom}</h2>
-        <p className="text-xs text-gray-500">{s.stats.bottomLabel}</p>
-      </div>
-
-      {/* Text content */}
-      <div className="relative z-10 flex flex-col justify-center items-center text-center px-8 w-full text-white">
-        <h1 className="text-4xl font-bold leading-tight">Find Top Talent Fast</h1>
-        <p className="mt-5 text-sm leading-7 text-white/80 max-w-sm">
-          Post jobs, manage applications and hire efficiently with GreatHire Recruiter Platform.
-        </p>
-        <p className="mt-4 text-xs text-white/70 tracking-wide">10,000+ Companies Hiring</p>
-        <div className="flex gap-8 mt-10">
-          <div><h3 className="text-2xl font-bold">10K+</h3><p className="text-xs text-white/60 mt-1">Companies</p></div>
-          <div><h3 className="text-2xl font-bold">1M+</h3><p className="text-xs text-white/60 mt-1">Candidates</p></div>
-          <div><h3 className="text-2xl font-bold">24/7</h3><p className="text-xs text-white/60 mt-1">Support</p></div>
+          {/* Bottom-left floating badge */}
+          <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">50k+</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Active Jobs</div>
+            </div>
+          </div>
         </div>
-        {/* Dots */}
-        <div className="flex gap-2 mt-10">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                i === active ? "bg-white w-5" : "bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
+
       </div>
     </div>
   );
@@ -159,7 +178,7 @@ const RecruiterSignup = () => {
       setErrors((prev) => ({ ...prev, email: "Enter a valid email first" }));
       return;
     }
-    const disposableDomains = ["mailinator.com","guerrillamail.com","tempmail.com","yopmail.com","trashmail.com","maildrop.cc","fakeinbox.com","10minutemail.com","temp-mail.org","tempmail.io","minitts.net","fosil.pro","mailtemp.info","emailondeck.com","mohmal.com","dispostable.com","tempr.email","discard.email","spamgourmet.com","throwam.com"];
+    const disposableDomains = ["mailinator.com", "guerrillamail.com", "tempmail.com", "yopmail.com", "trashmail.com", "maildrop.cc", "fakeinbox.com", "10minutemail.com", "temp-mail.org", "tempmail.io", "minitts.net", "fosil.pro", "mailtemp.info", "emailondeck.com", "mohmal.com", "dispostable.com", "tempr.email", "discard.email", "spamgourmet.com", "throwam.com"];
     const domain = accountData.email.split("@")[1]?.toLowerCase();
     if (disposableDomains.includes(domain)) {
       setErrors((prev) => ({ ...prev, email: "Disposable email addresses are not allowed. Please use a real work email." }));
@@ -302,269 +321,268 @@ const RecruiterSignup = () => {
         <div className="min-h-screen bg-[#f5f7fb] dark:bg-gray-950 flex flex-col items-center justify-center px-4 pt-24 pb-10">
 
           {/* Main Card */}
-          <div className="w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden flex">
+          <div className="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden flex">
 
             {/* Left Side — image carousel background */}
             <LeftCarousel />
 
             {/* Right Side — existing signup form */}
-            <div className="w-full md:w-[58%] bg-white dark:bg-gray-900">
+            <div className="w-full md:w-1/2 bg-white dark:bg-gray-900">
 
-            {/* Step indicator */}
-            <div className="flex">
-              {["Account Details", "Company Details"].map((label, i) => (
-                <div
-                  key={i}
-                  className={`flex-1 py-4 text-center text-sm font-semibold transition-colors ${
-                    step > i + 1
-                      ? "bg-green-500 text-white"
-                      : step === i + 1
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
-                  }`}
-                >
-                  {step > i + 1 ? `✓ ${label}` : `${i + 1}. ${label}`}
-                </div>
-              ))}
-            </div>
-
-            <div className="p-4 sm:p-6">
-              <div className="text-center mb-3">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                  Great<span className="text-blue-600 dark:text-blue-400">Hire</span>
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {step === 1 ? "Create your recruiter account" : "Set up your company profile"}
-                </p>
-                {step === 1 && (
-                  <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
-                    Already have an account?{" "}
-                    <span onClick={() => navigate("/recruiter-login")} className="cursor-pointer underline font-semibold hover:text-blue-800 dark:hover:text-blue-300">
-                      Log In
-                    </span>
-                  </p>
-                )}
+              {/* Step indicator */}
+              <div className="flex">
+                {["Account Details", "Company Details"].map((label, i) => (
+                  <div
+                    key={i}
+                    className={`flex-1 py-4 text-center text-sm font-semibold transition-colors ${step > i + 1
+                        ? "bg-green-500 text-white"
+                        : step === i + 1
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
+                      }`}
+                  >
+                    {step > i + 1 ? `✓ ${label}` : `${i + 1}. ${label}`}
+                  </div>
+                ))}
               </div>
 
-              {/* ── STEP 1: Account ── */}
-              {step === 1 && (
-                <form className="space-y-5" onSubmit={handleAccountNext}>
-                  <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Full Name</label>
-                    <input
-                      type="text" name="fullname" value={accountData.fullname} onChange={handleAccountChange}
-                      placeholder="Enter your full name" required
-                      className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                    {errors.fullname && <p className="text-red-500 text-sm mt-1">{errors.fullname}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
-                      Work Email {emailVerified && <span className="ml-2 text-green-500 text-xs font-semibold">✔ Verified</span>}
-                    </label>
-                    <div className="flex items-center">
-                      <input
-                        type="email" name="email" value={accountData.email} onChange={handleAccountChange}
-                        placeholder="Enter your work email" required disabled={emailVerified}
-                        className="block flex-1 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-60"
-                      />
-                      {!emailVerified && (
-                        <button
-                          type="button" onClick={handleSendEmailOtp}
-                          disabled={sendingEmailOtp || emailCooldown > 0}
-                          className="ml-2 px-3 py-2.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors whitespace-nowrap"
-                        >
-                          {sendingEmailOtp ? "Sending..." : emailCooldown > 0 ? `Resend (${emailCooldown}s)` : emailOtpSent ? "Resend OTP" : "Send OTP"}
-                        </button>
-                      )}
-                    </div>
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                    {emailOtpSent && !emailVerified && (
-                      <>
-                        <p className="text-blue-600 dark:text-blue-400 text-xs mt-1">OTP sent to your email</p>
-                        <OtpInput value={emailOtp} onChange={setEmailOtp} onVerify={handleVerifyEmailOtp} verifying={verifyingEmail} inputRef={emailOtpRef} />
-                      </>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Company Contact Number</label>
-                    <input
-                      type="text" name="phoneNumber" value={accountData.phoneNumber} onChange={handleAccountChange}
-                      placeholder="10-digit phone number" required
-                      className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                    {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"} name="password" value={accountData.password} onChange={handleAccountChange}
-                        placeholder="Min 8 characters" required
-                        className="block w-full pl-3 pr-16 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-                      />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs hover:text-gray-700 dark:hover:text-gray-200">
-                        {showPassword ? "Hide" : "Show"}
-                      </button>
-                    </div>
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Confirm Password</label>
-                    <div className="relative">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={accountData.confirmPassword} onChange={handleAccountChange}
-                        placeholder="Re-enter your password" required
-                        className="block w-full pl-3 pr-16 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-                      />
-                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs hover:text-gray-700 dark:hover:text-gray-200">
-                        {showConfirmPassword ? "Hide" : "Show"}
-                      </button>
-                    </div>
-                    {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-                    {!errors.confirmPassword && accountData.confirmPassword && accountData.password === accountData.confirmPassword && (
-                      <p className="text-green-500 text-xs mt-1">✔ Passwords match</p>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit" disabled={loading || !emailVerified}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 hover:shadow-lg"
-                  >
-                    {loading ? "Creating Account..." : "Continue to Company Details →"}
-                  </button>
-                  {!emailVerified && (
-                    <p className="text-center text-xs text-gray-500 dark:text-gray-400">Verify your email to continue</p>
+              <div className="p-4 sm:p-6">
+                <div className="text-center mb-3">
+                  <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                    Great<span className="text-blue-600 dark:text-blue-400">Hire</span>
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {step === 1 ? "Create your recruiter account" : "Set up your company profile"}
+                  </p>
+                  {step === 1 && (
+                    <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
+                      Already have an account?{" "}
+                      <span onClick={() => navigate("/recruiter-login")} className="cursor-pointer underline font-semibold hover:text-blue-800 dark:hover:text-blue-300">
+                        Log In
+                      </span>
+                    </p>
                   )}
-                </form>
-              )}
+                </div>
 
-              {/* ── STEP 2: Company ── */}
-              {step === 2 && (
-                <form className="space-y-3" onSubmit={handleCompanySubmit}>
-                  {/* Company Information */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Company Information</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Company Name *</label>
-                        <input type="text" name="companyName" value={companyData.companyName} onChange={handleCompanyChange} required
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Company Website *</label>
-                        <input type="url" name="companyWebsite" value={companyData.companyWebsite} onChange={handleCompanyChange} required
-                          placeholder="https://example.com"
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Industry *</label>
-                        <input type="text" name="industry" value={companyData.industry} onChange={handleCompanyChange} required
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Address */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Address</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        { name: "streetAddress", label: "Street Address", required: true },
-                        { name: "city", label: "City", required: true },
-                        { name: "state", label: "State", required: true },
-                        { name: "postalCode", label: "Postal Code", required: true },
-                        { name: "country", label: "Country", required: true },
-                      ].map(({ name, label, required }) => (
-                        <div key={name}>
-                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">{label}{required && " *"}</label>
-                          <input type="text" name={name} value={companyData[name]} onChange={handleCompanyChange} required={required}
-                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Contact */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Contact Information</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Business Email *</label>
-                        <input type="email" name="email" value={companyData.email} onChange={handleCompanyChange} required
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Phone Number *</label>
-                        <input type="text" name="phone" value={companyData.phone} onChange={handleCompanyChange} required
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Verification */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Verification Details</h3>
+                {/* ── STEP 1: Account ── */}
+                {step === 1 && (
+                  <form className="space-y-5" onSubmit={handleAccountNext}>
                     <div>
-                      <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">CIN/EAN <span className="font-bold">(Optional)</span></label>
-                      <input type="text" name="CIN" value={companyData.CIN} onChange={handleCompanyChange}
-                        placeholder="Corporate Identification Number"
-                        className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Full Name</label>
+                      <input
+                        type="text" name="fullname" value={accountData.fullname} onChange={handleAccountChange}
+                        placeholder="Enter your full name" required
+                        className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+                      />
+                      {errors.fullname && <p className="text-red-500 text-sm mt-1">{errors.fullname}</p>}
                     </div>
-                    <div className="mt-2">
-                      <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Upload Business Registration Certificate</label>
-                      <div
-                        {...getRootProps()}
-                        className={`relative border-2 border-dashed border-blue-500 px-4 py-3 rounded-lg flex items-center justify-center cursor-pointer transition-all ${isDragActive ? "bg-blue-100 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-800"} hover:bg-blue-50 dark:hover:bg-blue-900/10`}
-                      >
-                        <input {...getInputProps()} />
-                        {uploadProgress > 0 ? (
-                          <div className="w-12">
-                            <CircularProgressbar value={uploadProgress} text={`${uploadProgress}%`}
-                              styles={buildStyles({ textColor: "#3b82f6", pathColor: "#3b82f6", trailColor: "#d1d5db" })} />
-                          </div>
-                        ) : (
-                          <p className="text-gray-500 dark:text-gray-400 text-xs text-center">
-                            {isDragActive ? "Drop the file here..." : "Drag & drop or click to upload (JPG, PNG, PDF, Word)"}
-                          </p>
+
+                    <div>
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
+                        Work Email {emailVerified && <span className="ml-2 text-green-500 text-xs font-semibold">✔ Verified</span>}
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          type="email" name="email" value={accountData.email} onChange={handleAccountChange}
+                          placeholder="Enter your work email" required disabled={emailVerified}
+                          className="block flex-1 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-60"
+                        />
+                        {!emailVerified && (
+                          <button
+                            type="button" onClick={handleSendEmailOtp}
+                            disabled={sendingEmailOtp || emailCooldown > 0}
+                            className="ml-2 px-3 py-2.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors whitespace-nowrap"
+                          >
+                            {sendingEmailOtp ? "Sending..." : emailCooldown > 0 ? `Resend (${emailCooldown}s)` : emailOtpSent ? "Resend OTP" : "Send OTP"}
+                          </button>
                         )}
                       </div>
-                      {companyData.businessFile && (
-                        <p className="mt-1 text-green-500 text-xs">✓ {companyData.businessFile.name}</p>
+                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                      {emailOtpSent && !emailVerified && (
+                        <>
+                          <p className="text-blue-600 dark:text-blue-400 text-xs mt-1">OTP sent to your email</p>
+                          <OtpInput value={emailOtp} onChange={setEmailOtp} onVerify={handleVerifyEmailOtp} verifying={verifyingEmail} inputRef={emailOtpRef} />
+                        </>
                       )}
                     </div>
-                  </div>
 
-                  {/* Recruiter Details */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Your Details</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Your Position *</label>
-                        <input type="text" name="recruiterPosition" value={companyData.recruiterPosition} onChange={handleCompanyChange} required
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                    <div>
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Company Contact Number</label>
+                      <input
+                        type="text" name="phoneNumber" value={accountData.phoneNumber} onChange={handleAccountChange}
+                        placeholder="10-digit phone number" required
+                        className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+                      />
+                      {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Password</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? "text" : "password"} name="password" value={accountData.password} onChange={handleAccountChange}
+                          placeholder="Min 8 characters" required
+                          className="block w-full pl-3 pr-16 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+                        />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs hover:text-gray-700 dark:hover:text-gray-200">
+                          {showPassword ? "Hide" : "Show"}
+                        </button>
                       </div>
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Your Mobile Number</label>
-                        <input type="text" value={accountData.phoneNumber} readOnly
-                          className="w-full px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed" />
+                      {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Confirm Password</label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={accountData.confirmPassword} onChange={handleAccountChange}
+                          placeholder="Re-enter your password" required
+                          className="block w-full pl-3 pr-16 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+                        />
+                        <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs hover:text-gray-700 dark:hover:text-gray-200">
+                          {showConfirmPassword ? "Hide" : "Show"}
+                        </button>
+                      </div>
+                      {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+                      {!errors.confirmPassword && accountData.confirmPassword && accountData.password === accountData.confirmPassword && (
+                        <p className="text-green-500 text-xs mt-1">✔ Passwords match</p>
+                      )}
+                    </div>
+
+                    <button
+                      type="submit" disabled={loading || !emailVerified}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 hover:shadow-lg"
+                    >
+                      {loading ? "Creating Account..." : "Continue to Company Details →"}
+                    </button>
+                    {!emailVerified && (
+                      <p className="text-center text-xs text-gray-500 dark:text-gray-400">Verify your email to continue</p>
+                    )}
+                  </form>
+                )}
+
+                {/* ── STEP 2: Company ── */}
+                {step === 2 && (
+                  <form className="space-y-3" onSubmit={handleCompanySubmit}>
+                    {/* Company Information */}
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Company Information</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Company Name *</label>
+                          <input type="text" name="companyName" value={companyData.companyName} onChange={handleCompanyChange} required
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Company Website *</label>
+                          <input type="url" name="companyWebsite" value={companyData.companyWebsite} onChange={handleCompanyChange} required
+                            placeholder="https://example.com"
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
+                        <div className="sm:col-span-2">
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Industry *</label>
+                          <input type="text" name="industry" value={companyData.industry} onChange={handleCompanyChange} required
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <button type="submit" disabled={loading}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 hover:shadow-lg">
-                    {loading ? "Creating Company..." : "Create Company & Post Job →"}
-                  </button>
-                </form>
-              )}
-            </div>
+                    {/* Address */}
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Address</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {[
+                          { name: "streetAddress", label: "Street Address", required: true },
+                          { name: "city", label: "City", required: true },
+                          { name: "state", label: "State", required: true },
+                          { name: "postalCode", label: "Postal Code", required: true },
+                          { name: "country", label: "Country", required: true },
+                        ].map(({ name, label, required }) => (
+                          <div key={name}>
+                            <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">{label}{required && " *"}</label>
+                            <input type="text" name={name} value={companyData[name]} onChange={handleCompanyChange} required={required}
+                              className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Contact */}
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Contact Information</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Business Email *</label>
+                          <input type="email" name="email" value={companyData.email} onChange={handleCompanyChange} required
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Phone Number *</label>
+                          <input type="text" name="phone" value={companyData.phone} onChange={handleCompanyChange} required
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Verification */}
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Verification Details</h3>
+                      <div>
+                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">CIN/EAN <span className="font-bold">(Optional)</span></label>
+                        <input type="text" name="CIN" value={companyData.CIN} onChange={handleCompanyChange}
+                          placeholder="Corporate Identification Number"
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                      </div>
+                      <div className="mt-2">
+                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Upload Business Registration Certificate</label>
+                        <div
+                          {...getRootProps()}
+                          className={`relative border-2 border-dashed border-blue-500 px-4 py-3 rounded-lg flex items-center justify-center cursor-pointer transition-all ${isDragActive ? "bg-blue-100 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-800"} hover:bg-blue-50 dark:hover:bg-blue-900/10`}
+                        >
+                          <input {...getInputProps()} />
+                          {uploadProgress > 0 ? (
+                            <div className="w-12">
+                              <CircularProgressbar value={uploadProgress} text={`${uploadProgress}%`}
+                                styles={buildStyles({ textColor: "#3b82f6", pathColor: "#3b82f6", trailColor: "#d1d5db" })} />
+                            </div>
+                          ) : (
+                            <p className="text-gray-500 dark:text-gray-400 text-xs text-center">
+                              {isDragActive ? "Drop the file here..." : "Drag & drop or click to upload (JPG, PNG, PDF, Word)"}
+                            </p>
+                          )}
+                        </div>
+                        {companyData.businessFile && (
+                          <p className="mt-1 text-green-500 text-xs">✓ {companyData.businessFile.name}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Recruiter Details */}
+                    <div>
+                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Your Details</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Your Position *</label>
+                          <input type="text" name="recruiterPosition" value={companyData.recruiterPosition} onChange={handleCompanyChange} required
+                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                        </div>
+                        <div>
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Your Mobile Number</label>
+                          <input type="text" value={accountData.phoneNumber} readOnly
+                            className="w-full px-2 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button type="submit" disabled={loading}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 hover:shadow-lg">
+                      {loading ? "Creating Company..." : "Create Company & Post Job →"}
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>{/* end right side */}
           </div>{/* end main card */}
 
