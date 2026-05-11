@@ -62,7 +62,7 @@ export const postJob = [
       }
 
       // Fix bad data: "Unlimited" string stored in DB should be null
-      if (company.maxJobPosts === "Unlimited" || (typeof company.maxJobPosts === "string" && isNaN(company.maxJobPosts))) {
+      if (company.maxJobPosts === "9999999" || (typeof company.maxJobPosts === "string" && isNaN(company.maxJobPosts))) {
         await Company.findByIdAndUpdate(companyId, { maxJobPosts: null });
         company.maxJobPosts = null;
       }
