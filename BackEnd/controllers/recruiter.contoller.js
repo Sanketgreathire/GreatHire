@@ -22,6 +22,7 @@ import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
 import notificationService from "../utils/notificationService.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
+import { validateRecruiterPhone } from "../utils/recruiterValidatePhone.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -33,6 +34,7 @@ export const register = async (req, res) => {
     }
 
     const { fullname, email, phoneNumber, password } = req.body;
+    console.log("[REGISTER] Received:", { fullname, email, phoneNumber, password: "***" });
     // Fullname validation
     if (!fullname || fullname.length < 3) {
       return res.status(400).json({
@@ -51,13 +53,13 @@ export const register = async (req, res) => {
     }
 
     // Phone number validation
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid phone number. It must be 10 digits and start with 6–9.",
-      });
+    console.log("[REGISTER] Phone validation for:", phoneNumber);
+    const phoneCheck = validateRecruiterPhone(phoneNumber);
+    if (!phoneCheck.valid) {
+      console.log("[REGISTER] Phone validation FAILED:", phoneCheck.message);
+      return res.status(400).json({ success: false, message: phoneCheck.message });
     }
+    console.log("[REGISTER] Phone validation PASSED");
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
@@ -133,9 +135,10 @@ export const register = async (req, res) => {
         user: userWithoutPassword,
       });
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.error("[REGISTER] Error during registration:", error);
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: error.message || "Internal Server Error",
+      success: false,
     });
   }
 };
@@ -487,10 +490,10 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Validate phone number (India: 10-digit starting with 6-9, US: 10-digit)
-    const phoneRegex = /^[6789]\d{9}$|^\d{10}$/;
-    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
-      return res.status(400).json({ message: "Invalid phone number" });
+    // Validate phone number — international format
+    const intlPhoneRegex = /^\+\d{6,15}$/;
+    if (phoneNumber && !intlPhoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid international phone number", success: false });
     }
 
     let user = await Recruiter.findById(userId);

@@ -72,7 +72,7 @@ const comparison = [
     itTitle: "IT Jobs",
     itDesc: "Clear progression: Developer → Senior Dev → Tech Lead → Manager → Director. Specialization paths: AI/ML, Cloud, Security. Global mobility strong. Entrepreneurship easier.",
     nonItTitle: "Non-IT Jobs",
-    itDesc: "Progression: Associate → Officer → Senior Officer → Manager → Director. Slower advancement. Requires higher education (MBA) for top roles. Regional variations.",
+    nonItDesc: "Progression: Associate → Officer → Senior Officer → Manager → Director. Slower advancement. Requires higher education (MBA) for top roles. Regional variations.",
   },
   {
     num: "05",
