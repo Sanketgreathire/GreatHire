@@ -52,9 +52,9 @@ const CompanyPhoneInput = ({ value, onChange }) => {
         }}
         dropdownStyle={{ maxHeight: "300px", width: "320px" }}
       />
-      {isValid === true && (
+      {/* {isValid === true && (
         <p className="mt-1 text-xs text-green-500">✔ Valid phone number</p>
-      )}
+      )} */}
     </div>
   );
 };
