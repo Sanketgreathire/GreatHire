@@ -27,7 +27,7 @@ export const NOTIFICATION_API_END_POINT =
   "http://localhost:8000/api/v1/notifications";
 export const BACKEND_URL = "http://localhost:8000";*/
 
-const BASE_API = import.meta.env.VITE_API_URL + "/api/v1";
+const BASE_API = (import.meta.env.VITE_API_URL || "") + "/api/v1";
 
 export const USER_API_END_POINT = `${BASE_API}/user`;
 export const RECRUITER_API_END_POINT = `${BASE_API}/recruiter`;
@@ -49,6 +49,6 @@ export const NOTIFICATION_API_END_POINT = `${BASE_API}/notifications`;
 
 export const EMAIL_API_END_POINT = `${BASE_API}/email`;
 export const COLLEGE_API_END_POINT = `${BASE_API}/college`;
-export const BACKEND_URL = import.meta.env.VITE_API_URL;
+export const BACKEND_URL = import.meta.env.VITE_API_URL || "";
 export const COURSE_API_END_POINT = `${BASE_API}/courses`;
 export const OTP_API_END_POINT = `${BASE_API}/otp`;

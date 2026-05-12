@@ -100,6 +100,7 @@ import { addCompany } from "@/redux/companySlice";
 import Footer from "@/components/shared/Footer";
 import { RECRUITER_API_END_POINT, COMPANY_API_END_POINT, OTP_API_END_POINT } from "@/utils/ApiEndPoint";
 import { validateSignupForm } from "@/utils/signupValidation";
+import CompanyPhoneInput from "@/components/CompanyPhoneInput";
 
 const RESEND_COOLDOWN = 10;
 
@@ -133,7 +134,7 @@ const RecruiterSignup = () => {
   const [loading, setLoading] = useState(false);
 
   // Step 1 — Account
-  const [accountData, setAccountData] = useState({ fullname: "", email: "", phoneNumber: "", password: "", confirmPassword: "" });
+  const [accountData, setAccountData] = useState({ fullname: "", email: "", phoneNumber: "", password: "", confirmPassword: "", dialCode: "+91" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -239,7 +240,11 @@ const RecruiterSignup = () => {
         toast.error(res.data.message || "Signup failed");
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Network error, please try again");
+      console.error("Signup error:", err);
+      console.error("Response data:", err?.response?.data);
+      console.error("Status:", err?.response?.status);
+      const msg = err?.response?.data?.message || err?.response?.data?.errors?.[0]?.msg || err.message || "Network error, please try again";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -408,10 +413,12 @@ const RecruiterSignup = () => {
 
                     <div>
                       <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Company Contact Number</label>
-                      <input
-                        type="text" name="phoneNumber" value={accountData.phoneNumber} onChange={handleAccountChange}
-                        placeholder="10-digit phone number" required
-                        className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+                      <CompanyPhoneInput
+                        value={accountData.phoneNumber}
+                        onChange={(e164, dialCode, countryIso) => {
+                          setAccountData((prev) => ({ ...prev, phoneNumber: e164, dialCode, countryIso }));
+                          setErrors((prev) => ({ ...prev, phoneNumber: "" }));
+                        }}
                       />
                       {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
                     </div>

@@ -1,5 +1,5 @@
 export const validateSignupForm = (formData) => {
-  let errors = {};
+  const errors = {};
 
   if (!formData.fullname || formData.fullname.length < 3) {
     errors.fullname = "Full name must be at least 3 characters long.";
@@ -10,10 +10,10 @@ export const validateSignupForm = (formData) => {
     errors.email = "Enter a valid email address.";
   }
 
-  const phoneRegex = /^[6-9]\d{9}$/;
-  if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
-    errors.phoneNumber =
-      "Enter a valid phone number (10 digits, starting with 6–9).";
+  // E.164 format: + followed by 6–15 digits (covers all countries)
+  const e164Regex = /^\+\d{6,15}$/;
+  if (!formData.phoneNumber || !e164Regex.test(formData.phoneNumber)) {
+    errors.phoneNumber = "Enter a valid phone number with country code (e.g. +919876543210).";
   }
 
   if (!formData.password || formData.password.length < 8) {

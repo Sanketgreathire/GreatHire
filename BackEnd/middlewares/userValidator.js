@@ -10,10 +10,10 @@ export const validateUser = [
   // Email Validation
   body("email").isEmail().withMessage("Invalid email address").normalizeEmail(),
 
-  // Mobile Number Validation (India: 10 digits, US: 10 digits)
+  // Phone Number Validation — international E.164 format (+919876543210)
   body("phoneNumber")
-    .matches(/^[6789]\d{9}$|^\d{10}$/)
-    .withMessage("Invalid mobile number. It should be 10 digits"),
+    .matches(/^\+\d{6,15}$/)
+    .withMessage("Invalid phone number. Please include country code (e.g. +919876543210)"),
 
   // Password (Minimum length: 8)
   body("password")
