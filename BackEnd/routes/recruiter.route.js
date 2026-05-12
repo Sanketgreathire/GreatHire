@@ -105,11 +105,12 @@ import {
 import { singleUpload } from "../middlewares/multer.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { validateUser } from "../middlewares/userValidator.js";
+import { recruiterSignupLimiter } from "../middlewares/recruiterRateLimiter.js";
 import { login } from "../controllers/user.controller.js";
 
 
 const router = express.Router();
-router.route("/register").post(validateUser, register);
+router.route("/register").post(recruiterSignupLimiter, validateUser, register);
 router.route("/googleLogin").post(googleLogin);
 router
   .route("/profile/update")
