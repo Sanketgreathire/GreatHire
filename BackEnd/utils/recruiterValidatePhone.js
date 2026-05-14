@@ -1,37 +1,25 @@
-import { parsePhoneNumberFromString } from "libphonenumber-js";
+const normalizeInternationalPhone = (value) => {
+  if (value == null) return '';
+  let phone = String(value).trim();
 
-export const validateRecruiterPhone = (phone) => {
-  if (!phone) return { valid: false, message: "Phone number is required." };
+  // Remove common formatting characters.
+  phone = phone.replace(/[\s().-]/g, '');
 
-  // Normalize: accept E.164 (+919876543210) or raw digits (919876543210)
-  const e164 = phone.startsWith("+") ? phone : "+" + phone;
+  // Convert international prefix 00 -> +
+  if (phone.startsWith('00')) phone = `+${phone.slice(2)}`;
 
-  // Quick format check before parsing
-  if (!/^\+\d{6,15}$/.test(e164)) {
-    return { valid: false, message: "Invalid international phone number format." };
-  }
+  // If the number is digits only, treat it as an international number without the + prefix.
+  if (!phone.startsWith('+') && /^\d+$/.test(phone)) phone = `+${phone}`;
 
-  const parsed = parsePhoneNumberFromString(e164);
-
-  if (!parsed || !parsed.isValid()) {
-    return { valid: false, message: "Invalid phone number for the selected country." };
-  }
-
-  const { country, nationalNumber } = parsed;
-
-  // India-specific extra rules
-  if (country === "IN") {
-    if (!/^[6-9]\d{9}$/.test(nationalNumber)) {
-      return { valid: false, message: "Indian mobile numbers must start with 6, 7, 8, or 9." };
-    }
-    if (/^(\d)\1+$/.test(nationalNumber)) {
-      return { valid: false, message: "Phone number cannot be all repeated digits." };
-    }
-    const blocked = ["1234567890", "9876543210", "9999999999", "0000000000"];
-    if (blocked.includes(nationalNumber)) {
-      return { valid: false, message: "Please enter a real phone number." };
-    }
-  }
-
-  return { valid: true, message: null };
+  return phone;
 };
+
+const isValidInternationalPhone = (value) => {
+  const phone = normalizeInternationalPhone(value);
+  return /^\+[1-9]\d{5,14}$/.test(phone);
+};
+
+const validateRecruiterPhone = (value) => isValidInternationalPhone(value);
+
+export { normalizeInternationalPhone, isValidInternationalPhone, validateRecruiterPhone };
+export default validateRecruiterPhone;
