@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react"; // useRef disabled (OTP)
 
 const SLIDES = [
   {
@@ -98,33 +98,13 @@ import "react-circular-progressbar/dist/styles.css";
 import { setUser, setRecruiterIsCompanyCreated } from "@/redux/authSlice";
 import { addCompany } from "@/redux/companySlice";
 import Footer from "@/components/shared/Footer";
-import { RECRUITER_API_END_POINT, COMPANY_API_END_POINT, OTP_API_END_POINT } from "@/utils/ApiEndPoint";
+import { RECRUITER_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint"; // OTP_API_END_POINT disabled
 import { validateSignupForm } from "@/utils/signupValidation";
 import CompanyPhoneInput from "@/components/CompanyPhoneInput";
 
-const RESEND_COOLDOWN = 10;
-
-const OtpInput = ({ value, onChange, onVerify, verifying, inputRef }) => (
-  <div className="flex gap-2 mt-2">
-    <input
-      ref={inputRef}
-      type="text"
-      maxLength={6}
-      value={value}
-      onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
-      placeholder="Enter 6-digit OTP"
-      className="flex-1 pl-3 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-    />
-    <button
-      type="button"
-      onClick={onVerify}
-      disabled={verifying || value.length !== 6}
-      className="px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors whitespace-nowrap"
-    >
-      {verifying ? "Verifying..." : "Verify OTP"}
-    </button>
-  </div>
-);
+// OTP system disabled
+// const RESEND_COOLDOWN = 10;
+// const OtpInput = ...;
 
 const RecruiterSignup = () => {
   const dispatch = useDispatch();
@@ -138,14 +118,15 @@ const RecruiterSignup = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [emailOtpSent, setEmailOtpSent] = useState(false);
-  const [emailOtp, setEmailOtp] = useState("");
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
-  const [verifyingEmail, setVerifyingEmail] = useState(false);
-  const [emailCooldown, setEmailCooldown] = useState(0);
+  // OTP system temporarily disabled
+  // const [emailOtpSent, setEmailOtpSent] = useState(false);
+  // const [emailOtp, setEmailOtp] = useState("");
+  // const [emailVerified, setEmailVerified] = useState(false);
+  // const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
+  // const [verifyingEmail, setVerifyingEmail] = useState(false);
+  // const [emailCooldown, setEmailCooldown] = useState(0);
   const [registeredUser, setRegisteredUser] = useState(null); // user from step 1 API
-  const emailOtpRef = useRef(null);
+  // const emailOtpRef = useRef(null);
 
   // Step 2 — Company
   const [companyData, setCompanyData] = useState({
@@ -156,65 +137,29 @@ const RecruiterSignup = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileUploaded, setFileUploaded] = useState(false);
 
-  useEffect(() => {
-    if (emailCooldown <= 0) return;
-    const t = setTimeout(() => setEmailCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [emailCooldown]);
+  // OTP cooldown effect disabled
+  // useEffect(() => {
+  //   if (emailCooldown <= 0) return;
+  //   const t = setTimeout(() => setEmailCooldown((c) => c - 1), 1000);
+  //   return () => clearTimeout(t);
+  // }, [emailCooldown]);
 
   // ── Step 1 handlers ──
   const handleAccountChange = (e) => {
     const { name, value } = e.target;
     setAccountData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
-    if (name === "email") {
-      setEmailVerified(false);
-      setEmailOtpSent(false);
-      setEmailOtp("");
-    }
+    // OTP reset on email change disabled
+    // if (name === "email") {
+    //   setEmailVerified(false);
+    //   setEmailOtpSent(false);
+    //   setEmailOtp("");
+    // }
   };
 
-  const handleSendEmailOtp = async () => {
-    if (!accountData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(accountData.email)) {
-      setErrors((prev) => ({ ...prev, email: "Enter a valid email first" }));
-      return;
-    }
-    const disposableDomains = ["mailinator.com", "guerrillamail.com", "tempmail.com", "yopmail.com", "trashmail.com", "maildrop.cc", "fakeinbox.com", "10minutemail.com", "temp-mail.org", "tempmail.io", "minitts.net", "fosil.pro", "mailtemp.info", "emailondeck.com", "mohmal.com", "dispostable.com", "tempr.email", "discard.email", "spamgourmet.com", "throwam.com"];
-    const domain = accountData.email.split("@")[1]?.toLowerCase();
-    if (disposableDomains.includes(domain)) {
-      setErrors((prev) => ({ ...prev, email: "Disposable email addresses are not allowed. Please use a real work email." }));
-      return;
-    }
-    setSendingEmailOtp(true);
-    try {
-      const res = await axios.post(`${OTP_API_END_POINT}/send-email`, { email: accountData.email }, { timeout: 20000 });
-      if (res.data.success) {
-        setEmailOtpSent(true);
-        setEmailCooldown(RESEND_COOLDOWN);
-        toast.success("OTP sent to your email");
-        setTimeout(() => emailOtpRef.current?.focus(), 100);
-      }
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setSendingEmailOtp(false);
-    }
-  };
-
-  const handleVerifyEmailOtp = async () => {
-    setVerifyingEmail(true);
-    try {
-      const res = await axios.post(`${OTP_API_END_POINT}/verify-email`, { email: accountData.email, otp: emailOtp });
-      if (res.data.success) {
-        setEmailVerified(true);
-        toast.success("Email verified ✅");
-      }
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Invalid OTP");
-    } finally {
-      setVerifyingEmail(false);
-    }
-  };
+  // OTP handlers disabled
+  // const handleSendEmailOtp = async () => { ... };
+  // const handleVerifyEmailOtp = async () => { ... };
 
   const handleAccountNext = async (e) => {
     e.preventDefault();
@@ -223,10 +168,11 @@ const RecruiterSignup = () => {
       setErrors(validationErrors);
       return;
     }
-    if (!emailVerified) {
-      toast.error("Please verify your email before continuing.");
-      return;
-    }
+    // OTP verification check disabled
+    // if (!emailVerified) {
+    //   toast.error("Please verify your email before continuing.");
+    //   return;
+    // }
     setLoading(true);
     try {
       const res = await axios.post(`${RECRUITER_API_END_POINT}/register`, { ...accountData }, { withCredentials: true });
@@ -384,31 +330,16 @@ const RecruiterSignup = () => {
 
                     <div>
                       <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
-                        Work Email {emailVerified && <span className="ml-2 text-green-500 text-xs font-semibold">✔ Verified</span>}
+                        Work Email
                       </label>
                       <div className="flex items-center">
                         <input
                           type="email" name="email" value={accountData.email} onChange={handleAccountChange}
-                          placeholder="Enter your work email" required disabled={emailVerified}
-                          className="block flex-1 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-60"
+                          placeholder="Enter your work email" required
+                          className="block flex-1 px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
                         />
-                        {!emailVerified && (
-                          <button
-                            type="button" onClick={handleSendEmailOtp}
-                            disabled={sendingEmailOtp || emailCooldown > 0}
-                            className="ml-2 px-3 py-2.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors whitespace-nowrap"
-                          >
-                            {sendingEmailOtp ? "Sending..." : emailCooldown > 0 ? `Resend (${emailCooldown}s)` : emailOtpSent ? "Resend OTP" : "Send OTP"}
-                          </button>
-                        )}
                       </div>
                       {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                      {emailOtpSent && !emailVerified && (
-                        <>
-                          <p className="text-blue-600 dark:text-blue-400 text-xs mt-1">OTP sent to your email</p>
-                          <OtpInput value={emailOtp} onChange={setEmailOtp} onVerify={handleVerifyEmailOtp} verifying={verifyingEmail} inputRef={emailOtpRef} />
-                        </>
-                      )}
                     </div>
 
                     <div>
@@ -459,14 +390,11 @@ const RecruiterSignup = () => {
                     </div>
 
                     <button
-                      type="submit" disabled={loading || !emailVerified}
+                      type="submit" disabled={loading}
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 hover:shadow-lg"
                     >
                       {loading ? "Creating Account..." : "Continue to Company Details →"}
                     </button>
-                    {!emailVerified && (
-                      <p className="text-center text-xs text-gray-500 dark:text-gray-400">Verify your email to continue</p>
-                    )}
                   </form>
                 )}
 
