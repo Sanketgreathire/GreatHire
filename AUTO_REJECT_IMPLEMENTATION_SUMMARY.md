@@ -172,8 +172,8 @@ curl -X POST http://localhost:8000/api/v1/application/auto-reject/trigger \
 ### Environment Variables
 ```env
 # Required (already configured)
-EMAIL_USER=babdegreathire2025@gmail.com
-EMAIL_PASS=igqtjixwvwtyjijr
+EMAIL_USER=babdegreathire2026@gmail.com
+EMAIL_PASS=vptfecyxbhwymrjr
 
 # Auto-reject configuration (new)
 AUTO_REJECT_DAYS=30  # Change this to adjust time period
