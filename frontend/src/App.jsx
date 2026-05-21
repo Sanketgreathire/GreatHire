@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser } from "./redux/authSlice.js";
 import { USER_API_END_POINT } from "./utils/ApiEndPoint";
@@ -105,6 +105,18 @@ const AllApplicantsList      = lazy(() => import("./pages/recruiter/AllApplicant
 const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccount"));
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
+const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
+
+// Plan-based dashboard router
+const PREMIUM_PLANS = ["PREMIUM", "PRO", "ENTERPRISE"];
+function DashboardRouter() {
+  const { company } = useSelector((s) => s.company);
+  const plan = company?.plan || "FREE";
+  if (PREMIUM_PLANS.includes(plan)) {
+    return <PremiumDashboard />;
+  }
+  return <RecruiterHome />;
+}
 
 // ── Admin / DigitalMarketer ──
 const AdminLogin             = lazy(() => import("./components/auth/admin/AdminLogin"));
@@ -224,8 +236,8 @@ const appRouter = createBrowserRouter([
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><Suspense fallback={<PageLoader />}><RecruiterDashboard /></Suspense></ProtectedRecruiterRoute>,
     children: [
-      { index: true, element: <RecruiterHome /> },
-      { path: "home", element: <RecruiterHome /> },
+      { index: true, element: <Suspense fallback={<PageLoader />}><RequireCompany><DashboardRouter /></RequireCompany></Suspense> },
+      { path: "home", element: <Suspense fallback={<PageLoader />}><RequireCompany><DashboardRouter /></RequireCompany></Suspense> },
       { path: "create-company", element: <CreateCompany /> },
       { path: "add-recruiter", element: <AddRecruiter /> },
       { path: "post-job", element: <Suspense fallback={<PageLoader />}><RequireCompany><PostJob /></RequireCompany></Suspense> },

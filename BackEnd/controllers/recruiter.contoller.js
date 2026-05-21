@@ -725,6 +725,114 @@ export const toggleActive = async (req, res) => {
   }
 };
 
+export const getDashboard = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+
+    const company = await Company.findOne({ "userId.user": recruiterId })
+      .select("_id companyName plan creditedForCandidates creditedForJobs freeJobsPosted planJobsPostedThisMonth userId isActive")
+      .lean();
+
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+
+    const companyId = company._id;
+    const recruiterIds = company.userId.map((u) => u.user);
+
+    const [jobs, recruiters] = await Promise.all([
+      Job.find({ company: companyId }).select("_id jobDetails.title jobDetails.isActive createdAt application").lean(),
+      Recruiter.find({ _id: { $in: recruiterIds } }).select("_id").lean(),
+    ]);
+
+    const jobIds = jobs.map((j) => j._id);
+
+    const applications = await Application.find({ job: { $in: jobIds } })
+      .select("_id job applicantName applicantEmail status createdAt")
+      .populate("job", "jobDetails.title")
+      .lean();
+
+    const totalApplicants = applications.length;
+    const shortlisted = applications.filter((a) => a.status === "Shortlisted").length;
+    const interviewed = applications.filter((a) => a.status === "Interview Schedule").length;
+    const hired = applications.filter((a) => a.status === "Shortlisted").length; // map to hired if you have a Hired status
+    const activeJobs = jobs.filter((j) => j.jobDetails?.isActive).length;
+    const successRate = totalApplicants > 0 ? Math.round((shortlisted / totalApplicants) * 100) : 0;
+
+    // Funnel
+    const funnelData = [
+      { name: "Applicants", value: totalApplicants },
+      { name: "Shortlisted", value: shortlisted },
+      { name: "Interviewed", value: interviewed },
+      { name: "Offered", value: 0 },
+      { name: "Hired", value: 0 },
+    ];
+
+    // Applications by role
+    const roleMap = {};
+    applications.forEach((a) => {
+      const title = a.job?.jobDetails?.title || "Unknown";
+      roleMap[title] = (roleMap[title] || 0) + 1;
+    });
+    const roleData = Object.entries(roleMap)
+      .map(([role, count]) => ({ role, applications: count }))
+      .sort((a, b) => b.applications - a.applications)
+      .slice(0, 5);
+
+    // Trend: last 6 days with applications
+    const trendMap = {};
+    applications.forEach((a) => {
+      const day = new Date(a.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      trendMap[day] = (trendMap[day] || 0) + 1;
+    });
+    const trendData = Object.entries(trendMap)
+      .map(([day, count]) => ({ day, applications: count }))
+      .slice(-6);
+
+    // Recent jobs
+    const recentJobs = jobs
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map((j) => ({
+        title: j.jobDetails?.title || "Untitled",
+        date: new Date(j.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+        applications: j.application?.length || 0,
+      }));
+
+    // Recent applicants
+    const recentApplicants = applications
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map((a) => ({
+        name: a.applicantName || "Unknown",
+        role: a.job?.jobDetails?.title || "Unknown",
+        status: a.status,
+      }));
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        recruiters: recruiters.length,
+        postedJobs: jobs.length,
+        activeJobs,
+        applicants: totalApplicants,
+        shortlisted,
+        successRate,
+        credits: company.creditedForJobs || 0,
+      },
+      funnelData,
+      roleData,
+      trendData,
+      recentJobs,
+      applicants: recentApplicants,
+      package: company.plan,
+    });
+  } catch (error) {
+    console.error("[getDashboard] Error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 export const hasCreatedCompany = async (req, res) => {
   // try {
   //   const recruiterId = req.id;
