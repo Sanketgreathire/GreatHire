@@ -1,308 +1,162 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { io } from "socket.io-client";
+import { FaUsers, FaBriefcase, FaClipboardList, FaTrophy } from "react-icons/fa";
+import { BsCoin } from "react-icons/bs";
+import { FiGift } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { RECRUITER_DASHBOARD_API, BACKEND_URL } from "@/utils/ApiEndPoint";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
-const ALLOWED_PACKAGES = ["FREE", "STANDARD", "PREMIUM", "PRO", "ENTERPRISE"];
-
-const EMPTY_STATS = {
-  recruiters: 0, postedJobs: 0, activeJobs: 0,
-  applicants: 0, shortlisted: 0, successRate: 0, credits: 0,
-};
-
-export default function RecruiterHome() {
-  const { user } = useSelector((s) => s.auth);
-  const { company } = useSelector((s) => s.company);
-  const { jobPlan } = useSelector((s) => s.jobPlan);
+const RecruiterHome = () => {
+  const { company } = useSelector((state) => state.company);
+  const { jobPlan } = useSelector((state) => state.jobPlan);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const { recruiters } = useSelector((state) => state.recruiters);
+  const [jobsStatistics, setJobsStatistics] = useState(null);
 
-  const [stats, setStats] = useState(EMPTY_STATS);
-  const [funnelData, setFunnelData] = useState([]);
-  const [roleData, setRoleData] = useState([]);
-  const [trendData, setTrendData] = useState([]);
-  const [recentJobs, setRecentJobs] = useState([]);
-  const [applicants, setApplicants] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchDashboard = useCallback(async () => {
+  const fetchJobsStatistics = useCallback(async () => {
+    if (!company?._id) return;
     try {
-      const { data } = await axios.get(RECRUITER_DASHBOARD_API, { withCredentials: true });
-      if (data.success) {
-        setStats(data.stats);
-        setFunnelData(data.funnelData || []);
-        setRoleData(data.roleData || []);
-        setTrendData(data.trendData || []);
-        setRecentJobs(data.recentJobs || []);
-        setApplicants(data.applicants || []);
-      }
+      const response = await axios.get(
+        `${JOB_API_END_POINT}/job-statistics/${company._id}`,
+        { withCredentials: true }
+      );
+      if (response.data.success) setJobsStatistics(response.data.statistics);
     } catch (err) {
-      console.error("[RecruiterHome] fetchDashboard error:", err);
-    } finally {
-      setLoading(false);
+      console.error("Failed to fetch job statistics:", err);
     }
-  }, []);
+  }, [company?._id]);
 
-  useEffect(() => { fetchDashboard(); }, [fetchDashboard]);
-
-  // Socket.io — refresh on live events
   useEffect(() => {
-    if (!user?._id || !BACKEND_URL) return;
-    const socket = io(BACKEND_URL, { transports: ["websocket", "polling"], withCredentials: true });
-    socket.emit("join", user._id);
-    const refresh = () => fetchDashboard();
-    socket.on("newApplication", refresh);
-    socket.on("applicationStatusChanged", refresh);
-    socket.on("jobPosted", refresh);
-    socket.on("planExpired", refresh);
-    return () => {
-      socket.off("newApplication", refresh);
-      socket.off("applicationStatusChanged", refresh);
-      socket.off("jobPosted", refresh);
-      socket.off("planExpired", refresh);
-      socket.disconnect();
-    };
-  }, [user?._id, fetchDashboard]);
+    fetchJobsStatistics();
+  }, [fetchJobsStatistics]);
 
-  const recruiterPlan = jobPlan?.planName || jobPlan?.title || company?.plan || user?.plan;
-  const maxRole  = useMemo(() => Math.max(...roleData.map((r) => r.applications), 1), [roleData]);
-  const maxTrend = useMemo(() => Math.max(...trendData.map((t) => t.applications), 1), [trendData]);
+  const remainingJobPosts = useMemo(() => {
+    const plan = company?.plan || "FREE";
+    const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
+    const referralBonus = user?.remainingJobPosts ?? 0;
+    if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+      const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
+      return Math.max(0, company.maxJobPosts - used) + referralBonus;
+    }
+    if (plan === "FREE") {
+      return Math.max(0, (limits[plan] ?? 2) - (company?.freeJobsPosted || 0)) + referralBonus;
+    }
+    const paidLimit = limits[plan] ?? 0;
+    if (paidLimit === Infinity) return "∞";
+    const paidUsed = company?.planJobsPostedThisMonth || 0;
+    const carryover = paidUsed < 0 ? Math.abs(paidUsed) : 0;
+    return Math.max(0, paidLimit - Math.max(0, paidUsed)) + carryover + referralBonus;
+  }, [company, user?.remainingJobPosts]);
 
+  const cards = useMemo(() => [
+    { title: "Recruiters", count: recruiters.length, icon: <FaUsers className="text-4xl text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 rounded-lg p-2" />, description: "Recruiters in your company." },
+    { title: "Posted Jobs", count: jobsStatistics?.totalJobs, icon: <FaBriefcase className="text-4xl text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 rounded-lg p-2" />, description: "Jobs that you have posted." },
+    {
+      title: "Remaining Job Posts",
+      count: remainingJobPosts,
+      icon: <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2" />,
+      description: (
+        <span>
+          Number of jobs you can post.
+          {(user?.remainingJobPosts ?? 0) > 0 && (
+            <span className="block text-green-500 text-xs mt-0.5">🎁 Includes referral bonus</span>
+          )}
+        </span>
+      ),
+    },
+    { title: "Active Jobs", count: jobsStatistics?.activeJobs, icon: <FaBriefcase className="text-4xl text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 rounded-lg p-2" />, description: "Currently active and open jobs." },
+    { title: "Expired Jobs", count: jobsStatistics?.inactiveJobs, icon: <FaBriefcase className="text-4xl text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2" />, description: "Jobs that have expired." },
+    { title: "Applicants", count: jobsStatistics?.totalApplicants, icon: <FaUsers className="text-4xl text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 rounded-lg p-2" />, description: "Total applicants for your jobs." },
+    { title: "Shortlisted Candidates", count: jobsStatistics?.selectedCandidates, icon: <FaUsers className="text-4xl text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-900/30 rounded-lg p-2" />, description: "Candidates who have been shortlisted." },
+    {
+      title: "Hiring Success Rate",
+      count: jobsStatistics?.selectedCandidates && jobsStatistics?.totalApplicants
+        ? `${Math.round((jobsStatistics.selectedCandidates / jobsStatistics.totalApplicants) * 100)}%`
+        : "0%",
+      icon: <FaTrophy className="text-4xl text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 rounded-lg p-2" />,
+      description: "Percentage of shortlisted candidates.",
+    },
+    { title: "Invite & Earn", count: <FiGift className="text-3xl text-indigo-500" />, icon: <FiGift className="text-4xl text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-2" />, description: "Refer candidates and earn free job posts.", link: "/recruiter/dashboard/invite-and-earn" },
+    { title: "Credits For Database", count: company?.creditedForCandidates || 0, icon: <BsCoin className="text-4xl text-yellow-500 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg p-2" />, description: "Credits available for candidate database." },
+  ], [recruiters.length, jobsStatistics, remainingJobPosts, user?.remainingJobPosts, company?.creditedForCandidates]);
+
+  const recruiterPlan = jobPlan?.planName || jobPlan?.title || jobPlan?.name || company?.plan || user?.plan;
+
+  const verificationMessage = useMemo(() => {
+    const plan = company?.plan || "FREE";
+    const jobsPosted = plan === "FREE"
+      ? (company?.freeJobsPosted || 0)
+      : ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0));
+    return jobsPosted === 0
+      ? "Post your first job now. It will be reviewed by admin and published upon approval."
+      : "Your first job is under admin review. You cannot post additional jobs until your account is verified.";
+  }, [company?.plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth, company?.paidPlanFreeJobsPosted]);
+
+  // RequireCompany guard in App.jsx redirects before this renders if !company
   if (!company) return null;
-
-  if (!ALLOWED_PACKAGES.includes(company?.plan)) {
-    return (
-      <div className="h-screen flex items-center justify-center text-xl font-bold text-gray-700">
-        Dashboard Access Available Only For Paid Packages
-      </div>
-    );
-  }
 
   return (
     <>
       <Helmet>
-        <title>Recruiter's Dashboard | GreatHire Jobs, Applicants, &amp; Hiring Analytics</title>
-        <meta name="description" content="GreatHire recruiter dashboard with live hiring analytics." />
+        <title>Recruiter's Home | GreatHire's Jobs, Applications, and Hiring Analytics</title>
+        <meta name="description" content="GreatHire's Recruiter Home is a comprehensive hiring management system for today's recruiters, based in Hyderabad State, India." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-purple-100 text-gray-900">
-        <div className="flex-1 p-8">
-
-          {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-4xl font-extrabold text-gray-900">
-                👋 Welcome,{" "}
-                <span className="text-violet-600">{company?.companyName || "Recruiter"}</span>
-              </h1>
-              <p className="text-violet-500 mt-2 text-lg">Here's an overview of your recruitment activity.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <VerifiedRecruiterBadges plan={recruiterPlan} status={jobPlan?.status} expiryDate={jobPlan?.expiryDate} />
-              <div className="bg-white border border-yellow-300 shadow-md px-6 py-3 rounded-2xl text-sm font-semibold text-orange-500">
-                {new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+      <div className="min-h-screen p-8 pt-20 bg-gray-50 dark:bg-gray-900">
+        {/* Verification Banner */}
+        {!company?.isActive && (
+          <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 rounded">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  <span className="font-medium">Verification Pending:</span> {verificationMessage}
+                </p>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Verification Banner */}
-          {!company?.isActive && (
-            <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-              <p className="text-sm text-yellow-700">
-                <span className="font-medium">Verification Pending:</span> Your account is under admin review.
-              </p>
-            </div>
-          )}
-
-          {/* Stat Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-5 mb-8">
-            {[
-              { title: "Recruiters",   value: stats.recruiters,        color: "from-blue-500 to-blue-700" },
-              { title: "Posted Jobs",  value: stats.postedJobs,        color: "from-green-500 to-green-700" },
-              { title: "Active Jobs",  value: stats.activeJobs,        color: "from-purple-500 to-purple-700" },
-              { title: "Applicants",   value: stats.applicants,        color: "from-pink-500 to-pink-700" },
-              { title: "Shortlisted",  value: stats.shortlisted,       color: "from-cyan-500 to-cyan-700" },
-              { title: "Success Rate", value: `${stats.successRate}%`, color: "from-yellow-500 to-orange-500" },
-              { title: "Credits",      value: stats.credits,           color: "from-orange-500 to-yellow-500" },
-            ].map((c) => <StatCard key={c.title} {...c} loading={loading} />)}
+        {/* Header */}
+        <header className="mb-10 flex flex-col gap-6 md:flex-row md:justify-between md:items-start">
+          <div className="flex-1">
+            <h1 className="text-4xl font-extrabold text-gray-800 dark:text-gray-100">
+              👋 Welcome,{" "}
+              <span className="text-blue-600 dark:text-blue-400">{company?.companyName || "Recruiter"}</span>
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">Here's an overview of your recruitment activity.</p>
           </div>
-
-          {/* Middle Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
-            {/* Funnel */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Recruitment Funnel</h2>
-              <div className="space-y-3">
-                {funnelData.length ? funnelData.map((item, i) => (
-                  <div key={i} className="bg-gradient-to-r from-violet-500 to-purple-600 text-white py-3 rounded-lg text-center text-sm font-medium">
-                    {item.name} — {item.value}
-                  </div>
-                )) : <p className="text-gray-400 text-sm">No data yet.</p>}
-              </div>
-            </div>
-
-            {/* Jobs Overview */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg flex flex-col justify-center items-center">
-              <h2 className="text-xl font-semibold mb-5 text-gray-800">Jobs Overview</h2>
-              <div className="w-48 h-48 rounded-full border-[16px] border-green-500 flex items-center justify-center text-center">
-                <div>
-                  <div className="text-5xl font-bold text-gray-900">{stats.postedJobs}</div>
-                  <div className="text-gray-500 mt-1 text-sm">Total Jobs</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invite & Earn */}
-            <div className="bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg">
-              <div>
-                <h2 className="text-2xl font-bold mb-3">Invite &amp; Earn More!</h2>
-                <p className="text-violet-100">Refer friends and earn credits for every successful referral.</p>
-              </div>
-              <button
-                onClick={() => navigate("/recruiter/dashboard/invite-and-earn")}
-                className="mt-8 bg-white text-violet-700 hover:bg-violet-50 transition-all rounded-xl py-3 font-semibold"
-              >
-                Invite Now
-              </button>
-            </div>
+          <div className="flex items-start">
+            <VerifiedRecruiterBadges plan={recruiterPlan} status={jobPlan?.status} expiryDate={jobPlan?.expiryDate} />
           </div>
+        </header>
 
-          {/* Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
-            {/* Applications by Role */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg">
-              <h2 className="text-xl font-semibold mb-5 text-gray-800">Applications by Job Role</h2>
-              <div className="space-y-4">
-                {roleData.length ? roleData.map((r, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between mb-1 text-sm text-gray-700">
-                      <span>{r.role}</span><span>{r.applications}</span>
-                    </div>
-                    <div className="bg-violet-100 rounded-full h-3 overflow-hidden">
-                      <div className="bg-violet-500 h-full transition-all" style={{ width: `${(r.applications / maxRole) * 100}%` }} />
-                    </div>
-                  </div>
-                )) : <p className="text-gray-400 text-sm">No applications yet.</p>}
-              </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {cards.map((card, index) => (
+            <div
+              key={index}
+              onClick={() => card.link && navigate(card.link)}
+              className={`bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 hover:shadow-xl transition-shadow duration-200 transform hover:-translate-y-1 flex flex-col items-center border-t-4 border-blue-500 dark:border-blue-400 ${card.link ? "cursor-pointer" : ""}`}
+            >
+              <div className="mb-3">{card.icon}</div>
+              <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">{card.title}</h2>
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-50">{card.count}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{card.description}</p>
             </div>
-
-            {/* Applications Trend */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg">
-              <h2 className="text-xl font-semibold mb-5 text-gray-800">Applications Trend</h2>
-              <div className="space-y-4">
-                {trendData.length ? trendData.map((t, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between mb-1 text-sm text-gray-700">
-                      <span>{t.day}</span><span>{t.applications}</span>
-                    </div>
-                    <div className="bg-purple-100 rounded-full h-3 overflow-hidden">
-                      <div className="bg-purple-500 h-full transition-all" style={{ width: `${(t.applications / maxTrend) * 100}%` }} />
-                    </div>
-                  </div>
-                )) : <p className="text-gray-400 text-sm">No trend data yet.</p>}
-              </div>
-            </div>
-
-            {/* Top Job Roles */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg">
-              <h2 className="text-xl font-semibold mb-5 text-gray-800">Top Job Roles</h2>
-              <div className="space-y-3">
-                {roleData.length ? roleData.map((r, i) => {
-                  const pct = stats.applicants > 0 ? Math.round((r.applications / stats.applicants) * 100) : 0;
-                  return (
-                    <div key={i} className="flex justify-between bg-violet-50 border border-violet-100 p-3 rounded-xl text-sm text-gray-700">
-                      <span>{r.role}</span><span className="font-semibold text-violet-600">{pct}%</span>
-                    </div>
-                  );
-                }) : <p className="text-gray-400 text-sm">No data yet.</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-            {/* Recent Jobs */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Job Posts</h2>
-              <div className="space-y-3">
-                {recentJobs.length ? recentJobs.map((job, i) => (
-                  <div key={i} className="bg-violet-50 border border-violet-100 rounded-xl p-4">
-                    <div className="font-semibold text-sm text-gray-800">{job.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">{job.date}</div>
-                    <div className="text-green-600 text-xs mt-1 font-medium">{job.applications} Applications</div>
-                  </div>
-                )) : <p className="text-gray-400 text-sm">No jobs posted yet.</p>}
-              </div>
-            </div>
-
-            {/* Recent Applicants */}
-            <div className="bg-gradient-to-br from-white to-violet-50 rounded-2xl p-6 border border-violet-200 shadow-lg lg:col-span-2">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Applicants</h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-violet-200 text-gray-500">
-                      <th className="pb-3">Name</th>
-                      <th className="pb-3">Role</th>
-                      <th className="pb-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {applicants.length ? applicants.map((a, i) => (
-                      <tr key={i} className="border-b border-violet-100">
-                        <td className="py-3 text-gray-800">{a.name}</td>
-                        <td className="text-gray-600">{a.role}</td>
-                        <td>
-                          <span className="bg-violet-100 text-violet-700 px-3 py-1 rounded-full text-xs font-medium">
-                            {a.status}
-                          </span>
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr><td colSpan={3} className="py-4 text-gray-400">No applicants yet.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Upgrade CTA */}
-            <div className="bg-gradient-to-br from-violet-500 via-pink-500 to-fuchsia-500 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg">
-              <div>
-                <h2 className="text-2xl font-bold mb-3">Upgrade To Premium</h2>
-                <ul className="space-y-2 text-violet-100 text-sm">
-                  <li>✔ Unlimited Job Posts</li>
-                  <li>✔ Advanced Analytics</li>
-                  <li>✔ AI Candidate Matching</li>
-                  <li>✔ Priority Support</li>
-                </ul>
-              </div>
-              <button
-                onClick={() => navigate("/recruiter/dashboard/plans")}
-                className="mt-8 bg-white text-violet-700 hover:bg-violet-50 transition-all rounded-xl py-3 font-semibold"
-              >
-                Upgrade Now
-              </button>
-            </div>
-          </div>
-
+          ))}
         </div>
       </div>
     </>
   );
-}
+};
 
-function StatCard({ title, value, color, loading }) {
-  return (
-    <div className="bg-gradient-to-br from-white to-violet-50 border-t-4 border-violet-400 rounded-2xl shadow-lg p-6 text-center flex flex-col justify-center min-h-[130px]">
-      <div className={`w-10 h-10 mx-auto rounded-xl bg-gradient-to-r ${color} opacity-25 mb-3`} />
-      <h3 className="text-violet-700 text-sm font-semibold">{title}</h3>
-      <div className="text-4xl font-bold mt-2 text-gray-900">
-        {loading ? <span className="text-gray-300 animate-pulse">—</span> : value}
-      </div>
-    </div>
-  );
-}
+export default RecruiterHome;

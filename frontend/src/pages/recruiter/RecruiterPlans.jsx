@@ -114,7 +114,7 @@ const subscriptionPlans = [
   {
     id: "pro",
     title: "Pro Plan",
-    price: 1,
+    price: 4999,
     billing: "month",
     jobs: "25 Jobs",
     resumes: "5,000 Candidates",

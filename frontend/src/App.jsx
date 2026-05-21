@@ -108,7 +108,9 @@ const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnaly
 const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
 
 // Plan-based dashboard router
-const PREMIUM_PLANS = ["PREMIUM", "PRO", "ENTERPRISE"];
+// PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
+// FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
+const PREMIUM_PLANS = ["PRO", "ENTERPRISE"];
 function DashboardRouter() {
   const { company } = useSelector((s) => s.company);
   const plan = company?.plan || "FREE";
