@@ -146,14 +146,15 @@ const subscriptionPlans = [
     bestFor: "Best for: High-volume hiring companies",
     features: [
       "200 Job Postings",
-      "30,000 Users (Role-based access)",
+      "30,000 Candidate Database Access",
+      "12 Team Users Included",
       "Dedicated Relationship Manager",
-      "AI JD Creation + AI Matching",
-      "Full Analytics Dashboard",
-      "Custom Hiring Workflows",
-      "30,000 Email Support",
-      "Interview Tracking"
-    ],
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "Custom Hiring Workflows & Automation",
+      "30,000 Email Outreach Credits"
+       ],
     cta: "Buy Now",
     color: "gold",
   },
