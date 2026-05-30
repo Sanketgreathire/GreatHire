@@ -2,19 +2,37 @@ import express from "express";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
 import isAdmin from "../../middlewares/isAdmin.js";
 import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
+import { User } from "../../models/user.model.js";
 
 const router = express.Router();
 router.use(isAuthenticated, isAdmin);
 
-// GET /api/v1/admin/sourcing/stats
+// GET /api/v1/admin/sourcing/stats (OPTIMIZED - COUNT FROM BOTH COLLECTIONS)
 router.get("/stats", async (req, res) => {
   try {
-    const total = await SourcingCandidate.countDocuments();
-    const bySourceRaw = await SourcingCandidate.aggregate([
-      { $group: { _id: "$sourceType", count: { $sum: 1 } } },
+    // Count from BOTH old SourcingCandidate collection AND new User collection
+    const [oldCount, newCount, oldBySource, newBySource] = await Promise.all([
+      SourcingCandidate.countDocuments(),
+      User.countDocuments({ isAISourced: true }),
+      SourcingCandidate.aggregate([
+        { $group: { _id: "$sourceType", count: { $sum: 1 } } },
+      ]),
+      User.aggregate([
+        { $match: { isAISourced: true } },
+        { $group: { _id: "$aiSourceType", count: { $sum: 1 } } },
+      ])
     ]);
+    
+    const total = oldCount + newCount;
+    
+    // Combine source counts from both collections
     const bySource = {};
-    bySourceRaw.forEach(({ _id, count }) => { bySource[_id] = count; });
+    oldBySource.forEach(({ _id, count }) => { 
+      bySource[_id] = (bySource[_id] || 0) + count; 
+    });
+    newBySource.forEach(({ _id, count }) => { 
+      bySource[_id] = (bySource[_id] || 0) + count; 
+    });
 
     return res.json({ success: true, stats: { total, bySource } });
   } catch (err) {

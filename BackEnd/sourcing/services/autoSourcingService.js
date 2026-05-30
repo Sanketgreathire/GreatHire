@@ -1,4 +1,4 @@
-import { SourcingCandidate } from '../../models/sourcing/sourcingCandidate.model.js';
+import { User } from '../../models/user.model.js';
 import { AutoSourcingConfig } from '../../models/sourcing/autoSourcingConfig.model.js';
 import { GitHubScraper } from '../scrapers/githubScraper.js';
 import { LinkedInScraper } from '../scrapers/linkedinScraper.js';
@@ -6,7 +6,6 @@ import { IndeedScraper } from '../scrapers/indeedScraper.js';
 import { NaukriScraper } from '../scrapers/naukriScraper.js';
 import { StackOverflowScraper } from '../scrapers/stackoverflowScraper.js';
 import { DevToScraper } from '../scrapers/devtoScraper.js';
-import { buildDedupHash, findDuplicate } from './deduplicationService.js';
 import { normalizeSkills } from './normalizationService.js';
 import { ContactExtractorService } from './contactExtractorService.js';
 
@@ -170,18 +169,28 @@ class AutoSourcingService {
         // Enrich profile with contact extractor
         const enrichedProfile = ContactExtractorService.enrichProfile(profile);
 
-        // Check for duplicates
-        const { isDuplicate, existing } = await findDuplicate({
-          emails: enrichedProfile.emails,
-          phones: enrichedProfile.phones,
-          githubUrl: enrichedProfile.githubUrl,
-          linkedinUrl: enrichedProfile.linkedinUrl,
-        }, recruiterId);
+        // Check for duplicates globally (across all recruiters)
+        const duplicateQuery = {
+          $or: []
+        };
+        
+        if (enrichedProfile.emails?.length > 0) {
+          duplicateQuery.$or.push({ 'emailId.email': { $in: enrichedProfile.emails } });
+        }
+        if (enrichedProfile.githubUrl) {
+          duplicateQuery.$or.push({ githubUrl: enrichedProfile.githubUrl });
+        }
+        if (enrichedProfile.linkedinUrl) {
+          duplicateQuery.$or.push({ linkedinUrl: enrichedProfile.linkedinUrl });
+        }
 
-        if (isDuplicate) {
-          console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName} (already exists as ${existing?.fullName})`);
-          skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
-          continue;
+        if (duplicateQuery.$or.length > 0) {
+          const existing = await User.findOne(duplicateQuery);
+          if (existing) {
+            console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName} (already exists as ${existing.fullname})`);
+            skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
+            continue;
+          }
         }
 
         // Check if profile has minimum required data
@@ -191,40 +200,55 @@ class AutoSourcingService {
           continue;
         }
 
+        if (!enrichedProfile.emails || enrichedProfile.emails.length === 0) {
+          console.log(`   ⚠️ Skipping ${enrichedProfile.fullName}: No email`);
+          skipped.push({ profile: enrichedProfile.fullName, reason: 'no email' });
+          continue;
+        }
+
         // Normalize skills
         const normalizedSkills = normalizeSkills(enrichedProfile.skills);
 
-        // Create candidate
-        const candidate = await SourcingCandidate.create({
-          fullName: enrichedProfile.fullName,
-          emails: enrichedProfile.emails,
-          phones: enrichedProfile.phones,
+        // Map source type to aiSourceType enum
+        let aiSourceType = 'API_IMPORT';
+        if (sourceType === 'GITHUB_PROFILE') aiSourceType = 'GITHUB';
+        else if (sourceType === 'LINKEDIN_PROFILE') aiSourceType = 'LINKEDIN';
+
+        // Create candidate in User collection with AI sourcing flags
+        const candidate = await User.create({
+          fullname: enrichedProfile.fullName,
+          emailId: {
+            email: enrichedProfile.emails[0],
+            isVerified: false,
+          },
+          phoneNumber: enrichedProfile.phones?.length > 0 ? {
+            number: enrichedProfile.phones[0],
+            isVerified: false,
+          } : undefined,
+          role: 'student',
+          address: {
+            city: enrichedProfile.location || '',
+          },
+          profile: {
+            skills: normalizedSkills,
+            bio: enrichedProfile.summary || '',
+            hasExperience: (enrichedProfile.totalExperience || 0) > 0,
+            experiences: enrichedProfile.company ? [{
+              companyName: enrichedProfile.company,
+              jobProfile: enrichedProfile.designation || '',
+              currentlyWorking: true,
+            }] : [],
+          },
+          // AI Sourcing fields
+          isAISourced: true,
+          aiSourceType,
+          aiSourcedAt: new Date(),
+          aiSourcedBy: recruiterId,
           githubUrl: enrichedProfile.githubUrl || '',
           linkedinUrl: enrichedProfile.linkedinUrl || '',
-          portfolioUrl: enrichedProfile.portfolioUrl || '',
-          location: enrichedProfile.location,
-          currentCompany: enrichedProfile.company,
-          designation: enrichedProfile.designation,
-          totalExperience: enrichedProfile.totalExperience || 0,
-          skills: enrichedProfile.skills,
-          normalizedSkills,
-          summary: enrichedProfile.summary,
-          education: enrichedProfile.education || [],
-          sourceType,
-          sourceUrl: enrichedProfile.linkedinUrl || enrichedProfile.githubUrl || '',
-          createdBy: recruiterId,
-          createdByModel: 'Recruiter',
-          ingestionStatus: 'COMPLETED',
-          embeddingStatus: 'PENDING',
-          dedupHash: buildDedupHash({
-            emails: enrichedProfile.emails,
-            phones: enrichedProfile.phones,
-            githubUrl: enrichedProfile.githubUrl,
-            linkedinUrl: enrichedProfile.linkedinUrl,
-          }),
         });
 
-        console.log(`   ✅ Imported: ${enrichedProfile.fullName} (${enrichedProfile.skills?.length || 0} skills, ${enrichedProfile.phones?.length || 0} phones)`);
+        console.log(`   ✅ Imported: ${enrichedProfile.fullName} (${normalizedSkills?.length || 0} skills)`);
         imported.push(candidate);
       } catch (err) {
         console.error(`   ❌ Failed to import ${profile.fullName}:`, err.message);

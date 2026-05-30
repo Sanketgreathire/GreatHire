@@ -99,6 +99,14 @@ const Dashboard = () => {
       bg: "bg-orange-200/40 dark:bg-orange-900/30",
     },
     {
+      title: "Candidate Database",
+      count: userStats?.totalUsers || 0,
+      change: "profiles",
+      icon: <FaRegUser size={26} />,
+      color: "text-cyan-600 dark:text-cyan-400",
+      bg: "bg-cyan-200/40 dark:bg-cyan-900/30",
+    },
+    {
       title: "Total Jobs",
       count: jobStats?.totalJobs || 0,
       change: "+5.2%",

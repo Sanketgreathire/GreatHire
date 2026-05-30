@@ -195,6 +195,18 @@ userSchema.add({
 });
 
 /* ============================
+   ✅ AI SOURCING FIELDS – DO NOT REMOVE
+   ============================ */
+userSchema.add({
+  isAISourced:  { type: Boolean, default: false },
+  aiSourceType: { type: String, enum: ["GITHUB", "LINKEDIN", "NAUKRI", "INDEED", "MONSTER", "API_IMPORT", "CSV_IMPORT", "MANUAL", null], default: null },
+  aiSourcedAt:  { type: Date, default: null },
+  aiSourcedBy:  { type: mongoose.Schema.Types.ObjectId, ref: "Recruiter", default: null },
+  githubUrl:    { type: String, default: "" },
+  linkedinUrl:  { type: String, default: "" },
+});
+
+/* ============================
    ✅ ADDED – DO NOT REMOVE
    ============================ */
 
@@ -210,6 +222,8 @@ userSchema.index({ "address.city": 1 });
 userSchema.index({ "address.state": 1 });
 userSchema.index({ updatedAt: -1 });
 userSchema.index({ isProfileBoosted: -1, updatedAt: -1 });
+userSchema.index({ isAISourced: 1 }); // For filtering AI-sourced candidates
+userSchema.index({ aiSourceType: 1 }); // For grouping by source type
 
 // ✅ Virtual field so `user.email` works safely
 userSchema.virtual("email").get(function () {

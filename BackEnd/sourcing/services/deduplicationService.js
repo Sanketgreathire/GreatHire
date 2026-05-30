@@ -35,7 +35,7 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.emails?.length) {
     const cleanEmails = candidate.emails.map(e => e.toLowerCase().trim()).filter(Boolean);
     if (cleanEmails.length > 0) {
-      orConditions.push({ emails: { $in: cleanEmails }, createdBy: recruiterId });
+      orConditions.push({ emails: { $in: cleanEmails } });
     }
   }
 
@@ -43,25 +43,23 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.phones?.length) {
     const cleanPhones = candidate.phones.map(p => p.replace(/\D/g, '')).filter(p => p.length >= 10);
     if (cleanPhones.length > 0) {
-      orConditions.push({ phones: { $in: cleanPhones }, createdBy: recruiterId });
+      orConditions.push({ phones: { $in: cleanPhones } });
     }
   }
 
-  // 3. GitHub URL match (normalized)
+  // 3. GitHub URL match (normalized) - GLOBAL CHECK
   if (candidate.githubUrl) {
     const normalizedGithub = candidate.githubUrl.toLowerCase().replace(/\/$/, '');
     orConditions.push({ 
-      githubUrl: { $regex: new RegExp(normalizedGithub.replace('https://github.com/', ''), 'i') },
-      createdBy: recruiterId 
+      githubUrl: { $regex: new RegExp(normalizedGithub.replace('https://github.com/', ''), 'i') }
     });
   }
 
-  // 4. LinkedIn URL match (normalized)
+  // 4. LinkedIn URL match (normalized) - GLOBAL CHECK
   if (candidate.linkedinUrl) {
     const normalizedLinkedin = candidate.linkedinUrl.toLowerCase().replace(/\/$/, '');
     orConditions.push({ 
-      linkedinUrl: { $regex: new RegExp(normalizedLinkedin.replace('https://www.linkedin.com/in/', ''), 'i') },
-      createdBy: recruiterId 
+      linkedinUrl: { $regex: new RegExp(normalizedLinkedin.replace('https://www.linkedin.com/in/', ''), 'i') }
     });
   }
 
@@ -69,15 +67,15 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.fullName && candidate.fullName.length > 3) {
     const normalizedName = candidate.fullName.toLowerCase().trim().replace(/\s+/g, ' ');
     orConditions.push({ 
-      fullName: { $regex: new RegExp(`^${normalizedName}$`, 'i') },
-      createdBy: recruiterId 
+      fullName: { $regex: new RegExp(`^${normalizedName}$`, 'i') }
     });
   }
 
   if (!orConditions.length) return { isDuplicate: false, existing: null };
 
+  // Check globally first (across all recruiters)
   const existing = await SourcingCandidate.findOne({ $or: orConditions })
-    .select("_id fullName emails githubUrl linkedinUrl sourceType createdAt")
+    .select("_id fullName emails githubUrl linkedinUrl sourceType createdAt createdBy")
     .lean();
 
   return { isDuplicate: !!existing, existing: existing || null };
