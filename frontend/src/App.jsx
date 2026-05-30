@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser } from "./redux/authSlice.js";
 import { USER_API_END_POINT } from "./utils/ApiEndPoint";
@@ -11,6 +11,8 @@ import { MessageProvider } from './context/MessageContext';
 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
+import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
+import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
 
 // ── Auth ──
 const Home                   = lazy(() => import("./pages/Home"));
@@ -43,7 +45,7 @@ const MessagingPage          = lazy(() => import("./components/messaging/Messagi
 const About                  = lazy(() => import("./pages/services/About"));
 const Contact                = lazy(() => import("./pages/services/Contact"));
 const OurService             = lazy(() => import("./pages/services/OurService"));
-const MainBlogPage = lazy(() => import("./components/Main_blog_page"));
+const MainBlogPage           = lazy(() => import("./components/Main_blog_page"));
 const BlogsPage              = lazy(() => import("./pages/services/Blogs"));
 const BlogDetail             = lazy(() => import("./pages/services/BlogDetail"));
 const PrivacyPolicy          = lazy(() => import("./pages/policies/PrivacyPolicy"));
@@ -63,10 +65,24 @@ const SkillsFreshers         = lazy(() => import("./components/SkillsFreshers"))
 const HRInterviewBlog        = lazy(() => import("./components/HRInterviewblog"));
 const HyderabadJobsBlog      = lazy(() => import("./components/Hyderabadjobsblog"));
 const JobPortalsBlog         = lazy(() => import("./components/Jobportalsblog"));
+const RemoteJobsBlog         = lazy(() => import("./components/Remotejobspost"));
+const WalkInInterviewsBlog   = lazy(() => import("./components/Walkinhyderabadblog"));
+const Apply50JobsBlog        = lazy(() => import("./components/Apply50jobsblog"));
+const CareerAfterGraduation  = lazy(() => import("./components/Careeroptionaftergraduationblog"));
+const ITvsNonITJobs          = lazy(() => import("./components/ITvsNonITJobs"));
+const HighPayingSkills3Months = lazy(() => import("./components/HighPayingSkills3Months"));
+const HireRightCandidateFaster = lazy(() => import("./components/HireRightCandidateFaster"));
+const HiringMistakeBlog      = lazy(() => import("./components/HiringMistakesBlog"));
+const ResumeMistakeBlog      = lazy(() => import("./components/ResumeMistakesBlog"));
+const ResumATSFriendlyBlog   = lazy(() => import("./components/ResumATSFriendlyBlog"));
+const InterviewQuestionsBlog = lazy(() => import("./components/InterviewQuestionsBlog"));
+const SwitchToITNoCoding      = lazy(() => import("./components/SwitchToITNoCoding"));
+
 const TheFuture              = lazy(() => import("./components/TheFuture"));
 const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
 
 // ── Recruiter pages ──
+const RequireCompany         = lazy(() => import("./components/recruiter/RequireCompany"));
 const RecruiterDashboard     = lazy(() => import("./pages/recruiter/RecruiterDashboard"));
 const RecruiterHome          = lazy(() => import("./pages/recruiter/RecruiterHome"));
 const PostJob                = lazy(() => import("./pages/recruiter/postJob/PostJob"));
@@ -89,6 +105,20 @@ const AllApplicantsList      = lazy(() => import("./pages/recruiter/AllApplicant
 const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccount"));
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
+const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
+
+// Plan-based dashboard router
+// PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
+// FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
+const PREMIUM_PLANS = ["PRO", "ENTERPRISE"];
+function DashboardRouter() {
+  const { company } = useSelector((s) => s.company);
+  const plan = company?.plan || "FREE";
+  if (PREMIUM_PLANS.includes(plan)) {
+    return <PremiumDashboard />;
+  }
+  return <RecruiterHome />;
+}
 
 // ── Admin / DigitalMarketer ──
 const AdminLogin             = lazy(() => import("./components/auth/admin/AdminLogin"));
@@ -158,8 +188,22 @@ const appRouter = createBrowserRouter([
   { path: "/CareerAdvice/6", element: <ResumeFresherGuide /> },
   { path: "/CareerAdvice/7", element: <SkillsFreshers /> },
   { path: "/CareerAdvice/8", element: <HRInterviewBlog /> },
+  { path: "/TrendingTopics/9", element: <ResumATSFriendlyBlog /> },
+  { path: "/TrendingTopics/10", element: <InterviewQuestionsBlog /> },
+
   { path: "/HiringAdvice/4", element: <HyderabadJobsBlog /> },
   { path: "/HiringAdvice/5", element: <JobPortalsBlog /> },
+  { path: "/HiringAdvice/6", element: <RemoteJobsBlog /> },
+  { path: "/HiringAdvice/7", element: <WalkInHyderabadBlog /> },
+  { path: "/HiringAdvice/8", element: <Apply50JobsBlog /> },
+  { path: "/TrendingTopics/8", element: <ResumeMistakeBlog /> },
+  { path: "/TrendingTopics/4", element: <CareerAfterGraduation /> },
+  { path: "/TrendingTopics/5", element: <ITvsNonITJobs /> },
+  { path: "/TrendingTopics/6", element: <HighPayingSkills3Months /> },
+  { path: "/CarouselItems/1", element: <HireRightCandidateFaster /> },
+  { path: "/CarouselItems/2", element: <HiringMistakeBlog /> },
+  { path: "/CarouselItems/3", element: <CandidateScreeningBlog /> },
+  { path: "/TrendingTopics/7", element: <SwitchToITNoCoding /> },
   { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
   { path: "/TheFuture", element: <TheFuture /> },
   { path: "/TheFuture/:id", element: <TheFuture /> },
@@ -194,28 +238,28 @@ const appRouter = createBrowserRouter([
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><Suspense fallback={<PageLoader />}><RecruiterDashboard /></Suspense></ProtectedRecruiterRoute>,
     children: [
-      { index: true, element: <RecruiterHome /> },
-      { path: "home", element: <RecruiterHome /> },
+      { index: true, element: <Suspense fallback={<PageLoader />}><RequireCompany><DashboardRouter /></RequireCompany></Suspense> },
+      { path: "home", element: <Suspense fallback={<PageLoader />}><RequireCompany><DashboardRouter /></RequireCompany></Suspense> },
       { path: "create-company", element: <CreateCompany /> },
       { path: "add-recruiter", element: <AddRecruiter /> },
-      { path: "post-job", element: <PostJob /> },
-      { path: "jobs", element: <PostedJobList /> },
+      { path: "post-job", element: <Suspense fallback={<PageLoader />}><RequireCompany><PostJob /></RequireCompany></Suspense> },
+      { path: "jobs", element: <Suspense fallback={<PageLoader />}><RequireCompany><PostedJobList /></RequireCompany></Suspense> },
       { path: "company-details", element: <CompanyDetails /> },
-      { path: "applicants-list", element: <AllApplicantsList /> },
-      { path: "candidate-list", element: <CandidateList /> },
-      { path: "candidate-information/:id", element: <CandidateInformation /> },
-      { path: "candidate-database", element: <CandidateDatabase /> },
-      { path: "candidate-plans", element: <CandidatePlans /> },
-      { path: "your-plans", element: <CurrentPlans /> },
-      { path: "upgrade-plans", element: <RecruiterPlans /> },
-      { path: "delete-account", element: <DeleteAccount /> },
-      { path: "invite-and-earn", element: <InviteAndEarn /> },
-      { path: "recruiter-list", element: <RecruiterList /> },
-      { path: "recruiter-details/:recruiterId", element: <RecruitersDetails /> },
-      { path: "job-details/:id", element: <JobDetail /> },
-      { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
-      { path: "resume-analyzer", element: <RecruiterResumeAnalyzer /> },
-      { path: "applications/:jobId/:candidateId", element: <CandidateInformation /> },
+      { path: "applicants-list", element: <Suspense fallback={<PageLoader />}><RequireCompany><AllApplicantsList /></RequireCompany></Suspense> },
+      { path: "candidate-list", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateList /></RequireCompany></Suspense> },
+      { path: "candidate-information/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateInformation /></RequireCompany></Suspense> },
+      { path: "candidate-database", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateDatabase /></RequireCompany></Suspense> },
+      { path: "candidate-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidatePlans /></RequireCompany></Suspense> },
+      { path: "your-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><CurrentPlans /></RequireCompany></Suspense> },
+      { path: "upgrade-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterPlans /></RequireCompany></Suspense> },
+      { path: "delete-account", element: <Suspense fallback={<PageLoader />}><RequireCompany><DeleteAccount /></RequireCompany></Suspense> },
+      { path: "invite-and-earn", element: <Suspense fallback={<PageLoader />}><RequireCompany><InviteAndEarn /></RequireCompany></Suspense> },
+      { path: "recruiter-list", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterList /></RequireCompany></Suspense> },
+      { path: "recruiter-details/:recruiterId", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruitersDetails /></RequireCompany></Suspense> },
+      { path: "job-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><JobDetail /></RequireCompany></Suspense> },
+      { path: "applicants-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><AppliedCandidatesList /></RequireCompany></Suspense> },
+      { path: "resume-analyzer", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterResumeAnalyzer /></RequireCompany></Suspense> },
+      { path: "applications/:jobId/:candidateId", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateInformation /></RequireCompany></Suspense> },
     ],
   },
   { path: "/recruiter/profile", element: <ProtectedRecruiterRoute><RecruiterProfile /></ProtectedRecruiterRoute> },

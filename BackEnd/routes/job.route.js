@@ -69,15 +69,16 @@ import {
   applyJob,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import isRecruiterWithCompany from "../middlewares/isRecruiterWithCompany.js";
 
 const router = express.Router();
 
 // Latest jobs for slider - add this route
 router.get("/slider/latest", getLatestJobsForSlider);  // GET /jobs/slider/latest
 
-router.route("/post-job").post(isAuthenticated, postJob);
+router.route("/post-job").post(isAuthenticated, isRecruiterWithCompany, postJob);
 router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
-router.route("/toggle-active").put(isAuthenticated, toggleActive);
+router.route("/toggle-active").put(isAuthenticated, isRecruiterWithCompany, toggleActive);
 router.route("/get").get(getAllJobs);
 router.route("/jobs").get(getAllJobs);
 router.route("/get/:id").get(getJobById); // 🟢 Now it's public
@@ -86,9 +87,9 @@ router.get("/:id", getJobById);
 
 router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
 router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);
-router.route("/delete/:id").delete(isAuthenticated, deleteJobById);
-router.route("/update/:jobId").put(isAuthenticated, updateJob);
-router.route("/job-statistics/:id").get(isAuthenticated, getJobsStatistics);
+router.route("/delete/:id").delete(isAuthenticated, isRecruiterWithCompany, deleteJobById);
+router.route("/update/:jobId").put(isAuthenticated, isRecruiterWithCompany, updateJob);
+router.route("/job-statistics/:id").get(isAuthenticated, isRecruiterWithCompany, getJobsStatistics);
 router.route("/apply-job/:jobId").post(isAuthenticated, applyJob); //this
 
 

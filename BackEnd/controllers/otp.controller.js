@@ -2,22 +2,39 @@ import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 import { OtpModel } from "../models/otp.model.js";
 
-const OTP_EXPIRY_MINUTES = 5;
-const MAX_REQUESTS_PER_WINDOW = 3;
-const WINDOW_MINUTES = 10;
+const OTP_EXPIRY_MINUTES = 10;
+
+const DISPOSABLE_DOMAINS = new Set([
+  "mailinator.com","guerrillamail.com","tempmail.com","throwam.com",
+  "yopmail.com","sharklasers.com","guerrillamailblock.com","grr.la",
+  "guerrillamail.info","guerrillamail.biz","guerrillamail.de","guerrillamail.net",
+  "guerrillamail.org","spam4.me","trashmail.com","trashmail.me","trashmail.net",
+  "dispostable.com","maildrop.cc","fakeinbox.com","mailnull.com",
+  "spamgourmet.com","spamgourmet.net","spamgourmet.org","tempr.email",
+  "discard.email","mailnesia.com","spamfree24.org","spamfree.eu","spam.la",
+  "spamoff.de","trashdevil.com","trashdevil.de","wegwerfmail.de",
+  "wegwerfmail.net","wegwerfmail.org","10minutemail.com","10minutemail.net",
+  "10minutemail.org","tempinbox.com","tempinbox.co.uk","tempemail.net",
+  "minitts.net","fosil.pro","mailtemp.info","tempmail.io",
+  "temp-mail.org","temp-mail.io","tempmail.plus","emailondeck.com",
+  "getairmail.com","filzmail.com","mohmal.com","throwam.net",
+  "spamevader.com","spamevader.net","spamevader.org","mailnew.com",
+]);
+
+const isDisposableEmail = (email) => {
+  const domain = email.split("@")[1]?.toLowerCase();
+  return domain ? DISPOSABLE_DOMAINS.has(domain) : false;
+};
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 15000,
 });
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-const isRateLimited = (lastRequest, attempts) => {
-  if (!lastRequest) return false;
-  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-  return lastRequest > windowStart && attempts >= MAX_REQUESTS_PER_WINDOW;
-};
 
 // POST /api/v1/otp/send-email
 export const sendEmailOtp = async (req, res) => {
@@ -25,54 +42,52 @@ export const sendEmailOtp = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ success: false, message: "Email is required" });
 
-    let record = await OtpModel.findOne({ email });
-
-    if (record && isRateLimited(record.lastEmailRequest, record.emailAttempts)) {
-      return res.status(429).json({ success: false, message: "Too many OTP requests. Try again after 10 minutes." });
+    if (isDisposableEmail(email)) {
+      return res.status(400).json({ success: false, message: "Temporary/disposable email addresses are not allowed. Please use a real work email." });
     }
 
     const otp = generateOtp();
     const hashedOtp = await bcrypt.hash(otp, 10);
     const expiry = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
-    if (record) {
-      const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000);
-      const newAttempts = record.lastEmailRequest > windowStart ? record.emailAttempts + 1 : 1;
-      record.emailOtp = hashedOtp;
-      record.emailOtpExpiry = expiry;
-      record.emailVerified = false;
-      record.emailAttempts = newAttempts;
-      record.lastEmailRequest = new Date();
-      await record.save();
-    } else {
-      await OtpModel.create({
-        email,
-        emailOtp: hashedOtp,
-        emailOtpExpiry: expiry,
-        emailAttempts: 1,
-        lastEmailRequest: new Date(),
+    // Send email FIRST — only save to DB if delivery succeeds
+    try {
+      await transporter.sendMail({
+        from: `"GreatHire" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your GreatHire Email Verification OTP",
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#f9f9f9;border-radius:10px;">
+            <h2 style="color:#1D4ED8;text-align:center;">Great<span style="color:#333;">Hire</span></h2>
+            <p style="color:#555;">Your email verification OTP is:</p>
+            <div style="text-align:center;margin:24px 0;">
+              <span style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#1D4ED8;">${otp}</span>
+            </div>
+            <p style="color:#888;font-size:13px;">This OTP expires in <strong>${OTP_EXPIRY_MINUTES} minutes</strong>. Do not share it with anyone.</p>
+          </div>`,
       });
+    } catch (mailErr) {
+      console.error("sendMail error:", mailErr.message);
+      return res.status(500).json({ success: false, message: "Could not deliver email. Please check the email address and try again." });
     }
 
-    await transporter.sendMail({
-      from: `"GreatHire" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your GreatHire Email Verification OTP",
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#f9f9f9;border-radius:10px;">
-          <h2 style="color:#1D4ED8;text-align:center;">Great<span style="color:#333;">Hire</span></h2>
-          <p style="color:#555;">Your email verification OTP is:</p>
-          <div style="text-align:center;margin:24px 0;">
-            <span style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#1D4ED8;">${otp}</span>
-          </div>
-          <p style="color:#888;font-size:13px;">This OTP expires in <strong>5 minutes</strong>. Do not share it with anyone.</p>
-        </div>`,
-    });
+    // Email delivered — now upsert OTP record (no rate limiting)
+    await OtpModel.findOneAndUpdate(
+      { email },
+      {
+        emailOtp: hashedOtp,
+        emailOtpExpiry: expiry,
+        emailVerified: false,
+        lastEmailRequest: new Date(),
+        $inc: { emailAttempts: 1 },
+      },
+      { upsert: true, new: true }
+    );
 
     res.json({ success: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error("sendEmailOtp error:", err);
-    res.status(500).json({ success: false, message: "Failed to send OTP" });
+    res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
   }
 };
 

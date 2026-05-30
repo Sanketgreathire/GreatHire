@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import img from "../../assets/webp/img7.webp";
 import { useDropzone } from "react-dropzone";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import Navbar from "@/components/shared/Navbar";
@@ -10,24 +9,22 @@ import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Loading from "@/components/Loading";
 import { setRecruiterIsCompanyCreated } from "@/redux/authSlice";
 import { Helmet } from "react-helmet-async";
+import { Building2, MapPin, Phone, ShieldCheck, User, CheckCircle } from "lucide-react";
+import s from "./CreateCompany.module.css";
 
 const CreateCompany = () => {
-  // State for loading indicator
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user && user.isCompanyCreated) {
-      navigate("/recruiter/dashboard/post-job");
-    } else if (!user) navigate("/login");
-  }, []);
+    if (!user) { navigate("/login"); return; }
+    if (user.isCompanyCreated) navigate("/recruiter/dashboard/post-job");
+  }, [user]);
 
-  // State for form fields
   const [formData, setFormData] = useState({
     companyName: "",
     companyWebsite: "",
@@ -40,422 +37,259 @@ const CreateCompany = () => {
     email: "",
     phone: "",
     recruiterPosition: user?.position || "",
-    recruiterPhone: user?.phoneNumber.number || "",
+    recruiterPhone: user?.phoneNumber?.number || "",
     CIN: "",
     businessFile: null,
     isAgree: false,
   });
 
-  // File upload progress state
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fileUploaded, setFileUploaded] = useState(false);
 
-  // Handles changes in form inputs
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
-  // Handles checkbox toggle
-  const handleCheckboxChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.checked,
-    });
-  };
+  const handleCheckboxChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.checked });
 
-  // Handles file drop for business registration upload
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
-    if (file) {
-      // Allow PDF, Word documents, and images
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "application/pdf",
-        "application/msword", // .doc
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only JPG, PNG, PDF, or Word documents are allowed.");
-        return;
-      }
-
-      if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
-        toast.error("File size exceeds 10MB. Please choose a smaller file.");
-        return;
-      }
-
-      setFormData({ ...formData, businessFile: file });
-      setFileUploaded(false);
-      setUploadProgress(0);
-
-      // Simulating upload
-      const uploadSimulation = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(uploadSimulation);
-            setFileUploaded(true);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 200);
+    if (!file) return;
+    const allowed = [
+      "image/jpeg", "image/png", "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only JPG, PNG, PDF, or Word documents are allowed.");
+      return;
     }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size exceeds 10MB.");
+      return;
+    }
+    setFormData({ ...formData, businessFile: file });
+    setFileUploaded(false);
+    setUploadProgress(0);
+    const sim = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 100) { clearInterval(sim); setFileUploaded(true); return 100; }
+        return prev + 10;
+      });
+    }, 200);
   };
 
-  // Dropzone configuration for file upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  // Handles form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      // Add userEmail to formData
-      const updatedFormData = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== "" && value !== null) {
-          updatedFormData.append(key, value);
-        }
+      const fd = new FormData();
+      Object.entries(formData).forEach(([k, v]) => {
+        if (v !== "" && v !== null) fd.append(k, v);
       });
-
-      // this email become company admin email
-      updatedFormData.append("userEmail", user?.emailId.email); // Include userEmail
-
-      // API call to register the company
-      const res = await axios.post(
-        `${COMPANY_API_END_POINT}/register`,
-        updatedFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      fd.append("userEmail", user?.emailId.email);
+      const res = await axios.post(`${COMPANY_API_END_POINT}/register`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
       if (res.data.success) {
-        toast.success("Created successfully!");
         dispatch(setRecruiterIsCompanyCreated(true));
-        toast.success("GreatHire will active company soon!");
+        toast.success("Company created! GreatHire will activate it soon.");
         navigate("/recruiter/dashboard/post-job");
       } else {
         toast.error(res.data.message || "Error creating company");
       }
     } catch (err) {
-      console.log(`error in submitting company details ${err}`);
-      toast.error(
-        err?.response?.data?.message || "Something went wrong. Please try again."
-      );
+      toast.error(err?.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
 
+  if (!user || user?.isCompanyCreated) return null;
+
   return (
     <>
       <Helmet>
-        {/* Meta Title */}
         <title>Make a Company Profile | Sign Up & Confirm Your Enterprise with GreatHire</title>
-
-        {/* Meta Description */}
         <meta
           name="description"
-          content="Register your company profile smoothly on GreatHire, a trusted recruitment platform Hyderabad, India. Our company registration system has a secure method that helps the recruiter verify the authenticity of a company and upload the company documents for a smooth recruitment process. GreatHire operates within the Maharashtra State of India, providing services to recruiters, employers, start-ups, and small businesses"
+          content="Register your company profile smoothly on GreatHire, a trusted recruitment platform Hyderabad, India."
         />
       </Helmet>
 
       <Navbar />
-      {/* Show form only if user exists and hasn't created a company */}
-      {user && !user?.isCompanyCreated ? (
-        <div className="flex m-2 min-h-screen pt-20 bg-gray-100">
-          <div className="w-full md:w-1/2 flex flex-col space-y-2 p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center text-blue-700">
-              Company Details Form
-            </h1>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Section 1: Company Information */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Company Information
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block text-gray-600">Company Name</label>
-                    <input
-                      type="text"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+
+      <div className="min-h-screen pt-20 pb-8 px-4 bg-gray-100 dark:bg-gray-900 flex items-start justify-center">
+        <div className={s["register-wrapper"]}>
+
+          {/* LEFT PANEL */}
+          <div className={s["left-panel"]}>
+            <div className={s["icon-box"]}>
+              <Building2 size={34} color="#fff" />
+            </div>
+            <h1>Set Up Your Company</h1>
+            <p>Complete your company profile to start posting jobs and finding great candidates on GreatHire.</p>
+
+            <div className={s.stats}>
+              <h2>Step 2 of 3</h2>
+              <p style={{ fontSize: 13, opacity: 0.8, marginTop: 4 }}>Company Details</p>
+            </div>
+
+            <div style={{ marginTop: 20, display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                "Post jobs immediately",
+                "Access candidate database",
+                "Manage your team",
+              ].map((t) => (
+                <div key={t} className={s.badge}>
+                  <CheckCircle size={14} color="#a5f3fc" />
+                  <span>{t}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT PANEL */}
+          <div className={s["form-container"]}>
+            <h2>Company Details</h2>
+            <p className={s.subtitle}>Fill in your company information to complete registration.</p>
+
+            <form onSubmit={handleSubmit}>
+
+              {/* Company Information */}
+              <div className={s.section}>
+                <h3><Building2 size={13} style={{ display: "inline", marginRight: 6 }} />Company Information</h3>
+                <div className={s["form-grid"]}>
+                  <div className={s.field}>
+                    <label>Company Name *</label>
+                    <input name="companyName" value={formData.companyName} onChange={handleChange} required placeholder="Acme Corp" />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">
-                      Company Website
-                    </label>
-                    <input
-                      type="url"
-                      name="companyWebsite"
-                      value={formData.companyWebsite}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>Company Website *</label>
+                    <input type="url" name="companyWebsite" value={formData.companyWebsite} onChange={handleChange} required placeholder="https://example.com" />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">Industry</label>
-                    <input
-                      type="text"
-                      name="industry"
-                      value={formData.industry}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>Industry *</label>
+                    <input name="industry" value={formData.industry} onChange={handleChange} required placeholder="e.g. Technology" />
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Address Details */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Address Details
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block text-gray-600">
-                      Street Address
-                    </label>
-                    <input
-                      type="text"
-                      name="streetAddress"
-                      value={formData.streetAddress}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+              {/* Address Details */}
+              <div className={s.section}>
+                <h3><MapPin size={13} style={{ display: "inline", marginRight: 6 }} />Address Details</h3>
+                <div className={s["form-grid"]}>
+                  <div className={s.field}>
+                    <label>Street Address *</label>
+                    <input name="streetAddress" value={formData.streetAddress} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">City</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>City *</label>
+                    <input name="city" value={formData.city} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">State</label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>State *</label>
+                    <input name="state" value={formData.state} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">Postal Code</label>
-                    <input
-                      type="text"
-                      name="postalCode"
-                      value={formData.postalCode}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>Postal Code *</label>
+                    <input name="postalCode" value={formData.postalCode} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block w-full text-gray-600">
-                      Country
-                    </label>
-                    <input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>Country *</label>
+                    <input name="country" value={formData.country} onChange={handleChange} required />
                   </div>
                 </div>
               </div>
 
-              {/* Section 3: Contact Information */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Contact Information
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block text-gray-600">
-                      Business Email Address
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+              {/* Contact Information */}
+              <div className={s.section}>
+                <h3><Phone size={13} style={{ display: "inline", marginRight: 6 }} />Contact Information</h3>
+                <div className={s["form-grid"]}>
+                  <div className={s.field}>
+                    <label>Business Email *</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">Phone Number</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+                  <div className={s.field}>
+                    <label>Phone Number *</label>
+                    <input name="phone" value={formData.phone} onChange={handleChange} required />
                   </div>
                 </div>
               </div>
 
-              {/* Section 4: Verification Details */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Verification Details
-                </h2>
-                <div className="mt-4">
-                  <label className="block text-gray-600">
-                    CIN/EAN <span className="font-bold">(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="CIN"
-                    value={formData.CIN}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                    placeholder="Corporate Identification Number (CIN)"
-                  />
+              {/* Verification Details */}
+              <div className={s.section}>
+                <h3><ShieldCheck size={13} style={{ display: "inline", marginRight: 6 }} />Verification Details</h3>
+                <div className={s.field} style={{ marginBottom: 10 }}>
+                  <label>CIN / EAN <span style={{ fontWeight: 400, color: "#9ca3af" }}>(Optional)</span></label>
+                  <input name="CIN" value={formData.CIN} onChange={handleChange} placeholder="Corporate Identification Number" />
                 </div>
-                <div className="mt-4">
-                  <label className="block text-gray-600">
-                    Upload Business Registration Certificate
-                  </label>
+                <div className={s.field}>
+                  <label>Business Registration Certificate</label>
                   <div
                     {...getRootProps()}
-                    className={`relative border-2 border-dashed border-blue-500 p-4 rounded-lg h-48 flex items-center justify-center cursor-pointer transition-all ${isDragActive
-                      ? "bg-blue-100 border-blue-400"
-                      : "bg-gray-50"
-                      } hover:bg-blue-50`}
+                    className={`${s["upload-box"]} ${isDragActive ? s["drag-active"] : ""}`}
                   >
-                    <input
-                      {...getInputProps({
-                        accept: "image/jpeg, image/png", // Accept only JPG and PNG files
-                      })}
-                    />
+                    <input {...getInputProps({ accept: "image/jpeg,image/png,application/pdf" })} />
                     {uploadProgress > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 rounded-lg">
-                        <div className="w-20">
-                          <CircularProgressbar
-                            value={uploadProgress}
-                            text={`${uploadProgress}%`}
-                            styles={buildStyles({
-                              textColor: "#3b82f6",
-                              pathColor: "#3b82f6",
-                              trailColor: "#d1d5db",
-                            })}
-                          />
-                        </div>
+                      <div style={{ width: 48 }}>
+                        <CircularProgressbar
+                          value={uploadProgress}
+                          text={`${uploadProgress}%`}
+                          styles={buildStyles({ textColor: "#2458f5", pathColor: "#2458f5", trailColor: "#d1d5db" })}
+                        />
                       </div>
                     ) : (
-                      <p className="text-gray-600 text-center">
-                        {isDragActive
-                          ? "Drop the file here..."
-                          : "Drag & Drop your file here or click to upload"}
-                      </p>
+                      <span>{isDragActive ? "Drop here…" : "Drag & drop or click to upload"}</span>
                     )}
                   </div>
                   {formData.businessFile && (
-                    <p className="mt-2 text-green-500 text-center">
-                      File ready: {formData.businessFile.name}
+                    <p style={{ fontSize: 12, color: "#16a34a", marginTop: 4 }}>
+                      ✓ {formData.businessFile.name}
                     </p>
                   )}
                 </div>
               </div>
 
-              {/* Section 5: Recruiter Details */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Recruiter Details
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <label className="block text-gray-600">
-                      Your Position in the Company
-                    </label>
-                    <input
-                      type="text"
-                      name="recruiterPosition"
-                      value={formData.recruiterPosition}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
-                    />
+              {/* Recruiter Details */}
+              <div className={s.section}>
+                <h3><User size={13} style={{ display: "inline", marginRight: 6 }} />Recruiter Details</h3>
+                <div className={s["form-grid"]}>
+                  <div className={s.field}>
+                    <label>Your Position *</label>
+                    <input name="recruiterPosition" value={formData.recruiterPosition} onChange={handleChange} required />
                   </div>
-                  <div>
-                    <label className="block text-gray-600">
-                      Your Mobile Number
-                    </label>
-                    <input
-                      type="text"
-                      name="recruiterPhone"
-                      value={formData.recruiterPhone}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      readOnly
-                    />
+                  <div className={s.field}>
+                    <label>Your Mobile Number</label>
+                    <input name="recruiterPhone" value={formData.recruiterPhone} onChange={handleChange} readOnly />
                   </div>
                 </div>
               </div>
 
-              {/* Agreement Section */}
-              <div>
-                <label className="block text-gray-600">
-                  <input
-                    type="checkbox"
-                    name="isAgree"
-                    className="mr-2"
-                    required
-                    onChange={handleCheckboxChange}
-                  />
+              {/* Agreement + Submit */}
+              <div className={s.actions}>
+                <label className={s["checkbox-row"]}>
+                  <input type="checkbox" name="isAgree" required onChange={handleCheckboxChange} />
                   I agree to provide accurate company details.
                 </label>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`${s.btn} ${s["btn-primary"]}`}
+                  style={{ width: "100%", marginTop: 12 }}
+                >
+                  {loading ? "Creating…" : "Create Company"}
+                </button>
               </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className={`w-full bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 ${loading ? "cursor-not-allowed bg-blue-400" : ""
-                  }`}
-              >
-                {loading ? "Creating..." : "Create Company"}
-              </button>
             </form>
           </div>
-          <div className="hidden md:block md:w-1/2">
-            <img
-              src={img}
-              alt="bg"
-              className="w-full h-full object-full opacity-90"
-            />
-          </div>
+
         </div>
-      ) : (
-        <div className="flex justify-center items-center">
-          <p className="font-bold text-2xl">Loading...</p>
-        </div>
-      )}
+      </div>
     </>
   );
 };

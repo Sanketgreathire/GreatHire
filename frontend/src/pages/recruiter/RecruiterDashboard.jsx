@@ -103,32 +103,37 @@ const RecruiterDashboard = () => {
     };
   }, [user?._id, company?._id, dispatch]);
 
+  const isCompanyCreated = !!user?.isCompanyCreated;
+  const hasCompany = isCompanyCreated || !!company; // dual source of truth
+
   return (
     <>
       <Helmet>
         <title>
           Recruiter's Dashboard | GreatHire Jobs, Applicants, & Hiring Analytics
         </title>
-
         <meta
           name="description"
-          content="The recruiter dashboard provided by GreatHire enables organizations to conduct recruitment with confidence and agility. The organization is based in the state of Hyderabad in India. It assists in monitoring jobs that are posted, as well as active and expired ones. It also helps in monitoring applicants, short-listed individuals, recruiters, as well as recruitment credits. The modern recruiter dashboard offered by GreatHire assists in providing scalable recruitment solutions. This includes job performance analytics, management of applicants, as well as recruiter management. The company helps organizations acquire complete visibility, informed control, as well as rapid decision-making. It assists in acquiring the best human capital."
+          content="The recruiter dashboard provided by GreatHire enables organizations to conduct recruitment with confidence and agility."
         />
       </Helmet>
 
       <div className="flex flex-col min-h-screen">
-        {/* Navbar */}
+        {/* Navbar — always visible */}
         <Navbar />
 
         {/* Main Content */}
         <div className="flex flex-1">
-          <DashboardNavigations />
-          <div className="flex-1 bg-gradient-to-r bg-gray-100 overflow-y-auto lg:ml-52">
+          {/* Sidebar — only after company is fetched/created */}
+          {hasCompany && <DashboardNavigations />}
+
+          <div className={`flex-1 bg-gray-100 overflow-y-auto ${
+            hasCompany ? "lg:ml-52" : ""
+          }`}>
             <Outlet />
           </div>
         </div>
       </div>
-
     </>
   );
 };

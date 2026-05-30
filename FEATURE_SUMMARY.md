@@ -88,8 +88,8 @@ Authorization: Bearer YOUR_TOKEN
 ### Current Settings (in `.env`)
 ```env
 AUTO_REJECT_DAYS=30  # Applications older than 30 days will be rejected
-EMAIL_USER=babdegreathire2025@gmail.com
-EMAIL_PASS=igqtjixwvwtyjijr
+EMAIL_USER=babdegreathire2026@gmail.com
+EMAIL_PASS=vptfecyxbhwymrjr
 ```
 
 ### To Change Rejection Period
