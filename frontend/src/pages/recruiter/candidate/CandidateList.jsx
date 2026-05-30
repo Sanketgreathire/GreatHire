@@ -49,20 +49,20 @@ const CandidateList = () => {
   const { user } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("Find great talent for your team");
   
-  // Sourcing search state
   const [showSourcingSearch, setShowSourcingSearch] = useState(false);
   const [sourcingFilters, setSourcingFilters] = useState({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
   const [useAI, setUseAI] = useState(false);
   const [aiAvailable, setAiAvailable] = useState(false);
   const [sourcingLoading, setSourcingLoading] = useState(false);
   const [sourcingCandidates, setSourcingCandidates] = useState([]);
+  const [selectedSourcingCandidate, setSelectedSourcingCandidate] = useState(null);
+  const [showSourcingModal, setShowSourcingModal] = useState(false);
 
   const planType = company?.plan || "FREE";
   const isStarterPlan = !company?.hasSubscription && planType === "FREE";
   const hasAdvancedFilters = ["PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
   const hasLocationFilter = ["STANDARD", "PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
   
-  // Check AI availability
   useMemo(() => {
     axios.get(`${SOURCING_API_END_POINT}/ai-health`, { withCredentials: true })
       .then(({ data }) => setAiAvailable(data.success))
@@ -278,7 +278,6 @@ const CandidateList = () => {
             </Button>
           </div>
 
-          {/* Sourcing Search Panel */}
           {showSourcingSearch && (
             <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
               <div className="flex items-center justify-between mb-4">
@@ -289,13 +288,8 @@ const CandidateList = () => {
                   type="button"
                   onClick={() => setUseAI((v) => !v)}
                   disabled={!aiAvailable}
-                  title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border
-                    ${useAI && aiAvailable
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : aiAvailable
-                        ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+                    ${useAI && aiAvailable ? "bg-purple-600 text-white border-purple-600" : aiAvailable ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400" : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
                 >
                   <Brain size={13} />
                   {useAI && aiAvailable ? "AI ON" : "AI OFF"}
@@ -305,12 +299,7 @@ const CandidateList = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <div className="lg:col-span-3">
-                  <input
-                    className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"}
-                    value={sourcingFilters.q}
-                    onChange={(e) => setSourcingFilters({ ...sourcingFilters, q: e.target.value })}
-                  />
+                  <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"} value={sourcingFilters.q} onChange={(e) => setSourcingFilters({ ...sourcingFilters, q: e.target.value })} />
                 </div>
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters({ ...sourcingFilters, skills: e.target.value })} />
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters({ ...sourcingFilters, location: e.target.value })} />
@@ -320,75 +309,93 @@ const CandidateList = () => {
               </div>
 
               <div className="flex gap-3 mt-4">
-                <Button
-                  onClick={async () => {
-                    setSourcingLoading(true);
-                    try {
-                      if (useAI && sourcingFilters.q?.trim()) {
-                        const params = { q: sourcingFilters.q, topK: 50, scoreThreshold: 0.2 };
-                        if (sourcingFilters.location) params.location = sourcingFilters.location;
-                        if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
-                        if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
-                        if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
-                        if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
-                        const { data } = await axios.get(`${SOURCING_API_END_POINT}/semantic-search`, { params, withCredentials: true });
-                        if (data.success) setSourcingCandidates(data.results || []);
-                      } else {
-                        const params = { page: 1, limit: 50 };
-                        if (sourcingFilters.q) params.q = sourcingFilters.q;
-                        if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
-                        if (sourcingFilters.location) params.location = sourcingFilters.location;
-                        if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
-                        if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
-                        if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
-                        const { data } = await axios.get(`${SOURCING_API_END_POINT}/search`, { params, withCredentials: true });
-                        if (data.success) setSourcingCandidates(data.candidates);
-                      }
-                    } catch (err) {
-                      toast.error(err.response?.data?.message || "Search failed.");
-                    } finally {
-                      setSourcingLoading(false);
+                <Button onClick={async () => {
+                  setSourcingLoading(true);
+                  try {
+                    if (useAI && sourcingFilters.q?.trim()) {
+                      const params = { q: sourcingFilters.q, topK: 50, scoreThreshold: 0.2 };
+                      if (sourcingFilters.location) params.location = sourcingFilters.location;
+                      if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
+                      if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
+                      if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
+                      if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
+                      const { data } = await axios.get(`${SOURCING_API_END_POINT}/semantic-search`, { params, withCredentials: true });
+                      if (data.success) setSourcingCandidates(data.results || []);
+                    } else {
+                      const params = { page: 1, limit: 50 };
+                      if (sourcingFilters.q) params.q = sourcingFilters.q;
+                      if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
+                      if (sourcingFilters.location) params.location = sourcingFilters.location;
+                      if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
+                      if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
+                      if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
+                      const { data } = await axios.get(`${SOURCING_API_END_POINT}/search`, { params, withCredentials: true });
+                      if (data.success) setSourcingCandidates(data.candidates);
                     }
-                  }}
-                  disabled={sourcingLoading}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 flex items-center gap-2"
-                >
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || "Search failed.");
+                  } finally {
+                    setSourcingLoading(false);
+                  }
+                }} disabled={sourcingLoading} className="bg-purple-600 hover:bg-purple-700 text-white px-6 flex items-center gap-2">
                   {useAI && aiAvailable && <Zap size={14} />} {sourcingLoading ? "Searching..." : "Search"}
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setSourcingFilters({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
-                    setSourcingCandidates([]);
-                  }}
-                >
-                  Clear
-                </Button>
+                <Button type="button" variant="outline" onClick={() => { setSourcingFilters({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" }); setSourcingCandidates([]); }}>Clear</Button>
               </div>
 
-              {/* Sourcing Results */}
               {sourcingCandidates.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                    {sourcingCandidates.length} sourced candidate{sourcingCandidates.length !== 1 ? "s" : ""} found
-                  </h3>
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{sourcingCandidates.length} sourced candidate{sourcingCandidates.length !== 1 ? "s" : ""} found</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {sourcingCandidates.map((c) => (
-                      <div key={c._id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{c.fullName}</h4>
-                        {c.designation && <p className="text-sm text-gray-500 dark:text-gray-400">{c.designation}</p>}
-                        {c.totalExperience > 0 && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">🕐 {c.totalExperience} yrs exp</p>}
-                        {c.location && <p className="text-xs text-gray-600 dark:text-gray-400">📍 {c.location}</p>}
-                        {c.skills?.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {c.skills.slice(0, 4).map((s, i) => (
-                              <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs">{s}</Badge>
-                            ))}
+                    {sourcingCandidates.map((c) => {
+                      const isUnlocked = unlockedCandidates.has(c._id);
+                      return (
+                        <div key={c._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-semibold text-gray-900 dark:text-white truncate">{c.fullName}</h4>
+                              {c.designation && <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{c.designation}</p>}
+                              {c.currentCompany && <p className="text-xs text-gray-400 truncate">{c.currentCompany}</p>}
+                            </div>
+                            <Badge className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs shrink-0">Sourced</Badge>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                          <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400 mb-3">
+                            {c.totalExperience > 0 && <div className="flex items-center gap-1">🕐 {c.totalExperience} yrs exp</div>}
+                            {c.location && <div className="flex items-center gap-1">📍 {c.location}</div>}
+                            {c.emails?.length > 0 && !isUnlocked && <div className="flex items-center gap-1">✉️ <span className="blur-sm select-none">email@hidden.com</span></div>}
+                            {c.emails?.length > 0 && isUnlocked && <div className="flex items-start gap-1"><span>✉️</span><div className="flex-1 break-all">{c.emails.map((email, i) => <div key={i}><a href={`mailto:${email}`} className="text-blue-600 dark:text-blue-400 hover:underline">{email}</a></div>)}</div></div>}
+                            {c.phones?.length > 0 && !isUnlocked && <div className="flex items-center gap-1">📞 <span className="blur-sm select-none">+91 XXXXX XXXXX</span></div>}
+                            {c.phones?.length > 0 && isUnlocked && <div className="flex items-start gap-1"><span>📞</span><div className="flex-1">{c.phones.map((phone, i) => <div key={i}><a href={`tel:${phone}`} className="text-blue-600 dark:text-blue-400 hover:underline">{phone}</a></div>)}</div></div>}
+                          </div>
+                          {c.skills?.length > 0 && <div className="flex flex-wrap gap-1 mb-3">{c.skills.slice(0, 5).map((s, i) => <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs px-1.5 py-0">{s}</Badge>)}{c.skills.length > 5 && <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 text-xs px-1.5 py-0">+{c.skills.length - 5}</Badge>}</div>}
+                          <Button className={`w-full rounded-lg text-white ${isUnlocked ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-600 hover:bg-blue-700"}`} onClick={async () => {
+                            if (isUnlocked) {
+                              setSelectedSourcingCandidate(c);
+                              setShowSourcingModal(true);
+                            } else {
+                              if (company?.creditedForCandidates <= 0) {
+                                toast.error("Insufficient credits. Please purchase a plan.");
+                                navigate("/recruiter/dashboard/your-plans");
+                                return;
+                              }
+                              try {
+                                const res = await axios.post(`${COMPANY_API_END_POINT}/deduct-candidate-credit`, { companyId: company?._id }, { withCredentials: true });
+                                if (res.data.success) {
+                                  dispatch(decreaseCandidateCredits(1));
+                                  persistUnlockedCandidate(c._id);
+                                  setUnlockedCandidates(new Set(getUnlockedCandidates()));
+                                  toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
+                                  setSelectedSourcingCandidate(c);
+                                  setShowSourcingModal(true);
+                                }
+                              } catch (error) {
+                                toast.error(error?.response?.data?.message || "Failed to unlock candidate");
+                              }
+                            }
+                          }}>{isUnlocked ? "👁 View Profile" : "🔓 Unlock Profile"}</Button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -462,6 +469,103 @@ const CandidateList = () => {
               <Button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
                 Next
               </Button>
+            </div>
+          )}
+
+          {/* Sourcing Candidate Modal */}
+          {showSourcingModal && selectedSourcingCandidate && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowSourcingModal(false)}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Candidate Profile</h2>
+                  <button onClick={() => setShowSourcingModal(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <X size={24} />
+                  </button>
+                </div>
+                
+                <div className="p-6 space-y-6">
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-24 w-24 shrink-0">
+                      <AvatarImage src="/src/assets/noprofile.webp" />
+                    </Avatar>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedSourcingCandidate.fullName}</h3>
+                      {selectedSourcingCandidate.designation && <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">{selectedSourcingCandidate.designation}</p>}
+                      {selectedSourcingCandidate.currentCompany && <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">{selectedSourcingCandidate.currentCompany}</p>}
+                      <Badge className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 mt-2">Sourced Candidate</Badge>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedSourcingCandidate.totalExperience > 0 && (
+                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Experience</p>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">🕐 {selectedSourcingCandidate.totalExperience} years</p>
+                      </div>
+                    )}
+                    {selectedSourcingCandidate.location && (
+                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Location</p>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">📍 {selectedSourcingCandidate.location}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedSourcingCandidate.emails?.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email</h4>
+                      {selectedSourcingCandidate.emails.map((email, i) => (
+                        <a key={i} href={`mailto:${email}`} className="text-blue-600 dark:text-blue-400 hover:underline block">{email}</a>
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedSourcingCandidate.phones?.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phone</h4>
+                      {selectedSourcingCandidate.phones.map((phone, i) => (
+                        <a key={i} href={`tel:${phone}`} className="text-blue-600 dark:text-blue-400 hover:underline block">{phone}</a>
+                      ))}
+                    </div>
+                  )}
+
+                  {selectedSourcingCandidate.skills?.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedSourcingCandidate.skills.map((s, i) => (
+                          <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">{s}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedSourcingCandidate.summary && (
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Summary</h4>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">{selectedSourcingCandidate.summary}</p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    {selectedSourcingCandidate.resumeUrl && (
+                      <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white" onClick={() => window.open(selectedSourcingCandidate.resumeUrl, "_blank")}>
+                        📄 View Resume
+                      </Button>
+                    )}
+                    {selectedSourcingCandidate.githubUrl && (
+                      <Button className="flex-1 bg-gray-900 hover:bg-gray-800 text-white" onClick={() => window.open(selectedSourcingCandidate.githubUrl, "_blank")}>
+                        🔗 GitHub Profile
+                      </Button>
+                    )}
+                    {selectedSourcingCandidate.linkedinUrl && (
+                      <Button className="flex-1 bg-blue-700 hover:bg-blue-800 text-white" onClick={() => window.open(selectedSourcingCandidate.linkedinUrl, "_blank")}>
+                        💼 LinkedIn Profile
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
           </div>

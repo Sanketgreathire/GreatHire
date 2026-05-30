@@ -20,7 +20,7 @@ export class GitHubScraper {
     try {
       const { language, location, minRepos = 1, minFollowers = 0 } = criteria;
       
-      // Build search query with sorting by recently updated to get fresh profiles
+      // Build search query
       let query = 'type:user';
       if (language) query += ` language:${language}`;
       if (location) query += ` location:${location}`;
@@ -36,14 +36,23 @@ export class GitHubScraper {
         headers['Authorization'] = `token ${this.token}`;
       }
 
-      // Use pagination and sort by recently joined to get new users
+      // Rotate sorting strategy based on page to get diverse results
+      const sortStrategies = [
+        { sort: 'joined', order: 'desc' },      // Recently joined users
+        { sort: 'repositories', order: 'desc' }, // Most repos
+        { sort: 'followers', order: 'desc' }     // Most followers
+      ];
+      const strategy = sortStrategies[page % sortStrategies.length];
+
+      console.log(`   Using sort strategy: ${strategy.sort} ${strategy.order} (page ${page})`);
+
       const response = await axios.get(`${this.baseUrl}/search/users`, {
         params: { 
           q: query, 
           per_page: Math.min(limit, 100),
-          page: page,
-          sort: 'joined',
-          order: 'desc'
+          page: Math.ceil(page / sortStrategies.length), // Actual API page
+          sort: strategy.sort,
+          order: strategy.order
         },
         headers
       });
