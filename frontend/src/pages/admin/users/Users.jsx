@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash, Eye, Search, FileDown } from "lucide-react";
+import { Trash, Eye, Search, FileDown, Bot } from "lucide-react";
 import { Briefcase, FileText, CheckCircle } from "lucide-react";
 import { FaRegUser } from "react-icons/fa";
 import { Card } from "@/components/ui/card";
@@ -68,6 +68,7 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 20;
   const [usersList, setUsersList] = useState([]);
+  const [sourcedCount, setSourcedCount] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dloading, dsetLoading] = useState({});
@@ -150,7 +151,12 @@ const Users = () => {
 
   const location = useLocation();
   useEffect(() => {
-    if (user) fetchUserList();
+    if (user) {
+      fetchUserList();
+      axios.get(`${import.meta.env.VITE_API_URL}/api/v1/admin/sourcing/stats`, { withCredentials: true })
+        .then(({ data }) => { if (data.success) setSourcedCount(data.stats.total); })
+        .catch(() => {});
+    }
   }, [user]);
 
   // Stats Section
@@ -178,6 +184,12 @@ const Users = () => {
       count: applicationStats?.totalApplications || 0,
       icon: <FileText size={36} className="text-purple-600 dark:text-purple-400" />,
       color: "bg-purple-100 dark:bg-purple-900/30",
+    },
+    {
+      title: "AI Sourced",
+      count: sourcedCount,
+      icon: <Bot size={36} className="text-indigo-600 dark:text-indigo-400" />,
+      color: "bg-indigo-100 dark:bg-indigo-900/30",
     },
   ];
 
@@ -257,7 +269,7 @@ const Users = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         {/* Stat Cards */}
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {stats.map((stat, i) => (
             <Card
               key={i}

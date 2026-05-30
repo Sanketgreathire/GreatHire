@@ -40,6 +40,26 @@ import messageRoute from "./routes/message.route.js";
 import collegeRoute from "./routes/college.route.js"; // college auth + students
 import courseRoute from "./routes/course.route.js";
 import otpRoute from "./routes/otp.route.js";
+import sourcingRoute from "./routes/sourcing/sourcing.route.js";
+import ingestionRoute from "./routes/ingestion.route.js";
+import autoSourcingRoute from "./routes/autoSourcing.route.js";
+import adminSourcingRoute from "./routes/admin/adminSourcing.route.js";
+import jdMatchingRoute from "./jd-matching/jdMatching.route.js";
+import jobMatchingRoute from "./src/modules/jobs/routes/jobMatching.routes.js";
+import copilotRoute from "./src/modules/copilot/routes/copilot.routes.js";
+import extensionRoute from "./src/modules/extension/routes/extension.routes.js";
+import outreachRoute from "./src/modules/outreach/routes/outreach.routes.js";
+import enrichmentRoute from "./src/modules/enrichment/routes/enrichment.routes.js";
+import learningRoute from "./src/modules/learning/routes/learning.routes.js";
+import talentGraphRoute from "./src/modules/talentGraph/routes/talentGraph.routes.js";
+import discoveryRoute from "./src/modules/discovery/routes/discovery.routes.js";
+import githubDiscoveryRoute from "./src/modules/discovery/routes/github.routes.js";
+import portfolioDiscoveryRoute from "./src/modules/discovery/routes/portfolio.routes.js";
+import resumeDiscoveryRoute from "./src/modules/discovery/routes/resume.routes.js";
+import freshnessRoute from "./src/modules/freshness/routes/freshness.routes.js";
+import orchestratorRoute from "./src/modules/orchestrator/routes/orchestrator.routes.js";
+import talentSignalsRoute from "./src/modules/talentSignals/routes/talentSignals.routes.js";
+import eventsRoute from "./src/modules/events/routes/events.routes.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -172,12 +192,35 @@ app.use("/api/v1/admin/company/data", adminCompanyDataRoute);
 app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
+app.use("/api/v1/admin/sourcing", adminSourcingRoute);
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/email", emailRoute);
 app.use("/api/v1/messages", messageRoute);
 app.use("/api/v1/college", collegeRoute);
 app.use("/api/v1/courses", courseRoute);
 app.use("/api/v1/otp", otpRoute);
+app.use("/api/v1/sourcing",   sourcingRoute);
+app.use("/api/v1/ingestion",  ingestionRoute);
+app.use("/api/v1/auto-sourcing", autoSourcingRoute);
+app.use("/api/v1/jd-matching", jdMatchingRoute);
+app.use("/api/v1/jobs", jobMatchingRoute);
+app.use("/api/v1/copilot", copilotRoute);
+app.use("/api/extension", extensionRoute);
+app.use("/api/outreach", outreachRoute);
+app.use("/api/candidates", enrichmentRoute);
+app.use("/api/recruiter-feedback", learningRoute);
+app.use("/api/talent-graph", talentGraphRoute);
+app.use("/api/discovery", discoveryRoute);
+app.use("/api/discovery/github", githubDiscoveryRoute);
+app.use("/api/discovery/portfolio", portfolioDiscoveryRoute);
+app.use("/api/discovery/resume", resumeDiscoveryRoute);
+app.use("/api/freshness", freshnessRoute);
+app.use("/api/orchestrator", orchestratorRoute);
+app.use("/api/talent-signals", talentSignalsRoute);
+app.use("/api/events", eventsRoute);
+
+// Serve uploaded resumes
+app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 
 // ================= FRONTEND =================
 // Serve pre-compressed brotli/gzip assets with 1-year cache
@@ -222,6 +265,11 @@ import { setIO } from "./utils/socket.js";
 import notificationService from "./utils/notificationService.js";
 import { startMonthlyFreePlanRenewal } from "./utils/monthlyFreePlanRenewal.js";
 import { startAutoRejectCron } from "./utils/autoRejectApplications.js";
+import { startAutoSourcingCron } from "./sourcing/cron/autoSourcingCron.js";
+import { startIngestionWorker } from "./sourcing/workers/ingestionWorker.js";
+import { startEmbeddingWorker } from "./sourcing/ai/candidateEmbeddingWorker.js";
+import { startJdMatchingWorker } from "./jd-matching/workers/jdMatchingWorker.js";
+import { startJobMatchingWorker } from "./src/modules/jobs/workers/jobMatchingWorker.js";
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
@@ -261,9 +309,52 @@ await connectDB();
 
 // Start monthly free plan renewal cron job
 startMonthlyFreePlanRenewal();
-
-// Start auto-reject old applications cron job
 startAutoRejectCron();
+startAutoSourcingCron();
+startIngestionWorker().catch((e) => console.warn("Ingestion worker start failed:", e.message));
+
+startEmbeddingWorker().catch((e) => console.warn("Embedding worker start failed:", e.message));
+startJdMatchingWorker().catch((e) => console.warn("JD matching worker start failed:", e.message));
+startJobMatchingWorker().catch((e) => console.warn("Job matching worker start failed:", e.message));
+
+// Start talent graph worker
+const { startTalentGraphWorker } = await import("./src/modules/talentGraph/services/graphQueue.service.js");
+startTalentGraphWorker().catch((e) => console.warn("Talent graph worker start failed:", e.message));
+
+// Start discovery worker and scheduler
+const { startDiscoveryWorker } = await import("./src/modules/discovery/services/discoveryQueue.service.js");
+Promise.resolve().then(() => startDiscoveryWorker()).catch((e) => console.warn("Discovery worker start failed:", e.message));
+
+const { ingestionScheduler } = await import("./src/modules/discovery/services/ingestionScheduler.service.js");
+ingestionScheduler.startScheduler().catch((e) => console.warn("Discovery scheduler start failed:", e.message));
+
+// Start GitHub discovery worker
+const { startGitHubDiscoveryWorker } = await import("./src/modules/discovery/workers/githubDiscovery.worker.js");
+Promise.resolve().then(() => startGitHubDiscoveryWorker()).catch((e) => console.warn("GitHub discovery worker start failed:", e.message));
+
+// Start portfolio discovery worker
+const { startPortfolioDiscoveryWorker } = await import("./src/modules/discovery/workers/portfolioDiscovery.worker.js");
+Promise.resolve().then(() => startPortfolioDiscoveryWorker()).catch((e) => console.warn("Portfolio discovery worker start failed:", e.message));
+
+// Start resume discovery worker
+const { startResumeDiscoveryWorker } = await import("./src/modules/discovery/workers/resumeDiscovery.worker.js");
+Promise.resolve().then(() => startResumeDiscoveryWorker()).catch((e) => console.warn("Resume discovery worker start failed:", e.message));
+
+// Start freshness worker
+const { startFreshnessWorker } = await import("./src/modules/freshness/workers/freshness.worker.js");
+Promise.resolve().then(() => startFreshnessWorker()).catch((e) => console.warn("Freshness worker start failed:", e.message));
+
+// Start orchestrator worker
+const { startOrchestratorWorker } = await import("./src/modules/orchestrator/workers/orchestrator.worker.js");
+Promise.resolve().then(() => startOrchestratorWorker()).catch((e) => console.warn("Orchestrator worker start failed:", e.message));
+
+// Start talent signal worker
+const { startTalentSignalWorker } = await import("./src/modules/talentSignals/workers/talentSignal.worker.js");
+Promise.resolve().then(() => startTalentSignalWorker()).catch((e) => console.warn("Talent signal worker start failed:", e.message));
+
+// Start streaming coordinator
+const { streamingCoordinatorService } = await import("./src/modules/streaming/services/streamingCoordinator.service.js");
+streamingCoordinatorService.initialize().catch((e) => console.warn("Streaming coordinator start failed:", e.message));
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
@@ -272,6 +363,30 @@ server.listen(PORT, "0.0.0.0", () => {
 // ================= SHUTDOWN =================
 process.on("SIGINT", async () => {
   console.log("🛑 Shutting down...");
+  const { stopIngestionWorker } = await import("./sourcing/workers/ingestionWorker.js");
+  const { stopEmbeddingWorker } = await import("./sourcing/ai/candidateEmbeddingWorker.js");
+  await stopIngestionWorker();
+  await stopEmbeddingWorker();
+  const { stopJdMatchingWorker } = await import("./jd-matching/workers/jdMatchingWorker.js");
+  await stopJdMatchingWorker();
+  const { stopJobMatchingWorker } = await import("./src/modules/jobs/workers/jobMatchingWorker.js");
+  await stopJobMatchingWorker();
+  const { stopDiscoveryWorker } = await import("./src/modules/discovery/services/discoveryQueue.service.js");
+  await stopDiscoveryWorker();
+  const { stopGitHubDiscoveryWorker } = await import("./src/modules/discovery/workers/githubDiscovery.worker.js");
+  await stopGitHubDiscoveryWorker();
+  const { stopPortfolioDiscoveryWorker } = await import("./src/modules/discovery/workers/portfolioDiscovery.worker.js");
+  await stopPortfolioDiscoveryWorker();
+  const { stopResumeDiscoveryWorker } = await import("./src/modules/discovery/workers/resumeDiscovery.worker.js");
+  await stopResumeDiscoveryWorker();
+  const { stopFreshnessWorker } = await import("./src/modules/freshness/workers/freshness.worker.js");
+  await stopFreshnessWorker();
+  const { stopOrchestratorWorker } = await import("./src/modules/orchestrator/workers/orchestrator.worker.js");
+  await stopOrchestratorWorker();
+  const { stopTalentSignalWorker } = await import("./src/modules/talentSignals/workers/talentSignal.worker.js");
+  await stopTalentSignalWorker();
+  const { streamingCoordinatorService } = await import("./src/modules/streaming/services/streamingCoordinator.service.js");
+  await streamingCoordinatorService.shutdown();
   await mongoose.connection.close();
   process.exit(0);
 });

@@ -550,9 +550,10 @@ const Navbar = () => {
                 )}
               </div>
             </div>
+          </div>
 
-            {/* ── MOBILE RIGHT ICONS ── */}
-            <div className="flex items-center gap-2 lg:hidden">
+          {/* ── MOBILE RIGHT ICONS ── */}
+          <div className="flex items-center gap-2 lg:hidden">
               <ThemeToggle />
               {user && <NotificationDropdown />}
               <button
@@ -580,7 +581,6 @@ const Navbar = () => {
                 </svg>
               )}
               </button>
-            </div>
           </div>
 
           {/* ── MOBILE NAVIGATION OVERLAY ── */}

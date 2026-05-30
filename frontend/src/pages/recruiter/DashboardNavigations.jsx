@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   Home, X, PenSquare, Settings, Briefcase, PlusSquare,
   Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
-  LayoutDashboard, Users, Gift, Menu, FileText, Search
+  LayoutDashboard, Users, Gift, Menu, FileText, Search, Bot
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
@@ -165,6 +165,18 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
+              {/* <NavLink
+                to="/recruiter/dashboard/sourcing"
+                className={navLinkClass}
+                onClick={() => setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <Bot size={25} className={iconClass(isActive)} />
+                    <span>AI Sourcing</span>
+                  </>
+                )}
+              </NavLink> */}
               {/* <NavLink
                 to="/recruiter/dashboard/candidate-database"
                 className={navLinkClass}

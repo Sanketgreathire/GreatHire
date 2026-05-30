@@ -3,12 +3,13 @@ import axios from "axios";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { COMPANY_API_END_POINT, SOURCING_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { Search, Brain, Zap, X } from "lucide-react";
 
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
@@ -47,11 +48,26 @@ const CandidateList = () => {
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("Find great talent for your team");
+  
+  // Sourcing search state
+  const [showSourcingSearch, setShowSourcingSearch] = useState(false);
+  const [sourcingFilters, setSourcingFilters] = useState({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
+  const [useAI, setUseAI] = useState(false);
+  const [aiAvailable, setAiAvailable] = useState(false);
+  const [sourcingLoading, setSourcingLoading] = useState(false);
+  const [sourcingCandidates, setSourcingCandidates] = useState([]);
 
   const planType = company?.plan || "FREE";
   const isStarterPlan = !company?.hasSubscription && planType === "FREE";
   const hasAdvancedFilters = ["PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
   const hasLocationFilter = ["STANDARD", "PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
+  
+  // Check AI availability
+  useMemo(() => {
+    axios.get(`${SOURCING_API_END_POINT}/ai-health`, { withCredentials: true })
+      .then(({ data }) => setAiAvailable(data.success))
+      .catch(() => setAiAvailable(false));
+  }, []);
 
   const fetchCandidates = async () => {
     try {
@@ -241,7 +257,7 @@ const CandidateList = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-center md:justify-start">
+          <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-3">
             <Button
               onClick={fetchCandidates}
               disabled={isLoading}
@@ -251,7 +267,133 @@ const CandidateList = () => {
               )}
               {isLoading ? "Finding Candidates..." : "Find Candidates"}
             </Button>
+
+            {/* Sourcing — AI powered */}
+            <Button
+              onClick={() => setShowSourcingSearch(!showSourcingSearch)}
+              className="w-full sm:w-48 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 shadow-md transition-all duration-200"
+            >
+              <span></span>
+              {showSourcingSearch ? "Hide Sourcing" : "Sourcing"}
+            </Button>
           </div>
+
+          {/* Sourcing Search Panel */}
+          {showSourcingSearch && (
+            <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                  <Search size={17} className="text-purple-600" /> Search Sourced Candidates
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setUseAI((v) => !v)}
+                  disabled={!aiAvailable}
+                  title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border
+                    ${useAI && aiAvailable
+                      ? "bg-purple-600 text-white border-purple-600"
+                      : aiAvailable
+                        ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+                >
+                  <Brain size={13} />
+                  {useAI && aiAvailable ? "AI ON" : "AI OFF"}
+                  <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="lg:col-span-3">
+                  <input
+                    className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"}
+                    value={sourcingFilters.q}
+                    onChange={(e) => setSourcingFilters({ ...sourcingFilters, q: e.target.value })}
+                  />
+                </div>
+                <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters({ ...sourcingFilters, skills: e.target.value })} />
+                <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters({ ...sourcingFilters, location: e.target.value })} />
+                <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters({ ...sourcingFilters, designation: e.target.value })} />
+                <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Min Experience (yrs)" type="number" min="0" value={sourcingFilters.minExp} onChange={(e) => setSourcingFilters({ ...sourcingFilters, minExp: e.target.value })} />
+                <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Max Experience (yrs)" type="number" min="0" value={sourcingFilters.maxExp} onChange={(e) => setSourcingFilters({ ...sourcingFilters, maxExp: e.target.value })} />
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <Button
+                  onClick={async () => {
+                    setSourcingLoading(true);
+                    try {
+                      if (useAI && sourcingFilters.q?.trim()) {
+                        const params = { q: sourcingFilters.q, topK: 50, scoreThreshold: 0.2 };
+                        if (sourcingFilters.location) params.location = sourcingFilters.location;
+                        if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
+                        if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
+                        if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
+                        if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
+                        const { data } = await axios.get(`${SOURCING_API_END_POINT}/semantic-search`, { params, withCredentials: true });
+                        if (data.success) setSourcingCandidates(data.results || []);
+                      } else {
+                        const params = { page: 1, limit: 50 };
+                        if (sourcingFilters.q) params.q = sourcingFilters.q;
+                        if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
+                        if (sourcingFilters.location) params.location = sourcingFilters.location;
+                        if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
+                        if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
+                        if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
+                        const { data } = await axios.get(`${SOURCING_API_END_POINT}/search`, { params, withCredentials: true });
+                        if (data.success) setSourcingCandidates(data.candidates);
+                      }
+                    } catch (err) {
+                      toast.error(err.response?.data?.message || "Search failed.");
+                    } finally {
+                      setSourcingLoading(false);
+                    }
+                  }}
+                  disabled={sourcingLoading}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 flex items-center gap-2"
+                >
+                  {useAI && aiAvailable && <Zap size={14} />} {sourcingLoading ? "Searching..." : "Search"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setSourcingFilters({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
+                    setSourcingCandidates([]);
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+
+              {/* Sourcing Results */}
+              {sourcingCandidates.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    {sourcingCandidates.length} sourced candidate{sourcingCandidates.length !== 1 ? "s" : ""} found
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {sourcingCandidates.map((c) => (
+                      <div key={c._id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">{c.fullName}</h4>
+                        {c.designation && <p className="text-sm text-gray-500 dark:text-gray-400">{c.designation}</p>}
+                        {c.totalExperience > 0 && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">🕐 {c.totalExperience} yrs exp</p>}
+                        {c.location && <p className="text-xs text-gray-600 dark:text-gray-400">📍 {c.location}</p>}
+                        {c.skills?.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {c.skills.slice(0, 4).map((s, i) => (
+                              <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs">{s}</Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Candidates */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
 import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes } from "react-icons/fa";
-import { FaUserTie, FaGraduationCap, FaBookOpen } from "react-icons/fa6";
+import { FaUserTie, FaGraduationCap, FaBookOpen, FaRobot } from "react-icons/fa6";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -19,6 +19,7 @@ const navItems = [
   { name: "Companies",   path: "/admin/companies",        icon: PiBuildingOfficeDuotone },
   { name: "Recruiters",  path: "/admin/recruiters-list",  icon: FaUserTie               },
   { name: "Jobs",        path: "/admin/jobs",             icon: FaBriefcase             },
+  { name: "AI Sourcing", path: "/admin/ai-sourcing",      icon: FaRobot                 },
   { name: "Campus",      path: "/admin/campus-dashboard", icon: FaGraduationCap         },
   { name: "Courses",     path: "/admin/courses",          icon: FaBookOpen              },
   { name: "Reports",     path: "/admin/reports",          icon: FaChartBar              },

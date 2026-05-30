@@ -11,6 +11,30 @@ import "./index.css";
 
 const root = document.getElementById("root");
 
+// Expose token getter for Chrome Extension
+window.__getGreatHireToken = function() {
+  try {
+    // Get token from Redux store state
+    const state = store.getState();
+    const authState = state.auth;
+    
+    // Try multiple possible locations
+    if (authState && authState.user) {
+      // Token might be in user object
+      if (authState.user.token) return authState.user.token;
+    }
+    
+    // Check if there's a token in localStorage (for compatibility)
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) return storedToken;
+    
+    return null;
+  } catch (e) {
+    console.error('Error getting token:', e);
+    return null;
+  }
+};
+
 // Use createRoot with concurrent features for better scheduling
 ReactDOM.createRoot(root).render(
   <ThemeProvider>

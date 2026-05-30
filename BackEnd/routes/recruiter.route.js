@@ -95,6 +95,7 @@ import {
   googleLogin,
   getAllRecruiters,
   getRecruiterById,
+  getProfile,
   addRecruiterToCompany,
   updateProfile,
   deleteAccount,
@@ -111,6 +112,7 @@ import { login } from "../controllers/user.controller.js";
 const router = express.Router();
 router.route("/register").post(validateUser, register);
 router.route("/googleLogin").post(googleLogin);
+router.route("/profile").get(isAuthenticated, getProfile);
 router
   .route("/profile/update")
   .put(isAuthenticated, singleUpload, updateProfile);
