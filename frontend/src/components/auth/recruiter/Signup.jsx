@@ -158,7 +158,8 @@ const RecruiterSignup = () => {
         toast.success("Recruiter account created successfully ✅");
         setFormData({ fullname: "", email: "", phoneNumber: "", password: "" });
         dispatch(setUser(response.data.user));
-        navigate("/recruiter/dashboard/create-company");
+        
+      navigate("/recruiter/dashboard/create-company");
       } else {
         toast.error(response?.data?.message || "Signup failed ❌");
       }

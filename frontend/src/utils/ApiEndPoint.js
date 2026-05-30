@@ -52,3 +52,5 @@ export const COLLEGE_API_END_POINT = `${BASE_API}/college`;
 export const BACKEND_URL = import.meta.env.VITE_API_URL;
 export const COURSE_API_END_POINT = `${BASE_API}/courses`;
 export const OTP_API_END_POINT = `${BASE_API}/otp`;
+export const SOURCING_API_END_POINT   = `${BASE_API}/sourcing`;
+export const INGESTION_API_END_POINT  = `${BASE_API}/ingestion`;

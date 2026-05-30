@@ -305,6 +305,48 @@ export const getRecruiterById = async (req, res) => {
   }
 };
 
+// Get current authenticated recruiter's profile
+export const getProfile = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+    
+    if (!recruiterId) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "User not authenticated" 
+      });
+    }
+
+    const recruiter = await Recruiter.findById(recruiterId).select("-password").lean();
+    if (!recruiter) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Recruiter profile not found" 
+      });
+    }
+
+    const company = await Company.findOne(
+      { adminEmail: recruiter.emailId.email },
+      { companyName: 1 }
+    ).lean();
+
+    if (company) recruiter.companyName = company.companyName;
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Profile fetched successfully", 
+      recruiter 
+    });
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Server error", 
+      error: error.message 
+    });
+  }
+};
+
 // Plan-based user limits
 const USER_LIMITS = {
   FREE:       1,

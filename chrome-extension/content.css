@@ -1,0 +1,40 @@
+#greathire-float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999999;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+#greathire-float-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+#greathire-float-btn:active {
+  transform: translateY(0);
+}
+
+.gh-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gh-icon {
+  font-size: 18px;
+}
+
+.gh-text {
+  white-space: nowrap;
+}
