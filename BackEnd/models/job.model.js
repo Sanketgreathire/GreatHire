@@ -88,12 +88,12 @@ const jobSchema = new mongoose.Schema(
       },
       isActive: {
         type: Boolean,
-        default: true,
+        default: false,
       },
       status: {
         type: String,
         enum: ["pending", "active", "rejected"],
-        default: "active",
+        default: "pending",
       },
     }, 
     saveJob: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

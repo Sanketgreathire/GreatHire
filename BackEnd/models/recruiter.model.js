@@ -31,6 +31,7 @@ const recruiterSchema = new mongoose.Schema(
     phoneNumber: {
       number: {
         type: String,
+        match: [/^\+\d{6,15}$/, "Invalid international phone number"],
       },
       isVerified: {
         type: Boolean,
@@ -94,6 +95,13 @@ const recruiterSchema = new mongoose.Schema(
     reminderEmailSent: {
       type: Boolean,
       default: false,
+    },
+    reminderSent: {
+      type: Boolean,
+      default: false,
+    },
+    reminderSentAt: {
+      type: Date,
     },
     remainingJobPosts: {
       type: Number,

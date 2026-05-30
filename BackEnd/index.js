@@ -40,6 +40,7 @@ import messageRoute from "./routes/message.route.js";
 import collegeRoute from "./routes/college.route.js"; // college auth + students
 import courseRoute from "./routes/course.route.js";
 import otpRoute from "./routes/otp.route.js";
+
 import sourcingRoute from "./routes/sourcing/sourcing.route.js";
 import ingestionRoute from "./routes/ingestion.route.js";
 import autoSourcingRoute from "./routes/autoSourcing.route.js";
@@ -60,6 +61,9 @@ import freshnessRoute from "./src/modules/freshness/routes/freshness.routes.js";
 import orchestratorRoute from "./src/modules/orchestrator/routes/orchestrator.routes.js";
 import talentSignalsRoute from "./src/modules/talentSignals/routes/talentSignals.routes.js";
 import eventsRoute from "./src/modules/events/routes/events.routes.js";
+
+import analyticsRoute from "./routes/analytics/analytics.route.js";
+
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -199,6 +203,7 @@ app.use("/api/v1/messages", messageRoute);
 app.use("/api/v1/college", collegeRoute);
 app.use("/api/v1/courses", courseRoute);
 app.use("/api/v1/otp", otpRoute);
+
 app.use("/api/v1/sourcing",   sourcingRoute);
 app.use("/api/v1/ingestion",  ingestionRoute);
 app.use("/api/v1/auto-sourcing", autoSourcingRoute);
@@ -221,6 +226,9 @@ app.use("/api/events", eventsRoute);
 
 // Serve uploaded resumes
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
+
+app.use("/api/v1/analytics", analyticsRoute);
+
 
 // ================= FRONTEND =================
 // Serve pre-compressed brotli/gzip assets with 1-year cache
