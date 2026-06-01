@@ -66,8 +66,8 @@ import analyticsRoute from "./routes/analytics/analytics.route.js";
 
 
 // ================= MODELS =================
-import Blog from "./models/blog.model.js";
 
+import Blog from "./models/blog.model.js";
 // ================= APP SETUP =================
 const app = express();
 const server = http.createServer(app);
