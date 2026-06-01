@@ -1,4 +1,4 @@
-import { SourcingCandidate } from "../../../../models/sourcing/SourcingCandidate.model.js";
+import { SourcingCandidate } from "../../../../models/sourcing/sourcingCandidate.model.js";
 import { TalentSignal } from "../../../models/talentSignal.model.js";
 
 export class StartupAffinityService {

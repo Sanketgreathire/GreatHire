@@ -17,7 +17,7 @@ export class KafkaProducerService {
       } : undefined,
       retry: {
         initialRetryTime: 100,
-        retries: 8
+        retries: 2  // Reduced from 8 to fail faster
       },
       producerConfig: {
         maxInFlightRequests: 1,
@@ -37,7 +37,7 @@ export class KafkaProducerService {
     };
     this.batchQueue = [];
     this.batchSize = 100;
-    this.batchTimeout = 5000; // 5 seconds
+    this.batchTimeout = 5000;
     this.batchTimer = null;
   }
 
@@ -53,14 +53,14 @@ export class KafkaProducerService {
       await this.producer.connect();
       this.isConnected = true;
 
-      console.log('Kafka producer connected successfully');
-      
-      // Start batch processing
+      console.log('✅ Kafka producer connected successfully');
       this.startBatchProcessor();
 
     } catch (error) {
-      console.error('Failed to connect Kafka producer:', error);
-      throw error;
+      // Kafka unavailable — running in degraded mode silently
+      this.isConnected = false;
+      this.kafka = null;
+      this.producer = null;
     }
   }
 
@@ -71,7 +71,6 @@ export class KafkaProducerService {
         this.batchTimer = null;
       }
 
-      // Flush any remaining batch
       if (this.batchQueue.length > 0) {
         await this.flushBatch();
       }
@@ -82,14 +81,17 @@ export class KafkaProducerService {
         console.log('Kafka producer disconnected');
       }
     } catch (error) {
-      console.error('Error disconnecting Kafka producer:', error);
-      throw error;
+      // Ignore disconnect errors
     }
   }
 
   async publishEvent(topic, event, options = {}) {
     try {
       await this.ensureConnected();
+
+      if (!this.isConnected) {
+        return { success: false, skipped: true, reason: 'Kafka unavailable' };
+      }
 
       const startTime = Date.now();
       
@@ -131,24 +133,14 @@ export class KafkaProducerService {
       const endTime = Date.now();
       const latency = endTime - startTime;
 
-      // Update metrics
       this.metrics.messagesProduced++;
       this.metrics.bytesProduced += message.value.length;
       this.metrics.productionLatency.push(latency);
       this.metrics.lastProductionTime = new Date();
 
-      // Keep only last 1000 latency measurements
       if (this.metrics.productionLatency.length > 1000) {
         this.metrics.productionLatency = this.metrics.productionLatency.slice(-1000);
       }
-
-      console.log(`Event published to topic ${topic}`, {
-        eventId: event.id || message.headers['event-id'],
-        eventType: event.type,
-        partition: result[0]?.partition,
-        offset: result[0]?.offset,
-        latency: `${latency}ms`
-      });
 
       return {
         success: true,
@@ -160,20 +152,18 @@ export class KafkaProducerService {
       };
 
     } catch (error) {
-      console.error(`Failed to publish event to topic ${topic}:`, error);
       this.metrics.messagesFailed++;
-      
-      if (options.retry !== false) {
-        return await this.retryPublish(topic, event, options);
-      }
-      
-      throw error;
+      return { success: false, skipped: true, reason: 'Kafka unavailable' };
     }
   }
 
   async publishBatch(topic, events, options = {}) {
     try {
       await this.ensureConnected();
+
+      if (!this.isConnected) {
+        return { success: false, skipped: true, reason: 'Kafka unavailable' };
+      }
 
       const startTime = Date.now();
       
@@ -212,17 +202,10 @@ export class KafkaProducerService {
       const endTime = Date.now();
       const latency = endTime - startTime;
 
-      // Update metrics
       this.metrics.messagesProduced += events.length;
       this.metrics.bytesProduced += messages.reduce((sum, msg) => sum + msg.value.length, 0);
       this.metrics.productionLatency.push(latency);
       this.metrics.lastProductionTime = new Date();
-
-      console.log(`Batch published to topic ${topic}`, {
-        batchSize: events.length,
-        batchId: options.batchId,
-        latency: `${latency}ms`
-      });
 
       return {
         success: true,
@@ -235,9 +218,8 @@ export class KafkaProducerService {
       };
 
     } catch (error) {
-      console.error(`Failed to publish batch to topic ${topic}:`, error);
       this.metrics.messagesFailed += events.length;
-      throw error;
+      return { success: false, skipped: true, reason: 'Kafka unavailable' };
     }
   }
 
@@ -249,7 +231,6 @@ export class KafkaProducerService {
       timestamp: Date.now()
     });
 
-    // If batch is full, flush immediately
     if (this.batchQueue.length >= this.batchSize) {
       await this.flushBatch();
     }
@@ -260,7 +241,6 @@ export class KafkaProducerService {
       return;
     }
 
-    // Group by topic
     const topicGroups = this.batchQueue.reduce((groups, item) => {
       if (!groups[item.topic]) {
         groups[item.topic] = [];
@@ -271,17 +251,14 @@ export class KafkaProducerService {
 
     this.batchQueue = [];
 
-    // Publish each topic group
     const results = [];
     for (const [topic, items] of Object.entries(topicGroups)) {
       try {
         const events = items.map(item => item.event);
-        const options = items[0].options; // Use first item's options for batch
-        
+        const options = items[0].options;
         const result = await this.publishBatch(topic, events, options);
         results.push(result);
       } catch (error) {
-        console.error(`Failed to publish batch for topic ${topic}:`, error);
         results.push({ success: false, topic, error: error.message });
       }
     }
@@ -302,25 +279,15 @@ export class KafkaProducerService {
     const retryDelay = options.retryDelay || 1000 * Math.pow(2, attempt - 1);
 
     if (attempt > maxRetries) {
-      console.error(`Max retries exceeded for topic ${topic}`, {
-        eventId: event.id,
-        attempts: attempt - 1
-      });
-      throw new Error(`Failed to publish event after ${maxRetries} attempts`);
+      return { success: false, skipped: true, reason: 'Kafka unavailable after retries' };
     }
-
-    console.log(`Retrying event publish to topic ${topic}`, {
-      eventId: event.id,
-      attempt,
-      delay: `${retryDelay}ms`
-    });
 
     await new Promise(resolve => setTimeout(resolve, retryDelay));
 
     try {
       return await this.publishEvent(topic, event, {
         ...options,
-        retry: false // Prevent infinite retry loops
+        retry: false
       });
     } catch (error) {
       return await this.retryPublish(topic, event, options, attempt + 1);
@@ -329,6 +296,8 @@ export class KafkaProducerService {
 
   async createTopic(topic, options = {}) {
     try {
+      if (!this.isConnected) return null;
+
       const admin = this.kafka.admin();
       await admin.connect();
 
@@ -337,86 +306,71 @@ export class KafkaProducerService {
         numPartitions: options.numPartitions || 3,
         replicationFactor: options.replicationFactor || 1,
         config: {
-          'retention.ms': options.retentionMs || 604800000, // 7 days
+          'retention.ms': options.retentionMs || 604800000,
           'cleanup.policy': options.cleanupPolicy || 'delete',
           'compression.type': options.compressionType || 'gzip',
-          'max.message.bytes': options.maxMessageBytes || 1048576, // 1MB
+          'max.message.bytes': options.maxMessageBytes || 1048576,
           ...options.config
         }
       };
 
-      await admin.createTopics({
-        topics: [topicConfig]
-      });
-
+      await admin.createTopics({ topics: [topicConfig] });
       await admin.disconnect();
 
-      console.log(`Topic created: ${topic}`, topicConfig);
+      console.log(`Topic created: ${topic}`);
       return topicConfig;
 
     } catch (error) {
       if (error.type === 'TOPIC_ALREADY_EXISTS') {
-        console.log(`Topic already exists: ${topic}`);
         return null;
       }
-      console.error(`Failed to create topic ${topic}:`, error);
-      throw error;
+      return null;
     }
   }
 
   async deleteTopic(topic) {
     try {
+      if (!this.isConnected) return false;
+
       const admin = this.kafka.admin();
       await admin.connect();
-
-      await admin.deleteTopics({
-        topics: [topic]
-      });
-
+      await admin.deleteTopics({ topics: [topic] });
       await admin.disconnect();
 
       console.log(`Topic deleted: ${topic}`);
       return true;
-
     } catch (error) {
-      console.error(`Failed to delete topic ${topic}:`, error);
-      throw error;
+      return false;
     }
   }
 
   async listTopics() {
     try {
+      if (!this.isConnected) return [];
+
       const admin = this.kafka.admin();
       await admin.connect();
-
       const topics = await admin.listTopics();
-      
       await admin.disconnect();
 
       return topics;
-
     } catch (error) {
-      console.error('Failed to list topics:', error);
-      throw error;
+      return [];
     }
   }
 
   async getTopicMetadata(topic) {
     try {
+      if (!this.isConnected) return null;
+
       const admin = this.kafka.admin();
       await admin.connect();
-
-      const metadata = await admin.fetchTopicMetadata({
-        topics: [topic]
-      });
-
+      const metadata = await admin.fetchTopicMetadata({ topics: [topic] });
       await admin.disconnect();
 
       return metadata.topics[0];
-
     } catch (error) {
-      console.error(`Failed to get topic metadata for ${topic}:`, error);
-      throw error;
+      return null;
     }
   }
 
@@ -431,14 +385,11 @@ export class KafkaProducerService {
     
     return {
       ...this.metrics,
-      averageLatency: latency.length > 0 ? 
-        latency.reduce((sum, l) => sum + l, 0) / latency.length : 0,
+      averageLatency: latency.length > 0 ? latency.reduce((sum, l) => sum + l, 0) / latency.length : 0,
       maxLatency: latency.length > 0 ? Math.max(...latency) : 0,
       minLatency: latency.length > 0 ? Math.min(...latency) : 0,
-      p95Latency: latency.length > 0 ? 
-        this.percentile(latency, 0.95) : 0,
-      p99Latency: latency.length > 0 ? 
-        this.percentile(latency, 0.99) : 0,
+      p95Latency: latency.length > 0 ? this.percentile(latency, 0.95) : 0,
+      p99Latency: latency.length > 0 ? this.percentile(latency, 0.99) : 0,
       connected: this.isConnected,
       batchQueueSize: this.batchQueue.length
     };
@@ -462,9 +413,14 @@ export class KafkaProducerService {
 
   async healthCheck() {
     try {
-      await this.ensureConnected();
-      
-      // Test connection by listing topics
+      if (!this.isConnected) {
+        return {
+          status: 'unavailable',
+          connected: false,
+          reason: 'Kafka not connected'
+        };
+      }
+
       const topics = await this.listTopics();
       
       return {

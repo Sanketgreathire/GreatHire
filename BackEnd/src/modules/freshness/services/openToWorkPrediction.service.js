@@ -1,4 +1,4 @@
-import { SourcingCandidate } from "../../../../models/sourcing/SourcingCandidate.model.js";
+import { SourcingCandidate } from "../../../../models/sourcing/sourcingCandidate.model.js";
 import { GitHubCandidateMetadata } from "../../../models/githubCandidateMetadata.model.js";
 import { PortfolioCandidateMetadata } from "../../../models/portfolioCandidateMetadata.model.js";
 import { ResumeCandidateMetadata } from "../../../models/resumeCandidateMetadata.model.js";
