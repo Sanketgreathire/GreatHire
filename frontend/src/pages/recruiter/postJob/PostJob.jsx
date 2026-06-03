@@ -13,6 +13,8 @@ import { allLocations, jobTitles } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
 import { useRef } from "react";
 import DOMPurify from "dompurify";
+import ChatAssistant from "@/components/recruiter/ChatAssistant";
+import { Zap } from "lucide-react";
 
 const flatLocations = Object.values(allLocations).flat();
 
@@ -33,12 +35,14 @@ const filterLocations = (query) => {
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [langSearch, setLangSearch] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
+  const [generatedJDAvailable, setGeneratedJDAvailable] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -67,6 +71,76 @@ const PostJob = () => {
     if (remainingPosts === Infinity) return "Unlimited";
     return `${remainingPosts} Job${remainingPosts !== 1 ? "s" : ""}`;
   }, [remainingPosts]);
+
+  // Handler to apply generated JD to the form
+  const handleApplyGeneratedJD = useCallback((jdText) => {
+    if (!editorRef.current) return;
+
+    const lines = jdText.split(/\r?\n/);
+    let html = "";
+    let currentList = null;
+    let currentItems = [];
+
+    const flushList = () => {
+      if (!currentList || !currentItems.length) return;
+      const tag = currentList === "ol" ? "ol" : "ul";
+      html += `<${tag}>${currentItems.join("")}</${tag}>`;
+      currentList = null;
+      currentItems = [];
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) {
+        flushList();
+        continue;
+      }
+
+      if (/^[-*•]\s+/.test(line)) {
+        if (currentList !== "ul") flushList();
+        currentList = "ul";
+        currentItems.push(`<li>${line.replace(/^[-*•]\s+/, "")}</li>`);
+        continue;
+      }
+
+      if (/^\d+\.\s+/.test(line)) {
+        if (currentList !== "ol") flushList();
+        currentList = "ol";
+        currentItems.push(`<li>${line.replace(/^\d+\.\s+/, "")}</li>`);
+        continue;
+      }
+
+      flushList();
+      html += `<p>${line}</p>`;
+    }
+    flushList();
+
+    editorRef.current.innerHTML = html;
+    formik.setFieldValue("details", jdText);
+    toast.success("Job description applied! You can now review and submit.");
+  }, []);
+
+  useEffect(() => {
+    const updateAvailability = () => {
+      setGeneratedJDAvailable(Boolean(localStorage.getItem('lastGeneratedJD')));
+    };
+
+    updateAvailability();
+
+    const handleStorage = (event) => {
+      if (event.key === 'lastGeneratedJD') {
+        updateAvailability();
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('focus', updateAvailability);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', updateAvailability);
+    };
+  }, []);
 
   const handleChange = (e) => {
     const lines = e.target.value.split("\n");
@@ -546,9 +620,27 @@ const PostJob = () => {
 
 
                   <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                      Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label className="block text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                        Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setChatOpen(true)}
+                          className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm rounded-lg transition-all duration-200 shadow-md hover:shadow-lg dark:from-blue-700 dark:to-blue-600"
+                        >
+                          <Zap size={16} />
+                          AI Assistant
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        Use the AI Assistant to generate or refine job descriptions. Generated JDs will automatically populate this field.
+                      </p>
+                    </div>
 
                     {/* Toolbar */}
                     <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
@@ -1471,6 +1563,28 @@ const PostJob = () => {
           <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
         </div>
       )}
+
+      {/* Chat Assistant Modal */}
+      <ChatAssistant
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        onApplyJD={handleApplyGeneratedJD}
+        onJDGenerated={() => setGeneratedJDAvailable(true)}
+        formValues={{
+          title: formik.values.title,
+          department: formik.values.department,
+          skills: Array.isArray(formik.values.skills)
+            ? formik.values.skills
+            : String(formik.values.skills || "")
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+          experience: formik.values.experience,
+          workPlaceFlexibility: formik.values.workPlaceFlexibility,
+          salary: formik.values.salary,
+          details: formik.values.details,
+        }}
+      />
     </>
   );
 };

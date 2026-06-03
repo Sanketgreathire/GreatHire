@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JD Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0b0c0e;
+    --bg2: #111316;
+    --bg3: #181b20;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #eeecea;
+    --muted: #7a7975;
+    --accent: #c8f560;
+    --accent2: #a8d940;
+    --accent-dim: rgba(200,245,96,0.1);
+    --accent-dim2: rgba(200,245,96,0.06);
+    --danger: #f56060;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background: #f0f0ec;
+    color: #1a1a18;
+  }
+
+  .landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    text-align: center;
+    padding: 2rem;
+    background: #f0f0ec;
+  }
+
+  .landing-icon {
+    width: 72px; height: 72px;
+    background: #1a1a18;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .landing-icon svg { width: 32px; height: 32px; stroke: #c8f560; }
+
+  .landing h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #1a1a18;
+    line-height: 1.1;
+  }
+  .landing h1 span { color: #5a5a56; }
+
+  .landing p {
+    font-size: 16px;
+    color: #6a6a66;
+    max-width: 360px;
+    line-height: 1.6;
+  }
+
+  .open-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #1a1a18;
+    color: #c8f560;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .open-btn:hover { background: #2a2a28; }
+  .open-btn:active { transform: scale(0.97); }
+  .open-btn svg { width: 18px; height: 18px; stroke: #c8f560; }
+
+  .landing-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .landing-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(26,26,24,0.07);
+    color: #6a6a66;
+    border: 1px solid rgba(26,26,24,0.1);
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease;
+  }
+  .overlay.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--bg);
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    width: 100%;
+    max-width: 1060px;
+    height: min(90vh, 720px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.25s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+  .modal-header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .modal-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; }
+  .badge {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(200,245,96,0.2);
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .close-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .close-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .modal-body {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .panel-left {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--bg);
+  }
+
+  .section-block { display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-dim2);
+    border: 1px solid rgba(200,245,96,0.15);
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  input, select, textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    padding: 8px 11px;
+    width: 100%;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(200,245,96,0.35);
+    background: var(--bg3);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+  select { cursor: pointer; }
+  select option { background: var(--bg2); }
+  textarea { resize: vertical; min-height: 68px; line-height: 1.5; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .tags-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 9px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    min-height: 40px;
+    cursor: text;
+    transition: border-color 0.15s;
+  }
+  .tags-wrap:focus-within { border-color: rgba(200,245,96,0.35); background: var(--bg3); }
+  .tag-pill {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(200,245,96,0.2);
+    border-radius: 20px;
+    font-size: 11.5px;
+    padding: 2px 9px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .tag-pill button {
+    background: none; border: none;
+    color: var(--accent); cursor: pointer;
+    font-size: 14px; line-height: 1; padding: 0; opacity: 0.6;
+  }
+  .tag-pill button:hover { opacity: 1; }
+  .tags-input-inner {
+    border: none; background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; outline: none;
+    min-width: 100px; flex: 1; padding: 2px 0;
+  }
+  .tags-input-inner::placeholder { color: var(--muted); }
+
+  /* ── SALARY ── */
+  .salary-collapsed {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .salary-toggle-btn {
+    background: var(--accent-dim2);
+    border: 1px solid rgba(200,245,96,0.15);
+    color: var(--accent);
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .salary-toggle-btn:hover { background: var(--accent-dim); border-color: rgba(200,245,96,0.3); }
+  .salary-fields-wrap { display: none; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .salary-fields-wrap.open { display: flex; }
+  .salary-hint { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .generate-btn {
+    background: var(--accent);
+    color: #0b0c0e;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 12px 18px;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .generate-btn:hover { background: var(--accent2); }
+  .generate-btn:active { transform: scale(0.98); }
+  .generate-btn:disabled { background: #2a2e24; color: #4a5040; cursor: not-allowed; transform: none; }
+
+  .panel-right {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .output-header {
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .output-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .output-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: var(--radius);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  .output-body { flex: 1; overflow-y: auto; padding: 1.75rem 2rem; }
+
+  .empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 2rem;
+  }
+  .empty-icon {
+    width: 52px; height: 52px;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .empty-icon svg { width: 22px; height: 22px; stroke: var(--muted); }
+  .empty-state p { font-size: 13.5px; max-width: 260px; line-height: 1.5; }
+
+  .jd-rendered h1 { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
+  .jd-rendered h2 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1.75rem; margin-bottom: 0.65rem; padding-bottom: 5px; border-bottom: 1px solid var(--accent-dim); }
+  .jd-rendered p { margin-bottom: 0.65rem; color: var(--text); font-size: 14px; line-height: 1.75; }
+  .jd-rendered ul { padding-left: 0; list-style: none; margin-bottom: 0.65rem; }
+  .jd-rendered li { padding: 3px 0 3px 16px; position: relative; font-size: 14px; line-height: 1.65; color: var(--text); }
+  .jd-rendered li::before { content: '—'; position: absolute; left: 0; color: var(--accent); font-weight: 500; }
+  .jd-meta { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .jd-meta-pill { font-family: 'DM Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--bg3); border: 1px solid var(--border2); color: var(--muted); }
+
+  .loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 1.25rem; }
+  .loader-ring { width: 36px; height: 36px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-family: 'DM Mono', monospace; font-size: 12.5px; color: var(--muted); letter-spacing: 0.05em; }
+
+  .error-msg { background: rgba(245,96,96,0.08); border: 1px solid rgba(245,96,96,0.2); border-radius: var(--radius); padding: 1rem 1.25rem; color: var(--danger); font-size: 13px; font-family: 'DM Mono', monospace; line-height: 1.6; }
+
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--accent); color: #0b0c0e; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; padding: 8px 16px; border-radius: var(--radius); opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; z-index: 200; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  @media (max-width: 700px) {
+    .modal-body { grid-template-columns: 1fr; }
+    .panel-left { border-right: none; border-bottom: 1px solid var(--border); max-height: 55vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING PAGE -->
+<div class="landing">
+  <div class="landing-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+      <rect x="3" y="3" width="18" height="18" rx="3"/>
+      <path d="M7 8h10M7 12h7M7 16h5"/>
+    </svg>
+  </div>
+  <button class="open-btn" onclick="openModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2">
+      <rect x="3" y="3" width="18" height="18" rx="3"/>
+      <path d="M7 8h10M7 12h7M7 16h5"/>
+    </svg>
+    Create JD
+  </button>
+</div>
+
+<!-- OVERLAY + MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+
+    <div class="modal-header">
+      <div class="modal-logo">
+        <span class="logo-dot"></span>
+        JD Generator
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="badge">Groq-Powered</span>
+        <button class="close-btn" onclick="closeModal()" title="Close">&#x2715;</button>
+      </div>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- LEFT: Form -->
+      <div class="panel-left">
+
+        <!-- Section 1 -->
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">1</span>
+            <span class="section-label">Basic details</span>
+          </div>
+          <div class="field">
+            <label>Job title</label>
+            <input type="text" id="jobTitle" placeholder="e.g. Senior Product Designer" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Company</label>
+              <input type="text" id="company" placeholder="e.g. Acme Corp" />
+            </div>
+            <div class="field">
+              <label>Department</label>
+              <input type="text" id="department" placeholder="e.g. Engineering" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Employment type</label>
+              <select id="empType">
+                <option>Full-Time</option>
+                <option>Part-Time</option>
+                <option>Contract</option>
+                <option>Freelance</option>
+                <option>Internship</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Seniority</label>
+              <select id="seniority">
+                <option>Intern / Fresher</option>
+                <option>Junior (1–3 yrs)</option>
+                <option>Mid-Level (3–6 yrs)</option>
+                <option>Senior (6–10 yrs)</option>
+                <option>Lead / Principal</option>
+                <option>Manager / Director</option>
+                <option>VP / C-Suite</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Work mode</label>
+              <select id="workMode">
+                <option>On-site</option>
+                <option>Remote</option>
+                <option>Hybrid</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Location</label>
+              <input type="text" id="location" placeholder="Mumbai, India" />
+            </div>
+          </div>
+
+          <!-- SALARY EXPECTATION (new) -->
+          <div class="field">
+            <div class="salary-collapsed">
+              <label style="margin:0">Salary expectation</label>
+              <button class="salary-toggle-btn" id="salaryToggleBtn" onclick="toggleSalary()">+ Add range</button>
+            </div>
+            <div class="salary-fields-wrap" id="salaryFields">
+              <div class="field-row">
+                <div class="field">
+                  <label>Min</label>
+                  <input type="number" id="salaryMin" placeholder="e.g. 800000" min="0" />
+                </div>
+                <div class="field">
+                  <label>Max</label>
+                  <input type="number" id="salaryMax" placeholder="e.g. 1400000" min="0" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Currency</label>
+                  <select id="salaryCurrency">
+                    <option value="INR">INR ₹</option>
+                    <option value="USD">USD $</option>
+                    <option value="EUR">EUR €</option>
+                    <option value="GBP">GBP £</option>
+                    <option value="AED">AED د.إ</option>
+                    <option value="SGD">SGD S$</option>
+                    <option value="CAD">CAD C$</option>
+                    <option value="AUD">AUD A$</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Period</label>
+                  <select id="salaryPeriod">
+                    <option value="per annum">Per annum</option>
+                    <option value="per month">Per month</option>
+                    <option value="per hour">Per hour</option>
+                    <option value="per day">Per day</option>
+                  </select>
+                </div>
+              </div>
+              <span class="salary-hint">Leave blank → "Competitive salary" in JD.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">2</span>
+            <span class="section-label">Role &amp; skills</span>
+          </div>
+          <div class="field">
+            <label>Additional context</label>
+            <textarea id="context" rows="2" placeholder="What does the team do? Why is this role needed?"></textarea>
+          </div>
+          <div class="field">
+            <label>Required skills (Enter to add)</label>
+            <div class="tags-wrap" id="skillsWrap" onclick="document.getElementById('skillInput').focus()">
+              <input class="tags-input-inner" id="skillInput" placeholder="Python, AWS, React…" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-num">3</span>
+            <span class="section-label">Candidate profile</span>
+          </div>
+          <div class="field">
+            <label>Qualifications &amp; education</label>
+            <input type="text" id="qualifications" placeholder="B.Tech CS, MBA, AWS Certified…" />
+          </div>
+          <div class="field">
+            <label>Ideal background</label>
+            <textarea id="candidateBg" rows="2" placeholder="Prior startup experience, domain knowledge…"></textarea>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="generateBtn" onclick="generateJD()">
+          <svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M5 3l14 9-14 9V3z"/>
+          </svg>
+          Generate job details
+        </button>
+
+      </div>
+
+      <!-- RIGHT: Output -->
+      <div class="panel-right">
+        <div class="output-header">
+          <span class="output-title">Output</span>
+          <div class="output-actions">
+            <button class="btn-sm" onclick="copyJD()" id="copyBtn" style="display:none">Copy text</button>
+            <button class="btn-sm" onclick="downloadJD()" id="dlBtn" style="display:none">Download .txt</button>
+            <button class="btn-sm" onclick="saveJDToJob()" id="saveBtn" style="display:none">Save to Job</button>
+          </div>
+        </div>
+        <div class="output-body" id="outputBody">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <path d="M7 8h10M7 12h7M7 16h5"/>
+              </svg>
+            </div>
+            <p>Fill in the details on the left and click generate.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  const BACKEND = 'http://127.0.0.1:8000';
+
+  const skills = [];
+  const skillInput = document.getElementById('skillInput');
+  const skillsWrap = document.getElementById('skillsWrap');
+
+  skillInput.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ',') && skillInput.value.trim()) {
+      e.preventDefault();
+      addSkill(skillInput.value.trim().replace(/,$/, ''));
+      skillInput.value = '';
+    } else if (e.key === 'Backspace' && !skillInput.value && skills.length) {
+      removeSkill(skills.length - 1);
+    }
+  });
+
+  function addSkill(text) {
+    if (!text || skills.includes(text)) return;
+    skills.push(text);
+    renderSkills();
+  }
+  function removeSkill(idx) {
+    skills.splice(idx, 1);
+    renderSkills();
+  }
+  function renderSkills() {
+    [...skillsWrap.querySelectorAll('.tag-pill')].forEach(p => p.remove());
+    skills.forEach((s, i) => {
+      const pill = document.createElement('span');
+      pill.className = 'tag-pill';
+      pill.innerHTML = `${s}<button onclick="removeSkill(${i})" type="button">×</button>`;
+      skillsWrap.insertBefore(pill, skillInput);
+    });
+  }
+
+  let salaryOpen = false;
+  function toggleSalary() {
+    salaryOpen = !salaryOpen;
+    document.getElementById('salaryFields').classList.toggle('open', salaryOpen);
+    document.getElementById('salaryToggleBtn').textContent = salaryOpen ? '− Remove' : '+ Add range';
+  }
+
+  function getSalaryContext() {
+    if (!salaryOpen) return '';
+    const min = document.getElementById('salaryMin').value.trim();
+    const max = document.getElementById('salaryMax').value.trim();
+    const currency = document.getElementById('salaryCurrency').value;
+    const period = document.getElementById('salaryPeriod').value;
+    if (!min && !max) return `Salary: Competitive, ${period}`;
+    if (min && max) return `Salary range: ${currency} ${Number(min).toLocaleString()} – ${Number(max).toLocaleString()} ${period}`;
+    if (min) return `Salary: from ${currency} ${Number(min).toLocaleString()} ${period}`;
+    return `Salary: up to ${currency} ${Number(max).toLocaleString()} ${period}`;
+  }
+
+  function openModal() {
+    document.getElementById('overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('jobTitle').value = '';
+    document.getElementById('company').value = '';
+    document.getElementById('department').value = '';
+    document.getElementById('context').value = '';
+    document.getElementById('qualifications').value = '';
+    document.getElementById('candidateBg').value = '';
+    document.getElementById('location').value = '';
+    document.getElementById('salaryMin').value = '';
+    document.getElementById('salaryMax').value = '';
+    document.getElementById('empType').selectedIndex = 0;
+    document.getElementById('seniority').selectedIndex = 0;
+    document.getElementById('workMode').selectedIndex = 0;
+    document.getElementById('salaryCurrency').selectedIndex = 0;
+    document.getElementById('salaryPeriod').selectedIndex = 0;
+    salaryOpen = false;
+    document.getElementById('salaryFields').classList.remove('open');
+    document.getElementById('salaryToggleBtn').textContent = '+ Add range';
+    skills.length = 0;
+    renderSkills();
+    lastJD = '';
+    document.getElementById('outputBody').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <path d="M7 8h10M7 12h7M7 16h5"/>
+          </svg>
+        </div>
+        <p>Fill in the details on the left and click generate.</p>
+      </div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+    document.getElementById('dlBtn').style.display = 'none';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  let lastJD = '';
+
+  async function generateJD() {
+    const jobTitle   = document.getElementById('jobTitle').value.trim();
+    const company    = document.getElementById('company').value.trim();
+    const department = document.getElementById('department').value.trim();
+
+    if (!jobTitle || !company) {
+      showError('Job title and company name are required.');
+      return;
+    }
+
+    const salaryCtx = getSalaryContext();
+
+    const payload = {
+      title:              jobTitle,
+      department:         department || 'General',
+      skills:             skills.join(', '),
+      seniority:          document.getElementById('seniority').value,
+      work_mode:          document.getElementById('workMode').value,
+      additional_context: [
+        document.getElementById('context').value.trim(),
+        document.getElementById('qualifications').value.trim()
+          ? 'Qualifications: ' + document.getElementById('qualifications').value.trim()
+          : '',
+        document.getElementById('candidateBg').value.trim()
+          ? 'Ideal background: ' + document.getElementById('candidateBg').value.trim()
+          : '',
+        document.getElementById('location').value.trim()
+          ? 'Location: ' + document.getElementById('location').value.trim()
+          : '',
+        document.getElementById('empType').value
+          ? 'Employment type: ' + document.getElementById('empType').value
+          : '',
+        salaryCtx,
+      ].filter(Boolean).join('\n'),
+    };
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<div style="width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#0b0c0e;border-radius:50%;animation:spin 0.8s linear infinite"></div> Generating…`;
+    showLoader();
+
+    try {
+      const resp = await fetch(`${BACKEND}/generate-jd`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.detail || `Server error ${resp.status}`);
+      }
+
+      const json = await resp.json();
+      lastJD = json.jd;
+      try { localStorage.setItem('lastGeneratedJD', lastJD); } catch(e) {}
+      renderJD(lastJD, { title: jobTitle, company, department, ...payload });
+
+    } catch (err) {
+      if (err.message.includes('fetch')) {
+        showError('Cannot reach the backend. Make sure your FastAPI server is running:\n\npython main.py');
+      } else {
+        showError(err.message);
+      }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 3l14 9-14 9V3z"/></svg> Generate job description`;
+    }
+  }
+
+  function renderJD(text, data) {
+    const body = document.getElementById('outputBody');
+    document.getElementById('copyBtn').style.display = '';
+    document.getElementById('dlBtn').style.display = '';
+
+    let html = `<div class="jd-rendered">`;
+    html += `<h1>${data.title}</h1>`;
+    html += `<div class="jd-meta">`;
+    html += `<span class="jd-meta-pill">${data.company}</span>`;
+    if (data.department) html += `<span class="jd-meta-pill">${data.department}</span>`;
+    html += `<span class="jd-meta-pill">${data.seniority}</span>`;
+    html += `<span class="jd-meta-pill">${data.work_mode}</span>`;
+    html += `</div>`;
+
+    let inList = false;
+    for (const line of text.split('\n')) {
+      const t = line.trim();
+      if (!t) { if (inList) { html += '</ul>'; inList = false; } continue; }
+      if (t.startsWith('## ') || t.startsWith('# ')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h2>${t.replace(/^#+\s/, '')}</h2>`;
+      } else if (t.startsWith('- ') || t.startsWith('• ') || t.startsWith('* ')) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += `<li>${t.slice(2)}</li>`;
+      } else if (t.match(/^\d+\.\s/)) {
+        if (!inList) { html += '<ul>'; inList = true; }
+        html += `<li>${t.replace(/^\d+\.\s/, '')}</li>`;
+      } else if (t.startsWith('**') && t.endsWith('**')) {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<h2>${t.replace(/\*\*/g, '')}</h2>`;
+      } else {
+        if (inList) { html += '</ul>'; inList = false; }
+        html += `<p>${t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
+      }
+    }
+    if (inList) html += '</ul>';
+    html += '</div>';
+    body.innerHTML = html;
+  }
+
+  function showLoader() {
+    document.getElementById('outputBody').innerHTML = `<div class="loader"><div class="loader-ring"></div><span class="loader-text">Generating your JD…</span></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+    document.getElementById('dlBtn').style.display = 'none';
+  }
+
+  function showError(msg) {
+    document.getElementById('outputBody').innerHTML = `<div class="error-msg">Error: ${msg}</div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+    document.getElementById('dlBtn').style.display = 'none';
+  }
+
+  function copyJD() {
+    if (!lastJD) return;
+    navigator.clipboard.writeText(lastJD).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    });
+  }
+
+  function downloadJD() {
+    if (!lastJD) return;
+    const title = document.getElementById('jobTitle').value.trim().replace(/\s+/g, '_') || 'job_description';
+    const blob = new Blob([lastJD], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${title}.txt`;
+    a.click();
+  }
+</script>
+</body>
+</html>

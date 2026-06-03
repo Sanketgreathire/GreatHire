@@ -1,37 +1,9 @@
 {
-// <<<<<<< HEAD
-//     "compilerOptions": {
-//       // ...
-//       "baseUrl": ".",
-//       "paths": {
-//         "@/*": [
-//           "./src/*"
-//         ]
-//       }
-//       // ...
-//     }
-//   }
-  
-
-// <<<<<<< HEAD
-//     "compilerOptions": {
-//       // ...
-//       "baseUrl": ".",
-//       "paths": {
-//         "@/*": [
-//           "./src/*"
-//         ]
-//       }
-//       // ...
-//     }
-//   }
-  
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   }
 }
-
-// >>>>>>> e7d38b1211f783d95c853e623cd5229ea6ccb9ea

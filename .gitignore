@@ -1,1 +1,4 @@
 node_modules
+
+jd_service/.env
+__pycache__/
