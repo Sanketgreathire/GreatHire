@@ -69,6 +69,58 @@ Make sure you have the following installed on your machine:
 
 ## New Features
 
+### Auto-Sourcing System
+Automatically fetch candidates from public sources into your database:
+- ✅ GitHub profile scraping with smart search
+- ✅ Automated daily cron job (3:00 AM)
+- ✅ Smart deduplication and skill normalization
+- ✅ Multi-recruiter support
+- ✅ Per-recruiter configuration and stats
+- ✅ Configurable search criteria
+- ✅ Rate-limited API calls
+- ✅ REST API for configuration management
+- ✅ **One-click trigger button in admin panel**
+- ✅ **View all auto-sourced candidates in admin dashboard**
+
+**Where to View:**
+- Admin Dashboard: `/admin/dashboard` - See total count
+- AI Sourcing Page: `/admin/ai-sourcing` - View all candidates, trigger manually
+- Recruiter Page: `/recruiter/dashboard/sourcing` - Recruiters see their own
+
+**Quick Start:**
+```bash
+# 1. Add GitHub token to .env (optional but recommended)
+GITHUB_TOKEN=your_github_token
+
+# 2. Initialize configs for existing recruiters (run once)
+npm run init:auto-sourcing
+
+# 3. Test manually
+npm run test:auto-sourcing
+
+# 4. Runs automatically at 3 AM daily
+npm run dev
+```
+
+**Manual Trigger:**
+1. Login as admin
+2. Go to `/admin/ai-sourcing`
+3. Click "Trigger Auto-Sourcing" button
+4. Wait 5 seconds for results
+
+**API Endpoints:**
+- GET `/api/v1/auto-sourcing/config` - Get configuration
+- PUT `/api/v1/auto-sourcing/config` - Update configuration
+- GET `/api/v1/auto-sourcing/stats` - Get statistics
+- POST `/api/v1/auto-sourcing/trigger` - Manual trigger (admin)
+
+**Documentation:**
+- Full Guide: [AUTO_SOURCING_FEATURE.md](./AUTO_SOURCING_FEATURE.md)
+- Quick Start: [AUTO_SOURCING_QUICK_START.md](./AUTO_SOURCING_QUICK_START.md)
+- Implementation: [AUTO_SOURCING_IMPLEMENTATION.md](./AUTO_SOURCING_IMPLEMENTATION.md)
+- User Guide: [AUTO_SOURCING_USER_GUIDE.md](./AUTO_SOURCING_USER_GUIDE.md)
+- Architecture: [AUTO_SOURCING_ARCHITECTURE.md](./AUTO_SOURCING_ARCHITECTURE.md)
+
 ### Verification-Based Job Posting
 Recruiters can now start posting jobs immediately without waiting for verification:
 - ✅ Post 1 free job before company verification

@@ -111,7 +111,7 @@ const JobDescription = () => {
       toast.error("Please signup or login to apply");
 
       setTimeout(() => {
-        navigate("/jobseeker-login", { state: { from: `/jobs/${jobId}` } });
+        navigate("/signup", { state: { from: `/jobs/${jobId}` } });
       }, 600);
 
       return;

@@ -355,7 +355,7 @@ const Recruiters = () => {
       }
     } catch (error) {
       console.error("Bulk email error:", error);
-      toast.error("Error sending bulk emails");
+      toast.error(error.response?.data?.message || "Error sending bulk emails");
     } finally {
       setIsSendingBulkEmail(false);
     }

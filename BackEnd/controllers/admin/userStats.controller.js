@@ -115,11 +115,12 @@ const addExperienceSupport = {
 };
 
 // ===============================
-// GET USER STATS
+// GET USER STATS (OPTIMIZED)
 // ===============================
 export const getUserStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
+    // Fast count - only job seekers (not AI-sourced)
+    const totalUsers = await User.countDocuments({ isAISourced: false });
 
     const users = await User.aggregate([
       // 1️⃣ Convert dates FIRST

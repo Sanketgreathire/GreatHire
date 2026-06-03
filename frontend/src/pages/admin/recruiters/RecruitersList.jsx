@@ -205,6 +205,17 @@ const RecruitersList = () => {
 
   // Bulk email state
   const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // Track which recruiters have been messaged (green = messaged, red = not)
+  const [messagedIds, setMessagedIds] = useState(new Set());
+
+  const toggleMessaged = (id) => {
+    setMessagedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
   const [emailModal, setEmailModal] = useState(false);
   const [emailTarget, setEmailTarget] = useState(null);
   const [emailSubject, setEmailSubject] = useState("");
@@ -453,6 +464,7 @@ const RecruitersList = () => {
       );
       if (response.data.success) {
         toast.success("Message sent successfully");
+        setMessagedIds((prev) => new Set(prev).add(selectedMessageRecruiter._id));
         setShowMessageModal(false);
         setMessageText("");
       } else {
@@ -627,6 +639,11 @@ const RecruitersList = () => {
 
       if (response.data.success) {
         toast.success(response.data.message);
+        setMessagedIds((prev) => {
+          const next = new Set(prev);
+          selectedRecruiters.forEach((id) => next.add(id));
+          return next;
+        });
         setSelectedRecruiters([]);
       } else {
         toast.error(response.data.message || "Failed to send bulk emails");
@@ -871,6 +888,14 @@ const RecruitersList = () => {
                                 {r.email}
                               </div>
                             </div>
+                            {!r.isActive && (
+                              <button
+                                title={messagedIds.has(r._id) ? "Messaged — click to unmark" : "Not messaged — click to mark"}
+                                onClick={() => toggleMessaged(r._id)}
+                                className="w-3 h-3 rounded-full flex-shrink-0 self-center focus:outline-none mt-0.5"
+                                style={{ backgroundColor: messagedIds.has(r._id) ? '#22c55e' : '#ef4444' }}
+                              />
+                            )}
                           </div>
                         </TableCell>
 

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   Home, X, PenSquare, Settings, Briefcase, PlusSquare,
   Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
-  LayoutDashboard, Users, Gift, Menu, FileText, Search
+  LayoutDashboard, Users, Gift, Menu, FileText, Search, Bot
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
@@ -15,7 +15,9 @@ const DashboardNavigations = () => {
   // State for sidebar toggle
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  // Function to apply styles to navigation links
+  // hasCompany: dual source of truth — user flag (login-time) OR live fetched company object
+  const hasCompany = !!user?.isCompanyCreated || !!company;
+
   const navLinkClass = ({ isActive }) =>
   `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
    ${
@@ -23,6 +25,8 @@ const DashboardNavigations = () => {
        ? "bg-blue-600 text-white dark:bg-blue-700"
        : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
    }`;
+
+  const disabledLinkClass = "flex items-center gap-2 px-3 py-2 rounded-lg w-full opacity-40 cursor-not-allowed pointer-events-none text-gray-500 dark:text-gray-500";
 
   const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600 dark:text-blue-400");
 
@@ -97,43 +101,48 @@ const DashboardNavigations = () => {
                   shadow-xl rounded-xl py-2 flex flex-col gap-1
                   invisible opacity-0 group-hover:visible group-hover:opacity-100
                   transition-opacity duration-150">
-                  {!user?.isCompanyCreated && (
+                  {!hasCompany && (
                     <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
                       {({ isActive }) => (<><Building2 size={25} className={iconClass(isActive)} /><span>Company</span></>)}
                     </NavLink>
                   )}
-                  {user?.isActive && user?.isCompanyCreated && user?.emailId?.email === company?.adminEmail && (
+                  {hasCompany && user?.isActive && user?.emailId?.email === company?.adminEmail && (
                     <NavLink to="/recruiter/dashboard/add-recruiter" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
                       {({ isActive }) => (<><UserPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
                     </NavLink>
                   )}
-                  {user?.isCompanyCreated && (
+                  {hasCompany ? (
                     <NavLink to="/recruiter/dashboard/post-job" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
                       {({ isActive }) => (<><PlusSquare size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
                     </NavLink>
+                  ) : (
+                    <span className={disabledLinkClass}>
+                      <PlusSquare size={25} className="text-gray-400" />
+                      <span>Post Job</span>
+                    </span>
                   )}
                 </ul>
               </li>
               <NavLink
                 to="/recruiter/dashboard/jobs"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
               >
                 {({ isActive }) => (
                   <>
-                    <Briefcase size={25} className={iconClass(isActive)} />
+                    <Briefcase size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
                     <span>Jobs</span>
                   </>
                 )}
               </NavLink>
               <NavLink
                 to="/recruiter/dashboard/applicants-list"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
               >
                 {({ isActive }) => (
                   <>
-                    <Users size={25} className={iconClass(isActive)} />
+                    <Users size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
                     <span>Applicants</span>
                   </>
                 )}
@@ -155,16 +164,28 @@ const DashboardNavigations = () => {
               </NavLink>
               <NavLink
                 to="/recruiter/dashboard/candidate-list"
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <GraduationCap size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
+                    <span>Find Candidates</span>
+                  </>
+                )}
+              </NavLink>
+              {/* <NavLink
+                to="/recruiter/dashboard/sourcing"
                 className={navLinkClass}
                 onClick={() => setSidebarOpen(false)}
               >
                 {({ isActive }) => (
                   <>
-                    <GraduationCap size={25} className={iconClass(isActive)} />
-                    <span>Find Candidates</span>
+                    <Bot size={25} className={iconClass(isActive)} />
+                    <span>AI Sourcing</span>
                   </>
                 )}
-              </NavLink>
+              </NavLink> */}
               {/* <NavLink
                 to="/recruiter/dashboard/candidate-database"
                 className={navLinkClass}
@@ -189,49 +210,49 @@ const DashboardNavigations = () => {
             <ul className="flex flex-col gap-1">
               <NavLink
                 to="/recruiter/dashboard/invite-and-earn"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
               >
                 {({ isActive }) => (
                   <>
-                    <Gift size={25} className={iconClass(isActive)} />
+                    <Gift size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
                     <span>Invite &amp; Earn</span>
                   </>
                 )}
               </NavLink>
               <NavLink
                 to="/recruiter/dashboard/recruiter-list"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
               >
                 {({ isActive }) => (
                   <>
-                    <Users size={25} className={iconClass(isActive)} />
+                    <Users size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
                     <span>Recruiters</span>
                   </>
-                )} 
+                )}
               </NavLink>
               <NavLink
-                      to={
-                        company?.maxPostJobs === 0
-                          ? "/recruiter/dashboard/packages"
-                          : "/recruiter/dashboard/your-plans"
-                      }
-                      className={navLinkClass}
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                   {({ isActive }) => (
+                to={
+                  hasCompany
+                    ? (company?.maxPostJobs === 0 ? "/recruiter/dashboard/packages" : "/recruiter/dashboard/your-plans")
+                    : "/recruiter/dashboard/create-company"
+                }
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
                   <>
-                    <TrendingUp size={25} className={iconClass(isActive)} />
+                    <TrendingUp size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
                     <span>
-                      {company?.maxPostJobs === 0
-                        ? "Upgrade Plans"
+                      {hasCompany
+                        ? (company?.maxPostJobs === 0 ? "Upgrade Plans" : "Current Plan")
                         : "Current Plan"}
                     </span>
                   </>
                 )}
               </NavLink>
-              {user?.emailId?.email === company?.adminEmail && (
+              {hasCompany && user?.emailId?.email === company?.adminEmail && (
                 <NavLink
                   to="/recruiter/dashboard/delete-account"
                   className={navLinkClass}
@@ -239,10 +260,7 @@ const DashboardNavigations = () => {
                 >
                   {({ isActive }) => (
                     <>
-                      <Trash2
-                        size={25}
-                        className={iconClass(isActive)}
-                      />
+                      <Trash2 size={25} className={iconClass(isActive)} />
                       <span>Delete Account</span>
                     </>
                   )}

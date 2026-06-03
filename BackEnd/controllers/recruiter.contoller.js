@@ -22,6 +22,7 @@ import cloudinary from "../utils/cloudinary.js";
 import { isUserAssociated } from "./company.controller.js";
 import notificationService from "../utils/notificationService.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
+import { validateRecruiterPhone } from "../utils/recruiterValidatePhone.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -33,6 +34,7 @@ export const register = async (req, res) => {
     }
 
     const { fullname, email, phoneNumber, password } = req.body;
+    console.log("[REGISTER] Received:", { fullname, email, phoneNumber, password: "***" });
     // Fullname validation
     if (!fullname || fullname.length < 3) {
       return res.status(400).json({
@@ -51,13 +53,13 @@ export const register = async (req, res) => {
     }
 
     // Phone number validation
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid phone number. It must be 10 digits and start with 6–9.",
-      });
+    console.log("[REGISTER] Phone validation for:", phoneNumber);
+    const phoneCheck = validateRecruiterPhone(phoneNumber);
+    if (!phoneCheck.valid) {
+      console.log("[REGISTER] Phone validation FAILED:", phoneCheck.message);
+      return res.status(400).json({ success: false, message: phoneCheck.message });
     }
+    console.log("[REGISTER] Phone validation PASSED");
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
@@ -133,9 +135,10 @@ export const register = async (req, res) => {
         user: userWithoutPassword,
       });
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.error("[REGISTER] Error during registration:", error);
     return res.status(500).json({
-      message: "Internal Server Error",
+      message: error.message || "Internal Server Error",
+      success: false,
     });
   }
 };
@@ -302,6 +305,48 @@ export const getRecruiterById = async (req, res) => {
     res.status(200).json({ message: "Recruiter fetched successfully", recruiter, success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
+// Get current authenticated recruiter's profile
+export const getProfile = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+    
+    if (!recruiterId) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "User not authenticated" 
+      });
+    }
+
+    const recruiter = await Recruiter.findById(recruiterId).select("-password").lean();
+    if (!recruiter) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Recruiter profile not found" 
+      });
+    }
+
+    const company = await Company.findOne(
+      { adminEmail: recruiter.emailId.email },
+      { companyName: 1 }
+    ).lean();
+
+    if (company) recruiter.companyName = company.companyName;
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Profile fetched successfully", 
+      recruiter 
+    });
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Server error", 
+      error: error.message 
+    });
   }
 };
 
@@ -487,10 +532,10 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Validate phone number (India: 10-digit starting with 6-9, US: 10-digit)
-    const phoneRegex = /^[6789]\d{9}$|^\d{10}$/;
-    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
-      return res.status(400).json({ message: "Invalid phone number" });
+    // Validate phone number — international format
+    const intlPhoneRegex = /^\+\d{6,15}$/;
+    if (phoneNumber && !intlPhoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid international phone number", success: false });
     }
 
     let user = await Recruiter.findById(userId);
@@ -719,6 +764,114 @@ export const toggleActive = async (req, res) => {
     res.status(200).json({ message: "Recruiter status updated successfully", success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
+export const getDashboard = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+
+    const company = await Company.findOne({ "userId.user": recruiterId })
+      .select("_id companyName plan creditedForCandidates creditedForJobs freeJobsPosted planJobsPostedThisMonth userId isActive")
+      .lean();
+
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+
+    const companyId = company._id;
+    const recruiterIds = company.userId.map((u) => u.user);
+
+    const [jobs, recruiters] = await Promise.all([
+      Job.find({ company: companyId }).select("_id jobDetails.title jobDetails.isActive createdAt application").lean(),
+      Recruiter.find({ _id: { $in: recruiterIds } }).select("_id").lean(),
+    ]);
+
+    const jobIds = jobs.map((j) => j._id);
+
+    const applications = await Application.find({ job: { $in: jobIds } })
+      .select("_id job applicantName applicantEmail status createdAt")
+      .populate("job", "jobDetails.title")
+      .lean();
+
+    const totalApplicants = applications.length;
+    const shortlisted = applications.filter((a) => a.status === "Shortlisted").length;
+    const interviewed = applications.filter((a) => a.status === "Interview Schedule").length;
+    const hired = applications.filter((a) => a.status === "Shortlisted").length; // map to hired if you have a Hired status
+    const activeJobs = jobs.filter((j) => j.jobDetails?.isActive).length;
+    const successRate = totalApplicants > 0 ? Math.round((shortlisted / totalApplicants) * 100) : 0;
+
+    // Funnel
+    const funnelData = [
+      { name: "Applicants", value: totalApplicants },
+      { name: "Shortlisted", value: shortlisted },
+      { name: "Interviewed", value: interviewed },
+      { name: "Offered", value: 0 },
+      { name: "Hired", value: 0 },
+    ];
+
+    // Applications by role
+    const roleMap = {};
+    applications.forEach((a) => {
+      const title = a.job?.jobDetails?.title || "Unknown";
+      roleMap[title] = (roleMap[title] || 0) + 1;
+    });
+    const roleData = Object.entries(roleMap)
+      .map(([role, count]) => ({ role, applications: count }))
+      .sort((a, b) => b.applications - a.applications)
+      .slice(0, 5);
+
+    // Trend: last 6 days with applications
+    const trendMap = {};
+    applications.forEach((a) => {
+      const day = new Date(a.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      trendMap[day] = (trendMap[day] || 0) + 1;
+    });
+    const trendData = Object.entries(trendMap)
+      .map(([day, count]) => ({ day, applications: count }))
+      .slice(-6);
+
+    // Recent jobs
+    const recentJobs = jobs
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map((j) => ({
+        title: j.jobDetails?.title || "Untitled",
+        date: new Date(j.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+        applications: j.application?.length || 0,
+      }));
+
+    // Recent applicants
+    const recentApplicants = applications
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+      .map((a) => ({
+        name: a.applicantName || "Unknown",
+        role: a.job?.jobDetails?.title || "Unknown",
+        status: a.status,
+      }));
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        recruiters: recruiters.length,
+        postedJobs: jobs.length,
+        activeJobs,
+        applicants: totalApplicants,
+        shortlisted,
+        successRate,
+        credits: company.creditedForJobs || 0,
+      },
+      funnelData,
+      roleData,
+      trendData,
+      recentJobs,
+      applicants: recentApplicants,
+      package: company.plan,
+    });
+  } catch (error) {
+    console.error("[getDashboard] Error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

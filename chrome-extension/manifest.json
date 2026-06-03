@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "GreatHire Talent Sourcer",
+  "version": "1.0.1",
+  "description": "Extract candidate profiles from LinkedIn, Naukri, Indeed and save to GreatHire",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "cookies",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://in.linkedin.com/*",
+    "https://www.naukri.com/*",
+    "https://www.indeed.co.in/*",
+    "http://localhost:3000/*",
+    "http://localhost:5173/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/*",
+        "https://in.linkedin.com/*",
+        "https://www.naukri.com/*",
+        "https://www.indeed.co.in/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    },
+    {
+      "matches": [
+        "http://localhost:5173/*",
+        "http://localhost:3000/*"
+      ],
+      "js": ["content-greathire.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["*://localhost/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Briefcase, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Briefcase, UserCheck, ChevronLeft, ChevronRight, Bot } from "lucide-react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
@@ -45,6 +45,7 @@ const Dashboard = () => {
   const [recentActivity, setRecentActivity] = useState(null);
   const [jobPostings, setJobPostedJob] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [sourcedCount, setSourcedCount] = useState(0);
 
   // Track dark mode changes
   useEffect(() => {
@@ -82,12 +83,28 @@ const Dashboard = () => {
       bg: "bg-purple-200/40 dark:bg-purple-900/30",
     },
     {
-      title: "Total Users",
+      title: "Total Job Seekers",
       count: userStats?.totalUsers || 0,
       change: "+12.5%",
       icon: <FaRegUser size={26} />,
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-200/40 dark:bg-blue-900/30",
+    },
+    {
+      title: "AI Sourced",
+      count: sourcedCount,
+      change: "candidates",
+      icon: <Bot size={26} />,
+      color: "text-orange-600 dark:text-orange-400",
+      bg: "bg-orange-200/40 dark:bg-orange-900/30",
+    },
+    {
+      title: "Candidate Database",
+      count: userStats?.totalUsers || 0,
+      change: "profiles",
+      icon: <FaRegUser size={26} />,
+      color: "text-cyan-600 dark:text-cyan-400",
+      bg: "bg-cyan-200/40 dark:bg-cyan-900/30",
     },
     {
       title: "Total Jobs",
@@ -224,6 +241,19 @@ const Dashboard = () => {
       setLoading(true);
       fetchRecentActivity();
       fetchRecentPostedJob();
+      // Fetch AI sourced candidates count
+      console.log('Fetching AI sourced count...');
+      axios.get(`${import.meta.env.VITE_API_URL}/api/v1/admin/sourcing/stats`, { withCredentials: true })
+        .then(({ data }) => { 
+          console.log('AI sourced response:', data);
+          if (data.success) {
+            console.log('Setting sourced count to:', data.stats.total);
+            setSourcedCount(data.stats.total);
+          }
+        })
+        .catch((err) => {
+          console.error('Error fetching AI sourced count:', err);
+        });
       setLoading(false);
     }
   }, [user]);
@@ -243,7 +273,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
