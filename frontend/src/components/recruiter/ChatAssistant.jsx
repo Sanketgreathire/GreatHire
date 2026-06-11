@@ -39,7 +39,7 @@ const ChatAssistant = ({ isOpen, onClose, onApplyJD, onJDGenerated, formValues }
   };
 
   const handleGenerateJD = async () => {
-    if (!formValues?.title || !formValues?.skills) {
+    if (!formValues?.title || !(formValues?.skills?.length > 0)) {
       addMessage(
         "❌ Please fill in at least the job title and skills in the form first.",
         "bot"
@@ -48,15 +48,75 @@ const ChatAssistant = ({ isOpen, onClose, onApplyJD, onJDGenerated, formValues }
     }
 
     setLoading(true);
+
+    const skills = Array.isArray(formValues.skills)
+      ? formValues.skills.join(", ")
+      : String(formValues.skills || "");
+
+    const benefits = Array.isArray(formValues.benefits)
+      ? formValues.benefits.join("; ")
+      : String(formValues.benefits || "");
+
+    const qualifications = Array.isArray(formValues.qualifications)
+      ? formValues.qualifications.join("; ")
+      : String(formValues.qualifications || "");
+
+    const responsibilities = Array.isArray(formValues.responsibilities)
+      ? formValues.responsibilities.join("; ")
+      : String(formValues.responsibilities || "");
+
+    const questions = Array.isArray(formValues.questions)
+      ? formValues.questions.filter(Boolean).join("; ")
+      : String(formValues.questions || "");
+
+    const additionalContextParts = [
+      formValues.companyName && `Company: ${formValues.companyName}`,
+      formValues.urgentHiring && `Urgent hiring: ${formValues.urgentHiring}`,
+      formValues.department && `Department: ${formValues.department}`,
+      formValues.location && `Location: ${formValues.location}`,
+      formValues.jobType && `Job type: ${formValues.jobType}`,
+      formValues.numberOfOpening && `Openings: ${formValues.numberOfOpening}`,
+      formValues.respondTime && `Response time: ${formValues.respondTime} days`,
+      formValues.duration && `Duration: ${formValues.duration}`,
+      formValues.shift && `Shift: ${formValues.shift}`,
+      formValues.noticePeriod && `Notice period: ${formValues.noticePeriod}`,
+      formValues.anyAmount && `Applicants pay charges: ${formValues.anyAmount}`,
+      formValues.salary && `Salary: ${formValues.salary} ${formValues.salaryType || ""}`,
+      benefits && `Benefits: ${benefits}`,
+      qualifications && `Qualifications: ${qualifications}`,
+      responsibilities && `Responsibilities: ${responsibilities}`,
+      questions && `Application questions: ${questions}`,
+      formValues.languages && formValues.languages.length > 0 && `Preferred languages: ${Array.isArray(formValues.languages) ? formValues.languages.join(", ") : formValues.languages}`,
+      formValues.details && `Current job description: ${formValues.details}`,
+    ].filter(Boolean);
+
     const payload = {
-      title: formValues.title,
-      department: formValues.department || "General",
-      skills: formValues.skills?.join(", ") || "",
-      seniority: formValues.experience || "Mid-level",
-      work_mode: formValues.workPlaceFlexibility || "Hybrid",
-      additional_context: formValues.salary
-        ? `Salary: ${formValues.salary}`
-        : "",
+      companyName: formValues.companyName || "",
+      urgentHiring: formValues.urgentHiring || "",
+      department: formValues.department || "",
+      location: formValues.location || "",
+      jobType: formValues.jobType || "",
+      seniority: formValues.experience || "",
+      work_mode: formValues.workPlaceFlexibility || "",
+      numberOfOpening: formValues.numberOfOpening || "",
+      respondTime: formValues.respondTime || "",
+      duration: formValues.duration || "",
+      shift: formValues.shift || "",
+      noticePeriod: formValues.noticePeriod || "",
+      anyAmount: formValues.anyAmount || "",
+      salary: formValues.salary || "",
+      salaryType: formValues.salaryType || "",
+      benefits,
+      qualifications,
+      responsibilities,
+      languages: Array.isArray(formValues.languages)
+        ? formValues.languages.join(", ")
+        : String(formValues.languages || ""),
+      questions,
+      details: formValues.details || "",
+      title: formValues.title || "",
+      skills,
+      additional_context: additionalContextParts.join("\n"),
     };
 
     try {
@@ -78,8 +138,13 @@ const ChatAssistant = ({ isOpen, onClose, onApplyJD, onJDGenerated, formValues }
       );
       setMode("generated");
     } catch (error) {
+      let errorDetails = error.response?.data || error.response?.statusText || error.message;
+      if (typeof errorDetails === "object") {
+        errorDetails = JSON.stringify(errorDetails);
+      }
+      console.error('JD generation failed', error.response?.status, error.response?.data, error);
       addMessage(
-        `❌ Error generating JD: ${error.message}. Make sure the JD service is running.`,
+        `❌ Error generating JD: ${errorDetails}. Make sure the JD service is running.`,
         "bot"
       );
     } finally {

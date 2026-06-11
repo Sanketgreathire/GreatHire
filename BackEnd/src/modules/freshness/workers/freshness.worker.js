@@ -129,10 +129,16 @@ export async function getFreshnessQueueStats() {
   };
 }
 
-export function startFreshnessWorker() {
+export async function startFreshnessWorker() {
   if (freshnessWorker) {
     console.log('Freshness worker already running');
     return freshnessWorker;
+  }
+
+  const { isRedisAvailable } = await import('../../../config/redis.js');
+  if (!(await isRedisAvailable())) {
+    console.warn('⚠️  Freshness worker: Redis unavailable or version too old, skipping startup');
+    return null;
   }
 
   freshnessWorker = new Worker(

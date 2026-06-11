@@ -302,10 +302,10 @@ const PostJob = () => {
       title: "",
       details: "",
 
-      skills: [],
+      skills: "",
       languages: [],
-      benefits: [],
-      qualifications: [],
+      benefits: "",
+      qualifications: "",
       responsibilities: [],
 
       experience: "",
@@ -323,7 +323,7 @@ const PostJob = () => {
       anyAmount: "No",
     },
     validationSchema: Yup.object({
-      urgentHiring: Yup.string().required("This field is required"),
+      urgentHiring: Yup.string(),
       title: Yup.string().required("Job title is required"),
       details: Yup.string().required("Job details are required"),
       salary: Yup.string().required("Salary is required"),
@@ -397,10 +397,10 @@ const PostJob = () => {
 
   const handleNext = async () => {
     const currentStepFields = [
-      ["companyName", "urgentHiring", "title", "details"], // Step 0
+      ["companyName", "title", "numberOfOpening", "duration"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
-      ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
+      ["respondTime", "shift", "anyAmount", "details"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -410,6 +410,11 @@ const PostJob = () => {
     formik.setTouched(touchedFields);
     // Trigger validation and ensure required fields show error messages
     await formik.validateForm();
+    // Debug: log values and errors to help trace why Next may be blocked
+    try {
+      // eslint-disable-next-line no-console
+      // Debug logging removed per revert request
+    } catch (e) {}
     // Check if there are any errors or blank fields in the current step's fields
     const hasErrors = currentStepFields.some(
       (field) => !!formik.errors[field] || !formik.values[field]
@@ -536,7 +541,7 @@ const PostJob = () => {
 
             <form onSubmit={formik.handleSubmit}>
               {step === 0 && (
-                <div>
+                <div className="min-h-[520px]">
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Company Name<span className="text-red-500 dark:text-red-400 ml-1">*</span>
@@ -557,28 +562,7 @@ const PostJob = () => {
                       )}
                   </div>
 
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Urgent Hiring<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <select
-                      name="urgentHiring"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.urgentHiring}
-                    >
-                      <option value="">Select</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                    {formik.touched.urgentHiring &&
-                      formik.errors.urgentHiring && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.urgentHiring}
-                        </div>
-                      )}
-                  </div>
-
+                  
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Job Title<span className="text-red-500 dark:text-red-400 ml-1">*</span>
@@ -617,94 +601,70 @@ const PostJob = () => {
                     )}
                   </div>
 
+                  
 
-
+                  {/* Urgent Hiring */}
                   <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <Label className="block text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                        Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                      </Label>
-                      <div className="flex items-center gap-2">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Urgent Hiring?
+                    </Label>
+                    <div className="flex gap-3">
+                      {["Yes", "No"].map((option) => (
                         <button
+                          key={option}
                           type="button"
-                          onClick={() => setChatOpen(true)}
-                          className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm rounded-lg transition-all duration-200 shadow-md hover:shadow-lg dark:from-blue-700 dark:to-blue-600"
+                          onClick={() => formik.setFieldValue("urgentHiring", option)}
+                          className={`px-6 py-2 rounded border font-medium transition-colors duration-300 ${
+                            formik.values.urgentHiring === option
+                              ? "bg-blue-700 dark:bg-blue-600 text-white border-blue-700 dark:border-blue-600"
+                              : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-400"
+                          }`}
                         >
-                          <Zap size={16} />
-                          AI Assistant
+                          {option}
                         </button>
-                      </div>
+                      ))}
                     </div>
+                  </div>
 
-                    <div className="mb-4">
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Use the AI Assistant to generate or refine job descriptions. Generated JDs will automatically populate this field.
-                      </p>
-                    </div>
-
-                    {/* Toolbar */}
-                    <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
-                      {/* Bold */}
-                      <button
-                        type="button"
-                        onClick={toggleBold}
-                        className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
-                          } text-gray-900 dark:text-gray-100`}
-                      >
-                        B
-                      </button>
-
-                      {/* Italic */}
-                      <button
-                        type="button"
-                        onClick={toggleItalic}
-                        className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
-                          } text-gray-900 dark:text-gray-100`}
-                      >
-                        <i>i</i>
-                      </button>
-
-                      {/* Lists */}
-                      {/* Bullet */}
-                      <button
-                        type="button"
-                        onClick={bulletList}
-                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                        title="Bullet List"
-                      >
-                        ●
-                      </button>
-
-                      {/* Number */}
-                      <button
-                        type="button"
-                        onClick={numberList}
-                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                        title="Numbered List"
-                      >
-                        123
-                      </button>
-                    </div>
-
-                    {/* Editor */}
-                    <div
-                      ref={editorRef}
-                      contentEditable
-                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
-                      onKeyDown={handleKeyDown}
-                      onInput={(e) =>
-                        formik.setFieldValue("details", e.currentTarget.innerHTML)
-                      }
+                  {/* Number of Openings */}
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Number of Openings<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                    </Label>
+                    <input
+                      name="numberOfOpening"
+                      type="number"
+                      placeholder="Enter number of openings (e.g. 1, 2)"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                      onChange={formik.handleChange}
+                      value={formik.values.numberOfOpening}
                     />
-
-                    {/* Error */}
-                    {formik.touched.details && formik.errors.details && (
-                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">
-                        {formik.errors.details}
+                    {formik.touched.numberOfOpening && formik.errors.numberOfOpening && (
+                      <div className="text-red-500 dark:text-red-400 text-sm">
+                        {formik.errors.numberOfOpening}
                       </div>
                     )}
                   </div>
 
+                  {/* Duration */}
+                  <div className="mb-6">
+                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
+                      Duration<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                    </Label>
+                    <input
+                      name="duration"
+                      type="text"
+                      placeholder="Enter duration (e.g. Monday to Friday)"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                      onChange={formik.handleChange}
+                      value={formik.values.duration}
+                    />
+                    {formik.touched.duration && formik.errors.duration && (
+                      <div className="text-red-500 dark:text-red-400 text-sm">
+                        {formik.errors.duration}
+                      </div>
+                    )}
+                  </div>
 
 
                   {/* Buttons */}
@@ -728,6 +688,8 @@ const PostJob = () => {
                       Next
                     </button>
                   </div>
+
+                  
 
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
                     Have feedback?{" "}
@@ -1184,28 +1146,6 @@ const PostJob = () => {
 
               {step === 3 && (
                 <div>
-                  {/* Number of Openings */}
-                  <div className="mb-6 ">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Number of Openings
-                      <span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="numberOfOpening"
-                      type="number"
-                      placeholder="Enter number of openings (e.g. 1, 2)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.numberOfOpening}
-                    />
-                    {formik.touched.numberOfOpening &&
-                      formik.errors.numberOfOpening && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.numberOfOpening}
-                        </div>
-                      )}
-                  </div>
-
                   {/* Response Time */}
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
@@ -1225,26 +1165,6 @@ const PostJob = () => {
                           {formik.errors.respondTime}
                         </div>
                       )}
-                  </div>
-
-                  {/* Duration */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Duration<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="duration"
-                      type="text"
-                      placeholder="Enter duration (e.g. Monday to Friday)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.duration}
-                    />
-                    {formik.touched.duration && formik.errors.duration && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.duration}
-                      </div>
-                    )}
                   </div>
 
                   {/* Shift */}
@@ -1356,7 +1276,7 @@ const PostJob = () => {
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
                     </select>
-                    {formik.touched.activeColor &&
+                    {formik.touched.anyAmount &&
                       formik.errors.anyAmount && (
                         <div className="text-red-500 dark:text-red-400 text-sm">
                           {formik.errors.anyAmount}
@@ -1367,8 +1287,79 @@ const PostJob = () => {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">
                       <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
                     </p>
-                  </div>
 
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setChatOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-sm rounded-lg transition-all duration-200 shadow-md hover:shadow-lg dark:from-blue-700 dark:to-blue-600"
+                      >
+                        <Zap size={16} />
+                        AI Assistant
+                      </button>
+                    </div>
+
+                    <div className="mb-6 mt-8">
+                      <div className="flex justify-between items-center mb-2">
+                        <Label className="block text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                          Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                        </Label>
+                      </div>
+
+                      <div className="mb-4">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                          Use the AI Assistant to generate or refine job descriptions. Generated JDs will automatically populate this field based on your complete job form.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
+                        <button
+                          type="button"
+                          onClick={toggleBold}
+                          className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}
+                        >
+                          B
+                        </button>
+                        <button
+                          type="button"
+                          onClick={toggleItalic}
+                          className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}
+                        >
+                          <i>i</i>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={bulletList}
+                          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                          title="Bullet List"
+                        >
+                          ●
+                        </button>
+                        <button
+                          type="button"
+                          onClick={numberList}
+                          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                          title="Numbered List"
+                        >
+                          123
+                        </button>
+                      </div>
+
+                      <div
+                        ref={editorRef}
+                        contentEditable
+                        className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
+                        onKeyDown={handleKeyDown}
+                        onInput={(e) => formik.setFieldValue("details", e.currentTarget.innerHTML)}
+                      />
+
+                      {formik.touched.details && formik.errors.details && (
+                        <div className="text-red-500 dark:text-red-400 text-sm mt-1">
+                          {formik.errors.details}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   <div className="flex justify-between">
                     <button
@@ -1572,17 +1563,58 @@ const PostJob = () => {
         onJDGenerated={() => setGeneratedJDAvailable(true)}
         formValues={{
           title: formik.values.title,
+          companyName: formik.values.companyName,
+          urgentHiring: formik.values.urgentHiring,
           department: formik.values.department,
+          details: formik.values.details,
           skills: Array.isArray(formik.values.skills)
             ? formik.values.skills
             : String(formik.values.skills || "")
                 .split(",")
                 .map((s) => s.trim())
                 .filter(Boolean),
+          languages: Array.isArray(formik.values.languages)
+            ? formik.values.languages
+            : String(formik.values.languages || "")
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+          benefits: Array.isArray(formik.values.benefits)
+            ? formik.values.benefits
+            : String(formik.values.benefits || "")
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean),
+          qualifications: Array.isArray(formik.values.qualifications)
+            ? formik.values.qualifications
+            : String(formik.values.qualifications || "")
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean),
+          responsibilities: Array.isArray(formik.values.responsibilities)
+            ? formik.values.responsibilities
+            : String(formik.values.responsibilities || "")
+                .split("\n")
+                .map((s) => s.trim())
+                .filter(Boolean),
           experience: formik.values.experience,
-          workPlaceFlexibility: formik.values.workPlaceFlexibility,
           salary: formik.values.salary,
-          details: formik.values.details,
+          salaryType: formik.values.salaryType,
+          jobType: formik.values.jobType,
+          workPlaceFlexibility: formik.values.workPlaceFlexibility,
+          location: formik.values.location,
+          numberOfOpening: formik.values.numberOfOpening,
+          respondTime: formik.values.respondTime,
+          duration: formik.values.duration,
+          shift: formik.values.shift,
+          noticePeriod: formik.values.noticePeriod,
+          anyAmount: formik.values.anyAmount,
+          questions: Array.isArray(formik.values.questions)
+            ? formik.values.questions
+            : String(formik.values.questions || "")
+                .split("\n")
+                .map((q) => q.trim())
+                .filter(Boolean),
         }}
       />
     </>

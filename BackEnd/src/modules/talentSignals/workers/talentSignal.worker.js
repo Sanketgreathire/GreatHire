@@ -129,10 +129,16 @@ export async function getTalentSignalQueueStats() {
   };
 }
 
-export function startTalentSignalWorker() {
+export async function startTalentSignalWorker() {
   if (talentSignalWorker) {
     console.log('Talent signal worker already running');
     return talentSignalWorker;
+  }
+
+  const { isRedisAvailable } = await import('../../../config/redis.js');
+  if (!(await isRedisAvailable())) {
+    console.warn('⚠️  Talent signal worker: Redis unavailable or version too old, skipping startup');
+    return null;
   }
 
   talentSignalWorker = new Worker(

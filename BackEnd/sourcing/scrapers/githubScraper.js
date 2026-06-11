@@ -64,7 +64,6 @@ export class GitHubScraper {
       // Fetch detailed profile for each user
       for (const user of users.slice(0, limit)) {
         try {
-          // Skip if already processed
           if (seenUsernames.has(user.login.toLowerCase())) {
             console.log(`   ⏭️ Skipping duplicate username: ${user.login}`);
             continue;
@@ -74,10 +73,15 @@ export class GitHubScraper {
           const profile = await this.fetchUserProfile(user.login);
           if (profile) candidates.push(profile);
           
-          // Rate limiting: wait 1 second between requests (60 req/hour for unauthenticated)
-          await this.sleep(this.token ? 100 : 1000);
+          // Increased delay to avoid secondary rate limit (403)
+          await this.sleep(this.token ? 800 : 2000);
         } catch (err) {
           console.warn(`Failed to fetch profile for ${user.login}:`, err.message);
+          // On 403, back off longer before continuing
+          if (err.response?.status === 403 || err.message.includes('403')) {
+            console.warn('   ⏳ Rate limited, backing off for 60 seconds...');
+            await this.sleep(60000);
+          }
         }
       }
 
@@ -91,7 +95,7 @@ export class GitHubScraper {
   /**
    * Fetch detailed user profile
    */
-  async fetchUserProfile(username) {
+  async fetchUserProfile(username, retries = 3) {
     try {
       const headers = {
         'Accept': 'application/vnd.github.v3+json',
@@ -105,11 +109,13 @@ export class GitHubScraper {
       const [userRes, reposRes] = await Promise.all([
         axios.get(`${this.baseUrl}/users/${username}`, { headers }),
         axios.get(`${this.baseUrl}/users/${username}/repos`, { 
-          params: { per_page: 100, sort: 'updated' },
+          params: { per_page: 30, sort: 'updated' },
           headers 
         })
       ]);
 
+      // Small gap between the batch above and README fetch
+      await this.sleep(300);
       const user = userRes.data;
       const repos = reposRes.data;
 
@@ -141,6 +147,13 @@ export class GitHubScraper {
         totalExperience: this.estimateExperience(user, repos),
       };
     } catch (error) {
+      // Retry on 403 with exponential backoff
+      if ((error.response?.status === 403 || error.response?.status === 429) && retries > 0) {
+        const backoff = (4 - retries) * 15000; // 15s, 30s, 45s
+        console.warn(`   ⏳ Rate limited fetching ${username}, retrying in ${backoff/1000}s... (${retries} retries left)`);
+        await this.sleep(backoff);
+        return this.fetchUserProfile(username, retries - 1);
+      }
       console.error(`Error fetching profile for ${username}:`, error.message);
       return null;
     }
