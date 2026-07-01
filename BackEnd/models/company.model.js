@@ -54,11 +54,11 @@ const companySchema = new mongoose.Schema(
     },
     creditedForJobs: {
       type: Number,
-      default: 1000, // 2 free job posts (500 credits each)
+      default: 500, // 1 free job post (500 credits each)
     },
     creditedForCandidates: {
       type: Number,
-      default: 5, // 5 free candidate views
+      default: 30, // 30 free candidate views
     },
     customCreditsForJobs: {
       type: Number,
@@ -82,7 +82,7 @@ const companySchema = new mongoose.Schema(
     },
     freePlanExpiry: {
       type: Date,
-      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from creation
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days (1 month) from creation
     },
     freeJobsPosted: {
       type: Number,

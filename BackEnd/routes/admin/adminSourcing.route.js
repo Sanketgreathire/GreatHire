@@ -1,35 +1,35 @@
 import express from "express";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
 import isAdmin from "../../middlewares/isAdmin.js";
-import { AISourcedCandidate } from "../../models/postgres/aiSourcedCandidate.model.js";
+import { AISourcedCandidate } from "../../models/sourcing/aiSourcedCandidate.model.js";
 
 const router = express.Router();
 router.use(isAuthenticated, isAdmin);
 
-// GET /api/v1/admin/sourcing/stats (POSTGRES)
+// GET /api/v1/admin/sourcing/stats
 router.get("/stats", async (req, res) => {
   try {
     const [total, bySourceArray] = await Promise.all([
-      AISourcedCandidate.countAll(),
-      AISourcedCandidate.getStatsBySourceType()
+      AISourcedCandidate.countDocuments(),
+      AISourcedCandidate.aggregate([
+        { $group: { _id: "$aiSourceType", count: { $sum: 1 } } }
+      ]),
     ]);
-    
-    // Map PostgreSQL source types to frontend expected names
+
     const sourceMapping = {
-      'GITHUB': 'GITHUB_PROFILE',
-      'LINKEDIN': 'LINKEDIN_PROFILE',
-      'NAUKRI': 'PUBLIC_PROFILE',
-      'INDEED': 'PUBLIC_PROFILE',
-      'MONSTER': 'PUBLIC_PROFILE',
-      'API_IMPORT': 'API_IMPORT',
-      'CSV_IMPORT': 'CSV_IMPORT',
-      'MANUAL': 'MANUAL'
+      GITHUB:     "GITHUB_PROFILE",
+      LINKEDIN:   "LINKEDIN_PROFILE",
+      NAUKRI:     "PUBLIC_PROFILE",
+      INDEED:     "PUBLIC_PROFILE",
+      API_IMPORT: "API_IMPORT",
+      CSV_IMPORT: "CSV_IMPORT",
+      MANUAL:     "MANUAL",
     };
-    
+
     const bySource = {};
-    bySourceArray.forEach(({ ai_source_type, count }) => { 
-      const mappedType = sourceMapping[ai_source_type] || ai_source_type;
-      bySource[mappedType] = (bySource[mappedType] || 0) + parseInt(count); 
+    bySourceArray.forEach(({ _id, count }) => {
+      const mapped = sourceMapping[_id] || _id;
+      bySource[mapped] = (bySource[mapped] || 0) + count;
     });
 
     return res.json({ success: true, stats: { total, bySource } });
@@ -38,7 +38,7 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-// GET /api/v1/admin/sourcing/candidates (POSTGRES)
+// GET /api/v1/admin/sourcing/candidates
 router.get("/candidates", async (req, res) => {
   try {
     const { page = 1, limit = 12 } = req.query;
@@ -46,33 +46,20 @@ router.get("/candidates", async (req, res) => {
     const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10)));
     const skip     = (pageNum - 1) * limitNum;
 
-    const [rawCandidates, total] = await Promise.all([
-      AISourcedCandidate.getAll(limitNum, skip),
-      AISourcedCandidate.countAll()
+    const [candidates, total] = await Promise.all([
+      AISourcedCandidate.find().sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+      AISourcedCandidate.countDocuments(),
     ]);
-
-    // Transform PostgreSQL format to MongoDB format for frontend compatibility
-    const candidates = rawCandidates.map(c => ({
-      _id: c.id.toString(),
-      fullName: c.full_name,
-      designation: c.designation,
-      currentCompany: c.current_company,
-      totalExperience: c.total_experience,
-      location: c.location,
-      emails: c.email ? [c.email] : [],
-      phones: c.phone ? [c.phone] : [],
-      skills: c.skills || [],
-      githubUrl: c.github_url,
-      linkedinUrl: c.linkedin_url,
-      resumeUrl: c.resume_url,
-      sourceType: c.ai_source_type,
-      createdAt: c.created_at,
-      createdBy: { fullName: 'AI Sourced' }
-    }));
 
     return res.json({
       success: true,
-      candidates,
+      candidates: candidates.map(c => ({
+        ...c,
+        emails: c.email ? [c.email] : [],
+        phones: c.phone ? [c.phone] : [],
+        sourceType: c.aiSourceType,
+        createdBy: { fullName: "AI Sourced" },
+      })),
       pagination: {
         total,
         page:       pageNum,
@@ -87,10 +74,10 @@ router.get("/candidates", async (req, res) => {
   }
 });
 
-// DELETE /api/v1/admin/sourcing/:id (POSTGRES)
+// DELETE /api/v1/admin/sourcing/:id
 router.delete("/:id", async (req, res) => {
   try {
-    const candidate = await AISourcedCandidate.deleteById(req.params.id);
+    const candidate = await AISourcedCandidate.findByIdAndDelete(req.params.id);
     if (!candidate) return res.status(404).json({ success: false, message: "Not found." });
     return res.json({ success: true, message: "Deleted." });
   } catch (err) {

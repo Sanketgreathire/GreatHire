@@ -630,97 +630,101 @@ function StatsPanel({ candidates }) {
 }
 
 // ─── Search Bar ───────────────────────────────────────────────────────────────
-function SearchBar({ onSearch, aiAvailable }) {
-  const [filters, setFilters] = useState({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" });
+function SearchBar({ onSearch, aiAvailable, showImport, onToggleImport }) {
+  const [filters, setFilters] = useState({ skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" });
   const [useAI, setUseAI] = useState(false);
+  const [showJD, setShowJD] = useState(false);
 
   const set = (k, v) => setFilters((p) => ({ ...p, [k]: v }));
 
   const handleSearch = (e) => { e.preventDefault(); onSearch(filters, useAI && aiAvailable); };
   const handleClear = () => {
-    const empty = { q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" };
+    const empty = { skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" };
     setFilters(empty);
+    setShowJD(false);
     onSearch(empty, false);
   };
 
   return (
     <form onSubmit={handleSearch} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
+      {/* Header row */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-          <Search size={17} className="text-purple-600" /> Search Candidates
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-base font-semibold text-gray-800 dark:text-white">Search Sourced Candidates</h2>
+          <button
+            type="button"
+            onClick={() => setUseAI((v) => !v)}
+            disabled={!aiAvailable}
+            title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all border
+              ${useAI && aiAvailable
+                ? "bg-purple-600 text-white border-purple-600"
+                : aiAvailable
+                  ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+          >
+            <Brain size={12} />
+            {useAI && aiAvailable ? "AI ON" : "AI OFF"}
+            <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
+          </button>
+        </div>
         <button
           type="button"
-          onClick={() => setUseAI((v) => !v)}
-          disabled={!aiAvailable}
-          title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border
-            ${useAI && aiAvailable
-              ? "bg-purple-600 text-white border-purple-600"
-              : aiAvailable
-                ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+          onClick={onToggleImport}
+          className="text-sm text-purple-600 dark:text-purple-400 hover:underline font-medium"
         >
-          <Brain size={13} />
-          {useAI && aiAvailable ? "AI ON" : "AI OFF"}
-          <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
+          {showImport ? "Hide Sourcing" : "Show Sourcing"}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div className="lg:col-span-3">
-          <input
-            className={inputCls}
-            placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"}
-            value={filters.q}
-            onChange={(e) => set("q", e.target.value)}
-          />
-        </div>
-        <input className={inputCls} placeholder="Skills (e.g. React, Node.js)" value={filters.skills} onChange={(e) => set("skills", e.target.value)} />
+      {/* Filter row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+        <input className={inputCls} placeholder="Skills (e.g. React)" value={filters.skills} onChange={(e) => set("skills", e.target.value)} />
         <input className={inputCls} placeholder="Location" value={filters.location} onChange={(e) => set("location", e.target.value)} />
         <input className={inputCls} placeholder="Designation" value={filters.designation} onChange={(e) => set("designation", e.target.value)} />
         <input className={inputCls} placeholder="Min Experience (yrs)" type="number" min="0" value={filters.minExp} onChange={(e) => set("minExp", e.target.value)} />
         <input className={inputCls} placeholder="Max Experience (yrs)" type="number" min="0" value={filters.maxExp} onChange={(e) => set("maxExp", e.target.value)} />
-        
-        <div className="lg:col-span-3">
-          <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block">
-            Job Description (Optional - for AI-powered sourcing & matching)
-          </label>
+      </div>
+
+      {/* JD toggle + textarea */}
+      <div className="mb-3">
+        <button
+          type="button"
+          onClick={() => setShowJD(v => !v)}
+          className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors mb-2"
+        >
+          <Brain size={13} className={showJD ? "text-purple-500" : ""} />
+          {showJD ? "Hide Job Description" : "+ Add Job Description (AI Match)"}
+        </button>
+        {showJD && (
           <textarea
             className={`${inputCls} resize-none`}
             rows={4}
-            placeholder="Paste job description here for AI to source and match candidates based on requirements…"
+            placeholder="Paste job description here — AI will source candidates from GitHub and rank them by match score…"
             value={filters.jobDescription}
             onChange={(e) => set("jobDescription", e.target.value)}
           />
-        </div>
+        )}
+        {showJD && filters.jobDescription?.trim() && (
+          <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-xs text-green-700 dark:text-green-400">
+            <Brain size={12} className="shrink-0" />
+            <span><span className="font-semibold">JD Sourcing active</span> — candidates will be sourced from GitHub &amp; ranked by match</span>
+          </div>
+        )}
       </div>
 
-      {filters.jobDescription?.trim() && (
-        <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-xs text-green-700 dark:text-green-400">
-          <Brain size={13} className="shrink-0" />
-          <span><span className="font-semibold">JD-Based Sourcing active</span> — candidates will be ranked by match to your job description</span>
-        </div>
-      )}
-
-      <div className="flex gap-3 mt-4">
+      <div className="flex gap-2">
         <Button
           type="submit"
-          className={`px-6 flex items-center gap-2 text-white transition-colors ${
-            filters.jobDescription?.trim()
-              ? "bg-green-600 hover:bg-green-700"
-              : useAI && aiAvailable
-                ? "bg-purple-600 hover:bg-purple-700"
-                : "bg-purple-600 hover:bg-purple-700"
+          className={`px-5 flex items-center gap-2 text-white transition-colors ${
+            filters.jobDescription?.trim() ? "bg-green-600 hover:bg-green-700"
+              : useAI && aiAvailable ? "bg-purple-600 hover:bg-purple-700"
+              : "bg-purple-600 hover:bg-purple-700"
           }`}
         >
-          {filters.jobDescription?.trim() ? (
-            <><Brain size={14} /> Source &amp; Match Candidates</>
-          ) : useAI && aiAvailable ? (
-            <><Zap size={14} /> AI Search</>
-          ) : (
-            <><Search size={14} /> Search</>
-          )}
+          {filters.jobDescription?.trim() ? <><Brain size={14} /> Source &amp; Match</>
+            : useAI && aiAvailable ? <><Zap size={14} /> AI Search</>
+            : <><Search size={14} /> Search</>}
         </Button>
         <Button type="button" variant="outline" onClick={handleClear}>Clear</Button>
       </div>

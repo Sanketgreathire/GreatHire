@@ -30,14 +30,6 @@ export function startAutoSourcingCron() {
   });
 
   console.log(`✅ Auto-sourcing cron job scheduled: ${schedule}`);
-  
-  // Run immediately on startup for testing
-  console.log('🚀 Running auto-sourcing immediately on startup...');
-  setTimeout(() => {
-    runAutoSourcing()
-      .then(() => console.log('✅ Initial auto-sourcing completed'))
-      .catch(err => console.error('❌ Initial auto-sourcing failed:', err));
-  }, 10000); // Wait 10 seconds after server starts
 }
 
 /**

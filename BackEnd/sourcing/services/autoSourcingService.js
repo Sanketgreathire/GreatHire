@@ -1,6 +1,5 @@
-import { User } from '../../models/user.model.js';
 import { AutoSourcingConfig } from '../../models/sourcing/autoSourcingConfig.model.js';
-import { AISourcedCandidate } from '../../models/postgres/aiSourcedCandidate.model.js';
+import { AISourcedCandidate } from '../../models/sourcing/aiSourcedCandidate.model.js';
 import { GitHubScraper } from '../scrapers/githubScraper.js';
 import { LinkedInScraper } from '../scrapers/linkedinScraper.js';
 import { IndeedScraper } from '../scrapers/indeedScraper.js';
@@ -181,12 +180,14 @@ class AutoSourcingService {
         // Enrich profile with contact extractor
         const enrichedProfile = ContactExtractorService.enrichProfile(profile);
 
-        // Check for duplicates in PostgreSQL
-        const existing = await AISourcedCandidate.checkDuplicate(
-          enrichedProfile.emails?.[0],
-          enrichedProfile.githubUrl,
-          enrichedProfile.linkedinUrl
-        );
+        // Check for duplicates in MongoDB
+        const existing = await AISourcedCandidate.findOne({
+          $or: [
+            enrichedProfile.emails?.[0] ? { email: enrichedProfile.emails[0] } : null,
+            enrichedProfile.githubUrl   ? { githubUrl: enrichedProfile.githubUrl } : null,
+            enrichedProfile.linkedinUrl ? { linkedinUrl: enrichedProfile.linkedinUrl } : null,
+          ].filter(Boolean),
+        });
         
         if (existing) {
           console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName}`);
@@ -216,24 +217,22 @@ class AutoSourcingService {
         if (sourceType === 'GITHUB_PROFILE') aiSourceType = 'GITHUB';
         else if (sourceType === 'LINKEDIN_PROFILE') aiSourceType = 'LINKEDIN';
 
-        // Save to PostgreSQL
+        // Save to MongoDB
         const candidate = await AISourcedCandidate.create({
-          fullName: enrichedProfile.fullName,
-          email: enrichedProfile.emails?.[0] || null,
-          phone: enrichedProfile.phones?.[0] || null,
-          skills: normalizedSkills,
+          fullName:        enrichedProfile.fullName,
+          email:           enrichedProfile.emails?.[0] || null,
+          phone:           enrichedProfile.phones?.[0] || null,
+          skills:          normalizedSkills,
           totalExperience: enrichedProfile.totalExperience || 0,
-          currentCompany: enrichedProfile.company || null,
-          designation: enrichedProfile.designation || null,
-          location: enrichedProfile.location || null,
-          education: [],
-          summary: enrichedProfile.summary || null,
-          githubUrl: enrichedProfile.githubUrl || null,
-          linkedinUrl: enrichedProfile.linkedinUrl || null,
-          portfolioUrl: null,
-          resumeUrl: null,
+          currentCompany:  enrichedProfile.company || null,
+          designation:     enrichedProfile.designation || null,
+          location:        enrichedProfile.location || null,
+          education:       [],
+          summary:         enrichedProfile.summary || null,
+          githubUrl:       enrichedProfile.githubUrl || null,
+          linkedinUrl:     enrichedProfile.linkedinUrl || null,
           aiSourceType,
-          aiSourcedBy: recruiterId,
+          aiSourcedBy:     recruiterId,
           recruiterId,
         });
 

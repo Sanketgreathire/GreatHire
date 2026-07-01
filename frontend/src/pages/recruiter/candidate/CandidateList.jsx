@@ -50,11 +50,12 @@ const CandidateList = () => {
   const [message, setMessage] = useState("Find great talent for your team");
   
   const [showSourcingSearch, setShowSourcingSearch] = useState(false);
-  const [sourcingFilters, setSourcingFilters] = useState({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
+  const [sourcingFilters, setSourcingFilters] = useState({ skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" });
   const [useAI, setUseAI] = useState(false);
   const [aiAvailable, setAiAvailable] = useState(false);
   const [sourcingLoading, setSourcingLoading] = useState(false);
   const [sourcingCandidates, setSourcingCandidates] = useState([]);
+  const [sourcingMode, setSourcingMode] = useState("keyword");
   const [selectedSourcingCandidate, setSelectedSourcingCandidate] = useState(null);
   const [showSourcingModal, setShowSourcingModal] = useState(false);
 
@@ -284,23 +285,9 @@ const CandidateList = () => {
                 <h2 className="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                   <Search size={17} className="text-purple-600" /> Search Sourced Candidates
                 </h2>
-                <button
-                  type="button"
-                  onClick={() => setUseAI((v) => !v)}
-                  disabled={!aiAvailable}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border
-                    ${useAI && aiAvailable ? "bg-purple-600 text-white border-purple-600" : aiAvailable ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400" : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
-                >
-                  <Brain size={13} />
-                  {useAI && aiAvailable ? "AI ON" : "AI OFF"}
-                  <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
-                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div className="lg:col-span-3">
-                  <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"} value={sourcingFilters.q} onChange={(e) => setSourcingFilters({ ...sourcingFilters, q: e.target.value })} />
-                </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters({ ...sourcingFilters, skills: e.target.value })} />
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters({ ...sourcingFilters, location: e.target.value })} />
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters({ ...sourcingFilters, designation: e.target.value })} />
@@ -308,124 +295,135 @@ const CandidateList = () => {
                 <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Max Experience (yrs)" type="number" min="0" value={sourcingFilters.maxExp} onChange={(e) => setSourcingFilters({ ...sourcingFilters, maxExp: e.target.value })} />
               </div>
 
-              <div className="flex gap-3 mt-4">
+              {/* Job Description */}
+              <div className="mb-3">
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block flex items-center gap-1.5">
+                  <Brain size={13} className="text-purple-500" /> Job Description <span className="text-gray-400">(optional — AI will source from GitHub &amp; rank by match)</span>
+                </label>
+                <textarea
+                  className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                  rows={4}
+                  placeholder="Paste job description here — AI will source candidates from GitHub and rank them by match score…"
+                  value={sourcingFilters.jobDescription}
+                  onChange={(e) => setSourcingFilters({ ...sourcingFilters, jobDescription: e.target.value })}
+                />
+                {sourcingFilters.jobDescription?.trim() && (
+                  <div className="flex items-center gap-2 mt-1.5 px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-xs text-green-700 dark:text-green-400">
+                    <Brain size={12} />
+                    <span><span className="font-semibold">JD Sourcing active</span> — will source from GitHub &amp; rank by match score</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
                 <Button onClick={async () => {
                   setSourcingLoading(true);
+                  setSourcingCandidates([]);
                   try {
-                    if (useAI && sourcingFilters.q?.trim()) {
-                      const params = { q: sourcingFilters.q, topK: 50, scoreThreshold: 0.2 };
-                      if (sourcingFilters.location) params.location = sourcingFilters.location;
-                      if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
-                      if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
-                      if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
-                      if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
-                      const { data } = await axios.get(`${SOURCING_API_END_POINT}/semantic-search`, { params, withCredentials: true });
-                      if (data.success) setSourcingCandidates(data.results || []);
-                    } else {
-                      const params = { page: 1, limit: 50 };
-                      if (sourcingFilters.q) params.q = sourcingFilters.q;
-                      if (sourcingFilters.skills) params.skills = sourcingFilters.skills;
-                      if (sourcingFilters.location) params.location = sourcingFilters.location;
-                      if (sourcingFilters.designation) params.designation = sourcingFilters.designation;
-                      if (sourcingFilters.minExp) params.minExp = sourcingFilters.minExp;
-                      if (sourcingFilters.maxExp) params.maxExp = sourcingFilters.maxExp;
-                      const { data } = await axios.get(`${SOURCING_API_END_POINT}/search`, { params, withCredentials: true });
-                      if (data.success) setSourcingCandidates(data.candidates);
+                    // Always source from GitHub via /source-by-jd (scores by JD or by filter match)
+                    const payload = {
+                      skills: sourcingFilters.skills || undefined,
+                      location: sourcingFilters.location || undefined,
+                      designation: sourcingFilters.designation || undefined,
+                      minExp: sourcingFilters.minExp ? parseInt(sourcingFilters.minExp) : undefined,
+                      maxExp: sourcingFilters.maxExp ? parseInt(sourcingFilters.maxExp) : undefined,
+                      jobDescription: sourcingFilters.jobDescription || undefined,
+                    };
+                    const { data } = await axios.post(`${SOURCING_API_END_POINT}/source-by-jd`, payload, { withCredentials: true });
+                    if (data.success) {
+                      setSourcingCandidates(data.candidates || []);
+                      setSourcingMode(data.mode || "filter_matched");
                     }
                   } catch (err) {
                     toast.error(err.response?.data?.message || "Search failed.");
                   } finally {
                     setSourcingLoading(false);
                   }
-                }} disabled={sourcingLoading} className="bg-purple-600 hover:bg-purple-700 text-white px-6 flex items-center gap-2">
-                  {useAI && aiAvailable && <Zap size={14} />} {sourcingLoading ? "Searching..." : "Search"}
+                }} disabled={sourcingLoading} className={`px-6 flex items-center gap-2 text-white ${sourcingFilters.jobDescription?.trim() ? "bg-green-600 hover:bg-green-700" : "bg-purple-600 hover:bg-purple-700"}`}>
+                  {sourcingLoading ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Sourcing...</> : sourcingFilters.jobDescription?.trim() ? <><Brain size={14} /> Source &amp; Match JD</> : <><Search size={14} /> Source Candidates</>}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => { setSourcingFilters({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" }); setSourcingCandidates([]); }}>Clear</Button>
+                <Button type="button" variant="outline" onClick={() => { setSourcingFilters({ skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" }); setSourcingCandidates([]); }}>Clear</Button>
               </div>
 
               {sourcingCandidates.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{sourcingCandidates.length} sourced candidate{sourcingCandidates.length !== 1 ? "s" : ""} found</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    {sourcingCandidates.length} candidate{sourcingCandidates.length !== 1 ? "s" : ""} found
+                    {sourcingMode === "jd_matched" && <span className="ml-2 text-green-600 dark:text-green-400 font-medium">· JD matched &amp; ranked</span>}
+                    {sourcingMode === "filter_matched" && <span className="ml-2 text-blue-600 dark:text-blue-400 font-medium">· ranked by filter match</span>}
+                  </p>
                   <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                     <table className="w-full">
-                      <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+                      <thead className="border-b border-gray-200 dark:border-gray-700">
                         <tr>
-                          <th className="px-4 py-3 text-left"><input type="checkbox" className="rounded" /></th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">CANDIDATE</th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">CURRENT ROLE</th>
-                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">LOCATION</th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-400">SCORE</th>
-                          <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400">ACTION</th>
+                          <th className="px-4 py-3 text-left w-8"><input type="checkbox" className="rounded" /></th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Candidate</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Score</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {sourcingCandidates.map((c) => {
+                      <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                        {sourcingCandidates.map((c, idx) => {
                           const isUnlocked = unlockedCandidates.has(c._id);
-                          const qualificationBadge = c.qualificationRating || "Good";
-                          const qualificationColor = qualificationBadge === "Strong" ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300" : "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300";
-                          const score = c.matchScore || Math.floor(Math.random() * 40) + 70;
-                          
+                          const score = c.matchScore ?? null;
+                          const scoreColor = score == null ? "bg-gray-100 text-gray-500" : score >= 70 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" : score >= 40 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300" : "bg-gray-100 text-gray-500";
+                          const initials = c.fullName?.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+                          const bgColors = ["bg-blue-500","bg-purple-500","bg-green-500","bg-orange-500","bg-pink-500","bg-indigo-500"];
+                          const avatarBg = bgColors[idx % bgColors.length];
+                          // subtitle: designation · exp · location
+                          const parts = [
+                            c.designation && c.currentCompany ? `${c.designation} at ${c.currentCompany}` : c.designation || c.currentCompany,
+                            c.totalExperience > 0 ? `${c.totalExperience}y` : null,
+                            c.location,
+                          ].filter(Boolean);
+
                           return (
-                            <tr key={c._id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                              <td className="px-4 py-3"><input type="checkbox" className="rounded" /></td>
+                            <tr key={c._id || idx} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer" onClick={() => { setSelectedSourcingCandidate(c); setShowSourcingModal(true); }}>
+                              <td className="px-4 py-3" onClick={e => e.stopPropagation()}><input type="checkbox" className="rounded" /></td>
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-3">
-                                  <Avatar className="h-10 w-10 shrink-0">
-                                    <AvatarImage src={c.profilePhoto || "/src/assets/noprofile.webp"} />
-                                  </Avatar>
+                                  <div className={`h-10 w-10 rounded-full ${avatarBg} flex items-center justify-center text-white font-semibold text-sm shrink-0`}>
+                                    {initials}
+                                  </div>
                                   <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
-                                      <p className="font-semibold text-gray-900 dark:text-white truncate">{c.fullName}</p>
-                                      <Badge className={`text-xs shrink-0 ${qualificationColor}`}>{qualificationBadge}</Badge>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <span className="font-semibold text-gray-900 dark:text-white text-sm">{c.fullName}</span>
+                                      {score != null && (
+                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${score >= 70 ? "bg-green-100 text-green-700" : score >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"}`}>
+                                          {score >= 70 ? "Strong" : score >= 40 ? "Good" : "Fair"}
+                                        </span>
+                                      )}
                                     </div>
-                                    {c.currentCompany && <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{c.currentCompany}</p>}
+                                    {parts.length > 0 && (
+                                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{parts.join(" · ")}</p>
+                                    )}
+                                    {c.skills?.length > 0 && (
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {c.skills.slice(0, 4).map((s, i) => (
+                                          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">{s}</span>
+                                        ))}
+                                        {c.skills.length > 4 && <span className="text-[10px] text-gray-400">+{c.skills.length - 4}</span>}
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-4 py-3">
-                                <div className="min-w-0">
-                                  {c.designation && <p className="text-sm text-gray-700 dark:text-gray-300 truncate">{c.designation}</p>}
-                                  {c.totalExperience > 0 && <p className="text-xs text-gray-500 dark:text-gray-400">{c.totalExperience} yrs exp</p>}
-                                </div>
-                              </td>
-                              <td className="px-4 py-3">
-                                <p className="text-sm text-gray-700 dark:text-gray-300">{c.location || "—"}</p>
-                              </td>
-                              <td className="px-4 py-3 text-right">
-                                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 font-semibold text-sm">{score}</span>
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                <Button 
-                                  size="sm"
-                                  className={`text-xs rounded-lg text-white ${isUnlocked ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-600 hover:bg-blue-700"}`} 
-                                  onClick={async () => {
-                                    if (isUnlocked) {
-                                      setSelectedSourcingCandidate(c);
-                                      setShowSourcingModal(true);
-                                    } else {
-                                      if (company?.creditedForCandidates <= 0) {
-                                        toast.error("Insufficient credits. Please purchase a plan.");
-                                        navigate("/recruiter/dashboard/your-plans");
-                                        return;
-                                      }
+                              <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
+                                {score != null ? (
+                                  <span className={`inline-flex items-center justify-center w-11 h-11 rounded-full font-bold text-sm ${scoreColor}`}>{score}</span>
+                                ) : (
+                                  <Button size="sm" className={`text-xs text-white ${isUnlocked ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-600 hover:bg-blue-700"}`}
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      if (isUnlocked) { setSelectedSourcingCandidate(c); setShowSourcingModal(true); return; }
+                                      if (company?.creditedForCandidates <= 0) { toast.error("Insufficient credits."); navigate("/recruiter/dashboard/your-plans"); return; }
                                       try {
                                         const res = await axios.post(`${COMPANY_API_END_POINT}/deduct-candidate-credit`, { companyId: company?._id }, { withCredentials: true });
-                                        if (res.data.success) {
-                                          dispatch(decreaseCandidateCredits(1));
-                                          persistUnlockedCandidate(c._id);
-                                          setUnlockedCandidates(new Set(getUnlockedCandidates()));
-                                          toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
-                                          setSelectedSourcingCandidate(c);
-                                          setShowSourcingModal(true);
-                                        }
-                                      } catch (error) {
-                                        toast.error(error?.response?.data?.message || "Failed to unlock candidate");
-                                      }
-                                    }
-                                  }}
-                                >
-                                  {isUnlocked ? "View" : "Unlock"}
-                                </Button>
+                                        if (res.data.success) { dispatch(decreaseCandidateCredits(1)); persistUnlockedCandidate(c._id); setUnlockedCandidates(new Set(getUnlockedCandidates())); toast.success(`1 credit deducted.`); setSelectedSourcingCandidate(c); setShowSourcingModal(true); }
+                                      } catch (err) { toast.error(err?.response?.data?.message || "Failed"); }
+                                    }}>
+                                    {isUnlocked ? "View" : "Unlock"}
+                                  </Button>
+                                )}
                               </td>
                             </tr>
                           );

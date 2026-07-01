@@ -15,7 +15,7 @@ import axios from "axios";
 
 // Plan limits configuration
 const PLAN_LIMITS = {
-  FREE:       { jobsPerMonth: 1,         resumeCredits: 20 },
+  FREE:       { jobsPerMonth: 1,         resumeCredits: 30 },
   STANDARD:   { jobsPerMonth: 5,         resumeCredits: 500 },
   PREMIUM:    { jobsPerMonth: 10,        resumeCredits: 1500 },
   PRO:        { jobsPerMonth: 25,        resumeCredits: 5000 },
@@ -126,7 +126,7 @@ export const postJob = [
         if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
           return res.status(400).json({
             success: false,
-            message: "You have used your 2 free monthly job posts. Please upgrade your plan to post more jobs.",
+            message: "You have used your 1 free monthly job post. Please upgrade your plan to post more jobs.",
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
@@ -184,6 +184,8 @@ export const postJob = [
         const updateData = { freeJobsPosted: newFreeJobsPosted };
         if (newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
           updateData.hasUsedFreePlan = true;
+          // Set expiry for next monthly reset
+          updateData.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         }
         await Company.findByIdAndUpdate(companyId, updateData);
       } else {

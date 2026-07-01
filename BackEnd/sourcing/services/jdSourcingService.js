@@ -42,29 +42,64 @@ export class JdSourcingService {
         });
       }
 
-      // Step 3: Score against JD if provided
+      // Step 3: Score by filter match or JD
       if (jobDescription && jobDescription.trim()) {
         console.log('🎯 Scoring candidates against job description...');
         const scoredCandidates = await this.scoreCandidatesAgainstJD(filteredCandidates, jobDescription);
-        
-        // Sort by score descending
         scoredCandidates.sort((a, b) => b.matchScore - a.matchScore);
-        
-        return { 
-          success: true, 
-          candidates: scoredCandidates, 
-          total: scoredCandidates.length,
-          mode: 'jd_matched'
-        };
+        return { success: true, candidates: scoredCandidates, total: scoredCandidates.length, mode: 'jd_matched' };
       }
 
-      // Return without scoring
-      return { 
-        success: true, 
-        candidates: filteredCandidates.map(c => ({ ...c, matchScore: null })), 
-        total: filteredCandidates.length,
-        mode: 'filter_only'
-      };
+      // No JD — score by filter match (skills, location, designation, exp)
+      const scored = filteredCandidates.map(c => {
+        let score = 0;
+        const reasons = [];
+
+        if (skills) {
+          const required = skills.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+          const cSkills = (c.skills || []).map(s => s.toLowerCase());
+          const matched = required.filter(rs => cSkills.some(cs => cs.includes(rs) || rs.includes(cs)));
+          if (matched.length) {
+            score += Math.round((matched.length / required.length) * 50);
+            reasons.push(`Matched skills: ${matched.join(', ')}`);
+          }
+        } else {
+          score += 30; // no skill filter = partial credit
+        }
+
+        if (location && c.location) {
+          if (c.location.toLowerCase().includes(location.toLowerCase())) {
+            score += 20;
+            reasons.push(`Location matches: ${c.location}`);
+          }
+        } else if (!location) {
+          score += 10;
+        }
+
+        if (designation && c.designation) {
+          if (c.designation.toLowerCase().includes(designation.toLowerCase())) {
+            score += 20;
+            reasons.push(`Designation matches: ${c.designation}`);
+          }
+        } else if (!designation) {
+          score += 10;
+        }
+
+        if ((minExp !== undefined || maxExp !== undefined) && c.totalExperience > 0) {
+          const exp = c.totalExperience;
+          const inRange =
+            (minExp === undefined || exp >= parseFloat(minExp)) &&
+            (maxExp === undefined || exp <= parseFloat(maxExp));
+          if (inRange) { score += 10; reasons.push(`Experience ${exp}y in range`); }
+        } else if (minExp === undefined && maxExp === undefined) {
+          score += 10;
+        }
+
+        return { ...c, matchScore: Math.min(score, 100), matchReasons: reasons };
+      });
+
+      scored.sort((a, b) => b.matchScore - a.matchScore);
+      return { success: true, candidates: scored, total: scored.length, mode: 'filter_matched' };
 
     } catch (error) {
       console.error('JD Sourcing error:', error);
