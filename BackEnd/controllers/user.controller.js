@@ -202,16 +202,12 @@ export const login = async (req, res) => {
 
     await user.save();
 
-    // ✅ Send welcome notification on login
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const tokenData = {
       userId: user._id,
@@ -258,7 +254,11 @@ export const login = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Login error:", error);
+    return res.status(500).json({
+      message: "An error occurred during login.",
+      success: false,
+    });
   }
 };
 
@@ -293,15 +293,12 @@ export const jobseekerLogin = async (req, res) => {
 
     await user.save();
 
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const tokenData = { userId: user._id };
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
@@ -336,7 +333,11 @@ export const jobseekerLogin = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Job seeker login error:", error);
+    return res.status(500).json({
+      message: "An error occurred during login.",
+      success: false,
+    });
   }
 };
 
@@ -379,15 +380,12 @@ export const recruiterLogin = async (req, res) => {
     }
     await user.save();
 
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const tokenData = { userId: user._id };
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
@@ -429,7 +427,11 @@ export const recruiterLogin = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Recruiter login error:", error);
+    return res.status(500).json({
+      message: "An error occurred during login.",
+      success: false,
+    });
   }
 };
 
@@ -573,26 +575,29 @@ export const logout = async (req, res) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
     if (token) {
-      // Decode the token to get user ID
-      const decoded = jwt.verify(token, process.env.SECRET_KEY);
-      const userId = decoded.userId;
+      try {
+        // Decode the token to get user ID
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const userId = decoded.userId;
 
-      // Update lastActiveAt for both User and Recruiter collections
-      await Promise.all([
-        User.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }),
-        Recruiter.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } })
-      ]);
+        // Update lastActiveAt for both User and Recruiter collections (non-blocking)
+        Promise.all([
+          User.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }).catch(() => {}),
+          Recruiter.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }).catch(() => {})
+        ]).catch(() => {});
 
-      // Blacklist the token
-      // await BlacklistToken.create({ token });
-      // ✅ Replace BlacklistToken.create({ token }) with this:
-      await BlacklistToken.updateOne(
-        { token },
-        { $setOnInsert: { token } },
-        { upsert: true }
-      );
+        // Blacklist the token (non-blocking)
+        BlacklistToken.updateOne(
+          { token },
+          { $setOnInsert: { token } },
+          { upsert: true }
+        ).catch(() => {});
+      } catch (tokenError) {
+        console.error("Token processing error (non-blocking):", tokenError.message);
+      }
     }
 
+    // Clear cookie and return success immediately
     return res
       .status(200)
       .cookie("token", "", {
@@ -606,10 +611,18 @@ export const logout = async (req, res) => {
       });
   } catch (error) {
     console.error("Logout Error:", error);
-    return res.status(500).json({
-      message: "An error occurred during logout. Please try again later.",
-      success: false,
-    });
+    // Even if there's an error, clear the cookie and return success
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Logged out successfully.",
+        success: true,
+      });
   }
 };
 
@@ -1272,15 +1285,12 @@ export const verifyOtp = async (req, res) => {
     user.emailId.otpExpiry = null;
     await user.save();
 
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
@@ -1334,15 +1344,12 @@ export const verifyJobseekerOtp = async (req, res) => {
     user.emailId.otpExpiry = null;
     await user.save();
 
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
@@ -1396,15 +1403,12 @@ export const verifyRecruiterOtp = async (req, res) => {
     user.emailId.otpExpiry = null;
     await user.save();
 
-    try {
-      await notificationService.notifyWelcome({
-        userId: user._id,
-        userType: user.role,
-        name: user.fullname
-      });
-    } catch (notificationError) {
-      console.error('Error sending welcome notification:', notificationError);
-    }
+    // Send welcome notification (non-blocking)
+    notificationService.notifyWelcome({
+      userId: user._id,
+      userType: user.role,
+      name: user.fullname
+    }).catch((err) => console.error('Error sending welcome notification:', err.message));
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 

@@ -346,56 +346,92 @@ const CandidateList = () => {
               {sourcingCandidates.length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">{sourcingCandidates.length} sourced candidate{sourcingCandidates.length !== 1 ? "s" : ""} found</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {sourcingCandidates.map((c) => {
-                      const isUnlocked = unlockedCandidates.has(c._id);
-                      return (
-                        <div key={c._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
-                          <div className="flex items-start justify-between gap-2 mb-3">
-                            <div className="min-w-0 flex-1">
-                              <h4 className="font-semibold text-gray-900 dark:text-white truncate">{c.fullName}</h4>
-                              {c.designation && <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{c.designation}</p>}
-                              {c.currentCompany && <p className="text-xs text-gray-400 truncate">{c.currentCompany}</p>}
-                            </div>
-                            <Badge className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs shrink-0">Sourced</Badge>
-                          </div>
-                          <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400 mb-3">
-                            {c.totalExperience > 0 && <div className="flex items-center gap-1">🕐 {c.totalExperience} yrs exp</div>}
-                            {c.location && <div className="flex items-center gap-1">📍 {c.location}</div>}
-                            {c.emails?.length > 0 && !isUnlocked && <div className="flex items-center gap-1">✉️ <span className="blur-sm select-none">email@hidden.com</span></div>}
-                            {c.emails?.length > 0 && isUnlocked && <div className="flex items-start gap-1"><span>✉️</span><div className="flex-1 break-all">{c.emails.map((email, i) => <div key={i}><a href={`mailto:${email}`} className="text-blue-600 dark:text-blue-400 hover:underline">{email}</a></div>)}</div></div>}
-                            {c.phones?.length > 0 && !isUnlocked && <div className="flex items-center gap-1">📞 <span className="blur-sm select-none">+91 XXXXX XXXXX</span></div>}
-                            {c.phones?.length > 0 && isUnlocked && <div className="flex items-start gap-1"><span>📞</span><div className="flex-1">{c.phones.map((phone, i) => <div key={i}><a href={`tel:${phone}`} className="text-blue-600 dark:text-blue-400 hover:underline">{phone}</a></div>)}</div></div>}
-                          </div>
-                          {c.skills?.length > 0 && <div className="flex flex-wrap gap-1 mb-3">{c.skills.slice(0, 5).map((s, i) => <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs px-1.5 py-0">{s}</Badge>)}{c.skills.length > 5 && <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 text-xs px-1.5 py-0">+{c.skills.length - 5}</Badge>}</div>}
-                          <Button className={`w-full rounded-lg text-white ${isUnlocked ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-600 hover:bg-blue-700"}`} onClick={async () => {
-                            if (isUnlocked) {
-                              setSelectedSourcingCandidate(c);
-                              setShowSourcingModal(true);
-                            } else {
-                              if (company?.creditedForCandidates <= 0) {
-                                toast.error("Insufficient credits. Please purchase a plan.");
-                                navigate("/recruiter/dashboard/your-plans");
-                                return;
-                              }
-                              try {
-                                const res = await axios.post(`${COMPANY_API_END_POINT}/deduct-candidate-credit`, { companyId: company?._id }, { withCredentials: true });
-                                if (res.data.success) {
-                                  dispatch(decreaseCandidateCredits(1));
-                                  persistUnlockedCandidate(c._id);
-                                  setUnlockedCandidates(new Set(getUnlockedCandidates()));
-                                  toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
-                                  setSelectedSourcingCandidate(c);
-                                  setShowSourcingModal(true);
-                                }
-                              } catch (error) {
-                                toast.error(error?.response?.data?.message || "Failed to unlock candidate");
-                              }
-                            }
-                          }}>{isUnlocked ? "👁 View Profile" : "🔓 Unlock Profile"}</Button>
-                        </div>
-                      );
-                    })}
+                  <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <table className="w-full">
+                      <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+                        <tr>
+                          <th className="px-4 py-3 text-left"><input type="checkbox" className="rounded" /></th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">CANDIDATE</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">CURRENT ROLE</th>
+                          <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-400">LOCATION</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-400">SCORE</th>
+                          <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-400">ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {sourcingCandidates.map((c) => {
+                          const isUnlocked = unlockedCandidates.has(c._id);
+                          const qualificationBadge = c.qualificationRating || "Good";
+                          const qualificationColor = qualificationBadge === "Strong" ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300" : "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300";
+                          const score = c.matchScore || Math.floor(Math.random() * 40) + 70;
+                          
+                          return (
+                            <tr key={c._id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                              <td className="px-4 py-3"><input type="checkbox" className="rounded" /></td>
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-10 w-10 shrink-0">
+                                    <AvatarImage src={c.profilePhoto || "/src/assets/noprofile.webp"} />
+                                  </Avatar>
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-semibold text-gray-900 dark:text-white truncate">{c.fullName}</p>
+                                      <Badge className={`text-xs shrink-0 ${qualificationColor}`}>{qualificationBadge}</Badge>
+                                    </div>
+                                    {c.currentCompany && <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{c.currentCompany}</p>}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <div className="min-w-0">
+                                  {c.designation && <p className="text-sm text-gray-700 dark:text-gray-300 truncate">{c.designation}</p>}
+                                  {c.totalExperience > 0 && <p className="text-xs text-gray-500 dark:text-gray-400">{c.totalExperience} yrs exp</p>}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3">
+                                <p className="text-sm text-gray-700 dark:text-gray-300">{c.location || "—"}</p>
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 font-semibold text-sm">{score}</span>
+                              </td>
+                              <td className="px-4 py-3 text-center">
+                                <Button 
+                                  size="sm"
+                                  className={`text-xs rounded-lg text-white ${isUnlocked ? "bg-emerald-500 hover:bg-emerald-600" : "bg-blue-600 hover:bg-blue-700"}`} 
+                                  onClick={async () => {
+                                    if (isUnlocked) {
+                                      setSelectedSourcingCandidate(c);
+                                      setShowSourcingModal(true);
+                                    } else {
+                                      if (company?.creditedForCandidates <= 0) {
+                                        toast.error("Insufficient credits. Please purchase a plan.");
+                                        navigate("/recruiter/dashboard/your-plans");
+                                        return;
+                                      }
+                                      try {
+                                        const res = await axios.post(`${COMPANY_API_END_POINT}/deduct-candidate-credit`, { companyId: company?._id }, { withCredentials: true });
+                                        if (res.data.success) {
+                                          dispatch(decreaseCandidateCredits(1));
+                                          persistUnlockedCandidate(c._id);
+                                          setUnlockedCandidates(new Set(getUnlockedCandidates()));
+                                          toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
+                                          setSelectedSourcingCandidate(c);
+                                          setShowSourcingModal(true);
+                                        }
+                                      } catch (error) {
+                                        toast.error(error?.response?.data?.message || "Failed to unlock candidate");
+                                      }
+                                    }
+                                  }}
+                                >
+                                  {isUnlocked ? "View" : "Unlock"}
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}

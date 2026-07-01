@@ -15,6 +15,7 @@ import http from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
+import { initPostgres } from "./config/postgres.js";
 
 // ================= ROUTES =================
 import applicationRoute from "./routes/application.route.js";
@@ -313,60 +314,73 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= START SERVER =================
-await connectDB();
+try {
+  await connectDB();
+  initPostgres();
 
-// Start monthly free plan renewal cron job
-startMonthlyFreePlanRenewal();
-startAutoRejectCron();
-startAutoSourcingCron();
-startIngestionWorker().catch((e) => console.warn("Ingestion worker start failed:", e.message));
+  // Start server FIRST before starting workers
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 
-startEmbeddingWorker().catch((e) => console.warn("Embedding worker start failed:", e.message));
-startJdMatchingWorker().catch((e) => console.warn("JD matching worker start failed:", e.message));
-startJobMatchingWorker().catch((e) => console.warn("Job matching worker start failed:", e.message));
+  // Start workers AFTER server is listening (non-blocking)
+  setTimeout(() => {
+    try {
+      startMonthlyFreePlanRenewal();
+      startAutoRejectCron();
+      startAutoSourcingCron();
+      startIngestionWorker().catch((e) => console.warn("⚠️ Ingestion worker:", e.message));
+      startEmbeddingWorker().catch((e) => console.warn("⚠️ Embedding worker:", e.message));
+      startJdMatchingWorker().catch((e) => console.warn("⚠️ JD matching worker:", e.message));
+      startJobMatchingWorker().catch((e) => console.warn("⚠️ Job matching worker:", e.message));
 
-// Start talent graph worker
-const { startTalentGraphWorker } = await import("./src/modules/talentGraph/services/graphQueue.service.js");
-startTalentGraphWorker().catch((e) => console.warn("Talent graph worker start failed:", e.message));
+      import("./src/modules/talentGraph/services/graphQueue.service.js")
+        .then(({ startTalentGraphWorker }) => startTalentGraphWorker())
+        .catch((e) => console.warn("⚠️ Talent graph worker:", e.message));
 
-// Start discovery worker and scheduler
-const { startDiscoveryWorker } = await import("./src/modules/discovery/services/discoveryQueue.service.js");
-Promise.resolve().then(() => startDiscoveryWorker()).catch((e) => console.warn("Discovery worker start failed:", e.message));
+      import("./src/modules/discovery/services/discoveryQueue.service.js")
+        .then(({ startDiscoveryWorker }) => startDiscoveryWorker())
+        .catch((e) => console.warn("⚠️ Discovery worker:", e.message));
 
-const { ingestionScheduler } = await import("./src/modules/discovery/services/ingestionScheduler.service.js");
-ingestionScheduler.startScheduler().catch((e) => console.warn("Discovery scheduler start failed:", e.message));
+      import("./src/modules/discovery/services/ingestionScheduler.service.js")
+        .then(({ ingestionScheduler }) => ingestionScheduler.startScheduler())
+        .catch((e) => console.warn("⚠️ Discovery scheduler:", e.message));
 
-// Start GitHub discovery worker
-const { startGitHubDiscoveryWorker } = await import("./src/modules/discovery/workers/githubDiscovery.worker.js");
-Promise.resolve().then(() => startGitHubDiscoveryWorker()).catch((e) => console.warn("GitHub discovery worker start failed:", e.message));
+      import("./src/modules/discovery/workers/githubDiscovery.worker.js")
+        .then(({ startGitHubDiscoveryWorker }) => startGitHubDiscoveryWorker())
+        .catch((e) => console.warn("⚠️ GitHub discovery worker:", e.message));
 
-// Start portfolio discovery worker
-const { startPortfolioDiscoveryWorker } = await import("./src/modules/discovery/workers/portfolioDiscovery.worker.js");
-Promise.resolve().then(() => startPortfolioDiscoveryWorker()).catch((e) => console.warn("Portfolio discovery worker start failed:", e.message));
+      import("./src/modules/discovery/workers/portfolioDiscovery.worker.js")
+        .then(({ startPortfolioDiscoveryWorker }) => startPortfolioDiscoveryWorker())
+        .catch((e) => console.warn("⚠️ Portfolio discovery worker:", e.message));
 
-// Start resume discovery worker
-const { startResumeDiscoveryWorker } = await import("./src/modules/discovery/workers/resumeDiscovery.worker.js");
-Promise.resolve().then(() => startResumeDiscoveryWorker()).catch((e) => console.warn("Resume discovery worker start failed:", e.message));
+      import("./src/modules/discovery/workers/resumeDiscovery.worker.js")
+        .then(({ startResumeDiscoveryWorker }) => startResumeDiscoveryWorker())
+        .catch((e) => console.warn("⚠️ Resume discovery worker:", e.message));
 
-// Start freshness worker
-const { startFreshnessWorker } = await import("./src/modules/freshness/workers/freshness.worker.js");
-Promise.resolve().then(() => startFreshnessWorker()).catch((e) => console.warn("Freshness worker start failed:", e.message));
+      import("./src/modules/freshness/workers/freshness.worker.js")
+        .then(({ startFreshnessWorker }) => startFreshnessWorker())
+        .catch((e) => console.warn("⚠️ Freshness worker:", e.message));
 
-// Start orchestrator worker
-const { startOrchestratorWorker } = await import("./src/modules/orchestrator/workers/orchestrator.worker.js");
-Promise.resolve().then(() => startOrchestratorWorker()).catch((e) => console.warn("Orchestrator worker start failed:", e.message));
+      import("./src/modules/orchestrator/workers/orchestrator.worker.js")
+        .then(({ startOrchestratorWorker }) => startOrchestratorWorker())
+        .catch((e) => console.warn("⚠️ Orchestrator worker:", e.message));
 
-// Start talent signal worker
-const { startTalentSignalWorker } = await import("./src/modules/talentSignals/workers/talentSignal.worker.js");
-Promise.resolve().then(() => startTalentSignalWorker()).catch((e) => console.warn("Talent signal worker start failed:", e.message));
+      import("./src/modules/talentSignals/workers/talentSignal.worker.js")
+        .then(({ startTalentSignalWorker }) => startTalentSignalWorker())
+        .catch((e) => console.warn("⚠️ Talent signal worker:", e.message));
 
-// Start streaming coordinator
-const { streamingCoordinatorService } = await import("./src/modules/streaming/services/streamingCoordinator.service.js");
-streamingCoordinatorService.initialize().catch((e) => console.warn("Streaming coordinator start failed:", e.message));
-
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+      import("./src/modules/streaming/services/streamingCoordinator.service.js")
+        .then(({ streamingCoordinatorService }) => streamingCoordinatorService.initialize())
+        .catch((e) => console.warn("⚠️ Streaming coordinator:", e.message));
+    } catch (workerError) {
+      console.error("⚠️ Worker initialization error:", workerError.message);
+    }
+  }, 1000);
+} catch (error) {
+  console.error("❌ Server startup failed:", error);
+  process.exit(1);
+}
 
 // ================= SHUTDOWN =================
 process.on("SIGINT", async () => {

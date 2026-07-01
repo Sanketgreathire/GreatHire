@@ -9,6 +9,7 @@ import {
   searchCandidates,
   getCandidateById,
   deleteCandidate,
+  sourceByJobDescription,
 } from "../../controllers/sourcing/sourcing.controller.js";
 
 // Semantic AI controllers
@@ -119,6 +120,9 @@ router.post("/reindex-pending",       reindexPending);
 
 // ── Keyword Search ────────────────────────────────────────────────────────────
 router.get("/search", searchCandidates);
+
+// ── JD-Based Sourcing ─────────────────────────────────────────────────────────
+router.post("/source-by-jd", sourceByJobDescription);
 
 // ── Single Candidate ──────────────────────────────────────────────────────────
 router.get("/:id",    getCandidateById);

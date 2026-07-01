@@ -1,5 +1,6 @@
 import { User } from '../../models/user.model.js';
 import { AutoSourcingConfig } from '../../models/sourcing/autoSourcingConfig.model.js';
+import { AISourcedCandidate } from '../../models/postgres/aiSourcedCandidate.model.js';
 import { GitHubScraper } from '../scrapers/githubScraper.js';
 import { LinkedInScraper } from '../scrapers/linkedinScraper.js';
 import { IndeedScraper } from '../scrapers/indeedScraper.js';
@@ -30,9 +31,14 @@ class AutoSourcingService {
     try {
       console.log('🤖 Starting GitHub auto-sourcing...', criteria);
       
-      // Get current page from config
-      const config = await AutoSourcingConfig.findOne({ recruiterId });
-      const currentPage = config?.stats?.platformPages?.github || 1;
+      // Get current page from config (optional)
+      let currentPage = 1;
+      try {
+        const config = await AutoSourcingConfig.findOne({ recruiterId });
+        currentPage = config?.stats?.platformPages?.github || 1;
+      } catch (err) {
+        console.log('   Using default page 1 (config not found)');
+      }
       
       console.log(`   Fetching page ${currentPage} from GitHub...`);
       
@@ -41,17 +47,23 @@ class AutoSourcingService {
       
       if (profiles.length === 0) {
         console.log('⚠️ No profiles found from GitHub. Resetting to page 1.');
-        // Reset to page 1 if no results
-        await AutoSourcingConfig.findOneAndUpdate(
-          { recruiterId },
-          { $set: { 'stats.platformPages.github': 1 } }
-        );
+        try {
+          await AutoSourcingConfig.findOneAndUpdate(
+            { recruiterId },
+            { $set: { 'stats.platformPages.github': 1 } }
+          );
+        } catch (err) {
+          // Ignore config update errors
+        }
       } else {
-        // Increment page for next run
-        await AutoSourcingConfig.findOneAndUpdate(
-          { recruiterId },
-          { $inc: { 'stats.platformPages.github': 1 } }
-        );
+        try {
+          await AutoSourcingConfig.findOneAndUpdate(
+            { recruiterId },
+            { $inc: { 'stats.platformPages.github': 1 } }
+          );
+        } catch (err) {
+          // Ignore config update errors
+        }
       }
 
       return await this.importProfiles(profiles, recruiterId, 'GITHUB_PROFILE');
@@ -169,28 +181,17 @@ class AutoSourcingService {
         // Enrich profile with contact extractor
         const enrichedProfile = ContactExtractorService.enrichProfile(profile);
 
-        // Check for duplicates globally (across all recruiters)
-        const duplicateQuery = {
-          $or: []
-        };
+        // Check for duplicates in PostgreSQL
+        const existing = await AISourcedCandidate.checkDuplicate(
+          enrichedProfile.emails?.[0],
+          enrichedProfile.githubUrl,
+          enrichedProfile.linkedinUrl
+        );
         
-        if (enrichedProfile.emails?.length > 0) {
-          duplicateQuery.$or.push({ 'emailId.email': { $in: enrichedProfile.emails } });
-        }
-        if (enrichedProfile.githubUrl) {
-          duplicateQuery.$or.push({ githubUrl: enrichedProfile.githubUrl });
-        }
-        if (enrichedProfile.linkedinUrl) {
-          duplicateQuery.$or.push({ linkedinUrl: enrichedProfile.linkedinUrl });
-        }
-
-        if (duplicateQuery.$or.length > 0) {
-          const existing = await User.findOne(duplicateQuery);
-          if (existing) {
-            console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName} (already exists as ${existing.fullname})`);
-            skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
-            continue;
-          }
+        if (existing) {
+          console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName}`);
+          skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
+          continue;
         }
 
         // Check if profile has minimum required data
@@ -200,52 +201,40 @@ class AutoSourcingService {
           continue;
         }
 
-        if (!enrichedProfile.emails || enrichedProfile.emails.length === 0) {
-          console.log(`   ⚠️ Skipping ${enrichedProfile.fullName}: No email`);
-          skipped.push({ profile: enrichedProfile.fullName, reason: 'no email' });
+        if ((!enrichedProfile.emails || enrichedProfile.emails.length === 0) && 
+            (!enrichedProfile.phones || enrichedProfile.phones.length === 0)) {
+          console.log(`   ⚠️ Skipping ${enrichedProfile.fullName}: No email or phone`);
+          skipped.push({ profile: enrichedProfile.fullName, reason: 'no contact' });
           continue;
         }
 
         // Normalize skills
         const normalizedSkills = normalizeSkills(enrichedProfile.skills);
 
-        // Map source type to aiSourceType enum
+        // Map source type
         let aiSourceType = 'API_IMPORT';
         if (sourceType === 'GITHUB_PROFILE') aiSourceType = 'GITHUB';
         else if (sourceType === 'LINKEDIN_PROFILE') aiSourceType = 'LINKEDIN';
 
-        // Create candidate in User collection with AI sourcing flags
-        const candidate = await User.create({
-          fullname: enrichedProfile.fullName,
-          emailId: {
-            email: enrichedProfile.emails[0],
-            isVerified: false,
-          },
-          phoneNumber: enrichedProfile.phones?.length > 0 ? {
-            number: enrichedProfile.phones[0],
-            isVerified: false,
-          } : undefined,
-          role: 'student',
-          address: {
-            city: enrichedProfile.location || '',
-          },
-          profile: {
-            skills: normalizedSkills,
-            bio: enrichedProfile.summary || '',
-            hasExperience: (enrichedProfile.totalExperience || 0) > 0,
-            experiences: enrichedProfile.company ? [{
-              companyName: enrichedProfile.company,
-              jobProfile: enrichedProfile.designation || '',
-              currentlyWorking: true,
-            }] : [],
-          },
-          // AI Sourcing fields
-          isAISourced: true,
+        // Save to PostgreSQL
+        const candidate = await AISourcedCandidate.create({
+          fullName: enrichedProfile.fullName,
+          email: enrichedProfile.emails?.[0] || null,
+          phone: enrichedProfile.phones?.[0] || null,
+          skills: normalizedSkills,
+          totalExperience: enrichedProfile.totalExperience || 0,
+          currentCompany: enrichedProfile.company || null,
+          designation: enrichedProfile.designation || null,
+          location: enrichedProfile.location || null,
+          education: [],
+          summary: enrichedProfile.summary || null,
+          githubUrl: enrichedProfile.githubUrl || null,
+          linkedinUrl: enrichedProfile.linkedinUrl || null,
+          portfolioUrl: null,
+          resumeUrl: null,
           aiSourceType,
-          aiSourcedAt: new Date(),
           aiSourcedBy: recruiterId,
-          githubUrl: enrichedProfile.githubUrl || '',
-          linkedinUrl: enrichedProfile.linkedinUrl || '',
+          recruiterId,
         });
 
         console.log(`   ✅ Imported: ${enrichedProfile.fullName} (${normalizedSkills?.length || 0} skills)`);

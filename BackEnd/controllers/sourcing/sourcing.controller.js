@@ -3,6 +3,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
 import { extractResumeText, parseResumeFields } from "./resumeParser.service.js";
+import { JdSourcingService } from "../../sourcing/services/jdSourcingService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -166,5 +167,46 @@ export const deleteCandidate = async (req, res) => {
   } catch (error) {
     console.error("deleteCandidate error:", error);
     return res.status(500).json({ success: false, message: "Delete failed.", error: error.message });
+  }
+};
+
+// ─── POST /api/v1/sourcing/source-by-jd ──────────────────────────────────────
+export const sourceByJobDescription = async (req, res) => {
+  try {
+    const { skills, location, designation, minExp, maxExp, jobDescription } = req.body;
+
+    // Validate required fields
+    if (!skills && !location && !designation && !jobDescription) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "At least one filter (skills, location, designation) or job description is required." 
+      });
+    }
+
+    const jdSourcing = new JdSourcingService();
+    const limit = 20; // Max candidates to source
+
+    const result = await jdSourcing.sourceAndScore(
+      { skills, location, designation, minExp, maxExp, jobDescription },
+      limit
+    );
+
+    return res.status(200).json({
+      success: true,
+      candidates: result.candidates,
+      total: result.total,
+      mode: result.mode,
+      message: result.candidates.length === 0 
+        ? "No candidates found matching the criteria."
+        : `Found ${result.candidates.length} candidates${jobDescription ? ' and scored against job description' : ''}.`
+    });
+
+  } catch (error) {
+    console.error("sourceByJobDescription error:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Failed to source candidates.", 
+      error: error.message 
+    });
   }
 };

@@ -402,7 +402,6 @@ const candidateIntelligenceSchema = new mongoose.Schema({
   collection: "candidateintelligences"
 });
 
-candidateIntelligenceSchema.index({ candidateId: 1 }, { unique: true });
 candidateIntelligenceSchema.index({ "enrichmentMetadata.lastEnriched": -1 });
 candidateIntelligenceSchema.index({ "candidateScores.sourcingRecommendationScore": -1 });
 candidateIntelligenceSchema.index({ "careerIntelligence.seniorityLevel": 1 });

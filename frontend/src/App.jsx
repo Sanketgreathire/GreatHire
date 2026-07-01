@@ -22,6 +22,8 @@ const RecruiterLogin         = lazy(() => import('@/components/auth/recruiter/Re
 const SignupPage              = lazy(() => import("./components/shared/SignupPage"));
 const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
 const RecruiterSignup         = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
+const LearnersTrackLogin      = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
+const LearnersTrackSignup     = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
 const VerifyEmail             = lazy(() => import("./components/VerifyEmail"));
 const VerifyNumber            = lazy(() => import("./components/VerifyNumber"));
 const ForgotPassword          = lazy(() => import('./pages/ForgotPassword'));
@@ -212,6 +214,8 @@ const appRouter = createBrowserRouter([
   { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
   { path: "/jobseeker-login", element: <JobseekerLogin /> },
   { path: "/recruiter-login", element: <RecruiterLogin /> },
+  { path: "/learnerstrack-login", element: <LearnersTrackLogin /> },
+  { path: "/learnerstrack-signup", element: <LearnersTrackSignup /> },
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
