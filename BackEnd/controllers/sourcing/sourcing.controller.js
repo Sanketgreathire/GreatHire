@@ -175,7 +175,6 @@ export const sourceByJobDescription = async (req, res) => {
   try {
     const { skills, location, designation, minExp, maxExp, jobDescription } = req.body;
 
-    // Validate required fields
     if (!skills && !location && !designation && !jobDescription) {
       return res.status(400).json({ 
         success: false, 
@@ -184,11 +183,9 @@ export const sourceByJobDescription = async (req, res) => {
     }
 
     const jdSourcing = new JdSourcingService();
-    const limit = 20; // Max candidates to source
-
     const result = await jdSourcing.sourceAndScore(
       { skills, location, designation, minExp, maxExp, jobDescription },
-      limit
+      20
     );
 
     return res.status(200).json({
@@ -200,13 +197,8 @@ export const sourceByJobDescription = async (req, res) => {
         ? "No candidates found matching the criteria."
         : `Found ${result.candidates.length} candidates${jobDescription ? ' and scored against job description' : ''}.`
     });
-
   } catch (error) {
     console.error("sourceByJobDescription error:", error);
-    return res.status(500).json({ 
-      success: false, 
-      message: "Failed to source candidates.", 
-      error: error.message 
-    });
+    return res.status(500).json({ success: false, message: "Failed to source candidates.", error: error.message });
   }
 };

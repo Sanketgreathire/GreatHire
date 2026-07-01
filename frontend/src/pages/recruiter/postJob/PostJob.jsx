@@ -33,6 +33,7 @@ const filterLocations = (query) => {
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
@@ -249,7 +250,7 @@ const PostJob = () => {
       anyAmount: "No",
     },
     validationSchema: Yup.object({
-      urgentHiring: Yup.string().required("This field is required"),
+      urgentHiring: Yup.string(),
       title: Yup.string().required("Job title is required"),
       details: Yup.string().required("Job details are required"),
       salary: Yup.string().required("Salary is required"),
@@ -323,7 +324,7 @@ const PostJob = () => {
 
   const handleNext = async () => {
     const currentStepFields = [
-      ["companyName", "urgentHiring", "title", "details"], // Step 0
+      ["companyName", "title", "numberOfOpening", "duration"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
       ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
@@ -336,6 +337,11 @@ const PostJob = () => {
     formik.setTouched(touchedFields);
     // Trigger validation and ensure required fields show error messages
     await formik.validateForm();
+    // Debug: log values and errors to help trace why Next may be blocked
+    try {
+      // eslint-disable-next-line no-console
+      // Debug logging removed per revert request
+    } catch (e) {}
     // Check if there are any errors or blank fields in the current step's fields
     const hasErrors = currentStepFields.some(
       (field) => !!formik.errors[field] || !formik.values[field]

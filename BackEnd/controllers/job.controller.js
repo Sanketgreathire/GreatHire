@@ -184,7 +184,6 @@ export const postJob = [
         const updateData = { freeJobsPosted: newFreeJobsPosted };
         if (newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
           updateData.hasUsedFreePlan = true;
-          // Set expiry for next monthly reset
           updateData.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         }
         await Company.findByIdAndUpdate(companyId, updateData);

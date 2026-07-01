@@ -580,13 +580,11 @@ export const logout = async (req, res) => {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const userId = decoded.userId;
 
-        // Update lastActiveAt for both User and Recruiter collections (non-blocking)
         Promise.all([
           User.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }).catch(() => {}),
           Recruiter.findByIdAndUpdate(userId, { $set: { lastActiveAt: new Date() } }).catch(() => {})
         ]).catch(() => {});
 
-        // Blacklist the token (non-blocking)
         BlacklistToken.updateOne(
           { token },
           { $setOnInsert: { token } },

@@ -25,7 +25,9 @@
     "axios": "^1.8.4",
     "backend": "file:",
     "bcryptjs": "^2.4.3",
+
     "bullmq": "^5.76.6",
+
     "cloudinary": "^2.5.1",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -45,16 +47,22 @@
     "ioredis": "^5.10.1",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
+
+    "kafkajs": "^2.2.4",
+    "levenshtein-distance": "^0.0.2",
     "libphonenumber-js": "^1.13.1",
     "mammoth": "^1.12.0",
-    "mongoose": "^8.21.1",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.2",
     "multer": "^2.0.2",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.10",
     "nodemon": "^3.1.10",
     "pdf-parse": "^1.1.4",
+
     "pg": "^8.21.0",
+
     "qs": "^6.14.1",
     "randomstring": "^1.3.1",
     "razorpay": "^2.9.6",

@@ -3,6 +3,7 @@ import expressStaticGzip from "express-static-gzip";
 import dotenv from "dotenv";
 dotenv.config();
 
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,6 +17,7 @@ import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
 import { initPostgres } from "./config/postgres.js";
+
 
 // ================= ROUTES =================
 import applicationRoute from "./routes/application.route.js";
@@ -314,6 +316,7 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= START SERVER =================
+
 try {
   await connectDB();
   initPostgres();
