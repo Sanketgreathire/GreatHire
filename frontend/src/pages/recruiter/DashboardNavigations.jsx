@@ -174,6 +174,18 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
+              <NavLink
+                to="/recruiter/dashboard/resume-analyzer"
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <FileText size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
+                    <span>Resume Analyzer</span>
+                  </>
+                )}
+              </NavLink>
               {/* <NavLink
                 to="/recruiter/dashboard/sourcing"
                 className={navLinkClass}

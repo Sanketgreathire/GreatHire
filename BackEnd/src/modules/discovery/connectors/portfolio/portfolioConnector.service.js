@@ -1,5 +1,5 @@
 import axios from "axios";
-import cheerio from "cherio";
+import * as cheerio from "cheerio";
 import { portfolioParser } from "./portfolioParser.service.js";
 import { projectAnalysis } from "./projectAnalysis.service.js";
 import { technologyDetection } from "./technologyDetection.service.js";
