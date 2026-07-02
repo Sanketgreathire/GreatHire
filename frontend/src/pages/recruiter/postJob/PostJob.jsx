@@ -324,8 +324,8 @@ const PostJob = () => {
 
   const handleNext = async () => {
     const currentStepFields = [
-      ["companyName", "title", "numberOfOpening", "duration"], // Step 0
-      ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
+      ["companyName", "title", "details"], // Step 0
+      ["skills", "benefits", "qualifications"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
       ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
     ][step];
