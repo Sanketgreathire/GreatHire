@@ -45,6 +45,7 @@ const CandidateList = () => {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [showCandidates, setShowCandidates] = useState(false);
   const { company } = useSelector((state) => state.company);
   const { user } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("Find great talent for your team");
@@ -96,6 +97,7 @@ const CandidateList = () => {
         // Backend already sorts: boosted first, then most recent — no JS sort needed
         setCandidates(response.data.candidates.slice(0, 1000));
         setCurrentPage(1);
+        setShowCandidates(true);
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Error fetching candidates");
@@ -259,15 +261,26 @@ const CandidateList = () => {
           </div>
 
           <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-3">
-            <Button
-              onClick={fetchCandidates}
-              disabled={isLoading}
-              className="w-full sm:w-48 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
-              {isLoading && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <div className="flex items-center rounded-xl overflow-hidden shadow-md w-full sm:w-auto">
+              <Button
+                onClick={fetchCandidates}
+                disabled={isLoading}
+                className="flex items-center justify-center gap-2 rounded-none bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-5 disabled:opacity-60 disabled:cursor-not-allowed">
+                {isLoading && (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                )}
+                {isLoading ? "Finding Candidates..." : "Find Candidates"}
+              </Button>
+              {showCandidates && (
+                <button
+                  onClick={() => setShowCandidates(false)}
+                  className="bg-indigo-700 hover:bg-red-600 text-white px-3 py-3 transition-colors"
+                  title="Close Results"
+                >
+                  <X size={16} />
+                </button>
               )}
-              {isLoading ? "Finding Candidates..." : "Find Candidates"}
-            </Button>
+            </div>
 
             {/* Sourcing — AI powered */}
             <Button
@@ -437,7 +450,9 @@ const CandidateList = () => {
           )}
 
           {/* Candidates */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 mt-8">
+          {showCandidates && (
+          <div className="mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
             {isLoading ? (
               <p className="text-center text-xl">Loading...</p>
             ) : currentCandidates.length === 0 ? (
@@ -504,6 +519,8 @@ const CandidateList = () => {
                 Next
               </Button>
             </div>
+          )}
+          </div>
           )}
 
           {/* Sourcing Candidate Modal */}

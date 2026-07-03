@@ -254,7 +254,6 @@ const Navbar = () => {
         ...(user && !isRecruiter ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter && hasCompany ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-        ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
       ]
     : [
         { to: "/", label: "Home" },
@@ -276,7 +275,6 @@ const Navbar = () => {
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
     ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
     ...(!user || (isRecruiter && hasCompany) ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-    ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/Main_blog_page",      label: "Blogs" },
     { to: "/courses",             label: "Courses" },

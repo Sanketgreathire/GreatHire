@@ -54,6 +54,7 @@ export class KafkaConsumerService extends EventEmitter {
   }
 
   async connect() {
+    if (process.env.KAFKA_DISABLED === 'true') return;
     try {
       if (this.isConnected) return;
       this.kafka = new Kafka(this.config);
