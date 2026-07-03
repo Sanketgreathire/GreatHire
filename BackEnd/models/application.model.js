@@ -30,6 +30,19 @@ const applicationSchema = new mongoose.Schema(
       enum: ["Pending", "Interview Schedule", "Shortlisted", "Rejected"],
       default: "Pending",
     },
+    aiInterview: {
+      status: {
+        type: String,
+        enum: ["Not Started", "Scheduled", "Completed", "Failed"],
+        default: "Not Started",
+      },
+      blandCallId: { type: String, default: "" },
+      transcript: { type: String, default: "" },
+      score: { type: Number, default: 0 },
+      matchScore: { type: Number, default: 0 },
+      skillsMatched: { type: [String], default: [] },
+      missingSkills: { type: [String], default: [] },
+    },
   },
    
   { timestamps: true }

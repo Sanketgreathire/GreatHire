@@ -66,6 +66,7 @@ import talentSignalsRoute from "./src/modules/talentSignals/routes/talentSignals
 import eventsRoute from "./src/modules/events/routes/events.routes.js";
 
 import analyticsRoute from "./routes/analytics/analytics.route.js";
+import interviewRoute from "./routes/interview.route.js";
 
 
 // ================= MODELS =================
@@ -231,6 +232,7 @@ app.use("/api/events", eventsRoute);
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 
 app.use("/api/v1/analytics", analyticsRoute);
+app.use("/api/v1/interview", interviewRoute);
 
 
 // ================= FRONTEND =================
@@ -316,6 +318,8 @@ setIO(io);
 notificationService.setIO(io);
 
 // ================= START SERVER =================
+console.log("GROQ_API_KEY:", process.env.GROQ_API_KEY ? "✅ Set" : "❌ undefined");
+console.log("BLAND_API_KEY:", process.env.BLAND_API_KEY ? "✅ Set" : "❌ undefined");
 
 try {
   await connectDB();
