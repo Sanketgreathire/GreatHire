@@ -147,7 +147,7 @@ const LearnersTrackNavbar = () => {
               <span className="text-black dark:text-white">Great</span>
               <span className="text-blue-600">Hire</span>
             </h2>
-            <span className="text-lg font-bold text-gray-300 dark:text-gray-600">×</span>
+            <span className="text-lg font-bold text-gray-300 dark:text-gray-600">with</span>
             <img src={learnersTrackNavLogo} alt="LearnersTrack" className="h-10 sm:h-12" />
           </Link>
 
