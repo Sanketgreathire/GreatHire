@@ -55,6 +55,9 @@ export const OTP_API_END_POINT = `${BASE_API}/otp`;
 
 export const SOURCING_API_END_POINT   = `${BASE_API}/sourcing`;
 export const INGESTION_API_END_POINT  = `${BASE_API}/ingestion`;
+export const REFERRING_CANDIDATES_API = `${BASE_API}/admin/referring-candidates`;
+export const CONTACT_MESSAGE_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/sendMessage`;
+export const SUPPORT_QUERIES_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/v1/admin/support-queries`;
 
 export const RECRUITER_DASHBOARD_API = `${BASE_API}/recruiter/dashboard`;
 export const ANALYTICS_DASHBOARD_API = `${BASE_API}/analytics/dashboard`;
