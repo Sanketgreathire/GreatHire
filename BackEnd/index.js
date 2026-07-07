@@ -16,7 +16,6 @@ import http from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
-import { initPostgres } from "./config/postgres.js";
 
 
 // ================= ROUTES =================
@@ -319,7 +318,6 @@ notificationService.setIO(io);
 
 try {
   await connectDB();
-  initPostgres();
 
   // Start server FIRST before starting workers
   server.listen(PORT, "0.0.0.0", () => {
