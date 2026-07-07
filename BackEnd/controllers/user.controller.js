@@ -104,9 +104,14 @@ export const register = async (req, res) => {
             { $inc: { referralCount: 1 } },
             { new: true }
           );
-          // Auto-boost when referralCount reaches 5
-          if (updatedReferrer && updatedReferrer.referralCount >= 5 && !updatedReferrer.isProfileBoosted) {
-            await User.findByIdAndUpdate(referrer._id, { isProfileBoosted: true });
+          // At 25 referrals: boost profile + unlock recruiter contacts reward
+          if (updatedReferrer && updatedReferrer.referralCount >= 25) {
+            const updates = {};
+            if (!updatedReferrer.isProfileBoosted) updates.isProfileBoosted = true;
+            if (!updatedReferrer.referral25AchievedAt) updates.referral25AchievedAt = new Date();
+            if (Object.keys(updates).length) {
+              await User.findByIdAndUpdate(referrer._id, updates);
+            }
           }
         }
       }
@@ -292,6 +297,7 @@ export const jobseekerLogin = async (req, res) => {
     }
 
     await user.save();
+    pushLoginHistory(user._id, req);
 
     // Send welcome notification (non-blocking)
     notificationService.notifyWelcome({
@@ -1434,6 +1440,25 @@ export const verifyRecruiterOtp = async (req, res) => {
   } catch (err) {
     console.error("Verify OTP Error:", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// Helper: push a login history entry (non-blocking)
+const pushLoginHistory = (userId, req) => {
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket?.remoteAddress || "";
+  const device = req.headers["user-agent"]?.slice(0, 200) || "";
+  User.findByIdAndUpdate(userId, {
+    $push: { loginHistory: { $each: [{ timestamp: new Date(), ip, device }], $slice: -50 } },
+  }).catch(() => {});
+};
+
+export const getLoginHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.id).select("loginHistory");
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    return res.status(200).json({ success: true, loginHistory: (user.loginHistory || []).reverse() });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
