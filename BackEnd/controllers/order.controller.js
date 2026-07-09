@@ -28,6 +28,7 @@ export const createOrderForJobPlan = async (req, res) => {
       amount,
       creditsForJobs,
       creditsForCandidates,
+      durationMonths,
     } = req.body;
 
     const userId = req.id; // recruiter id
@@ -69,7 +70,7 @@ export const createOrderForJobPlan = async (req, res) => {
     });
 
     // 🧾 Save subscription (✅ schema-safe)
-    const expiryMonths = planName === "Enterprise Elite" ? 12 : 1;
+    const expiryMonths = Number(durationMonths) || (planName.includes("Enterprise") ? 12 : 1);
     await JobSubscription.create({
       planName,
       creditedForJobs: creditsForJobs,               // ✅ FIXED

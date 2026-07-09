@@ -469,15 +469,11 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       await company.save();
 
       // Determine plan type based on job count
-      let planType = "STANDARD";
-      if (creditsForJobs >= 999999) {
-        planType = "ENTERPRISE";
-      } else if (creditsForJobs >= 25) {
-        planType = "PRO";
-      } else if (creditsForJobs >= 10) {
-        planType = "PREMIUM";
-      } else if (creditsForJobs >= 5) {
-        planType = "STANDARD";
+      let planType = "ENTERPRISE"; // all paid plans are now ENTERPRISE
+      if (creditsForJobs < 999999) {
+        if (creditsForJobs >= 25) planType = "PRO";
+        else if (creditsForJobs >= 10) planType = "PREMIUM";
+        else planType = "STANDARD";
       }
 
       company.creditedForJobs = creditsForJobs;

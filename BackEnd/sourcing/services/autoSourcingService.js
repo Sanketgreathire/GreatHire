@@ -181,18 +181,18 @@ class AutoSourcingService {
         const enrichedProfile = ContactExtractorService.enrichProfile(profile);
 
         // Check for duplicates in MongoDB
-        const existing = await AISourcedCandidate.findOne({
-          $or: [
-            enrichedProfile.emails?.[0] ? { email: enrichedProfile.emails[0] } : null,
-            enrichedProfile.githubUrl   ? { githubUrl: enrichedProfile.githubUrl } : null,
-            enrichedProfile.linkedinUrl ? { linkedinUrl: enrichedProfile.linkedinUrl } : null,
-          ].filter(Boolean),
-        });
-        
-        if (existing) {
-          console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName}`);
-          skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
-          continue;
+        const orConditions = [];
+        if (enrichedProfile.emails?.[0])  orConditions.push({ email: enrichedProfile.emails[0] });
+        if (enrichedProfile.githubUrl)    orConditions.push({ githubUrl: enrichedProfile.githubUrl });
+        if (enrichedProfile.linkedinUrl)  orConditions.push({ linkedinUrl: enrichedProfile.linkedinUrl });
+
+        if (orConditions.length > 0) {
+          const existing = await AISourcedCandidate.findOne({ $or: orConditions });
+          if (existing) {
+            console.log(`   ⏭️ Skipping duplicate: ${enrichedProfile.fullName}`);
+            skipped.push({ profile: enrichedProfile.fullName, reason: 'duplicate' });
+            continue;
+          }
         }
 
         // Check if profile has minimum required data
@@ -202,8 +202,8 @@ class AutoSourcingService {
           continue;
         }
 
-        if ((!enrichedProfile.emails || enrichedProfile.emails.length === 0) && 
-            (!enrichedProfile.phones || enrichedProfile.phones.length === 0)) {
+        // Must have at least email or phone
+        if (!enrichedProfile.emails?.length && !enrichedProfile.phones?.length) {
           console.log(`   ⚠️ Skipping ${enrichedProfile.fullName}: No email or phone`);
           skipped.push({ profile: enrichedProfile.fullName, reason: 'no contact' });
           continue;
