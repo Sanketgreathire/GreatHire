@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Mail, Pen, IdCard, FileText, Plus, Eye, Upload, Briefcase, MapPin, Phone, CheckCircle, Settings, LogOut, User, Shield } from "lucide-react";
+import { Mail, Pen, IdCard, FileText, Plus, Eye, Upload, Briefcase, MapPin, Phone, CheckCircle, Settings, LogOut, User, Shield, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { USER_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -72,6 +72,7 @@ const UserProfile = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [appliedLoading, setAppliedLoading] = useState(true);
   const [showAppliedJobs, setShowAppliedJobs] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -179,61 +180,85 @@ const UserProfile = () => {
 
       <div className="min-h-screen bg-[#f0f2f5] dark:bg-gray-900 flex">
         {/* Top Navbar */}
-        <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 z-30 shadow-sm">
-          <span className="text-xl font-bold">
-            <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
-          </span>
+        <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 z-30 shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              className="md:hidden p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={() => setSidebarOpen(v => !v)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => user?.profile?.resume ? navigate(-1) : toast.error("You must upload a resume before leaving!")}
+              className="p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <span className="text-xl font-bold">
+              <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
+            </span>
+          </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
           >
-            <LogOut className="w-4 h-4" /> Logout
+            <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Logout</span>
           </button>
         </header>
 
-        {/* Left Sidebar */}
-        <aside className="w-56 bg-white dark:bg-gray-800 shadow-sm flex flex-col px-4 pb-6 fixed left-0 z-20" style={{height:'calc(100vh - 56px)', top:'56px', overflowY:'auto'}}>
-         
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
+        {/* Left Sidebar */}
+        <aside
+          className={`fixed left-0 z-50 md:z-20 bg-white dark:bg-gray-800 shadow-sm flex flex-col px-4 pb-6 transition-transform duration-300
+            w-56 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          style={{height:'calc(100vh - 56px)', top:'56px', overflowY:'auto'}}
+        >
           {/* Nav items */}
           <div className="space-y-1 mb-4 pt-4">
-            <button className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium text-sm">
+            <button
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium text-sm"
+              onClick={() => setSidebarOpen(false)}
+            >
               <User className="w-4 h-4" /> Profile
             </button>
             <button
-              onClick={() => navigate("/ResumeAnalyzer")}
+              onClick={() => { navigate("/ResumeAnalyzer"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <FileText className="w-4 h-4" /> Resume Analyzer
             </button>
             <button
-              onClick={() => navigate("/jobs")}
+              onClick={() => { navigate("/jobs"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <Briefcase className="w-4 h-4" /> Jobs
             </button>
             <button
-              onClick={() => navigate("/profile/settings-policy")}
+              onClick={() => { navigate("/profile/settings-policy"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <Shield className="w-4 h-4" /> Settings &amp; Policy
             </button>
           </div>
-
           <hr className="border-gray-200 dark:border-gray-700 mb-4" />
-
-          
-
-         
         </aside>
 
         {/* Main Content */}
-        <main className="ml-56 flex-1 px-5 pb-6" style={{paddingTop:'72px'}}>
-          <div className="flex gap-4">
+        <main className="w-full md:ml-56 flex-1 px-3 md:px-5 pb-6" style={{paddingTop:'72px'}}>
+          <div className="flex flex-col lg:flex-row gap-4">
             {/* Center Column */}
             <div className="flex-1 space-y-4">
               {/* Hero Card */}
-              <div className="bg-gradient-to-r from-purple-100 via-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 flex items-center gap-5 shadow-sm">
+              <div className="bg-gradient-to-r from-purple-100 via-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-5 shadow-sm">
                 <div className="relative flex-shrink-0">
                   <Avatar className="h-20 w-20 border-4 border-white shadow-md">
                     <AvatarImage
@@ -270,14 +295,14 @@ const UserProfile = () => {
                 </div>
                 <Button
                   onClick={() => setOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-2 text-sm flex items-center gap-2 shadow"
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-2 text-sm flex items-center gap-2 shadow sm:ml-auto"
                 >
                   <FileText className="w-4 h-4" /> Edit Profile
                 </Button>
               </div>
 
               {/* Contact + Personal Info Row */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Contact Information */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
                   <h2 className="font-semibold text-gray-800 dark:text-white mb-4">Contact Information</h2>
@@ -421,7 +446,7 @@ const UserProfile = () => {
               </div>
 
               {/* Job Categories + Top Skills Row */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Job Categories + Languages */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm space-y-4">
                   <div>
@@ -516,7 +541,7 @@ const UserProfile = () => {
             </div>
 
             {/* Right Column */}
-            <div className="w-72 flex-shrink-0 self-start sticky top-[72px] space-y-4">
+            <div className="w-full lg:w-72 lg:flex-shrink-0 lg:self-start lg:sticky lg:top-[72px] space-y-4">
               {/* Resume Card */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
                 <div className="flex flex-col items-center">
