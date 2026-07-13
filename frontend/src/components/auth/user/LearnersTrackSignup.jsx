@@ -218,7 +218,7 @@ const LearnersTrackSignup = () => {
                     <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">
                       Great<span className="text-blue-600 dark:text-blue-400">Hire</span>
                     </h1>
-                    <span className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500">×</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500"> collaboration with</span>
                     <img src={learnersTrackLogo} alt="LearnersTrack" className="h-[100px] sm:h-[120px]" />
                   </div>
                   <h2 className="text-xl font-semibold mt-2 text-gray-900 dark:text-white">

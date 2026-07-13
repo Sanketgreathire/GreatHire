@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import { Contact } from "../models/contact.model.js";
+import isAuthenticated from "../middlewares/isAuthenticated.js";
 
 // Create transporter based on email provider
 const createTransporter = () => {
@@ -73,9 +75,9 @@ export const sendContactMessage = async (req, res) => {
       });
     }
 
-    // Validate phone number format (basic check)
+    // Validate phone number format (skip if N/A or empty)
     const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-    if (!phoneRegex.test(phoneNumber)) {
+    if (phoneNumber && phoneNumber !== "N/A" && !phoneRegex.test(phoneNumber)) {
       return res.status(400).json({
         success: false,
         message: "Invalid phone number format",
@@ -206,20 +208,24 @@ export const sendContactMessage = async (req, res) => {
       `,
     };
 
-    // Send emails
-    const results = await Promise.all([
+    // Save to DB first — always succeed if DB write works
+    await Contact.create({ name: fullname, email, phoneNumber, message });
+
+    // Fire emails in background — don't block the response
+    Promise.all([
       transporter.sendMail(mailOptionsToHR),
       transporter.sendMail(mailOptionsToUser),
-    ]);
-
-    console.log("✅ Emails sent successfully");
-    console.log("   HR Email:", results[0].messageId);
-    console.log("   User Confirmation:", results[1].messageId);
+    ])
+      .then((results) => {
+        console.log("✅ Emails sent successfully");
+        console.log("   HR Email:", results[0].messageId);
+        console.log("   User Confirmation:", results[1].messageId);
+      })
+      .catch((err) => console.error("⚠️ Email send failed (message saved to DB):", err.message));
 
     return res.status(200).json({
       success: true,
       message: "Message sent successfully! We'll respond within 24 hours.",
-      messageId: results[0].messageId,
     });
   } catch (error) {
     console.error("❌ Error sending email:", error);
@@ -228,6 +234,37 @@ export const sendContactMessage = async (req, res) => {
       message: "Failed to send message. Please try again later.",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
+  }
+};
+
+// Get all contact queries (admin)
+export const getContactQueries = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+    const filter = status ? { status } : {};
+    const skip = (page - 1) * limit;
+    const [queries, total] = await Promise.all([
+      Contact.find(filter).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).lean(),
+      Contact.countDocuments(filter),
+    ]);
+    res.json({ success: true, queries, total });
+  } catch (e) {
+    res.status(500).json({ success: false, message: "Failed to fetch queries" });
+  }
+};
+
+// Update query status (admin)
+export const updateQueryStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!["seen", "unseen"].includes(status))
+      return res.status(400).json({ success: false, message: "Invalid status" });
+    const query = await Contact.findByIdAndUpdate(id, { status }, { new: true });
+    if (!query) return res.status(404).json({ success: false, message: "Not found" });
+    res.json({ success: true, query });
+  } catch (e) {
+    res.status(500).json({ success: false, message: "Failed to update status" });
   }
 };
 

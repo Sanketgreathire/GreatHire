@@ -16,7 +16,6 @@ import http from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
-import { initPostgres } from "./config/postgres.js";
 
 
 // ================= ROUTES =================
@@ -36,6 +35,7 @@ import adminCompanyDataRoute from "./routes/admin/companyStats.route.js";
 import adminRecruiterDataRoute from "./routes/admin/recruiterStats.route.js";
 import adminJobDataRoute from "./routes/admin/jobStats.route.js";
 import adminApplicationDataRoute from "./routes/admin/applicationStats.route.js";
+import referringCandidatesRoute from "./routes/admin/referringCandidates.route.js";
 import notificationRoute from "./routes/notification.route.js";
 import contactMessageRoute from "./routes/contactMessage.route.js";
 import emailRoute from "./routes/email.route.js";
@@ -200,6 +200,7 @@ app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
 app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/admin/sourcing", adminSourcingRoute);
+app.use("/api/v1/admin/referring-candidates", referringCandidatesRoute);
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/email", emailRoute);
 app.use("/api/v1/messages", messageRoute);
@@ -319,7 +320,6 @@ notificationService.setIO(io);
 
 try {
   await connectDB();
-  initPostgres();
 
   // Start server FIRST before starting workers
   server.listen(PORT, "0.0.0.0", () => {
