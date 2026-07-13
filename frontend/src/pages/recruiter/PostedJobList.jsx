@@ -159,6 +159,7 @@ const PostedJobList = () => {
                         <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Date</TableHead>
                         <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Job Role</TableHead>
                         <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Status</TableHead>
+                        <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Job Status</TableHead>
                         <TableHead className="text-center text-gray-900 dark:text-gray-100 font-semibold">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -212,6 +213,18 @@ const PostedJobList = () => {
                             ) : (
                               <TableCell className="text-gray-900 dark:text-gray-100">-----</TableCell>
                             )}
+                            {/* Job Status — plain text badge, separate from the toggle above */}
+                            <TableCell className="place-items-center">
+                              <span
+                                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                                  job.jobDetails.isActive
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                    : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+                                }`}
+                              >
+                                {job.jobDetails.isActive ? "🟢 Active" : "🔴 Expired"}
+                              </span>
+                            </TableCell>
                             <TableCell className="p-3 text-center">
                               <div className="flex justify-center gap-3 flex-wrap">
                                 <button
@@ -239,7 +252,7 @@ const PostedJobList = () => {
                       ) : (
                         <TableRow>
                           <TableCell
-                            colSpan="5"
+                            colSpan="6"
                             className="text-center text-gray-500 dark:text-gray-400 py-8 transition-colors duration-300"
                           >
                             No jobs found.

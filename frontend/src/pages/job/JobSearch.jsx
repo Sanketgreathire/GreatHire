@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { IoIosSearch } from "react-icons/io";
-import LocationSearch from "@/pages/job/LocationSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobSearch = ({ searchInfo, onSearchUpdate }) => {
@@ -9,17 +8,12 @@ const JobSearch = ({ searchInfo, onSearchUpdate }) => {
   const handleTitleChange = useCallback((value) => {
     onSearchUpdate({ titleKeyword: value });
     if (value === "") resetFilter?.();
-    else filterJobs(value, searchInfo.location);
-  }, [onSearchUpdate, resetFilter, filterJobs, searchInfo.location]);
-
-  const handleLocationSelect = useCallback((selectedLocation) => {
-    onSearchUpdate({ location: selectedLocation });
-    filterJobs(searchInfo.titleKeyword, selectedLocation);
-  }, [onSearchUpdate, filterJobs, searchInfo.titleKeyword]);
+    else filterJobs(value);
+  }, [onSearchUpdate, resetFilter, filterJobs]);
 
   const handleSearchClick = useCallback(() => {
-    filterJobs(searchInfo.titleKeyword, searchInfo.location);
-  }, [filterJobs, searchInfo.titleKeyword, searchInfo.location]);
+    filterJobs(searchInfo.titleKeyword);
+  }, [filterJobs, searchInfo.titleKeyword]);
 
   return (
       <div className="flex flex-col justify-center items-center w-full mt-5">
@@ -36,12 +30,6 @@ const JobSearch = ({ searchInfo, onSearchUpdate }) => {
               onChange={(e) => handleTitleChange(e.target.value)}
             />
           </div>
-
-          {/* Location Search — value prop added so FilterCard changes reflect here */}
-          <LocationSearch
-            value={searchInfo.location}
-            onSelectLocation={handleLocationSelect}
-          />
 
           {/* Desktop Search Button */}
           <div className="hidden md:block">
