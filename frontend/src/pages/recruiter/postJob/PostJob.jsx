@@ -65,7 +65,7 @@ const PostJob = () => {
   }, [company, plan, referralBonus]);
 
   const remainingPostsLabel = useMemo(() => {
-    if (remainingPosts === Infinity) return "Unlimited";
+    if (remainingPosts === Infinity || remainingPosts >= 999999 || plan === "ENTERPRISE") return "Unlimited";
     return `${remainingPosts} Job${remainingPosts !== 1 ? "s" : ""}`;
   }, [remainingPosts]);
 

@@ -1,6 +1,7 @@
 import { GitHubScraper } from '../scrapers/githubScraper.js';
 import axios from 'axios';
 import { GeminiJdMatcher } from './geminiJdMatcher.js';
+import { AISourcedCandidate } from '../../models/sourcing/aiSourcedCandidate.model.js';
 
 const AI_BASE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8001';
 const AI_API_KEY = process.env.AI_SERVICE_API_KEY || 'greathire-ai-secret-key-change-in-prod';
@@ -23,18 +24,39 @@ export class JdSourcingService {
     try {
       const { skills, location, designation, minExp, maxExp, jobDescription } = filters;
 
-      // Step 1: Source candidates from GitHub
-      console.log('🔍 Sourcing candidates from GitHub...');
-      const candidates = await this.sourceCandidates({ skills, location, designation }, limit);
-      
+      // Step 1: Check the saved-candidates database first; only fall back to a live
+      // GitHub fetch if the database doesn't already have enough matches.
+      console.log('🔍 Checking saved candidates database first...');
+      const savedCandidates = await this.getSavedCandidates({ skills, location, designation, minExp, maxExp });
+
+      let candidates;
+      if (savedCandidates.length >= limit) {
+        console.log(`✅ Found ${savedCandidates.length} matching candidates in the database, skipping live GitHub fetch`);
+        candidates = savedCandidates;
+      } else {
+        console.log(`⚠️ Only ${savedCandidates.length} in the database, sourcing more from GitHub...`);
+        const freshCandidates = await this.sourceCandidates({ skills, location, designation }, limit);
+        const seenKeys = new Set();
+        candidates = [...savedCandidates, ...freshCandidates].filter(c => {
+          const key = (c.githubUrl || c.emails?.[0] || c.fullName || '').toLowerCase();
+          if (!key || seenKeys.has(key)) return false;
+          seenKeys.add(key);
+          return true;
+        });
+      }
+
       if (candidates.length === 0) {
         return { success: true, candidates: [], total: 0 };
       }
 
-      // Step 2: Filter by experience if provided
-      let filteredCandidates = candidates;
+      // Step 2: Only keep candidates with at least an email or phone
+      let filteredCandidates = candidates.filter(c =>
+        (c.emails?.length || 0) > 0 || (c.phones?.length || 0) > 0
+      );
+
+      // Step 3: Filter by experience if provided
       if (minExp !== undefined || maxExp !== undefined) {
-        filteredCandidates = candidates.filter(c => {
+        filteredCandidates = filteredCandidates.filter(c => {
           const exp = c.totalExperience || 0;
           if (minExp !== undefined && exp < parseFloat(minExp)) return false;
           if (maxExp !== undefined && exp > parseFloat(maxExp)) return false;
@@ -42,7 +64,7 @@ export class JdSourcingService {
         });
       }
 
-      // Step 3: Score by filter match or JD
+      // Step 4: Score by filter match or JD
       if (jobDescription && jobDescription.trim()) {
         console.log('🎯 Scoring candidates against job description...');
         const scoredCandidates = await this.scoreCandidatesAgainstJD(filteredCandidates, jobDescription);
@@ -124,8 +146,8 @@ export class JdSourcingService {
         minFollowers: 0
       };
 
-      const candidates = await this.githubScraper.searchDevelopers(
-        searchCriteria, 
+      let candidates = await this.githubScraper.searchDevelopers(
+        searchCriteria,
         limit,
         1
       );
@@ -137,11 +159,20 @@ export class JdSourcingService {
           .map(s => s.trim().toLowerCase())
           .filter(Boolean);
 
-        return candidates.filter(c => {
+        candidates = candidates.filter(c => {
           const candidateSkills = (c.skills || []).map(s => s.toLowerCase());
-          return requiredSkills.some(rs => 
+          return requiredSkills.some(rs =>
             candidateSkills.some(cs => cs.includes(rs) || rs.includes(cs))
           );
+        });
+      }
+
+      // Filter by designation so e.g. a "frontend developer" search doesn't return backend profiles
+      if (criteria.designation?.trim()) {
+        const wanted = criteria.designation.trim().toLowerCase();
+        candidates = candidates.filter(c => {
+          const d = (c.designation || '').toLowerCase();
+          return d.length > 0 && (d.includes(wanted) || wanted.includes(d));
         });
       }
 
@@ -149,6 +180,46 @@ export class JdSourcingService {
 
     } catch (error) {
       console.error('GitHub sourcing error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Fetch previously GitHub-sourced candidates (company-wide, shared pool — not
+   * scoped to a single recruiter, since auto-sourcing runs independently of who searches) that match the same criteria
+   */
+  async getSavedCandidates(criteria) {
+    try {
+      const { skills, location, designation, minExp, maxExp } = criteria;
+
+      const query = {
+        aiSourceType: 'GITHUB',
+        $or: [
+          { email: { $exists: true, $ne: null } },
+          { phone: { $exists: true, $ne: null } },
+        ],
+      };
+      if (location?.trim()) query.location = { $regex: location.trim(), $options: 'i' };
+      if (designation?.trim()) query.designation = { $regex: designation.trim(), $options: 'i' };
+      if (skills?.trim()) {
+        const arr = skills.split(',').map(s => s.trim()).filter(Boolean);
+        if (arr.length) query.skills = { $all: arr.map(s => new RegExp(s, 'i')) };
+      }
+      if (minExp !== undefined || maxExp !== undefined) {
+        query.totalExperience = {};
+        if (minExp !== undefined) query.totalExperience.$gte = parseFloat(minExp);
+        if (maxExp !== undefined) query.totalExperience.$lte = parseFloat(maxExp);
+      }
+
+      const docs = await AISourcedCandidate.find(query).sort({ createdAt: -1 }).limit(50).lean();
+      return docs.map(c => ({
+        ...c,
+        emails: c.email ? [c.email] : [],
+        phones: c.phone ? [c.phone] : [],
+        fromDatabase: true,
+      }));
+    } catch (error) {
+      console.error('getSavedCandidates error:', error.message);
       return [];
     }
   }

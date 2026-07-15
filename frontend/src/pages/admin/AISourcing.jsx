@@ -245,7 +245,7 @@ const AdminAISourcing = () => {
     { label: "Public Profiles",   value: stats?.bySource?.PUBLIC_PROFILE ?? 0,   color: "text-teal-600"   },
     { label: "CSV Imports",       value: stats?.bySource?.CSV_IMPORT ?? 0,       color: "text-green-600"  },
     { label: "Manual Entries",    value: stats?.bySource?.MANUAL ?? 0,           color: "text-pink-600"   },
-    { label: "API Imports",       value: stats?.bySource?.API_IMPORT ?? 0,       color: "text-indigo-600" },
+    { label: "Recruitkar API",    value: stats?.bySource?.API_IMPORT ?? 0,       color: "text-indigo-600" },
   ];
 
   return (

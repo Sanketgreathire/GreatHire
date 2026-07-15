@@ -3,16 +3,11 @@ import { Job } from "../../models/job.model.js";
 // returing total jobs, total active jobs, total deactive jobs
 export const getJobStats = async (req, res) => {
   try {
-    // Total Jobs
-    const totalJobs = await Job.countDocuments();
-    // Total Active Jobs
-    const totalActiveJobs = await Job.countDocuments({
-      "jobDetails.isActive": true,
-    });
-    // total Deactive Jobs
-    const totalDeactiveJobs = await Job.countDocuments({
-      "jobDetails.isActive": false,
-    });
+    const [totalJobs, totalActiveJobs, totalDeactiveJobs] = await Promise.all([
+      Job.estimatedDocumentCount(),
+      Job.countDocuments({ "jobDetails.isActive": true }),
+      Job.countDocuments({ "jobDetails.isActive": false }),
+    ]);
 
     return res.status(200).json({
       success: true,

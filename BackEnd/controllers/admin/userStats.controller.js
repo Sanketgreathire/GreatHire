@@ -117,103 +117,17 @@ const addExperienceSupport = {
 // ===============================
 // GET USER STATS (OPTIMIZED)
 // ===============================
+// Only the count is ever consumed by the frontend (Dashboard/Sidebar badges) —
+// the full per-user aggregation with an applications $lookup used to run here
+// on every admin navigation just to be thrown away. The actual user list (with
+// application counts) is served separately by getUsersList (/user-stats), which
+// is what the Users admin page actually renders.
 export const getUserStats = async (req, res) => {
   try {
-    // Fast count - only job seekers (not AI-sourced)
     const totalUsers = await User.countDocuments({ isAISourced: false });
-
-    const users = await User.aggregate([
-      // 1️⃣ Convert dates FIRST
-      {
-        $addFields: {
-          createdAtSafe: {
-            $cond: [
-              { $eq: ["$createdAt", null] },
-              null,
-              {
-                $convert: {
-                  input: "$createdAt",
-                  to: "date",
-                  onError: null,   // ✅ ignores bad dates
-                  onNull: null
-                }
-              },
-            ],
-          },
-          lastActiveAtSafe: {
-            $cond: [
-              { $eq: ["$lastActiveAt", null] },
-              null,
-              { $toDate: "$lastActiveAt" },
-            ],
-          },
-        },
-      },
-
-      // 2️⃣ SORT BEFORE LOOKUP (FIX)
-      { $sort: { createdAtSafe: -1 } },
-
-      // 3️⃣ LOOKUP AFTER SORT
-      {
-        $lookup: {
-          from: "applications",
-          localField: "_id",
-          foreignField: "applicant",
-          as: "applications",
-        },
-      },
-
-      // 4️⃣ Formatting
-      {
-        $addFields: {
-          applicationCount: { $size: "$applications" },
-          email: "$emailId.email",
-          phoneNumber: "$phoneNumber.number",
-          ...addExperienceSupport,
-
-          joined: {
-                    $dateToString: {
-                      format: "%Y-%m-%d",   // ✅ VALID
-                      date: "$createdAtSafe",
-                    },
-                  },
-
-          lastActiveAt: {
-            $cond: {
-              if: { $eq: ["$lastActiveAtSafe", null] },
-              then: null,
-              else: {
-                $dateToString: {
-                  format: "%Y-%m-%d",   // ✅ VALID
-                  date: "$lastActiveAtSafe",
-                },
-              },
-            },
-          },
-
-          resumeurl: "$profile.resume",
-        },
-      },
-
-      {
-        $project: {
-          _id: 1,
-          fullname: 1,
-          email: 1,
-          phoneNumber: 1,
-          jobRole: 1,
-          duration: 1,
-          joined: 1,
-          lastActiveAt: 1,
-          applicationCount: 1,
-          resumeurl: 1,
-        },
-      },
-    ]).allowDiskUse(true);
 
     return res.status(200).json({
       success: true,
-      data: users,
       stats: { totalUsers },
     });
   } catch (err) {

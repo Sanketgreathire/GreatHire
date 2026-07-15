@@ -60,6 +60,10 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 30, // 30 free candidate views
     },
+    aiSourcingCredits: {
+      type: Number,
+      default: 0, // AI sourcing credits — added by plan purchase
+    },
     customCreditsForJobs: {
       type: Number,
       default: null, // Admin can set custom credits
