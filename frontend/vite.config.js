@@ -28,7 +28,7 @@ export default defineConfig({
       "recharts/node_modules/react-is",
     ],
     exclude: [
-      "pdfjs-dist", "mammoth", "jspdf",
+      "mammoth", "jspdf",
       "country-state-city", "html2canvas",
       "chart.js",
     ],

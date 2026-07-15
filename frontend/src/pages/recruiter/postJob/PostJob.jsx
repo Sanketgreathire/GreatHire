@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -40,6 +39,7 @@ const PostJob = () => {
   const [langSearch, setLangSearch] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -221,6 +221,27 @@ const PostJob = () => {
 
 
 
+  const handleGenerateJD = async (overrideData) => {
+    const data = overrideData || aiForm;
+    if (!data.title) { toast.error("Job title is required to generate JD"); return; }
+    setAiGenerating(true);
+    try {
+      const res = await axios.post(`${JOB_API_END_POINT}/generate-jd`, data, { withCredentials: true });
+      if (res.data.success) {
+        const html = res.data.html;
+        formik.setFieldValue("details", html);
+        if (editorRef.current) editorRef.current.innerHTML = html;
+        toast.success("Job description generated!");
+      }
+    } catch (e) {
+      const msg = e.response?.data?.message || "Failed to generate JD. Please try again.";
+      toast.error(msg);
+      console.error("JD generation error:", e.response?.data || e.message);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -324,7 +345,7 @@ const PostJob = () => {
 
   const handleNext = async () => {
     const currentStepFields = [
-      ["companyName", "title", "details"], // Step 0
+      ["companyName", "title"], // Step 0
       ["skills", "benefits", "qualifications"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
       ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
@@ -351,7 +372,8 @@ const PostJob = () => {
       return;
     }
     // Move to the next step if all fields are valid
-    setStep((prev) => Math.min(prev + 1, steps.length - 1));
+    const nextStep = Math.min(step + 1, steps.length - 1);
+    setStep(nextStep);
   };
 
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
@@ -545,76 +567,6 @@ const PostJob = () => {
                     {formik.touched.title && formik.errors.title && (
                       <div className="text-red-500 dark:text-red-400 text-sm">
                         {formik.errors.title}
-                      </div>
-                    )}
-                  </div>
-
-
-
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-2 transition-colors duration-300">
-                      Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-
-                    {/* Toolbar */}
-                    <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
-                      {/* Bold */}
-                      <button
-                        type="button"
-                        onClick={toggleBold}
-                        className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
-                          } text-gray-900 dark:text-gray-100`}
-                      >
-                        B
-                      </button>
-
-                      {/* Italic */}
-                      <button
-                        type="button"
-                        onClick={toggleItalic}
-                        className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"
-                          } text-gray-900 dark:text-gray-100`}
-                      >
-                        <i>i</i>
-                      </button>
-
-                      {/* Lists */}
-                      {/* Bullet */}
-                      <button
-                        type="button"
-                        onClick={bulletList}
-                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                        title="Bullet List"
-                      >
-                        ●
-                      </button>
-
-                      {/* Number */}
-                      <button
-                        type="button"
-                        onClick={numberList}
-                        className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                        title="Numbered List"
-                      >
-                        123
-                      </button>
-                    </div>
-
-                    {/* Editor */}
-                    <div
-                      ref={editorRef}
-                      contentEditable
-                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
-                      onKeyDown={handleKeyDown}
-                      onInput={(e) =>
-                        formik.setFieldValue("details", e.currentTarget.innerHTML)
-                      }
-                    />
-
-                    {/* Error */}
-                    {formik.touched.details && formik.errors.details && (
-                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">
-                        {formik.errors.details}
                       </div>
                     )}
                   </div>
@@ -1314,6 +1266,48 @@ const PostJob = () => {
 
               {step === 4 && (
                 <>
+                  {/* Job Description Editor */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="block text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                        Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                      </Label>
+                      <button
+                        type="button"
+                        disabled={aiGenerating}
+                        onClick={() => {
+                          handleGenerateJD({
+                            title: formik.values.title,
+                            skills: formik.values.skills,
+                            experience: formik.values.experience,
+                            jobType: formik.values.jobType,
+                            location: formik.values.location,
+                            workPlaceFlexibility: formik.values.workPlaceFlexibility,
+                          });
+                        }}
+                        className="flex items-center gap-1 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity"
+                      >
+                        {aiGenerating ? "Generating..." : "✨ Generate with AI"}
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
+                      <button type="button" onClick={toggleBold} className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}>B</button>
+                      <button type="button" onClick={toggleItalic} className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}><i>i</i></button>
+                      <button type="button" onClick={bulletList} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300" title="Bullet List">●</button>
+                      <button type="button" onClick={numberList} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300" title="Numbered List">123</button>
+                    </div>
+                    <div
+                      ref={editorRef}
+                      contentEditable
+                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
+                      onKeyDown={handleKeyDown}
+                      onInput={(e) => formik.setFieldValue("details", e.currentTarget.innerHTML)}
+                    />
+                    {formik.touched.details && formik.errors.details && (
+                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">{formik.errors.details}</div>
+                    )}
+                  </div>
+
                   {/* <h2 className="text-xl font-bold mb-4">Review & Submit</h2> */}
                   <div className="p-4 bg-blue-50 dark:bg-gray-700 rounded-xl transition-colors duration-300">
                     <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -1477,6 +1471,8 @@ const PostJob = () => {
           <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
         </div>
       )}
+
+
     </>
   );
 };

@@ -187,28 +187,40 @@ async function extractTextFromFile(file) {
   if (ext === "pdf") {
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      // Use local worker bundled with pdfjs-dist to avoid CDN dependency
+      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        "pdfjs-dist/build/pdf.worker.min.js",
+        import.meta.url
+      ).toString();
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
       let fullText = "";
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
-        const content = await page.getTextContent({
-          normalizeWhitespace: true,
-          disableCombineTextItems: false,
-        });
+        const content = await page.getTextContent();
         let pageText = "";
         for (const item of content.items) {
           if (!item.str) continue;
           pageText += item.str;
           if (item.hasEOL) pageText += "\n";
+          else pageText += " ";
         }
         fullText += pageText + "\n";
       }
       fullText = fullText.replace(/ {2,}/g, " ").replace(/\t/g, " ");
-      return repairSplitWords(fullText.trim());
-    } catch {
-      throw new Error("Could not parse PDF. Try saving it as a .txt file.");
+      const extracted = repairSplitWords(fullText.trim());
+      if (!extracted || extracted.length < 30)
+        throw new Error("PDF appears to be image-based or scanned — try a text-based PDF or .docx");
+      return extracted;
+    } catch (e) {
+      if (e.message.includes("image-based")) throw e;
+      // Fallback: try reading as raw text (handles some simple PDFs)
+      try {
+        const text = await file.text();
+        const cleaned = text.replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/ {3,}/g, " ").trim();
+        if (cleaned.length > 100) return repairSplitWords(cleaned);
+      } catch {}
+      throw new Error("Could not parse PDF. Try saving it as a .docx or .txt file.");
     }
   }
 
@@ -228,134 +240,189 @@ async function extractTextFromFile(file) {
   throw new Error(`Unsupported file type: .${ext}`);
 }
 
-function repairTruncatedJSON(text) {
-  const stack = [];
-  let inString = false, escape = false, lastSafePos = 0;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (escape) { escape = false; continue; }
-    if (ch === "\\" && inString) { escape = true; continue; }
-    if (ch === '"') { inString = !inString; continue; }
-    if (inString) continue;
-    if (ch === "{" || ch === "[") { stack.push(ch); }
-    else if (ch === "}" || ch === "]") {
-      stack.pop();
-      if (stack.length === 1) lastSafePos = i + 1;
-    }
-  }
-  let repaired = text.slice(0, lastSafePos || text.length).replace(/,\s*$/, "");
-  for (let i = stack.length - 1; i >= 0; i--) {
-    repaired += stack[i] === "{" ? "}" : "]";
-  }
-  return repaired;
+
+// ── Role keyword map ────────────────────────────────────────
+const ROLE_KEYWORDS = {
+  default: ["communication","teamwork","problem solving","leadership","management","analytical","project","collaboration","detail","organized"],
+  frontend: ["react","vue","angular","javascript","typescript","html","css","tailwind","webpack","vite","redux","responsive","ui","ux","figma","sass","next.js","performance","accessibility","rest api"],
+  backend: ["node","express","python","django","flask","java","spring","sql","mongodb","postgresql","redis","api","rest","graphql","microservices","docker","kubernetes","aws","authentication","database"],
+  fullstack: ["react","node","javascript","typescript","mongodb","sql","rest api","docker","git","html","css","express","redux","aws","ci/cd","testing","agile","deployment","authentication","database"],
+  data: ["python","sql","machine learning","pandas","numpy","tensorflow","pytorch","statistics","visualization","tableau","power bi","excel","r","spark","hadoop","etl","data pipeline","scikit","regression","classification"],
+  devops: ["docker","kubernetes","ci/cd","jenkins","aws","azure","gcp","terraform","ansible","linux","bash","monitoring","prometheus","grafana","git","pipeline","infrastructure","automation","nginx","security"],
+  design: ["figma","sketch","adobe xd","photoshop","illustrator","ui","ux","wireframe","prototype","user research","typography","color theory","responsive","accessibility","design system","branding","animation","css","html","interaction"],
+  marketing: ["seo","sem","google ads","social media","content","analytics","email marketing","crm","hubspot","salesforce","campaign","conversion","roi","brand","copywriting","strategy","market research","ppc","influencer","automation"],
+  hr: ["recruitment","onboarding","payroll","performance management","employee relations","hris","talent acquisition","training","compliance","benefits","compensation","workforce","succession planning","engagement","diversity","labor law","kpi","appraisal","sourcing","retention"],
+  finance: ["accounting","financial analysis","excel","budgeting","forecasting","gaap","ifrs","audit","tax","balance sheet","p&l","cash flow","erp","sap","quickbooks","investment","risk","compliance","reporting","reconciliation"],
+  sales: ["crm","salesforce","lead generation","pipeline","negotiation","closing","quota","b2b","b2c","account management","cold calling","prospecting","revenue","upselling","customer success","demo","proposal","territory","forecasting","relationship"],
+};
+
+const WEAK_VERBS = ["worked","helped","assisted","did","made","got","went","used","tried","handled","was responsible for","participated in","involved in"];
+const STRONG_VERBS = ["achieved","built","created","delivered","designed","developed","drove","engineered","established","executed","generated","implemented","improved","increased","launched","led","managed","optimized","reduced","spearheaded"];
+const SECTION_HEADERS = ["experience","education","skills","projects","summary","objective","certifications","achievements","awards","publications","languages","interests","references","contact","profile"];
+
+function getRoleKeywords(role) {
+  const r = role.toLowerCase();
+  if (r.includes("front")) return ROLE_KEYWORDS.frontend;
+  if (r.includes("back")) return ROLE_KEYWORDS.backend;
+  if (r.includes("full")) return ROLE_KEYWORDS.fullstack;
+  if (r.includes("data") || r.includes("analyst") || r.includes("ml") || r.includes("machine")) return ROLE_KEYWORDS.data;
+  if (r.includes("devops") || r.includes("cloud") || r.includes("infra")) return ROLE_KEYWORDS.devops;
+  if (r.includes("design") || r.includes("ui") || r.includes("ux")) return ROLE_KEYWORDS.design;
+  if (r.includes("market") || r.includes("seo") || r.includes("content")) return ROLE_KEYWORDS.marketing;
+  if (r.includes("hr") || r.includes("human") || r.includes("recruit") || r.includes("talent")) return ROLE_KEYWORDS.hr;
+  if (r.includes("financ") || r.includes("account") || r.includes("audit")) return ROLE_KEYWORDS.finance;
+  if (r.includes("sales") || r.includes("business dev")) return ROLE_KEYWORDS.sales;
+  return ROLE_KEYWORDS.default;
 }
 
-function extractJSON(raw) {
-  let text = raw.replace(/^```(?:json)?\s*/im, "").replace(/\s*```\s*$/im, "").trim();
-  const start = text.indexOf("{");
-  if (start === -1) throw new Error("No JSON object found.");
-  text = text.slice(start);
-  const lastBrace = text.lastIndexOf("}");
-  if (lastBrace === -1) {
-    text = repairTruncatedJSON(text);
-  } else {
-    text = text.slice(0, lastBrace + 1);
-  }
-  text = text.replace(/,\s*([\]}])/g, "$1");
-  text = text.replace(/"([^"\\]*(\\.[^"\\]*)*)"/gs, (m) =>
-    m.replace(/\n/g, " ").replace(/\r/g, "").replace(/\t/g, " ")
-  );
-  text = text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
-  try { return JSON.parse(text); } catch (_) {}
-  // Last-resort safe parse (no eval — uses JSON.parse after aggressive cleanup)
-  try {
-    const cleaned = text
-      .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
-      .replace(/'/g, '"');
-    return JSON.parse(cleaned);
-  } catch {
-    throw new Error("Could not parse AI response.");
-  }
-}
+function analyzeResumeLocally(resumeText, role, jobDesc) {
+  const text = resumeText.toLowerCase();
+  const words = text.split(/\s+/);
+  const lines = resumeText.split(/\n/).map(l => l.trim()).filter(Boolean);
 
-async function callGeminiAPI(prompt) {
-  const API_KEY = import.meta.env.VITE_GEMINI_KEY;
-  if (!API_KEY) throw new Error("Gemini API key missing. Add VITE_GEMINI_KEY to your .env file.");
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 8192,
-          responseMimeType: "application/json",
-        },
-      }),
-    }
-  );
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `HTTP ${res.status}`;
-    if (res.status === 400) throw new Error("Invalid API key. Check your VITE_GEMINI_KEY in .env");
-    if (res.status === 429) throw new Error("Rate limit hit. Wait a moment and try again.");
-    throw new Error(`Gemini API error: ${msg}`);
-  }
-  const data = await res.json();
-  const finishReason = data?.candidates?.[0]?.finishReason;
-  if (finishReason === "MAX_TOKENS") console.warn("Gemini hit token limit — will attempt truncation repair.");
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Empty response from Gemini. Please try again.");
-  return text;
-}
+  // ── Keywords ────────────────────────────────────────────
+  const roleKws = getRoleKeywords(role);
+  const jobKws = jobDesc
+    ? [...new Set(jobDesc.toLowerCase().match(/\b[a-z][a-z.+#]{2,}\b/g) || [])]
+        .filter(w => w.length > 3 && !ROLE_KEYWORDS.default.includes(w))
+        .slice(0, 30)
+    : [];
+  const allKws = [...new Set([...roleKws, ...jobKws])];
+  const found = allKws.filter(kw => text.includes(kw)).slice(0, 8);
+  const missing = allKws.filter(kw => !text.includes(kw)).slice(0, 8);
+  const suggested = roleKws.filter(kw => !found.includes(kw) && !missing.slice(0,4).includes(kw)).slice(0, 6);
 
-function buildPrompt(resumeText, role, jobDesc) {
-  return `You are an ATS resume analyzer. Analyze this resume for a "${role}" role${
-    jobDesc ? ` using this job description:\n---\n${jobDesc}\n---` : ""
-  }.
+  // ── Section detection ────────────────────────────────────
+  const detectedSections = SECTION_HEADERS.filter(s => text.includes(s));
+  const hasExperience = detectedSections.includes("experience") || text.includes("work history") || text.includes("employment");
+  const hasEducation  = detectedSections.includes("education") || text.includes("university") || text.includes("college") || text.includes("degree") || text.includes("bachelor") || text.includes("master");
+  const hasSkills     = detectedSections.includes("skills") || text.includes("proficient") || text.includes("expertise");
+  const hasSummary    = detectedSections.includes("summary") || detectedSections.includes("objective") || detectedSections.includes("profile");
+  const hasProjects   = detectedSections.includes("projects") || text.includes("project");
+  const hasCerts      = detectedSections.includes("certifications") || text.includes("certified") || text.includes("certificate");
+  const hasContact    = text.includes("@") || text.includes("phone") || text.includes("linkedin") || text.includes("github") || /\d{10}/.test(text);
 
-RESUME (PDF-extracted text — ignore any split-word spacing like 'deg ree' or 'col lege', these are parser artifacts not real typos; do NOT flag them as mistakes):
----
-${resumeText.slice(0, 5000)}
----
+  // ── Metrics & impact ─────────────────────────────────────
+  const hasNumbers    = /\d+%|\$\d+|\d+\s*(users|clients|projects|team|members|million|k\b|years|months)/.test(text);
+  const weakVerbCount = WEAK_VERBS.filter(v => text.includes(v)).length;
+  const strongVerbCount = STRONG_VERBS.filter(v => text.includes(v)).length;
+  const wordCount     = words.length;
+  const hasLinkedIn   = text.includes("linkedin");
+  const hasGitHub     = text.includes("github");
+  const emailMatch    = resumeText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
 
-Return ONLY a raw JSON object. No markdown, no code fences, no explanation.
-First char must be {, last must be }.
-All string values must be single-line (no embedded newlines).
-Keep all text fields under 120 characters each.
+  // ── Length check ─────────────────────────────────────────
+  const tooShort = wordCount < 200;
+  const tooLong  = wordCount > 1200;
 
-{
-  "overall_score": <integer 0-100>,
-  "verdict": "<4-6 word verdict>",
-  "summary": "<2 concise sentences under 200 chars total>",
-  "sections": [
-    { "name": "Experience", "score": <int>, "color": "#00e5a0" },
-    { "name": "Skills",     "score": <int>, "color": "#3b82f6" },
-    { "name": "Education",  "score": <int>, "color": "#a78bfa" },
-    { "name": "Formatting", "score": <int>, "color": "#f59e0b" },
-    { "name": "Impact",     "score": <int>, "color": "#ec4899" }
-  ],
-  "suggestions": [
-    { "type": "critical", "icon": "🚨", "text": "<under 100 chars>" },
-    { "type": "improve",  "icon": "💡", "text": "<under 100 chars>" },
-    { "type": "tip",      "icon": "✅", "text": "<under 100 chars>" },
-    { "type": "improve",  "icon": "💡", "text": "<under 100 chars>" },
-    { "type": "tip",      "icon": "✅", "text": "<under 100 chars>" }
-  ],
-  "keywords": {
-    "found":     ["word","word","word","word","word","word"],
-    "missing":   ["word","word","word","word","word","word"],
-    "suggested": ["word","word","word","word","word","word"]
-  },
-  "mistakes": [
-    { "icon": "⚠️", "text": "<under 100 chars>" },
-    { "icon": "⚠️", "text": "<under 100 chars>" },
-    { "icon": "⚠️", "text": "<under 100 chars>" },
-    { "icon": "⚠️", "text": "<under 100 chars>" }
-  ]
-}`;
+  // ── Scores ───────────────────────────────────────────────
+  let expScore = 40;
+  if (hasExperience) expScore += 25;
+  if (hasNumbers)    expScore += 20;
+  if (strongVerbCount >= 3) expScore += 10;
+  if (hasProjects)   expScore += 5;
+  expScore = Math.min(100, expScore);
+
+  let skillScore = 30;
+  if (hasSkills)          skillScore += 20;
+  skillScore += Math.min(35, found.length * 5);
+  if (hasCerts)           skillScore += 10;
+  if (hasGitHub)          skillScore += 5;
+  skillScore = Math.min(100, skillScore);
+
+  let eduScore = 40;
+  if (hasEducation) eduScore += 40;
+  if (text.includes("gpa") || text.includes("cgpa")) eduScore += 10;
+  if (text.includes("honors") || text.includes("distinction") || text.includes("merit")) eduScore += 10;
+  eduScore = Math.min(100, eduScore);
+
+  let fmtScore = 50;
+  if (!tooShort && !tooLong) fmtScore += 15;
+  if (hasContact)  fmtScore += 15;
+  if (hasSummary)  fmtScore += 10;
+  if (hasLinkedIn) fmtScore += 5;
+  if (tooShort)    fmtScore -= 15;
+  if (tooLong)     fmtScore -= 10;
+  fmtScore = Math.max(10, Math.min(100, fmtScore));
+
+  let impactScore = 30;
+  if (hasNumbers)           impactScore += 30;
+  if (strongVerbCount >= 5) impactScore += 20;
+  else if (strongVerbCount >= 2) impactScore += 10;
+  if (weakVerbCount <= 2)   impactScore += 10;
+  if (hasSummary)           impactScore += 10;
+  impactScore = Math.min(100, impactScore);
+
+  const overall = Math.round((expScore * 0.3 + skillScore * 0.25 + eduScore * 0.15 + fmtScore * 0.15 + impactScore * 0.15));
+
+  // ── Verdict ──────────────────────────────────────────────
+  const verdict =
+    overall >= 80 ? "Strong ATS-Ready Resume" :
+    overall >= 65 ? "Good Resume, Minor Gaps" :
+    overall >= 50 ? "Average — Needs Improvement" :
+    overall >= 35 ? "Weak — Major Gaps Found" :
+    "Needs Significant Rework";
+
+  const summary =
+    overall >= 65
+      ? `Your resume scores well for a ${role} role with ${found.length} matching keywords. ${missing.length > 3 ? "Adding more role-specific keywords will boost ATS ranking." : "Keep refining impact statements for best results."}`
+      : `Your resume needs improvement for a ${role} role. ${!hasNumbers ? "Add measurable achievements with numbers. " : ""}${missing.length > 4 ? "Several key keywords are missing." : "Focus on strengthening your experience section."}`.trim();
+
+  // ── Suggestions ──────────────────────────────────────────
+  const suggestions = [];
+  if (!hasNumbers)
+    suggestions.push({ type: "critical", icon: "🚨", text: "Add quantified achievements (e.g. 'Increased sales by 30%' or 'Led team of 8')" });
+  if (missing.length > 4)
+    suggestions.push({ type: "critical", icon: "🚨", text: `Add missing keywords: ${missing.slice(0,3).join(", ")} — these are expected for ${role}` });
+  if (weakVerbCount > 2)
+    suggestions.push({ type: "improve", icon: "💡", text: `Replace weak verbs like 'worked on' or 'helped' with strong ones: led, built, delivered` });
+  if (!hasSummary)
+    suggestions.push({ type: "improve", icon: "💡", text: "Add a professional summary at the top — 2-3 sentences about your value proposition" });
+  if (!hasLinkedIn)
+    suggestions.push({ type: "tip", icon: "✅", text: "Include your LinkedIn profile URL to increase recruiter trust" });
+  if (!hasGitHub && (role.toLowerCase().includes("dev") || role.toLowerCase().includes("engineer") || role.toLowerCase().includes("data")))
+    suggestions.push({ type: "tip", icon: "✅", text: "Add your GitHub profile link to showcase real projects" });
+  if (tooShort)
+    suggestions.push({ type: "improve", icon: "💡", text: "Resume is too short. Expand experience and project descriptions for better ATS scoring" });
+  if (tooLong)
+    suggestions.push({ type: "tip", icon: "✅", text: "Resume is quite long. Trim to 1-2 pages — keep only the most relevant experience" });
+  if (!hasProjects)
+    suggestions.push({ type: "tip", icon: "✅", text: "Add a Projects section to demonstrate hands-on experience" });
+  if (strongVerbCount < 3)
+    suggestions.push({ type: "improve", icon: "💡", text: `Start bullet points with strong action verbs: ${STRONG_VERBS.slice(0,4).join(", ")}` });
+
+  // ── Mistakes ─────────────────────────────────────────────
+  const mistakes = [];
+  if (!hasContact)
+    mistakes.push({ icon: "⚠️", text: "Missing contact information — add email, phone, and LinkedIn" });
+  if (!emailMatch)
+    mistakes.push({ icon: "⚠️", text: "No email address detected — this is critical for recruiters to reach you" });
+  if (weakVerbCount > 3)
+    mistakes.push({ icon: "⚠️", text: `Found ${weakVerbCount} weak action verbs — replace with impactful alternatives` });
+  if (!hasNumbers)
+    mistakes.push({ icon: "⚠️", text: "No measurable results found — numbers make your impact concrete and credible" });
+  if (tooShort)
+    mistakes.push({ icon: "⚠️", text: `Resume is only ~${wordCount} words — too brief to pass ATS filters effectively` });
+  if (!hasEducation)
+    mistakes.push({ icon: "⚠️", text: "Education section not detected — ensure it's clearly labeled" });
+  if (!hasSkills)
+    mistakes.push({ icon: "⚠️", text: "Skills section not clearly labeled — ATS systems scan for a dedicated skills section" });
+
+  return {
+    overall_score: overall,
+    verdict,
+    summary,
+    sections: [
+      { name: "Experience", score: expScore,   color: "#00e5a0" },
+      { name: "Skills",     score: skillScore, color: "#3b82f6" },
+      { name: "Education",  score: eduScore,   color: "#a78bfa" },
+      { name: "Formatting", score: fmtScore,   color: "#f59e0b" },
+      { name: "Impact",     score: impactScore,color: "#ec4899" },
+    ],
+    suggestions: suggestions.slice(0, 6),
+    keywords: { found, missing, suggested },
+    mistakes: mistakes.slice(0, 5),
+  };
 }
 
 const LOADING_STEPS = [
@@ -561,19 +628,9 @@ export default function ResumeAnalyzer() {
     const role = jobRole.trim() || "General Position";
     setLoading(true); setResult(null);
     try {
-      const raw = await callGeminiAPI(buildPrompt(resumeText, role, jobDesc.trim()));
-      let parsed;
-      try { parsed = extractJSON(raw); } catch (jsonErr) {
-        console.error("JSON parse failed. Raw response:", raw);
-        throw new Error("AI returned an unexpected format. Please click Analyze again.");
-      }
-      if (typeof parsed.overall_score !== "number" || !Array.isArray(parsed.sections)) {
-        throw new Error("Incomplete analysis returned. Please try again.");
-      }
-      parsed.overall_score = Math.min(100, Math.max(0, Math.round(parsed.overall_score)));
-      parsed.suggestions   = parsed.suggestions || [];
-      parsed.mistakes      = parsed.mistakes     || [];
-      parsed.keywords      = parsed.keywords     || { found: [], missing: [], suggested: [] };
+      // Small artificial delay so the loading animation is visible
+      await new Promise(r => setTimeout(r, 1800));
+      const parsed = analyzeResumeLocally(resumeText, role, jobDesc.trim());
       setResult(parsed);
       setActiveTab("breakdown");
       setTimeout(

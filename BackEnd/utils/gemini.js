@@ -1,12 +1,9 @@
 // utils/gemini.js
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// Initialize model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function fetchJobResultsFromQuery(query, jobsList) {
     const prompt = `
@@ -19,9 +16,10 @@ export async function fetchJobResultsFromQuery(query, jobsList) {
     Show relevant results in a friendly format.
     `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: prompt,
+    });
 
-    return text;
+    return response.text();
 }

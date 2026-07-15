@@ -52,7 +52,6 @@
 
 
 import express from "express";
-// import { getJobById } from "../controllers/job.controller.js";
 import {
   postJob,
   getLatestJobsForSlider,
@@ -65,16 +64,20 @@ import {
   toggleActive,
   getJobByCompanyId,
   getJobsStatistics,
-  getExternalJobsFromFindwork,  // Importing the new function
+  getExternalJobsFromFindwork,
   applyJob,
+  generateJD,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isRecruiterWithCompany from "../middlewares/isRecruiterWithCompany.js";
 
 const router = express.Router();
 
-// Latest jobs for slider - add this route
-router.get("/slider/latest", getLatestJobsForSlider);  // GET /jobs/slider/latest
+// AI JD Generation
+router.post("/generate-jd", isAuthenticated, generateJD);
+
+// Latest jobs for slider
+router.get("/slider/latest", getLatestJobsForSlider);
 
 router.route("/post-job").post(isAuthenticated, isRecruiterWithCompany, postJob);
 router.route("/bookmark-job/:jobId").get(isAuthenticated, bookmarkJob);
