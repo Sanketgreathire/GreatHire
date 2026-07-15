@@ -231,7 +231,7 @@ userSchema.add({
 
 // ✅ Performance indexes for candidate search
 userSchema.index({ "profile.skills": 1 });
-userSchema.index({ "profile.experience.jobProfile": 1 });
+userSchema.index({ "profile.experiences.jobProfile": 1 });
 userSchema.index({ "profile.gender": 1 });
 userSchema.index({ "profile.qualification": 1 });
 userSchema.index({ "address.city": 1 });

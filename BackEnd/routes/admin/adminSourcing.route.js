@@ -1,6 +1,7 @@
 import express from "express";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
 import isAdmin from "../../middlewares/isAdmin.js";
+import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
 import { AISourcedCandidate } from "../../models/sourcing/aiSourcedCandidate.model.js";
 import { AutoSourcingConfig } from "../../models/sourcing/autoSourcingConfig.model.js";
 import { triggerAutoSourcing } from "../../sourcing/cron/autoSourcingCron.js";
@@ -8,28 +9,49 @@ import { triggerAutoSourcing } from "../../sourcing/cron/autoSourcingCron.js";
 const router = express.Router();
 router.use(isAuthenticated, isAdmin);
 
+const sourceMapping = {
+  GITHUB: "GITHUB_PROFILE",
+  LINKEDIN: "LINKEDIN_PROFILE",
+  NAUKRI: "PUBLIC_PROFILE",
+  INDEED: "PUBLIC_PROFILE",
+  API_IMPORT: "API_IMPORT",
+  CSV_IMPORT: "CSV_IMPORT",
+  MANUAL: "MANUAL",
+};
+
 // GET /api/v1/admin/sourcing/stats
+// Candidates live in two collections: GitHub/LinkedIn/Naukri/Indeed scrapes are
+// still saved to the legacy AISourcedCandidate collection, while Recruitkar
+// imports and admin manual-adds go to SourcingCandidate. Recruitkar imports are
+// also mirrored into AISourcedCandidate for backward compatibility, so that
+// slice is excluded here to avoid counting it twice.
 router.get("/stats", async (req, res) => {
   try {
-    const [total, bySourceArray] = await Promise.all([
-      AISourcedCandidate.countDocuments(),
-      AISourcedCandidate.aggregate([
-        { $group: { _id: "$aiSourceType", count: { $sum: 1 } } }
-      ]),
+    const [aiBySourceArray, rkBySourceArray, aiTotal, rkTotal] = await Promise.all([
+      AISourcedCandidate.aggregate([{ $group: { _id: "$aiSourceType", count: { $sum: 1 } } }]),
+      SourcingCandidate.aggregate([{ $group: { _id: "$sourceType", count: { $sum: 1 } } }]),
+      AISourcedCandidate.countDocuments({ aiSourceType: { $ne: "API_IMPORT" } }),
+      SourcingCandidate.countDocuments(),
     ]);
 
     const bySource = {};
-    bySourceArray.forEach(({ _id, count }) => {
-      if (_id) bySource[_id] = count;
+    aiBySourceArray.forEach(({ _id, count }) => {
+      if (_id === "API_IMPORT") return;
+      const mapped = sourceMapping[_id] || _id;
+      bySource[mapped] = (bySource[mapped] || 0) + count;
+    });
+    rkBySourceArray.forEach(({ _id, count }) => {
+      const mapped = sourceMapping[_id] || _id;
+      bySource[mapped] = (bySource[mapped] || 0) + count;
     });
 
-    return res.json({ success: true, stats: { total, bySource } });
+    return res.json({ success: true, stats: { total: aiTotal + rkTotal, bySource } });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// GET /api/v1/admin/sourcing/auto-stats  — global auto-sourcing stats across all recruiters
+// GET /api/v1/admin/sourcing/auto-stats — global auto-sourcing stats across all recruiters
 router.get("/auto-stats", async (req, res) => {
   try {
     const configs = await AutoSourcingConfig.find().lean();
@@ -52,12 +74,12 @@ router.get("/auto-stats", async (req, res) => {
   }
 });
 
-// POST /api/v1/admin/sourcing/trigger  — manually trigger auto-sourcing
+// POST /api/v1/admin/sourcing/trigger — manually trigger auto-sourcing
 router.post("/trigger", async (req, res) => {
   try {
     triggerAutoSourcing()
-      .then(results => console.log("✅ Manual auto-sourcing done:", results))
-      .catch(err   => console.error("❌ Manual auto-sourcing failed:", err));
+      .then(results => console.log("Manual auto-sourcing done:", results))
+      .catch(err   => console.error("Manual auto-sourcing failed:", err));
     return res.json({ success: true, message: "Auto-sourcing triggered. Candidates will appear shortly." });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
@@ -65,46 +87,115 @@ router.post("/trigger", async (req, res) => {
 });
 
 // GET /api/v1/admin/sourcing/candidates
+// Merges both collections (see /stats comment above) in application code rather
+// than $unionWith because createdBy/recruiterId point at different ref models
+// (Recruiter vs User) that populate() can't resolve in a single pass.
+const AI_ONLY_SOURCE_TYPES = ["GITHUB", "LINKEDIN", "NAUKRI", "INDEED"];
+
 router.get("/candidates", async (req, res) => {
   try {
-    const { page = 1, limit = 12, q, skills, location, sourceType } = req.query;
-    const pageNum  = Math.max(1, parseInt(page, 10));
+    const { q, skills, location, sourceType, page = 1, limit = 12 } = req.query;
+    const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10)));
-    const skip     = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
+    const fetchCap = skip + limitNum;
 
-    const filter = {};
+    const rkQuery = {};
+    const aiQuery = {};
+
     if (q?.trim()) {
-      const re = new RegExp(q.trim(), "i");
-      filter.$or = [{ fullName: re }, { designation: re }, { currentCompany: re }, { location: re }];
+      const re = { $regex: q.trim(), $options: "i" };
+      const orClause = [
+        { fullName: re }, { designation: re }, { currentCompany: re }, { location: re }, { skills: re },
+      ];
+      rkQuery.$or = orClause;
+      aiQuery.$or = orClause;
+    }
+    if (location?.trim()) {
+      rkQuery.location = { $regex: location.trim(), $options: "i" };
+      aiQuery.location = { $regex: location.trim(), $options: "i" };
     }
     if (skills?.trim()) {
-      const skillList = skills.split(",").map(s => s.trim()).filter(Boolean);
-      if (skillList.length) filter.skills = { $in: skillList.map(s => new RegExp(s, "i")) };
+      const arr = skills.split(",").map((s) => s.trim()).filter(Boolean);
+      if (arr.length) {
+        rkQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+        aiQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+      }
     }
-    if (location?.trim()) filter.location = new RegExp(location.trim(), "i");
-    if (sourceType?.trim()) filter.aiSourceType = sourceType.trim();
 
-    const [candidates, total] = await Promise.all([
-      AISourcedCandidate.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
-      AISourcedCandidate.countDocuments(filter),
+    let queryRk = true;
+    let queryAi = true;
+    if (sourceType?.trim()) {
+      const st = sourceType.trim();
+      if (st === "API_IMPORT") {
+        rkQuery.sourceType = st;
+        queryAi = false;
+      } else if (AI_ONLY_SOURCE_TYPES.includes(st)) {
+        aiQuery.aiSourceType = st;
+        queryRk = false;
+      } else {
+        rkQuery.sourceType = st;
+        aiQuery.aiSourceType = st;
+      }
+    } else {
+      aiQuery.aiSourceType = { $ne: "API_IMPORT" };
+    }
+
+    const [rkDocs, aiDocs, rkTotal, aiTotal] = await Promise.all([
+      queryRk
+        ? SourcingCandidate.find(rkQuery)
+            .select("-parsedText -embedding")
+            .populate("createdBy", "fullName emailId")
+            .sort({ createdAt: -1 })
+            .limit(fetchCap)
+            .lean()
+        : [],
+      queryAi
+        ? AISourcedCandidate.find(aiQuery)
+            .populate({ path: "recruiterId", select: "fullName emailId", model: "Recruiter" })
+            .sort({ createdAt: -1 })
+            .limit(fetchCap)
+            .lean()
+        : [],
+      queryRk ? SourcingCandidate.countDocuments(rkQuery) : 0,
+      queryAi ? AISourcedCandidate.countDocuments(aiQuery) : 0,
     ]);
+
+    const normalizedRk = rkDocs.map((c) => ({
+      ...c,
+      emails: c.emails?.length ? c.emails : (c.email ? [c.email] : []),
+      phones: c.phones?.length ? c.phones : (c.phone ? [c.phone] : []),
+      sourceType: c.sourceType || "API_IMPORT",
+      createdBy: c.createdBy
+        ? { fullName: c.createdBy.fullName || "Recruiter", emailId: c.createdBy.emailId }
+        : { fullName: "AI Sourced" },
+    }));
+
+    const normalizedAi = aiDocs.map((c) => ({
+      ...c,
+      emails: c.email ? [c.email] : [],
+      phones: c.phone ? [c.phone] : [],
+      sourceType: c.aiSourceType,
+      createdBy: c.recruiterId
+        ? { fullName: c.recruiterId.fullName || "Recruiter", emailId: c.recruiterId.emailId }
+        : { fullName: "AI Sourced" },
+    }));
+
+    const total = rkTotal + aiTotal;
+    const candidates = [...normalizedRk, ...normalizedAi]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(skip, skip + limitNum);
 
     return res.json({
       success: true,
-      candidates: candidates.map(c => ({
-        ...c,
-        emails: c.email ? [c.email] : [],
-        phones: c.phone ? [c.phone] : [],
-        sourceType: c.aiSourceType,
-        createdBy: { fullName: "AI Sourced" },
-      })),
+      candidates,
       pagination: {
         total,
-        page:       pageNum,
-        limit:      limitNum,
+        page: pageNum,
+        limit: limitNum,
         totalPages: Math.ceil(total / limitNum),
-        hasNext:    pageNum < Math.ceil(total / limitNum),
-        hasPrev:    pageNum > 1,
+        hasNext: pageNum < Math.ceil(total / limitNum),
+        hasPrev: pageNum > 1,
       },
     });
   } catch (err) {
@@ -118,19 +209,21 @@ router.post("/manual", async (req, res) => {
     const { fullName, email, phone, skills, location, designation, currentCompany, githubUrl, linkedinUrl, totalExperience, summary } = req.body;
     if (!fullName?.trim()) return res.status(400).json({ success: false, message: "Full name is required." });
 
-    const candidate = await AISourcedCandidate.create({
+    const candidate = await SourcingCandidate.create({
       fullName:        fullName.trim(),
-      email:           email?.trim() || null,
-      phone:           phone?.trim() || null,
+      emails:          email?.trim() ? [email.trim()] : [],
+      phones:          phone?.trim() ? [phone.trim()] : [],
       skills:          Array.isArray(skills) ? skills : (skills ? skills.split(",").map(s => s.trim()).filter(Boolean) : []),
-      location:        location?.trim() || null,
-      designation:     designation?.trim() || null,
-      currentCompany:  currentCompany?.trim() || null,
-      githubUrl:       githubUrl?.trim() || null,
-      linkedinUrl:     linkedinUrl?.trim() || null,
+      location:        location?.trim() || "",
+      designation:     designation?.trim() || "",
+      currentCompany:  currentCompany?.trim() || "",
+      githubUrl:       githubUrl?.trim() || "",
+      linkedinUrl:     linkedinUrl?.trim() || "",
       totalExperience: Number(totalExperience) || 0,
-      summary:         summary?.trim() || null,
-      aiSourceType:    "MANUAL",
+      summary:         summary?.trim() || "",
+      sourceType:      "MANUAL",
+      createdBy:       req.id,
+      createdByModel:  "Admin",
     });
     return res.status(201).json({ success: true, candidate });
   } catch (err) {
@@ -141,7 +234,9 @@ router.post("/manual", async (req, res) => {
 // DELETE /api/v1/admin/sourcing/:id
 router.delete("/:id", async (req, res) => {
   try {
-    const candidate = await AISourcedCandidate.findByIdAndDelete(req.params.id);
+    const candidate =
+      (await SourcingCandidate.findByIdAndDelete(req.params.id)) ||
+      (await AISourcedCandidate.findByIdAndDelete(req.params.id));
     if (!candidate) return res.status(404).json({ success: false, message: "Not found." });
     return res.json({ success: true, message: "Deleted." });
   } catch (err) {

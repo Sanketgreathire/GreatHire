@@ -29,6 +29,7 @@ export const createOrderForJobPlan = async (req, res) => {
       creditsForJobs,
       creditsForCandidates,
       durationMonths,
+      aiSourcingCredits = 0,
     } = req.body;
 
     const userId = req.id; // recruiter id
@@ -75,6 +76,7 @@ export const createOrderForJobPlan = async (req, res) => {
       planName,
       creditedForJobs: creditsForJobs,               // ✅ FIXED
       creditedForCandidates: creditsForCandidates,   // ✅ FIXED
+      aiSourcingCredits: Number(aiSourcingCredits) || 0,
       price: amount,                                 // ✅ REQUIRED
       razorpayOrderId: order.id,                     // ✅ REQUIRED
       company: companyId,

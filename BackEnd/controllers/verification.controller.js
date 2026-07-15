@@ -380,6 +380,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       creditsForJobs,
       creditsForCandidates,
       companyId,
+      aiSourcingCredits = 0,
     } = req.body;
 
     // Allow unverified recruiters to complete payment verification
@@ -404,7 +405,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           status: "Active", // Activate the plan after paymentStatus is paid
         },
         { new: true } // Return the updated document
-      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
+      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits");
 
       // Expire the previous active plan (if any) before activating the new one
       await JobSubscription.updateOne(
@@ -455,6 +456,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
       company.maxJobPosts = null;
       company.customMaxJobPosts = 0; // reset after carrying forward into planJobsPostedThisMonth offset
       company.hasSubscription = true;
@@ -478,6 +480,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
       company.maxJobPosts = "9999999";
       company.hasSubscription = true;
       company.freePlanExpiry = null;

@@ -94,6 +94,10 @@ const jobSubscriptionSchema = new mongoose.Schema(
     planName: String,
     creditedForJobs: Number,
     creditedForCandidates: Number,
+    aiSourcingCredits: {
+      type: Number,
+      default: 0,
+    },
     price: Number,
     company: {
       type: mongoose.Schema.Types.ObjectId,
