@@ -6,75 +6,105 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { FiCpu, FiUsers, FiRefreshCw, FiUpload, FiX } from "react-icons/fi";
 import { JOB_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 
-// ── Gemini ────────────────────────────────────────────────────
-async function callGemini(prompt) {
-  const API_KEY = import.meta.env.VITE_GEMINI_KEY;
-  if (!API_KEY) throw new Error("Gemini API key missing. Add VITE_GEMINI_KEY to .env");
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 8192 },
-      }),
-    }
-  );
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    if (res.status === 429) throw new Error("Rate limit hit. Wait a moment and try again.");
-    if (res.status === 400) throw new Error("Invalid API key. Check VITE_GEMINI_KEY in .env");
-    throw new Error(`Gemini error: ${err?.error?.message || res.status}`);
-  }
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Empty response from Gemini.");
-  return text;
+// ── Local AI Engine ──────────────────────────────────────────
+const ROLE_KW = {
+  default:   ["communication","teamwork","leadership","management","analytical","project","collaboration","organized"],
+  frontend:  ["react","vue","angular","javascript","typescript","html","css","tailwind","redux","responsive","ui","ux","figma","next.js","rest api"],
+  backend:   ["node","express","python","django","java","spring","sql","mongodb","postgresql","redis","api","rest","graphql","microservices","docker","aws"],
+  fullstack: ["react","node","javascript","typescript","mongodb","sql","rest api","docker","git","html","css","express","redux","aws","ci/cd"],
+  data:      ["python","sql","machine learning","pandas","numpy","tensorflow","statistics","visualization","tableau","power bi","excel","spark","etl","scikit"],
+  devops:    ["docker","kubernetes","ci/cd","jenkins","aws","azure","terraform","ansible","linux","bash","monitoring","prometheus","git","pipeline"],
+  design:    ["figma","sketch","adobe xd","photoshop","ui","ux","wireframe","prototype","user research","typography","responsive","accessibility","design system"],
+  marketing: ["seo","sem","google ads","social media","content","analytics","email marketing","crm","campaign","conversion","roi","brand","copywriting"],
+  hr:        ["recruitment","onboarding","payroll","performance management","hris","talent acquisition","training","compliance","benefits","compensation","sourcing"],
+  finance:   ["accounting","financial analysis","excel","budgeting","forecasting","gaap","audit","tax","balance sheet","cash flow","erp","sap","reporting"],
+  sales:     ["crm","salesforce","lead generation","pipeline","negotiation","closing","quota","b2b","account management","prospecting","revenue","upselling"],
+};
+
+const STRONG_VERBS = ["achieved","built","created","delivered","designed","developed","drove","engineered","executed","generated","implemented","improved","increased","launched","led","managed","optimized","reduced","spearheaded"];
+
+function getRoleKws(role) {
+  const r = role.toLowerCase();
+  if (r.includes("front")) return ROLE_KW.frontend;
+  if (r.includes("back"))  return ROLE_KW.backend;
+  if (r.includes("full"))  return ROLE_KW.fullstack;
+  if (r.includes("data") || r.includes("analyst") || r.includes("ml")) return ROLE_KW.data;
+  if (r.includes("devops") || r.includes("cloud")) return ROLE_KW.devops;
+  if (r.includes("design") || r.includes("ui") || r.includes("ux")) return ROLE_KW.design;
+  if (r.includes("market") || r.includes("seo")) return ROLE_KW.marketing;
+  if (r.includes("hr") || r.includes("human") || r.includes("recruit") || r.includes("talent")) return ROLE_KW.hr;
+  if (r.includes("financ") || r.includes("account")) return ROLE_KW.finance;
+  if (r.includes("sales")) return ROLE_KW.sales;
+  return ROLE_KW.default;
 }
 
-function extractJSON(raw) {
-  let text = raw.replace(/^```(?:json)?\s*/im, "").replace(/\s*```\s*$/im, "").trim();
-  const start = text.indexOf("{");
-  if (start === -1) throw new Error("No JSON in response.");
-  text = text.slice(start);
-  const last = text.lastIndexOf("}");
-  if (last !== -1) text = text.slice(0, last + 1);
-  text = text.replace(/,\s*([\]}])/g, "$1");
-  return JSON.parse(text);
+function scoreApplicant(applicant, jobTitle, jobDesc) {
+  const text = [
+    applicant.skills?.join(" ") || "",
+    applicant.experience || "",
+    applicant.education || "",
+    applicant.bio || "",
+  ].join(" ").toLowerCase();
+
+  const roleKws = getRoleKws(jobTitle);
+  const jobKws  = jobDesc
+    ? [...new Set(jobDesc.toLowerCase().match(/\b[a-z][a-z.+#]{2,}\b/g) || [])].filter(w => w.length > 3).slice(0, 20)
+    : [];
+  const allKws = [...new Set([...roleKws, ...jobKws])];
+
+  const found       = allKws.filter(kw => text.includes(kw));
+  const missing     = allKws.filter(kw => !text.includes(kw)).slice(0, 4);
+  const hasNumbers  = /\d+%|\$\d+|\d+\s*(users|clients|projects|team|members|million|k\b|years|months)/.test(text);
+  const strongCount = STRONG_VERBS.filter(v => text.includes(v)).length;
+  const skillCount  = applicant.skills?.length || 0;
+  const hasExp      = !!(applicant.experience && applicant.experience.trim());
+  const hasEdu      = !!(applicant.education && applicant.education.trim());
+
+  let score = 30;
+  score += Math.min(30, found.length * 3);
+  if (hasNumbers)       score += 10;
+  if (strongCount >= 2) score += 8;
+  if (skillCount >= 5)  score += 8;
+  if (hasExp)           score += 8;
+  if (hasEdu)           score += 6;
+  score = Math.min(100, Math.max(10, score));
+
+  const verdict =
+    score >= 80 ? "Strong Match" :
+    score >= 65 ? "Good Candidate" :
+    score >= 50 ? "Moderate Fit" :
+    score >= 35 ? "Weak Match" : "Poor Fit";
+
+  const strengths = [];
+  if (found.length >= 4) strengths.push(`Matches ${found.length} key skills for this role`);
+  if (hasNumbers)        strengths.push("Has quantified achievements");
+  if (strongCount >= 2)  strengths.push("Uses strong action verbs");
+  if (skillCount >= 5)   strengths.push(`Lists ${skillCount} relevant skills`);
+  if (hasEdu)            strengths.push("Has relevant educational background");
+  if (strengths.length === 0) strengths.push("Has basic profile information");
+
+  const gaps = [];
+  if (missing.length > 0) gaps.push(`Missing keywords: ${missing.slice(0, 3).join(", ")}`);
+  if (!hasNumbers)        gaps.push("No measurable achievements listed");
+  if (skillCount < 3)     gaps.push("Too few skills listed in profile");
+  if (!hasExp)            gaps.push("No work experience information");
+
+  const recommendation =
+    score >= 65
+      ? `Strong candidate for ${jobTitle} — recommend shortlisting for interview.`
+      : score >= 45
+      ? `Moderate fit for ${jobTitle} — consider if pool is small.`
+      : `Below threshold for ${jobTitle} — missing key requirements.`;
+
+  return { score, verdict, strengths: strengths.slice(0, 3), gaps: gaps.slice(0, 3), recommendation };
 }
 
-function buildPrompt(applicants, jobTitle, jobDesc) {
-  const profiles = applicants
-    .map((a, i) => {
-      const skills = a.skills?.join(", ") || "N/A";
-      return `[${i}] Name: ${a.name}
-Skills: ${skills}
-Experience: ${a.experience || "N/A"}
-Education: ${a.education || "N/A"}
-Bio: ${a.bio || "N/A"}`;
-    })
-    .join("\n\n");
-
-  return `You are an expert recruiter AI. Analyze these ${applicants.length} applicant profiles for the job role: "${jobTitle}"${jobDesc ? `\n\nJob Description:\n${jobDesc}` : ""}.
-
-APPLICANT PROFILES:
-${profiles}
-
-Return ONLY valid JSON. No markdown, no code fences. Start with { end with }.
-
-{
-  "results": [
-    {
-      "index": 0,
-      "score": <integer 0-100>,
-      "verdict": "<3-5 word verdict>",
-      "strengths": ["<strength>", "<strength>"],
-      "gaps": ["<gap>", "<gap>"],
-      "recommendation": "<one sentence under 120 chars>"
-    }
-  ]
-}`;
+function analyzeApplicants(applicants, jobTitle, jobDesc) {
+  return applicants.map((a, index) => ({
+    index,
+    ...scoreApplicant(a, jobTitle, jobDesc),
+    applicant: a,
+  }));
 }
 
 // ── Resume text extractor ────────────────────────────────────
@@ -243,12 +273,8 @@ const RecruiterResumeAnalyzer = () => {
         const uploaded = uploadedResumes[a._id];
         return { ...a, bio: uploaded?.text ? `RESUME TEXT:\n${uploaded.text.slice(0, 3000)}` : a.bio };
       });
-      const raw = await callGemini(buildPrompt(enrichedApplicants, jobTitle, jobDesc));
-      const parsed = extractJSON(raw);
-      if (!Array.isArray(parsed.results)) throw new Error("Invalid AI response format.");
-      const merged = parsed.results
-        .map((r) => ({ ...r, applicant: applicants[r.index] }))
-        .filter((r) => r.applicant);
+      await new Promise(r => setTimeout(r, 800));
+      const merged = analyzeApplicants(enrichedApplicants, jobTitle, jobDesc);
       setResults(merged);
     } catch (err) {
       setError(err.message || "Analysis failed. Please try again.");

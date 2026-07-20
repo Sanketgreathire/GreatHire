@@ -38,6 +38,7 @@ const MainApply              = lazy(() => import("./components/ApplyJobs/MainApp
 const ReportJob              = lazy(() => import("./pages/job/ReportJob"));
 const Success                = lazy(() => import("./pages/job/Success"));
 const UserProfile            = lazy(() => import("./pages/user/UserProfile"));
+const SettingsPolicy         = lazy(() => import("./pages/user/SettingsPolicy"));
 const ResumeAnalyzer         = lazy(() => import("./components/ResumeAnalyzer"));
 const ReferAndBoost          = lazy(() => import("./pages/ReferAndBoost"));
 const NotificationPage       = lazy(() => import("./components/notifications/NotificationPage"));
@@ -225,6 +226,7 @@ const appRouter = createBrowserRouter([
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
   { path: "/profile", element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
+  { path: "/profile/settings-policy", element: <ProtectedUserRoute><SettingsPolicy /></ProtectedUserRoute> },
   { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
   { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
   { path: "/policy/privacy-policy", element: <PrivacyPolicy /> },

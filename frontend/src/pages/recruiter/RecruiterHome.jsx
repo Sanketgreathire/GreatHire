@@ -38,6 +38,7 @@ const RecruiterHome = () => {
     const plan = company?.plan || "FREE";
     const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
     const referralBonus = user?.remainingJobPosts ?? 0;
+    if (plan === "ENTERPRISE") return "∞";
     if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
       const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
       return Math.max(0, company.maxJobPosts - used) + referralBonus;

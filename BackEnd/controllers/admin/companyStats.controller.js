@@ -4,16 +4,11 @@ import { deletedCompany } from "../../models/deletedCompany.model.js";
 // returning total number of company, active company, deactive company
 export const companyStats = async (req, res) => {
   try {
-    // Total Companies
-    const totalCompanies = await Company.countDocuments();
-    // Total Active Companies
-    const totalActiveCompanies = await Company.countDocuments({
-      isActive: true,
-    });
-    // Total Deactive Companies
-    const totalDeactiveCompanies = await Company.countDocuments({
-      isActive: false,
-    });
+    const [totalCompanies, totalActiveCompanies, totalDeactiveCompanies] = await Promise.all([
+      Company.estimatedDocumentCount(),
+      Company.countDocuments({ isActive: true }),
+      Company.countDocuments({ isActive: false }),
+    ]);
 
     return res.status(200).json({
       success: true,

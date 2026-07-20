@@ -609,17 +609,36 @@ export const getCurrentPlan = async (req, res) => {
 };
 
 // This controller will help to get candidate data — recruiter can find users/candidates
+// Common English stopwords excluded from job-description keyword extraction
+const JD_STOPWORDS = new Set([
+  "the", "and", "for", "are", "with", "you", "your", "will", "have", "has",
+  "this", "that", "from", "our", "who", "able", "can", "must", "should",
+  "work", "working", "role", "job", "team", "years", "year", "experience",
+  "strong", "good", "excellent", "knowledge", "skills", "skill", "using",
+  "well", "into", "such", "than", "they", "them", "also", "not", "any",
+  "all", "etc", "including", "responsible", "responsibilities", "requirements",
+]);
+
+const extractKeywords = (text) =>
+  [...new Set(
+    (text || "")
+      .toLowerCase()
+      .split(/[^a-z0-9+.#]+/)
+      .filter((w) => w.length >= 3 && !JD_STOPWORDS.has(w))
+  )];
+
 export const getCandidateData = async (req, res) => {
   try {
     const {
       jobTitle, experience, salaryBudget, gender, qualification,
       lastActive, location, skills, companyId,
-    } = req.query;
+      designation, minExp, maxExp, jobDescription,
+    } = req.body;
 
     const userId = req.id;
 
     // Fast auth check: single query, no Recruiter lookup
-    const company = await Company.findById(companyId).select("userId").lean();
+    const company = await Company.findById(companyId).select("userId hasSubscription").lean();
     if (!company) return res.status(403).json({ message: "Company not found", success: false });
     const belongs = company.userId.some(u => u.user.toString() === userId);
     if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
@@ -629,9 +648,12 @@ export const getCandidateData = async (req, res) => {
 
     const query = {};
 
-    if (jobTitle?.trim()) {
+    // "Job Title" and "Designation" both target the same underlying field
+    // (a candidate's current/most-recent job profile) — either or both may be filled.
+    const titleTerms = [jobTitle, designation].filter((t) => t?.trim()).map((t) => t.trim());
+    if (titleTerms.length) {
       query["profile.experiences.jobProfile"] = {
-        $regex: new RegExp(escapeRegex(jobTitle.trim()), "i"),
+        $regex: new RegExp(titleTerms.map(escapeRegex).join("|"), "i"),
       };
     }
 
@@ -681,8 +703,11 @@ export const getCandidateData = async (req, res) => {
 
     const LIMIT = 200;
     const now = new Date();
+    const hasExpRange = minExp !== undefined || maxExp !== undefined;
+    // JD-based ranking is a paid-plan feature
+    const jdTrimmed = company.hasSubscription ? jobDescription?.trim() : undefined;
 
-    const candidates = await User.find(query)
+    let candidates = await User.find(query)
       .select({
         fullname: 1,
         "profile.experiences": { $slice: 1 }, // only first experience
@@ -690,13 +715,52 @@ export const getCandidateData = async (req, res) => {
         "profile.expectedCTC": 1,
         "profile.resume": 1,
         "profile.profilePhoto": 1,
+        "profile.qualification": 1,
+        "profile.otherQualification": 1,
+        collegeName: 1,
         updatedAt: 1,
         address: 1,
         isProfileBoosted: 1,
       })
       .sort({ isProfileBoosted: -1, updatedAt: -1 })
-      .limit(LIMIT)
+      .limit(hasExpRange || jdTrimmed ? LIMIT * 2 : LIMIT)
       .lean();
+
+    // Min/Max Experience — duration is free text (e.g. "2"), so filter in-memory
+    // using the first (most recent) experience entry as the candidate's experience.
+    if (hasExpRange) {
+      const min = minExp !== undefined ? parseFloat(minExp) : null;
+      const max = maxExp !== undefined ? parseFloat(maxExp) : null;
+      candidates = candidates.filter((c) => {
+        const raw = c.profile?.experiences?.[0]?.duration;
+        const years = raw ? parseFloat(String(raw).match(/[\d.]+/)?.[0]) : NaN;
+        if (Number.isNaN(years)) return false;
+        if (min !== null && years < min) return false;
+        if (max !== null && years > max) return false;
+        return true;
+      });
+    }
+
+    // Job Description — rank by keyword overlap against skills + job title
+    let mode = "filter_matched";
+    if (jdTrimmed) {
+      const jdKeywords = extractKeywords(jdTrimmed);
+      candidates = candidates
+        .map((c) => {
+          if (!jdKeywords.length) return { ...c, matchScore: null };
+          const candidateSkills = (c.profile?.skills || []).map((s) => s.toLowerCase());
+          const candidateTitle = (c.profile?.experiences?.[0]?.jobProfile || "").toLowerCase();
+          const matched = jdKeywords.filter(
+            (kw) => candidateSkills.some((s) => s.includes(kw) || kw.includes(s)) || candidateTitle.includes(kw)
+          );
+          const matchScore = Math.round((matched.length / jdKeywords.length) * 100);
+          return { ...c, matchScore };
+        })
+        .sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0));
+      mode = "jd_matched";
+    }
+
+    candidates = candidates.slice(0, LIMIT);
 
     const enhancedCandidates = candidates.map((candidate) => {
       const diffMs = now - new Date(candidate.updatedAt);
@@ -710,7 +774,7 @@ export const getCandidateData = async (req, res) => {
       };
     });
 
-    res.status(200).json({ success: true, candidates: enhancedCandidates });
+    res.status(200).json({ success: true, candidates: enhancedCandidates, mode });
   } catch (error) {
     console.error("Error fetching candidate data:", error);
     res.status(500).json({ message: "Internal Server Error", error });
@@ -1136,6 +1200,34 @@ export const reportJob = async (req, res) => {
   } catch (err) {
     console.error("Error reporting job:", err);
     res.status(500).json({ success: false, message: "Internal Server Error", error: err.message });
+  }
+};
+
+// Deduct AI sourcing credits (1 per search)
+export const deductAiSourcingCredit = async (req, res) => {
+  try {
+    const { companyId, amount = 1 } = req.body;
+    const userId = req.id;
+
+    const company = await Company.findById(companyId).select("userId aiSourcingCredits").lean();
+    if (!company) return res.status(404).json({ success: false, message: "Company not found" });
+
+    const belongs = company.userId.some(u => u.user.toString() === userId.toString());
+    if (!belongs) return res.status(403).json({ success: false, message: "Not authorized" });
+
+    if ((company.aiSourcingCredits || 0) < amount) {
+      return res.status(402).json({ success: false, message: "Insufficient AI sourcing credits. Please upgrade your plan." });
+    }
+
+    const updated = await Company.findByIdAndUpdate(
+      companyId,
+      { $inc: { aiSourcingCredits: -amount } },
+      { new: true }
+    ).select("aiSourcingCredits");
+
+    return res.json({ success: true, remainingCredits: updated.aiSourcingCredits });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };
 

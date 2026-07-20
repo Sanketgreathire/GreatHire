@@ -60,6 +60,10 @@ const companySlice = createSlice({
       state.company.creditedForJobs =
         state.company.creditedForJobs - action.payload;
     },
+    decreaseAiSourcingCredits: (state, action) => {
+      state.company.aiSourcingCredits =
+        (state.company.aiSourcingCredits || 0) - action.payload;
+    },
   },
 });
 
@@ -74,6 +78,7 @@ export const {
   updateCandidateCredits,
   decreaseCandidateCredits,
   decreaseJobCredits,
+  decreaseAiSourcingCredits,
 } = companySlice.actions;
 
 export default companySlice.reducer;

@@ -127,7 +127,7 @@ const RecruiterDashboard = () => {
           {/* Sidebar — only after company is fetched/created */}
           {hasCompany && <DashboardNavigations />}
 
-          <div className={`flex-1 bg-gray-100 overflow-y-auto ${
+          <div className={`flex-1 bg-gray-100 dark:bg-gray-900 overflow-y-auto ${
             hasCompany ? "lg:ml-52" : ""
           }`}>
             <Outlet />

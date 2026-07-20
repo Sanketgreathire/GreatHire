@@ -24,6 +24,8 @@ const Profile           = lazy(() => import("../../pages/admin/Profile"));
 const CampusDashboard   = lazy(() => import("@/components/Campus/campusDashboard"));
 const Courses           = lazy(() => import("@/pages/admin/courses/Courses"));
 const AdminAISourcing   = lazy(() => import("@/pages/admin/AISourcing"));
+const ReferringCandidates = lazy(() => import("@/pages/admin/ReferringCandidates"));
+const SupportQueries      = lazy(() => import("@/pages/admin/SupportQueries"));
 
 const Loader = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
@@ -64,6 +66,8 @@ const AdminLayout = () => {
               <Route path="campus-dashboard"                     element={<CampusDashboard />} />
               <Route path="courses"                              element={<Courses />} />
               <Route path="ai-sourcing"                          element={<AdminAISourcing />} />
+              <Route path="referring-candidates"                  element={<ReferringCandidates />} />
+              <Route path="support-queries"                        element={<SupportQueries />} />
             </Routes>
           </Suspense>
         </div>

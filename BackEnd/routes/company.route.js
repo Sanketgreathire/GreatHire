@@ -9,6 +9,7 @@ import {
   getCandidateData,
   decreaseCandidateCredits,
   deductCandidateCredit,
+  deductAiSourcingCredit,
   getCompanyApplicants,
   reportJob,
   deleteJobReport,
@@ -37,7 +38,7 @@ router.route("/change-admin").put(isAuthenticated, changeAdmin);
 
 // Define the route to get candidates
 router.get("/candidate-information/:id", getCandidateInformation);
-router.get("/candidate-list", isAuthenticated, getCandidateData);
+router.post("/candidate-list", isAuthenticated, getCandidateData);
 router.get("/applicants/:companyId", isAuthenticated, getCompanyApplicants);
 
 router.route("/update/:id").put(isAuthenticated, updateCompany);
@@ -45,9 +46,8 @@ router.route("/current-plan/:id").get(isAuthenticated, getCurrentPlan);
 router
   .route("/decrease-credit/:id")
   .get(isAuthenticated, decreaseCandidateCredits);
-router
-  .route("/deduct-candidate-credit")
-  .post(isAuthenticated, deductCandidateCredit);
+router.route("/deduct-candidate-credit").post(isAuthenticated, deductCandidateCredit);
+router.route("/deduct-ai-sourcing-credit").post(isAuthenticated, deductAiSourcingCredit);
 
 router.route("/report-job").post(isAuthenticated,(req, res, next) => {
     multiUpload(req, res, (err) => {

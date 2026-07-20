@@ -1,15 +1,9 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
-import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Mail, Pen, IdCard, FileText } from "lucide-react";
-import { LuPhoneIncoming, LuMapPin } from "react-icons/lu";
-import { Badge } from "../../components/ui/badge";
+import { Mail, Pen, IdCard, FileText, Plus, Eye, Upload, Briefcase, MapPin, Phone, CheckCircle, Settings, LogOut, User, Shield, ArrowLeft } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import AppliedJobTable from "../job/AppliedJobTable";
-const UserUpdateProfile = lazy(() => import("./UserUpdateProfile"));
 import { useSelector, useDispatch } from "react-redux";
-import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { USER_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
@@ -19,22 +13,72 @@ import VerifyEmail from "@/components/VerifyEmail";
 import VerifyNumber from "@/components/VerifyNumber";
 import { Helmet } from "react-helmet-async";
 
+const UserUpdateProfile = lazy(() => import("./UserUpdateProfile"));
+
+const statusStyles = {
+  Shortlisted: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
+  Pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
+  Rejected: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+};
+
+const AppliedJobsInline = ({ jobs }) => {
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const perPage = 10;
+  const total = Math.ceil(jobs.length / perPage) || 1;
+  const current = jobs.slice((page - 1) * perPage, page * perPage);
+  return (
+    <div className="overflow-hidden">
+      <div className="space-y-2">
+        {current.map((job, i) => (
+          <div
+            key={i}
+            onClick={() => job.job?._id && navigate(`/description/${job.job._id}`)}
+            className="flex flex-col gap-0.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border border-gray-100 dark:border-gray-700"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-xs font-semibold text-gray-800 dark:text-white leading-tight line-clamp-2">
+                {job.job?.jobDetails?.title || "N/A"}
+              </p>
+              <span className={`shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${statusStyles[job.status] || "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"}`}>
+                {job.status || "Pending"}
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">{job.job?.company?.companyName || "N/A"}</p>
+            <p className="text-[10px] text-gray-400">{new Date(job.createdAt).toLocaleDateString()}</p>
+          </div>
+        ))}
+      </div>
+      {total > 1 && (
+        <div className="flex items-center justify-between mt-3">
+          <button onClick={() => setPage(p => Math.max(p-1,1))} disabled={page===1} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Prev</button>
+          <span className="text-[11px] text-gray-500">Page {page}/{total}</span>
+          <button onClick={() => setPage(p => Math.min(p+1,total))} disabled={page===total} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Next</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const DOC_ICONS = {
-  "PAN Card": <IdCard className="w-4 h-4" />,
-  "Aadhar Card": <IdCard className="w-4 h-4" />,
-  "Passport": <FileText className="w-4 h-4" />,
+  "PAN Card": <IdCard className="w-5 h-5 text-blue-600" />,
+  "Aadhar Card": <IdCard className="w-5 h-5 text-blue-600" />,
+  Passport: <FileText className="w-5 h-5 text-blue-600" />,
 };
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [appliedLoading, setAppliedLoading] = useState(true);
+  const [showAppliedJobs, setShowAppliedJobs] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
 
-  // Prevent back navigation if resume is missing
   useEffect(() => {
     if (!user?.profile?.resume) {
       window.history.pushState(null, "", window.location.href);
@@ -46,6 +90,16 @@ const UserProfile = () => {
       return () => window.removeEventListener("popstate", handlePopState);
     }
   }, [user?.profile?.resume]);
+
+  useEffect(() => {
+    axios
+      .get(`${APPLICATION_API_END_POINT}/get`, { withCredentials: true })
+      .then((res) => {
+        if (res.data.success) setAppliedJobs(res.data.application || []);
+      })
+      .catch(() => {})
+      .finally(() => setAppliedLoading(false));
+  }, []);
 
   const normalizedExperiences = useMemo(() => {
     let list = [];
@@ -68,9 +122,10 @@ const UserProfile = () => {
   }, [user?.profile?.experiences, user?.profile?.experience]);
 
   const { qualificationToDisplay, firstExp, totalYears } = useMemo(() => {
-    const qual = user?.profile?.qualification === "Others"
-      ? user?.profile?.otherQualification
-      : user?.profile?.qualification;
+    const qual =
+      user?.profile?.qualification === "Others"
+        ? user?.profile?.otherQualification
+        : user?.profile?.qualification;
     const exps = user?.profile?.experiences || [];
     const years = exps.reduce((sum, exp) => sum + (parseFloat(exp.duration) || 0), 0);
     return {
@@ -78,29 +133,30 @@ const UserProfile = () => {
       firstExp: normalizedExperiences[0],
       totalYears: years,
     };
-  }, [user?.profile?.qualification, user?.profile?.otherQualification, user?.profile?.experiences, normalizedExperiences]);
+  }, [
+    user?.profile?.qualification,
+    user?.profile?.otherQualification,
+    user?.profile?.experiences,
+    normalizedExperiences,
+  ]);
 
-  const handleDeleteAccount = useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     try {
-      setLoading(true);
-      const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
-        data: { email: user?.emailId?.email },
-        withCredentials: true,
-      });
-      if (response.data.success) {
-        dispatch(logOut());
-        navigate("/");
-      }
-      toast.success(response.data.message);
+      await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
+      dispatch(logOut());
+      navigate("/");
     } catch {
-      toast.error("Error in deleting account");
-    } finally {
-      setLoading(false);
+      toast.error("Error logging out");
     }
-  }, [user?.emailId?.email, dispatch, navigate]);
+  }, [dispatch, navigate]);
 
-  const onConfirmDelete = useCallback(() => handleDeleteAccount(), [handleDeleteAccount]);
-  const onCancelDelete = useCallback(() => {}, []);
+  const resumeDate = user?.profile?.resumeUpdatedAt
+    ? new Date(user.profile.resumeUpdatedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
 
   if (!user) {
     return (
@@ -110,232 +166,471 @@ const UserProfile = () => {
     );
   }
 
+  const nameInitial = (user?.fullname || "U")[0].toUpperCase();
+
   return (
     <>
       <Helmet>
-        <title>Profile Dashboard | GreatHire Job Applications, Skills, and Resume</title>
+        <title>Profile Dashboard | GreatHire</title>
         <meta
           name="description"
-          content="Establish and organize your professional profile on GreatHire, an authentic job portal functioning in the Hyderabad State of India. The malleable user profile management page enables individuals to upload resumes, highlight their skill sets, include their experiences, and monitor job applications all through this single dashboard. Validate contact information and organize various documents to produce a recruiter-friendly profile in today's competitive job environment."
+          content="Manage your professional profile on GreatHire. Upload resumes, highlight skills, add experience, and track job applications."
         />
       </Helmet>
 
-      <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        <Navbar />
-        <div className="flex-grow">
-          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-4 p-8">
+      <div className="min-h-screen bg-[#f0f2f5] dark:bg-gray-900 flex">
+        {/* Top Navbar */}
+        <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-6 z-30 shadow-sm">
+          <div className="flex items-center gap-3">
+            <button
+              className="md:hidden p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={() => setSidebarOpen(v => !v)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              onClick={() => user?.profile?.resume ? navigate(-1) : toast.error("You must upload a resume before leaving!")}
+              className="p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <span className="text-xl font-bold">
+              <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
+          >
+            <LogOut className="w-4 h-4" /> <span className="hidden sm:inline">Logout</span>
+          </button>
+        </header>
 
-            {/* User Info */}
-            <div className="flex flex-col items-center text-center border-b pb-8">
-              <Avatar className="h-24 w-24 shadow-lg">
-                <AvatarImage
-                  src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/src/assets/noprofile.webp"}
-                  alt="Profile Photo"
-                />
-              </Avatar>
-              <h1 className="mt-4 text-3xl font-bold text-gray-800 dark:text-gray-100">
-                {user?.fullname || "User Name"}
-              </h1>
-              <h1 className="mt-1 text-gray-600 dark:text-gray-300">
-                {firstExp ? firstExp.jobProfile : "Fresher"}
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400 mt-1">
-                Experience: {totalYears > 0 ? `${totalYears} Year(s)` : "0 Years"}
-              </p>
-              <Button onClick={() => setOpen(true)} variant="outline" className="mt-4 flex items-center gap-2">
-                <Pen className="h-4 w-4" /> Edit Profile
-              </Button>
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Left Sidebar */}
+        <aside
+          className={`fixed left-0 z-50 md:z-20 bg-white dark:bg-gray-800 shadow-sm flex flex-col px-4 pb-6 transition-transform duration-300
+            w-56 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          style={{height:'calc(100vh - 56px)', top:'56px', overflowY:'auto'}}
+        >
+          {/* Nav items */}
+          <div className="space-y-1 mb-4 pt-4">
+            <button
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium text-sm"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <User className="w-4 h-4" /> Profile
+            </button>
+            <button
+              onClick={() => { navigate("/ResumeAnalyzer"); setSidebarOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+            >
+              <FileText className="w-4 h-4" /> Resume Analyzer
+            </button>
+            <button
+              onClick={() => { navigate("/jobs"); setSidebarOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+            >
+              <Briefcase className="w-4 h-4" /> Jobs
+            </button>
+            <button
+              onClick={() => { navigate("/profile/settings-policy"); setSidebarOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+            >
+              <Shield className="w-4 h-4" /> Settings &amp; Policy
+            </button>
+          </div>
+          <hr className="border-gray-200 dark:border-gray-700 mb-4" />
+        </aside>
+
+        {/* Main Content */}
+        <main className="w-full md:ml-56 flex-1 px-3 md:px-5 pb-6" style={{paddingTop:'72px'}}>
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Center Column */}
+            <div className="flex-1 space-y-4">
+              {/* Hero Card */}
+              <div className="bg-gradient-to-r from-purple-100 via-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-5 shadow-sm">
+                <div className="relative flex-shrink-0">
+                  <Avatar className="h-20 w-20 border-4 border-white shadow-md">
+                    <AvatarImage
+                      src={
+                        user?.profile?.profilePhoto &&
+                        !user.profile.profilePhoto.includes("github.com")
+                          ? user.profile.profilePhoto
+                          : "/noprofile.webp"
+                      }
+                      alt="Profile"
+                    />
+                  </Avatar>
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="absolute bottom-0 right-0 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shadow"
+                  >
+                    <Pen className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white uppercase tracking-wide">
+                      {user?.fullname || "User Name"}
+                    </h1>
+                    <MdOutlineVerified className="text-blue-500 w-5 h-5" />
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-0.5">
+                    {firstExp ? firstExp.jobProfile : "Fresher"}
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs mt-1 flex items-center gap-1">
+                    <Briefcase className="w-3 h-3" />
+                    {totalYears > 0 ? `${totalYears} Year${totalYears > 1 ? "s" : ""} Experience` : "Fresher"}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-5 py-2 text-sm flex items-center gap-2 shadow sm:ml-auto"
+                >
+                  <FileText className="w-4 h-4" /> Edit Profile
+                </Button>
+              </div>
+
+              {/* Contact + Personal Info Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Contact Information */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                  <h2 className="font-semibold text-gray-800 dark:text-white mb-4">Contact Information</h2>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Email Address</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-200 break-all">
+                          {user?.emailId?.email || "Not Provided"}
+                        </p>
+                        {!user?.emailId?.isVerified ? (
+                          <span
+                            className="text-blue-600 text-xs cursor-pointer hover:underline"
+                            onClick={() => setOpenEmailOTPModal(true)}
+                          >
+                            Verify
+                          </span>
+                        ) : (
+                          <span className="text-green-500 text-xs flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Verified
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Phone Number</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-200">
+                          {user?.phoneNumber?.number || "Not Provided"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400">Location</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-200">
+                          {[user?.address?.city, user?.address?.state, user?.address?.country]
+                            .filter(Boolean)
+                            .join(", ") || "Not Provided"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Personal Info */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                  <h2 className="font-semibold text-gray-800 dark:text-white mb-4">Personal Info</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-400">Gender</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mt-0.5">
+                        {user?.profile?.gender || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Highest Qualification</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mt-0.5">
+                        {qualificationToDisplay || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Current CTC</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mt-0.5">
+                        {firstExp?.currentCTC || "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400">Notice Period</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mt-0.5">
+                        {firstExp?.noticePeriod || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Experience Details */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-gray-800 dark:text-white">Experience Details</h2>
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="w-7 h-7 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <Plus className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                {normalizedExperiences.length > 0 ? (
+                  normalizedExperiences.map((exp, i) => (
+                    <div key={i} className={`flex gap-4 ${i > 0 ? "mt-4 pt-4 border-t dark:border-gray-700" : ""}`}>
+                      <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        {(exp.companyName || "C")[0].toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-800 dark:text-white text-sm">{exp.jobProfile}</p>
+                            <p className="text-blue-600 text-xs">{exp.companyName}</p>
+                            <p className="text-gray-400 text-xs mt-0.5">
+                              {exp.startDate
+                                ? `${exp.startDate} - ${exp.currentlyWorking ? "Present" : exp.endDate || ""} (${exp.duration} Year${exp.duration > 1 ? "s" : ""})`
+                                : exp.duration
+                                ? `${exp.duration} Year(s)`
+                                : ""}
+                            </p>
+                          </div>
+                          {exp.employmentType && (
+                            <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">
+                              {exp.employmentType}
+                            </span>
+                          )}
+                        </div>
+                        {exp.currentlyWorking && (
+                          <div className="flex gap-6 mt-2">
+                            <div>
+                              <p className="text-xs text-gray-400 uppercase tracking-wide">Current CTC</p>
+                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{exp.currentCTC}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 uppercase tracking-wide">Notice Period</p>
+                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{exp.noticePeriod}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No experience details available</p>
+                )}
+              </div>
+
+              {/* Job Categories + Top Skills Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Job Categories + Languages */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm space-y-4">
+                  <div>
+                    <h2 className="font-semibold text-gray-800 dark:text-white mb-3">Job Categories</h2>
+                    {user?.profile?.category?.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {user.profile.category.map((cat, i) => (
+                          <span
+                            key={i}
+                            className="px-3 py-1 rounded-full border border-blue-300 text-blue-700 dark:text-blue-300 dark:border-blue-600 text-xs"
+                          >
+                            {cat}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-sm">Not specified</p>
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-800 dark:text-white mb-3">Languages</h2>
+                    {user?.profile?.language?.length > 0 ? (
+                      <div className="flex flex-wrap gap-3">
+                        {user.profile.language.map((lang, i) => (
+                          <span key={i} className="text-sm text-gray-600 dark:text-gray-300">
+                            {lang}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-sm">Not specified</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Top Skills */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="font-semibold text-gray-800 dark:text-white">Top Skills</h2>
+                    <button
+                      onClick={() => setOpen(true)}
+                      className="text-blue-600 text-xs hover:underline"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                  {user?.profile?.skills?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {user.profile.skills.map((skill, i) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-sm">No skills listed</p>
+                  )}
+                </div>
+              </div>
+
+              {/* ID's / Documents */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                <h2 className="font-semibold text-gray-800 dark:text-white mb-4">ID's / Documents</h2>
+                <div className="flex flex-wrap gap-3">
+                  {user?.profile?.documents?.length > 0 ? (
+                    user.profile.documents.map((doc, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800"
+                      >
+                        {DOC_ICONS[doc] || <FileText className="w-5 h-5 text-blue-600" />}
+                        <div>
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{doc}</p>
+                          <p className="text-xs text-green-500 flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Uploaded
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : null}
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl text-blue-600 dark:text-blue-400 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                  >
+                    <Upload className="w-4 h-4" /> Upload New Document
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Profile Summary */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Profile Summary</h2>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">{user?.profile?.bio || "No bio available"}</p>
-            </div>
+            {/* Right Column */}
+            <div className="w-full lg:w-72 lg:flex-shrink-0 lg:self-start lg:sticky lg:top-[72px] space-y-4">
+              {/* Resume Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex flex-col items-center">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
+                      <FileText className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-3 h-3 text-white" />
+                    </div>
+                  </div>
+                  <p className="font-semibold text-gray-800 dark:text-white mt-3">Your Resume</p>
+                  {resumeDate && (
+                    <p className="text-xs text-gray-400 mt-0.5">Last updated: {resumeDate}</p>
+                  )}
+                </div>
+                <div className="mt-4 space-y-2">
+                  {user?.profile?.resume ? (
+                    <a
+                      href={user.profile.resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition-colors"
+                    >
+                      <Eye className="w-4 h-4" /> View Resume
+                    </a>
+                  ) : (
+                    <p className="text-center text-gray-400 text-sm">No resume uploaded</p>
+                  )}
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Update Resume
+                  </button>
+                </div>
+              </div>
 
-            {/* Contact Information */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Contact Information</h2>
-              <div className="mt-4 space-y-4">
-                <div className="flex items-center gap-4">
-                  <Mail className="text-blue-500 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">{user?.emailId?.email || "Not Provided"}</span>
-                  {!user?.emailId?.isVerified ? (
-                    <span className="text-blue-600 dark:text-blue-400 text-sm cursor-pointer hover:underline" onClick={() => setOpenEmailOTPModal(true)}>Verify</span>
-                  ) : (
-                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
-                      <MdOutlineVerified size={20} /> <span>Verified</span>
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4">
-                  <LuPhoneIncoming size={25} className="text-blue-500 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">{user?.phoneNumber?.number || "Not Provided"}</span>
-                  {!user?.phoneNumber?.isVerified ? (
-                    <span className="text-blue-600 dark:text-blue-400 text-sm hidden cursor-pointer hover:underline" onClick={() => setOpenNumberOTPModal(true)}>Verify</span>
-                  ) : (
-                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
-                      <MdOutlineVerified size={20} /> <span>Verified</span>
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 mt-2">
-                  <LuPhoneIncoming size={25} className="text-blue-500 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">{user?.alternatePhone?.number || "Not Provided"}</span>
-                  {!user?.alternatePhone?.isVerified ? (
-                    <span className="text-blue-600 dark:text-blue-400 text-sm hidden cursor-pointer hover:underline" onClick={() => setOpenNumberOTPModal(true)}>Verify</span>
-                  ) : (
-                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 px-2 rounded-lg gap-1">
-                      <MdOutlineVerified size={20} /> <span>Verified</span>
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 pb-4">
-                  <LuMapPin size={25} className="text-blue-500 dark:text-blue-400" />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}, ${user?.address?.pincode}`}
+              {/* Applied Jobs Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    <h2 className="font-semibold text-gray-800 dark:text-white text-sm">Applied Jobs</h2>
+                  </div>
+                  <span className="min-w-5 h-5 px-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 text-xs flex items-center justify-center font-semibold">
+                    {appliedLoading ? "…" : appliedJobs.length}
                   </span>
                 </div>
-              </div>
-            </div>
 
-            {/* Languages */}
-            <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Languages Known</h2>
-              {user?.profile?.language?.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {user.profile.language.map((lang, i) => (
-                    <span key={i} className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full text-sm">{lang}</span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600 mt-2 dark:text-gray-400">Not Specified.</p>
-              )}
-            </div>
-
-            {/* Gender */}
-            <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Gender</h2>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <span className="text-gray-700 dark:text-gray-300">{user?.profile?.gender}</span>
-              </div>
-            </div>
-
-            {/* Qualification */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Qualification</h2>
-              {qualificationToDisplay || "-"}
-            </div>
-
-            {/* Experience */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Experience Details</h2>
-              {normalizedExperiences.length > 0 ? (
-                normalizedExperiences.map((exp, index) => (
-                  <div key={index} className="mt-4 pb-4">
-                    <div className="grid gap-y-4 md:grid-cols-5 md:gap-y-2 md:gap-x-4">
-                      <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Company Name:</p></div>
-                      <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.companyName}</p></div>
-                      <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Job Profile:</p></div>
-                      <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.jobProfile}</p></div>
-                      <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Duration:</p></div>
-                      <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.duration}</p></div>
-                      <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Details:</p></div>
-                      <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.experienceDetails}</p></div>
-                      {exp.currentlyWorking && (
-                        <>
-                          <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Current CTC:</p></div>
-                          <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.currentCTC}</p></div>
-                          <div className="col-span-5 md:col-span-1"><p className="font-semibold text-gray-700 dark:text-gray-300">Notice Period:</p></div>
-                          <div className="col-span-5 md:col-span-4"><p className="text-gray-600 dark:text-gray-400">{exp.noticePeriod}</p></div>
-                        </>
-                      )}
+                {appliedLoading ? (
+                  <p className="text-xs text-gray-400 text-center py-2">Loading...</p>
+                ) : appliedJobs.length === 0 ? (
+                  <div className="flex flex-col items-center text-center py-4">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-3">
+                      <Briefcase className="w-6 h-6 text-gray-400" />
                     </div>
-                    {index !== normalizedExperiences.length - 1 && <hr className="mt-4 border-gray-300 dark:border-gray-700" />}
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">No applications found</p>
+                    <p className="text-xs text-gray-400 mt-1">You haven't applied to any jobs yet. Start exploring opportunities!</p>
+                    <button onClick={() => navigate("/jobs")} className="mt-3 text-blue-600 text-xs hover:underline">Explore Jobs</button>
                   </div>
-                ))
-              ) : (
-                <p className="text-gray-600 dark:text-gray-400 mt-2 pb-4">No experience details available</p>
-              )}
-            </div>
-
-            {/* Job Category */}
-            <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Job Category</h2>
-              {user?.profile?.category?.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {user.profile.category.map((cat, i) => (
-                    <span key={i} className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 rounded-full text-sm">{cat}</span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600 dark:text-gray-400 mt-2">Not Specified.</p>
-              )}
-            </div>
-
-            {/* Skills */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Skills</h2>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {user?.profile?.skills?.length > 0 ? (
-                  user.profile.skills.map((skill, index) => (
-                    <Badge key={index} className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-2 rounded-lg font-medium text-sm">
-                      {skill}
-                    </Badge>
-                  ))
                 ) : (
-                  <span className="text-gray-600 dark:text-gray-400">No skills listed</span>
-                )}
-              </div>
-            </div>
-
-            {/* Documents */}
-            <div className="mt-3">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">ID's / Documents</h2>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {user?.profile?.documents?.length > 0 ? (
-                  user.profile.documents.map((doc, i) => (
-                    <span key={i} className="flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 font-medium text-sm shadow-sm hover:bg-gradient-to-l hover:from-blue-200 hover:to-blue-300 cursor-pointer">
-                      {DOC_ICONS[doc] || <FileText className="w-4 h-4" />}
-                      {doc}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-gray-600 dark:text-gray-400">Does not have any documents</span>
-                )}
-              </div>
-            </div>
-
-            {/* Resume */}
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">Resume</h2>
-              <div className="mt-4">
-                {user?.profile?.resume ? (
-                  <a href={user.profile.resume} target="_blank" rel="noopener noreferrer" className="inline-block bg-blue-500 dark:bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700">
-                    View Resume
-                  </a>
-                ) : (
-                  <span className="text-gray-600 dark:text-gray-400">No resume uploaded.</span>
+                  <>
+                    <button
+                      onClick={() => setShowAppliedJobs((v) => !v)}
+                      className="w-full text-blue-600 text-xs hover:underline text-center mb-3"
+                    >
+                      {showAppliedJobs ? "Hide Applications" : `View All ${appliedJobs.length} Applications`}
+                    </button>
+                    {showAppliedJobs && (
+                      <div className="overflow-y-auto" style={{maxHeight: '550px'}}>
+                        <AppliedJobsInline jobs={appliedJobs} />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Applied Jobs */}
-          <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-8 p-8">
-            <h2 className="text-lg text-center underline font-semibold border-b pb-2 text-gray-800 dark:text-white">APPLIED JOBS</h2>
-            <div className="mt-4"><AppliedJobTable /></div>
-          </div>
-        </div>
-
-        <Suspense fallback={null}>
-          <UserUpdateProfile open={open} setOpen={setOpen} />
-        </Suspense>
-        <Footer className="mt-auto" />
-
-        {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />}
-        {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />}
+        </main>
       </div>
+
+      <Suspense fallback={null}>
+        <UserUpdateProfile open={open} setOpen={setOpen} />
+      </Suspense>
+
+      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />}
+      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />}
     </>
   );
 };

@@ -6,18 +6,19 @@ import { sendFirstJobReminderEmail } from "../../utils/emailService.js";
 // returning total number of recruiter, total active recruiters, total deactive recruiters
 export const getRecrutierStats = async (req, res) => {
   try {
-    // Total Recruiters
-    const totalRecruiters = await Recruiter.countDocuments();
-    // Total Active Recruiters
-    const totalActiveRecruiters = await Recruiter.countDocuments({
-      isActive: true,
-    });
-    // Total Deactive Recruiters
-    const totalDeactiveRecruiters = await Recruiter.countDocuments({
-      isActive: false,
-    });
-    const totalReminderSent = await Recruiter.countDocuments({ reminderSent: true });
-    const totalReminderPending = await Recruiter.countDocuments({ reminderSent: { $ne: true } });
+    const [
+      totalRecruiters,
+      totalActiveRecruiters,
+      totalDeactiveRecruiters,
+      totalReminderSent,
+      totalReminderPending,
+    ] = await Promise.all([
+      Recruiter.estimatedDocumentCount(),
+      Recruiter.countDocuments({ isActive: true }),
+      Recruiter.countDocuments({ isActive: false }),
+      Recruiter.countDocuments({ reminderSent: true }),
+      Recruiter.countDocuments({ reminderSent: { $ne: true } }),
+    ]);
 
     return res.status(200).json({
       success: true,

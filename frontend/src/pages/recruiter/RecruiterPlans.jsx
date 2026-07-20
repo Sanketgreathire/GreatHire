@@ -163,25 +163,81 @@ const subscriptionPlans = [
   // ────────────────────────────────────────────────────────────────────
 
   {
-    id: "enterprise",
-    title: "Enterprise Plan",
+    id: "enterprise-3m",
+    title: "Enterprise — 3 Months",
+    price: 7500,
+    billing: "3 months",
+    durationMonths: 3,
+    aiSourcingCredits: 750,
+    jobs: "200",
+    resumes: "7,500",
+    enterprise: true,
+    bestFor: "Best for: Short-term high-volume hiring",
+    features: [
+      "Unlimited Job Postings",
+      "750 AI Sourcing Credits",
+      "7,500 Candidate Database Access",
+      "12 Team Users Included",
+      "Dedicated Relationship Manager",
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "AI Auto Scoring System",
+      "7,500 Email Outreach Credits",
+    ],
+    cta: "Buy Now",
+    color: "blue",
+  },
+  {
+    id: "enterprise-6m",
+    title: "Enterprise — 6 Months",
+    price: 15000,
+    billing: "6 months",
+    durationMonths: 6,
+    aiSourcingCredits: 1500,
+    jobs: "200",
+    resumes: "15,000",
+    enterprise: true,
+    popular: true,
+    bestFor: "Best for: Growing hiring teams",
+    features: [
+      "Unlimited Job Postings",
+      "1,500 AI Sourcing Credits",
+      "15,000 Candidate Database Access",
+      "12 Team Users Included",
+      "Dedicated Relationship Manager",
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "AI Auto Scoring System",
+      "15,000 Email Outreach Credits",
+    ],
+    cta: "Buy Now",
+    color: "purple",
+  },
+  {
+    id: "enterprise-1y",
+    title: "Enterprise — 1 Year",
     price: 30000,
     billing: "year",
+    durationMonths: 12,
+    aiSourcingCredits: 3000,
     jobs: "200",
     resumes: "30,000",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
-      "200 Job Postings",
+      "Unlimited Job Postings",
+      "3,000 AI Sourcing Credits",
       "30,000 Candidate Database Access",
       "12 Team Users Included",
       "Dedicated Relationship Manager",
       "AI-Powered JD Creation & Smart Candidate Matching",
       "Advanced Analytics & Hiring Dashboard",
       "Priority Customer Support",
-      "Custom Hiring Workflows & Automation",
-      "30,000 Email Outreach Credits"
-       ],
+      "AI Auto Scoring System",
+      "30,000 Email Outreach Credits",
+    ],
     cta: "Buy Now",
     color: "gold",
   },
@@ -252,7 +308,7 @@ function RecruiterPlans() {
 
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
-        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
+        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0, durationMonths: plan.durationMonths ?? 1 },
         { withCredentials: true }
       );
 
@@ -265,7 +321,7 @@ function RecruiterPlans() {
         handler: async (response) => {
           const verify = await axios.post(
             `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
-            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
+            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0 },
             { withCredentials: true }
           );
           if (verify.data.success) {
@@ -326,12 +382,20 @@ function RecruiterPlans() {
     }
 
     if (plan.enterprise) {
-      initiateCreditPayment({ title: plan.title, price: plan.price, creditsForJobs: 999999, creditsForCandidates: 999999 });
+      const candidateMap = { "enterprise-3m": 7500, "enterprise-6m": 15000, "enterprise-1y": 30000 };
+      initiateCreditPayment({
+        title: plan.title,
+        price: plan.price,
+        creditsForJobs: 999999,
+        creditsForCandidates: candidateMap[plan.id] ?? 30000,
+        aiSourcingCredits: plan.aiSourcingCredits || 0,
+        durationMonths: plan.durationMonths ?? 12,
+      });
       return;
     }
 
     const credits = PLAN_CREDITS[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
-    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits });
+    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits, aiSourcingCredits: plan.aiSourcingCredits || 0 });
   }, [company, user, dispatch, navigate, initiateCreditPayment]);
 
   return (
@@ -428,7 +492,7 @@ function RecruiterPlans() {
             </div>
 
             {/* ================= PRICING CARDS ================= */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {subscriptionPlans.map((plan) => {
                   const borderColor = BORDER_COLOR[plan.color] || "border-gray-200";
                   const badgeBg = BADGE_BG[plan.color] || "bg-gray-100 text-gray-600";

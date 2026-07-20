@@ -263,8 +263,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   );
 
   // Character limits for bio and experience details
-  const maxBioChars = 500;
-  const maxExperienceChars = 750;
+  const maxBioChars = 5000;
+  const maxExperienceChars = 35000;
 
   // Handles input changes, ensuring character limits for specific fields
   const handleChange = (e) => {
@@ -1203,11 +1203,11 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 value={exp.experienceDetails || ""}
                                 onChange={(e) => {
                                   const words = e.target.value.trim().split(/\s+/).filter(Boolean);
-                                  if (words.length <= 600) {
+                                  if (words.length <= 5000) {
                                     handleExperienceChange(index, "experienceDetails", e.target.value);
                                   }
                                 }}
-                                placeholder="Describe your work experience in detail... Just in few words (500 - 600)"
+                                placeholder="Describe your work experience in detail..."
                                 className="w-full border rounded p-2 h-32 md:h-40 lg:h-48"
                                 required
                               />
@@ -1216,7 +1216,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 {
                                   (exp.experienceDetails?.trim().split(/\s+/).filter(Boolean).length) || 0
                                 }{" "}
-                                / 600 words
+                                / 5000 words
                               </div>
                             </div>
                           </div>
