@@ -738,14 +738,16 @@ const PostJob = () => {
                       })}
                     </div>
 
-                    <textarea
-                      id="benefits"
-                      name="benefits"
-                      placeholder="Enter additional benefits..."
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={String(formik.values.benefits || "")} // Ensure it's always a string
-                    />
+                    {String(formik.values.benefits || "").split("\n").includes("Others") && (
+                      <textarea
+                        id="benefits"
+                        name="benefits"
+                        placeholder="Enter additional benefits..."
+                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                        onChange={formik.handleChange}
+                        value={String(formik.values.benefits || "")}
+                      />
+                    )}
                     {formik.touched.benefits && formik.errors.benefits && (
                       <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.benefits}</div>
                     )}
@@ -810,71 +812,64 @@ const PostJob = () => {
                     <Label htmlFor="experience" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                       Experience<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        "Fresher",
-                        "6 months-1 year",
-                        "1-2 years",
-                        "2-3 years",
-                        "3-4 years",
-                        "4-5 years",
-                        "5-6 years",
-                        "6-7 years",
-                        "7-8 years",
-                        "8-9 years",
-                        "9-10 years",
-                        "More than 10 years",
-                      ].map((option) => {
-                        // Convert the current string value into an array for easier handling
-                        const selectedOptions = formik.values.experience
-                          ? formik.values.experience.split(", ")
-                          : [];
-                        return (
-                          <label key={option} className="flex items-center space-x-2">
-                            {/* Changed input type from radio to checkbox */}
-                            <input
-                              type="checkbox"
-                              name="experience"
-                              value={option}
-                              // Updated to check if the option exists in the array derived from the string
-                              checked={selectedOptions.includes(option)}
-                              onChange={(e) => {
-                                // Create a mutable copy of the current selections from the string value
-                                let updatedOptions = [...selectedOptions];
-                                if (e.target.checked) {
-                                  // Add the option if checked
-                                  updatedOptions.push(option);
-                                } else {
-                                  // Remove the option if unchecked
-                                  updatedOptions = updatedOptions.filter((opt) => opt !== option);
-                                }
-                                // Join the array back into a string (comma separated) to meet the expected type
-                                formik.setFieldValue("experience", updatedOptions.join(", "));
-                              }}
-                              className="peer hidden"
-                            />
-                            <div className="w-4 h-4 border border-gray-400 dark:border-gray-500 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-600 transition-colors duration-300">
-                              {selectedOptions.includes(option) && (
-                                <svg
-                                  className="w-4 h-4 text-white"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                  strokeLinecap="butt"
-                                  strokeLinejoin="miter"
-                                >
-                                  <polyline points="4 12 10 18 20 5" />
-                                </svg>
-                              )}
-                            </div>
-                            <span className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{option}</span>
-                          </label>
-                        );
-                      })}
+                    <label className="flex items-center space-x-2 mb-3">
+                      <input
+                        type="checkbox"
+                        checked={String(formik.values.experience || "").includes("Fresher")}
+                        onChange={(e) => {
+                          const current = String(formik.values.experience || "");
+                          if (e.target.checked) {
+                            formik.setFieldValue("experience", "Fresher, From 0 To 0");
+                          } else {
+                            formik.setFieldValue("experience", current.replace("Fresher", "").replace(/^,\s*|,\s*$/g, "").trim());
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-gray-700 dark:text-gray-300">Fresher</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-1">From (years)</label>
+                        <select
+                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                          value={(() => { const m = String(formik.values.experience || "").match(/From (\d+)/); return m ? m[1] : ""; })()}
+                          onChange={(e) => {
+                            const current = String(formik.values.experience || "");
+                            const toMatch = current.match(/To (\d+)/);
+                            const toVal = toMatch ? ` To ${toMatch[1]}` : "";
+                            const isFresher = current.includes("Fresher") ? "Fresher, " : "";
+                            formik.setFieldValue("experience", e.target.value ? `${isFresher}From ${e.target.value}${toVal}` : `${isFresher}${toVal}`.trim());
+                          }}
+                        >
+                          <option value="">Select</option>
+                          {Array.from({ length: 11 }, (_, i) => i).map(n => (
+                            <option key={n} value={n}>{n}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-1">To (years)</label>
+                        <select
+                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                          value={(() => { const m = String(formik.values.experience || "").match(/To (\d+)/); return m ? m[1] : ""; })()}
+                          onChange={(e) => {
+                            const current = String(formik.values.experience || "");
+                            const fromMatch = current.match(/From (\d+)/);
+                            const fromVal = fromMatch ? `From ${fromMatch[1]} ` : "";
+                            const isFresher = current.includes("Fresher") ? "Fresher, " : "";
+                            formik.setFieldValue("experience", e.target.value ? `${isFresher}${fromVal}To ${e.target.value}` : `${isFresher}${fromVal}`.trim());
+                          }}
+                        >
+                          <option value="">Select</option>
+                          {Array.from({ length: 11 }, (_, i) => i).map(n => (
+                            <option key={n} value={n}>{n}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                     {formik.touched.experience && formik.errors.experience && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.experience}</div>
+                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">{formik.errors.experience}</div>
                     )}
                   </div>
 
@@ -901,9 +896,8 @@ const PostJob = () => {
                         name="salaryType"
                         className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 h-10 w-32 text-gray-700 dark:text-gray-300 transition-colors duration-300"
                         onChange={formik.handleChange}
-                        value={formik.values.salaryType || ""}
+                        value={formik.values.salaryType || "per year"}
                       >
-                        <option value="" disabled>Rate</option>
                         <option value="per year">per year</option>
                         <option value="per month">per month</option>
                         <option value="per week">per week</option>
@@ -1075,7 +1069,7 @@ const PostJob = () => {
                   {/* Response Time */}
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Response Time<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                      Response Time (Days)<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
                     <input
                       name="respondTime"
@@ -1096,20 +1090,33 @@ const PostJob = () => {
                   {/* Duration */}
                   <div className="mb-6">
                     <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Duration<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                      Working Days<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                     </Label>
-                    <input
-                      name="duration"
-                      type="text"
-                      placeholder="Enter duration (e.g. Monday to Friday)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.duration}
-                    />
+                    <select
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+                      onChange={(e) => {
+                        if (e.target.value === "Other") formik.setFieldValue("duration", "Other");
+                        else formik.setFieldValue("duration", e.target.value);
+                      }}
+                      value={["5 Days A Week", "6 Days A Week"].includes(formik.values.duration) ? formik.values.duration : formik.values.duration ? "Other" : ""}
+                    >
+                      <option value="">Select duration</option>
+                      <option value="5 Days A Week">5 Days A Week</option>
+                      <option value="6 Days A Week">6 Days A Week</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {!(["5 Days A Week", "6 Days A Week", ""].includes(formik.values.duration)) && (
+                      <input
+                        name="duration"
+                        type="text"
+                        placeholder="Enter custom duration"
+                        className="mt-2 w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
+                        onChange={formik.handleChange}
+                        value={formik.values.duration === "Other" ? "" : formik.values.duration}
+                      />
+                    )}
                     {formik.touched.duration && formik.errors.duration && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.duration}
-                      </div>
+                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">{formik.errors.duration}</div>
                     )}
                   </div>
 
@@ -1148,25 +1155,6 @@ const PostJob = () => {
                         {formik.errors.shift}
                       </div>
                     )}
-                  </div>
-
-                  {/* Notice Period */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Notice Period
-                    </Label>
-                    <select
-                      name="noticePeriod"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.noticePeriod || ""}
-                    >
-                      <option value="">Select notice period</option>
-                      <option value="30 days">30 days</option>
-                      <option value="45 days">45 days</option>
-                      <option value="60 days">60 days</option>
-                      <option value="90 days">90 days</option>
-                    </select>
                   </div>
 
                   <div className="mb-6">

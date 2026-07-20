@@ -1,8 +1,8 @@
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useEffect, useState } from "react";
 
-// Real-time validation using libphonenumber-js — same library as backend
 const isValidForCountry = (phone, countryIso) => {
   if (!phone) return null;
   try {
@@ -14,11 +14,19 @@ const isValidForCountry = (phone, countryIso) => {
 };
 
 const CompanyPhoneInput = ({ value, onChange }) => {
-  // value is stored as E.164 e.g. "+919876543210", strip + for the library
   const rawValue = value?.replace("+", "") || "";
-
-  // Derive country ISO from current value for live validation indicator
   const isValid = rawValue.length > 4 ? isValidForCountry(rawValue, null) : null;
+
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains("dark"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const borderColor = isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : isDark ? "#4b5563" : "#d1d5db";
 
   return (
     <div className="w-full">
@@ -26,8 +34,6 @@ const CompanyPhoneInput = ({ value, onChange }) => {
         country={"in"}
         value={rawValue}
         onChange={(phone, country) => {
-          // phone from library may have formatting like "91 95038-13287"
-          // Strip ALL non-digits, then prefix with +
           const cleaned = phone.replace(/\D/g, "");
           const e164 = `+${cleaned}`;
           onChange(e164, "+" + country.dialCode, country.countryCode?.toUpperCase());
@@ -39,22 +45,26 @@ const CompanyPhoneInput = ({ value, onChange }) => {
           width: "100%",
           height: "42px",
           borderRadius: "8px",
-          border: `1px solid ${isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : "#d1d5db"}`,
+          border: `1px solid ${borderColor}`,
           fontSize: "14px",
           paddingLeft: "52px",
           transition: "border-color 0.2s",
+          backgroundColor: isDark ? "#1f2937" : "#ffffff",
+          color: isDark ? "#f3f4f6" : "#111827",
         }}
         buttonStyle={{
           borderTopLeftRadius: "8px",
           borderBottomLeftRadius: "8px",
-          border: `1px solid ${isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : "#d1d5db"}`,
-          backgroundColor: "#fff",
+          border: `1px solid ${borderColor}`,
+          backgroundColor: isDark ? "#374151" : "#ffffff",
         }}
-        dropdownStyle={{ maxHeight: "300px", width: "320px" }}
+        dropdownStyle={{
+          maxHeight: "300px",
+          width: "320px",
+          backgroundColor: isDark ? "#1f2937" : "#ffffff",
+          color: isDark ? "#f3f4f6" : "#111827",
+        }}
       />
-      {/* {isValid === true && (
-        <p className="mt-1 text-xs text-green-500">✔ Valid phone number</p>
-      )} */}
     </div>
   );
 };
