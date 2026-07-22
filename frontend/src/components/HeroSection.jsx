@@ -130,14 +130,14 @@ const HeroSection = () => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="py-3 text-center px-4 sm:px-6 lg:px-12">
-      <div className="flex flex-col gap-5 my-10">
+    <div className="py-1 text-center px-4 sm:px-6 lg:px-12">
+      <div className="flex flex-col gap-5 my-4">
 
         <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce">
           No. 1 Job Hunt Website
         </span>
 
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight">
           Search, Apply & <br />
           Get Your{" "}
           <span className="text-blue-700 dark:text-blue-500">Dream Jobs</span>
