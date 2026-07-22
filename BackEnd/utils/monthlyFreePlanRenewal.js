@@ -78,8 +78,16 @@ export const startMonthlyFreePlanRenewal = () => {
         }
       }
 
+      // ── TRIAL EXPIRY CLEANUP ──────────────────────────────────────────────
+      // Flags flip immediately in every gate via trialExpiresAt comparison
+      // (see utils/trial.js); this just tidies up the stored boolean.
+      const expiredTrialResult = await Company.updateMany(
+        { trialActive: true, trialExpiresAt: { $lte: now } },
+        { $set: { trialActive: false } }
+      );
+
       console.log(
-        `✅ Renewal complete — ${expiredFreeCompanies.length} FREE resets, ${paidPlanCompanies.length} paid renewals.`
+        `✅ Renewal complete — ${expiredFreeCompanies.length} FREE resets, ${paidPlanCompanies.length} paid renewals, ${expiredTrialResult.modifiedCount} trials expired.`
       );
     } catch (error) {
       console.error("❌ Error in monthly free plan renewal:", error);

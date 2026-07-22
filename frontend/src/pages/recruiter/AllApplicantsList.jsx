@@ -199,8 +199,13 @@ const AllApplicantsList = () => {
     }
   };
 
-  const isStarterPlan = !company?.hasSubscription && (company?.plan === "FREE" || !company?.plan);
-  const hasAIAccess = ["PREMIUM", "PRO", "ENTERPRISE"].includes(company?.plan);
+  const isTrialLive = !!(
+    company?.trialActive &&
+    company?.trialExpiresAt &&
+    new Date(company.trialExpiresAt) > new Date()
+  );
+  const isStarterPlan = !company?.hasSubscription && !isTrialLive && (company?.plan === "FREE" || !company?.plan);
+  const hasAIAccess = isTrialLive || ["PREMIUM", "PRO", "ENTERPRISE"].includes(company?.plan);
   const STARTER_LIMIT = 20;
 
   const [showAIModal, setShowAIModal] = useState(false);

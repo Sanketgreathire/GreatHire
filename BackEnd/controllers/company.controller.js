@@ -458,6 +458,54 @@ export const activateCompanySubscription = async (req, res) => {
   }
 };
 
+// Activate the 3-day free trial for a Starter (FREE) plan company.
+// Unlocks paid-tier limits (unlimited jobs, advanced/location filters, AI
+// auto-scoring, etc.) for 3 days — no card required. AI Sourcing is
+// intentionally excluded: it stays gated on `hasSubscription`, which this
+// never touches. One trial per company, ever.
+export const activateTrial = async (req, res) => {
+  try {
+    const userId = req.id;
+    const company = await Company.findOne({
+      userId: { $elemMatch: { user: userId } },
+    });
+
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found." });
+    }
+
+    if (company.hasSubscription) {
+      return res.status(400).json({
+        success: false,
+        message: "You already have a paid plan — the trial is only for Starter plan companies.",
+      });
+    }
+
+    if (company.hasUsedTrial) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already used your free trial.",
+      });
+    }
+
+    const now = new Date();
+    company.trialActive = true;
+    company.trialStartedAt = now;
+    company.trialExpiresAt = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    company.hasUsedTrial = true;
+    await company.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Your 3-day free trial is now active. Enjoy all premium features!",
+      company,
+    });
+  } catch (error) {
+    console.error("Error activating trial:", error);
+    return res.status(500).json({ success: false, message: "Failed to activate trial." });
+  }
+};
+
 // this controller return the company according to recruiter id mean which recruiter belong to which recruiter
 export const companyByUserId = async (req, res) => {
   const { userId } = req.body; // recrutier id

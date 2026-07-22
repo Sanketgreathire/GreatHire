@@ -113,9 +113,36 @@ const companySchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    hasSubscription: { 
-      type: Boolean, 
-      default: false 
+    hasSubscription: {
+      type: Boolean,
+      default: false
+    },
+    // Overrides the flat per-plan USER_LIMITS table (see recruiter.contoller.js)
+    // for ENTERPRISE companies — set per purchased duration (3/6/12 team users
+    // for the 3-month/6-month/1-year plans). null = fall back to the table.
+    teamUserLimit: {
+      type: Number,
+      default: null,
+    },
+    // ── 3-day free trial (Starter plan only) ────────────────────────────
+    // Unlocks paid-tier limits (jobs, filters, AI auto-scoring, etc.) for 3
+    // days, no card required. AI Sourcing stays gated on `hasSubscription`
+    // and is intentionally NEVER unlocked by the trial.
+    trialActive: {
+      type: Boolean,
+      default: false,
+    },
+    trialStartedAt: {
+      type: Date,
+      default: null,
+    },
+    trialExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    hasUsedTrial: {
+      type: Boolean,
+      default: false, // one trial per company, ever
     },
     userId: [
       {

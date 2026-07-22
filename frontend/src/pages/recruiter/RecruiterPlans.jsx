@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Check, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
+import { Check, X, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -66,6 +66,8 @@ const subscriptionPlans = [
       "Basic Search Filters",
       "1 User",
       "No AI Features",
+      "3-Day Free Trial of All Features — No Credit Card Required",
+      { text: "AI Advanced Sourcing (Paid)", excluded: true },
     ],
     cta: "Start Free",
     color: "gray",
@@ -165,19 +167,21 @@ const subscriptionPlans = [
   {
     id: "enterprise-3m",
     title: "Enterprise — 3 Months",
-    price: 7500,
+    price: 7499,
     billing: "3 months",
     durationMonths: 3,
     aiSourcingCredits: 750,
+    teamUserLimit: 3,
     jobs: "200",
     resumes: "7,500",
     enterprise: true,
     bestFor: "Best for: Short-term high-volume hiring",
     features: [
       "Unlimited Job Postings",
-      "750 AI Sourcing Credits",
+      "Unlimited AI Sourcing",
+      "750 Advance AI Sourcing Credits",
       "7,500 Candidate Database Access",
-      "12 Team Users Included",
+      "3 Team Users Included",
       "Dedicated Relationship Manager",
       "AI-Powered JD Creation & Smart Candidate Matching",
       "Advanced Analytics & Hiring Dashboard",
@@ -191,10 +195,11 @@ const subscriptionPlans = [
   {
     id: "enterprise-6m",
     title: "Enterprise — 6 Months",
-    price: 15000,
+    price: 13999,
     billing: "6 months",
     durationMonths: 6,
     aiSourcingCredits: 1500,
+    teamUserLimit: 6,
     jobs: "200",
     resumes: "15,000",
     enterprise: true,
@@ -202,9 +207,10 @@ const subscriptionPlans = [
     bestFor: "Best for: Growing hiring teams",
     features: [
       "Unlimited Job Postings",
-      "1,500 AI Sourcing Credits",
+      "Unlimited AI Sourcing",
+      "1,500 Advance AI Sourcing Credits",
       "15,000 Candidate Database Access",
-      "12 Team Users Included",
+      "6 Team Users Included",
       "Dedicated Relationship Manager",
       "AI-Powered JD Creation & Smart Candidate Matching",
       "Advanced Analytics & Hiring Dashboard",
@@ -218,17 +224,19 @@ const subscriptionPlans = [
   {
     id: "enterprise-1y",
     title: "Enterprise — 1 Year",
-    price: 30000,
+    price: 26999,
     billing: "year",
     durationMonths: 12,
     aiSourcingCredits: 3000,
+    teamUserLimit: 12,
     jobs: "200",
     resumes: "30,000",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
       "Unlimited Job Postings",
-      "3,000 AI Sourcing Credits",
+      "Unlimited AI Sourcing",
+      "3,000 Advance AI Sourcing Credits",
       "30,000 Candidate Database Access",
       "12 Team Users Included",
       "Dedicated Relationship Manager",
@@ -308,7 +316,7 @@ function RecruiterPlans() {
 
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
-        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0, durationMonths: plan.durationMonths ?? 1 },
+        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0, durationMonths: plan.durationMonths ?? 1, teamUserLimit: plan.teamUserLimit ?? null },
         { withCredentials: true }
       );
 
@@ -390,6 +398,7 @@ function RecruiterPlans() {
         creditsForCandidates: candidateMap[plan.id] ?? 30000,
         aiSourcingCredits: plan.aiSourcingCredits || 0,
         durationMonths: plan.durationMonths ?? 12,
+        teamUserLimit: plan.teamUserLimit ?? 12,
       });
       return;
     }
@@ -567,12 +576,22 @@ function RecruiterPlans() {
 
                       {/* Features */}
                       <ul className="space-y-2 text-sm flex-1 mb-4">
-                        {plan.features.map((f, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <Check size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">{f}</span>
-                          </li>
-                        ))}
+                        {plan.features.map((f, i) => {
+                          const isExcluded = typeof f === "object" && f.excluded;
+                          const label = typeof f === "object" ? f.text : f;
+                          return (
+                            <li key={i} className="flex items-start gap-2">
+                              {isExcluded ? (
+                                <X size={15} className="text-red-400 flex-shrink-0 mt-0.5" />
+                              ) : (
+                                <Check size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
+                              )}
+                              <span className={isExcluded ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-700 dark:text-gray-300"}>
+                                {label}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
 
                       {/* Extra info (RPO) */}

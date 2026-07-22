@@ -384,7 +384,13 @@ export const addRecruiterToCompany = async (req, res) => {
       return res.status(404).json({ success: false, message: "Company not found" });
     }
     const planType = company.plan || "FREE";
-    const userLimit = USER_LIMITS[planType] ?? 1;
+    // ENTERPRISE companies have a duration-specific cap (3/6/12 team users
+    // for the 3-month/6-month/1-year plans) purchased alongside the plan —
+    // see verification.controller.js. Other plans use the flat table.
+    const userLimit =
+      planType === "ENTERPRISE" && company.teamUserLimit
+        ? company.teamUserLimit
+        : USER_LIMITS[planType] ?? 1;
     const currentUserCount = company.userId.length;
     if (userLimit !== Infinity && currentUserCount >= userLimit) {
       return res.status(400).json({

@@ -14,6 +14,7 @@ import {
   reportJob,
   deleteJobReport,
   getCandidateInformation,
+  activateTrial,
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload, multiUpload } from "../middlewares/multer.js";
@@ -35,6 +36,7 @@ router.route("/register").post(
 router.route("/company-by-id").post(getCompanyById);
 router.route("/company-by-userid").post(isAuthenticated, companyByUserId);
 router.route("/change-admin").put(isAuthenticated, changeAdmin);
+router.route("/activate-trial").post(isAuthenticated, activateTrial);
 
 // Define the route to get candidates
 router.get("/candidate-information/:id", getCandidateInformation);
