@@ -175,10 +175,10 @@ export const registerCompany = async (req, res) => {
       }
     }
 
-    if (!companyWebsite || !/^https?:\/\/.+\..+/.test(companyWebsite)) {
+    if (companyWebsite && !/^https?:\/\/.+\..+/.test(companyWebsite)) {
       return res.status(400).json({
         success: false,
-        message: "Valid company website URL is required.",
+        message: "Please enter a valid website URL (e.g. https://example.com).",
       });
     }
 
@@ -264,13 +264,15 @@ export const registerCompany = async (req, res) => {
       });
     }
 
-    // Check if company website already exists
-    const existingWebsite = await Company.findOne({ companyWebsite });
-    if (existingWebsite) {
-      return res.status(400).json({
-        message: "Company website is already registered.",
-        success: false,
-      });
+    // Check if company website already exists (only if provided)
+    if (companyWebsite) {
+      const existingWebsite = await Company.findOne({ companyWebsite });
+      if (existingWebsite) {
+        return res.status(400).json({
+          message: "Company website is already registered.",
+          success: false,
+        });
+      }
     }
 
     // Check if industry already exists
