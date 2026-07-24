@@ -1,7 +1,10 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import compression from "vite-plugin-compression";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   assetsInclude: ["**/*.lottie"],
@@ -13,7 +16,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "Campus": path.resolve(__dirname, "./Campus"),
+      "Campus": path.resolve(__dirname, "./src/components/Campus"),
       "lodash": "lodash-es",
     },
   },

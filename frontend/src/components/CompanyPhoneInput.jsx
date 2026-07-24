@@ -1,65 +1,31 @@
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-
-// Real-time validation using libphonenumber-js — same library as backend
-const isValidForCountry = (phone, countryIso) => {
-  if (!phone) return null;
-  try {
-    const parsed = parsePhoneNumberFromString("+" + phone, countryIso?.toUpperCase());
-    return parsed?.isValid() ?? false;
-  } catch {
-    return false;
-  }
-};
 
 const CompanyPhoneInput = ({ value, onChange }) => {
-  // value is stored as E.164 e.g. "+919876543210", strip + for the library
-  const rawValue = value?.replace("+", "") || "";
-
-  // Derive country ISO from current value for live validation indicator
-  const isValid = rawValue.length > 4 ? isValidForCountry(rawValue, null) : null;
+  const rawValue = value || "+91";
 
   return (
-    <div className="w-full">
+    <div className="w-full gh-phone gh-phone-field">
       <PhoneInput
         defaultCountry="in"
-        value={value}
+        value={rawValue}
         forceDialCode
-        showDisabledDialCodeAndPrefix={false}
-        className="gh-phone"
-        onChange={(phone, country) => {
-          // phone from library may have formatting like "91 95038-13287"
-          // Strip ALL non-digits, then prefix with +
-          const cleaned = phone.replace(/\D/g, "");
-          const e164 = `+${cleaned}`;
-          onChange(e164, "+" + country.dialCode, country.countryCode?.toUpperCase());
-        }}
-        enableSearch={true}
+        disableDialCodeAndPrefix={false}
         countryCodeEditable={false}
+        className="w-full"
+        inputClassName="gh-phone-input"
         placeholder="Enter phone number"
-        inputStyle={{
-          width: "100%",
-          height: "42px",
-          borderRadius: "8px",
-          border: `1px solid ${isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : "#d1d5db"}`,
-          fontSize: "14px",
-          paddingLeft: "52px",
-          transition: "border-color 0.2s",
+        countrySelectorStyleProps={{
+          dropdownStyle: {
+            maxHeight: "180px",
+            width: "100%",
+          },
         }}
-        buttonStyle={{
-          borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px",
-          border: `1px solid ${isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : "#d1d5db"}`,
-          backgroundColor: "#fff",
+        onChange={(phone, meta) => {
+          const dialCode = `+${meta.country.dialCode}`;
+          onChange(phone || "+91", dialCode, meta.country.iso2?.toUpperCase());
         }}
-        dropdownStyle={{ maxHeight: "300px", width: "320px" }}
       />
-      {/* {isValid === true && (
-        <p className="mt-1 text-xs text-green-500">✔ Valid phone number</p>
-      )} */}
     </div>
   );
 };

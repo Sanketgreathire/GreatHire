@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import 'dotenv/config';
-import { SourcingCandidate } from './models/sourcing/SourcingCandidate.model.js';
+import { SourcingCandidate } from './models/sourcing/sourcingCandidate.model.js';
 
 const checkData = async () => {
   try {

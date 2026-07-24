@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import 'dotenv/config';
 import { User } from './models/user.model.js';
-import { SourcingCandidate } from './models/sourcing/SourcingCandidate.model.js';
+import { SourcingCandidate } from './models/sourcing/sourcingCandidate.model.js';
 
 const cleanupAISourcingData = async () => {
   try {

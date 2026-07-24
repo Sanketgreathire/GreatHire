@@ -430,7 +430,7 @@ const ContactSection = () => {
                       </div>
                     </div>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form className="space-y-7" onSubmit={handleSubmit}>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="relative group">
                           <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
@@ -440,7 +440,7 @@ const ContactSection = () => {
                           <input
                             type="text"
                             name="fullname"
-                            className="w-full px-5 py-4 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="gh-contact-input w-full px-5 py-5 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl outline-none transition-all duration-200 group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             placeholder="John Doe"
                             value={formData.fullname}
                             onChange={handleChange}
@@ -462,7 +462,7 @@ const ContactSection = () => {
                           <input
                             type="email"
                             name="email"
-                            className="w-full px-5 py-4 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                            className="gh-contact-input w-full px-5 py-5 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl outline-none transition-all duration-200 group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
                             placeholder="john@example.com"
                             value={formData.email}
                             onChange={handleChange}
@@ -477,7 +477,7 @@ const ContactSection = () => {
                         </div>
                       </div>
 
-                      <div className="relative group">
+                      <div className="relative group mb-16 sm:mb-20 contact-phone-wrap">
                         <label className="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                           Phone Number
                           <span className="text-red-500">*</span>
@@ -516,7 +516,7 @@ const ContactSection = () => {
                         <textarea
                           rows="6"
                           name="message"
-                          className="w-full px-5 py-4 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all resize-none group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                          className="gh-contact-input w-full px-5 py-5 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl outline-none transition-all duration-200 resize-none group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
                           placeholder="Tell us about your requirements, questions, or how we can help you..."
                           value={formData.message}
                           onChange={handleChange}

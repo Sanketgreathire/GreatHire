@@ -1,6 +1,6 @@
 import axios from 'axios';
 import crypto from 'crypto';
-import { SourcingCandidate } from '../../models/sourcing/SourcingCandidate.model.js';
+import { SourcingCandidate } from '../../models/sourcing/sourcingCandidate.model.js';
 import { AISourcedCandidate } from '../../models/sourcing/aiSourcedCandidate.model.js';
 
 const RK_BASE = 'https://api.recruitkar.com/v1';
