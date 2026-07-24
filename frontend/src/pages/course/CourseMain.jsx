@@ -3,6 +3,55 @@ import Navbar from "@/components/shared/Navbar";
 import { useState, useMemo, lazy, Suspense, memo, useCallback } from "react";
 import { Link } from "react-router-dom";
 
+const COURSE_PLACEHOLDER_IMAGE = "https://placehold.co/400x200?text=Course";
+
+const COURSE_IMAGE_MAP = {
+  "full stack java developer": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop",
+  "full stack python developer": "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&h=450&fit=crop",
+  "data science": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
+  "aws & devops": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=450&fit=crop",
+  "digital marketing": "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=800&h=450&fit=crop",
+  "data analytics": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
+  saleforce: "https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=800&h=450&fit=crop",
+  "sap fico": "https://images.unsplash.com/photo-1556155092-490a1ba16284?w=800&h=450&fit=crop",
+  bim: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=450&fit=crop",
+  "medical coding": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&h=450&fit=crop",
+  "testing tools": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&h=450&fit=crop",
+  vlsi: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=450&fit=crop",
+  multimedia: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=450&fit=crop",
+  "advance excel": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=450&fit=crop",
+  autocad: "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=450&fit=crop",
+  "revit mep": "https://images.unsplash.com/photo-1496307653780-42ee777d4833?w=800&h=450&fit=crop",
+  "business analytics": "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=800&h=450&fit=crop",
+  "generative ai": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&h=450&fit=crop",
+  ai: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&h=450&fit=crop",
+  "sap mm": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop",
+  "cyber security": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=450&fit=crop",
+  pmp: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=450&fit=crop",
+  javascript: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop",
+  react: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=450&fit=crop",
+  "node.js": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop",
+  html: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=450&fit=crop",
+  css: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&h=450&fit=crop",
+  mongodb: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=800&h=450&fit=crop",
+  sql: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&h=450&fit=crop",
+  mysql: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&h=450&fit=crop",
+  "spring boot": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&h=450&fit=crop",
+  java: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&h=450&fit=crop",
+  python: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&h=450&fit=crop",
+  cloud: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=450&fit=crop",
+};
+
+function normalizeCourseKey(value = "") {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function getCourseImage(course) {
+  const titleKey = normalizeCourseKey(course.title);
+  const categoryKey = normalizeCourseKey(course.category);
+  return COURSE_IMAGE_MAP[titleKey] || COURSE_IMAGE_MAP[categoryKey] || COURSE_IMAGE_MAP.ai || COURSE_PLACEHOLDER_IMAGE;
+}
+
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const COURSES = [
@@ -77,7 +126,7 @@ const COURSES = [
   {
     id: 5,
     icon: "📱",
-    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop",
     category: "Digital Marketing",
     title: "Digital Marketing",
     desc: "Become a digital marketer with advanced SEO techniques, high-impact Google Ads strategies, dynamic social media management, data-driven content strategy, and in-depth marketing analytics.",
@@ -94,7 +143,8 @@ const COURSES = [
   {
     id: 6,
     icon: "🧪",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=200&fit=crop",
+    //image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
     category: "Testing",
     title: "Data Analytics",
     desc: "Learn Python, SQL, Power BI, and Machine Learning for data-driven decision-making. Master data visualization, predictive analytics, and real-world projects to boost your Data Analytics career.",
@@ -420,7 +470,7 @@ const COURSES = [
   {
     id: 25,
     icon: "📱",
-    image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=400&h=200&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop",
     category: "Digital Marketing",
     title: "Digital Marketing",
     desc: "Become a digital marketer with advanced SEO techniques, high-impact Google Ads strategies, dynamic social media management, data-driven content strategy, and in-depth marketing analytics.",
@@ -585,15 +635,20 @@ function StarRating({ count }) {
 }
 
 const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
+  const imageSrc = getCourseImage(course);
+
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
       {/* Image Section */}
       <div className="relative h-44 mb-8 overflow-visible">
         <img
-          src={course.image}
-          alt=""
+          src={imageSrc}
+          alt={course.title}
           loading={priority ? "eager" : "lazy"}
           fetchpriority={priority ? "high" : "low"}
+          onError={(e) => {
+            e.currentTarget.src = COURSE_PLACEHOLDER_IMAGE;
+          }}
           width={400}
           height={176}
           className="w-full h-full object-cover"

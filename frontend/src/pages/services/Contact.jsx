@@ -20,6 +20,8 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import CompanyPhoneInput from "@/components/CompanyPhoneInput";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
@@ -28,11 +30,15 @@ const ContactSection = () => {
   const [loading, setLoading] = useState(false);
   const maxChars = 500;
 
+  const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     phoneNumber: "",
     message: "",
+    dialCode: "+91",
+    countryIso: "IN",
   });
 
   const handleChange = useCallback((e) => {
@@ -44,14 +50,86 @@ const ContactSection = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }, [maxChars]);
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Full Name
+    if (!formData.fullname.trim()) {
+      newErrors.fullname = "Full name is required";
+    } else if (!/^[A-Za-z ]{3,50}$/.test(formData.fullname.trim())) {
+      newErrors.fullname =
+        "Name should contain only letters and spaces (3-50 characters)";
+    }
+
+    // Email
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
+    ) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    // Phone
+    // Phone
+      if (!formData.phoneNumber) {
+        newErrors.phoneNumber = "Phone number is required";
+      } else {
+        try {
+          const phone = formData.phoneNumber.replace(/[\s-]/g, "");
+
+          console.log("Phone Value:", phone);
+
+          const parsed = parsePhoneNumberFromString(phone);
+
+          console.log("Parsed Phone:", parsed);
+          console.log("Is Valid:", parsed?.isValid());
+
+          if (!parsed || !parsed.isValid()) {
+            newErrors.phoneNumber = "Enter a valid phone number";
+          }
+        } catch (error) {
+          console.log("Phone Error:", error);
+          newErrors.phoneNumber = "Enter a valid phone number";
+        }
+      }
+
+    // Message
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message should contain at least 10 characters";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields.");
+      return;
+    }
+
     setLoading(true);
     try {
       const { data } = await axios.post("/api/sendMessage", { ...formData });
       if (data.success) {
         toast.success(data.message);
-        setFormData({ fullname: "", email: "", phoneNumber: "", message: "" });
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          message: "",
+          dialCode: "+91",
+          countryIso: "IN",
+        });
+
+        setErrors({});
       } else {
         toast.error(data.message);
       }
@@ -366,8 +444,14 @@ const ContactSection = () => {
                             placeholder="John Doe"
                             value={formData.fullname}
                             onChange={handleChange}
+                            onBlur={validateForm}
                             required
                           />
+                          {errors.fullname && (
+                            <p className="mt-2 text-sm text-red-500">
+                              {errors.fullname}
+                            </p>
+                          )}
                         </div>
 
                         <div className="relative group">
@@ -382,8 +466,14 @@ const ContactSection = () => {
                             placeholder="john@example.com"
                             value={formData.email}
                             onChange={handleChange}
+                            onBlur={validateForm}
                             required
                           />
+                          {errors.email && (
+                            <p className="mt-2 text-sm text-red-500">
+                              {errors.email}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -392,15 +482,30 @@ const ContactSection = () => {
                           Phone Number
                           <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="tel"
-                          name="phoneNumber"
-                          className="w-full px-5 py-4 border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl focus:border-purple-500 dark:focus:border-purple-400 focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all group-hover:border-slate-300 dark:group-hover:border-slate-500 text-base placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                          placeholder="+91 XXXXX XXXXX"
+                       <CompanyPhoneInput
                           value={formData.phoneNumber}
-                          onChange={handleChange}
-                          required
+                          onChange={(e164, dialCode, countryIso) => {
+                            console.log("Phone:", e164);
+
+                            setFormData((prev) => ({
+                              ...prev,
+                              phoneNumber: e164,
+                              dialCode,
+                              countryIso,
+                            }));
+
+                            setErrors((prev) => ({
+                              ...prev,
+                              phoneNumber: "",
+                            }));
+                          }}
                         />
+
+                        {errors.phoneNumber && (
+                          <p className="mt-2 text-sm text-red-500">
+                            {errors.phoneNumber}
+                          </p>
+                        )}
                       </div>
 
                       <div className="relative group">
@@ -415,8 +520,14 @@ const ContactSection = () => {
                           placeholder="Tell us about your requirements, questions, or how we can help you..."
                           value={formData.message}
                           onChange={handleChange}
+                          onBlur={validateForm}
                           required
                         ></textarea>
+                        {errors.message && (
+                          <p className="mt-2 text-sm text-red-500">
+                            {errors.message}
+                          </p>
+                        )}
                         <div className="flex justify-between items-center mt-3">
                           <span className="text-sm text-slate-500 dark:text-slate-400">
                             Maximum {maxChars} characters
