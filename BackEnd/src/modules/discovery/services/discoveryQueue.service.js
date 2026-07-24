@@ -128,17 +128,10 @@ export async function resumeDiscoveryQueue() {
   await queue.resume();
 }
 
-export async function startDiscoveryWorker() {
+export function startDiscoveryWorker() {
   if (discoveryWorker) {
     console.log('Discovery worker already running');
     return discoveryWorker;
-  }
-
-  // Check Redis availability
-  const { isRedisAvailable } = await import('../../../config/redis.js');
-  if (!(await isRedisAvailable())) {
-    console.warn('⚠️  Discovery worker: Redis unavailable or version too old, skipping startup');
-    return null;
   }
 
   discoveryWorker = new Worker(

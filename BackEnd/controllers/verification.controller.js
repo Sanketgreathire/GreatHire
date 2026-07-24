@@ -380,6 +380,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       creditsForJobs,
       creditsForCandidates,
       companyId,
+      aiSourcingCredits = 0,
     } = req.body;
 
     // Allow unverified recruiters to complete payment verification
@@ -404,7 +405,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           status: "Active", // Activate the plan after paymentStatus is paid
         },
         { new: true } // Return the updated document
-      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates");
+      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits teamUserLimit");
 
       // Expire the previous active plan (if any) before activating the new one
       await JobSubscription.updateOne(
@@ -455,6 +456,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
       company.maxJobPosts = null;
       company.customMaxJobPosts = 0; // reset after carrying forward into planJobsPostedThisMonth offset
       company.hasSubscription = true;
@@ -469,25 +471,25 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       await company.save();
 
       // Determine plan type based on job count
-      let planType = "STANDARD";
-      if (creditsForJobs >= 999999) {
-        planType = "ENTERPRISE";
-      } else if (creditsForJobs >= 25) {
-        planType = "PRO";
-      } else if (creditsForJobs >= 10) {
-        planType = "PREMIUM";
-      } else if (creditsForJobs >= 5) {
-        planType = "STANDARD";
+      let planType = "ENTERPRISE"; // all paid plans are now ENTERPRISE
+      if (creditsForJobs < 999999) {
+        if (creditsForJobs >= 25) planType = "PRO";
+        else if (creditsForJobs >= 10) planType = "PREMIUM";
+        else planType = "STANDARD";
       }
 
       company.creditedForJobs = creditsForJobs;
       company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
+      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
       company.maxJobPosts = "9999999";
       company.hasSubscription = true;
       company.freePlanExpiry = null;
       company.planJobsPostedThisMonth = -carryoverJobs;
       company.plan = planType;
       company.planMonthStart = new Date();
+      // Team-user cap purchased with this Enterprise plan (3/6/12 for 3mo/6mo/1yr);
+      // non-Enterprise plans fall back to the flat USER_LIMITS table.
+      company.teamUserLimit = planType === "ENTERPRISE" ? (currentPlan?.teamUserLimit ?? null) : null;
 
       await company.save();
 

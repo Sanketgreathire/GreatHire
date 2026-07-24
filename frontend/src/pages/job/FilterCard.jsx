@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdClose } from "react-icons/io";
-import { FiFilter } from "react-icons/fi";
+import { FiFilter, FiMapPin } from "react-icons/fi";
 
 // imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
@@ -54,6 +54,7 @@ const filterOptions = {
     "Nampally, Hyderabad", "Saidabad, Hyderabad", "Secunderabad, Hyderabad",
     "Shaikpet, Hyderabad", "Tirumalgiri, Hyderabad", "Tirumalagiry, Hyderabad", "Remote",
   ],
+
   jobType: ["Full-time", "Part-time", "Contract", "Temporary", "Volunteer", "Internship"],
   workPlace: ["On-Site", "Remote", "Hybrid"],
 
@@ -119,7 +120,161 @@ const filterOptions = {
   datePosted: ["Last 24 hours", "Last 7 days", "Last 15 days", "Past Month"],
 };
 
+// Maps a location to its "nearby" locations, driving the 99acres-style
+// suggestion checkboxes that appear once a location is picked.
+const nearbyLocationsMap = {
+  // Hyderabad city areas — all nearby to each other
+  "Amberpet, Hyderabad": ["Ameerpet, Hyderabad", "Himayathnagar, Hyderabad", "Musheerabad, Hyderabad", "Secunderabad, Hyderabad"],
+  "Ameerpet, Hyderabad": ["Amberpet, Hyderabad", "Khairthabad, Hyderabad", "Nampally, Hyderabad", "Punjagutta, Hyderabad"],
+  "Asifnagar, Hyderabad": ["Bahadurpura, Hyderabad", "Charminar, Hyderabad", "Nampally, Hyderabad"],
+  "Bahadurpura, Hyderabad": ["Asifnagar, Hyderabad", "Charminar, Hyderabad", "Shaikpet, Hyderabad"],
+  "Bandlaguda, Hyderabad": ["Charminar, Hyderabad", "Saidabad, Hyderabad", "Shaikpet, Hyderabad"],
+  "Charminar, Hyderabad": ["Asifnagar, Hyderabad", "Bahadurpura, Hyderabad", "Bandlaguda, Hyderabad"],
+  "Golconda, Hyderabad": ["Shaikpet, Hyderabad", "Asifnagar, Hyderabad", "Bahadurpura, Hyderabad"],
+  "Himayathnagar, Hyderabad": ["Amberpet, Hyderabad", "Nampally, Hyderabad", "Khairthabad, Hyderabad"],
+  "Khairthabad, Hyderabad": ["Ameerpet, Hyderabad", "Himayathnagar, Hyderabad", "Nampally, Hyderabad"],
+  "Marredpally, Hyderabad": ["Secunderabad, Hyderabad", "Tirumalgiri, Hyderabad", "Tirumalagiry, Hyderabad"],
+  "Musheerabad, Hyderabad": ["Amberpet, Hyderabad", "Secunderabad, Hyderabad", "Nampally, Hyderabad"],
+  "Nampally, Hyderabad": ["Ameerpet, Hyderabad", "Himayathnagar, Hyderabad", "Khairthabad, Hyderabad"],
+  "Saidabad, Hyderabad": ["Bandlaguda, Hyderabad", "Charminar, Hyderabad"],
+  "Secunderabad, Hyderabad": ["Marredpally, Hyderabad", "Musheerabad, Hyderabad", "Tirumalgiri, Hyderabad"],
+  "Shaikpet, Hyderabad": ["Golconda, Hyderabad", "Bahadurpura, Hyderabad", "Bandlaguda, Hyderabad"],
+  "Tirumalgiri, Hyderabad": ["Secunderabad, Hyderabad", "Marredpally, Hyderabad", "Tirumalagiry, Hyderabad"],
+  "Tirumalagiry, Hyderabad": ["Tirumalgiri, Hyderabad", "Secunderabad, Hyderabad", "Marredpally, Hyderabad"],
+
+  // Same-state clusters (city-level)
+  "Visakhapatnam, Andhra Pradesh": ["Vijayawada, Andhra Pradesh", "Guntur, Andhra Pradesh"],
+  "Vijayawada, Andhra Pradesh": ["Visakhapatnam, Andhra Pradesh", "Guntur, Andhra Pradesh"],
+  "Guntur, Andhra Pradesh": ["Vijayawada, Andhra Pradesh", "Visakhapatnam, Andhra Pradesh"],
+
+  "Itanagar, Arunachal Pradesh": ["Tawang, Arunachal Pradesh", "Pasighat, Arunachal Pradesh"],
+  "Tawang, Arunachal Pradesh": ["Itanagar, Arunachal Pradesh", "Pasighat, Arunachal Pradesh"],
+  "Pasighat, Arunachal Pradesh": ["Itanagar, Arunachal Pradesh", "Tawang, Arunachal Pradesh"],
+
+  "Guwahati, Assam": ["Silchar, Assam", "Dibrugarh, Assam"],
+  "Silchar, Assam": ["Guwahati, Assam", "Dibrugarh, Assam"],
+  "Dibrugarh, Assam": ["Guwahati, Assam", "Silchar, Assam"],
+
+  "Patna, Bihar": ["Gaya, Bihar", "Bhagalpur, Bihar"],
+  "Gaya, Bihar": ["Patna, Bihar", "Bhagalpur, Bihar"],
+  "Bhagalpur, Bihar": ["Patna, Bihar", "Gaya, Bihar"],
+
+  "Raipur, Chhattisgarh": ["Bhilai, Chhattisgarh", "Bilaspur, Chhattisgarh"],
+  "Bhilai, Chhattisgarh": ["Raipur, Chhattisgarh", "Bilaspur, Chhattisgarh"],
+  "Bilaspur, Chhattisgarh": ["Raipur, Chhattisgarh", "Bhilai, Chhattisgarh"],
+
+  "Panaji, Goa": ["Margao, Goa", "Vasco da Gama, Goa"],
+  "Margao, Goa": ["Panaji, Goa", "Vasco da Gama, Goa"],
+  "Vasco da Gama, Goa": ["Panaji, Goa", "Margao, Goa"],
+
+  "Ambala, Haryana": ["Faridabad, Haryana", "Gurugram, Haryana"],
+  "Faridabad, Haryana": ["Ambala, Haryana", "Gurugram, Haryana"],
+  "Gurugram, Haryana": ["Faridabad, Haryana", "Ambala, Haryana"],
+
+  "Shimla, Himachal Pradesh": ["Dharamshala, Himachal Pradesh", "Mandi, Himachal Pradesh"],
+  "Dharamshala, Himachal Pradesh": ["Shimla, Himachal Pradesh", "Mandi, Himachal Pradesh"],
+  "Mandi, Himachal Pradesh": ["Shimla, Himachal Pradesh", "Dharamshala, Himachal Pradesh"],
+
+  "Ranchi, Jharkhand": ["Jamshedpur, Jharkhand", "Dhanbad, Jharkhand"],
+  "Jamshedpur, Jharkhand": ["Ranchi, Jharkhand", "Dhanbad, Jharkhand"],
+  "Dhanbad, Jharkhand": ["Ranchi, Jharkhand", "Jamshedpur, Jharkhand"],
+
+  "Bengaluru, Karnataka": ["Mysuru, Karnataka", "Mangalore, Karnataka"],
+  "Mysuru, Karnataka": ["Bengaluru, Karnataka", "Mangalore, Karnataka"],
+  "Mangalore, Karnataka": ["Bengaluru, Karnataka", "Mysuru, Karnataka"],
+
+  "Thiruvananthapuram, Kerala": ["Kochi, Kerala", "Kozhikode, Kerala"],
+  "Kochi, Kerala": ["Thiruvananthapuram, Kerala", "Kozhikode, Kerala"],
+  "Kozhikode, Kerala": ["Thiruvananthapuram, Kerala", "Kochi, Kerala"],
+
+  "Indore, Madhya Pradesh": ["Bhopal, Madhya Pradesh", "Gwalior, Madhya Pradesh"],
+  "Bhopal, Madhya Pradesh": ["Indore, Madhya Pradesh", "Gwalior, Madhya Pradesh"],
+  "Gwalior, Madhya Pradesh": ["Indore, Madhya Pradesh", "Bhopal, Madhya Pradesh"],
+
+  "Mumbai, Maharashtra": ["Pune, Maharashtra", "Nagpur, Maharashtra", "Nashik, Maharashtra"],
+  "Pune, Maharashtra": ["Mumbai, Maharashtra", "Nashik, Maharashtra", "Nagpur, Maharashtra"],
+  "Nagpur, Maharashtra": ["Mumbai, Maharashtra", "Pune, Maharashtra"],
+  "Nashik, Maharashtra": ["Mumbai, Maharashtra", "Pune, Maharashtra"],
+
+  "Imphal, Manipur": ["Thoubal, Manipur", "Kakching, Manipur"],
+  "Thoubal, Manipur": ["Imphal, Manipur", "Kakching, Manipur"],
+  "Kakching, Manipur": ["Imphal, Manipur", "Thoubal, Manipur"],
+
+  "Shillong, Meghalaya": ["Tura, Meghalaya", "Nongpoh, Meghalaya"],
+  "Tura, Meghalaya": ["Shillong, Meghalaya", "Nongpoh, Meghalaya"],
+  "Nongpoh, Meghalaya": ["Shillong, Meghalaya", "Tura, Meghalaya"],
+
+  "Aizawl, Mizoram": ["Lunglei, Mizoram", "Champhai, Mizoram"],
+  "Lunglei, Mizoram": ["Aizawl, Mizoram", "Champhai, Mizoram"],
+  "Champhai, Mizoram": ["Aizawl, Mizoram", "Lunglei, Mizoram"],
+
+  "Kohima, Nagaland": ["Dimapur, Nagaland", "Mokokchung, Nagaland"],
+  "Dimapur, Nagaland": ["Kohima, Nagaland", "Mokokchung, Nagaland"],
+  "Mokokchung, Nagaland": ["Kohima, Nagaland", "Dimapur, Nagaland"],
+
+  "Bhubaneswar, Odisha": ["Cuttack, Odisha", "Rourkela, Odisha"],
+  "Cuttack, Odisha": ["Bhubaneswar, Odisha", "Rourkela, Odisha"],
+  "Rourkela, Odisha": ["Bhubaneswar, Odisha", "Cuttack, Odisha"],
+
+  "Chandigarh, Punjab": ["Ludhiana, Punjab", "Amritsar, Punjab", "Chandigarh"],
+  "Ludhiana, Punjab": ["Chandigarh, Punjab", "Amritsar, Punjab"],
+  "Amritsar, Punjab": ["Chandigarh, Punjab", "Ludhiana, Punjab"],
+  "Chandigarh": ["Chandigarh, Punjab", "Ambala, Haryana"],
+
+  "Jaipur, Rajasthan": ["Udaipur, Rajasthan", "Jodhpur, Rajasthan"],
+  "Udaipur, Rajasthan": ["Jaipur, Rajasthan", "Jodhpur, Rajasthan"],
+  "Jodhpur, Rajasthan": ["Jaipur, Rajasthan", "Udaipur, Rajasthan"],
+
+  "Gangtok, Sikkim": ["Namchi, Sikkim", "Pelling, Sikkim"],
+  "Namchi, Sikkim": ["Gangtok, Sikkim", "Pelling, Sikkim"],
+  "Pelling, Sikkim": ["Gangtok, Sikkim", "Namchi, Sikkim"],
+
+  "Chennai, Tamil Nadu": ["Coimbatore, Tamil Nadu", "Madurai, Tamil Nadu"],
+  "Coimbatore, Tamil Nadu": ["Chennai, Tamil Nadu", "Madurai, Tamil Nadu"],
+  "Madurai, Tamil Nadu": ["Chennai, Tamil Nadu", "Coimbatore, Tamil Nadu"],
+
+  "Hyderabad, Telangana": ["Warangal, Telangana", "Nizamabad, Telangana", "Secunderabad, Hyderabad", "Ameerpet, Hyderabad"],
+  "Warangal, Telangana": ["Hyderabad, Telangana", "Nizamabad, Telangana"],
+  "Nizamabad, Telangana": ["Hyderabad, Telangana", "Warangal, Telangana"],
+
+  "Agartala, Tripura": ["Udaipur, Tripura", "Dharmanagar, Tripura"],
+  "Udaipur, Tripura": ["Agartala, Tripura", "Dharmanagar, Tripura"],
+  "Dharmanagar, Tripura": ["Agartala, Tripura", "Udaipur, Tripura"],
+
+  "Lucknow, Uttar Pradesh": ["Kanpur, Uttar Pradesh", "Varanasi, Uttar Pradesh", "Noida, Uttar Pradesh"],
+  "Kanpur, Uttar Pradesh": ["Lucknow, Uttar Pradesh", "Varanasi, Uttar Pradesh"],
+  "Varanasi, Uttar Pradesh": ["Lucknow, Uttar Pradesh", "Kanpur, Uttar Pradesh"],
+  "Noida, Uttar Pradesh": ["New Delhi, Delhi", "Gurugram, Haryana", "Lucknow, Uttar Pradesh"],
+
+  "Dehradun, Uttarakhand": ["Haridwar, Uttarakhand", "Nainital, Uttarakhand"],
+  "Haridwar, Uttarakhand": ["Dehradun, Uttarakhand", "Nainital, Uttarakhand"],
+  "Nainital, Uttarakhand": ["Dehradun, Uttarakhand", "Haridwar, Uttarakhand"],
+
+  "Kolkata, West Bengal": ["Siliguri, West Bengal", "Durgapur, West Bengal"],
+  "Siliguri, West Bengal": ["Kolkata, West Bengal", "Durgapur, West Bengal"],
+  "Durgapur, West Bengal": ["Kolkata, West Bengal", "Siliguri, West Bengal"],
+
+  "New Delhi, Delhi": ["Gurugram, Haryana", "Noida, Uttar Pradesh"],
+};
+
 const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
+
+  const [locationSearch, setLocationSearch] = React.useState("");
+  const [activeSearchLocation, setActiveSearchLocation] = React.useState(""); // which location's "nearby" list is showing
+
+  const handleLocationToggle = (loc) => {
+    const current = Array.isArray(filters.location) ? filters.location : [];
+    const updated = current.includes(loc)
+      ? current.filter((l) => l !== loc)
+      : [...current, loc];
+    onFilterChange?.({ ...filters, location: updated });
+  };
+
+  const handlePickSearchResult = (loc) => {
+    handleLocationToggle(loc);
+    setActiveSearchLocation(loc);
+    setLocationSearch("");
+  };
 
   const handleCheckboxChange = (category, value) => {
     const current = Array.isArray(filters[category]) ? filters[category] : [];
@@ -136,12 +291,14 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
   const handleReset = () => {
     const resetFilters = {
       jobTitle: "",
-      location: "",
+      location: [],
       jobType: [],
       workPlace: [],
       company: "",
       datePosted: [],
     };
+    setLocationSearch("");
+    setActiveSearchLocation("");
     onFilterChange?.(resetFilters);
     onReset?.();
   };
@@ -184,8 +341,8 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-0 pb-20 sm:pb-4 pt-6 space-y-6">
-          {/* Dropdown Filters */}
-          {["jobTitle", "location"].map((category) => (
+          {/* Job Title dropdown (location removed from this generic loop) */}
+          {["jobTitle"].map((category) => (
             <div key={category} className="mb-6">
               <label
                 htmlFor={category}
@@ -209,6 +366,91 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
               </select>
             </div>
           ))}
+
+          {/* Location — search bar, picks a location, reveals nearby as checkboxes */}
+          <div className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6">
+            <label className="block text-gray-700 dark:text-gray-200 text-sm sm:text-base font-semibold tracking-wide mb-2">
+              Location
+            </label>
+
+            <input
+              type="text"
+              placeholder="Search a location (e.g. Hyderabad)"
+              value={locationSearch}
+              onChange={(e) => setLocationSearch(e.target.value)}
+              className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
+            />
+
+            {/* Search suggestions dropdown */}
+            {locationSearch.trim() && (
+              <div className="mt-1 max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm">
+                {filterOptions.location
+                  .filter((loc) => loc.toLowerCase().includes(locationSearch.trim().toLowerCase()))
+                  .slice(0, 15)
+                  .map((loc) => (
+                    <div
+                      key={loc}
+                      onClick={() => handlePickSearchResult(loc)}
+                      className="px-3 py-2 text-sm cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200"
+                    >
+                      {loc}
+                    </div>
+                  ))}
+                {filterOptions.location.filter((loc) =>
+                  loc.toLowerCase().includes(locationSearch.trim().toLowerCase())
+                ).length === 0 && (
+                  <div className="px-3 py-2 text-sm text-gray-400">No matches found</div>
+                )}
+              </div>
+            )}
+
+            {/* Selected locations as removable chips */}
+            {Array.isArray(filters.location) && filters.location.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {filters.location.map((loc) => (
+                  <span
+                    key={loc}
+                    className="flex items-start gap-1.5 max-w-full bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium pl-3 pr-2 py-1.5 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-300 transition-all"
+                  >
+                    <FiMapPin size={12} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                    <span className="break-words">{loc}</span>
+                    <button
+                      onClick={() => handleLocationToggle(loc)}
+                      className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 text-blue-500 hover:text-blue-700 transition-colors flex-shrink-0 mt-0.5"
+                    >
+                      <IoMdClose size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            {/* Nearby locations as checkboxes, shown after a pick */}
+            {activeSearchLocation && nearbyLocationsMap[activeSearchLocation] && (
+              <div className="mt-4">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                  People also search nearby:
+                </p>
+                <div className="space-y-2">
+                  {nearbyLocationsMap[activeSearchLocation].map((nearLoc) => {
+                    const checked = Array.isArray(filters.location) && filters.location.includes(nearLoc);
+                    return (
+                      <label key={nearLoc} className="flex items-center gap-2 text-sm cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => handleLocationToggle(nearLoc)}
+                          className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        />
+                        <span className="text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200">
+                          {nearLoc}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Checkbox Filters */}
           {["jobType", "workPlace"].map((category) => (

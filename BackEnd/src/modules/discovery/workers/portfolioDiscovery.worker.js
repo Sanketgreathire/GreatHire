@@ -107,16 +107,10 @@ export async function resumePortfolioDiscoveryQueue() {
   await queue.resume();
 }
 
-export async function startPortfolioDiscoveryWorker() {
+export function startPortfolioDiscoveryWorker() {
   if (portfolioDiscoveryWorker) {
     console.log('Portfolio discovery worker already running');
     return portfolioDiscoveryWorker;
-  }
-
-  const { isRedisAvailable } = await import('../../../config/redis.js');
-  if (!(await isRedisAvailable())) {
-    console.warn('⚠️  Portfolio discovery worker: Redis unavailable or version too old, skipping startup');
-    return null;
   }
 
   portfolioDiscoveryWorker = new Worker(

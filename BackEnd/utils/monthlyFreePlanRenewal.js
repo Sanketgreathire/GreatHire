@@ -29,11 +29,12 @@ export const startMonthlyFreePlanRenewal = () => {
         }
 
         // Strict reset — no carry-forward
-        company.creditedForJobs = 1000;       // 2 job posts (500 credits each)
-        company.creditedForCandidates = 5;    // 5 candidate views
+        company.creditedForJobs = 500;        // 1 job post (500 credits each)
+        company.creditedForCandidates = 30;   // 30 candidate views
         company.freeJobsPosted = 0;
+        company.hasUsedFreePlan = false;       // Allow 1 new job post next month
         company.lastFreePlanRenewal = now;
-        company.freePlanExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Fresh 30-day FREE window
+        company.freePlanExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Fresh 30-day window
         await company.save();
 
         console.log(`✅ FREE plan reset for: ${company.companyName}`);
@@ -77,8 +78,16 @@ export const startMonthlyFreePlanRenewal = () => {
         }
       }
 
+      // ── TRIAL EXPIRY CLEANUP ──────────────────────────────────────────────
+      // Flags flip immediately in every gate via trialExpiresAt comparison
+      // (see utils/trial.js); this just tidies up the stored boolean.
+      const expiredTrialResult = await Company.updateMany(
+        { trialActive: true, trialExpiresAt: { $lte: now } },
+        { $set: { trialActive: false } }
+      );
+
       console.log(
-        `✅ Renewal complete — ${expiredFreeCompanies.length} FREE resets, ${paidPlanCompanies.length} paid renewals.`
+        `✅ Renewal complete — ${expiredFreeCompanies.length} FREE resets, ${paidPlanCompanies.length} paid renewals, ${expiredTrialResult.modifiedCount} trials expired.`
       );
     } catch (error) {
       console.error("❌ Error in monthly free plan renewal:", error);

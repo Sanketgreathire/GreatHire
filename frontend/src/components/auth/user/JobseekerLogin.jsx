@@ -73,7 +73,7 @@ const JobseekerLogin = () => {
 
   const handleOtpChange = useCallback((e) => setOtp(e.target.value), []);
 
-  const handleSignUpClick = useCallback(() => navigate("/signup-choice"), [navigate]);
+  const handleSignUpClick = useCallback(() => navigate("/signup"), [navigate]);
   const handleForgotPassword = useCallback(() => navigate("/forgot-password"), [navigate]);
 
   const handleOtpClick = useCallback(() => {

@@ -199,8 +199,13 @@ const AllApplicantsList = () => {
     }
   };
 
-  const isStarterPlan = !company?.hasSubscription && (company?.plan === "FREE" || !company?.plan);
-  const hasAIAccess = ["PREMIUM", "PRO", "ENTERPRISE"].includes(company?.plan);
+  const isTrialLive = !!(
+    company?.trialActive &&
+    company?.trialExpiresAt &&
+    new Date(company.trialExpiresAt) > new Date()
+  );
+  const isStarterPlan = !company?.hasSubscription && !isTrialLive && (company?.plan === "FREE" || !company?.plan);
+  const hasAIAccess = isTrialLive || ["PREMIUM", "PRO", "ENTERPRISE"].includes(company?.plan);
   const STARTER_LIMIT = 20;
 
   const [showAIModal, setShowAIModal] = useState(false);
@@ -447,42 +452,12 @@ const AllApplicantsList = () => {
                           {ALL_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                         <div className="flex items-center gap-2">
-                          {unlockedIds.has(app._id) ? (
-                            <button
-                              onClick={() => { setApplicant(app); setApplicantId(app?._id); setJobId(app?.job?._id || app?.job); setApplicantDetailsModal(true); }}
-                              className="text-sm font-medium px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all flex items-center gap-1"
-                            >
-                              👁 View
-                            </button>
-                          ) : (
-                            <button
-                              onClick={async () => {
-                                try {
-                                  const res = await axios.post(
-                                    `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
-                                    { companyId },
-                                    { withCredentials: true }
-                                  );
-                                  if (res.data.success) {
-                                    _unlockedIds.add(app._id);
-                                    localStorage.setItem(`gh_unlockedIds_${companyId}`, JSON.stringify([..._unlockedIds]));
-                                    setUnlockedIds(new Set(_unlockedIds));
-                                    dispatch(updateCandidateCredits(res.data.remainingCredits));
-                                    toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
-                                    setApplicant(app);
-                                    setApplicantId(app?._id);
-                                    setJobId(app?.job?._id || app?.job);
-                                    setApplicantDetailsModal(true);
-                                  }
-                                } catch (err) {
-                                  toast.error(err?.response?.data?.message || "Failed to unlock.");
-                                }
-                              }}
-                              className="text-sm font-medium px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all flex items-center gap-1"
-                            >
-                              🔓 Unlock
-                            </button>
-                          )}
+                          <button
+                            onClick={() => { setApplicant(app); setApplicantId(app?._id); setJobId(app?.job?._id || app?.job); setApplicantDetailsModal(true); }}
+                            className="text-sm font-medium px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all flex items-center gap-1"
+                          >
+                            👁 View
+                          </button>
                           <button
                             onClick={() => navigate(`/recruiter/dashboard/job-details/${app?.job?._id || app?.job}`)}
                             className="text-sm font-medium px-4 py-1.5 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-all"

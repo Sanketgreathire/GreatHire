@@ -28,6 +28,9 @@ export const createOrderForJobPlan = async (req, res) => {
       amount,
       creditsForJobs,
       creditsForCandidates,
+      durationMonths,
+      aiSourcingCredits = 0,
+      teamUserLimit = null,
     } = req.body;
 
     const userId = req.id; // recruiter id
@@ -69,11 +72,13 @@ export const createOrderForJobPlan = async (req, res) => {
     });
 
     // 🧾 Save subscription (✅ schema-safe)
-    const expiryMonths = planName === "Enterprise Elite" ? 12 : 1;
+    const expiryMonths = Number(durationMonths) || (planName.includes("Enterprise") ? 12 : 1);
     await JobSubscription.create({
       planName,
       creditedForJobs: creditsForJobs,               // ✅ FIXED
       creditedForCandidates: creditsForCandidates,   // ✅ FIXED
+      aiSourcingCredits: Number(aiSourcingCredits) || 0,
+      teamUserLimit: teamUserLimit != null ? Number(teamUserLimit) : null,
       price: amount,                                 // ✅ REQUIRED
       razorpayOrderId: order.id,                     // ✅ REQUIRED
       company: companyId,

@@ -10,7 +10,6 @@ import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 import ThemeToggle from "../ThemeToggle";
-import InternshipMarquee from "./InternshipMarquee";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 // ─────────────────────────────────────────────────────────────
@@ -254,7 +253,6 @@ const Navbar = () => {
         ...(user && !isRecruiter ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
         ...(isRecruiter && hasCompany ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-        ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
       ]
     : [
         { to: "/", label: "Home" },
@@ -276,7 +274,6 @@ const Navbar = () => {
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
     ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
     ...(!user || (isRecruiter && hasCompany) ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
-    ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/resume-analyzer", label: "Resume Analyzer" }] : []),
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/Main_blog_page",      label: "Blogs" },
     { to: "/courses",             label: "Courses" },
@@ -753,15 +750,10 @@ const Navbar = () => {
       </nav>
 
 
-      {/* Internship Marquee — fixed below navbar, hidden for recruiters */}
-      {!isRecruiter && (
-        <div className="fixed top-[61px] left-0 right-0 z-20 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-          <InternshipMarquee jobs={jobs} />
-        </div>
-      )}
+      
 
       {/* Spacer — pushes page content below fixed navbar (+ marquee for non-recruiters) */}
-      <div className={isRecruiter ? "h-[61px]" : "h-[117px]"} />
+      <div className="h-[61px]" />
     </>
   );
 };

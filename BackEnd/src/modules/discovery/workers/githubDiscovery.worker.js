@@ -105,16 +105,10 @@ export async function resumeGitHubDiscoveryQueue() {
   await queue.resume();
 }
 
-export async function startGitHubDiscoveryWorker() {
+export function startGitHubDiscoveryWorker() {
   if (githubDiscoveryWorker) {
     console.log('GitHub discovery worker already running');
     return githubDiscoveryWorker;
-  }
-
-  const { isRedisAvailable } = await import('../../../config/redis.js');
-  if (!(await isRedisAvailable())) {
-    console.warn('⚠️  GitHub discovery worker: Redis unavailable or version too old, skipping startup');
-    return null;
   }
 
   githubDiscoveryWorker = new Worker(

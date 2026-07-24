@@ -230,7 +230,6 @@ const candidateFreshnessSchema = new mongoose.Schema({
   collection: 'candidate_freshness'
 });
 
-candidateFreshnessSchema.index({ candidateId: 1 });
 candidateFreshnessSchema.index({ freshnessScore: -1 });
 candidateFreshnessSchema.index({ openToWorkScore: -1 });
 candidateFreshnessSchema.index({ lastActivityAt: -1 });

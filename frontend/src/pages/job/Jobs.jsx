@@ -13,23 +13,22 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
 const Jobs = () => {
-  const { jobs, resetFilter, error, setSelectedJob } = useJobDetails();
+  const { jobs, resetFilter, error, setSelectedJob, isLoading } = useJobDetails();
   const location = useLocation();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const jobListingsRef = useRef(null);
 
   const [filters, setFilters] = useState({
     jobTitle: "",
-    location: "",
+    location: [], // now an array — supports multiple selected locations + nearby suggestions
     jobType: [],
     workPlace: [],
     company: "",
     datePosted: [],
   });
 
-  // searchInfo drives the JobSearch bar UI (title input + location input)
+  // searchInfo drives the JobSearch bar UI (title input only, location input removed)
   const [searchInfo, setSearchInfo] = useState({
     titleKeyword: "",
     location: "",
@@ -52,10 +51,6 @@ const Jobs = () => {
   }, [location.state?.selectedJobId, jobs]);
 
   useEffect(() => {
-    setIsLoading(!jobs);
-  }, [jobs, error]);
-
-  useEffect(() => {
     setCurrentPage(1);
   }, [filters]);
 
@@ -64,7 +59,6 @@ const Jobs = () => {
     setFilters((prev) => ({
       ...prev,
       jobTitle: updates.titleKeyword !== undefined ? updates.titleKeyword : prev.jobTitle,
-      location: updates.location !== undefined ? updates.location : prev.location,
     }));
   }, []);
 
@@ -72,7 +66,6 @@ const Jobs = () => {
     setFilters(newFilters);
     setSearchInfo((prev) => ({
       ...prev,
-      location: newFilters.location ?? prev.location,
       titleKeyword: newFilters.jobTitle ?? prev.titleKeyword,
     }));
   }, []);
@@ -80,9 +73,12 @@ const Jobs = () => {
   const filteredJobs = useMemo(() => {
     if (!jobs) return [];
     return jobs.filter((job) => {
-      if (filters.location) {
+      if (Array.isArray(filters.location) && filters.location.length > 0) {
         const jobLocation = (job?.jobDetails?.location || job?.location || "").toLowerCase();
-        if (!jobLocation.includes(filters.location.toLowerCase())) return false;
+        const matchesAny = filters.location.some((loc) =>
+          jobLocation.includes(loc.toLowerCase())
+        );
+        if (!matchesAny) return false;
       }
       if (filters.jobTitle) {
         const jobTitle = (job?.jobDetails?.title || job?.job_title || "").toLowerCase();
@@ -119,7 +115,7 @@ const Jobs = () => {
   const displayedJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
   const handleResetFilters = useCallback(() => {
-    setFilters({ jobTitle: "", location: "", jobType: [], workPlace: [], company: "", datePosted: [] });
+    setFilters({ jobTitle: "", location: [], jobType: [], workPlace: [], company: "", datePosted: [] });
     setSearchInfo({ titleKeyword: "", location: "" });
     setCurrentPage(1);
   }, []);
@@ -159,7 +155,6 @@ const Jobs = () => {
     
             <div className="flex items-center justify-center gap-2">
               <div className="w-full max-w-[900px]">
-                {/* searchInfo.location is passed down so LocationSearch stays in sync with FilterCard */}
                 <JobSearch searchInfo={searchInfo} onSearchUpdate={handleSearchUpdate} />
               </div>
             </div>

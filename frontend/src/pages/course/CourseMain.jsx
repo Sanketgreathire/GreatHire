@@ -638,7 +638,7 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
   const imageSrc = getCourseImage(course);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
       {/* Image Section */}
       <div className="relative h-44 mb-8 overflow-visible">
         <img
@@ -656,7 +656,7 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
 
         {/* Center overlapping logo box */}
         <div className="absolute left-1/2 -bottom-6 transform -translate-x-1/2">
-          <div className="font-bold hover:text-blue-600 transition duration-300 ease-in-out bg-white rounded-xl px-5 py-2.5 shadow-lg flex items-center text-2xl">
+          <div className="font-bold hover:text-blue-600 transition duration-300 ease-in-out bg-white dark:bg-gray-800 rounded-xl px-5 py-2.5 shadow-lg flex items-center text-2xl">
             <span className="text-black dark:text-white">Great</span>
             <span className="text-blue-600">Hire</span>
           </div>
@@ -672,8 +672,8 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
 
       {/* Content */}
       <div className="p-5 pt-6 flex flex-col flex-1">
-        <h3 className="text-base font-bold text-gray-900 mb-2 leading-snug">{course.title}</h3>
-        <p className="text-gray-500 text-sm leading-relaxed flex-1">{course.desc}</p>
+        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug">{course.title}</h3>
+        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed flex-1">{course.desc}</p>
 
         {/* Actions */}
         <div className="flex gap-3 mt-5">
@@ -686,7 +686,7 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
           {course.link && (
             <Link
               to={course.link}
-              className="flex-1 text-center bg-gray-900 hover:bg-gray-700 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors duration-200"
+              className="flex-1 text-center bg-gray-900 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors duration-200"
             >
               Know More
             </Link>
@@ -842,7 +842,7 @@ export default function TrainingCoursesPage() {
   }), [activeTab, activeCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
 
       {/* ── Navbar ── */}
       <Navbar />
@@ -886,11 +886,11 @@ export default function TrainingCoursesPage() {
       </section>
 
       {/* ── Courses Section ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 dark:bg-gray-900">
 
         {/* Section Heading */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2">
+          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-2">
             Our Courses
           </h2>
           {/* Orange underline accent — matches screenshot */}
@@ -903,7 +903,7 @@ export default function TrainingCoursesPage() {
               className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
                 activeTab === "employment"
                   ? "bg-blue-600 text-white shadow-md"
-                  : "bg-transparent text-blue-600 hover:bg-blue-50"
+                  : "bg-transparent text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
               }`}
             >
               Employment Program
@@ -913,14 +913,14 @@ export default function TrainingCoursesPage() {
               className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
                 activeTab === "certification"
                   ? "bg-blue-600 text-white shadow-md"
-                  : "bg-transparent text-blue-600 hover:bg-blue-50"
+                  : "bg-transparent text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
               }`}
             >
               TIH-IIT Certification Program
             </button>
           </div>
 
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">
             50+ industry-recognized programs designed with leading companies to get you job-ready.
           </p>
         </div>
@@ -944,7 +944,7 @@ export default function TrainingCoursesPage() {
 
         {/* Results count */}
         <p className="text-sm text-gray-400 mb-6 text-center">
-          Showing <span className="font-semibold text-gray-700">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""}
+          Showing <span className="font-semibold text-gray-700 dark:text-gray-300">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""}
           {activeCategory !== "All" ? ` in ${activeCategory}` : ""}
         </p>
 
@@ -974,13 +974,13 @@ export default function TrainingCoursesPage() {
       </section>
 
       {/* ── Why Great Hire Training ── */}
-      <section className="bg-white py-16 border-t border-gray-100">
+      <section className="bg-white dark:bg-gray-800 py-16 border-t border-gray-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-3">
               Why Train with Great Hire?
             </h2>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">
+            <p className="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">
               We don't just train you — we connect you directly to hiring opportunities.
             </p>
           </div>
@@ -988,14 +988,14 @@ export default function TrainingCoursesPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="flex gap-4 p-6 rounded-2xl border border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-100 transition-all duration-300 group"
+                className="flex gap-4 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-100 dark:hover:border-blue-800 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-2xl shrink-0 group-hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 bg-white dark:bg-gray-600 rounded-xl shadow-sm flex items-center justify-center text-2xl shrink-0 group-hover:shadow-md transition-shadow">
                   {f.icon}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1 text-base">{f.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-base">{f.title}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -1004,24 +1004,24 @@ export default function TrainingCoursesPage() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-16 bg-gray-50 border-t border-gray-100">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">Student Success Stories</h2>
-            <p className="text-gray-500 text-lg">Real results from real students placed through Great Hire.</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white mb-3">Student Success Stories</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Real results from real students placed through Great Hire.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+              <div key={t.name} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow duration-300">
                 <StarRating count={t.rating} />
-                <p className="text-gray-700 text-sm leading-relaxed mt-4 mb-6 italic">"{t.text}"</p>
-                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-4 mb-6 italic">"{t.text}"</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div className={`w-10 h-10 ${t.avatarColor} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
                     {t.avatar}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900 text-sm">{t.name}</p>
-                    <p className="text-gray-400 text-xs">{t.role}</p>
+                    <p className="font-bold text-gray-900 dark:text-white text-sm">{t.name}</p>
+                    <p className="text-gray-400 dark:text-gray-500 text-xs">{t.role}</p>
                     <span className="text-xs font-medium text-blue-600">{t.course}</span>
                   </div>
                 </div>

@@ -207,20 +207,33 @@ class NotificationService {
       metadata: { userType, isWelcome: true }
     });
   }
-
   async notifyPlanExpiry(planData) {
-    const { userId, userType, planType, expiryDate, daysLeft } = planData;
+    const { userId, userType, planType, expiryDate, daysLeft, expired } = planData;
 
-    const urgency = daysLeft <= 3 ? 'urgent' : daysLeft <= 7 ? 'high' : 'medium';
+    const cleanPlanType = (planType || "").replace(/\s*plan\s*$/i, "").trim() || planType;
+
+    let title, message, priority;
+
+    if (expired) {
+      title = `${cleanPlanType} Plan Expired`;
+      message = `Your ${cleanPlanType} plan has expired. Renew now to continue enjoying premium features.`;
+      priority = 'urgent';
+    } else {
+      const urgency = daysLeft <= 3 ? 'urgent' : daysLeft <= 7 ? 'high' : 'medium';
+      title = `${cleanPlanType} Plan Expiring Soon`;
+      message = `Your ${cleanPlanType} plan expires in ${daysLeft} days. Renew now to continue enjoying premium features.`;
+      priority = urgency;
+    }
+
     await this.createAndEmit({
       recipient: userId,
       recipientModel: userType === 'recruiter' ? 'Recruiter' : userType === 'company' ? 'Company' : 'User',
       type: 'plan-expiry',
-      title: `${planType} Plan Expiring Soon`,
-      message: `Your ${planType} plan expires in ${daysLeft} days. Renew now to continue enjoying premium features.`,
-      priority: urgency,
+      title,
+      message,
+      priority,
       actionUrl: '/billing/renew',
-      metadata: { planType, expiryDate, daysLeft }
+      metadata: { planType, expiryDate, daysLeft, expired: !!expired }
     });
   }
 

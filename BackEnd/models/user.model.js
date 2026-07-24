@@ -173,6 +173,20 @@ const userSchema = new mongoose.Schema(
 );
 
 /* ============================
+   ✅ LOGIN HISTORY – DO NOT REMOVE
+   ============================ */
+userSchema.add({
+  loginHistory: {
+    type: [{
+      timestamp: { type: Date, default: Date.now },
+      ip: { type: String, default: "" },
+      device: { type: String, default: "" },
+    }],
+    default: [],
+  },
+});
+
+/* ============================
    ✅ COLLEGE / ACADEMIC FIELDS
    ============================ */
 userSchema.add({
@@ -187,11 +201,13 @@ userSchema.add({
    ✅ REFERRAL FIELDS – DO NOT REMOVE
    ============================ */
 userSchema.add({
-  referralCode:        { type: String, unique: true, sparse: true, default: null },
-  referredBy:          { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-  referralCount:       { type: Number, default: 0 },
-  isProfileBoosted:    { type: Boolean, default: false },
-  referralRewardGiven: { type: Boolean, default: false },
+  referralCode:           { type: String, unique: true, sparse: true, default: null },
+  referredBy:             { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+  referralCount:          { type: Number, default: 0 },
+  isProfileBoosted:       { type: Boolean, default: false },
+  referralRewardGiven:    { type: Boolean, default: false },
+  referral25AchievedAt:   { type: Date, default: null },
+  referral25RewardStatus: { type: String, enum: ["Pending", "Shared"], default: "Pending" },
 });
 
 /* ============================
@@ -215,7 +231,7 @@ userSchema.add({
 
 // ✅ Performance indexes for candidate search
 userSchema.index({ "profile.skills": 1 });
-userSchema.index({ "profile.experience.jobProfile": 1 });
+userSchema.index({ "profile.experiences.jobProfile": 1 });
 userSchema.index({ "profile.gender": 1 });
 userSchema.index({ "profile.qualification": 1 });
 userSchema.index({ "address.city": 1 });

@@ -105,16 +105,10 @@ export async function getOrchestratorQueueStats() {
   };
 }
 
-export async function startOrchestratorWorker() {
+export function startOrchestratorWorker() {
   if (orchestratorWorker) {
     console.log('Orchestrator worker already running');
     return orchestratorWorker;
-  }
-
-  const { isRedisAvailable } = await import('../../../config/redis.js');
-  if (!(await isRedisAvailable())) {
-    console.warn('⚠️  Orchestrator worker: Redis unavailable or version too old, skipping startup');
-    return null;
   }
 
   orchestratorWorker = new Worker(

@@ -18,11 +18,6 @@ const doubled = [...COURSES, ...COURSES];
 export default function InternshipMarquee() {
   return (
     <div className="flex items-center w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-md overflow-hidden">
-      <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full m-1 border bg-gradient-to-r from-pink-600 via-pink-600 to-pink-600 text-white">
-        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-        <span className="text-white text-xs sm:text-sm font-bold tracking-wide whitespace-nowrap">Skill Development</span>
-      </div>
-
       <div className="flex-1 overflow-hidden relative">
         <div className="absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-blue-600 to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-pink-600 to-transparent z-10 pointer-events-none" />

@@ -172,13 +172,20 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
+
+    // Get the job to check company plan
+    const job = await Job.findById(jobId).populate("company");
+    const companyPlan = job?.company?.plan || "FREE";
+    const isFreePlan = companyPlan === "FREE";
+
     const rawApplicants = await Application.find({ job: jobId })
       .populate({
         path: "applicant",
         select: "fullname emailId phoneNumber profile address isProfileBoosted",
       })
       .select("applicant status answers createdAt")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(isFreePlan ? 30 : 0); // 0 = no limit for paid plans
 
     // Boosted candidates float to top, order preserved within each group
     const applicants = [

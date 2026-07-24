@@ -9,10 +9,12 @@ import {
   getCandidateData,
   decreaseCandidateCredits,
   deductCandidateCredit,
+  deductAiSourcingCredit,
   getCompanyApplicants,
   reportJob,
   deleteJobReport,
   getCandidateInformation,
+  activateTrial,
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload, multiUpload } from "../middlewares/multer.js";
@@ -34,10 +36,11 @@ router.route("/register").post(
 router.route("/company-by-id").post(getCompanyById);
 router.route("/company-by-userid").post(isAuthenticated, companyByUserId);
 router.route("/change-admin").put(isAuthenticated, changeAdmin);
+router.route("/activate-trial").post(isAuthenticated, activateTrial);
 
 // Define the route to get candidates
 router.get("/candidate-information/:id", getCandidateInformation);
-router.get("/candidate-list", isAuthenticated, getCandidateData);
+router.post("/candidate-list", isAuthenticated, getCandidateData);
 router.get("/applicants/:companyId", isAuthenticated, getCompanyApplicants);
 
 router.route("/update/:id").put(isAuthenticated, updateCompany);
@@ -45,9 +48,8 @@ router.route("/current-plan/:id").get(isAuthenticated, getCurrentPlan);
 router
   .route("/decrease-credit/:id")
   .get(isAuthenticated, decreaseCandidateCredits);
-router
-  .route("/deduct-candidate-credit")
-  .post(isAuthenticated, deductCandidateCredit);
+router.route("/deduct-candidate-credit").post(isAuthenticated, deductCandidateCredit);
+router.route("/deduct-ai-sourcing-credit").post(isAuthenticated, deductAiSourcingCredit);
 
 router.route("/report-job").post(isAuthenticated,(req, res, next) => {
     multiUpload(req, res, (err) => {

@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { getRedisConnection, isRedisAvailable } from "../../../../sourcing/queues/redisConnection.js";
+import { getRedisConnection } from "../../../../sourcing/queues/redisConnection.js";
 import { matchCandidatesForJob } from "../services/candidateMatching.service.js";
 import { generateJobEmbedding } from "../services/jobEmbedding.service.js";
 import JobMatch from "../../../models/jobMatch.model.js";
@@ -11,12 +11,6 @@ let isRunning = false;
 export async function startJobMatchingWorker() {
   if (isRunning) {
     console.warn("Job matching worker is already running");
-    return;
-  }
-
-  const redisReady = await isRedisAvailable();
-  if (!redisReady) {
-    console.warn("⚠️  Job matching worker: Redis unavailable, skipping startup");
     return;
   }
 

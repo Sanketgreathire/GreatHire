@@ -2,7 +2,9 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
+import { AISourcedCandidate } from "../../models/sourcing/aiSourcedCandidate.model.js";
 import { extractResumeText, parseResumeFields } from "./resumeParser.service.js";
+import { JdSourcingService } from "../../sourcing/services/jdSourcingService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -126,6 +128,97 @@ export const searchCandidates = async (req, res) => {
   }
 };
 
+// ─── GET /api/v1/sourcing/saved-sourced ─────────────────────────────────────
+// Recruitkar imports live in SourcingCandidate; GitHub auto-sourced profiles
+// still land in the legacy AISourcedCandidate collection (see autoSourcingService.js),
+// so both are queried here and merged for this recruiter.
+export const getSavedSourcedCandidates = async (req, res) => {
+  try {
+    const recruiterId = req.id;
+    const { q, skills, location, designation, minExp, maxExp, page = 1, limit = 20 } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page, 10));
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10)));
+    const skip = (pageNum - 1) * limitNum;
+    const fetchCap = skip + limitNum;
+
+    const rkQuery = {
+      createdBy: recruiterId,
+      sourceType: "API_IMPORT",
+      $or: [
+        { emails: { $exists: true, $ne: [] } },
+        { phones: { $exists: true, $ne: [] } },
+      ],
+    };
+    const ghQuery = {
+      recruiterId,
+      aiSourceType: "GITHUB",
+      $or: [
+        { email: { $exists: true, $ne: null } },
+        { phone: { $exists: true, $ne: null } },
+      ],
+    };
+
+    if (q?.trim()) rkQuery.$text = { $search: q.trim() };
+    if (location?.trim()) {
+      rkQuery.location = { $regex: location.trim(), $options: "i" };
+      ghQuery.location = { $regex: location.trim(), $options: "i" };
+    }
+    if (designation?.trim()) {
+      rkQuery.designation = { $regex: designation.trim(), $options: "i" };
+      ghQuery.designation = { $regex: designation.trim(), $options: "i" };
+    }
+    if (skills?.trim()) {
+      const arr = skills.split(",").map((s) => s.trim()).filter(Boolean);
+      if (arr.length) {
+        rkQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+        ghQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+      }
+    }
+    if (minExp !== undefined || maxExp !== undefined) {
+      rkQuery.totalExperience = {};
+      ghQuery.totalExperience = {};
+      if (minExp !== undefined) { rkQuery.totalExperience.$gte = parseFloat(minExp); ghQuery.totalExperience.$gte = parseFloat(minExp); }
+      if (maxExp !== undefined) { rkQuery.totalExperience.$lte = parseFloat(maxExp); ghQuery.totalExperience.$lte = parseFloat(maxExp); }
+    }
+
+    const [rkDocs, ghDocs, rkTotal, ghTotal] = await Promise.all([
+      SourcingCandidate.find(rkQuery).select("-parsedText").sort({ createdAt: -1 }).limit(fetchCap).lean(),
+      AISourcedCandidate.find(ghQuery).sort({ createdAt: -1 }).limit(fetchCap).lean(),
+      SourcingCandidate.countDocuments(rkQuery),
+      AISourcedCandidate.countDocuments(ghQuery),
+    ]);
+
+    const normalizedGh = ghDocs.map((c) => ({
+      ...c,
+      emails: c.email ? [c.email] : [],
+      phones: c.phone ? [c.phone] : [],
+      sourceType: c.aiSourceType,
+    }));
+
+    const total = rkTotal + ghTotal;
+    const candidates = [...rkDocs, ...normalizedGh]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(skip, skip + limitNum);
+
+    return res.status(200).json({
+      success: true,
+      candidates,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+        hasNext: pageNum < Math.ceil(total / limitNum),
+        hasPrev: pageNum > 1,
+      },
+    });
+  } catch (error) {
+    console.error("getSavedSourcedCandidates error:", error);
+    return res.status(500).json({ success: false, message: "Failed to fetch saved sourced candidates.", error: error.message });
+  }
+};
+
 // ─── GET /api/v1/sourcing/:id ─────────────────────────────────────────────────
 export const getCandidateById = async (req, res) => {
   try {
@@ -166,5 +259,38 @@ export const deleteCandidate = async (req, res) => {
   } catch (error) {
     console.error("deleteCandidate error:", error);
     return res.status(500).json({ success: false, message: "Delete failed.", error: error.message });
+  }
+};
+
+// ─── POST /api/v1/sourcing/source-by-jd ──────────────────────────────────────
+export const sourceByJobDescription = async (req, res) => {
+  try {
+    const { skills, location, designation, minExp, maxExp, jobDescription } = req.body;
+
+    if (!skills && !location && !designation && !jobDescription) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one filter (skills, location, designation) or job description is required."
+      });
+    }
+
+    const jdSourcing = new JdSourcingService();
+    const result = await jdSourcing.sourceAndScore(
+      { skills, location, designation, minExp, maxExp, jobDescription },
+      20
+    );
+
+    return res.status(200).json({
+      success: true,
+      candidates: result.candidates,
+      total: result.total,
+      mode: result.mode,
+      message: result.candidates.length === 0 
+        ? "No candidates found matching the criteria."
+        : `Found ${result.candidates.length} candidates${jobDescription ? ' and scored against job description' : ''}.`
+    });
+  } catch (error) {
+    console.error("sourceByJobDescription error:", error);
+    return res.status(500).json({ success: false, message: "Failed to source candidates.", error: error.message });
   }
 };

@@ -42,10 +42,9 @@ export class KafkaProducerService {
   }
 
   async connect() {
+    if (process.env.KAFKA_DISABLED === 'true') return;
     try {
-      if (this.isConnected) {
-        return;
-      }
+      if (this.isConnected) return;
 
       this.kafka = new Kafka(this.config);
       this.producer = this.kafka.producer(this.config.producerConfig);

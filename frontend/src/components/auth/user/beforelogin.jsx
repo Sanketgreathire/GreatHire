@@ -609,7 +609,6 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 const JobsHiringSlider = lazy(() => import("./JobSlider"));
 const Lottie = lazy(() => import("lottie-react"));
 const CompactTestimonials = lazy(() => import("@/components/ui/CompactTestimonials"));
-const InternshipMarquee = lazy(() => import("@/components/shared/InternshipMarquee"));
 
 // Lazy load heavy animation JSONs only when needed
 const tabAnimations = {
@@ -916,11 +915,7 @@ const GreatHireLanding = () => {
           {/* ══════════════════════════════════════
               INTERNSHIP MARQUEE — fixed below navbar
           ══════════════════════════════════════ */}
-          <div className="fixed top-[61px] left-0 right-0 z-40 px-3 py-1.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-            <Suspense fallback={<div className="h-8" />}>
-              <InternshipMarquee jobs={jobs} />
-            </Suspense>
-          </div>
+          
 
           {/* ══════════════════════════════════════
               MOBILE SLIDE-IN OVERLAY MENU
@@ -1030,7 +1025,7 @@ const GreatHireLanding = () => {
           ══════════════════════════════════════ */}
           <section
             id="home"
-            className="min-h-screen pt-[117px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300"
+            className="min-h-screen pt-[52px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300"
           >
             {/* Animated bg blobs — GPU composited */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none" aria-hidden="true">
@@ -1038,12 +1033,12 @@ const GreatHireLanding = () => {
               <div className="absolute top-40 -right-20 w-96 h-96 bg-purple-400 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 will-change-transform" />
             </div>
 
-            <div className="container mx-auto px-4 py-8 relative z-10">
+            <div className="container mx-auto px-4 py-2 relative z-10">
               {/* Hero */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-8">
                 {/* Left */}
                 <div className="space-y-6 ">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
                     Find Your
                     <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mt-2">
                       Dream Career

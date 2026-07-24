@@ -11,6 +11,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobDescription = () => {
   const { user } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const JobDescription = () => {
   const { jobId: jobParam } = useParams();
   const jobId = jobParam?.length === 24 ? jobParam : jobParam?.split("-").pop();
 
+  const { addApplicationToJob } = useJobDetails();
   const [job, setJob] = useState(null);
   const [isApplied, setApplied] = useState(false);
   const [error, setError] = useState(null);
@@ -156,6 +158,7 @@ const JobDescription = () => {
       if (response.data.success) {
         toast.success("Applied Successfully");
         setApplied(true);
+        addApplicationToJob(jobId, { applicant: user._id });
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong!");
@@ -174,32 +177,7 @@ const JobDescription = () => {
   const handleNavigateToProfile = () => {
     navigate('/profile');
   };
-  const importJD = async () => {
-    const jd = localStorage.getItem('lastGeneratedJD');
-    if (!jd) { toast.error('No generated JD found in your browser. Generate one first.'); return; }
-    if (!user) { toast.error('Please login as the recruiter who owns this job.'); return; }
-    try {
-      const payload = {
-        companyId: job.company._id,
-        editedJob: {
-          details: jd,
-          skills: Array.isArray(job.jobDetails?.skills) ? job.jobDetails.skills.join(', ') : (job.jobDetails?.skills || ''),
-        }
-      };
-      const res = await fetch(`${JOB_API_END_POINT}/update/${job._id}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to import JD');
-      setJob(data.updatedJob);
-      toast.success('JD imported to job details');
-    } catch (err) {
-      toast.error(err.message || 'Error importing JD');
-    }
-  };
+
   const sanitizedJobDescription = job?.jobDetails?.details
     ? DOMPurify.sanitize(job.jobDetails.details)
     : "";
@@ -277,12 +255,6 @@ const JobDescription = () => {
               >
                 {isApplied ? "✓ Applied" : "Apply Now"}
               </button>
-
-              {user && String(user._id) === String(job.created_by) && (
-                <button onClick={importJD} className="ml-3 px-4 py-2 bg-yellow-400 text-black rounded-lg font-semibold">
-                  Import generated JD
-                </button>
-              )}
 
               {/* PROFILE TOOLTIP */}
               {user && !isProfileComplete(user) && !isApplied && (

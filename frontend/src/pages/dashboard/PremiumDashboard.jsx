@@ -61,7 +61,7 @@ export default function RecruiterEnterpriseDashboard() {
 
   if (!dashboard) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f6f3ff]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f6f3ff] dark:bg-gray-900">
         <div className="text-violet-700 text-xl font-bold animate-pulse">Loading Dashboard...</div>
       </div>
     );
@@ -110,7 +110,7 @@ export default function RecruiterEnterpriseDashboard() {
         <meta name="description" content="GreatHire premium enterprise recruitment analytics." />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-[#f6f3ff] via-white to-[#f3e8ff] p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#f6f3ff] via-white to-[#f3e8ff] dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 p-4">
 
         {/* HERO */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-700 via-purple-600 to-fuchsia-600 px-6 py-7 shadow-[0_20px_80px_rgba(124,58,237,0.3)]">
@@ -134,8 +134,8 @@ export default function RecruiterEnterpriseDashboard() {
 
         {/* VERIFICATION BANNER */}
         {!company?.isActive && (
-          <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 px-4 py-3 rounded-xl">
-            <p className="text-sm text-yellow-700">
+          <div className="mt-4 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 px-4 py-3 rounded-xl">
+            <p className="text-sm text-yellow-700 dark:text-yellow-300">
               <span className="font-semibold">Verification Pending:</span> Your account is under admin review.
             </p>
           </div>
@@ -146,15 +146,15 @@ export default function RecruiterEnterpriseDashboard() {
           {cards.map((item, i) => {
             const Icon = item.icon;
             return (
-              <div key={i} className="relative overflow-hidden rounded-2xl border border-violet-100 bg-white/80 backdrop-blur-xl px-4 py-4 shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+              <div key={i} className="relative overflow-hidden rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 backdrop-blur-xl px-4 py-4 shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
                 <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${item.color} opacity-10 blur-2xl`} />
                 <div className="relative z-10">
                   <div className={`w-9 h-9 rounded-xl bg-gradient-to-r ${item.color} flex items-center justify-center text-white shadow-sm`}>
                     <Icon size={18} />
                   </div>
                   <div className="mt-3">
-                    <div className="text-violet-600 text-xs font-semibold">{item.title}</div>
-                    <div className="mt-1 text-2xl font-black text-gray-900">{item.value}</div>
+                    <div className="text-violet-600 dark:text-violet-400 text-xs font-semibold">{item.title}</div>
+                    <div className="mt-1 text-2xl font-black text-gray-900 dark:text-white">{item.value}</div>
                   </div>
                   <div className="mt-2 flex items-center text-green-600 text-xs font-semibold">
                     <TrendingUp size={12} className="mr-1" /> Live
@@ -167,8 +167,8 @@ export default function RecruiterEnterpriseDashboard() {
 
         {/* ROW 1: Trend + Funnel + Sources */}
         <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Applications Trend</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Applications Trend</h2>
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={dashboard.applicationsTrend}>
                 <defs>
@@ -184,8 +184,8 @@ export default function RecruiterEnterpriseDashboard() {
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Hiring Funnel</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Hiring Funnel</h2>
             <ResponsiveContainer width="100%" height={240}>
               <FunnelChart>
                 <Tooltip />
@@ -196,8 +196,8 @@ export default function RecruiterEnterpriseDashboard() {
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Candidate Sources</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Candidate Sources</h2>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie data={dashboard.sources} dataKey="value" outerRadius={90} label>
@@ -213,9 +213,9 @@ export default function RecruiterEnterpriseDashboard() {
 
         {/* ROW 2: Applications by Job Role */}
         <div className="mt-4">
-          <div className="rounded-2xl bg-white border border-gray-100 px-5 pt-4 pb-5 shadow-sm">
-            <h2 className="text-base font-bold text-gray-800">Applications by Job Role</h2>
-            <p className="text-xs text-gray-400 mb-3">Total applications per job title</p>
+          <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5 pt-4 pb-5 shadow-sm">
+            <h2 className="text-base font-bold text-gray-800 dark:text-white">Applications by Job Role</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">Total applications per job title</p>
             <ResponsiveContainer width="100%" height={Math.max(roleData.length * 38, 120)}>
               <BarChart
                 layout="vertical"
@@ -232,7 +232,7 @@ export default function RecruiterEnterpriseDashboard() {
                 <YAxis
                   type="category"
                   dataKey="role"
-                  tick={{ fontSize: 11, fill: "#374151" }}
+                  tick={{ fontSize: 11, fill: "var(--recharts-axis-tick, #374151)" }}
                   width={170}
                   axisLine={false}
                   tickLine={false}
@@ -256,9 +256,9 @@ export default function RecruiterEnterpriseDashboard() {
         <div className="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
 
           {/* Top Job Categories */}
-          <div className="rounded-2xl bg-white border border-gray-100 px-5 pt-4 pb-5 shadow-sm">
-            <h2 className="text-base font-bold text-gray-800">Top Job Categories</h2>
-            <p className="text-xs text-gray-400 mb-3">Distribution of applications by category</p>
+          <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5 pt-4 pb-5 shadow-sm">
+            <h2 className="text-base font-bold text-gray-800 dark:text-white">Top Job Categories</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">Distribution of applications by category</p>
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
                 <ResponsiveContainer width={140} height={140}>
@@ -288,8 +288,8 @@ export default function RecruiterEnterpriseDashboard() {
                   return (
                     <div key={i} className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: CAT_COLORS[i % CAT_COLORS.length] }} />
-                      <span className="text-gray-600 text-sm flex-1">{cat.name}</span>
-                      <span className="text-gray-700 text-sm font-semibold">{pct}%</span>
+                      <span className="text-gray-600 dark:text-gray-300 text-sm flex-1">{cat.name}</span>
+                      <span className="text-gray-700 dark:text-gray-200 text-sm font-semibold">{pct}%</span>
                     </div>
                   );
                 })}
@@ -298,17 +298,17 @@ export default function RecruiterEnterpriseDashboard() {
           </div>
 
           {/* Applications Heatmap */}
-          <div className="rounded-2xl bg-white border border-gray-100 px-5 pt-4 pb-5 shadow-sm">
-            <h2 className="text-base font-bold text-gray-800">Applications Heatmap</h2>
-            <p className="text-xs text-gray-400 mb-3">Application activity by day &amp; time</p>
+          <div className="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-5 pt-4 pb-5 shadow-sm">
+            <h2 className="text-base font-bold text-gray-800 dark:text-white">Applications Heatmap</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">Application activity by day &amp; time</p>
             <HeatmapChart data={heatmapData} />
           </div>
         </div>
 
         {/* ROW 4: Recruiter Performance + Hiring Growth */}
         <div className="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Recruiter Performance</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Recruiter Performance</h2>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={dashboard.recruitersPerformance}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ede9fe" />
@@ -320,8 +320,8 @@ export default function RecruiterEnterpriseDashboard() {
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Hiring Growth</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Hiring Growth</h2>
             <ResponsiveContainer width="100%" height={260}>
               <LineChart data={dashboard.monthlyHiring}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ede9fe" />
@@ -336,31 +336,31 @@ export default function RecruiterEnterpriseDashboard() {
 
         {/* ROW 5: AI Insights + Activity + Usage */}
         <div className="mt-4 grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">AI Hiring Insights</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">AI Hiring Insights</h2>
             <div className="space-y-3">
               {dashboard.insights?.map((item, i) => (
-                <div key={i} className="rounded-xl border border-violet-100 bg-gradient-to-r from-violet-50 to-fuchsia-50 px-4 py-3 font-medium text-violet-700 text-sm">
+                <div key={i} className="rounded-xl border border-violet-100 dark:border-violet-800 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/30 dark:to-fuchsia-900/30 px-4 py-3 font-medium text-violet-700 dark:text-violet-300 text-sm">
                   ✨ {item}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Live Activity Feed</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Live Activity Feed</h2>
             <div className="space-y-3">
               {dashboard.activities?.length ? dashboard.activities.map((item, i) => (
-                <div key={i} className="rounded-xl border border-violet-100 bg-violet-50 px-4 py-3">
-                  <div className="font-semibold text-violet-700 text-sm">{item.title}</div>
-                  <div className="mt-0.5 text-xs text-gray-500">{item.time}</div>
+                <div key={i} className="rounded-xl border border-violet-100 dark:border-violet-800 bg-violet-50 dark:bg-violet-900/20 px-4 py-3">
+                  <div className="font-semibold text-violet-700 dark:text-violet-300 text-sm">{item.title}</div>
+                  <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{item.time}</div>
                 </div>
               )) : <p className="text-gray-400 text-sm">No recent activity.</p>}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-violet-100 bg-white/80 px-5 py-4 shadow-lg backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-violet-700 mb-4">Usage Analytics</h2>
+          <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
+            <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Usage Analytics</h2>
             <Usage label="Database Credits" value={dashboard.databaseCredits} max={100000} />
             <Usage label="Job Posts"        value={dashboard.postedJobs}      max={1000000} />
             <Usage label="Recruiters"       value={dashboard.recruiters}      max={5} />
@@ -429,7 +429,7 @@ function HeatmapChart({ data }) {
     <div className="relative select-none">
       {data.map((row) => (
         <div key={row.day} className="flex items-center mb-1">
-          <span className="w-8 text-[10px] text-gray-500 flex-shrink-0 font-medium">{row.day}</span>
+          <span className="w-8 text-[10px] text-gray-500 dark:text-gray-400 flex-shrink-0 font-medium">{row.day}</span>
           {HOURS.map((h) => (
             <div
               key={h}
@@ -445,17 +445,17 @@ function HeatmapChart({ data }) {
       {/* Hour labels at bottom */}
       <div className="flex mt-1.5 ml-8">
         {HOURS.map((h) => (
-          <div key={h} className="flex-1 text-center text-[9px] text-gray-400">{h}</div>
+          <div key={h} className="flex-1 text-center text-[9px] text-gray-400 dark:text-gray-500">{h}</div>
         ))}
       </div>
 
       {/* Legend */}
       <div className="flex items-center gap-1 mt-2 ml-8">
-        <span className="text-[9px] text-gray-400 mr-1">Low</span>
+        <span className="text-[9px] text-gray-400 dark:text-gray-500 mr-1">Low</span>
         {["#f1f5f9", "#ddd6fe", "#8b5cf6", "#c026d3", "#f97316"].map((c) => (
           <div key={c} className="flex-1 h-2 rounded-sm" style={{ background: c }} />
         ))}
-        <span className="text-[9px] text-gray-400 ml-1">High</span>
+        <span className="text-[9px] text-gray-400 dark:text-gray-500 ml-1">High</span>
       </div>
 
       {/* Floating tooltip */}
@@ -477,11 +477,11 @@ function Usage({ label, value, max }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   return (
     <div className="mb-4">
-      <div className="mb-1.5 flex justify-between font-medium text-xs text-gray-700">
+      <div className="mb-1.5 flex justify-between font-medium text-xs text-gray-700 dark:text-gray-300">
         <span>{label}</span>
         <span>{Number(value).toLocaleString()}</span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-violet-100">
+      <div className="h-2.5 overflow-hidden rounded-full bg-violet-100 dark:bg-violet-900/40">
         <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all" style={{ width: `${pct}%` }} />
       </div>
     </div>

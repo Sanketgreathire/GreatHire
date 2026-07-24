@@ -11,11 +11,70 @@ import { User } from "../models/user.model.js";
 import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
+import { isTrialLive } from "../utils/trial.js";
 
+// AI JD Generation (template-based, no API key required)
+export const generateJD = async (req, res) => {
+  try {
+    const { title, skills, experience, jobType, location, workPlaceFlexibility } = req.body;
+    if (!title) return res.status(400).json({ success: false, message: "Job title is required" });
+
+    const skillList = skills ? skills.split(",").map(s => s.trim()).filter(Boolean) : [];
+    const expText = experience || "relevant experience";
+    const typeText = jobType || "Full-Time";
+    const locText = location || "our office";
+    const modeText = workPlaceFlexibility || "On-site";
+
+    const skillsHtml = skillList.length
+      ? skillList.map(s => `<li>${s}</li>`).join("")
+      : "<li>Relevant technical skills</li><li>Strong communication skills</li>";
+
+    const html = `
+<p>We are looking for a talented and motivated <strong>${title}</strong> to join our growing team. This is a <strong>${typeText}</strong> position based in <strong>${locText}</strong> (${modeText}).</p>
+
+<p><strong>Role Overview</strong></p>
+<p>As a ${title}, you will play a key role in driving our technical initiatives forward. You will collaborate with cross-functional teams to deliver high-quality solutions and contribute to the overall success of the organization.</p>
+
+<p><strong>Key Responsibilities</strong></p>
+<ul>
+<li>Design, develop, and maintain scalable solutions aligned with business requirements</li>
+<li>Collaborate with product, design, and engineering teams to deliver features on time</li>
+<li>Write clean, maintainable, and well-documented code</li>
+<li>Participate in code reviews and contribute to best practices</li>
+<li>Troubleshoot, debug, and resolve technical issues efficiently</li>
+<li>Stay updated with industry trends and emerging technologies</li>
+</ul>
+
+<p><strong>Required Skills &amp; Qualifications</strong></p>
+<ul>
+${skillsHtml}
+<li>${expText} of relevant experience</li>
+<li>Strong problem-solving and analytical skills</li>
+<li>Excellent communication and teamwork abilities</li>
+</ul>
+
+<p><strong>What We Offer</strong></p>
+<ul>
+<li>Competitive salary and performance-based incentives</li>
+<li>Flexible work environment (${modeText})</li>
+<li>Opportunities for professional growth and learning</li>
+<li>Collaborative and inclusive work culture</li>
+<li>Health benefits and other perks</li>
+</ul>
+
+<p>If you are passionate about your craft and eager to make an impact, we'd love to hear from you. Apply now and be part of something great!</p>
+`.trim();
+
+    return res.status(200).json({ success: true, html });
+  } catch (error) {
+    console.error("JD generation error:", error);
+    return res.status(500).json({ success: false, message: "Failed to generate JD" });
+  }
+};
 
 // Plan limits configuration
 const PLAN_LIMITS = {
-  FREE:       { jobsPerMonth: 1,         resumeCredits: 20 },
+  FREE:       { jobsPerMonth: 1,         resumeCredits: 30 },
   STANDARD:   { jobsPerMonth: 5,         resumeCredits: 500 },
   PREMIUM:    { jobsPerMonth: 10,        resumeCredits: 1500 },
   PRO:        { jobsPerMonth: 25,        resumeCredits: 5000 },
@@ -67,7 +126,8 @@ export const postJob = [
         company.maxJobPosts = null;
       }
 
-      const companyPlan = company.plan || "FREE";
+      // 3-day trial unlocks Enterprise-level job posting limits (never AI Sourcing).
+      const companyPlan = isTrialLive(company) ? "ENTERPRISE" : (company.plan || "FREE");
       const isVerified = company.isActive;
       const isFirstJob = company.freeJobsPosted === 0;
 
@@ -126,7 +186,7 @@ export const postJob = [
         if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
           return res.status(400).json({
             success: false,
-            message: "You have used your 2 free monthly job posts. Please upgrade your plan to post more jobs.",
+            message: "You have used your 1 free monthly job post. Please upgrade your plan to post more jobs.",
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
@@ -184,6 +244,7 @@ export const postJob = [
         const updateData = { freeJobsPosted: newFreeJobsPosted };
         if (newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
           updateData.hasUsedFreePlan = true;
+          updateData.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         }
         await Company.findByIdAndUpdate(companyId, updateData);
       } else {

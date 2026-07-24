@@ -14,7 +14,12 @@ const AddRecruiter = () => {
   const { user } = useSelector((state) => state.auth);
 
   const planType = company?.plan || "FREE";
-  const userLimit = USER_LIMITS[planType] ?? 1;
+  // ENTERPRISE companies have a duration-specific cap (3/6/12 team users)
+  // purchased with the plan; other plans use the flat table.
+  const userLimit =
+    planType === "ENTERPRISE" && company?.teamUserLimit
+      ? company.teamUserLimit
+      : USER_LIMITS[planType] ?? 1;
   const atLimit = userLimit !== Infinity && (company?.userId?.length ?? 0) >= userLimit;
 
   const [loading, setLoading] = useState(false);

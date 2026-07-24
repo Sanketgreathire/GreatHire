@@ -1,5 +1,6 @@
 import express from "express";
 import isAuthenticated from "../../middlewares/isAuthenticated.js";
+import requireSourcingAccess from "../../middlewares/requireSourcingAccess.js";
 import { resumeUpload } from "../../middlewares/resumeUpload.js";
 
 
@@ -7,9 +8,12 @@ import { resumeUpload } from "../../middlewares/resumeUpload.js";
 import {
   uploadResume,
   searchCandidates,
+  getSavedSourcedCandidates,
   getCandidateById,
   deleteCandidate,
+  sourceByJobDescription,
 } from "../../controllers/sourcing/sourcing.controller.js";
+import { recruitkarSearch, recruitkarContact, recruitkarPreview } from "../../controllers/sourcing/recruitkar.controller.js";
 
 // Semantic AI controllers
 import {
@@ -119,6 +123,15 @@ router.post("/reindex-pending",       reindexPending);
 
 // ── Keyword Search ────────────────────────────────────────────────────────────
 router.get("/search", searchCandidates);
+router.get("/saved-sourced", requireSourcingAccess, getSavedSourcedCandidates);
+
+// ── JD-Based Sourcing (Free — GitHub) ─────────────────────────────────────────
+router.post("/source-by-jd", requireSourcingAccess, sourceByJobDescription);
+
+// ── Recruitkar AI Sourcing (Paid) ──────────────────────────────────────────────
+router.post("/recruitkar-search", requireSourcingAccess, recruitkarSearch);
+router.post("/recruitkar-contact", requireSourcingAccess, recruitkarContact);
+router.post("/recruitkar-preview", requireSourcingAccess, recruitkarPreview);
 
 // ── Single Candidate ──────────────────────────────────────────────────────────
 router.get("/:id",    getCandidateById);

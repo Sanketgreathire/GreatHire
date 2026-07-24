@@ -1,5 +1,5 @@
 import { Queue, Worker } from 'bullmq';
-import { getRedisConnection, isRedisAvailable } from '../../../config/redis.js';
+import { getRedisConnection } from '../../../config/redis.js';
 
 const TALENT_GRAPH_QUEUE_NAME = "talent-graph-processing";
 
@@ -203,12 +203,6 @@ export async function resumeGraphQueue() {
 // Start talent graph worker
 export async function startTalentGraphWorker() {
   try {
-    const redisReady = await isRedisAvailable();
-    if (!redisReady) {
-      console.warn('⚠️  Talent graph worker: Redis unavailable, skipping startup');
-      return null;
-    }
-
     const connection = getRedisConnection();
     
     const worker = new Worker(

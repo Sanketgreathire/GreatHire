@@ -16,6 +16,7 @@ const JobDetailsProvider = ({ children }) => {
   const [originalJobsList, setOriginalJobsList] = useState([]);
   const [saveJobsList, setSaveJobsList] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // NEW
   const [error, setError] = useState(null);
 
   // Define the qualification categories for filtering
@@ -29,24 +30,30 @@ const JobDetailsProvider = ({ children }) => {
 
   // Fetch job listings — only for job seekers, deferred so it doesn't block initial paint
   useEffect(() => {
-    if (isRecruiterOrAdmin) return;
+  if (isRecruiterOrAdmin) {
+    setIsLoading(false); // recruiters/admins never fetch this list — don't show a spinner forever
+    return;
+  }
 
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch(`${JOB_API_END_POINT}/jobs`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.statusText}`);
-        const jobs = await response.json();
-        setJobsList(jobs);
-        setOriginalJobsList(jobs);
-        setSelectedJob(jobs[0] || null);
-      } catch (err) {
-        setError("An error occurred while fetching jobs.");
-      }
-    };
+  setIsLoading(true); // NEW — reset to true whenever this effect (re)runs
 
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch(`${JOB_API_END_POINT}/jobs`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.statusText}`);
+      const jobs = await response.json();
+      setJobsList(jobs);
+      setOriginalJobsList(jobs);
+      setSelectedJob(jobs[0] || null);
+    } catch (err) {
+      setError("An error occurred while fetching jobs.");
+    } finally {
+      setIsLoading(false); // NEW — always stops loading, success or failure
+    }
+  };
     // Defer 1.5s for unauthenticated users — lets critical render finish first
     const delay = user ? 300 : 1500;
     const t = setTimeout(fetchJobs, delay);
@@ -266,6 +273,7 @@ const JobDetailsProvider = ({ children }) => {
     getSaveJobs,
     saveJobsList,
     error,
+    isLoading,
   }), [jobsList, selectedJob, saveJobsList, error]);
 
   return (

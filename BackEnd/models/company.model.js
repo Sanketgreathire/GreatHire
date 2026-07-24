@@ -54,11 +54,15 @@ const companySchema = new mongoose.Schema(
     },
     creditedForJobs: {
       type: Number,
-      default: 1000, // 2 free job posts (500 credits each)
+      default: 500, // 1 free job post (500 credits each)
     },
     creditedForCandidates: {
       type: Number,
-      default: 5, // 5 free candidate views
+      default: 30, // 30 free candidate views
+    },
+    aiSourcingCredits: {
+      type: Number,
+      default: 0, // AI sourcing credits — added by plan purchase
     },
     customCreditsForJobs: {
       type: Number,
@@ -82,7 +86,7 @@ const companySchema = new mongoose.Schema(
     },
     freePlanExpiry: {
       type: Date,
-      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from creation
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days (1 month) from creation
     },
     freeJobsPosted: {
       type: Number,
@@ -109,9 +113,36 @@ const companySchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    hasSubscription: { 
-      type: Boolean, 
-      default: false 
+    hasSubscription: {
+      type: Boolean,
+      default: false
+    },
+    // Overrides the flat per-plan USER_LIMITS table (see recruiter.contoller.js)
+    // for ENTERPRISE companies — set per purchased duration (3/6/12 team users
+    // for the 3-month/6-month/1-year plans). null = fall back to the table.
+    teamUserLimit: {
+      type: Number,
+      default: null,
+    },
+    // ── 3-day free trial (Starter plan only) ────────────────────────────
+    // Unlocks paid-tier limits (jobs, filters, AI auto-scoring, etc.) for 3
+    // days, no card required. AI Sourcing stays gated on `hasSubscription`
+    // and is intentionally NEVER unlocked by the trial.
+    trialActive: {
+      type: Boolean,
+      default: false,
+    },
+    trialStartedAt: {
+      type: Date,
+      default: null,
+    },
+    trialExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    hasUsedTrial: {
+      type: Boolean,
+      default: false, // one trial per company, ever
     },
     userId: [
       {

@@ -24,15 +24,7 @@ export async function isRedisAvailable() {
   try {
     const client = getRedisConnection();
     await client.connect().catch(() => {});
-    const info = await client.info('server');
-    const match = info.match(/redis_version:(\S+)/);
-    if (match) {
-      const [major] = match[1].split('.').map(Number);
-      if (major < 5) {
-        console.warn(`⚠️  Redis version ${match[1]} is too old for BullMQ (requires >= 5.0.0). Workers will be disabled.`);
-        return false;
-      }
-    }
+    await client.ping();
     return true;
   } catch {
     return false;

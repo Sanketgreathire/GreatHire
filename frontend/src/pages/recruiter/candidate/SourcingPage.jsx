@@ -630,62 +630,101 @@ function StatsPanel({ candidates }) {
 }
 
 // ─── Search Bar ───────────────────────────────────────────────────────────────
-function SearchBar({ onSearch, aiAvailable }) {
-  const [filters, setFilters] = useState({ q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" });
+function SearchBar({ onSearch, aiAvailable, showImport, onToggleImport }) {
+  const [filters, setFilters] = useState({ skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" });
   const [useAI, setUseAI] = useState(false);
+  const [showJD, setShowJD] = useState(false);
 
   const set = (k, v) => setFilters((p) => ({ ...p, [k]: v }));
 
   const handleSearch = (e) => { e.preventDefault(); onSearch(filters, useAI && aiAvailable); };
   const handleClear = () => {
-    const empty = { q: "", skills: "", location: "", designation: "", minExp: "", maxExp: "" };
+    const empty = { skills: "", location: "", designation: "", minExp: "", maxExp: "", jobDescription: "" };
     setFilters(empty);
+    setShowJD(false);
     onSearch(empty, false);
   };
 
   return (
     <form onSubmit={handleSearch} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
+      {/* Header row */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-          <Search size={17} className="text-purple-600" /> Search Candidates
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-base font-semibold text-gray-800 dark:text-white">Search Sourced Candidates</h2>
+          <button
+            type="button"
+            onClick={() => setUseAI((v) => !v)}
+            disabled={!aiAvailable}
+            title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all border
+              ${useAI && aiAvailable
+                ? "bg-purple-600 text-white border-purple-600"
+                : aiAvailable
+                  ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+          >
+            <Brain size={12} />
+            {useAI && aiAvailable ? "AI ON" : "AI OFF"}
+            <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
+          </button>
+        </div>
         <button
           type="button"
-          onClick={() => setUseAI((v) => !v)}
-          disabled={!aiAvailable}
-          title={aiAvailable ? "Toggle AI semantic search" : "AI service unavailable"}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border
-            ${useAI && aiAvailable
-              ? "bg-purple-600 text-white border-purple-600"
-              : aiAvailable
-                ? "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-400 border-gray-200 cursor-not-allowed"}`}
+          onClick={onToggleImport}
+          className="text-sm text-purple-600 dark:text-purple-400 hover:underline font-medium"
         >
-          <Brain size={13} />
-          {useAI && aiAvailable ? "AI ON" : "AI OFF"}
-          <span className={`ml-0.5 ${aiAvailable ? (useAI ? "text-green-300" : "text-green-500") : "text-red-400"}`}>●</span>
+          {showImport ? "Hide Sourcing" : "Show Sourcing"}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div className="lg:col-span-3">
-          <input
-            className={inputCls}
-            placeholder={useAI && aiAvailable ? "Describe the candidate you need…" : "Search by name, company, designation…"}
-            value={filters.q}
-            onChange={(e) => set("q", e.target.value)}
-          />
-        </div>
-        <input className={inputCls} placeholder="Skills (e.g. React, Node.js)" value={filters.skills} onChange={(e) => set("skills", e.target.value)} />
+      {/* Filter row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+        <input className={inputCls} placeholder="Skills (e.g. React)" value={filters.skills} onChange={(e) => set("skills", e.target.value)} />
         <input className={inputCls} placeholder="Location" value={filters.location} onChange={(e) => set("location", e.target.value)} />
         <input className={inputCls} placeholder="Designation" value={filters.designation} onChange={(e) => set("designation", e.target.value)} />
         <input className={inputCls} placeholder="Min Experience (yrs)" type="number" min="0" value={filters.minExp} onChange={(e) => set("minExp", e.target.value)} />
         <input className={inputCls} placeholder="Max Experience (yrs)" type="number" min="0" value={filters.maxExp} onChange={(e) => set("maxExp", e.target.value)} />
       </div>
 
-      <div className="flex gap-3 mt-4">
-        <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white px-6 flex items-center gap-2">
-          {useAI && aiAvailable && <Zap size={14} />} Search
+      {/* JD toggle + textarea */}
+      <div className="mb-3">
+        <button
+          type="button"
+          onClick={() => setShowJD(v => !v)}
+          className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors mb-2"
+        >
+          <Brain size={13} className={showJD ? "text-purple-500" : ""} />
+          {showJD ? "Hide Job Description" : "+ Add Job Description (AI Match)"}
+        </button>
+        {showJD && (
+          <textarea
+            className={`${inputCls} resize-none`}
+            rows={4}
+            placeholder="Paste job description here — AI will source candidates from GitHub and rank them by match score…"
+            value={filters.jobDescription}
+            onChange={(e) => set("jobDescription", e.target.value)}
+          />
+        )}
+        {showJD && filters.jobDescription?.trim() && (
+          <div className="flex items-center gap-2 mt-2 px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-xs text-green-700 dark:text-green-400">
+            <Brain size={12} className="shrink-0" />
+            <span><span className="font-semibold">JD Sourcing active</span> — candidates will be sourced from GitHub &amp; ranked by match</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          type="submit"
+          className={`px-5 flex items-center gap-2 text-white transition-colors ${
+            filters.jobDescription?.trim() ? "bg-green-600 hover:bg-green-700"
+              : useAI && aiAvailable ? "bg-purple-600 hover:bg-purple-700"
+              : "bg-purple-600 hover:bg-purple-700"
+          }`}
+        >
+          {filters.jobDescription?.trim() ? <><Brain size={14} /> Source &amp; Match</>
+            : useAI && aiAvailable ? <><Zap size={14} /> AI Search</>
+            : <><Search size={14} /> Search</>}
         </Button>
         <Button type="button" variant="outline" onClick={handleClear}>Clear</Button>
       </div>
@@ -717,7 +756,7 @@ function CandidateCard({ candidate, onDelete, showScore }) {
     finally { setDeleting(false); }
   };
 
-  const score = candidate._scores?.hybrid;
+  const score = candidate._scores?.hybrid || candidate.matchScore;
   const src = candidate.source || "resume";
   const srcBadge = SOURCE_BADGE[src] || SOURCE_BADGE.resume;
 
@@ -728,12 +767,12 @@ function CandidateCard({ candidate, onDelete, showScore }) {
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-semibold text-gray-900 dark:text-white truncate">{candidate.fullName}</h3>
             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${srcBadge.cls}`}>{srcBadge.label}</span>
-            {showScore && score !== undefined && (
+            {showScore && score !== undefined && score !== null && (
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full
-                ${score >= 0.7 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                  : score >= 0.4 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400"
+                ${score >= 70 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                  : score >= 40 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400"
                   : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>
-                {Math.round(score * 100)}%
+                {typeof score === 'number' && score < 1 ? Math.round(score * 100) : score}%
               </span>
             )}
           </div>
@@ -808,6 +847,23 @@ function CandidateCard({ candidate, onDelete, showScore }) {
       {candidate.summary && (
         <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{candidate.summary}</p>
       )}
+
+      {showScore && candidate.matchReasons?.length > 0 && (
+        <div className="mt-2.5 pt-2.5 border-t border-gray-100 dark:border-gray-700">
+          <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 flex items-center gap-1.5">
+            <Brain size={12} className="text-purple-500" />
+            Match Analysis:
+          </p>
+          <div className="space-y-1">
+            {candidate.matchReasons.map((reason, i) => (
+              <p key={i} className="text-xs text-gray-500 dark:text-gray-400 flex items-start gap-1.5">
+                <span className={`mt-0.5 shrink-0 ${candidate.matchScore >= 70 ? 'text-green-500' : candidate.matchScore >= 40 ? 'text-yellow-500' : 'text-gray-400'}`}>•</span>
+                {reason}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -824,6 +880,8 @@ const SourcingPage = () => {
   const [searchMode, setSearchMode]       = useState("keyword");
   const [aiAvailable, setAiAvailable]     = useState(false);
   const [searchMeta, setSearchMeta]       = useState(null);
+  const [loadingMessage, setLoadingMessage] = useState("");
+  const [sourcingProgress, setSourcingProgress] = useState(0);
 
   useEffect(() => {
     axios
@@ -834,8 +892,41 @@ const SourcingPage = () => {
 
   const fetchCandidates = useCallback(async (filters, useAI = false, page = 1) => {
     setLoading(true);
+    setLoadingMessage("");
+    setSourcingProgress(0);
     try {
-      if (useAI && filters.q?.trim()) {
+      // If job description is provided, use JD-based sourcing
+      if (filters.jobDescription?.trim()) {
+        setLoadingMessage("🔍 Sourcing candidates from GitHub...");
+        setSourcingProgress(20);
+        
+        const payload = {
+          skills: filters.skills?.split(',').map(s => s.trim()).filter(Boolean) || [],
+          location: filters.location || undefined,
+          designation: filters.designation || undefined,
+          minExperience: filters.minExp ? parseInt(filters.minExp) : undefined,
+          maxExperience: filters.maxExp ? parseInt(filters.maxExp) : undefined,
+          jobDescription: filters.jobDescription
+        };
+
+        setTimeout(() => {
+          setLoadingMessage("🎯 Scoring candidates with AI...");
+          setSourcingProgress(60);
+        }, 3000);
+
+        const { data } = await axios.post(`${SOURCING_API_END_POINT}/source-by-jd`, payload, { withCredentials: true });
+        
+        setSourcingProgress(100);
+        
+        if (data.success) {
+          setCandidates(data.candidates || []);
+          setPagination(null);
+          setSearchMode("jd");
+          setHasSearched(true);
+          setSearchMeta({ mode: data.mode, total: data.total, message: data.message });
+          toast.success(`Found ${data.candidates?.length || 0} candidates matching your job description!`);
+        }
+      } else if (useAI && filters.q?.trim()) {
         const params = { q: filters.q, topK: ITEMS_PER_PAGE, scoreThreshold: 0.2 };
         if (filters.location)    params.location    = filters.location;
         if (filters.designation) params.designation = filters.designation;
@@ -874,6 +965,8 @@ const SourcingPage = () => {
       toast.error(err.response?.data?.message || "Search failed.");
     } finally {
       setLoading(false);
+      setLoadingMessage("");
+      setSourcingProgress(0);
     }
   }, []);
 
@@ -898,7 +991,7 @@ const SourcingPage = () => {
     if (pagination) setPagination((p) => ({ ...p, total: p.total - 1 }));
   };
 
-  const totalCount = searchMode === "ai"
+  const totalCount = searchMode === "ai" || searchMode === "jd"
     ? (searchMeta?.total ?? candidates.length)
     : (pagination?.total ?? candidates.length);
 
@@ -947,8 +1040,22 @@ const SourcingPage = () => {
           )}
 
           {loading ? (
-            <div className="flex justify-center py-16">
+            <div className="flex flex-col items-center justify-center py-16 space-y-4">
               <span className="h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent" />
+              {loadingMessage && (
+                <div className="text-center space-y-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{loadingMessage}</p>
+                  {sourcingProgress > 0 && (
+                    <div className="w-64 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-purple-500 to-green-500 transition-all duration-500"
+                        style={{ width: `${sourcingProgress}%` }}
+                      />
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 dark:text-gray-400">This may take 30-60 seconds...</p>
+                </div>
+              )}
             </div>
           ) : hasSearched && candidates.length === 0 ? (
             <div className="text-center py-16 text-gray-400 dark:text-gray-500">
@@ -962,12 +1069,13 @@ const SourcingPage = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {totalCount} candidate{totalCount !== 1 ? "s" : ""} found
                   {searchMode === "ai" && <span className="ml-2 text-purple-500 font-medium">· AI ranked</span>}
+                  {searchMode === "jd" && <span className="ml-2 text-green-500 font-medium">· JD matched</span>}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {candidates.map((c) => (
-                  <CandidateCard key={c._id} candidate={c} onDelete={handleDeleted} showScore={searchMode === "ai"} />
+                  <CandidateCard key={c._id || c.githubUrl} candidate={c} onDelete={handleDeleted} showScore={searchMode === "ai" || searchMode === "jd"} />
                 ))}
               </div>
 

@@ -146,6 +146,7 @@ const resumeCandidateMetadataSchema = new mongoose.Schema({
 });
 
 resumeCandidateMetadataSchema.index({ candidateId: 1, documentUrl: 1 });
+
 resumeCandidateMetadataSchema.index({ documentUrl: 1 });
 resumeCandidateMetadataSchema.index({ documentType: 1 });
 resumeCandidateMetadataSchema.index({ parsingConfidence: -1 });

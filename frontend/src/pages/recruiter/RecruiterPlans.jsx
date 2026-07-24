@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Check, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
+import { Check, X, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -56,130 +56,198 @@ const subscriptionPlans = [
     title: "Starter Plan",
     price: 0,
     billing: "Forever Free",
-    jobs: "1 Job / 3 months",
-    resumes: "20 Applications",
+    jobs: "1 Job / month",
+    resumes: "30 Applications",
     isFree: true,
     bestFor: "Best for trying the platform",
     features: [
-      "1 Job Posting every 3 months",
-      "Access to first 20 applications per job",
+      "1 Job Posting every month",
+      "Access to first 30 applications per job",
       "Basic Search Filters",
       "1 User",
       "No AI Features",
+      "3-Day Free Trial of All Features — No Credit Card Required",
+      { text: "AI Advanced Sourcing (Paid)", excluded: true },
     ],
     cta: "Start Free",
     color: "gray",
   },
+
+  // ── FUTURE PLANS (uncomment to re-enable) ────────────────────────────
+  // {
+  //   id: "growth",
+  //   title: "Growth Plan",
+  //   price: 1999,
+  //   billing: "month",
+  //   jobs: "5 Jobs",
+  //   resumes: "500 Candidates",
+  //   bestFor: "Best for: Startups hiring 1–3 roles/month",
+  //   features: [
+  //     "5 Job Postings",
+  //     "500 Candidates Database Access",
+  //     "1 User",
+  //     "Basic Filters +1",
+  //     "1,000 Email Support",
+  //   ],
+  //   cta: "Upgrade Now",
+  //   color: "blue",
+  // },
+  // {
+  //   id: "scale",
+  //   title: "Scale Plan",
+  //   price: 2999,
+  //   billing: "month",
+  //   jobs: "10 Jobs",
+  //   resumes: "1,500 Candidates",
+  //   popular: true,
+  //   bestFor: "Best for: Teams hiring consistently",
+  //   features: [
+  //     "10 Job Postings",
+  //     "1,500 Candidates Database Access",
+  //     "3 Users",
+  //     "AI Candidate Matching",
+  //     "AI JD Creation",
+  //     "Smart Filters & Shortlisting",
+  //     "Hire 3x faster",
+  //     "Save 50–70% hiring cost",
+  //     "3,000 Email Support",
+  //   ],
+  //   cta: "Get Started",
+  //   color: "purple",
+  // },
+  // {
+  //   id: "pro",
+  //   title: "Pro Plan",
+  //   price: 4999,
+  //   billing: "month",
+  //   jobs: "25 Jobs",
+  //   resumes: "5,000 Candidates",
+  //   bestFor: "For companies scaling aggressively",
+  //   features: [
+  //     "25 Job Postings",
+  //     "5,000 Candidates Database Access",
+  //     "5 Users",
+  //     "AI JD Creation",
+  //     "AI Candidate Matching",
+  //     "Advanced Analytics Dashboard",
+  //     "Priority Support",
+  //     "Interview Tracking",
+  //     "Replace external recruiters",
+  //     "Build in-house hiring engine",
+  //     "10,000 Email Support",
+  //   ],
+  //   cta: "Go Pro",
+  //   color: "orange",
+  // },
+  // {
+  //   id: "full-cycle-rpo",
+  //   title: "Full-Cycle RPO",
+  //   price: "8.33%",
+  //   billing: "Per Hire",
+  //   jobs: "End-to-End Hiring",
+  //   resumes: "Unlimited",
+  //   bestFor: "For companies that want zero hiring hassle",
+  //   features: [
+  //     "Complete sourcing to offer management",
+  //     "Technical & HR screening",
+  //     "Salary negotiation & closure",
+  //     "Free replacement within 90 days",
+  //     "Dedicated recruitment team",
+  //     "Unlimited Email Support",
+  //   ],
+  //   extraInfo: [
+  //     "Fee: 8.33% of annual gross CTC",
+  //     "₹5,000 sourcing advance (non-refundable)",
+  //   ],
+  //   cta: "Contact Sales",
+  //   color: "teal",
+  // },
+  // ────────────────────────────────────────────────────────────────────
+
   {
-    id: "growth",
-    title: "Growth Plan",
-    price: 1999,
-    billing: "month",
-    jobs: "5 Jobs",
-    resumes: "500 Candidates",
-    bestFor: "Best for: Startups hiring 1–3 roles/month",
+    id: "enterprise-3m",
+    title: "Enterprise — 3 Months",
+    price: 7499,
+    billing: "3 months",
+    durationMonths: 3,
+    aiSourcingCredits: 750,
+    teamUserLimit: 3,
+    jobs: "200",
+    resumes: "7,500",
+    enterprise: true,
+    bestFor: "Best for: Short-term high-volume hiring",
     features: [
-      "5 Job Postings",
-      "500 Candidates Database Access",
-      "1 User",
-      "Basic Filters +1",
-      "1,000 Email Support",
+      "Unlimited Job Postings",
+      "Unlimited AI Sourcing",
+      "750 Advance AI Sourcing Credits",
+      "7,500 Candidate Database Access",
+      "3 Team Users Included",
+      "Dedicated Relationship Manager",
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "AI Auto Scoring System",
+      "7,500 Email Outreach Credits",
     ],
-    cta: "Upgrade Now",
+    cta: "Buy Now",
     color: "blue",
   },
   {
-    id: "scale",
-    title: "Scale Plan",
-    price: 2999,
-    billing: "month",
-    jobs: "10 Jobs",
-    resumes: "1,500 Candidates",
+    id: "enterprise-6m",
+    title: "Enterprise — 6 Months",
+    price: 13999,
+    billing: "6 months",
+    durationMonths: 6,
+    aiSourcingCredits: 1500,
+    teamUserLimit: 6,
+    jobs: "200",
+    resumes: "15,000",
+    enterprise: true,
     popular: true,
-    bestFor: "Best for: Teams hiring consistently",
+    bestFor: "Best for: Growing hiring teams",
     features: [
-      "10 Job Postings",
-      "1,500 Candidates Database Access",
-      "3 Users",
-      "AI Candidate Matching",
-      "AI JD Creation",
-      "Smart Filters & Shortlisting",
-      "Hire 3x faster",
-      "Save 50–70% hiring cost",
-      "3,000 Email Support",
+      "Unlimited Job Postings",
+      "Unlimited AI Sourcing",
+      "1,500 Advance AI Sourcing Credits",
+      "15,000 Candidate Database Access",
+      "6 Team Users Included",
+      "Dedicated Relationship Manager",
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "AI Auto Scoring System",
+      "15,000 Email Outreach Credits",
     ],
-    cta: "Get Started",
+    cta: "Buy Now",
     color: "purple",
   },
   {
-    id: "pro",
-    title: "Pro Plan",
-    price: 4999,
-    billing: "month",
-    jobs: "25 Jobs",
-    resumes: "5,000 Candidates",
-    bestFor: "For companies scaling aggressively",
-    features: [
-      "25 Job Postings",
-      "5,000 Candidates Database Access",
-      "5 Users",
-      "AI JD Creation",
-      "AI Candidate Matching",
-      "Advanced Analytics Dashboard",
-      "Priority Support",
-      "Interview Tracking",
-      "Replace external recruiters",
-      "Build in-house hiring engine",
-      "10,000 Email Support",
-    ],
-    cta: "Go Pro",
-    color: "orange",
-  },
-  {
-    id: "enterprise",
-    title: "Enterprise Plan",
-    price: 30000,
+    id: "enterprise-1y",
+    title: "Enterprise — 1 Year",
+    price: 26999,
     billing: "year",
+    durationMonths: 12,
+    aiSourcingCredits: 3000,
+    teamUserLimit: 12,
     jobs: "200",
     resumes: "30,000",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
-      "200 Job Postings",
+      "Unlimited Job Postings",
+      "Unlimited AI Sourcing",
+      "3,000 Advance AI Sourcing Credits",
       "30,000 Candidate Database Access",
       "12 Team Users Included",
       "Dedicated Relationship Manager",
       "AI-Powered JD Creation & Smart Candidate Matching",
       "Advanced Analytics & Hiring Dashboard",
       "Priority Customer Support",
-      "Custom Hiring Workflows & Automation",
-      "30,000 Email Outreach Credits"
-       ],
+      "AI Auto Scoring System",
+      "30,000 Email Outreach Credits",
+    ],
     cta: "Buy Now",
     color: "gold",
-  },
-  {
-    id: "full-cycle-rpo",
-    title: "Full-Cycle RPO",
-    price: "8.33%",
-    billing: "Per Hire",
-    jobs: "End-to-End Hiring",
-    resumes: "Unlimited",
-    bestFor: "For companies that want zero hiring hassle",
-    features: [
-      "Complete sourcing to offer management",
-      "Technical & HR screening",
-      "Salary negotiation & closure",
-      "Free replacement within 90 days",
-      "Dedicated recruitment team",
-      "Unlimited Email Support",
-    ],
-    extraInfo: [
-      "Fee: 8.33% of annual gross CTC",
-      "₹5,000 sourcing advance (non-refundable)",
-    ],
-    cta: "Contact Sales",
-    color: "teal",
   },
 ];
 
@@ -248,7 +316,7 @@ function RecruiterPlans() {
 
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
-        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
+        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0, durationMonths: plan.durationMonths ?? 1, teamUserLimit: plan.teamUserLimit ?? null },
         { withCredentials: true }
       );
 
@@ -261,7 +329,7 @@ function RecruiterPlans() {
         handler: async (response) => {
           const verify = await axios.post(
             `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
-            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates },
+            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0 },
             { withCredentials: true }
           );
           if (verify.data.success) {
@@ -310,7 +378,7 @@ function RecruiterPlans() {
           const response = await axios.post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true });
           if (response?.data.success) {
             dispatch(addCompany(response?.data.company));
-            toast.success("Free plan activated! You now have 1 job post every 3 months.");
+            toast.success("Free plan activated! You now have 1 job post every month.");
             navigate("/recruiter/dashboard/post-job");
           }
         } catch { toast.error("Failed to activate free plan. Please try again."); }
@@ -322,12 +390,21 @@ function RecruiterPlans() {
     }
 
     if (plan.enterprise) {
-      initiateCreditPayment({ title: plan.title, price: plan.price, creditsForJobs: 999999, creditsForCandidates: 999999 });
+      const candidateMap = { "enterprise-3m": 7500, "enterprise-6m": 15000, "enterprise-1y": 30000 };
+      initiateCreditPayment({
+        title: plan.title,
+        price: plan.price,
+        creditsForJobs: 999999,
+        creditsForCandidates: candidateMap[plan.id] ?? 30000,
+        aiSourcingCredits: plan.aiSourcingCredits || 0,
+        durationMonths: plan.durationMonths ?? 12,
+        teamUserLimit: plan.teamUserLimit ?? 12,
+      });
       return;
     }
 
     const credits = PLAN_CREDITS[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
-    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits });
+    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits, aiSourcingCredits: plan.aiSourcingCredits || 0 });
   }, [company, user, dispatch, navigate, initiateCreditPayment]);
 
   return (
@@ -424,7 +501,7 @@ function RecruiterPlans() {
             </div>
 
             {/* ================= PRICING CARDS ================= */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               {subscriptionPlans.map((plan) => {
                   const borderColor = BORDER_COLOR[plan.color] || "border-gray-200";
                   const badgeBg = BADGE_BG[plan.color] || "bg-gray-100 text-gray-600";
@@ -499,12 +576,22 @@ function RecruiterPlans() {
 
                       {/* Features */}
                       <ul className="space-y-2 text-sm flex-1 mb-4">
-                        {plan.features.map((f, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <Check size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700 dark:text-gray-300">{f}</span>
-                          </li>
-                        ))}
+                        {plan.features.map((f, i) => {
+                          const isExcluded = typeof f === "object" && f.excluded;
+                          const label = typeof f === "object" ? f.text : f;
+                          return (
+                            <li key={i} className="flex items-start gap-2">
+                              {isExcluded ? (
+                                <X size={15} className="text-red-400 flex-shrink-0 mt-0.5" />
+                              ) : (
+                                <Check size={15} className="text-green-500 flex-shrink-0 mt-0.5" />
+                              )}
+                              <span className={isExcluded ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-700 dark:text-gray-300"}>
+                                {label}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
 
                       {/* Extra info (RPO) */}

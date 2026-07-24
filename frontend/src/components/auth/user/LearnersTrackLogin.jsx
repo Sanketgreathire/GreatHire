@@ -1,0 +1,435 @@
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/authSlice";
+import axios from "axios";
+import LearnersTrackNavbar from "@/components/shared/LearnersTrackNavbar";
+import Footer from "@/components/shared/Footer";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import learnersTrackLogo from "@/assets/learnertrack.png";
+
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = (seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+};
+
+const SLIDES = [
+  {
+    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=70",
+    title: "Find Your Dream Job",
+    subtitle: "Connect with top companies and discover opportunities that match your skills",
+    stats: "50,000+ Jobs Available",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=70",
+    title: "Build Your Career",
+    subtitle: "Join thousands of professionals who found success through GreatHire",
+    stats: "95% Success Rate",
+  },
+  {
+    image: "https://plus.unsplash.com/premium_photo-1661587727551-7f7aac005fe3?q=70&w=800&auto=format&fit=crop",
+    title: "Network & Grow",
+    subtitle: "Expand your professional network and accelerate your career growth",
+    stats: "100k+ Professionals",
+  },
+];
+
+const EyeIcon = () => (
+  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+);
+
+const EyeOffIcon = () => (
+  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+  </svg>
+);
+
+const LearnersTrackLogin = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [rememberMe, setRememberMe] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
+    if (savedEmail && savedPassword) {
+      setFormData({ email: savedEmail, password: savedPassword });
+      setRememberMe(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleOtpChange = useCallback((e) => setOtp(e.target.value), []);
+
+  const handleSignUpClick = useCallback(() => navigate("/learnerstrack-signup"), [navigate]);
+  const handleForgotPassword = useCallback(() => navigate("/forgot-password"), [navigate]);
+
+  const handleOtpClick = useCallback(() => {
+    setShowOtpInput((prev) => !prev);
+    setOtp("");
+    setResendTimer(0);
+  }, []);
+
+  const handleSendOtp = useCallback(async () => {
+    if (!formData.email) {
+      toast.error("Please enter your email first");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await axios.post(`${USER_API_END_POINT}/send-otp`, { email: formData.email });
+      if (res.data.success) {
+        toast.success("OTP sent to email");
+        setOtpSent(true);
+        setResendTimer(300);
+        const interval = setInterval(() => {
+          setResendTimer((prev) => {
+            if (prev <= 1) { clearInterval(interval); return 0; }
+            return prev - 1;
+          });
+        }, 1000);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  }, [formData.email]);
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = showOtpInput
+        ? await axios.post(`${USER_API_END_POINT}/verify-otp`, { email: formData.email, otp }, { withCredentials: true })
+        : await axios.post(`${USER_API_END_POINT}/login`, formData, { withCredentials: true });
+
+      if (response?.data?.success) {
+        toast.success(response.data.message);
+        dispatch(setUser(response.data.user));
+
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", formData.email);
+          localStorage.setItem("rememberedPassword", showOtpInput ? otp : formData.password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
+
+        const user = response.data.user;
+        if (user.role === "student" || user.role === "candidate") {
+          navigate(user.isFirstLogin ? "/profile" : "/");
+        } else if (user.role === "recruiter") {
+          navigate("/recruiter/dashboard");
+        } else if (user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [formData, otp, showOtpInput, rememberMe, dispatch, navigate]);
+
+  const slideStyle = useMemo(() => ({
+    transform: `translateX(-${currentSlide * 100}%)`,
+  }), [currentSlide]);
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800" />
+
+      <div className="relative z-10 flex-1 flex flex-col">
+        <LearnersTrackNavbar />
+
+        <div className="flex justify-center w-full py-8 sm:py-16 sm:mt-16 mt-10">
+          <div className="flex w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+
+            {/* Left Side - Image Carousel */}
+            <div className="hidden lg:flex lg:w-1/2 relative bg-white dark:bg-gray-800 p-6">
+              <div className="relative w-full h-full flex items-center justify-center">
+                <div className="relative w-[95%] h-[95%] overflow-hidden" style={{ borderRadius: "20px 60px 60px 8px" }}>
+                  <div className="absolute inset-0 flex transition-transform duration-1000 ease-in-out" style={slideStyle}>
+                    {SLIDES.map((slide, index) => (
+                      <div key={index} className="min-w-full relative">
+                        <img
+                          src={slide.image}
+                          alt={slide.title}
+                          className="w-full h-full object-cover"
+                          loading={index === 0 ? "eager" : "lazy"}
+                          decoding="async"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-30" />
+                        <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-6">
+                          <div className="text-center max-w-xs">
+                            <h2 className="text-2xl font-bold mb-3">{slide.title}</h2>
+                            <p className="text-sm opacity-90 leading-relaxed mb-4">{slide.subtitle}</p>
+                            <div className="inline-block bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold">
+                              {slide.stats}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex space-x-2">
+                    {SLIDES.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`h-3 rounded-full transition-all duration-300 ${currentSlide === index ? "bg-white w-8" : "bg-white/50 w-3"}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="absolute -right-4 top-20 bg-white dark:bg-gray-700 rounded-xl p-4 shadow-lg">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">98%</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-300">Success Rate</div>
+                  </div>
+                </div>
+
+                <div className="absolute -left-4 bottom-20 bg-white dark:bg-gray-700 rounded-xl p-4 shadow-lg">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">50k+</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-300">Active Jobs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Login Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900">
+              <div className="w-full max-w-md space-y-4">
+
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">
+                      Great<span className="text-blue-600">Hire</span>
+                    </h1>
+                    <span className="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500">collaboration with</span>
+                    <img src={learnersTrackLogo} alt="LearnersTrack" className="h-[100px] sm:h-[120px]" />
+                  </div>
+                  <h2 className="text-xl font-semibold mt-2 text-gray-900 dark:text-gray-100">Welcome to LearnersTrack</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Exclusive community with GreatHire</p>
+                  <p className="mt-3 text-sm text-blue-600">
+                    Don&apos;t have an account?{" "}
+                    <span onClick={handleSignUpClick} className="cursor-pointer underline font-semibold hover:text-blue-800 transition-colors">
+                      Sign Up
+                    </span>
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                  <form className="space-y-5" onSubmit={handleSubmit}>
+
+                    {/* Email */}
+                    <div>
+                      <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
+                        Email Address
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                          </svg>
+                        </div>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="Enter your email"
+                          className="block w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          required
+                          autoComplete="email"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Password or OTP */}
+                    {!showOtpInput ? (
+                      <div>
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
+                          Password
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                          </div>
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="Enter your password"
+                            className="block w-full pl-10 pr-10 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            required
+                            autoComplete="current-password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((p) => !p)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          >
+                            {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
+                          Enter OTP
+                        </label>
+                        <input
+                          type="text"
+                          name="otp"
+                          value={otp}
+                          onChange={handleOtpChange}
+                          placeholder="Enter 6-digit OTP"
+                          className="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          maxLength={6}
+                          required
+                          autoComplete="one-time-code"
+                          inputMode="numeric"
+                        />
+                        <div className="mt-3 text-center">
+                          {resendTimer > 0 ? (
+                            <p className="text-gray-500 dark:text-gray-400 text-xs">
+                              Resend OTP in {formatTime(resendTimer)}
+                            </p>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleSendOtp}
+                              disabled={loading}
+                              className="text-blue-600 text-xs font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {otpSent ? "Resend OTP" : "Send OTP"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Remember Me & Forgot Password */}
+                    <div className="flex items-center justify-between pt-1">
+                      <div className="flex items-center">
+                        <input
+                          id="remember-me"
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="remember-me" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          Remember me
+                        </label>
+                      </div>
+                      <button type="button" onClick={handleForgotPassword} className="text-blue-600 text-sm hover:underline font-medium">
+                        Forgot Password?
+                      </button>
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-200 ${
+                        loading ? "opacity-70 cursor-not-allowed" : "hover:from-blue-700 hover:to-purple-700 hover:shadow-lg"
+                      }`}
+                    >
+                      {loading ? (
+                        <span className="flex items-center justify-center">
+                          <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                          Signing in...
+                        </span>
+                      ) : (
+                        <span className="flex items-center justify-center">
+                          Sign In
+                          <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                          </svg>
+                        </span>
+                      )}
+                    </button>
+                  </form>
+
+                  <div className="mt-6 text-center">
+                    <button type="button" onClick={handleOtpClick} className="text-blue-600 text-sm hover:underline font-medium">
+                      {showOtpInput ? "Login with Password?" : "Login with OTP?"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className="mt-6 flex items-center justify-center space-x-6 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="flex items-center space-x-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>SSL Secured</span>
+                  </span>
+                  <span className="flex items-center space-x-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>100k+ Users</span>
+                  </span>
+                  <span className="flex items-center space-x-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                    <span>98% Success</span>
+                  </span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default LearnersTrackLogin;

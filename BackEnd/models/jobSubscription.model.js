@@ -94,6 +94,17 @@ const jobSubscriptionSchema = new mongoose.Schema(
     planName: String,
     creditedForJobs: Number,
     creditedForCandidates: Number,
+    aiSourcingCredits: {
+      type: Number,
+      default: 0,
+    },
+    // Team-user cap for this purchase (Enterprise plans only — 3/6/12 for the
+    // 3-month/6-month/1-year durations). Copied onto Company.teamUserLimit
+    // on payment verification.
+    teamUserLimit: {
+      type: Number,
+      default: null,
+    },
     price: Number,
     company: {
       type: mongoose.Schema.Types.ObjectId,
@@ -154,6 +165,7 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
       company.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       company.hasSubscription = false;
       company.plan = "FREE";
+      company.teamUserLimit = null;
       company.freeJobsPosted = 0;
       company.paidPlanFreeJobsPosted = 0;
       company.paidPlanFreeJobsRenewal = null;

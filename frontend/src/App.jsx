@@ -22,6 +22,8 @@ const RecruiterLogin         = lazy(() => import('@/components/auth/recruiter/Re
 const SignupPage              = lazy(() => import("./components/shared/SignupPage"));
 const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
 const RecruiterSignup         = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
+const LearnersTrackLogin      = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
+const LearnersTrackSignup     = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
 const VerifyEmail             = lazy(() => import("./components/VerifyEmail"));
 const VerifyNumber            = lazy(() => import("./components/VerifyNumber"));
 const ForgotPassword          = lazy(() => import('./pages/ForgotPassword'));
@@ -36,6 +38,7 @@ const MainApply              = lazy(() => import("./components/ApplyJobs/MainApp
 const ReportJob              = lazy(() => import("./pages/job/ReportJob"));
 const Success                = lazy(() => import("./pages/job/Success"));
 const UserProfile            = lazy(() => import("./pages/user/UserProfile"));
+const SettingsPolicy         = lazy(() => import("./pages/user/SettingsPolicy"));
 const ResumeAnalyzer         = lazy(() => import("./components/ResumeAnalyzer"));
 const ReferAndBoost          = lazy(() => import("./pages/ReferAndBoost"));
 const NotificationPage       = lazy(() => import("./components/notifications/NotificationPage"));
@@ -212,6 +215,8 @@ const appRouter = createBrowserRouter([
   { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
   { path: "/jobseeker-login", element: <JobseekerLogin /> },
   { path: "/recruiter-login", element: <RecruiterLogin /> },
+  { path: "/learnerstrack-login", element: <LearnersTrackLogin /> },
+  { path: "/learnerstrack-signup", element: <LearnersTrackSignup /> },
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
@@ -221,6 +226,7 @@ const appRouter = createBrowserRouter([
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
   { path: "/profile", element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
+  { path: "/profile/settings-policy", element: <ProtectedUserRoute><SettingsPolicy /></ProtectedUserRoute> },
   { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
   { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
   { path: "/policy/privacy-policy", element: <PrivacyPolicy /> },
