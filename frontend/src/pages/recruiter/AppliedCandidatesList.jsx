@@ -37,7 +37,12 @@ const AppliedCandidatesList = () => {
   const [applicants, setApplicants] = useState([]);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
-  const isStarterPlan = !company?.hasSubscription && (company?.plan === "FREE" || !company?.plan);
+  const isTrialLive = !!(
+    company?.trialActive &&
+    company?.trialExpiresAt &&
+    new Date(company.trialExpiresAt) > new Date()
+  );
+  const isStarterPlan = !company?.hasSubscription && !isTrialLive && (company?.plan === "FREE" || !company?.plan);
   const STARTER_LIMIT = 20;
   const [search, setSearch] = useState(""); // State for search input
   const [statusFilter, setStatusFilter] = useState("All"); // State for status filter

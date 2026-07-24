@@ -92,9 +92,6 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useDropzone } from "react-dropzone";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { setUser, setRecruiterIsCompanyCreated } from "@/redux/authSlice";
 import { addCompany } from "@/redux/companySlice";
 import Footer from "@/components/shared/Footer";
@@ -129,13 +126,12 @@ const RecruiterSignup = () => {
   // const emailOtpRef = useRef(null);
 
   // Step 2 — Company
+  const [hasWebsite, setHasWebsite] = useState(null); // null = unanswered, true/false
   const [companyData, setCompanyData] = useState({
     companyName: "", companyWebsite: "", industry: "",
     streetAddress: "", city: "", state: "", country: "", postalCode: "",
-    email: "", phone: "", CIN: "", recruiterPosition: "", businessFile: null,
+    email: "", phone: "", recruiterPosition: "",
   });
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [fileUploaded, setFileUploaded] = useState(false);
 
   // OTP cooldown effect disabled
   // useEffect(() => {
@@ -201,35 +197,6 @@ const RecruiterSignup = () => {
   const handleCompanyChange = (e) => {
     setCompanyData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  const onDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-    const allowedTypes = [
-      "image/jpeg", "image/png", "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Only JPG, PNG, PDF, or Word documents are allowed.");
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size exceeds 10MB.");
-      return;
-    }
-    setCompanyData((prev) => ({ ...prev, businessFile: file }));
-    setFileUploaded(false);
-    setUploadProgress(0);
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) { clearInterval(interval); setFileUploaded(true); return 100; }
-        return prev + 10;
-      });
-    }, 200);
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const handleCompanySubmit = async (e) => {
     e.preventDefault();
@@ -412,10 +379,22 @@ const RecruiterSignup = () => {
                             className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
                         </div>
                         <div>
-                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Company Website *</label>
-                          <input type="url" name="companyWebsite" value={companyData.companyWebsite} onChange={handleCompanyChange} required
-                            placeholder="https://example.com"
-                            className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                          <label className="block text-gray-600 dark:text-gray-400 text-xs mb-1">Do you have a company website?</label>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => { setHasWebsite(true); }}
+                              className={`px-3 py-1.5 text-xs rounded border font-medium transition-colors ${hasWebsite === true ? "bg-blue-600 text-white border-blue-600" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400"}`}>
+                              Yes
+                            </button>
+                            <button type="button" onClick={() => { setHasWebsite(false); setCompanyData((p) => ({ ...p, companyWebsite: "" })); }}
+                              className={`px-3 py-1.5 text-xs rounded border font-medium transition-colors ${hasWebsite === false ? "bg-blue-600 text-white border-blue-600" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-400"}`}>
+                              No
+                            </button>
+                          </div>
+                          {hasWebsite === true && (
+                            <input type="url" name="companyWebsite" value={companyData.companyWebsite} onChange={handleCompanyChange} required
+                              placeholder="https://example.com"
+                              className="mt-1.5 w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
+                          )}
                         </div>
                         <div className="sm:col-span-2">
                           <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Industry *</label>
@@ -462,40 +441,7 @@ const RecruiterSignup = () => {
                       </div>
                     </div>
 
-                    {/* Verification */}
-                    <div>
-                      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Verification Details</h3>
-                      <div>
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">CIN/EAN <span className="font-bold">(Optional)</span></label>
-                        <input type="text" name="CIN" value={companyData.CIN} onChange={handleCompanyChange}
-                          placeholder="Corporate Identification Number"
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-blue-500" />
-                      </div>
-                      <div className="mt-2">
-                        <label className="block text-gray-600 dark:text-gray-400 text-xs mb-0.5">Upload Business Registration Certificate</label>
-                        <div
-                          {...getRootProps()}
-                          className={`relative border-2 border-dashed border-blue-500 px-4 py-3 rounded-lg flex items-center justify-center cursor-pointer transition-all ${isDragActive ? "bg-blue-100 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-800"} hover:bg-blue-50 dark:hover:bg-blue-900/10`}
-                        >
-                          <input {...getInputProps()} />
-                          {uploadProgress > 0 ? (
-                            <div className="w-12">
-                              <CircularProgressbar value={uploadProgress} text={`${uploadProgress}%`}
-                                styles={buildStyles({ textColor: "#3b82f6", pathColor: "#3b82f6", trailColor: "#d1d5db" })} />
-                            </div>
-                          ) : (
-                            <p className="text-gray-500 dark:text-gray-400 text-xs text-center">
-                              {isDragActive ? "Drop the file here..." : "Drag & drop or click to upload (JPG, PNG, PDF, Word)"}
-                            </p>
-                          )}
-                        </div>
-                        {companyData.businessFile && (
-                          <p className="mt-1 text-green-500 text-xs">✓ {companyData.businessFile.name}</p>
-                        )}
-                      </div>
-                    </div>
 
-                    {/* Recruiter Details */}
                     <div>
                       <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Your Details</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

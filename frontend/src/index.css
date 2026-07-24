@@ -96,6 +96,137 @@
     content-visibility: auto;
     contain-intrinsic-size: 0 800px;
   }
+
+  /* GreatHire phone input theme */
+  .gh-phone {
+    --react-international-phone-height: 56px;
+    --react-international-phone-border-radius: 8px;
+    --react-international-phone-border-color: #d1d5db;
+    --react-international-phone-background-color: #ffffff;
+    --react-international-phone-text-color: #111827;
+    --react-international-phone-country-selector-background-color: #ffffff;
+    --react-international-phone-country-selector-background-color-hover: #f3f4f6;
+    --react-international-phone-country-selector-border-color: #d1d5db;
+    --react-international-phone-country-selector-arrow-color: #6b7280;
+    --react-international-phone-dropdown-item-background-color: #ffffff;
+    --react-international-phone-dropdown-item-text-color: #111827;
+    --react-international-phone-dropdown-item-dial-code-color: #6b7280;
+    --react-international-phone-selected-dropdown-item-background-color: #eff6ff;
+    --react-international-phone-selected-dropdown-item-text-color: #111827;
+    --react-international-phone-selected-dropdown-item-dial-code-color: #4b5563;
+    --react-international-phone-dropdown-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
+  }
+
+  .dark .gh-phone {
+    --react-international-phone-border-color: #4b5563;
+    --react-international-phone-background-color: #0f172a;
+    --react-international-phone-text-color: #f9fafb;
+    --react-international-phone-country-selector-background-color: #0f172a;
+    --react-international-phone-country-selector-background-color-hover: #1f2937;
+    --react-international-phone-country-selector-border-color: #4b5563;
+    --react-international-phone-country-selector-arrow-color: #9ca3af;
+    --react-international-phone-dropdown-item-background-color: #111827;
+    --react-international-phone-dropdown-item-text-color: #f9fafb;
+    --react-international-phone-dropdown-item-dial-code-color: #9ca3af;
+    --react-international-phone-selected-dropdown-item-background-color: #1e293b;
+    --react-international-phone-selected-dropdown-item-text-color: #f9fafb;
+    --react-international-phone-selected-dropdown-item-dial-code-color: #cbd5e1;
+    --react-international-phone-dropdown-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .gh-phone .react-international-phone-input-container {
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .gh-phone .react-international-phone-country-selector-button {
+    border-right: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .gh-phone .react-international-phone-input {
+    width: 100%;
+    height: 100%;
+    padding-left: 16px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-left: 0;
+    box-shadow: none;
+    flex: 1 1 auto;
+    line-height: 1;
+  }
+
+  .gh-phone .react-international-phone-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .gh-phone-field {
+    min-height: 56px;
+    border-radius: 8px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .gh-phone-field:focus-within {
+    border-color: #a855f7;
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.16), 0 0 24px rgba(168, 85, 247, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .dark .gh-phone-field:focus-within {
+    border-color: #c084fc;
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.22), 0 0 28px rgba(168, 85, 247, 0.24);
+  }
+
+  .gh-contact-input {
+    min-height: 56px;
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+
+  .gh-contact-input:focus,
+  .gh-contact-input:focus-visible,
+  .gh-contact-input:not(:placeholder-shown) {
+    border-color: #a855f7;
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.16), 0 0 24px rgba(168, 85, 247, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .dark .gh-contact-input:focus,
+  .dark .gh-contact-input:focus-visible,
+  .dark .gh-contact-input:not(:placeholder-shown) {
+    border-color: #c084fc;
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.22), 0 0 28px rgba(168, 85, 247, 0.24);
+  }
+
+  .gh-contact-input:-webkit-autofill,
+  .gh-contact-input:-webkit-autofill:hover,
+  .gh-contact-input:-webkit-autofill:focus,
+  .gh-contact-input:-webkit-autofill:active {
+    -webkit-text-fill-color: #111827;
+    box-shadow: 0 0 0 1000px #ffffff inset, 0 0 0 4px rgba(168, 85, 247, 0.16);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  .dark .gh-contact-input:-webkit-autofill,
+  .dark .gh-contact-input:-webkit-autofill:hover,
+  .dark .gh-contact-input:-webkit-autofill:focus,
+  .dark .gh-contact-input:-webkit-autofill:active {
+    -webkit-text-fill-color: #f9fafb;
+    box-shadow: 0 0 0 1000px #0f172a inset, 0 0 0 4px rgba(168, 85, 247, 0.22);
+  }
+
+  .contact-phone-wrap {
+    position: relative;
+    z-index: 20;
+  }
+
+  .contact-phone-wrap .react-international-phone-country-selector-dropdown {
+    z-index: 40;
+  }
 }
 
 /* ── Carousel / Marquee animations ── */

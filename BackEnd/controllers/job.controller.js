@@ -11,6 +11,7 @@ import { User } from "../models/user.model.js";
 import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
+import { isTrialLive } from "../utils/trial.js";
 
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
@@ -125,7 +126,8 @@ export const postJob = [
         company.maxJobPosts = null;
       }
 
-      const companyPlan = company.plan || "FREE";
+      // 3-day trial unlocks Enterprise-level job posting limits (never AI Sourcing).
+      const companyPlan = isTrialLive(company) ? "ENTERPRISE" : (company.plan || "FREE");
       const isVerified = company.isActive;
       const isFirstJob = company.freeJobsPosted === 0;
 

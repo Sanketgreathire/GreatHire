@@ -49,14 +49,11 @@ const sourcingCandidateSchema = new mongoose.Schema(
     location:        { type: String, default: "", trim: true, index: true },
     education:       { type: [educationSchema], default: [] },
     summary:         { type: String, default: "" },
-    pastExperience:  { type: mongoose.Schema.Types.Mixed, default: [] },
 
     // ── External Profile Links (used for dedup) ────────────────────────────
-    githubUrl:    { type: String, default: "", index: true, sparse: true },
-    linkedinUrl:  { type: String, default: "", index: true, sparse: true },
-    portfolioUrl: { type: String, default: "" },
-    profilePhoto: { type: String, default: "" },
-    rkId:         { type: String, default: "", index: true, sparse: true },
+    githubUrl:   { type: String, default: "", index: true, sparse: true },
+    linkedinUrl: { type: String, default: "", index: true, sparse: true },
+    portfolioUrl:{ type: String, default: "" },
 
     // ── Resume ────────────────────────────────────────────────────────────
     resumeUrl:          { type: String, default: "" },

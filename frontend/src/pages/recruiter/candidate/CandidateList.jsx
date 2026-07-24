@@ -115,10 +115,19 @@ const CandidateList = () => {
   const [savedSourcedFilter, setSavedSourcedFilter] = useState("");
   const [savedSourcedContactLoadingId, setSavedSourcedContactLoadingId] = useState(null);
 
-  const planType = company?.plan || "FREE";
-  const isStarterPlan = !company?.hasSubscription && planType === "FREE";
+  // 3-day trial unlocks general starter-plan limits (filters, location search,
+  // etc.) but NEVER AI Sourcing — that stays gated on the real `hasSubscription`
+  // flag via `aiSourcingLocked` below, independent of the trial.
+  const isTrialLive = !!(
+    company?.trialActive &&
+    company?.trialExpiresAt &&
+    new Date(company.trialExpiresAt) > new Date()
+  );
+  const planType = isTrialLive ? "ENTERPRISE" : (company?.plan || "FREE");
+  const isStarterPlan = !company?.hasSubscription && !isTrialLive && planType === "FREE";
   const hasAdvancedFilters = !isStarterPlan;
   const hasLocationFilter = ["STANDARD", "PREMIUM", "PRO", "ENTERPRISE"].includes(planType);
+  const aiSourcingLocked = !company?.hasSubscription;
   const aiSourcingBalance = company?.aiSourcingCredits ?? 0;
 
   const loadSavedSourcedCandidates = useCallback(async (designation = savedSourcedFilter) => {
@@ -143,7 +152,7 @@ const CandidateList = () => {
 
   // Reset sourcing results whenever the user switches sections/tabs
   const switchSection = (section) => {
-    if (section !== SECTIONS.DATABASE && isStarterPlan) {
+    if (section !== SECTIONS.DATABASE && aiSourcingLocked) {
       toast.error("AI Sourcing is available on paid plans only. Upgrade to unlock it.");
       navigate("/packages");
       return;
@@ -558,7 +567,7 @@ const CandidateList = () => {
                 Remaining Credits: <strong>{company?.creditedForCandidates}</strong>
               </p>
               <p className="text-sm rounded-full bg-purple-100 dark:bg-purple-900/30 px-3 py-1 text-purple-700 dark:text-purple-300">
-                AI Sourcing Credits: <strong>{aiSourcingBalance}</strong>
+                Advance AI Sourcing: <strong>{aiSourcingBalance}</strong>
               </p>
               {company?.creditedForCandidates === 0 && (
                 <Button onClick={() => navigate("/recruiter/dashboard/packages")}>
@@ -588,31 +597,31 @@ const CandidateList = () => {
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
-              <Database size={16} /> Candidate Database
+              <Database size={16} /> Internal Candidate Database
             </button>
             <button
               onClick={() => switchSection(SECTIONS.FREE)}
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${
                 activeSection === SECTIONS.FREE
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow"
-                  : isStarterPlan
+                  : aiSourcingLocked
                   ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
-              {isStarterPlan ? <Lock size={16} /> : <Github size={16} />} Sourcing (Free)
+              {aiSourcingLocked ? <Lock size={16} /> : <Github size={16} />} AI Sourcing (Unlimited)
             </button>
             <button
               onClick={() => switchSection(SECTIONS.PAID)}
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${
                 activeSection === SECTIONS.PAID
                   ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow"
-                  : isStarterPlan
+                  : aiSourcingLocked
                   ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
-              {isStarterPlan ? <Lock size={16} /> : <Zap size={16} />} Sourcing (Paid)
+              {aiSourcingLocked ? <Lock size={16} /> : <Zap size={16} />} Advance AI Sourcing
             </button>
           </div>
 

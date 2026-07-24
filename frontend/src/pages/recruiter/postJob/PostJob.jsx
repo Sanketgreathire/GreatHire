@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,6 @@ import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations, jobTitles } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
-import { useRef } from "react";
 import DOMPurify from "dompurify";
 
 const flatLocations = Object.values(allLocations).flat();
@@ -29,6 +28,35 @@ const filterLocations = (query) => {
     (locationStateMap[loc] || "").toLowerCase().includes(q)
   );
 };
+
+/* ------------------------------------------------------------------ */
+/*  Shared style tokens (visual layer only — no behavioural changes)  */
+/* ------------------------------------------------------------------ */
+const cardCls =
+  "rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-sm dark:shadow-none p-5 md:p-6 transition-colors duration-300";
+const labelCls =
+  "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 transition-colors duration-300";
+const inputCls =
+  "w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.06] text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200 text-sm";
+const errorCls = "text-red-500 dark:text-red-400 text-xs mt-1.5";
+const primaryBtnCls =
+  "inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-semibold shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:from-indigo-500 hover:to-violet-500 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-indigo-600 disabled:hover:to-violet-600";
+const secondaryBtnCls =
+  "inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-white/[0.08] active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed";
+const chipCls =
+  "inline-flex items-center gap-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-medium px-2.5 py-1 rounded-full border border-indigo-100 dark:border-indigo-500/20";
+
+const SectionHeader = ({ icon, title, subtitle }) => (
+  <div className="flex items-start gap-3 mb-5">
+    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
+      {icon}
+    </div>
+    <div>
+      <h3 className="text-base font-semibold text-slate-900 dark:text-white transition-colors duration-300">{title}</h3>
+      {subtitle && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>}
+    </div>
+  </div>
+);
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
@@ -128,12 +156,12 @@ const PostJob = () => {
       if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         let listItem = range.startContainer;
-        
+
         // Find the closest li element
         while (listItem && listItem.nodeName !== 'LI') {
           listItem = listItem.parentNode;
         }
-        
+
         if (listItem) {
           if (e.shiftKey) {
             // Shift+Tab: Outdent
@@ -362,7 +390,7 @@ const PostJob = () => {
     try {
       // eslint-disable-next-line no-console
       // Debug logging removed per revert request
-    } catch (e) {}
+    } catch (e) { }
     // Check if there are any errors or blank fields in the current step's fields
     const hasErrors = currentStepFields.some(
       (field) => !!formik.errors[field] || !formik.values[field]
@@ -391,6 +419,148 @@ const PostJob = () => {
     { title: "Review & Submit" },
   ];
 
+  const percentComplete = Math.round(((step + 1) / steps.length) * 100);
+
+  const skillsPreview = useMemo(
+    () => String(formik.values.skills || "").split(",").map(s => s.trim()).filter(Boolean),
+    [formik.values.skills]
+  );
+
+  /* ------------------------------ icons ------------------------------ */
+  const IconBriefcase = (
+    <svg className="w-4.5 h-4.5" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" /></svg>
+  );
+  const IconSparkle = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.6 4.6L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.4L12 3z" /><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z" /></svg>
+  );
+  const IconTools = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a4 4 0 015 5l-6.6 6.6a2 2 0 01-2.8 0l-2.2-2.2a2 2 0 010-2.8l6.6-6.6z" /><path d="M6 21l3-3" /></svg>
+  );
+  const IconGraduate = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z" /><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" /></svg>
+  );
+  const IconMoney = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 15a2 2 0 002.2 1.7h.6a2 2 0 000-4h-.6a2 2 0 010-4h.6A2 2 0 0114.5 10" /><path d="M12 6.5v1M12 16.5v1" /></svg>
+  );
+  const IconPin = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" /><circle cx="12" cy="10" r="3" /></svg>
+  );
+  const IconUsers = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.9" /><path d="M16 3.1a4 4 0 010 7.8" /></svg>
+  );
+  const IconSettings = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09A1.65 1.65 0 0015 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" /></svg>
+  );
+  const IconDoc = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6" /></svg>
+  );
+  const IconEye = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+  );
+  const IconArrowLeft = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+  );
+  const IconArrowRight = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+  );
+  const IconRocket = (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" /><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" /><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" /><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" /></svg>
+  );
+
+  /* ---------------------- live preview side card --------------------- */
+  const LivePreview = () => (
+    <div className={`${cardCls} lg:sticky lg:top-24`}>
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-indigo-500 dark:text-indigo-400">{IconEye}</span>
+        <span className="text-xs font-semibold tracking-wide uppercase text-slate-500 dark:text-slate-400">Live Preview</span>
+      </div>
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+          {(formik.values.companyName || "GH").slice(0, 2).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <h4 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+            {formik.values.title || "Job Title"}
+          </h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+            {formik.values.companyName || "Your Company"}
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 mb-4">
+        {formik.values.location && (
+          <div className="flex items-center gap-1.5"><span className="text-slate-400 dark:text-slate-500">{IconPin}</span>{formik.values.location}</div>
+        )}
+        {formik.values.salary && (
+          <div className="flex items-center gap-1.5"><span className="text-slate-400 dark:text-slate-500">{IconMoney}</span>₹{formik.values.salary} {formik.values.salaryType || ""}</div>
+        )}
+        {(formik.values.jobType || formik.values.workPlaceFlexibility) && (
+          <div className="flex items-center gap-1.5"><span className="text-slate-400 dark:text-slate-500">{IconBriefcase}</span>
+            {[formik.values.jobType, formik.values.workPlaceFlexibility].filter(Boolean).join(" • ")}
+          </div>
+        )}
+      </div>
+
+      {skillsPreview.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {skillsPreview.slice(0, 6).map((s, i) => (
+            <span key={i} className={chipCls}>{s}</span>
+          ))}
+        </div>
+      )}
+
+      {formik.values.urgentHiring === "Yes" && (
+        <div className="mb-4">
+          <span className="inline-flex items-center gap-1 bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-300 text-xs font-semibold px-2.5 py-1 rounded-full border border-orange-100 dark:border-orange-500/20">
+            Urgent Hiring
+          </span>
+        </div>
+      )}
+
+      <button
+        type="button"
+        disabled
+        className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 text-sm font-medium cursor-not-allowed"
+      >
+        Apply Now (Preview)
+      </button>
+    </div>
+  );
+
+  /* ------------------------- step indicator --------------------------- */
+  const StepIndicator = () => (
+    <div className="flex items-center justify-between md:justify-center gap-1 md:gap-3">
+      {steps.map((s, i) => (
+        <React.Fragment key={s.title}>
+          <div className="flex flex-col items-center gap-1.5">
+            <div
+              className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold border-2 transition-all duration-300 ${
+                i < step
+                  ? "bg-indigo-600 border-indigo-600 text-white"
+                  : i === step
+                  ? "bg-gradient-to-br from-indigo-600 to-violet-600 border-transparent text-white shadow-md shadow-indigo-500/30"
+                  : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500"
+              }`}
+            >
+              {i < step ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+              ) : (
+                i + 1
+              )}
+            </div>
+            <span className={`hidden md:block text-[11px] font-medium ${i === step ? "text-indigo-600 dark:text-indigo-300" : "text-slate-400 dark:text-slate-500"}`}>
+              {s.title}
+            </span>
+          </div>
+          {i < steps.length - 1 && (
+            <div className={`flex-1 h-0.5 rounded-full mb-4 md:mb-5 min-w-[10px] md:min-w-[24px] transition-colors duration-300 ${i < step ? "bg-indigo-500" : "bg-slate-200 dark:bg-white/10"}`} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+
   return (
     <>
       <Helmet>
@@ -405,1074 +575,910 @@ const PostJob = () => {
       </Helmet>
 
       {company ? (
-        <div className="px-2 py-4 pt-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          {/* Verification Status Banner - shown after 1st job, not yet verified (free or paid plan) */}
-          {!company?.isActive && jobsPosted >= 1 && (
-            <div className="max-w-3xl mx-auto mb-4 px-4">
-              <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-red-700 dark:text-red-300">
-                      <span className="font-medium">Pending Verification.</span> Your first job is under admin review. You cannot post additional jobs until your account is verified.
-                    </p>
-                  </div>
-                </div>
+        <div className="min-h-screen px-3 sm:px-4 py-6 pt-20 bg-slate-50 dark:bg-[#0a0e1a] transition-colors duration-300">
+          <div className="max-w-6xl mx-auto">
+
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/20 mb-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                  {company.plan || "FREE"} Plan
+                  <span className="opacity-50">•</span>
+                  {remainingPostsLabel} Remaining
+                </span>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-300">
+                  Post a New Opportunity
+                </h1>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                  {steps[step].title} &middot; {percentComplete}% complete
+                </p>
+              </div>
+              <div className="w-full sm:w-auto">
+                <StepIndicator />
               </div>
             </div>
-          )}
 
-          {/* Verified banner - shown after verification with 1 job already posted */}
-          {company?.isActive && (() => {
-            if (plan === "FREE") return company.freeJobsPosted === 1;
-            return ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)) === 1;
-          })() && (
-            <div className="max-w-3xl mx-auto mb-4 px-4">
-              <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 rounded">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-green-700 dark:text-green-300">
-                      <span className="font-medium">Verified!</span> You can now post more jobs according to your plan.
-                    </p>
-                  </div>
+            {/* Verification Status Banner */}
+            {!company?.isActive && jobsPosted >= 1 && (
+              <div className={`${cardCls} mb-5 !p-4 border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/[0.06]`}>
+                <div className="flex items-start gap-3">
+                  <svg className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    <span className="font-semibold">Pending verification.</span> Your first job is under admin review. You can't post additional jobs until your account is verified.
+                  </p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Credit Status Banner */}
-          <div className="max-w-3xl mx-auto mb-4 px-4">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 text-white rounded-lg p-4 shadow-lg transition-colors duration-300">
-              <div className="flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-sm font-medium">Remaining Job Posts</p>
-                  <p className="text-3xl font-bold">{remainingPostsLabel}</p>
-                  <p className="text-xs mt-1 opacity-80">{company.plan || "FREE"} Plan</p>
+            {/* Verified banner */}
+            {company?.isActive && (() => {
+              if (plan === "FREE") return company.freeJobsPosted === 1;
+              return ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)) === 1;
+            })() && (
+              <div className={`${cardCls} mb-5 !p-4 border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/[0.06]`}>
+                <div className="flex items-start gap-3">
+                  <svg className="h-5 w-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                    <span className="font-semibold">Verified!</span> You can now post more jobs according to your plan.
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
+            )}
 
-          <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg transition-colors duration-300">
-            {/* Lock form for ALL recruiters (free or paid) after 1st job until verified */}
+            <div className={`${cardCls} !p-5 md:!p-6 mb-5 bg-gradient-to-r from-indigo-600 to-violet-600 !border-0 text-white`}>
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <p className="text-xs font-medium text-indigo-100">Remaining Job Posts</p>
+                  <p className="text-2xl font-bold">{remainingPostsLabel}</p>
+                </div>
+                <span className="text-xs font-semibold bg-white/15 px-3 py-1 rounded-full">{company.plan || "FREE"} Plan</span>
+              </div>
+            </div>
+
+            {/* Locked state */}
             {!company?.isActive && jobsPosted >= 1 ? (
-              <div className="text-center py-12">
-                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className={`${cardCls} text-center py-14`}>
+                <svg className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-gray-100">Job Posting Locked</h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Your first job is under admin review. You cannot post additional jobs until your account is verified.
+                <h3 className="mt-3 text-lg font-semibold text-slate-900 dark:text-white">Job Posting Locked</h3>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                  Your first job is under admin review. You can't post additional jobs until your account is verified.
                 </p>
                 <div className="mt-6">
-                  <Link
-                    to="/recruiter/dashboard/home"
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                  >
+                  <Link to="/recruiter/dashboard/home" className={primaryBtnCls}>
                     Go to Dashboard
                   </Link>
                 </div>
               </div>
             ) : (
-              <>
-            <h2 className="md:hidden font-bold text-2xl text-blue-700 dark:text-blue-400 py-7 transition-colors duration-300">
-              {steps[step].title}
-            </h2>
+              <form onSubmit={formik.handleSubmit}>
+                <div className={`grid grid-cols-1 ${step !== 4 ? "lg:grid-cols-[1fr_340px]" : ""} gap-5`}>
 
-            <form onSubmit={formik.handleSubmit}>
-              {step === 0 && (
-                <div>
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Company Name<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="companyName"
-                      type="text"
-                      placeholder="Enter company name"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.companyName}
-                    />
-                    {formik.touched.companyName &&
-                      formik.errors.companyName && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.companyName}
+                  {/* ------------------------------- STEP 0 ------------------------------- */}
+                  {step === 0 && (
+                    <div className="space-y-5">
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconBriefcase} title="Company Info" subtitle="Tell candidates who's hiring" />
+
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Company Name<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <input
+                            name="companyName"
+                            type="text"
+                            placeholder="Enter company name"
+                            className={inputCls}
+                            onChange={formik.handleChange}
+                            value={formik.values.companyName}
+                          />
+                          {formik.touched.companyName && formik.errors.companyName && (
+                            <div className={errorCls}>{formik.errors.companyName}</div>
+                          )}
                         </div>
-                      )}
-                  </div>
 
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Urgent Hiring<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <select
-                      name="urgentHiring"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.urgentHiring}
-                    >
-                      <option value="">Select</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                    {formik.touched.urgentHiring &&
-                      formik.errors.urgentHiring && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.urgentHiring}
-                        </div>
-                      )}
-                  </div>
-
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Job Title<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="relative">
-                      <input
-                        name="title"
-                        type="text"
-                        placeholder="Search or enter job title"
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                        onChange={formik.handleChange}
-                        value={formik.values.title}
-                        onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
-                        onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
-                        autoComplete="off"
-                      />
-                      <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-48 overflow-y-auto hidden">
-                        {jobTitles
-                          .filter(t => t.toLowerCase().includes((formik.values.title || "").toLowerCase()))
-                          .map(title => (
-                            <div
-                              key={title}
-                              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 text-sm"
-                              onMouseDown={() => formik.setFieldValue("title", title)}
-                            >
-                              {title}
-                            </div>
-                          ))
-                        }
-                      </div>
-                    </div>
-                    {formik.touched.title && formik.errors.title && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.title}
-                      </div>
-                    )}
-                  </div>
-
-
-
-                  {/* Buttons */}
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handlePrevious}
-                      disabled={step === 0} // Disable button if step is 0
-                      className={`p-2 rounded transition-colors duration-300 ${step === 0
-                          ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-600 cursor-not-allowed"
-                          : "bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-500"
-                        }`}
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
-                    Have feedback?{" "}
-                    <Link
-                      to="/contact"
-                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
-                    >
-                      Tell us more
-                    </Link>
-                  </p>
-                </div>
-              )}
-
-              {step === 1 && (
-                <div>
-                  {/* Skills */}
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="skills"
-                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
-                    >
-                      Skills<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <textarea
-                      id="skills"
-                      name="skills"
-                      placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.skills}
-                    />
-                    {formik.touched.skills && formik.errors.skills && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.skills}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Languages */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Languages<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="flex gap-3 items-start">
-                      {/* Searchable dropdown */}
-                      <div className="relative flex-1">
-                        <input
-                          type="text"
-                          placeholder="Search language"
-                          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                          value={langSearch}
-                          onChange={(e) => setLangSearch(e.target.value)}
-                          onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
-                          onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
-                          autoComplete="off"
-                        />
-                        <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-48 overflow-y-auto hidden">
-                          {[
-                            "English", "Hindi", "Telugu", "Tamil", "Kannada",
-                            "Malayalam", "Marathi", "Bengali", "Gujarati", "Punjabi",
-                            "Urdu", "Odia", "Arabic", "French", "German",
-                          ]
-                            .filter(l => l.toLowerCase().includes(langSearch.toLowerCase()) && !formik.values.languages.includes(l))
-                            .map(lang => (
-                              <div
-                                key={lang}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 text-sm"
-                                onMouseDown={() => {
-                                  formik.setFieldValue("languages", [...formik.values.languages, lang]);
-                                  setLangSearch("");
-                                }}
-                              >
-                                {lang}
-                              </div>
-                            ))
-                          }
-                        </div>
-                      </div>
-                      {/* Selected tags */}
-                      <div className="flex flex-wrap gap-2 flex-1">
-                        {formik.values.languages.map(lang => (
-                          <span key={lang} className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-2 py-1 rounded-full">
-                            {lang}
-                            <button
-                              type="button"
-                              className="text-blue-500 hover:text-red-500 font-bold leading-none"
-                              onClick={() => formik.setFieldValue("languages", formik.values.languages.filter(l => l !== lang))}
-                            >×</button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Benefits */}
-                  <div className="mb-6">
-                    <Label htmlFor="benefits" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Benefits<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                      {[
-                        "Health Insurance",
-                        "Provident Fund",
-                        "Cell Phone Reimbursement",
-                        "Paid Sick Time",
-                        "Work From Home",
-                        "Paid time Off",
-                        "Food Provided",
-                        "Life Insurance",
-                        "Internet Reimbursement",
-                        "Travelling Allowance",
-                        "Leave Encashment",
-                        "Flexible Schedule",
-                        "Others",
-                      ].map((benefit) => {
-                        // Ensure benefits is always a string before splitting
-                        const selectedBenefits = String(formik.values.benefits || "").split("\n");
-
-                        return (
-                          <label key={benefit} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              name="benefitsCheckbox"
-                              value={benefit}
-                              className="w-4 h-4"
-                              checked={selectedBenefits.includes(benefit)}
-                              onChange={(e) => {
-                                let updatedBenefits = [...selectedBenefits].filter(Boolean); // Remove empty values
-
-                                if (e.target.checked) {
-                                  updatedBenefits.push(benefit);
-                                } else {
-                                  updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
-                                }
-
-                                formik.setFieldValue("benefits", updatedBenefits.join("\n")); // Store as a string
-                              }}
-                            />
-                            <span className="text-gray-600 dark:text-gray-300 transition-colors duration-300">{benefit}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-
-                    <textarea
-                      id="benefits"
-                      name="benefits"
-                      placeholder="Enter additional benefits..."
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={String(formik.values.benefits || "")} // Ensure it's always a string
-                    />
-                    {formik.touched.benefits && formik.errors.benefits && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.benefits}</div>
-                    )}
-                  </div>
-                  {/* Qualifications */}
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="qualifications"
-                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
-                    >
-                      Qualifications<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <textarea
-                      id="qualifications"
-                      name="qualifications"
-                      placeholder="Enter qualifications separated by new lines (eg. Bechelor, Master or diploma)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.qualifications}
-                    />
-                    {formik.touched.qualifications &&
-                      formik.errors.qualifications && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.qualifications}
-                        </div>
-                      )}
-                  </div>
-
-                  {/* Navigation Buttons */}
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handlePrevious}
-                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
-                    Have feedback?{" "}
-                    <Link
-                      to="/contact"
-                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
-                    >
-                      Tell us more
-                    </Link>
-                  </p>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div>
-                  {/* Experience */}
-                  <div className="mb-6">
-                    <Label htmlFor="experience" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Experience<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        "Fresher",
-                        "6 months-1 year",
-                        "1-2 years",
-                        "2-3 years",
-                        "3-4 years",
-                        "4-5 years",
-                        "5-6 years",
-                        "6-7 years",
-                        "7-8 years",
-                        "8-9 years",
-                        "9-10 years",
-                        "More than 10 years",
-                      ].map((option) => {
-                        // Convert the current string value into an array for easier handling
-                        const selectedOptions = formik.values.experience
-                          ? formik.values.experience.split(", ")
-                          : [];
-                        return (
-                          <label key={option} className="flex items-center space-x-2">
-                            {/* Changed input type from radio to checkbox */}
-                            <input
-                              type="checkbox"
-                              name="experience"
-                              value={option}
-                              // Updated to check if the option exists in the array derived from the string
-                              checked={selectedOptions.includes(option)}
-                              onChange={(e) => {
-                                // Create a mutable copy of the current selections from the string value
-                                let updatedOptions = [...selectedOptions];
-                                if (e.target.checked) {
-                                  // Add the option if checked
-                                  updatedOptions.push(option);
-                                } else {
-                                  // Remove the option if unchecked
-                                  updatedOptions = updatedOptions.filter((opt) => opt !== option);
-                                }
-                                // Join the array back into a string (comma separated) to meet the expected type
-                                formik.setFieldValue("experience", updatedOptions.join(", "));
-                              }}
-                              className="peer hidden"
-                            />
-                            <div className="w-4 h-4 border border-gray-400 dark:border-gray-500 rounded-sm flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-600 transition-colors duration-300">
-                              {selectedOptions.includes(option) && (
-                                <svg
-                                  className="w-4 h-4 text-white"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                  strokeLinecap="butt"
-                                  strokeLinejoin="miter"
-                                >
-                                  <polyline points="4 12 10 18 20 5" />
-                                </svg>
-                              )}
-                            </div>
-                            <span className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{option}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                    {formik.touched.experience && formik.errors.experience && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.experience}</div>
-                    )}
-                  </div>
-
-                  {/* Salary */}
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="salary"
-                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
-                    >
-                      Salary<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        id="salary"
-                        name="salary"
-                        type="text"
-                        placeholder="Enter salary (e.g., 45000-50000)"
-                        className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded h-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                        onChange={formik.handleChange}
-                        value={formik.values.salary}
-                      />
-                      <select
-                        id="salaryType"
-                        name="salaryType"
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 h-10 w-32 text-gray-700 dark:text-gray-300 transition-colors duration-300"
-                        onChange={formik.handleChange}
-                        value={formik.values.salaryType || ""}
-                      >
-                        <option value="" disabled>Rate</option>
-                        <option value="per year">per year</option>
-                        <option value="per month">per month</option>
-                        <option value="per week">per week</option>
-                        <option value="per day">per day</option>
-                        <option value="per hour">per hour</option>
-                        <option value="Unpaid">Unpaid</option>
-                      </select>
-                    </div>
-                    {formik.touched.salary && formik.errors.salary && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.salary}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Job Type */}
-                  <div className="mb-6">
-                    <Label
-                      htmlFor="jobType"
-                      className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300"
-                    >
-                      Job Type<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <select
-                      id="jobType"
-                      name="jobType"
-                      type="text"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.jobType}
-                    >
-                      <option value="">Select a job type</option>
-                      <option value="Full-Time">Full-Time</option>
-                      <option value="Part-Time">Part-Time</option>
-                      <option value="Contract/Temporary">Contract/Temporary</option>
-                      <option value="Freelance">Freelance</option>
-                      <option value="Internship">Internship</option>
-                      <option value="Volunteer">Volunteer</option>
-                      <option value="Fresher">Fresher</option>
-                    </select>
-                    {formik.touched.jobType && formik.errors.jobType && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.jobType}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Work Place Flexibility <span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <select
-                      name="workPlaceFlexibility"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.workPlaceFlexibility}
-                    >
-                      <option value="">Select</option>
-                      <option value="Remote">Remote</option>
-                      <option value="On-site">On-site</option>
-                      <option value="Hybrid">Hybrid</option>
-                    </select>
-                    {formik.touched.workPlaceFlexibility &&
-                      formik.errors.workPlaceFlexibility && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.workPlaceFlexibility}
-                        </div>
-                      )}
-                  </div>
-
-                  {/* Location */}
-                  <div className="mb-6 relative">
-                    <Label htmlFor="location" className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Location<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      placeholder="Enter location manually or select from dropdown"
-                      value={locationSearch || formik.values.location}
-                      onChange={(e) => {
-                        setLocationSearch(e.target.value);
-                        formik.setFieldValue("location", e.target.value);
-                      }}
-                      onFocus={() => {
-                        setLocationSearch(formik.values.location);
-                        setShowLocationDropdown(true);
-                      }}
-                      onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
-                      autoComplete="off"
-                    />
-                    {showLocationDropdown && filteredLocations.length > 0 && (
-                      <div className="absolute z-10 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded mt-1 shadow-md max-h-40 overflow-y-auto transition-colors duration-300">
-                        {filteredLocations.map((loc) => (
-                          <div
-                            key={loc}
-                            className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                            onMouseDown={() => {
-                              formik.setFieldValue("location", loc);
-                              setLocationSearch(loc);
-                              setShowLocationDropdown(false);
-                            }}
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Urgent Hiring<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <select
+                            name="urgentHiring"
+                            className={inputCls}
+                            onChange={formik.handleChange}
+                            value={formik.values.urgentHiring}
                           >
-                            {loc}
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                          </select>
+                          {formik.touched.urgentHiring && formik.errors.urgentHiring && (
+                            <div className={errorCls}>{formik.errors.urgentHiring}</div>
+                          )}
+                        </div>
+
+                        <div>
+                          <Label className={labelCls}>
+                            Job Title<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <div className="relative">
+                            <input
+                              name="title"
+                              type="text"
+                              placeholder="Search or enter job title"
+                              className={inputCls}
+                              onChange={formik.handleChange}
+                              value={formik.values.title}
+                              onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
+                              onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                              autoComplete="off"
+                            />
+                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
+                              {jobTitles
+                                .filter(t => t.toLowerCase().includes((formik.values.title || "").toLowerCase()))
+                                .map(title => (
+                                  <div
+                                    key={title}
+                                    className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
+                                    onMouseDown={() => formik.setFieldValue("title", title)}
+                                  >
+                                    {title}
+                                  </div>
+                                ))
+                              }
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                    {formik.touched.location && formik.errors.location && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">{formik.errors.location}</div>
-                    )}
-                  </div>
-
-                  {/* Navigation Buttons */}
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handlePrevious}
-                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
-                    Have feedback?{" "}
-                    <Link
-                      to="/contact"
-                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
-                    >
-                      Tell us more
-                    </Link>
-                  </p>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div>
-                  {/* Number of Openings */}
-                  <div className="mb-6 ">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Number of Openings
-                      <span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="numberOfOpening"
-                      type="number"
-                      placeholder="Enter number of openings (e.g. 1, 2)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.numberOfOpening}
-                    />
-                    {formik.touched.numberOfOpening &&
-                      formik.errors.numberOfOpening && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.numberOfOpening}
+                          {formik.touched.title && formik.errors.title && (
+                            <div className={errorCls}>{formik.errors.title}</div>
+                          )}
                         </div>
-                      )}
-                  </div>
-
-                  {/* Response Time */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Response Time<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="respondTime"
-                      type="number"
-                      placeholder="Enter response time (e.g. 1 day, 2 days)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.respondTime}
-                    />
-                    {formik.touched.respondTime &&
-                      formik.errors.respondTime && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.respondTime}
-                        </div>
-                      )}
-                  </div>
-
-                  {/* Duration */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Duration<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <input
-                      name="duration"
-                      type="text"
-                      placeholder="Enter duration (e.g. Monday to Friday)"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.duration}
-                    />
-                    {formik.touched.duration && formik.errors.duration && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.duration}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Shift */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Shift<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <div className="flex gap-2">
-                      <select
-                        name="shift"
-                        className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                        onChange={(e) => {
-                          formik.setFieldValue("shift", e.target.value);
-                        }}
-                        value={formik.values.shift}
-                      >
-                        <option value="">Select shift</option>
-                        <option value="Day shift">Day shift</option>
-                        <option value="Night shift">Night shift</option>
-                        <option value="Rotational shift">Rotational shift</option>
-                      </select>
-                      <input
-                        name="shiftCustom"
-                        type="text"
-                        placeholder="Or enter custom shift"
-                        className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                        onChange={(e) => {
-                          formik.setFieldValue("shift", e.target.value);
-                        }}
-                        value={formik.values.shift && !["Day shift", "Night shift", "Rotational shift"].includes(formik.values.shift) ? formik.values.shift : ""}
-                      />
-                    </div>
-                    {formik.touched.shift && formik.errors.shift && (
-                      <div className="text-red-500 dark:text-red-400 text-sm">
-                        {formik.errors.shift}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Notice Period */}
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Notice Period
-                    </Label>
-                    <select
-                      name="noticePeriod"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.noticePeriod || ""}
-                    >
-                      <option value="">Select notice period</option>
-                      <option value="30 days">30 days</option>
-                      <option value="45 days">45 days</option>
-                      <option value="60 days">60 days</option>
-                      <option value="90 days">90 days</option>
-                    </select>
-                  </div>
-
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Custom Questions <span className="text-gray-400 dark:text-gray-500 text-xs">(Optional)</span>
-                    </Label>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add questions applicants must answer before applying.</p>
-                    {formik.values.questions.map((q, idx) => (
-                      <div key={idx} className="flex gap-2 mb-2">
-                        <input
-                          type="text"
-                          placeholder={`Question ${idx + 1}`}
-                          className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors duration-300"
-                          value={q}
-                          onChange={(e) => {
-                            const updated = [...formik.values.questions];
-                            updated[idx] = e.target.value;
-                            formik.setFieldValue("questions", updated);
-                          }}
-                        />
+                      <div className="flex justify-between items-center">
                         <button
                           type="button"
-                          onClick={() => {
-                            const updated = formik.values.questions.filter((_, i) => i !== idx);
-                            formik.setFieldValue("questions", updated);
-                          }}
-                          className="text-red-500 hover:text-red-700 px-2"
+                          onClick={handlePrevious}
+                          disabled={step === 0}
+                          className={secondaryBtnCls}
                         >
-                          ✕
+                          {IconArrowLeft} Previous
+                        </button>
+                        <button type="button" onClick={handleNext} className={primaryBtnCls}>
+                          Next {IconArrowRight}
                         </button>
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => formik.setFieldValue("questions", [...formik.values.questions, ""])}
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline mt-1"
-                    >
-                      + Add Question
-                    </button>
-                  </div>
 
-                  <div className="mb-6">
-                    <Label className="block text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                      Applicants need to  pay any charges?<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                    </Label>
-                    <select
-                      name="anyAmount"
-                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300"
-                      onChange={formik.handleChange}
-                      value={formik.values.anyAmount}
-                    >
-                      <option value="">Select</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                    {formik.touched.activeColor &&
-                      formik.errors.anyAmount && (
-                        <div className="text-red-500 dark:text-red-400 text-sm">
-                          {formik.errors.anyAmount}
+                      <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                        Have feedback?{" "}
+                        <Link to="/contact" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                          Tell us more
+                        </Link>
+                      </p>
+                    </div>
+                  )}
+
+                  {/* ------------------------------- STEP 1 ------------------------------- */}
+                  {step === 1 && (
+                    <div className="space-y-5">
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconTools} title="Required Skills" subtitle="What abilities will this role need" />
+                        <textarea
+                          id="skills"
+                          name="skills"
+                          placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
+                          className={`${inputCls} min-h-[90px]`}
+                          onChange={formik.handleChange}
+                          value={formik.values.skills}
+                        />
+                        {formik.touched.skills && formik.errors.skills && (
+                          <div className={errorCls}>{formik.errors.skills}</div>
+                        )}
+                      </div>
+
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconUsers} title="Languages" subtitle="Optional — languages candidates should speak" />
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <div className="relative flex-1">
+                            <input
+                              type="text"
+                              placeholder="Search language"
+                              className={inputCls}
+                              value={langSearch}
+                              onChange={(e) => setLangSearch(e.target.value)}
+                              onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
+                              onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                              autoComplete="off"
+                            />
+                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
+                              {[
+                                "English", "Hindi", "Telugu", "Tamil", "Kannada",
+                                "Malayalam", "Marathi", "Bengali", "Gujarati", "Punjabi",
+                                "Urdu", "Odia", "Arabic", "French", "German",
+                              ]
+                                .filter(l => l.toLowerCase().includes(langSearch.toLowerCase()) && !formik.values.languages.includes(l))
+                                .map(lang => (
+                                  <div
+                                    key={lang}
+                                    className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
+                                    onMouseDown={() => {
+                                      formik.setFieldValue("languages", [...formik.values.languages, lang]);
+                                      setLangSearch("");
+                                    }}
+                                  >
+                                    {lang}
+                                  </div>
+                                ))
+                              }
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2 flex-1 items-center">
+                            {formik.values.languages.map(lang => (
+                              <span key={lang} className={chipCls}>
+                                {lang}
+                                <button
+                                  type="button"
+                                  className="text-indigo-400 hover:text-red-500 font-bold leading-none ml-0.5"
+                                  onClick={() => formik.setFieldValue("languages", formik.values.languages.filter(l => l !== lang))}
+                                >×</button>
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      )}
+                      </div>
 
-                    {/* Note about GreatHire policy */}
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">
-                      <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
-                    </p>
-                  </div>
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconSparkle} title="Benefits" subtitle="Perks that come with this role" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                          {[
+                            "Health Insurance",
+                            "Provident Fund",
+                            "Cell Phone Reimbursement",
+                            "Paid Sick Time",
+                            "Work From Home",
+                            "Paid time Off",
+                            "Food Provided",
+                            "Life Insurance",
+                            "Internet Reimbursement",
+                            "Travelling Allowance",
+                            "Leave Encashment",
+                            "Flexible Schedule",
+                            "Others",
+                          ].map((benefit) => {
+                            const selectedBenefits = String(formik.values.benefits || "").split("\n");
+                            const checked = selectedBenefits.includes(benefit);
+                            return (
+                              <label
+                                key={benefit}
+                                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border cursor-pointer text-sm transition-colors duration-200 ${
+                                  checked
+                                    ? "border-indigo-300 dark:border-indigo-500/40 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+                                    : "border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04]"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  name="benefitsCheckbox"
+                                  value={benefit}
+                                  className="w-4 h-4 accent-indigo-600"
+                                  checked={checked}
+                                  onChange={(e) => {
+                                    let updatedBenefits = [...selectedBenefits].filter(Boolean);
+                                    if (e.target.checked) {
+                                      updatedBenefits.push(benefit);
+                                    } else {
+                                      updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
+                                    }
+                                    formik.setFieldValue("benefits", updatedBenefits.join("\n"));
+                                  }}
+                                />
+                                <span>{benefit}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
 
+                        {String(formik.values.benefits || "").split("\n").includes("Others") && (
+                          <textarea
+                            id="benefits"
+                            name="benefits"
+                            placeholder="Enter additional benefits..."
+                            className={`${inputCls} h-24`}
+                            onChange={formik.handleChange}
+                            value={String(formik.values.benefits || "")}
+                          />
+                        )}
+                        {formik.touched.benefits && formik.errors.benefits && (
+                          <div className={errorCls}>{formik.errors.benefits}</div>
+                        )}
+                      </div>
 
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handlePrevious}
-                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300"
-                    >
-                      Next
-                    </button>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4 transition-colors duration-300">
-                    Have feedback?{" "}
-                    <Link
-                      to="/contact"
-                      className="text-blue-700 dark:text-blue-400 cursor-pointer hover:underline"
-                    >
-                      Tell us more
-                    </Link>
-                  </p>
-                </div>
-              )}
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconGraduate} title="Qualifications" subtitle="Minimum education requirements" />
+                        <textarea
+                          id="qualifications"
+                          name="qualifications"
+                          placeholder="Enter qualifications separated by new lines (eg. Bachelor, Master or diploma)"
+                          className={`${inputCls} min-h-[80px]`}
+                          onChange={formik.handleChange}
+                          value={formik.values.qualifications}
+                        />
+                        {formik.touched.qualifications && formik.errors.qualifications && (
+                          <div className={errorCls}>{formik.errors.qualifications}</div>
+                        )}
+                      </div>
 
-              {step === 4 && (
-                <>
-                  {/* Job Description Editor */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <Label className="block text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                        Job Details<span className="text-red-500 dark:text-red-400 ml-1">*</span>
-                      </Label>
-                      <button
-                        type="button"
-                        disabled={aiGenerating}
-                        onClick={() => {
-                          handleGenerateJD({
-                            title: formik.values.title,
-                            skills: formik.values.skills,
-                            experience: formik.values.experience,
-                            jobType: formik.values.jobType,
-                            location: formik.values.location,
-                            workPlaceFlexibility: formik.values.workPlaceFlexibility,
-                          });
-                        }}
-                        className="flex items-center gap-1 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity"
-                      >
-                        {aiGenerating ? "Generating..." : "✨ Generate with AI"}
-                      </button>
+                      <div className="flex justify-between items-center">
+                        <button type="button" onClick={handlePrevious} className={secondaryBtnCls}>
+                          {IconArrowLeft} Previous
+                        </button>
+                        <button type="button" onClick={handleNext} className={primaryBtnCls}>
+                          Next {IconArrowRight}
+                        </button>
+                      </div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                        Have feedback?{" "}
+                        <Link to="/contact" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                          Tell us more
+                        </Link>
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2 border border-gray-300 dark:border-gray-600 rounded-t px-3 py-2 bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
-                      <button type="button" onClick={toggleBold} className={`p-2 rounded font-bold transition-colors duration-300 ${boldMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}>B</button>
-                      <button type="button" onClick={toggleItalic} className={`p-2 rounded italic transition-colors duration-300 ${italicMode ? "bg-gray-200 dark:bg-gray-600" : "hover:bg-gray-200 dark:hover:bg-gray-600"} text-gray-900 dark:text-gray-100`}><i>i</i></button>
-                      <button type="button" onClick={bulletList} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300" title="Bullet List">●</button>
-                      <button type="button" onClick={numberList} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 transition-colors duration-300" title="Numbered List">123</button>
-                    </div>
-                    <div
-                      ref={editorRef}
-                      contentEditable
-                      className="w-full min-h-[150px] p-3 border border-t-0 border-gray-300 dark:border-gray-600 rounded-b focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
-                      onKeyDown={handleKeyDown}
-                      onInput={(e) => formik.setFieldValue("details", e.currentTarget.innerHTML)}
-                    />
-                    {formik.touched.details && formik.errors.details && (
-                      <div className="text-red-500 dark:text-red-400 text-sm mt-1">{formik.errors.details}</div>
-                    )}
-                  </div>
+                  )}
 
-                  {/* <h2 className="text-xl font-bold mb-4">Review & Submit</h2> */}
-                  <div className="p-4 bg-blue-50 dark:bg-gray-700 rounded-xl transition-colors duration-300">
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Company Name:</strong>{" "}
-                      {formik.values.companyName || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Urgent Hiring:</strong>{" "}
-                      {formik.values.urgentHiring || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Job Title:</strong> {formik.values.title || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Job Details:</strong>{" "}
-                      <div
-                        className="
-    text-justify text-sm
-    [&_ul]:list-disc [&_ul]:ml-6
-    [&_ol]:list-decimal [&_ol]:ml-6
-    [&_li]:mb-1
-    [&_ol[type='a']]:list-[lower-alpha]
-    [&_ol[type='A']]:list-[upper-alpha]
-    [&_ol[type='i']]:list-[lower-roman]
-    [&_ol[type='I']]:list-[upper-roman]
-  "
-                        dangerouslySetInnerHTML={{
-                          __html: formik.values.details
-                            ? DOMPurify.sanitize(formik.values.details)
-                            : "<p>N/A</p>",
-                        }}
-                      />
+                  {/* ------------------------------- STEP 2 ------------------------------- */}
+                  {step === 2 && (
+                    <div className="space-y-5">
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconBriefcase} title="Employment Details" subtitle="Experience, salary and job type" />
 
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Skills:</strong>{" "}
-                      {formik.values.skills.length > 0
-                        ? formik.values.skills
-                          .split(",")
-                          .map((skill, index) => (
-                            <span
-                              key={index}
-                              className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded mr-2 mb-2 transition-colors duration-300"
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Experience<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <label className="flex items-center gap-2 mb-3 text-sm text-slate-600 dark:text-slate-300">
+                            <input
+                              type="checkbox"
+                              checked={String(formik.values.experience || "").includes("Fresher")}
+                              onChange={(e) => {
+                                const current = String(formik.values.experience || "");
+                                if (e.target.checked) {
+                                  formik.setFieldValue("experience", "Fresher, From 0 To 0");
+                                } else {
+                                  formik.setFieldValue("experience", current.replace("Fresher", "").replace(/^,\s*|,\s*$/g, "").trim());
+                                }
+                              }}
+                              className="w-4 h-4 accent-indigo-600"
+                            />
+                            <span>Fresher</span>
+                          </label>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">From (years)</label>
+                              <select
+                                className={inputCls}
+                                value={(() => { const m = String(formik.values.experience || "").match(/From (\d+)/); return m ? m[1] : ""; })()}
+                                onChange={(e) => {
+                                  const current = String(formik.values.experience || "");
+                                  const toMatch = current.match(/To (\d+)/);
+                                  const toVal = toMatch ? ` To ${toMatch[1]}` : "";
+                                  const isFresher = current.includes("Fresher") ? "Fresher, " : "";
+                                  formik.setFieldValue("experience", e.target.value ? `${isFresher}From ${e.target.value}${toVal}` : `${isFresher}${toVal}`.trim());
+                                }}
+                              >
+                                <option value="">Select</option>
+                                {Array.from({ length: 11 }, (_, i) => i).map(n => (
+                                  <option key={n} value={n}>{n}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">To (years)</label>
+                              <select
+                                className={inputCls}
+                                value={(() => { const m = String(formik.values.experience || "").match(/To (\d+)/); return m ? m[1] : ""; })()}
+                                onChange={(e) => {
+                                  const current = String(formik.values.experience || "");
+                                  const fromMatch = current.match(/From (\d+)/);
+                                  const fromVal = fromMatch ? `From ${fromMatch[1]} ` : "";
+                                  const isFresher = current.includes("Fresher") ? "Fresher, " : "";
+                                  formik.setFieldValue("experience", e.target.value ? `${isFresher}${fromVal}To ${e.target.value}` : `${isFresher}${fromVal}`.trim());
+                                }}
+                              >
+                                <option value="">Select</option>
+                                {Array.from({ length: 11 }, (_, i) => i).map(n => (
+                                  <option key={n} value={n}>{n}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          {formik.touched.experience && formik.errors.experience && (
+                            <div className={errorCls}>{formik.errors.experience}</div>
+                          )}
+                        </div>
+
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Salary<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <div className="flex flex-col sm:flex-row gap-2.5">
+                            <input
+                              id="salary"
+                              name="salary"
+                              type="text"
+                              placeholder="Enter salary (e.g., 45000-50000)"
+                              className={inputCls}
+                              onChange={formik.handleChange}
+                              value={formik.values.salary}
+                            />
+                            <select
+                              id="salaryType"
+                              name="salaryType"
+                              className={`${inputCls} sm:w-40`}
+                              onChange={formik.handleChange}
+                              value={formik.values.salaryType || "per year"}
                             >
-                              {skill.trim()}
-                            </span>
-                          ))
-                        : "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Experience:</strong>{" "}
-                      {formik.values.experience || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Benefits:</strong>{" "}
-                      {formik.values.benefits
-                        ? formik.values.benefits.split("\n").join(", ") : "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Qualification:</strong>{" "}
-                      {formik.values.qualifications || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Salary:</strong>{" "}
-                      {formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim() : "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Job Type:</strong>{" "}
-                      {formik.values.jobType || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Work Place Flexibility:</strong>{" "}
-                      {formik.values.workPlaceFlexibility || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Location:</strong>{" "}
-                      {formik.values.location || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Number of Openings:</strong>{" "}
-                      {formik.values.numberOfOpening || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Response Time:</strong>{" "}
-                      {formik.values.respondTime + " days" || "N/A"}
-                    </div>
+                              <option value="per year">per year</option>
+                              <option value="per month">per month</option>
+                              <option value="per week">per week</option>
+                              <option value="per day">per day</option>
+                              <option value="per hour">per hour</option>
+                              <option value="Unpaid">Unpaid</option>
+                            </select>
+                          </div>
+                          {formik.touched.salary && formik.errors.salary && (
+                            <div className={errorCls}>{formik.errors.salary}</div>
+                          )}
+                        </div>
 
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Duration:</strong>{" "}
-                      {formik.values.duration || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Shift:</strong>{" "}
-                      {formik.values.shift || "N/A"}
-                    </div>
-                    <div className="mb-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                      <strong>Applicants need to  pay any charges?:</strong>{" "}
-                      {formik.values.anyAmount || "N/A"}
-                    </div>
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Job Type<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <select
+                            id="jobType"
+                            name="jobType"
+                            className={inputCls}
+                            onChange={formik.handleChange}
+                            value={formik.values.jobType}
+                          >
+                            <option value="">Select a job type</option>
+                            <option value="Full-Time">Full-Time</option>
+                            <option value="Part-Time">Part-Time</option>
+                            <option value="Contract/Temporary">Contract/Temporary</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Internship">Internship</option>
+                            <option value="Volunteer">Volunteer</option>
+                            <option value="Fresher">Fresher</option>
+                          </select>
+                          {formik.touched.jobType && formik.errors.jobType && (
+                            <div className={errorCls}>{formik.errors.jobType}</div>
+                          )}
+                        </div>
 
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors duration-300">
-                      If you notice an error in your job post, please <br />
-                      <Link to="/contact" className="underline cursor-pointer text-blue-700 dark:text-blue-400">
-                        contact Great Hire
-                      </Link>
-                    </p>
+                        <div>
+                          <Label className={labelCls}>
+                            Work Place Flexibility<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <div className="grid grid-cols-3 gap-2.5">
+                            {["Remote", "Hybrid", "On-site"].map((mode) => (
+                              <button
+                                type="button"
+                                key={mode}
+                                onClick={() => formik.setFieldValue("workPlaceFlexibility", mode)}
+                                className={`py-2.5 rounded-xl border text-sm font-medium transition-colors duration-200 ${
+                                  formik.values.workPlaceFlexibility === mode
+                                    ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
+                                    : "border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04]"
+                                }`}
+                              >
+                                {mode}
+                              </button>
+                            ))}
+                          </div>
+                          {formik.touched.workPlaceFlexibility && formik.errors.workPlaceFlexibility && (
+                            <div className={errorCls}>{formik.errors.workPlaceFlexibility}</div>
+                          )}
+                        </div>
+                      </div>
 
-                    <small className="text-xs text-gray-500 dark:text-gray-400 block mb-6 transition-colors duration-300">
-                      By pressing apply: 1) you agree to our{" "}
-                      <Link
-                        to="/policy/privacy-policy"
-                        className="underline cursor-pointer text-blue-700 dark:text-blue-400"
-                      >
-                        Terms, Cookie & Privacy Policies
-                      </Link>
-                      ; 2) you consent to your jobs being transmitted to the
-                      Students (Great Hire does not guarantee receipt), &
-                      processed & analyzed in accordance with its & Great Hire's
-                      terms & privacy policies; & 3) you acknowledge that when
-                      you post to jobs outside your country it may involve you
-                      sending your personal data to countries with lower levels
-                      of data protection.
-                    </small>
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconPin} title="Work Location" />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            className={inputCls}
+                            placeholder="Enter location manually or select from dropdown"
+                            value={locationSearch || formik.values.location}
+                            onChange={(e) => {
+                              setLocationSearch(e.target.value);
+                              formik.setFieldValue("location", e.target.value);
+                            }}
+                            onFocus={() => {
+                              setLocationSearch(formik.values.location);
+                              setShowLocationDropdown(true);
+                            }}
+                            onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
+                            autoComplete="off"
+                          />
+                          {showLocationDropdown && filteredLocations.length > 0 && (
+                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto">
+                              {filteredLocations.map((loc) => (
+                                <div
+                                  key={loc}
+                                  className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
+                                  onMouseDown={() => {
+                                    formik.setFieldValue("location", loc);
+                                    setLocationSearch(loc);
+                                    setShowLocationDropdown(false);
+                                  }}
+                                >
+                                  {loc}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {formik.touched.location && formik.errors.location && (
+                          <div className={errorCls}>{formik.errors.location}</div>
+                        )}
+                      </div>
 
-                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">
-                      Having an issue with this job?{" "}
-                      <Link
-                        to="/contact"
-                        className="underline text-blue-700 dark:text-blue-400 cursor-pointer"
-                      >
-                        Tell us more
-                      </Link>
-                    </p>
-                  </div>
-                  <div className="mt-2 flex justify-between">
-                    <button
-                      type="button"
-                      onClick={handlePrevious}
-                      className="bg-gray-500 dark:bg-gray-600 text-white p-2 rounded hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors duration-300"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      type="submit"
-                      className={`bg-blue-700 dark:bg-blue-600 text-white p-2 rounded hover:bg-blue-800 dark:hover:bg-blue-500 transition-colors duration-300 ${loading && "cursor-not-allowed opacity-70"
-                        }`}
-                      disabled={loading}
-                    >
-                      {loading ? "Posting..." : "Post"}
-                    </button>
-                  </div>
-                </>
-              )}
-            </form>
-              </>
+                      <div className="flex justify-between items-center">
+                        <button type="button" onClick={handlePrevious} className={secondaryBtnCls}>
+                          {IconArrowLeft} Previous
+                        </button>
+                        <button type="button" onClick={handleNext} className={primaryBtnCls}>
+                          Next {IconArrowRight}
+                        </button>
+                      </div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                        Have feedback?{" "}
+                        <Link to="/contact" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                          Tell us more
+                        </Link>
+                      </p>
+                    </div>
+                  )}
+
+                  {/* ------------------------------- STEP 3 ------------------------------- */}
+                  {step === 3 && (
+                    <div className="space-y-5">
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconSettings} title="Hiring Details" subtitle="Openings, timelines and schedule" />
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                          <div>
+                            <Label className={labelCls}>
+                              Number of Openings<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                            </Label>
+                            <input
+                              name="numberOfOpening"
+                              type="number"
+                              placeholder="e.g. 1, 2"
+                              className={inputCls}
+                              onChange={formik.handleChange}
+                              value={formik.values.numberOfOpening}
+                            />
+                            {formik.touched.numberOfOpening && formik.errors.numberOfOpening && (
+                              <div className={errorCls}>{formik.errors.numberOfOpening}</div>
+                            )}
+                          </div>
+
+                          <div>
+                            <Label className={labelCls}>
+                              Response Time (Days)<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                            </Label>
+                            <input
+                              name="respondTime"
+                              type="number"
+                              placeholder="e.g. 1, 2"
+                              className={inputCls}
+                              onChange={formik.handleChange}
+                              value={formik.values.respondTime}
+                            />
+                            {formik.touched.respondTime && formik.errors.respondTime && (
+                              <div className={errorCls}>{formik.errors.respondTime}</div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="mb-5">
+                          <Label className={labelCls}>
+                            Working Days<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <select
+                            className={inputCls}
+                            onChange={(e) => {
+                              if (e.target.value === "Other") formik.setFieldValue("duration", "Other");
+                              else formik.setFieldValue("duration", e.target.value);
+                            }}
+                            value={["5 Days A Week", "6 Days A Week"].includes(formik.values.duration) ? formik.values.duration : formik.values.duration ? "Other" : ""}
+                          >
+                            <option value="">Select duration</option>
+                            <option value="5 Days A Week">5 Days A Week</option>
+                            <option value="6 Days A Week">6 Days A Week</option>
+                            <option value="Other">Other</option>
+                          </select>
+                          {!(["5 Days A Week", "6 Days A Week", ""].includes(formik.values.duration)) && (
+                            <input
+                              name="duration"
+                              type="text"
+                              placeholder="Enter custom duration"
+                              className={`${inputCls} mt-2`}
+                              onChange={formik.handleChange}
+                              value={formik.values.duration === "Other" ? "" : formik.values.duration}
+                            />
+                          )}
+                          {formik.touched.duration && formik.errors.duration && (
+                            <div className={errorCls}>{formik.errors.duration}</div>
+                          )}
+                        </div>
+
+                        <div>
+                          <Label className={labelCls}>
+                            Shift<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                          </Label>
+                          <div className="flex flex-col sm:flex-row gap-2.5">
+                            <select
+                              name="shift"
+                              className={inputCls}
+                              onChange={(e) => formik.setFieldValue("shift", e.target.value)}
+                              value={formik.values.shift}
+                            >
+                              <option value="">Select shift</option>
+                              <option value="Day shift">Day shift</option>
+                              <option value="Night shift">Night shift</option>
+                              <option value="Rotational shift">Rotational shift</option>
+                            </select>
+                            <input
+                              name="shiftCustom"
+                              type="text"
+                              placeholder="Or enter custom shift"
+                              className={inputCls}
+                              onChange={(e) => formik.setFieldValue("shift", e.target.value)}
+                              value={formik.values.shift && !["Day shift", "Night shift", "Rotational shift"].includes(formik.values.shift) ? formik.values.shift : ""}
+                            />
+                          </div>
+                          {formik.touched.shift && formik.errors.shift && (
+                            <div className={errorCls}>{formik.errors.shift}</div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconDoc} title="Custom Questions" subtitle="Optional — screening questions for applicants" />
+                        {formik.values.questions.map((q, idx) => (
+                          <div key={idx} className="flex gap-2 mb-2.5">
+                            <input
+                              type="text"
+                              placeholder={`Question ${idx + 1}`}
+                              className={inputCls}
+                              value={q}
+                              onChange={(e) => {
+                                const updated = [...formik.values.questions];
+                                updated[idx] = e.target.value;
+                                formik.setFieldValue("questions", updated);
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = formik.values.questions.filter((_, i) => i !== idx);
+                                formik.setFieldValue("questions", updated);
+                              }}
+                              className="flex-shrink-0 w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-200"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => formik.setFieldValue("questions", [...formik.values.questions, ""])}
+                          className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline font-medium mt-1"
+                        >
+                          + Add Question
+                        </button>
+                      </div>
+
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconMoney} title="Applicant Charges" />
+                        <select
+                          name="anyAmount"
+                          className={inputCls}
+                          onChange={formik.handleChange}
+                          value={formik.values.anyAmount}
+                        >
+                          <option value="">Select</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                        {formik.touched.activeColor && formik.errors.anyAmount && (
+                          <div className={errorCls}>{formik.errors.anyAmount}</div>
+                        )}
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                          <strong>Note:</strong> GreatHire does not support taking any amount from applicants.
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <button type="button" onClick={handlePrevious} className={secondaryBtnCls}>
+                          {IconArrowLeft} Previous
+                        </button>
+                        <button type="button" onClick={handleNext} className={primaryBtnCls}>
+                          Next {IconArrowRight}
+                        </button>
+                      </div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                        Have feedback?{" "}
+                        <Link to="/contact" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                          Tell us more
+                        </Link>
+                      </p>
+                    </div>
+                  )}
+
+                  {step !== 4 && <LivePreview />}
+
+                  {/* ------------------------------- STEP 4 ------------------------------- */}
+                  {step === 4 && (
+                    <div className="space-y-5">
+                      <div className={cardCls}>
+                        <div className="flex items-center justify-between mb-4">
+                          <SectionHeader icon={IconDoc} title="Job Description" subtitle="Describe the role, team and impact" />
+                          <button
+                            type="button"
+                            disabled={aiGenerating}
+                            onClick={() => {
+                              handleGenerateJD({
+                                title: formik.values.title,
+                                skills: formik.values.skills,
+                                experience: formik.values.experience,
+                                jobType: formik.values.jobType,
+                                location: formik.values.location,
+                                workPlaceFlexibility: formik.values.workPlaceFlexibility,
+                              });
+                            }}
+                            className="flex-shrink-0 flex items-center gap-1.5 text-xs bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-3.5 py-1.5 rounded-full hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity font-medium -mt-8"
+                          >
+                            {IconSparkle} {aiGenerating ? "Generating..." : "Generate with AI"}
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-1 border border-slate-200 dark:border-white/10 rounded-t-xl px-2 py-1.5 bg-slate-50 dark:bg-white/[0.04] transition-colors duration-300">
+                          <button type="button" onClick={toggleBold} className={`w-8 h-8 rounded-lg font-bold text-sm transition-colors duration-200 ${boldMode ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300" : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200"}`}>B</button>
+                          <button type="button" onClick={toggleItalic} className={`w-8 h-8 rounded-lg italic text-sm transition-colors duration-200 ${italicMode ? "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300" : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200"}`}><i>i</i></button>
+                          <div className="w-px h-5 bg-slate-200 dark:bg-white/10 mx-1" />
+                          <button type="button" onClick={bulletList} className="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-colors duration-200" title="Bullet List">●</button>
+                          <button type="button" onClick={numberList} className="w-8 h-8 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs transition-colors duration-200" title="Numbered List">123</button>
+                        </div>
+                        <div
+                          ref={editorRef}
+                          contentEditable
+                          className="w-full min-h-[150px] p-3.5 border border-t-0 border-slate-200 dark:border-white/10 rounded-b-xl focus:outline-none bg-white dark:bg-white/[0.03] text-slate-900 dark:text-slate-100 text-sm [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
+                          onKeyDown={handleKeyDown}
+                          onInput={(e) => formik.setFieldValue("details", e.currentTarget.innerHTML)}
+                        />
+                        {formik.touched.details && formik.errors.details && (
+                          <div className={errorCls}>{formik.errors.details}</div>
+                        )}
+                      </div>
+
+                      <div className={cardCls}>
+                        <SectionHeader icon={IconEye} title="Review & Submit" subtitle="Double-check everything before publishing" />
+
+                        <dl className="divide-y divide-slate-100 dark:divide-white/5 text-sm">
+                          {[
+                            ["Company Name", formik.values.companyName || "N/A"],
+                            ["Urgent Hiring", formik.values.urgentHiring || "N/A"],
+                            ["Job Title", formik.values.title || "N/A"],
+                          ].map(([k, v]) => (
+                            <div key={k} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 py-2.5">
+                              <dt className="w-full sm:w-48 flex-shrink-0 font-medium text-slate-500 dark:text-slate-400">{k}</dt>
+                              <dd className="text-slate-900 dark:text-slate-100">{v}</dd>
+                            </div>
+                          ))}
+
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 py-2.5">
+                            <dt className="w-full sm:w-48 flex-shrink-0 font-medium text-slate-500 dark:text-slate-400">Job Details</dt>
+                            <dd
+                              className="text-slate-900 dark:text-slate-100 text-sm [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1"
+                              dangerouslySetInnerHTML={{
+                                __html: formik.values.details
+                                  ? DOMPurify.sanitize(formik.values.details)
+                                  : "<p>N/A</p>",
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 py-2.5">
+                            <dt className="w-full sm:w-48 flex-shrink-0 font-medium text-slate-500 dark:text-slate-400">Skills</dt>
+                            <dd className="flex flex-wrap gap-1.5">
+                              {formik.values.skills.length > 0
+                                ? formik.values.skills.split(",").map((skill, index) => (
+                                  <span key={index} className={chipCls}>{skill.trim()}</span>
+                                ))
+                                : "N/A"}
+                            </dd>
+                          </div>
+
+                          {[
+                            ["Experience", formik.values.experience || "N/A"],
+                            ["Benefits", formik.values.benefits ? formik.values.benefits.split("\n").join(", ") : "N/A"],
+                            ["Qualification", formik.values.qualifications || "N/A"],
+                            ["Salary", formik.values.salary ? `₹${formik.values.salary} ${formik.values.salaryType || ""}`.trim() : "N/A"],
+                            ["Job Type", formik.values.jobType || "N/A"],
+                            ["Work Place Flexibility", formik.values.workPlaceFlexibility || "N/A"],
+                            ["Location", formik.values.location || "N/A"],
+                            ["Number of Openings", formik.values.numberOfOpening || "N/A"],
+                            ["Response Time", formik.values.respondTime ? `${formik.values.respondTime} days` : "N/A"],
+                            ["Duration", formik.values.duration || "N/A"],
+                            ["Shift", formik.values.shift || "N/A"],
+                            ["Applicant Charges", formik.values.anyAmount || "N/A"],
+                          ].map(([k, v]) => (
+                            <div key={k} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 py-2.5">
+                              <dt className="w-full sm:w-48 flex-shrink-0 font-medium text-slate-500 dark:text-slate-400">{k}</dt>
+                              <dd className="text-slate-900 dark:text-slate-100">{v}</dd>
+                            </div>
+                          ))}
+                        </dl>
+
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-5">
+                          If you notice an error in your job post, please{" "}
+                          <Link to="/contact" className="underline text-indigo-600 dark:text-indigo-400">
+                            contact Great Hire
+                          </Link>
+                        </p>
+
+                        <small className="text-xs text-slate-500 dark:text-slate-400 block mt-4 leading-relaxed">
+                          By pressing apply: 1) you agree to our{" "}
+                          <Link to="/policy/privacy-policy" className="underline text-indigo-600 dark:text-indigo-400">
+                            Terms, Cookie & Privacy Policies
+                          </Link>
+                          ; 2) you consent to your jobs being transmitted to the
+                          Students (Great Hire does not guarantee receipt), &
+                          processed & analyzed in accordance with its & Great Hire's
+                          terms & privacy policies; & 3) you acknowledge that when
+                          you post to jobs outside your country it may involve you
+                          sending your personal data to countries with lower levels
+                          of data protection.
+                        </small>
+
+                        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-5">
+                          Having an issue with this job?{" "}
+                          <Link to="/contact" className="underline text-indigo-600 dark:text-indigo-400">
+                            Tell us more
+                          </Link>
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <button type="button" onClick={handlePrevious} className={secondaryBtnCls}>
+                          {IconArrowLeft} Previous
+                        </button>
+                        <button type="submit" className={primaryBtnCls} disabled={loading}>
+                          {loading ? "Posting..." : (<>Publish Opportunity {IconRocket}</>)}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              </form>
             )}
           </div>
         </div>
       ) : (
-        <div className="h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          <span className="text-4xl text-gray-400 dark:text-gray-500 transition-colors duration-300">Company not created</span>
+        <div className="h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0a0e1a] transition-colors duration-300">
+          <span className="text-4xl text-slate-400 dark:text-slate-500 transition-colors duration-300">Company not created</span>
         </div>
       )}
-
-
     </>
   );
 };

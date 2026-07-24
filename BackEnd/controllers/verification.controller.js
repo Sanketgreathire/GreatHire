@@ -405,7 +405,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
           status: "Active", // Activate the plan after paymentStatus is paid
         },
         { new: true } // Return the updated document
-      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits");
+      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits teamUserLimit");
 
       // Expire the previous active plan (if any) before activating the new one
       await JobSubscription.updateOne(
@@ -487,6 +487,9 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       company.planJobsPostedThisMonth = -carryoverJobs;
       company.plan = planType;
       company.planMonthStart = new Date();
+      // Team-user cap purchased with this Enterprise plan (3/6/12 for 3mo/6mo/1yr);
+      // non-Enterprise plans fall back to the flat USER_LIMITS table.
+      company.teamUserLimit = planType === "ENTERPRISE" ? (currentPlan?.teamUserLimit ?? null) : null;
 
       await company.save();
 
