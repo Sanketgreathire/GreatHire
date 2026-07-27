@@ -1,68 +1,29 @@
-import { parsePhoneNumberFromString } from "libphonenumber-js";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import { useEffect, useState } from "react";
-
-const isValidForCountry = (phone, countryIso) => {
-  if (!phone) return null;
-  try {
-    const parsed = parsePhoneNumberFromString("+" + phone, countryIso?.toUpperCase());
-    return parsed?.isValid() ?? false;
-  } catch {
-    return false;
-  }
-};
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 const CompanyPhoneInput = ({ value, onChange }) => {
-  const rawValue = value?.replace("+", "") || "";
-  const isValid = rawValue.length > 4 ? isValidForCountry(rawValue, null) : null;
-
-  const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains("dark"));
-    check();
-    const observer = new MutationObserver(check);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
-
-  const borderColor = isValid === false ? "#ef4444" : isValid === true ? "#22c55e" : isDark ? "#4b5563" : "#d1d5db";
+  const rawValue = value || "+91";
 
   return (
-    <div className="w-full">
+    <div className="w-full gh-phone gh-phone-field">
       <PhoneInput
-        country={"in"}
+        defaultCountry="in"
         value={rawValue}
-        onChange={(phone, country) => {
-          const cleaned = phone.replace(/\D/g, "");
-          const e164 = `+${cleaned}`;
-          onChange(e164, "+" + country.dialCode, country.countryCode?.toUpperCase());
-        }}
-        enableSearch={true}
+        forceDialCode
+        disableDialCodeAndPrefix={false}
         countryCodeEditable={false}
+        className="w-full"
+        inputClassName="gh-phone-input"
         placeholder="Enter phone number"
-        inputStyle={{
-          width: "100%",
-          height: "42px",
-          borderRadius: "8px",
-          border: `1px solid ${borderColor}`,
-          fontSize: "14px",
-          paddingLeft: "52px",
-          transition: "border-color 0.2s",
-          backgroundColor: isDark ? "#1f2937" : "#ffffff",
-          color: isDark ? "#f3f4f6" : "#111827",
+        countrySelectorStyleProps={{
+          dropdownStyle: {
+            maxHeight: "180px",
+            width: "100%",
+          },
         }}
-        buttonStyle={{
-          borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px",
-          border: `1px solid ${borderColor}`,
-          backgroundColor: isDark ? "#374151" : "#ffffff",
-        }}
-        dropdownStyle={{
-          maxHeight: "300px",
-          width: "320px",
-          backgroundColor: isDark ? "#1f2937" : "#ffffff",
-          color: isDark ? "#f3f4f6" : "#111827",
+        onChange={(phone, meta) => {
+          const dialCode = `+${meta.country.dialCode}`;
+          onChange(phone || "+91", dialCode, meta.country.iso2?.toUpperCase());
         }}
       />
     </div>

@@ -67,6 +67,7 @@ import eventsRoute from "./src/modules/events/routes/events.routes.js";
 
 import analyticsRoute from "./routes/analytics/analytics.route.js";
 
+import { startPlanExpiryNotifier }  from "./scripts/planExpiryNotifier.js";
 
 // ================= MODELS =================
 

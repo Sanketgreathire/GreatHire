@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef, useEffect } from "react";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+import { useState, useCallback } from "react";
+import Navbar from "../../components/shared/Navbar";
+import Footer from "../../components/shared/Footer";
 import { Helmet } from "react-helmet-async";
 import {
   AlertTriangle,
@@ -275,62 +275,47 @@ const quickFacts = [
 ];
 
 // ── SectionCard is defined OUTSIDE PrivacyPolicy ──────────────────────────────
+
+
 function SectionCard({ section, isOpen, onToggle }) {
   const Icon = section.icon;
-  const contentRef = useRef(null);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setHeight(isOpen ? contentRef.current.scrollHeight : 0);
-    }
-  }, [isOpen]);
 
   return (
-    <article className="rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
+    <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
       <button
         type="button"
         onClick={onToggle}
-        aria-expanded={isOpen}
-        className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
+        className="flex w-full items-center justify-between px-5 py-4"
       >
-        <span className="flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300">
-            <Icon className="h-5 w-5" />
-          </span>
-          <span className="min-w-0">
-            <span className="block truncate text-base font-semibold text-slate-900 dark:text-slate-100">
-              {section.label}
-            </span>
-            <span className="mt-0.5 block text-sm text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-3">
+          <Icon className="h-5 w-5 text-sky-600" />
+
+          <div className="text-left">
+            <h3 className="font-semibold">{section.label}</h3>
+            <p className="text-sm text-gray-500">
               {section.intro}
-            </span>
-          </span>
-        </span>
-        <span
-          className="shrink-0 text-slate-500 dark:text-slate-400 transition-transform duration-200"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-        >
-          <ChevronDown className="h-5 w-5" />
-        </span>
+            </p>
+          </div>
+        </div>
+
+        <ChevronDown
+          className={`h-5 w-5 transition-transform ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
       </button>
 
-      <div
-        ref={contentRef}
-        className="overflow-hidden transition-all duration-250"
-        style={{ height }}
-      >
-        <div className="border-t border-slate-200/70 px-5 pb-5 pt-4 dark:border-slate-700">
-          <ul className="space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+      {isOpen && (
+        <div className="border-t p-5">
+          <ul className="space-y-2">
             {section.points.map((point) => (
-              <li key={point} className="flex items-start gap-2">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-500" />
-                <span>{point}</span>
+              <li key={point}>
+                • {point}
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      )}
     </article>
   );
 }
@@ -363,7 +348,7 @@ function PrivacyPolicy() {
 
       <Navbar />
 
-      <header className="relative overflow-hidden border-b border-slate-200/70 bg-gradient-to-br from-cyan-100 via-sky-100 to-amber-50 pt-24 dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
+      <header className="relative z-10 overflow-hidden border-b border-slate-200/70 bg-gradient-to-br from-cyan-100 via-sky-100 to-amber-50 pt-32 dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
         <div className="pointer-events-none absolute -left-24 top-10 h-56 w-56 rounded-full bg-sky-300/40 blur-3xl dark:bg-cyan-600/20" />
         <div className="pointer-events-none absolute -right-24 bottom-8 h-56 w-56 rounded-full bg-amber-300/30 blur-3xl dark:bg-sky-600/20" />
 
@@ -405,7 +390,7 @@ function PrivacyPolicy() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="relative mx-auto max-w-7xl px-4 pt-16 pb-8 sm:px-6 lg:px-8">
         <div className="mb-4 flex gap-2 overflow-x-auto pb-2 lg:hidden">
           {sections.map((section) => (
             <button
@@ -423,64 +408,41 @@ function PrivacyPolicy() {
           ))}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/80">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                Table of Contents
-              </h2>
-              <nav className="space-y-1">
-                {sections.map((section) => {
-                  const Icon = section.icon;
-                  const isActive = expandedSection === section.id;
+       
+        <div className="relative flex flex-col gap-6">
 
-                  return (
-                    <button
-                      key={section.id}
-                      type="button"
-                      onClick={() => setExpandedSection(section.id)}
-                      className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm transition ${
-                        isActive
-                          ? "bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
-                          : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="truncate">{section.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-          </aside>
-
-          <section className="space-y-4">
+          <section className="flex-1 min-w-0 space-y-6 p-2 lg:p-0">
             <div className="rounded-2xl border border-slate-200 bg-white/90 px-5 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/80">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Currently Open
               </p>
+
               <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">
                 {activeSection?.label}
               </h3>
+
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                 Use the section list to quickly navigate policy topics.
               </p>
             </div>
 
+            
+
             {sections.map((section) => (
-              <SectionCard
+              <div
                 key={section.id}
-                section={section}
-                isOpen={expandedSection === section.id}
-                onToggle={() => handleToggle(section.id)}
-              />
+                className="p-5 rounded-xl bg-gradient-to-r from-fuchsia-500 via-violet-600 to-sky-500 text-white shadow-lg ring-1 ring-white/10"
+              >
+                {section.label}
+              </div>
             ))}
 
             <div className="rounded-2xl border border-sky-200 bg-sky-50/80 p-5 dark:border-sky-900 dark:bg-sky-950/30">
               <p className="text-sm font-semibold text-sky-800 dark:text-sky-300">
                 Need privacy help?
               </p>
-              <p className="mt-1 text-sm text-sky-700 dark:text-sky-200">
+
+              <p className="mt-1 text-sm text-sky-700 dark:text-slate-200">
                 Email us at{" "}
                 <a
                   href="mailto:privacy@greathire.com"
@@ -492,6 +454,8 @@ function PrivacyPolicy() {
               </p>
             </div>
           </section>
+         
+          
         </div>
       </main>
 
