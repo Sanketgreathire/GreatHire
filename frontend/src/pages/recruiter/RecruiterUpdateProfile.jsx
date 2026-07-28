@@ -9,6 +9,8 @@ import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
+import CompanyPhoneInput from "@/components/CompanyPhoneInput";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -19,9 +21,14 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     fullname: user?.fullname || "",
     email: user?.emailId.email || "",
     phoneNumber: user?.phoneNumber.number || "",
+    dialCode: "+91",
+    countryIso: "IN",
     position: user?.position || "",
     profilePhoto: user?.profile?.profilePhoto || "",
   });
+
+  // Phone-specific error state (mirrors Contact Us pattern)
+  const [phoneError, setPhoneError] = useState("");
 
   // Profile image preview state
   const [previewImage, setPreviewImage] = useState(
@@ -50,6 +57,29 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
 
   const submitHandler = useCallback(async (e) => {
     e.preventDefault();
+
+    // Validate phone number — same logic as Contact Us module
+    let phoneValid = true;
+    if (!input.phoneNumber) {
+      setPhoneError("Phone number is required");
+      phoneValid = false;
+    } else {
+      try {
+        const phone = input.phoneNumber.replace(/[\s-]/g, "");
+        const parsed = parsePhoneNumberFromString(phone);
+        if (!parsed || !parsed.isValid()) {
+          setPhoneError("Enter a valid phone number");
+          phoneValid = false;
+        } else {
+          setPhoneError("");
+        }
+      } catch {
+        setPhoneError("Enter a valid phone number");
+        phoneValid = false;
+      }
+    }
+    if (!phoneValid) return;
+
     const formData = new FormData();
     formData.append("fullname", input.fullname);
     formData.append("phoneNumber", input.phoneNumber);
@@ -175,19 +205,28 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
                 />
               </div>
 
-              {/* Phone */}
+              {/* Phone — country code dropdown, identical to Contact Us module */}
               <div className="flex flex-col gap-1">
                 <Label htmlFor="phoneNumber" className="text-gray-700 dark:text-gray-300">
                   Phone
                 </Label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={input.phoneNumber}
-                  onChange={changeEventHandler}
-                  placeholder="Enter your phone number"
-                  className="dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                />
+                <div className="gh-phone-profile">
+                  <CompanyPhoneInput
+                    value={input.phoneNumber}
+                    onChange={(e164, dialCode, countryIso) => {
+                      setInput((prev) => ({
+                        ...prev,
+                        phoneNumber: e164,
+                        dialCode,
+                        countryIso,
+                      }));
+                      setPhoneError("");
+                    }}
+                  />
+                </div>
+                {phoneError && (
+                  <p className="mt-1 text-sm text-red-500">{phoneError}</p>
+                )}
               </div>
 
               {/* Position */}
