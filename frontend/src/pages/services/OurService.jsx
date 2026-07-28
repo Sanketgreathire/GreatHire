@@ -44,7 +44,7 @@ const OurService = () => {
         </div>
 
         {/* Hero Section */}
-        <header className="text-white py-8 md:py-10 flex justify-center relative z-10">
+        <header className="text-white flex justify-center relative z-10">
           {/* Hero Card - Light Mode */}
           <div
             className="
