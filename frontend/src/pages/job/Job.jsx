@@ -20,7 +20,7 @@ const Job = ({ job }) => {
   const { user } = useSelector((state) => state.auth);
 
   const isBookmarked = useMemo(() => job?.saveJob?.includes(user?._id) || false, [job?.saveJob, user?._id]);
-  const isApplied = useMemo(() => job?.application?.some((a) => a.applicant === user?._id) || false, [job?.application, user?._id]);
+  const isApplied = useMemo(() => job?.application?.some((a) => String(a.applicant?._id || a.applicant) === String(user?._id)) || false, [job?.application, user?._id]);
   const activeDays = useMemo(() => Math.floor((Date.now() - new Date(job?.createdAt)) / 86400000), [job?.createdAt]);
 
   useEffect(() => {

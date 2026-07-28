@@ -80,7 +80,7 @@ const server = http.createServer(app);
 const allowedOrigins =
   process.env.NODE_ENV === "production"
     ? ["https://greathire.in", "https://www.greathire.in"]
-    : ["http://localhost:5173", "http://localhost:5174"];
+    : ["http://localhost:5173", "http://localhost:5174", "http://192.168.0.229:5173", "http://192.168.0.229:5174"];
 
 const io = new Server(server, {
   cors: {
