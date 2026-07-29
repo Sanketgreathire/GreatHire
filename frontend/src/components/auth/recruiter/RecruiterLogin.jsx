@@ -217,49 +217,32 @@ const RecruiterLogin = () => {
               <form className="space-y-5" onSubmit={handleSubmit}>
                 {/* Email */}
                 <div>
-                  <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Company Email</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                      </svg>
-                    </div>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange}
-                      placeholder="Enter your company email"
-                      className="block w-full pl-10 pr-4 py-3 text-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all"
-                      required autoComplete="email" />
-                  </div>
+                  <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Company Email</label>
+                  <input type="email" name="email" value={formData.email} onChange={handleChange}
+                    placeholder="Enter your company email"
+                    className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 transition-all"
+                    required autoComplete="email" />
                 </div>
 
                 {/* Password or OTP */}
                 {!showOtpInput ? (
                   <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Password</label>
+                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Password</label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                      </div>
                       <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange}
                         placeholder="Enter your password"
-                        className="block w-full pl-10 pr-12 py-3 text-sm border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all"
+                        className="block w-full px-3 py-2.5 pr-16 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 transition-all"
                         required autoComplete="current-password" />
-                      <button type="button" onClick={() => setShowPassword((p) => !p)} className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                        <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          {showPassword
-                            ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                            : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
-                          }
-                        </svg>
+                      <button type="button" onClick={() => setShowPassword((p) => !p)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 text-xs hover:text-gray-700 dark:hover:text-gray-200">
+                        {showPassword ? "Hide" : "Show"}
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-semibold mb-2">Enter OTP</label>
+                    <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Enter OTP</label>
                     <input type="text" name="otp" value={otp} onChange={handleOtpChange} placeholder="Enter 6-digit OTP"
-                      className="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-center text-lg tracking-wider focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-all"
+                      className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg text-center tracking-wider focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 transition-all"
                       maxLength={6} required autoComplete="one-time-code" inputMode="numeric" />
                     <div className="mt-3 text-center">
                       {resendTimer > 0
@@ -281,19 +264,19 @@ const RecruiterLogin = () => {
 
                 {/* Submit */}
                 <button type="submit" disabled={loading}
-                  className={`w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 rounded-xl text-sm transition-all duration-200 ${loading ? "opacity-70 cursor-not-allowed" : "hover:from-green-700 hover:to-emerald-700 hover:shadow-xl"}`}>
+                  className={`w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-200 ${loading ? "opacity-50 cursor-not-allowed" : "hover:from-green-700 hover:to-emerald-700 hover:shadow-lg"}`}>
                   {loading
-                    ? <span className="flex items-center justify-center"><span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />Signing in...</span>
-                    : <span className="flex items-center justify-center">Sign In <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg></span>
+                    ? <span className="flex items-center justify-center"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />Signing in...</span>
+                    : "Sign In"
                   }
                 </button>
               </form>
 
-              <div className="text-center">
+              {/* <div className="text-center">
                 <button type="button" onClick={handleOtpClick} className="text-green-600 dark:text-green-500 text-sm hover:underline font-semibold">
                   {showOtpInput ? "Login with Password?" : "Login with OTP?"}
                 </button>
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-center space-x-6 text-xs text-gray-500 dark:text-gray-400 pt-2">
                 <span className="flex items-center space-x-1">

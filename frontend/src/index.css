@@ -241,6 +241,61 @@
     box-shadow: none;
   }
 
+  /* Auth form variant — matches signup form input fields */
+  .gh-phone.gh-phone-auth {
+    --react-international-phone-height: 42px;
+    --react-international-phone-border-radius: 8px;
+    --react-international-phone-font-size: 14px;
+    --react-international-phone-border-color: #d1d5db; /* border-gray-300 */
+  }
+
+  .dark .gh-phone.gh-phone-auth {
+    --react-international-phone-border-color: #4b5563; /* border-gray-600 */
+    --react-international-phone-background-color: #1f2937; /* bg-gray-800 */
+  }
+
+  .gh-phone-field.gh-phone-auth {
+    min-height: 42px !important;
+    border-radius: 8px;
+    box-shadow: none !important;
+  }
+
+  /* Reset default field focus effects completely */
+  .gh-phone-field.gh-phone-auth:focus-within {
+    transform: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .gh-phone-auth .react-international-phone-input-container {
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--react-international-phone-border-color);
+    transition: box-shadow 0.15s ease;
+  }
+
+  /* Apply exact Tailwind focus:ring-2 focus:ring-blue-500 to the container */
+  .gh-phone-auth:focus-within .react-international-phone-input-container {
+    box-shadow: 0 0 0 2px #3b82f6;
+    border-color: var(--react-international-phone-border-color); /* keep original border, let shadow act as ring */
+    outline: none;
+  }
+
+  .dark .gh-phone-auth:focus-within .react-international-phone-input-container {
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+
+  .gh-phone-auth .react-international-phone-country-selector-button {
+    height: 40px;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .gh-phone-auth .react-international-phone-input {
+    height: 40px;
+    padding-left: 12px;
+    border-radius: 0 8px 8px 0;
+  }
+
   .gh-contact-input {
     min-height: 56px;
     box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
