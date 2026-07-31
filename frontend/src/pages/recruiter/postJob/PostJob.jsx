@@ -286,6 +286,8 @@ const PostJob = () => {
 
       experience: "",
       salary: "",
+      salaryMin: "",
+      salaryMax: "",
       jobType: "",
       workPlaceFlexibility: "",
       location: "",
@@ -1005,20 +1007,61 @@ const PostJob = () => {
                             Salary<span className="text-red-500 dark:text-red-400 ml-1">*</span>
                           </Label>
                           <div className="flex flex-col sm:flex-row gap-2.5">
-                            <input
-                              id="salary"
-                              name="salary"
-                              type="text"
-                              placeholder="Enter salary (e.g., 45000-50000)"
-                              className={inputCls}
-                              onChange={formik.handleChange}
-                              value={formik.values.salary}
-                            />
+                            {formik.values.salaryType === "per month" ? (
+                              <div className="flex gap-2 flex-1">
+                                <input
+                                  type="number"
+                                  placeholder="Min (e.g., 30000)"
+                                  className={inputCls}
+                                  value={formik.values.salaryMin}
+                                  onChange={(e) => {
+                                    formik.setFieldValue("salaryMin", e.target.value);
+                                    formik.setFieldValue("salary", e.target.value && formik.values.salaryMax ? `${e.target.value}-${formik.values.salaryMax}` : e.target.value || formik.values.salaryMax || "");
+                                  }}
+                                />
+                                <input
+                                  type="number"
+                                  placeholder="Max (e.g., 50000)"
+                                  className={inputCls}
+                                  value={formik.values.salaryMax}
+                                  onChange={(e) => {
+                                    formik.setFieldValue("salaryMax", e.target.value);
+                                    formik.setFieldValue("salary", formik.values.salaryMin && e.target.value ? `${formik.values.salaryMin}-${e.target.value}` : formik.values.salaryMin || e.target.value || "");
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <input
+                                id="salary"
+                                name="salary"
+                                type="text"
+                                placeholder={formik.values.salaryType === "Unpaid" ? "0" : "Enter salary (e.g., 45000-50000)"}
+                                className={inputCls}
+                                onChange={formik.handleChange}
+                                value={formik.values.salaryType === "Unpaid" ? "0" : formik.values.salary}
+                                readOnly={formik.values.salaryType === "Unpaid"}
+                              />
+                            )}
                             <select
                               id="salaryType"
                               name="salaryType"
                               className={`${inputCls} sm:w-40`}
-                              onChange={formik.handleChange}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                formik.setFieldValue("salaryType", val);
+                                if (val === "Unpaid") {
+                                  formik.setFieldValue("salary", "0");
+                                  formik.setFieldValue("salaryMin", "");
+                                  formik.setFieldValue("salaryMax", "");
+                                } else if (val === "per month") {
+                                  formik.setFieldValue("salary", "");
+                                  formik.setFieldValue("salaryMin", "");
+                                  formik.setFieldValue("salaryMax", "");
+                                } else {
+                                  formik.setFieldValue("salaryMin", "");
+                                  formik.setFieldValue("salaryMax", "");
+                                }
+                              }}
                               value={formik.values.salaryType || "per year"}
                             >
                               <option value="per year">per year</option>
