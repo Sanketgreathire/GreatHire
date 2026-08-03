@@ -10,6 +10,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
+import WhatsAppFloat from "./components/shared/WhatsAppFloat";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
@@ -340,6 +341,7 @@ function App() {
             <Suspense fallback={null}>
               <RouterProvider router={appRouter} />
             </Suspense>
+            <WhatsAppFloat />
           </MessageProvider>
         </NotificationProvider>
       </JobDetailsProvider>

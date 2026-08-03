@@ -51,6 +51,10 @@ const jobSchema = new mongoose.Schema(
         type: String, // Use String if the salary includes a range
         required: true,
       },
+      salaryType: {
+        type: String,
+        default: "per year",
+      },
       jobType: {
         type: String,
         required: true,

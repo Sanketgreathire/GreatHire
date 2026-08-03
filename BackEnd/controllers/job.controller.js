@@ -107,7 +107,7 @@ export const postJob = [
 
       const {
         companyName, urgentHiring, title, details, skills, qualifications,
-        benefits, responsibilities, experience, salary, jobType,
+        benefits, responsibilities, experience, salary, salaryType, jobType,
         workPlaceFlexibility, location, numberOfOpening, respondTime,
         duration, shift, anyAmount, companyId, questions,
       } = req.body;
@@ -226,7 +226,7 @@ export const postJob = [
           companyName, urgentHiring, title, details,
           skills: splitSkills, benefits: splitBenefits,
           qualifications: splitQualifications, responsibilities: splitResponsibilities,
-          salary, experience, jobType, workPlaceFlexibility,
+          salary, salaryType: salaryType || "per year", experience, jobType, workPlaceFlexibility,
           location, numberOfOpening, respondTime, duration, shift, anyAmount,
           isActive: jobIsActive,
           status: jobStatus,

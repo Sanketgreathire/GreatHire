@@ -105,17 +105,16 @@ const ApplicantDetails = ({
         { withCredentials: true }
       );
       if (res.data.success) {
-        const emailRes = await axios.post(
+        setApplicants((prev) =>
+          prev.map((a) => a._id === app._id ? { ...a, status: statusString } : a)
+        );
+        toast.success("Status Updated");
+        // Send email notification (non-blocking)
+        axios.post(
           `${VERIFICATION_API_END_POINT}/send-email-applicants/${jobId}`,
           { email: app?.applicant?.emailId?.email, status: statusString },
           { withCredentials: true }
-        );
-        if (emailRes.data.success) {
-          setApplicants((prev) =>
-            prev.map((a) => a._id === app._id ? { ...a, status: statusString } : a)
-          );
-          toast.success("Status Updated");
-        }
+        ).catch(() => {});
       } else {
         toast.error("Status updation failed");
       }
