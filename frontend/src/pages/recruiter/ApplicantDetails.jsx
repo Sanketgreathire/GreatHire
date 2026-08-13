@@ -459,23 +459,25 @@ const ApplicantDetails = ({
               {/* Actions */}
               <Divider />
               <div className="space-y-3">
-                {/* Interview Actions */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={previewInterviewQuestions}
-                    disabled={interviewLoading}
-                    className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
-                  >
-                    {interviewLoading ? "Loading..." : "👁️ Preview"}
-                  </button>
-                  <button
-                    onClick={startAIInterview}
-                    disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
-                    className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
-                  >
-                    {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
-                  </button>
-                </div>
+                {/* Interview Actions - Recruiter Only */}
+                {user?.role === "recruiter" && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={previewInterviewQuestions}
+                      disabled={interviewLoading}
+                      className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                    >
+                      {interviewLoading ? "Loading..." : "👁️ Preview"}
+                    </button>
+                    <button
+                      onClick={startAIInterview}
+                      disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
+                      className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                    >
+                      {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
+                    </button>
+                  </div>
+                )}
 
                 {/* Shortlist/Reject Actions */}
                 {user?.role === "recruiter" && status === "Pending" ? (
