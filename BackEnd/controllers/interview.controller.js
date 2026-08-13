@@ -149,22 +149,43 @@ export const fetchCallLogs = async (req, res) => {
 
     const callData = await blandResponse.json();
     
-    // Extract transcript and recording
-    let transcript = callData.transcript || callData.messages?.map(m => `${m.role}: ${m.content}`).join("\n") || "No transcript available";
+    // Extract transcript from Bland.ai response
+    // Bland.ai can return transcript in multiple formats
+    let transcript = "";
+    
+    if (callData.transcript) {
+      // Direct transcript string
+      transcript = callData.transcript;
+    } else if (callData.messages && Array.isArray(callData.messages)) {
+      // Messages array format
+      transcript = callData.messages.map(m => {
+        const role = m.role === "assistant" ? "AI" : "Candidate";
+        return `${role}: ${m.content}`;
+      }).join("\n\n");
+    } else if (callData.analysis?.transcript) {
+      // Nested transcript
+      transcript = callData.analysis.transcript;
+    }
+
+    // If still no transcript but we have a recording, provide message to user
+    if (!transcript) {
+      transcript = callData.recording_url 
+        ? "Recording available but transcript not yet available. Please check back later or contact support."
+        : "No transcript or recording available for this call.";
+    }
+
     const recording = callData.recording_url || null;
 
-    // If no transcript but we have a recording, use Groq to transcribe (optional enhancement)
-    // For now, just return what we have
-    
     return res.json({
       success: true,
-      transcript,
+      transcript: transcript.trim(),
       recording,
       callData: {
         status: callData.status,
         duration: callData.duration,
         from: callData.from,
         to: callData.to,
+        createdAt: callData.created_at,
       },
     });
   } catch (error) {
