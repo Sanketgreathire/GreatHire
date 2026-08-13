@@ -8,6 +8,41 @@ import {
   extractPhoneFromResume,
   extractResumeText,
 } from "../services/interview.service.js";
+export const previewInterview = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    // Fetch application with job populated
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ success: false, message: "Application not found" });
+    }
+
+    const job = await Job.findById(application.job);
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found" });
+    }
+
+    // Extract resume text from PDF/DOCX on Cloudinary
+    const resumeUrl = application.resume;
+    const resumeText = resumeUrl ? await extractResumeText(resumeUrl) : "";
+
+    // Generate personalized interview questions
+    const questions = resumeText
+      ? await generateInterviewQuestions(job, resumeText)
+      : `Ask candidate about their experience with ${job.jobDetails.skills.join(", ")} and their interest in the ${job.jobDetails.title} role.`;
+
+    return res.json({
+      success: true,
+      questions,
+      script: questions,
+    });
+  } catch (error) {
+    console.error("Interview preview error:", error.message);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 export const startInterview = async (req, res) => {
   try {
     const { applicationId } = req.params;
