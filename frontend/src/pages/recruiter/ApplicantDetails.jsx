@@ -54,6 +54,10 @@ const ApplicantDetails = ({
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [interviewQuestions, setInterviewQuestions] = useState("");
   const [matchScore, setMatchScore] = useState(null);
+  const [showCallLogsModal, setShowCallLogsModal] = useState(false);
+  const [callTranscript, setCallTranscript] = useState("");
+  const [callRecording, setCallRecording] = useState(null);
+  const [callLogsLoading, setCallLogsLoading] = useState(false);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
 
@@ -154,6 +158,32 @@ const ApplicantDetails = ({
       toast.error(error?.response?.data?.message || "Error starting interview");
     } finally {
       setInterviewLoading(false);
+    }
+  };
+
+  const fetchCallLogs = async () => {
+    if (!applicantId) {
+      toast.error("Invalid applicant ID");
+      return;
+    }
+    try {
+      setCallLogsLoading(true);
+      const res = await axios.post(
+        `/api/v1/interview/call-logs/${applicantId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setCallTranscript(res.data.transcript || "No transcript available");
+        setCallRecording(res.data.recording || null);
+        setShowCallLogsModal(true);
+      } else {
+        toast.error(res.data.message || "Failed to load call logs");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error loading call logs");
+    } finally {
+      setCallLogsLoading(false);
     }
   };
 
@@ -461,22 +491,31 @@ const ApplicantDetails = ({
               <div className="space-y-3">
                 {/* Interview Actions - Recruiter Only */}
                 {user?.role === "recruiter" && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={previewInterviewQuestions}
-                      disabled={interviewLoading}
-                      className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
-                    >
-                      {interviewLoading ? "Loading..." : "👁️ Preview"}
-                    </button>
-                    <button
-                      onClick={startAIInterview}
-                      disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
-                      className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
-                    >
-                      {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
-                    </button>
-                  </div>
+                  <>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={previewInterviewQuestions}
+                        disabled={interviewLoading}
+                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {interviewLoading ? "Loading..." : "👁️ Preview"}
+                      </button>
+                      <button
+                        onClick={startAIInterview}
+                        disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
+                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
+                      </button>
+                      <button
+                        onClick={fetchCallLogs}
+                        disabled={callLogsLoading || !mergedApp?.aiInterview?.status}
+                        className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {callLogsLoading ? "Loading..." : "📋 Logs"}
+                      </button>
+                    </div>
+                  </>
                 )}
 
                 {/* Shortlist/Reject Actions */}
@@ -520,6 +559,42 @@ const ApplicantDetails = ({
                     <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
                       {interviewQuestions}
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Call Logs Modal */}
+              {showCallLogsModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-3xl w-full max-h-[70vh] overflow-y-auto p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Call Communication Logs</h3>
+                      <button
+                        onClick={() => setShowCallLogsModal(false)}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    
+                    {/* Transcript Section */}
+                    <div className="mb-6">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">📝 Transcript</h4>
+                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto">
+                        {callTranscript || "No transcript available"}
+                      </div>
+                    </div>
+
+                    {/* Recording Section */}
+                    {callRecording && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">🎙️ Recording</h4>
+                        <audio controls className="w-full rounded-lg">
+                          <source src={callRecording} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

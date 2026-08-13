@@ -118,3 +118,58 @@ export const startInterview = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message });
   }
 };
+
+export const fetchCallLogs = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    // Fetch application
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ success: false, message: "Application not found" });
+    }
+
+    // Check if call ID exists
+    const callId = application.aiInterview?.blandCallId;
+    if (!callId) {
+      return res.status(400).json({ success: false, message: "No call found for this application" });
+    }
+
+    // Fetch call data from Bland.ai
+    const blandResponse = await fetch(`https://api.bland.ai/v1/calls/${callId}`, {
+      headers: {
+        authorization: process.env.BLAND_API_KEY,
+      },
+    });
+
+    if (!blandResponse.ok) {
+      console.error("Bland API error:", blandResponse.statusText);
+      return res.status(500).json({ success: false, message: "Failed to fetch call data" });
+    }
+
+    const callData = await blandResponse.json();
+    
+    // Extract transcript and recording
+    let transcript = callData.transcript || callData.messages?.map(m => `${m.role}: ${m.content}`).join("\n") || "No transcript available";
+    const recording = callData.recording_url || null;
+
+    // If no transcript but we have a recording, use Groq to transcribe (optional enhancement)
+    // For now, just return what we have
+    
+    return res.json({
+      success: true,
+      transcript,
+      recording,
+      callData: {
+        status: callData.status,
+        duration: callData.duration,
+        from: callData.from,
+        to: callData.to,
+      },
+    });
+  } catch (error) {
+    console.error("Fetch call logs error:", error.message);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
