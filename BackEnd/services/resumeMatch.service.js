@@ -1,4 +1,8 @@
 import Groq from "groq-sdk";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let groq;
 const getGroq = () => {
@@ -30,6 +34,21 @@ Return JSON:
  "missingSkills": []
 }
 `;
+
+  // If configured to use a local model, call it and robustly extract JSON
+  if (process.env.USE_LOCAL_MODEL === "1") {
+    const { generateChatCompletion, _findJsonSubstring } = await import(path.join(__dirname, "local_llm.js"));
+    const raw = await generateChatCompletion({ prompt });
+    // try to parse directly first
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      // attempt to extract JSON block from noisy output
+      const parsed = _findJsonSubstring(raw);
+      if (parsed) return parsed;
+      return { matchScore: 50, skillsMatched: [], missingSkills: [] };
+    }
+  }
 
   const completion = await getGroq().chat.completions.create({
     model: "llama-3.3-70b-versatile",

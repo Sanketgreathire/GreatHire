@@ -2,6 +2,10 @@ import axios from "axios";
 import Groq from "groq-sdk";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let groq;
 const getGroq = () => {
@@ -44,7 +48,7 @@ export const extractPhoneFromResume = (resumeText) => {
   return match ? match[0].replace(/[\s-]/g, "") : null;
 };
 
-// Generate personalized interview questions using Groq
+// Generate personalized interview questions using Groq or local model
 export const generateInterviewQuestions = async (job, resumeText) => {
   const prompt = `
 You are an AI interviewer. Generate a concise phone interview script for the following job and candidate resume.
@@ -64,6 +68,14 @@ Generate 5 personalized interview questions based on:
 
 Return only the questions as a numbered list. Keep it conversational for a phone call.
 `;
+
+  // If configured, use a local model (HTTP server or CLI) instead of Groq/remote API
+  if (process.env.USE_LOCAL_MODEL === "1") {
+    const { generateChatCompletion } = await import(path.join(__dirname, "local_llm.js"));
+    const raw = await generateChatCompletion({ prompt });
+    // Some local runners may include extra text; attempt to return raw string
+    return typeof raw === "string" ? raw.trim() : JSON.stringify(raw);
+  }
 
   const completion = await getGroq().chat.completions.create({
     model: "llama-3.3-70b-versatile",
