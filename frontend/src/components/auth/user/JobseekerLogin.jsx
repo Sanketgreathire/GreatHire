@@ -248,9 +248,8 @@ const JobseekerLogin = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                       </div>
-                      <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Enter your password"
+                      <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} placeholder="Enter your password"
                         className="block w-full pl-10 pr-12 py-3 text-sm border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        style={showPassword ? {webkitTextSecurity:'none', fontFamily:'inherit'} : {}}
                         required autoComplete="current-password" />
                       <button type="button" onClick={() => setShowPassword((p) => !p)} className="absolute inset-y-0 right-0 pr-3 flex items-center">
                         <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,11 +295,11 @@ const JobseekerLogin = () => {
                 </button>
               </form>
 
-              <div className="text-center">
+              {/* <div className="text-center">
                 <button type="button" onClick={handleOtpClick} className="text-blue-600 dark:text-blue-400 text-sm hover:underline font-semibold">
                   {showOtpInput ? "Login with Password?" : "Login with OTP?"}
                 </button>
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-center space-x-6 text-xs text-gray-500 dark:text-gray-400 pt-2">
                 <span className="flex items-center space-x-1">

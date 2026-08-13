@@ -57,7 +57,7 @@ const Job = ({ job }) => {
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 border">
         
         {/* Header Section with Badge and Icons */}
-        <div className="flex justify-between items-center mb-2 min-h-[28px]">
+        <div className="flex justify-between items-center min-h-[28px]">
 
           {/* Urgent Hiring Label */}
           {job?.jobDetails?.urgentHiring === "Yes" && (
@@ -106,7 +106,7 @@ const Job = ({ job }) => {
         <h3 className="text-lg font-semibold line-clamp-2 h-[48px] text-gray-900 dark:text-white">{job?.jobDetails?.title}</h3>
 
         {/* Company Name and Location Section */}
-        <div className="flex items-center justify-between gap-2 my-2">
+        <div className="flex items-center justify-between gap-2">
           <div className="text-gray-700 dark:text-gray-300 font-medium">{job?.jobDetails?.companyName}</div>
           <div className="text-right">
             <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.workPlaceFlexibility}</p>

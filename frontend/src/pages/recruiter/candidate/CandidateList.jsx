@@ -239,20 +239,25 @@ const CandidateList = () => {
     currentPage * ITEMS_PER_PAGE
   ), [candidates, currentPage]);
 
-  const filterFields = useMemo(() => [
-    { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
-    { label: "Designation", name: "designation", placeholder: "e.g. Senior Developer" },
-    { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
-    { label: "Skills", name: "skills", placeholder: "React, Node.js" },
-    { label: "Experience", name: "experience", placeholder: "e.g. 1,2,3", advanced: true },
-    { label: "Min Experience (yrs)", name: "minExp", type: "number", placeholder: "0" },
-    { label: "Max Experience (yrs)", name: "maxExp", type: "number", placeholder: "10" },
-    { label: "Qualification", name: "qualification", type: "select", options: ["", "Post Graduation", "Under Graduation", "B.Tech", "Diploma", "MBA", "Others"], advanced: true },
-    { label: "Last Active", name: "lastActive", placeholder: "Days e.g. 3", advanced: true },
-    { label: "Location", name: "location", placeholder: "Bangalore", locationFilter: true },
-    { label: "Expected CTC", name: "salaryBudget", placeholder: "50000", advanced: true }
-  ].filter(f => (!f.advanced || hasAdvancedFilters) && (!f.locationFilter || hasLocationFilter)),
-  [hasAdvancedFilters, hasLocationFilter]);
+  const filterFields = useMemo(() => {
+    const minOptions = ["", ...Array.from({length: 31}, (_, i) => i.toString())];
+    const currentMin = filters.minExp ? Number(filters.minExp) : 0;
+    const maxOptions = ["", ...Array.from({length: 31 - currentMin}, (_, i) => (i + currentMin).toString())];
+
+    return [
+      { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
+      { label: "Designation", name: "designation", placeholder: "e.g. Senior Developer" },
+      { label: "Gender", name: "gender", type: "select", options: ["", "Male", "Female", "Other"] },
+      { label: "Skills", name: "skills", placeholder: "React, Node.js" },
+      { label: "Experience", name: "experience", placeholder: "e.g. 1,2,3", advanced: true },
+      { label: "Min Experience (yrs)", name: "minExp", type: "select", options: minOptions },
+      { label: "Max Experience (yrs)", name: "maxExp", type: "select", options: maxOptions },
+      { label: "Qualification", name: "qualification", type: "select", options: ["", "Post Graduation", "Under Graduation", "B.Tech", "Diploma", "MBA", "Others"], advanced: true },
+      { label: "Last Active", name: "lastActive", placeholder: "Days e.g. 3", advanced: true },
+      { label: "Location", name: "location", placeholder: "Bangalore", locationFilter: true },
+      { label: "Expected CTC", name: "salaryBudget", placeholder: "50000", advanced: true }
+    ].filter(f => (!f.advanced || hasAdvancedFilters) && (!f.locationFilter || hasLocationFilter));
+  }, [hasAdvancedFilters, hasLocationFilter, filters.minExp]);
 
   // ---------- Sourcing (Free) — GitHub based, local AI, no credits ----------
   const handleFreeSourcingSearch = async () => {
@@ -530,18 +535,42 @@ const CandidateList = () => {
   };
 
   // ---------- Shared sourcing filter inputs row ----------
-  const renderSourcingInputsRow = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
-      <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters(prev => ({ ...prev, skills: e.target.value }))} />
-      <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters(prev => ({ ...prev, location: e.target.value }))} />
-      <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters(prev => ({ ...prev, designation: e.target.value }))} />
-      <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Min Experience (yrs)" type="number" min="0" value={sourcingFilters.minExp} onChange={(e) => setSourcingFilters(prev => ({ ...prev, minExp: e.target.value }))} />
-      <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Max Experience (yrs)" type="number" min="0" value={sourcingFilters.maxExp} onChange={(e) => setSourcingFilters(prev => ({ ...prev, maxExp: e.target.value }))} />
-      {activeSection === SECTIONS.PAID && (
-        <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Candidate Search Count" type="number" min="1" max="100" value={sourcingFilters.searchCount} onChange={(e) => setSourcingFilters(prev => ({ ...prev, searchCount: e.target.value }))} />
-      )}
-    </div>
-  );
+  const renderSourcingInputsRow = () => {
+    const minOptions = ["", ...Array.from({length: 31}, (_, i) => i.toString())];
+    const currentMin = sourcingFilters.minExp ? Number(sourcingFilters.minExp) : 0;
+    const maxOptions = ["", ...Array.from({length: 31 - currentMin}, (_, i) => (i + currentMin).toString())];
+
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
+        <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters(prev => ({ ...prev, skills: e.target.value }))} />
+        <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters(prev => ({ ...prev, location: e.target.value }))} />
+        <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters(prev => ({ ...prev, designation: e.target.value }))} />
+        /*
+        <select className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" value={sourcingFilters.minExp} onChange={(e) => {
+          const val = e.target.value;
+          let newMax = sourcingFilters.maxExp;
+          if (val !== "" && newMax !== "" && Number(val) > Number(newMax)) {
+            newMax = val;
+          }
+          setSourcingFilters(prev => ({ ...prev, minExp: val, maxExp: newMax }));
+        }}>
+          {minOptions.map((opt) => (
+            <option key={opt} value={opt}>{opt === "" ? "Min Experience (yrs)" : opt}</option>
+          ))}
+        </select>
+        
+        <select className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" value={sourcingFilters.maxExp} onChange={(e) => setSourcingFilters(prev => ({ ...prev, maxExp: e.target.value }))}>
+          {maxOptions.map((opt) => (
+            <option key={opt} value={opt}>{opt === "" ? "Max Experience (yrs)" : opt}</option>
+          ))}
+        </select>
+
+        {activeSection === SECTIONS.PAID && (
+          <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Candidate Search Count" type="number" min="1" max="100" value={sourcingFilters.searchCount} onChange={(e) => setSourcingFilters(prev => ({ ...prev, searchCount: e.target.value }))} />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -647,9 +676,19 @@ const CandidateList = () => {
                       {field.type === "select" ? (
                         <select
                           value={filters[field.name]}
-                          onChange={(e) => setFilters({ ...filters, [field.name]: e.target.value })}
-                          className="w-full p-2.5 rounded-md border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700
-                             text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (field.name === "minExp") {
+                              let newMax = filters.maxExp;
+                              if (val !== "" && newMax !== "" && Number(val) > Number(newMax)) {
+                                newMax = val;
+                              }
+                              setFilters({ ...filters, minExp: val, maxExp: newMax });
+                            } else {
+                              setFilters({ ...filters, [field.name]: val });
+                            }
+                          }}
+                          className="w-full h-10 px-3 rounded-md border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                           {field.options.map((opt) => (
                             <option key={opt} value={opt}>
                               {opt || `Select ${field.label}`}
