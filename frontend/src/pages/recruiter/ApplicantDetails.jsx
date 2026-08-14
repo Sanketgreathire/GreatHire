@@ -575,33 +575,49 @@ const ApplicantDetails = ({
                   <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col p-6">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Communication Logs</h3>
-                      <button
-                        onClick={() => setShowCallLogsModal(false)}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                      >
-                        ✕
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={fetchCallLogs}
+                          className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                          title="Refresh transcript"
+                        >
+                          🔄 Refresh
+                        </button>
+                        <button
+                          onClick={() => setShowCallLogsModal(false)}
+                          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
                     
-                    {/* Tabs for Transcript and Recording */}
-                    <div className="flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-700">
-                      <button className="px-4 py-2 border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 font-semibold">📝 Transcript</button>
-                    </div>
-
                     {/* Transcript Section */}
                     <div className="flex-1 overflow-y-auto mb-4">
-                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-600 space-y-3">
-                        {callTranscript && callTranscript !== "No transcript available" ? (
+                      {callTranscript && callTranscript.trim() && !callTranscript.includes("not yet available") && !callTranscript.includes("being processed") ? (
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-mono whitespace-pre-wrap break-words">
                             {callTranscript}
                           </div>
-                        ) : (
-                          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                            <p className="text-lg mb-2">⏳ Transcript Processing</p>
-                            <p>{callTranscript || "Loading transcript..."}</p>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-lg text-center">
+                          <p className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">⏳ Transcript Processing</p>
+                          <p className="text-sm text-blue-600 dark:text-blue-400 mb-4">
+                            The transcript is still being processed. This usually takes 30-60 seconds.
+                          </p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                            {callTranscript || "Click 'Refresh' to check for updates."}
+                          </p>
+                          <button
+                            onClick={fetchCallLogs}
+                            disabled={callLogsLoading}
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition"
+                          >
+                            {callLogsLoading ? "Loading..." : "🔄 Refresh Now"}
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     {/* Recording Section */}

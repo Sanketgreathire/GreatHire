@@ -135,7 +135,21 @@ export const fetchCallLogs = async (req, res) => {
       return res.status(400).json({ success: false, message: "No call found for this application" });
     }
 
-    // Fetch call data from Bland.ai
+    // If transcript already stored in DB, return it
+    if (application.aiInterview?.transcript) {
+      return res.json({
+        success: true,
+        transcript: application.aiInterview.transcript,
+        recording: application.aiInterview.recordingUrl || null,
+        callData: {
+          status: application.aiInterview.status,
+          blandCallId: callId,
+        },
+      });
+    }
+
+    // Fetch call data from Bland.ai API
+    console.log("Fetching call data from Bland.ai for call ID:", callId);
     const blandResponse = await fetch(`https://api.bland.ai/v1/calls/${callId}`, {
       headers: {
         authorization: process.env.BLAND_API_KEY,
@@ -143,36 +157,50 @@ export const fetchCallLogs = async (req, res) => {
     });
 
     if (!blandResponse.ok) {
-      console.error("Bland API error:", blandResponse.statusText);
-      return res.status(500).json({ success: false, message: "Failed to fetch call data" });
+      console.error("Bland API error:", blandResponse.status, blandResponse.statusText);
+      return res.status(500).json({ 
+        success: false, 
+        message: `Failed to fetch call data: ${blandResponse.statusText}`,
+        callId: callId 
+      });
     }
 
     const callData = await blandResponse.json();
+    console.log("Bland.ai response keys:", Object.keys(callData));
     
-    // Extract transcript from Bland.ai response
-    // Bland.ai can return transcript in multiple formats
+    // Extract transcript from various Bland.ai response formats
     let transcript = "";
     
     if (callData.transcript) {
-      // Direct transcript string
       transcript = callData.transcript;
     } else if (callData.messages && Array.isArray(callData.messages)) {
-      // Messages array format
       transcript = callData.messages.map(m => {
-        const role = m.role === "assistant" ? "AI" : "Candidate";
-        return `${role}: ${m.content}`;
-      }).join("\n\n");
+        const role = m.role === "assistant" ? "AI Agent" : "Candidate";
+        const time = m.timestamp ? ` [${new Date(m.timestamp).toLocaleTimeString()}]` : "";
+        return `${role}${time}:\n${m.content}`;
+      }).join("\n\n---\n\n");
     } else if (callData.analysis?.transcript) {
-      // Nested transcript
       transcript = callData.analysis.transcript;
+    } else if (callData.messages_processed) {
+      // Handle processed messages format
+      transcript = callData.messages_processed.map(m => {
+        return `${m.speaker || "Speaker"}:\n${m.text}`;
+      }).join("\n\n---\n\n");
     }
 
-    // If still no transcript but we have a recording, provide message to user
+    // Fallback message
     if (!transcript) {
       transcript = callData.recording_url 
-        ? "Recording available but transcript not yet available. Please check back later or contact support."
-        : "No transcript or recording available for this call.";
+        ? "⏳ Transcript is being processed. Please check back in a few moments."
+        : "No transcript available for this call.";
     }
+
+    // Store transcript in application for future reference
+    application.aiInterview.transcript = transcript.trim();
+    if (callData.recording_url) {
+      application.aiInterview.recordingUrl = callData.recording_url;
+    }
+    await application.save().catch(err => console.log("Error saving transcript:", err.message));
 
     const recording = callData.recording_url || null;
 
@@ -181,16 +209,21 @@ export const fetchCallLogs = async (req, res) => {
       transcript: transcript.trim(),
       recording,
       callData: {
-        status: callData.status,
+        status: callData.status || application.aiInterview.status,
         duration: callData.duration,
         from: callData.from,
         to: callData.to,
         createdAt: callData.created_at,
+        blandCallId: callId,
       },
     });
   } catch (error) {
-    console.error("Fetch call logs error:", error.message);
-    return res.status(500).json({ success: false, error: error.message });
+    console.error("Fetch call logs error:", error);
+    return res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      details: "Check server logs for more information"
+    });
   }
 };
 
