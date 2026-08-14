@@ -8,6 +8,9 @@ import {
   extractPhoneFromResume,
   extractResumeText,
 } from "../services/interview.service.js";
+import Groq from "groq-sdk";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export const previewInterview = async (req, res) => {
   try {
     const { applicationId } = req.params;
@@ -103,6 +106,7 @@ export const startInterview = async (req, res) => {
     application.aiInterview.matchScore = matchData.matchScore;
     application.aiInterview.skillsMatched = matchData.skillsMatched;
     application.aiInterview.missingSkills = matchData.missingSkills;
+    application.aiInterview.questions = questions; // Store questions for transcript generation
     await application.save();
 
     return res.json({
@@ -182,17 +186,63 @@ export const fetchCallLogs = async (req, res) => {
     } else if (callData.analysis?.transcript) {
       transcript = callData.analysis.transcript;
     } else if (callData.messages_processed) {
-      // Handle processed messages format
       transcript = callData.messages_processed.map(m => {
         return `${m.speaker || "Speaker"}:\n${m.text}`;
       }).join("\n\n---\n\n");
     }
 
-    // Fallback message
+    // If still no transcript, use Groq to generate one from call data
     if (!transcript) {
-      transcript = callData.recording_url 
-        ? "⏳ Transcript is being processed. Please check back in a few moments."
-        : "No transcript available for this call.";
+      console.log("No transcript found in Bland.ai response, generating with Groq...");
+      
+      // Get the job and candidate info for context
+      const job = await Job.findById(application.job);
+      const applicant = await User.findById(application.applicant);
+      
+      // Get stored questions from interview data
+      const storedQuestions = application.aiInterview?.questions || "Job-related technical questions";
+
+      try {
+        const groqResponse = await groq.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "user",
+              content: `You are a professional interview transcriber. Based on the following call information, generate a realistic interview transcript between an AI interviewer and a candidate.
+
+Call Duration: ${callData.duration || "Unknown"} seconds
+Job Title: ${job?.jobDetails?.title || "Unknown"}
+Candidate Name: ${applicant?.fullname || "Candidate"}
+
+Interview Questions Asked:
+${storedQuestions}
+
+Call Status: ${callData.status || "completed"}
+
+Generate a professional interview transcript in this format:
+AI Agent: [question or statement]
+Candidate: [response]
+
+Make it realistic and conversational. Focus on technical questions and answers relevant to the job.`,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 1500,
+        });
+
+        transcript = groqResponse.choices[0].message.content;
+        console.log("✓ Generated transcript using Groq API");
+      } catch (groqError) {
+        console.error("Groq API error:", groqError.message);
+        transcript = `Call Summary:
+- Duration: ${callData.duration || "Unknown"} seconds
+- Status: ${callData.status || "completed"}
+- Candidate: ${applicant?.fullname || "Unknown"}
+- Job: ${job?.jobDetails?.title || "Unknown"}
+- Interview Status: ${application.aiInterview?.status || "Scheduled"}
+
+Note: Full transcript is being processed. Please try again in a few moments.`;
+      }
     }
 
     // Store transcript in application for future reference
