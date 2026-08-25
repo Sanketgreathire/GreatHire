@@ -197,7 +197,7 @@ const RecruitersList = () => {
 
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [selectedCreditsRecruiter, setSelectedCreditsRecruiter] = useState(null);
-  const [sendingReminder, setSendingReminder] = useState(false);
+
 
   // Bulk selection states
   const [selectedRecruiters, setSelectedRecruiters] = useState([]);
@@ -329,25 +329,7 @@ const RecruitersList = () => {
     },
   ];
 
-  const sendFirstJobReminders = async () => {
-    setSendingReminder(true);
-    try {
-      const res = await axios.post(
-        `${ADMIN_RECRUITER_DATA_API_END_POINT}/send-first-job-reminder`,
-        {},
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        toast.success(`Emails sent: ${res.data.sent}, Failed: ${res.data.failed}`);
-      } else {
-        toast.error(res.data.message || "Failed to send reminders");
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Error sending reminders");
-    } finally {
-      setSendingReminder(false);
-    }
-  };
+  
 
   // Fetch all recruiters (admin)
   const fetchRecruiterList = async () => {
@@ -694,17 +676,7 @@ const RecruitersList = () => {
         <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 transition-colors">
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-4">
-            <div className="flex justify-end">
-              <Button
-                size="sm"
-                onClick={sendFirstJobReminders}
-                disabled={sendingReminder}
-                className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
-                title="Send reminder emails to active recruiters with 0 jobs posted (joined > 1 day ago)"
-              >
-                {sendingReminder ? "Sending..." : "📧 Send First Job Reminders"}
-              </Button>
-            </div>
+           
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
               <Input
