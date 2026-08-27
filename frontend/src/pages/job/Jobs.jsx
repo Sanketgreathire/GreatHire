@@ -70,6 +70,9 @@ const Jobs = () => {
     }));
   }, []);
 
+//   console.log("JOBS:", jobs);
+// console.log("JOBS LENGTH:", jobs?.length);
+
   const filteredJobs = useMemo(() => {
     if (!jobs) return [];
     return jobs.filter((job) => {

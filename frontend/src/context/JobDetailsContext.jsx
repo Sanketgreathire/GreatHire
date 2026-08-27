@@ -45,6 +45,10 @@ const JobDetailsProvider = ({ children }) => {
       });
       if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.statusText}`);
       const jobs = await response.json();
+
+//       console.log("JOBS API RESPONSE:", jobs);
+// console.log("IS ARRAY:", Array.isArray(jobs));
+// console.log("JOBS COUNT:", Array.isArray(jobs) ? jobs.length : "NOT ARRAY"); 
       setJobsList(jobs);
       setOriginalJobsList(jobs);
       setSelectedJob(jobs[0] || null);

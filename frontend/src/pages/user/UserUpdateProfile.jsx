@@ -253,6 +253,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     gender: user?.profile?.gender || "",
     qualification: user?.profile?.qualification || "",
     otherQualification: user?.profile?.otherQualification || "",
+
+    autoApply: user?.profile?.autoApply || false,
   });
 
   // State for profile image preview
@@ -674,6 +676,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     });
     formData.append("bio", input.bio || "");
     formData.append("skills", input.skills || "");
+
+    formData.append("autoApply", input.autoApply)
     formData.append("qualification", input.qualification || "");
     if (input.qualification === "Others") {
       formData.append("otherQualification", input.otherQualification || "");
@@ -726,7 +730,20 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               },
             };
         // dispatch(setUser(response.data.user));
-        dispatch(setUser(updatedUser));
+        // dispatch(setUser(updatedUser));
+
+        // updatedUser.profile.autoApply=input.autoApply;
+
+        const updatedUserWithAutoApply = {
+  ...updatedUser,
+  profile: {
+    ...updatedUser.profile,
+    autoApply: input.autoApply,
+  },
+};
+
+dispatch(setUser(updatedUserWithAutoApply));
+        
         setSelectedCategories(
           Array.isArray(updatedUser.profile?.category)
             ? updatedUser.profile.category
@@ -1234,7 +1251,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 e.target.checked
                               )
                             }
-                          />
+                          />  
                           <label className="font-medium">Currently Working</label>
                         </div>
 
@@ -1452,6 +1469,53 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               </div>
 
             </div>
+
+            {/* Auto Apply Toggle */}
+<div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-6 flex items-center justify-between bg-white dark:bg-gray-800">
+  <div className="pr-4">
+    <label
+      onClick={() =>
+        setInput((prev) => ({
+          ...prev,
+          autoApply: !prev.autoApply,
+        }))
+      }
+      className="font-semibold text-base cursor-pointer text-gray-800 dark:text-white"
+    >
+      Enable Auto Apply
+    </label>
+    <p className="text-sm text-gray-500 mt-1">
+      Automatically apply to jobs when your profile matches at least 65% of the job skills.
+    </p>
+  </div>
+
+  <div
+    onClick={() =>
+      setInput((prev) => ({
+        ...prev,
+        autoApply: !prev.autoApply,
+      }))
+    }
+    className={`relative w-24 h-12 rounded-full cursor-pointer transition-all duration-300 flex-shrink-0 ${
+      input.autoApply ? "bg-green-500" : "bg-gray-400"
+    }`}
+  >
+    <span
+      className={`absolute inset-0 flex items-center text-white font-bold text-sm transition-all duration-300 pointer-events-none ${
+        input.autoApply ? "justify-start pl-4" : "justify-end pr-4"
+      }`}
+    >
+      {input.autoApply ? "YES" : "NO"}
+    </span>
+    <div
+      className={`absolute top-1 w-10 h-10 bg-white rounded-full shadow-md transition-all duration-300 ${
+        input.autoApply ? "right-1" : "left-1"
+      }`}
+    />
+  </div>
+</div>
+
+
             {/* Submit Button */}
             <Button
               type="submit"

@@ -142,7 +142,8 @@ const JobseekerLogin = () => {
         toast.error(response.data.message);
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "An error occurred. Please try again.");
+      const message = err?.response?.data?.message || err?.response?.data?.errors?.[0]?.msg || err?.message || "Network error. Please check your connection and try again.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }

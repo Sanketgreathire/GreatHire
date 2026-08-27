@@ -34,7 +34,9 @@ class NotificationService {
           priority: notification.priority,
           createdAt: notification.createdAt,
           isRead: notification.isRead,
-          actionUrl: notification.actionUrl
+          actionUrl: notification.actionUrl,
+           relatedEntity: notification.relatedEntity,
+             metadata: notification.metadata
         };
         this.io.to(room).emit('newNotification', notificationPayload);
         console.log(`🔔 Real-time notification sent to room: ${room}`);
