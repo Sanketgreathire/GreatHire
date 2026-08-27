@@ -14,17 +14,17 @@ const DashboardNavigations = () => {
 
   // State for sidebar toggle
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isCreateNewOpen, setCreateNewOpen] = useState(false);
 
   // hasCompany: dual source of truth — user flag (login-time) OR live fetched company object
   const hasCompany = !!user?.isCompanyCreated || !!company;
 
   const navLinkClass = ({ isActive }) =>
-  `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
-   ${
-     isActive
-       ? "bg-blue-600 text-white dark:bg-blue-700"
-       : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
-   }`;
+    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
+   ${isActive
+      ? "bg-blue-600 text-white dark:bg-blue-700"
+      : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
+    }`;
 
   const disabledLinkClass = "flex items-center gap-2 px-3 py-2 rounded-lg w-full opacity-40 cursor-not-allowed pointer-events-none text-gray-500 dark:text-gray-500";
 
@@ -32,18 +32,18 @@ const DashboardNavigations = () => {
 
   return (
     <>
-    <Helmet>
-  {/* Meta Title */}
-  <title>
-    Dashboard Navigation | GreatHire's Hiring, Jobs, and Teams Management
-  </title>
+      <Helmet>
+        {/* Meta Title */}
+        <title>
+          Dashboard Navigation | GreatHire's Hiring, Jobs, and Teams Management
+        </title>
 
-  {/* Meta Description */}
-  <meta
-    name="description"
-    content="This intuitive Hyderabad State-powered dashboard by GreatHire allows modern companies to manage recruitment effectively from a single centralized platform. It helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. GreatHire is purpose-built for startups, enterprises, HR teams, and staffing agencies to simplify complex hiring workflows with the assurance of speed, security, and scalability. The smart navigation, real-time insights, and role-based access enable recruiters to make quicker decisions, manage candidates more smoothly, and scale up their hiring confidently across India."
-  />
-</Helmet>
+        {/* Meta Description */}
+        <meta
+          name="description"
+          content="This intuitive Hyderabad State-powered dashboard by GreatHire allows modern companies to manage recruitment effectively from a single centralized platform. It helps recruiters post jobs, track applicants, manage recruiters, control company details, monitor hiring plans, and upgrade subscriptions with ease. GreatHire is purpose-built for startups, enterprises, HR teams, and staffing agencies to simplify complex hiring workflows with the assurance of speed, security, and scalability. The smart navigation, real-time insights, and role-based access enable recruiters to make quicker decisions, manage candidates more smoothly, and scale up their hiring confidently across India."
+        />
+      </Helmet>
       {/*  Hamburger Button (Visible on Small Screens) */}
       <button
         className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm  text-gray-700 dark:text-gray-200"
@@ -53,8 +53,8 @@ const DashboardNavigations = () => {
       </button>
 
       {/*  Sidebar */}
-      <div 
-      className={`fixed top-0 left-0 z-50 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200
+      <div
+        className={`fixed top-0 left-0 z-50 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200
                   shadow-lg dark:shadow-gray-800 transition-transform duration-300 ease-in-out
                   w-64 h-screen transform
                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -90,38 +90,85 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
-              <li className="relative group ml-1">
-                <span className="flex items-center gap-2 px-2 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700 cursor-default">
-                  <PenSquare size={25} className="text-blue-600 dark:text-blue-400" />
-                  <span>Create New</span>
-                </span>
+              <li className="relative ml-1">
+                {/* Trigger Button (Click / Tap to toggle) */}
+                <button
+                  type="button"
+                  onClick={() => setCreateNewOpen((prev) => !prev)}
+                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+                >
+                  <div className="flex items-center gap-2">
+                    <PenSquare size={25} className="text-blue-600 dark:text-blue-400" />
+                    <span>Create New</span>
+                  </div>
+                  <span className={`text-xs transition-transform duration-200 ${isCreateNewOpen ? "rotate-180" : ""}`}>
+                    ▼
+                  </span>
+                </button>
 
-                <ul className="absolute left-0 top-full w-44 z-50
-                  bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700
-                  shadow-xl rounded-xl py-2 flex flex-col gap-1
-                  invisible opacity-0 group-hover:visible group-hover:opacity-100
-                  transition-opacity duration-150">
-                  {!hasCompany && (
-                    <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><Building2 size={25} className={iconClass(isActive)} /><span>Company</span></>)}
-                    </NavLink>
-                  )}
-                  {hasCompany && user?.isActive && user?.emailId?.email === company?.adminEmail && (
-                    <NavLink to="/recruiter/dashboard/add-recruiter" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><UserPlus size={25} className={iconClass(isActive)} /><span>Add Recruiter</span></>)}
-                    </NavLink>
-                  )}
-                  {hasCompany ? (
-                    <NavLink to="/recruiter/dashboard/post-job" className={navLinkClass} onClick={() => setSidebarOpen(false)}>
-                      {({ isActive }) => (<><PlusSquare size={25} className={iconClass(isActive)} /><span>Post Job</span></>)}
-                    </NavLink>
-                  ) : (
-                    <span className={disabledLinkClass}>
-                      <PlusSquare size={25} className="text-gray-400" />
-                      <span>Post Job</span>
-                    </span>
-                  )}
-                </ul>
+                {/* Sub-menu (Renders on state toggle for mobile, tablet, and desktop) */}
+                {isCreateNewOpen && (
+                  <div className="mt-1 ml-4 pl-2 border-l-2 border-blue-200 dark:border-gray-700 flex flex-col gap-1 sm:absolute sm:left-0 sm:top-full sm:w-44 sm:z-50 sm:bg-white sm:dark:bg-gray-800 sm:border sm:border-gray-100 sm:shadow-xl sm:rounded-xl sm:py-2">
+                    {!hasCompany && (
+                      <NavLink
+                        to="/recruiter/dashboard/create-company"
+                        className={navLinkClass}
+                        onClick={() => {
+                          setSidebarOpen(false);
+                          setCreateNewOpen(false);
+                        }}
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <Building2 size={25} className={iconClass(isActive)} />
+                            <span>Company</span>
+                          </>
+                        )}
+                      </NavLink>
+                    )}
+
+                    {hasCompany && user?.isActive && user?.emailId?.email === company?.adminEmail && (
+                      <NavLink
+                        to="/recruiter/dashboard/add-recruiter"
+                        className={navLinkClass}
+                        onClick={() => {
+                          setSidebarOpen(false);
+                          setCreateNewOpen(false);
+                        }}
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <UserPlus size={25} className={iconClass(isActive)} />
+                            <span>Add Recruiter</span>
+                          </>
+                        )}
+                      </NavLink>
+                    )}
+
+                    {hasCompany ? (
+                      <NavLink
+                        to="/recruiter/dashboard/post-job"
+                        className={navLinkClass}
+                        onClick={() => {
+                          setSidebarOpen(false);
+                          setCreateNewOpen(false);
+                        }}
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <PlusSquare size={25} className={iconClass(isActive)} />
+                            <span>Post Job</span>
+                          </>
+                        )}
+                      </NavLink>
+                    ) : (
+                      <span className={disabledLinkClass}>
+                        <PlusSquare size={25} className="text-gray-400" />
+                        <span>Post Job</span>
+                      </span>
+                    )}
+                  </div>
+                )}
               </li>
               <NavLink
                 to="/recruiter/dashboard/jobs"
@@ -216,7 +263,7 @@ const DashboardNavigations = () => {
           {/* Footer Navigation */}
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              <Settings size={25} className="text-blue-700 dark:text-blue-500"/>
+              <Settings size={25} className="text-blue-700 dark:text-blue-500" />
               <span>Settings</span>
             </h2>
             <ul className="flex flex-col gap-1">

@@ -13,7 +13,7 @@ const Success = () => {
     <>
 
       <Helmet>
-        <title>Successful Submission of a Job Application | GreatHire's Next Step</title>
+        <title>Successful Submission of a Job Application | GreatHire</title>
         <meta
           name="description"
           content="Read GreatHire’s Terms of Service and Privacy Policy to understand how our platform operates, how user data is collected and protected, and what responsibilities apply to job seekers and recruiters. Based in Hyderabad State, India, GreatHire is committed to transparency, ethical hiring practices, and compliance with global data protection laws such as GDPR and CCPA."

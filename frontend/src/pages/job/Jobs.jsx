@@ -166,15 +166,15 @@ const Jobs = () => {
           <div ref={jobListingsRef} className="flex-grow w-full max-w-[1500px] mx-auto pt-2 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
 
             {/* ── CHANGE: gap-4 added so sidebar and job list never touch ── */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 overflow-x-hidden">
 
               {/* Sidebar — ── CHANGE: reduced from lg:w-72 to lg:w-56, added pr-2 so content doesn't butt against job list ── */}
-              <div className="hidden lg:block lg:w-56 lg:flex-shrink-0 lg:pl-4 lg:pr-2 pb-4">
+              <div className="hidden lg:block lg:w-64 flex-shrink-0 lg:pl-4 lg:pr-2 pb-4">
                 <FilterCard filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
               </div>
 
               {/* Main area — min-w-0 prevents flex overflow */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 px-2 overflow-hidden">
                 <div className="flex items-center justify-between mb-4 lg:hidden px-4 sm:px-6">
                   <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-3 py-2 rounded-md transition-colors shadow-md">
                     <FiFilter size={18} /> Filters

@@ -309,10 +309,10 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
     <>
 
       <Helmet>
-        <title>Advanced Job Search Filters | Locate Jobs by Role, Company, and Location - GreatHire</title>
+        <title>Advanced Job Search Filters, Find Jobs by Role, Company, and Location | GreatHire</title>
         <meta
           name="description"
-          content="Smarter job searching, powered by GreatHire's advanced job filters for precision and speed, helps you in finding opportunities that truly match your career goals. GreatHire, based in Hyderabad State, India, connects talented professionals with top companies through a user-friendly, modern hiring platform built for today's competitive job market. Be it a fresher or an experienced professional; our intelligent filtering system is here to help you uncover relevant openings faster, reduce noise, and focus only on the roles that matter."
+          content="Smarter job searching in India, powered by GreatHire's advanced job filters for precision and speed, helps you in finding opportunities that truly match your career goals. GreatHire, based in Hyderabad State, India, connects talented professionals with top companies through a user-friendly, modern hiring platform built for today's competitive job market. Be it a fresher or an experienced professional; our intelligent filtering system is here to help you uncover relevant openings faster, reduce noise, and focus only on the roles that matter."
         />
       </Helmet>
 
@@ -322,7 +322,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       )}
 
       {/* Filter Card — CHANGE: reduced sm:w-[210px] md:w-[224px] to match lg:w-56 sidebar in Jobs.jsx */}
-      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full sm:w-[210px] md:w-[224px] bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
+      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
         {onClose && (
           <button
             onClick={onClose}

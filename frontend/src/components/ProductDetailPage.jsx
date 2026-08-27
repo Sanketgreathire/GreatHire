@@ -608,7 +608,9 @@ const ProductDetailPage = () => {
   if (!product && id) {
     return (
       <>
-        <Helmet><title>GreatHire - Not Found</title></Helmet>
+        <Helmet><title>GreatHire - Not Found</title>
+        <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
         <Navbar />
         <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-950">
           <p className="text-xl font-bold text-gray-900 dark:text-white">Product not found</p>
@@ -624,7 +626,7 @@ const ProductDetailPage = () => {
   return (
     <>
       <Helmet>
-        <title>GreatHire - {p.name}</title>
+        <title>{p.name} | GreatHire</title>
         <meta name="description" content={p.description.slice(0, 160)} />
         <meta name="keywords" content={p.primaryKeyword} />
       </Helmet>

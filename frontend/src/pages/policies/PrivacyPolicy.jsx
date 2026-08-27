@@ -338,7 +338,7 @@ function PrivacyPolicy() {
     >
       <Helmet>
         <title>
-          Terms and Privacy Policy | GreatHire Platform Rules and Data Protection
+          Terms and Privacy Policy | GreatHire
         </title>
         <meta
           name="description"

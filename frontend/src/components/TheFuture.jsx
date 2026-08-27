@@ -332,7 +332,8 @@ const TheFuture = () => {
   return (
     <>
       <Helmet>
-        <title>GreatHire — {currentSlide.title}</title>
+        <title>{currentSlide.title} | GreatHire</title>
+        <meta name="description" content={currentSlide.intro.slice(0, 160)}/>
       </Helmet>
       <Navbar />
 

@@ -4,7 +4,7 @@ import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import RecruiterFAQ from "../../components/RecruiterFAQ";
 import Navbar from "@/components/shared/Navbar";
@@ -273,8 +273,9 @@ function RecruiterPlans() {
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const isRecruiter = user?.role === "recruiter";
+  const isRecruiter = user?.role === "recruiter" && !location.pathname.includes("packages") && !location.pathname.includes("your-plans") && !location.pathname.includes("recruiter-plans");
 
   const [selectedPlanId, setSelectedPlanId] = useState(
     subscriptionPlans.find((p) => p.popular)?.id
@@ -366,7 +367,7 @@ function RecruiterPlans() {
 
   const handleSubscription = useCallback(async (plan) => {
     if (RPO_IDS.has(plan.id)) { navigate("/contact"); return; }
-    if (!user) { toast.error("Please login to purchase a plan."); navigate("/recruiter/signup"); return; }
+    if (!user) { toast.error("Please login to purchase a plan."); navigate("/recruiter-login"); return; }
     if (!company) { toast.error("Please complete company profile first."); navigate("/recruiter/company-profile"); return; }
 
     if (plan.isFree && company.hasSubscription) { toast.error("You already have a paid plan. Free plan is not available."); return; }
@@ -510,14 +511,14 @@ function RecruiterPlans() {
                     <div
                       key={plan.id}
                       onClick={() => setSelectedPlanId(plan.id)}
-                      className={`relative border-2 ${borderColor} rounded-2xl p-6 bg-white dark:bg-slate-900 shadow hover:shadow-xl cursor-pointer transition-all duration-300 flex flex-col ${
+                      className={`relative border-2 ${borderColor} rounded-2xl p-6 pt-10 bg-white dark:bg-slate-900 shadow hover:shadow-xl cursor-pointer transition-all duration-300 flex flex-col ${
                         plan.popular ? "ring-2 ring-purple-500 dark:ring-purple-400" : ""
                       }`}
                     >
                       {/* Popular badge */}
                       {plan.popular && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+                          <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow whitespace-nowrap">
                             ⭐ MOST POPULAR
                           </span>
                         </div>
@@ -526,7 +527,7 @@ function RecruiterPlans() {
                       {/* Current plan badge for starter */}
                       {plan.isFree && company && !company.hasSubscription && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+                          <span className="bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow whitespace-nowrap">
                             ✓ CURRENT PLAN
                           </span>
                         </div>

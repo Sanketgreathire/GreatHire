@@ -57,30 +57,28 @@ export const parseJd = async (req, res) => {
 
 // ── POST /api/v1/jd-matching/match-candidates/:jobId ─────────────────────────
 export const matchCandidates = async (req, res) => {
+
+  console.log("🚀 MATCH CANDIDATES CONTROLLER HIT");
+console.log("Job ID:", req.params.jobId);
+console.log("Recruiter ID:", req.id);
+
   try {
     const { jobId }     = req.params;
     const recruiterId   = req.id;
 
     const job = await Job.findOne({ _id: jobId, created_by: recruiterId }).lean();
+    console.log("✅ JOB QUERY COMPLETED");
+console.log("Job found:", !!job);
     if (!job) return res.status(404).json({ success: false, message: "Job not found." });
 
     // Try queue first
-    const redisOk = await isRedisAvailable();
-    if (redisOk) {
-      const qJob = await enqueueJdMatch(jobId, recruiterId);
-      if (qJob) {
-        return res.status(202).json({
-          success: true,
-          queued:  true,
-          message: "Candidate matching queued for background processing.",
-          jobId,
-          pollUrl: `/api/v1/jd-matching/${jobId}/matches`,
-        });
-      }
-    }
-
+    console.log("⚡ Redis bypassed - running matching pipeline directly");
     // Synchronous fallback
+    console.log("🚀 STARTING MATCHING PIPELINE");
+
     const stats = await runMatchingPipeline(jobId, recruiterId);
+
+    console.log("Matchine pipeline finished: ", stats);
     return res.status(200).json({
       success: true,
       queued:  false,

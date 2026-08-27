@@ -167,7 +167,7 @@ const ReportJob = () => {
     <>
 
       <Helmet>
-        <title>Report a Job Posting | GreatHire's Safe & Reliable Hiring</title>
+        <title>Secured Hiring | GreatHire's Safe & Reliable Hiring</title>
         <meta
           name="description"
           content="GreatHire is an employment solutions facilitator, which is currently operational from the state of Hyderabad, India, with the aim of providing a secure and authenticated employment environment for the professionals of the state of Hyderabad only. When you find such employment opportunities, you can report them on GreatHire to ensure the employment platform is safe and sound for all. This page is made to help users to complain about misleading ads, misleading information about companies, offending ads, and misleading ads in a very easy and confidential manner."

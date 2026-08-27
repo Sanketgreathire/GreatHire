@@ -143,7 +143,6 @@ const COURSES = [
   {
     id: 6,
     icon: "🧪",
-    //image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
     category: "Testing",
     title: "Data Analytics",
@@ -413,9 +412,6 @@ const COURSES = [
     link: "/courses/pmp-training",
     tab: "employment",
   },
-  // ── TIH-IIT Certification Program courses ────────────────────────────────
-  // Add your IIT certification courses here with tab: "certification"
-  // Example placeholder:
   {
     id: 22,
     icon: "💻",
@@ -516,7 +512,7 @@ const COURSES = [
     color: "border-rose-500",
     iconBg: "bg-rose-50",
     link: "/courses/bim-training",
-   tab: "certification",
+    tab: "certification",
   },
   {
     id: 28,
@@ -553,31 +549,6 @@ const COURSES = [
     tab: "certification",
   },
 ];
-
-// const CATEGORIES = [
-//   "All",
-//   "Python Full Stack",
-//   "Java FUll Stack",
-//   "Data Science",
-//   "AWS & DevOps",
-//   "Digital Marketing",
-//   "Data Analytics",
-//   "Saleforce",
-//   "BIM",
-//   "SAP FICO",
-//   "Medical Coding",
-//   "Testing Tools",
-//   "VLSI",
-//   "Multimedia",
-//   "Advanced Excel",
-//   "AutoCAD",
-//   "Revit MEP",
-//   "Business Analytics",
-//   "Generative AI",
-//   "SAP MM",
-//   "Cyber Security",
-//   "PMP",
-// ];
 
 const FEATURES = [
   { icon: "🎓", title: "Industry Expert Trainers", desc: "Learn from professionals with 10+ years of real-world industry experience." },
@@ -673,7 +644,7 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
       {/* Content */}
       <div className="p-5 pt-6 flex flex-col flex-1">
         <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 leading-snug">{course.title}</h3>
-        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed flex-1">{course.desc}</p>
+        <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-1">{course.desc}</p>
 
         {/* Actions */}
         <div className="flex gap-3 mt-5">
@@ -703,9 +674,34 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({ name: "", email: "", phone: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let nameErr = "";
+    let emailErr = "";
+    let phoneErr = "";
+
+    if (!form.name.trim()) {
+      nameErr = "Full name is required.";
+    } else if (!/^[A-Za-z\s]+$/.test(form.name)) {
+      nameErr = "Full name can only contain letters and spaces.";
+    }
+
+    if (!form.email.trim()) {
+      emailErr = "Email address is required.";
+    }
+
+    if (!form.phone.trim()) {
+      phoneErr = "Phone number is required.";
+    }
+
+    if (nameErr || emailErr || phoneErr) {
+      setErrors({ name: nameErr, email: emailErr, phone: phoneErr });
+      return;
+    }
+
+    setErrors({ name: "", email: "", phone: "" });
     setLoading(true);
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
@@ -713,9 +709,12 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, courseName: course.title, fee: type === "enrollment" ? (course.fee || "") : "", type }),
       });
-    } catch (_) {}
-    setLoading(false);
-    setSubmitted(true);
+      setLoading(false);
+      setSubmitted(true);
+    } catch (_) {
+      setLoading(false);
+      setErrors({ name: "", email: "", phone: "Something went wrong. Please try again." });
+    }
   };
 
   if (!course) return null;
@@ -757,9 +756,15 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   type="text"
                   placeholder="Your full name"
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                    setForm({ ...form, name: filteredValue });
+                  }}
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.name ? "border-red-500" : "border-gray-200"
+                  }`}
                 />
+                {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Email Address</label>
@@ -769,8 +774,11 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   placeholder="you@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.email ? "border-red-500" : "border-gray-200"
+                  }`}
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Phone Number</label>
@@ -780,8 +788,11 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   placeholder="+91 98765 43210"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.phone ? "border-red-500" : "border-gray-200"
+                  }`}
                 />
+                {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone}</p>}
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Preferred Mode</label>
@@ -925,26 +936,9 @@ export default function TrainingCoursesPage() {
           </p>
         </div>
 
-        {/* Category Filter */}
-        {/* <div className="flex flex-wrap gap-2 justify-center mb-10">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
-                activeCategory === cat
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-white border border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div> */}
-
         {/* Results count */}
-        <p className="text-sm text-gray-400 mb-6 text-center">
-          Showing <span className="font-semibold text-gray-700 dark:text-gray-300">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""}
+        <p className="text-sm text-gray-400 dark:text-gray-400 mb-6 text-center">
+          Showing <span className="font-semibold text-gray-700 dark:text-gray-200">{filtered.length}</span> course{filtered.length !== 1 ? "s" : ""}
           {activeCategory !== "All" ? ` in ${activeCategory}` : ""}
         </p>
 
@@ -988,7 +982,7 @@ export default function TrainingCoursesPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="flex gap-4 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-100 dark:hover:border-blue-800 transition-all duration-300 group"
+                className="flex gap-4 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-200 dark:hover:border-gray-600 transition-all duration-300 group shadow-sm"
               >
                 <div className="w-12 h-12 bg-white dark:bg-gray-600 rounded-xl shadow-sm flex items-center justify-center text-2xl shrink-0 group-hover:shadow-md transition-shadow">
                   {f.icon}

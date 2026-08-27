@@ -259,10 +259,10 @@ const JobsForYou = ({ jobs = [] }) => {
 
       <div className="w-full mt-4 dark:bg-gray-900">
         {/* Job List Container - FIXED OVERFLOW */}
-        <div className="flex justify-center gap-6 dark:bg-gray-900">
+        <div className="flex justify-center gap-4 dark:bg-gray-900 w-full">
 
           {/* Left: Job Cards List - FIXED WIDTH & OVERFLOW */}
-          <div className="flex flex-col gap-4 w-full md:w-2/5 m-2 md:m-0 overflow-y-auto scrollbar-hide max-h-[calc(100vh-80px)] relative">
+          <div className="flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 m-2 md:m-0 flex-shrink-0 overflow-y-auto scrollbar-hide h-[calc(100vh-140px)] min-h-[920px] relative">
 
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
@@ -288,10 +288,7 @@ const JobsForYou = ({ jobs = [] }) => {
             {jobs?.map((job) => (
               <div
                 key={job._id}
-                className={`p-5 border rounded-lg cursor-pointer transition-all shadow-md hover:shadow-lg flex-shrink-0 relative ${selectedJob?._id === job._id
-                  ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/50"
-                  : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400"
-                  }`}
+                className={`}`}
                 onClick={() => handleJobClick(job)}
               >
                 {/* Checkbox for bulk apply (only for logged-in users who haven't applied) */}
@@ -447,9 +444,9 @@ const JobsForYou = ({ jobs = [] }) => {
             ))}
           </div>
 
-          {/* Right: Job Details Panel (Desktop only) - FIXED WIDTH & OVERFLOW */}
+          {/* Right: Job Details Panel (Desktop & Tablet only) - FIXED WIDTH & OVERFLOW */}
           {selectedJob && (
-            <div className="sticky top-[64px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-3/5 hidden h-[calc(100vh-80px)] dark:border-gray-700 dark:bg-gray-800">
+            <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[calc(100vh-140px)] min-h-[920px] dark:border-gray-700 dark:bg-gray-800">
 
               {/* Header (Sticky) */}
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">

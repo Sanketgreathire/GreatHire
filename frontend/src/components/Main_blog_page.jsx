@@ -646,13 +646,12 @@ function Moin_blog_page() {
     <>
       <Helmet>
         <title>
-          GreatHire Blog | Career Guidance, Employment Patterns, and
-          Perspectives on the Future of Work
+          GreatHire Blog | Career Advice, Hiring & Future of Work
         </title>
 
         <meta
           name="description"
-          content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
+          content="Explore the GreatHire Blog for career advice, hiring strategies, interview tips, resume guidance, recruitment insights, and the future of work. Get practical insights for job seekers, recruiters, and employers."
         />
       </Helmet>
 
@@ -2850,14 +2849,14 @@ color: rgb(160, 67, 246);
                        shadow-lg 
                        border border-gray-200 dark:border-gray-700
                        hover:border-orange-400
-                       transition duration-300"
+                       transition duration-300 flex flex-col h-full"
                 >
 
                   {/* Product Image */}
-                  <div className="relative aspect-[4/3] 
+                  <div className="relative h-64 sm:h-72 w-full 
                             bg-gradient-to-br 
                             from-gray-200 to-gray-300 
-                            dark:from-gray-700 dark:to-gray-800">
+                            dark:from-gray-700 dark:to-gray-800 overflow-hidden">
 
                     <img
                       src={product.image}
@@ -2887,7 +2886,7 @@ color: rgb(160, 67, 246);
 
                   {/* Product Details */}
                   <div className="p-4 sm:p-5 md:p-6 
-                            space-y-4">
+                            space-y-4 flex flex-col flex-1">
 
                     {/* Category */}
                     <div className="inline-block 
@@ -2910,11 +2909,12 @@ color: rgb(160, 67, 246);
                     {/* Description */}
                     <p className="text-sm md:text-base 
                             text-gray-600 dark:text-gray-300 
-                            leading-relaxed line-clamp-3">
+                            leading-relaxed line-clamp-3 flex-1">
                       {product.description}
                     </p>
 
                     {/* Read More Button */}
+                    <div className="mt-auto">
                     <Link
                       to={`/ProductDetailPage/${product.id}`}
                       className="w-full 
@@ -2931,6 +2931,7 @@ color: rgb(160, 67, 246);
                     >
                       Read More
                     </Link>
+                    </div>
                   </div>
                 </div>
               ))}

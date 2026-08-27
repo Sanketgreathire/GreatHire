@@ -91,13 +91,12 @@ const HowWeHirePage = () => {
     <>
       <Helmet>
         <title>
-          GreatHire Blog | Career Guidance, Employment Patterns, and
-          Perspectives on the Future of Work
+          How We Hire | GreatHire
         </title>
 
         <meta
           name="description"
-          content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
+          content="Learn how GreatHire connects talented professionals with the right opportunities through a transparent and effective hiring process."
         />
       </Helmet>
 
