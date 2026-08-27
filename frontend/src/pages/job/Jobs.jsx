@@ -98,197 +98,93 @@ export default function JobDetailsPage() {
     resetFilter();
   }, [resetFilter]);
 
-  const job = selectedJob;
+  // Pre-select job when navigating from marquee
+  useEffect(() => {
+    const jobId = location.state?.selectedJobId;
+    if (jobId && jobs?.length > 0) {
+      const job = jobs.find((j) => j._id === jobId);
+      if (job) setSelectedJob(job);
+    }
+  }, [location.state?.selectedJobId, jobs]);
 
-  // Helper: get company initial from job
-  const getInitial = (j) => {
-    const name = j?.jobDetails?.companyName || j?.company?.name || "?";
-    return name.charAt(0).toUpperCase();
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
 
-  const activeDays = (createdAt) =>
-    createdAt ? Math.floor((Date.now() - new Date(createdAt)) / 86400000) : 0;
+  const handleSearchUpdate = useCallback((updates) => {
+    setSearchInfo((prev) => ({ ...prev, ...updates }));
+    setFilters((prev) => ({
+      ...prev,
+      jobTitle: updates.titleKeyword !== undefined ? updates.titleKeyword : prev.jobTitle,
+    }));
+  }, []);
 
-  const FilterSidebarContent = (
-    <div className="flex h-full flex-col gap-4">
-      {/* Results count */}
-      <div className="mt-1 px-1">
-        <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
-          {isLoading
-            ? "Loading..."
-            : `Showing ${jobs.length}${searchMeta?.total > jobs.length ? ` of ${searchMeta.total}` : ""} jobs${searchMeta?.query ? ` for "${searchMeta.query}"` : ""}`}
-        </p>
+  const handleFilterChange = useCallback((newFilters) => {
+    setFilters(newFilters);
+    setSearchInfo((prev) => ({
+      ...prev,
+      titleKeyword: newFilters.jobTitle ?? prev.titleKeyword,
+    }));
+  }, []);
 
-        {/* Job list */}
-        <div className="flex flex-col gap-3">
-          {jobs.map((j) => {
-            const isSelected = selectedJob?._id === j._id;
-            return (
-              <button
-                key={j._id}
-                onClick={() => {
-                  setSelectedJob(j);
-                  setActiveTab("Overview");
-                  setIsFilterOpen(false);
-                }}
-                className={`flex items-start gap-3 rounded-2xl border p-4 text-left transition-all ${
-                  isSelected
-                    ? "border-blue-600 bg-blue-50/60 shadow-sm ring-1 ring-blue-600 dark:border-blue-500 dark:bg-blue-950/40 dark:ring-blue-500"
-                    : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700"
-                }`}
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-bold text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                  {getInitial(j)}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-gray-900 dark:text-gray-100">
-                    {j.jobDetails?.title}
-                  </p>
-                  <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                    {j.jobDetails?.companyName} • {j.jobDetails?.location?.split(",")[0]}
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                      {j.jobDetails?.workPlaceFlexibility}
-                    </span>
-                    {j.matchScore && (
-                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-600 dark:bg-blue-950 dark:text-blue-400">
-                        {j.matchScore}% Match
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
+  const filteredJobs = useMemo(() => {
+    if (!jobs) return [];
+    return jobs.filter((job) => {
+      if (Array.isArray(filters.location) && filters.location.length > 0) {
+        const jobLocation = (job?.jobDetails?.location || job?.location || "").toLowerCase();
+        const matchesAny = filters.location.some((loc) =>
+          jobLocation.includes(loc.toLowerCase())
+        );
+        if (!matchesAny) return false;
+      }
+      if (filters.jobTitle) {
+        const jobTitle = (job?.jobDetails?.title || job?.job_title || "").toLowerCase();
+        const companyName = (job?.jobDetails?.companyName || "").toLowerCase();
+        const keyword = filters.jobTitle.toLowerCase();
+        if (!jobTitle.includes(keyword) && !companyName.includes(keyword)) return false;
+      }
+      if (Array.isArray(filters.jobType) && filters.jobType.length > 0) {
+        const jobType = (job?.jobDetails?.jobType || "").toLowerCase();
+        if (!filters.jobType.some((type) => jobType.includes(type.toLowerCase()))) return false;
+      }
+      if (Array.isArray(filters.workPlace) && filters.workPlace.length > 0) {
+        const workPlace = (job?.jobDetails?.workPlaceFlexibility || "").toLowerCase();
+        if (!filters.workPlace.some((wp) => workPlace.includes(wp.toLowerCase()))) return false;
+      }
+      if (filters.company) {
+        const company = (job?.jobDetails?.companyName || job?.jobDetails?.company || job?.employer_name || job?.company || "").toLowerCase();
+        if (!company.includes(filters.company.toLowerCase())) return false;
+      }
+      if (Array.isArray(filters.datePosted) && filters.datePosted.length > 0) {
+        const dateStr = job?.jobDetails?.datePosted || job?.createdAt || job?.jobDetails?.createdAt || job?.postedAt || job?.job_posted_at || null;
+        const jobDate = dateStr ? new Date(dateStr) : null;
+        if (!jobDate || isNaN(jobDate)) return false;
+        const today = new Date();
+        const dayMap = { "Last 24 hours": 1, "Last 7 days": 7, "Last 15 days": 15, "Past Month": 30 };
+        if (!filters.datePosted.some((d) => (today - jobDate) / 86400000 <= (dayMap[d] || 0))) return false;
+      }
+      return true;
+    });
+  }, [jobs, filters]);
 
-          {!isLoading && jobs.length === 0 && (
-            <p className="text-center text-sm text-gray-400 py-6">No jobs found.</p>
-          )}
-        </div>
-      </div>
+  const totalFilteredJobs = filteredJobs.length;
+  const totalPages = Math.max(1, Math.ceil(totalFilteredJobs / jobsPerPage));
+  const displayedJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
-      {/* Filters header */}
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Filters</h2>
-          {activeFilterCount > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-100 px-1.5 text-xs font-semibold text-blue-600 dark:bg-blue-950 dark:text-blue-400">
-              {activeFilterCount}
-            </span>
-          )}
-        </div>
-        <button
-          onClick={handleReset}
-          className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          Reset All
-        </button>
-      </div>
+  const handleResetFilters = useCallback(() => {
+    setFilters({ jobTitle: "", location: [], jobType: [], workPlace: [], company: "", datePosted: [] });
+    setSearchInfo({ titleKeyword: "", location: "" });
+    setCurrentPage(1);
+  }, []);
 
-      {/* Job Title filter */}
-      <AccordionSection title="Job Title" defaultOpen>
-        <input
-          type="text"
-          placeholder="Search titles..."
-          value={titleFilter}
-          onChange={(e) => {
-            setTitleFilter(e.target.value);
-            applyFilters(e.target.value, locationFilter, experienceFilter, workPlaceFilter);
-          }}
-          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
-        />
-      </AccordionSection>
+  const handlePageChange = useCallback((pageNumber) => {
+    setCurrentPage(pageNumber);
+    if (jobListingsRef.current) {
+      const y = jobListingsRef.current.getBoundingClientRect().top + window.pageYOffset - 100;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  }, []);
 
-      {/* Location filter */}
-      <AccordionSection title="Location" defaultOpen>
-        <div className="relative mb-3">
-          <input
-            type="text"
-            placeholder="City or zip code"
-            value={locationFilter}
-            onChange={(e) => {
-              setLocationFilter(e.target.value);
-              applyFilters(titleFilter, e.target.value, experienceFilter, workPlaceFilter);
-            }}
-            className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 pr-9 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-blue-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
-          />
-          <FiMapPin
-            size={16}
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-blue-500"
-          />
-        </div>
-        {/* Quick location chips */}
-        <div className="flex flex-wrap gap-2">
-          {["Bengaluru", "Remote", "Hyderabad", "Mumbai"].map((tag) => (
-            <button
-              key={tag}
-              onClick={() => {
-                setLocationFilter(tag);
-                applyFilters(titleFilter, tag, experienceFilter, workPlaceFilter);
-              }}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                locationFilter === tag
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                  : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-      </AccordionSection>
-
-      {/* GreatHire AI */}
-      <AccordionSection title="GreatHire AI" highlighted defaultOpen={false}>
-        <p className="text-sm text-gray-600 dark:text-gray-300">
-          AI match scores are calculated based on your search query against job title, skills, and details.
-        </p>
-      </AccordionSection>
-
-      {/* Experience filter */}
-      <AccordionSection title="Experience" defaultOpen={false}>
-        <div className="flex flex-col gap-2">
-          {["Fresher", "1-3", "3-5", "5-8", "8+"].map((exp) => (
-            <label key={exp} className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300">
-              <input
-                type="radio"
-                name="experience"
-                checked={experienceFilter === exp}
-                onChange={() => {
-                  setExperienceFilter(exp);
-                  applyFilters(titleFilter, locationFilter, exp, workPlaceFilter);
-                }}
-                className="accent-blue-600"
-              />
-              {exp} {exp !== "Fresher" ? "years" : ""}
-            </label>
-          ))}
-        </div>
-      </AccordionSection>
-
-      {/* Work Place filter */}
-      <AccordionSection title="Work Place" defaultOpen={false}>
-        <div className="flex flex-col gap-2">
-          {["Remote", "Hybrid", "On-site"].map((wp) => (
-            <label key={wp} className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 dark:text-gray-300">
-              <input
-                type="radio"
-                name="workPlace"
-                checked={workPlaceFilter === wp}
-                onChange={() => {
-                  setWorkPlaceFilter(wp);
-                  applyFilters(titleFilter, locationFilter, experienceFilter, wp);
-                }}
-                className="accent-blue-600"
-              />
-              {wp}
-            </label>
-          ))}
-        </div>
-      </AccordionSection>
-    </div>
-  );
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">

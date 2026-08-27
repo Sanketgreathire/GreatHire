@@ -29,37 +29,77 @@ const JobDescription = () => {
   const [questionsModal, setQuestionsModal] = useState(false);
   const [questionAnswers, setQuestionAnswers] = useState([]);
 
+  // useEffect(() => {
+  //   const fetchJob = async () => {
+  //     try {
+  //       const res = await fetch(`/api/v1/job/get/${jobId}`, {
+  //         credentials: "include",
+  //       });
+
+  //       const data = await res.json();
+
+  //       if (!data.success || !data.job) {
+  //         setError("Job not found");
+  //         return;
+  //       }
+
+  //       setJob(data.job);
+
+  //       if (user?._id) {
+  //         const appliedRes = await fetch(
+  //           `/api/v1/job/${jobId}/check-applied/${user._id}`,
+  //           { credentials: "include" }
+  //         );
+  //         const appliedData = await appliedRes.json();
+  //         setApplied(appliedData.applied);
+  //       }
+  //     } catch (err) {
+  //       setError("Network error");
+  //     }
+  //   };
+
+  //   fetchJob();
+  // }, [jobId, user]);
+
   useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        const res = await fetch(`/api/v1/job/get/${jobId}`, {
-          credentials: "include",
-        });
+  const fetchJob = async () => {
+    try {
+      const res = await fetch(`/api/v1/job/get/${jobId}`, {
+        credentials: "include",
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (!data.success || !data.job) {
-          setError("Job not found");
-          return;
-        }
-
-        setJob(data.job);
-
-        if (user?._id) {
-          const appliedRes = await fetch(
-            `/api/v1/job/${jobId}/check-applied/${user._id}`,
-            { credentials: "include" }
-          );
-          const appliedData = await appliedRes.json();
-          setApplied(appliedData.applied);
-        }
-      } catch (err) {
-        setError("Network error");
+      if (!data.success || !data.job) {
+        setError("Job not found");
+        return;
       }
-    };
 
-    fetchJob();
-  }, [jobId, user]);
+      setJob(data.job);
+
+      // Check application from the job's application array
+      if (user?._id && Array.isArray(data.job.application)) {
+        const alreadyApplied = data.job.application.some(
+          (application) => {
+            const applicantId =
+              typeof application?.applicant === "object"
+                ? application?.applicant?._id
+                : application?.applicant;
+
+            return applicantId?.toString() === user._id.toString();
+          }
+        );
+
+        setApplied(alreadyApplied);
+      }
+    } catch (err) {
+      console.error("Error fetching job:", err);
+      setError("Network error");
+    }
+  };
+
+  fetchJob();
+}, [jobId, user]);
 
   // ================= PROFILE CHECK =================
 
@@ -143,7 +183,7 @@ const JobDescription = () => {
       const payload = {
         applicant: user._id,
         applicantName: user.fullname || user.name,
-        applicantEmail: user.email,
+        applicantEmail: user.emailId?.email || user.email,
         applicantPhone: user.phoneNumber?.number || user.phoneNumber,
         applicantProfile: user.profile,
         answers,

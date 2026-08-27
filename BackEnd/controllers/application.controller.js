@@ -95,17 +95,28 @@ export const applyJob = async (req, res) => {
     }
 
     const updateUser = await user.save();
-    // Check duplicate applications
-    const existingApplication = await Application.findOne({
-      job: jobId,
-      applicant: userId,
-    });
-    if (existingApplication) {
-      return res.status(400).json({
-        message: "You have already applied for this job",
-        success: false,
-      });
-    }
+
+    console.log("========== DUPLICATE APPLICATION CHECK ==========");
+console.log("Job ID:", jobId);
+console.log("User ID:", userId);
+
+const existingApplication = await Application.findOne({
+  job: jobId,
+  applicant: userId,
+});
+
+console.log("Existing Application:", existingApplication);
+
+if (existingApplication) {
+  console.log("❌ USER HAS ALREADY APPLIED TO THIS JOB");
+
+  return res.status(400).json({
+    message: "You have already applied for this job",
+    success: false,
+  });
+}
+
+console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
 
     // Create a New application & its always starts as "Pending"
     const newApplication = new Application({

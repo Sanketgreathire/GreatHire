@@ -16,6 +16,9 @@ import http from "http";
 import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
+import { Job } from "./models/job.model.js";
+import { autoApply } from "./src/services/autoApply.service.js";
+import { User } from "./models/user.model.js";
 
 
 // ================= ROUTES =================
@@ -76,14 +79,37 @@ import Blog from "./models/blog.model.js";
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? ["https://greathire.in", "https://www.greathire.in"]
-    : ["http://localhost:5173", "http://localhost:5174"];
+const buildAllowedOrigins = () => {
+  const configuredOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return Array.from(
+    new Set([
+      "https://greathire.in",
+      "https://www.greathire.in",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:5174",
+      ...configuredOrigins,
+    ])
+  );
+};
+
+const allowedOrigins = buildAllowedOrigins();
+const isAllowedOrigin = (origin) => !origin || allowedOrigins.includes(origin);
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
   },
 });
@@ -102,13 +128,25 @@ app.use(
 );
 app.disable("x-powered-by");
 
+
 // ================= CORS =================
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Cookie"],
   })
 );
+
+
+
 
 // ================= COMPRESSION =================
 app.use(compression({ level: 6, threshold: 1024 }));
@@ -325,6 +363,7 @@ try {
   // Start server FIRST before starting workers
   server.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
+    
   });
 
   // Start workers AFTER server is listening (non-blocking)

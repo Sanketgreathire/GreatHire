@@ -34,10 +34,19 @@ const JobDetailsProvider = ({ children }) => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
+<<<<<<< HEAD
       if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.status}`);
       const data = await response.json();
       if (!data.success) throw new Error("Invalid response");
       const jobs = data.jobs || [];
+=======
+      if (!response.ok) throw new Error(`Failed to fetch jobs: ${response.statusText}`);
+      const jobs = await response.json();
+
+//       console.log("JOBS API RESPONSE:", jobs);
+// console.log("IS ARRAY:", Array.isArray(jobs));
+// console.log("JOBS COUNT:", Array.isArray(jobs) ? jobs.length : "NOT ARRAY"); 
+>>>>>>> 0db4679e2e4540e959addd53a206c00dd65ccd00
       setJobsList(jobs);
       setOriginalJobsList(jobs);
       setSelectedJob(jobs[0] || null);
