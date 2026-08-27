@@ -221,7 +221,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
-  { path: "/jobs", element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
+  { path: "/jobs", element: <Jobs /> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },

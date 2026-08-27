@@ -189,7 +189,7 @@ const JobsForYou = ({ jobs = [] }) => {
   }, [user, setSelectedJob]);
 
   const handleBulkApply = useCallback(async (answersMap = {}) => {
-    if (!user) { toast.error("Please login to apply"); return; }
+    if (!user) { navigate('/jobseeker-login', { state: { from: '/jobs' } }); return; }
     if (selectedJobs.size === 0) { toast.error("No jobs selected"); return; }
     if (missingFields.length > 0) {
       toast.error(`Complete your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
@@ -221,7 +221,7 @@ const JobsForYou = ({ jobs = [] }) => {
   }, [user, selectedJobs, jobs, missingFields, addApplicationToJob]);
 
   const handleApply = useCallback(async (jobId) => {
-    if (!user) { toast.error("Please login to apply"); return; }
+    if (!user) { navigate('/jobseeker-login', { state: { from: '/jobs' } }); return; }
     if (hasAppliedToJob(jobId)) { toast.error("Already applied"); return; }
     if (missingFields.length > 0) {
       toast.error(`Please complete the following details in your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
@@ -527,6 +527,13 @@ const JobsForYou = ({ jobs = [] }) => {
                       <div className="flex items-center justify-center gap-2">
                         <span className="text-xl">✓</span> Applied
                       </div>
+                    ) : !user ? (
+                      <button
+                        className="w-full flex items-center justify-center gap-2"
+                        onClick={() => navigate('/jobseeker-login', { state: { from: '/jobs' } })}
+                      >
+                        Login to Apply
+                      </button>
                     ) : (
                       <div
                         className="relative group w-full"
@@ -752,6 +759,13 @@ const JobsForYou = ({ jobs = [] }) => {
               {isApplied ? (
                 <button className="bg-green-600 text-white px-6 py-3 rounded-lg w-full max-w-md">
                   Applied
+                </button>
+              ) : !user ? (
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md font-semibold"
+                  onClick={() => navigate('/jobseeker-login', { state: { from: '/jobs' } })}
+                >
+                  Login to Apply
                 </button>
               ) : (
                 <div className="relative group w-full max-w-md">

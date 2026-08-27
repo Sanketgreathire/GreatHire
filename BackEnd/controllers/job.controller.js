@@ -402,40 +402,27 @@ export const applyJob = async (req, res) => {
 /** get all jobs for home page in stream manner like
 this controller does not return all jobs at once. Instead, it uses streaming to send jobs to the client incrementally, which is particularly useful when dealing with large datasets. */
 export const getAllJobs = async (req, res) => {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache");
-
   try {
-    // Only stream jobs whose company is verified (isActive: true)
-    const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+    const isProduction = process.env.NODE_ENV === "production";
 
-    const cursor = Job.find({ company: { $in: verifiedCompanyIds }, "jobDetails.isActive": true })
+    let query = {};
+
+    if (isProduction) {
+      // In production: only show active jobs from verified companies
+      const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+      query = { "jobDetails.isActive": true, company: { $in: verifiedCompanyIds } };
+    }
+    // In dev: return all jobs regardless of isActive or company verification
+
+    const jobs = await Job.find(query)
       .sort({ createdAt: -1 })
       .populate({ path: "application" })
-      .cursor();
+      .lean();
 
-    res.write("[");
-
-    let isFirst = true;
-    cursor.on("data", (doc) => {
-      if (!isFirst) res.write(",");
-      else isFirst = false;
-      res.write(JSON.stringify(doc.toObject()));
-    });
-
-    cursor.on("end", () => {
-      res.write("]");
-      res.end();
-    });
-
-    cursor.on("error", (error) => {
-      console.error("Error streaming jobs:", error);
-      if (!res.headersSent) res.status(500).json({ message: "Internal server error" });
-      else res.end("]");
-    });
+    return res.status(200).json(jobs);
   } catch (error) {
     console.error("Error fetching jobs:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -933,3 +920,88 @@ async function findAndNotifyMatchingCandidates(job) {
 async function sendGeneralJobAlert(job) {
   // Removed to prevent timeout - only skill-based matching is used
 }
+
+// Compute a simple match score (0-100) between a search query and a job
+function computeMatchScore(query, job) {
+  if (!query) return null;
+  const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const fields = [
+    job.jobDetails?.title || "",
+    (job.jobDetails?.skills || []).join(" "),
+    job.jobDetails?.details || "",
+    job.jobDetails?.experience || "",
+    job.jobDetails?.location || "",
+  ].join(" ").toLowerCase();
+
+  const matched = keywords.filter(k => fields.includes(k)).length;
+  const score = Math.round((matched / keywords.length) * 70) + 20;
+  return Math.min(score, 95);
+}
+
+// Search jobs with filters + match score
+export const searchJobs = async (req, res) => {
+  try {
+    const {
+      query,
+      location,
+      experience,
+      workPlaceFlexibility,
+      jobType,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    const isProduction = process.env.NODE_ENV === "production";
+    const filter = { "jobDetails.isActive": true };
+
+    if (isProduction) {
+      const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
+      filter.company = { $in: verifiedIds };
+    }
+
+    if (query) {
+      filter.$or = [
+        { "jobDetails.title": { $regex: query, $options: "i" } },
+        { "jobDetails.skills": { $regex: query, $options: "i" } },
+        { "jobDetails.details": { $regex: query, $options: "i" } },
+      ];
+    }
+
+    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
+    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
+    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
+    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [jobs, total] = await Promise.all([
+      Job.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit))
+        .populate("company", "name logo isActive")
+        .lean(),
+      Job.countDocuments(filter),
+    ]);
+
+    const results = jobs.map(job => ({
+      ...job,
+      matchScore: query ? computeMatchScore(query, job) : null,
+    }));
+
+    if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+    return res.status(200).json({
+      success: true,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
+      count: results.length,
+      query: query || null,
+      jobs: results,
+    });
+  } catch (error) {
+    console.error("Error searching jobs:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
