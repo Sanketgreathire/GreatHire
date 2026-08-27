@@ -204,9 +204,20 @@ const AppliedJobTable = () => {
                 <TableCell className="text-gray-700 dark:text-gray-300">
                   {new Date(job.createdAt).toLocaleDateString()}
                 </TableCell>
+
                 <TableCell className="text-gray-800 dark:text-white font-medium">
-                  {job.job?.jobDetails?.title || "N/A"}
-                </TableCell>
+  <div className="flex items-center gap-2 flex-wrap">
+    <span>{job.job?.jobDetails?.title || "N/A"}</span>
+    
+    {/* ⚡ AUTO APPLIED BADGE */}
+    {job.isAutoApplied && (
+      <span className="inline-flex items-center gap-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs font-semibold px-2 py-0.5 rounded-full border border-purple-200 dark:border-purple-700">
+        ⚡ Auto Applied {job.matchPercentage ? `(${job.matchPercentage}% Match)` : ''}
+      </span>
+    )}
+  </div>
+</TableCell>
+
                 <TableCell className="text-gray-800 dark:text-white font-medium">
                   {job.job?.company?.companyName || "N/A"}
                 </TableCell>

@@ -518,10 +518,76 @@ export const addRecruiterToCompany = async (req, res) => {
 };
 
 // update profile of recruiter
+// export const updateProfile = async (req, res) => {
+//   try {
+//     const { fullname, phoneNumber, position } = req.body;
+//     const { profilePhoto } = req.files; // Access files from req.files
+//     const userId = req.id;
+
+//     if (!userId) {
+//       return res.status(400).json({
+//         message: "User ID is missing in the request.",
+//         success: false,
+//       });
+//     }
+
+//     if (fullname && (typeof fullname !== "string" || fullname.length < 3)) {
+//       return res.status(200).json({
+//         message: "Fullname must be a string and at least 3 characters long.",
+//         success: false,
+//       });
+//     }
+
+//     // Validate phone number — international format
+//     const intlPhoneRegex = /^\+\d{6,15}$/;
+//     if (phoneNumber && !intlPhoneRegex.test(phoneNumber)) {
+//       return res.status(400).json({ message: "Invalid international phone number", success: false });
+//     }
+
+//     let user = await Recruiter.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found.",
+//         success: false,
+//       });
+//     }
+
+//     // Upload profile photo if provided
+//     if (profilePhoto && profilePhoto.length > 0) {
+//       const fileUri = getDataUri(profilePhoto[0]);
+//       const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+//       user.profile.profilePhoto = cloudResponse.secure_url;
+//     }
+
+//     if (fullname && user.fullname !== fullname) user.fullname = fullname;
+//     if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
+//       user.phoneNumber.number = phoneNumber;
+//       user.phoneNumber.isVerified = false;
+//     }
+//     if (position && user.position !== position) user.position = position;
+//     await user.save();
+
+//     const updatedUser = await Recruiter.findById(userId).select("-password");
+
+//     return res.status(200).json({
+//       message: "Profile updated successfully.",
+//       user: updatedUser,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error in updateProfile:", error);
+//     return res.status(500).json({
+//       message: "An error occurred while updating the profile.",
+//       error: error.message,
+//       success: false,
+//     });
+//   }
+// };
+// update profile of recruiter
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, phoneNumber, position } = req.body;
-    const { profilePhoto } = req.files; // Access files from req.files
     const userId = req.id;
 
     if (!userId) {
@@ -531,20 +597,26 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullname && (typeof fullname !== "string" || fullname.length < 3)) {
-      return res.status(200).json({
+    // Fullname validation
+    if (fullname && (typeof fullname !== "string" || fullname.trim().length < 3)) {
+      return res.status(400).json({
         message: "Fullname must be a string and at least 3 characters long.",
         success: false,
       });
     }
 
-    // Validate phone number — international format
+    // Phone number validation
     const intlPhoneRegex = /^\+\d{6,15}$/;
+
     if (phoneNumber && !intlPhoneRegex.test(phoneNumber)) {
-      return res.status(400).json({ message: "Invalid international phone number", success: false });
+      return res.status(400).json({
+        message: "Invalid international phone number.",
+        success: false,
+      });
     }
 
-    let user = await Recruiter.findById(userId);
+    // Find recruiter
+    const user = await Recruiter.findById(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -553,30 +625,60 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Upload profile photo if provided
+    // Profile photo
+    const profilePhoto = req.files?.profilePhoto;
+
     if (profilePhoto && profilePhoto.length > 0) {
       const fileUri = getDataUri(profilePhoto[0]);
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+
+      const cloudResponse = await cloudinary.uploader.upload(
+        fileUri.content
+      );
+
+      if (!user.profile) {
+        user.profile = {};
+      }
+
       user.profile.profilePhoto = cloudResponse.secure_url;
     }
 
-    if (fullname && user.fullname !== fullname) user.fullname = fullname;
-    if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
+    // Fullname
+    if (fullname && user.fullname !== fullname.trim()) {
+      user.fullname = fullname.trim();
+    }
+
+    // Phone number
+    if (
+      phoneNumber &&
+      user.phoneNumber?.number !== phoneNumber
+    ) {
       user.phoneNumber.number = phoneNumber;
+
+      // Phone changed → verification reset
       user.phoneNumber.isVerified = false;
     }
-    if (position && user.position !== position) user.position = position;
+
+    // Position
+    if (position && user.position !== position) {
+      user.position = position;
+    }
+
     await user.save();
 
-    const updatedUser = await Recruiter.findById(userId).select("-password");
+    // Return updated recruiter without password
+    const updatedUser = await Recruiter.findById(userId)
+      .select("-password")
+      .lean();
 
     return res.status(200).json({
       message: "Profile updated successfully.",
       user: updatedUser,
       success: true,
     });
+
   } catch (error) {
     console.error("Error in updateProfile:", error);
+
     return res.status(500).json({
       message: "An error occurred while updating the profile.",
       error: error.message,

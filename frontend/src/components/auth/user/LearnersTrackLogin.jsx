@@ -391,11 +391,11 @@ const LearnersTrackLogin = () => {
                     </button>
                   </form>
 
-                  <div className="mt-6 text-center">
+                  {/* <div className="mt-6 text-center">
                     <button type="button" onClick={handleOtpClick} className="text-blue-600 text-sm hover:underline font-medium">
                       {showOtpInput ? "Login with Password?" : "Login with OTP?"}
                     </button>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Trust Indicators */}

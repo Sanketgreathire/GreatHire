@@ -12,6 +12,7 @@ import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 import { validationResult } from "express-validator";
 import { isUserAssociatedForPlan } from "./company.controller.js";
+import { autoApply } from "../src/services/autoApply.service.js";
 // otpService.js
 import twilio from "twilio";
 // Setup nodemailer
@@ -74,12 +75,21 @@ export const sendVerificationStatus = async (req, res) => {
 
     // If approving (isActive = true), activate the first pending job
     if (isActive) {
-      await Job.findOneAndUpdate(
-        { company: companyId, "jobDetails.status": "pending" },
-        { "jobDetails.status": "active", "jobDetails.isActive": true },
-        { sort: { createdAt: 1 } }
-      );
+  const activatedJob = await Job.findOneAndUpdate(
+    { company: companyId, "jobDetails.status": "pending" },
+    { "jobDetails.status": "active", "jobDetails.isActive": true },
+    { sort: { createdAt: 1 }, new: true }
+  );
+
+  if (activatedJob) {
+    try {
+      await autoApply(activatedJob._id);
+      console.log("✅ Auto Apply triggered on company verification:", activatedJob._id);
+    } catch (err) {
+      console.error("Auto Apply on verification failed:", err.message);
     }
+  }
+}
 
     // Update the admin recruiter (company admin) based on company.adminEmail.
     // This assumes the admin of the company is stored as a recruiter.

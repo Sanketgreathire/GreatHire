@@ -10,7 +10,11 @@ import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
+<<<<<<< HEAD
 import NoIndex from "./components/SEO/NoIndex.jsx";
+=======
+import WhatsAppFloat from "./components/shared/WhatsAppFloat";
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
@@ -221,7 +225,7 @@ const appRouter = createBrowserRouter([
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
-  { path: "/jobs", element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
+  { path: "/jobs", element: <Jobs /> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex/><SavedJobs /></></ProtectedUserRoute> },
@@ -341,6 +345,7 @@ function App() {
             <Suspense fallback={null}>
               <RouterProvider router={appRouter} />
             </Suspense>
+            <WhatsAppFloat />
           </MessageProvider>
         </NotificationProvider>
       </JobDetailsProvider>

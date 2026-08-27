@@ -867,10 +867,15 @@ export default function DataSciencePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => setShowModal(true)}
               className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">
-              🚀 Enroll Now — Free Demo
+              🚀 Enroll Now — ₹38,000
             </button>
-            <button className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">
-              📞 Call: +91 90000 12345
+            <button onClick={() => { setEnrollAmount(60000); setShowEnroll(true); }}
+              className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
+              🚀 Enroll Now — ₹60,000
+            </button>
+            <button onClick={() => setShowModal(true)}
+              className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">
+              🎯 Book Free Demo
             </button>
           </div>
         </div>

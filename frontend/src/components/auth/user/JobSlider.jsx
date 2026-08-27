@@ -125,7 +125,12 @@ export default function JobsHiringSection() {
                           <IconComponent className={`${job.iconColor} w-6 h-6`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base font-bold text-gray-900 dark:text-white line-clamp-1">{job.title}</h3>
+                          <h3
+                            className="text-base font-bold text-gray-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            onClick={() => navigate('/jobs')}
+                          >
+                            {job.title}
+                          </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{job.company} · {job.location}</p>
                         </div>
                         <span className={`${job.badgeColor} px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0`}>{job.badge}</span>

@@ -15,7 +15,14 @@
   import http from "http";
   import { Server } from "socket.io";
 
+<<<<<<< HEAD
   import connectDB from "./utils/db.js";
+=======
+import connectDB from "./utils/db.js";
+import { Job } from "./models/job.model.js";
+import { autoApply } from "./src/services/autoApply.service.js";
+import { User } from "./models/user.model.js";
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
 
 
   // ================= ROUTES =================
@@ -76,6 +83,7 @@
   const app = express();
   const server = http.createServer(app);
 
+<<<<<<< HEAD
   const allowedOrigins =
     process.env.NODE_ENV === "production"
       ? ["https://greathire.in", "https://www.greathire.in"]
@@ -85,6 +93,211 @@
     cors: {
       origin: allowedOrigins,
       credentials: true,
+=======
+const buildAllowedOrigins = () => {
+  const configuredOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return Array.from(
+    new Set([
+      "https://greathire.in",
+      "https://www.greathire.in",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:5174",
+      ...configuredOrigins,
+    ])
+  );
+};
+
+const allowedOrigins = buildAllowedOrigins();
+const isAllowedOrigin = (origin) => !origin || allowedOrigins.includes(origin);
+
+const io = new Server(server, {
+  cors: {
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
+    credentials: true,
+  },
+});
+
+const PORT = process.env.PORT || 8000;
+app.set("trust proxy", 1);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ================= SECURITY =================
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+app.disable("x-powered-by");
+
+
+// ================= CORS =================
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Cookie"],
+  })
+);
+
+
+
+
+// ================= COMPRESSION =================
+app.use(compression({ level: 6, threshold: 1024 }));
+
+// Ensure Vary header for proper CDN caching
+app.use((req, res, next) => {
+  res.setHeader("Vary", "Accept-Encoding");
+  next();
+});
+
+// ================= MIDDLEWARE =================
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// ================= RATE LIMIT =================
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip,
+});
+app.use("/api", apiLimiter);
+
+// ================= SEO FILES =================
+app.get("/sitemap.xml", async (req, res) => {
+  try {
+    const baseUrl = "https://www.greathire.in";
+    const staticPages = ["/", "/jobs", "/blogs", "/about", "/contact"];
+    const blogs = await Blog.find({ status: "published" }).select(
+      "slug updatedAt"
+    );
+
+    res.set("Content-Type", "application/xml");
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+
+    staticPages.forEach((page) => {
+      xml += `
+        <url>
+          <loc>${baseUrl}${page}</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>`;
+    });
+
+    blogs.forEach((blog) => {
+      xml += `
+        <url>
+          <loc>${baseUrl}/blogs/${blog.slug}</loc>
+          <lastmod>${blog.updatedAt.toISOString()}</lastmod>
+          <changefreq>weekly</changefreq>
+          <priority>0.9</priority>
+        </url>`;
+    });
+
+    xml += `</urlset>`;
+    res.send(xml);
+  } catch (err) {
+    console.error("Sitemap error:", err);
+    res.status(500).send("Error generating sitemap");
+  }
+});
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`User-agent: *
+Allow: /
+Sitemap: https://www.greathire.in/sitemap.xml`);
+});
+
+// ================= ROUTES =================
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/recruiter", recruiterRoute);
+app.use("/api/v1/digitalmarketer", digitalmarketerRoute);
+app.use("/api/v1/verification", verificationRoute);
+app.use("/api/v1/company", companyRoute);
+app.use("/api/v1/job", jobRoute);
+app.use("/api/v1/application", applicationRoute);
+app.use("/api/v1/order", orderRoute);
+app.use("/api/v1/revenue", revenueRoute);
+app.use("/api", contactMessageRoute);
+app.use("/api/v1/admin", adminRoute);
+app.use("/api/v1/admin/stat", adminStatRoute);
+app.use("/api/v1/admin/user/data", adminUserDataRoute);
+app.use("/api/v1/admin/company/data", adminCompanyDataRoute);
+app.use("/api/v1/admin/recruiter/data", adminRecruiterDataRoute);
+app.use("/api/v1/admin/job/data", adminJobDataRoute);
+app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
+app.use("/api/v1/admin/sourcing", adminSourcingRoute);
+app.use("/api/v1/admin/referring-candidates", referringCandidatesRoute);
+app.use("/api/v1/notifications", notificationRoute);
+app.use("/api/v1/email", emailRoute);
+app.use("/api/v1/messages", messageRoute);
+app.use("/api/v1/college", collegeRoute);
+app.use("/api/v1/courses", courseRoute);
+app.use("/api/v1/otp", otpRoute);
+
+app.use("/api/v1/sourcing",   sourcingRoute);
+app.use("/api/v1/ingestion",  ingestionRoute);
+app.use("/api/v1/auto-sourcing", autoSourcingRoute);
+app.use("/api/v1/jd-matching", jdMatchingRoute);
+app.use("/api/v1/jobs", jobMatchingRoute);
+app.use("/api/v1/copilot", copilotRoute);
+app.use("/api/extension", extensionRoute);
+app.use("/api/outreach", outreachRoute);
+app.use("/api/candidates", enrichmentRoute);
+app.use("/api/recruiter-feedback", learningRoute);
+app.use("/api/talent-graph", talentGraphRoute);
+app.use("/api/discovery", discoveryRoute);
+app.use("/api/discovery/github", githubDiscoveryRoute);
+app.use("/api/discovery/portfolio", portfolioDiscoveryRoute);
+app.use("/api/discovery/resume", resumeDiscoveryRoute);
+app.use("/api/freshness", freshnessRoute);
+app.use("/api/orchestrator", orchestratorRoute);
+app.use("/api/talent-signals", talentSignalsRoute);
+app.use("/api/events", eventsRoute);
+
+// Serve uploaded resumes
+app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
+
+app.use("/api/v1/analytics", analyticsRoute);
+
+
+// ================= FRONTEND =================
+// Serve pre-compressed brotli/gzip assets with 1-year cache
+app.use("/assets", expressStaticGzip(path.join(__dirname, "../frontend/dist/assets"), {
+  enableBrotli: true,
+  orderPreference: ["br", "gz"],
+  customCompressions: [
+    {
+      encodingName: "br",
+      fileExtension: "br",
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
     },
   });
 
@@ -110,6 +323,7 @@
     })
   );
 
+<<<<<<< HEAD
   // ================= COMPRESSION =================
   app.use(compression({ level: 6, threshold: 1024 }));
 
@@ -117,6 +331,12 @@
   app.use((req, res, next) => {
     res.setHeader("Vary", "Accept-Encoding");
     next();
+=======
+  // Start server FIRST before starting workers
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
   });
 
   // ================= MIDDLEWARE =================

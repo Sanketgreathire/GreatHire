@@ -314,6 +314,7 @@ const RecruiterSignup = () => {
                       <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Company Contact Number</label>
                       <CompanyPhoneInput
                         value={accountData.phoneNumber}
+                        wrapperClass="gh-phone-auth"
                         onChange={(e164, dialCode, countryIso) => {
                           setAccountData((prev) => ({ ...prev, phoneNumber: e164, dialCode, countryIso }));
                           setErrors((prev) => ({ ...prev, phoneNumber: "" }));

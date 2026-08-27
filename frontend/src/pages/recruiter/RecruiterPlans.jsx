@@ -165,6 +165,34 @@ const subscriptionPlans = [
   // ────────────────────────────────────────────────────────────────────
 
   {
+    id: "enterprise-monthly",
+    title: "Enterprise — Monthly",
+    price: 2999,
+    billing: "month",
+    durationMonths: 1,
+    aiSourcingCredits: 250,
+    teamUserLimit: 2,
+    jobs: "100",
+    resumes: "2,500",
+    enterprise: true,
+    bestFor: "Best for: Small teams with consistent hiring needs",
+    features: [
+      "Unlimited Job Postings",
+      "Unlimited AI Sourcing",
+      "250 Advanced AI Sourcing Credits",
+      "2,500 Candidate Database Access",
+      "2 Team Users Included",
+      "Dedicated Relationship Manager",
+      "AI-Powered JD Creation & Smart Candidate Matching",
+      "Advanced Analytics & Hiring Dashboard",
+      "Priority Customer Support",
+      "AI Auto Scoring System",
+      "2,500 Email Outreach Credits",
+    ],
+    cta: "Buy Now",
+    color: "teal",
+  },
+  {
     id: "enterprise-3m",
     title: "Enterprise — 3 Months",
     price: 7499,
@@ -391,7 +419,7 @@ function RecruiterPlans() {
     }
 
     if (plan.enterprise) {
-      const candidateMap = { "enterprise-3m": 7500, "enterprise-6m": 15000, "enterprise-1y": 30000 };
+      const candidateMap = { "enterprise-monthly": 2500, "enterprise-3m": 7500, "enterprise-6m": 15000, "enterprise-1y": 30000 };
       initiateCreditPayment({
         title: plan.title,
         price: plan.price,
@@ -452,7 +480,7 @@ function RecruiterPlans() {
               <div className="absolute -bottom-8 right-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <div className="w-full px-4 relative z-10">
               {/* Mobile Back Button */}
               {user && (
                 <button
@@ -482,7 +510,7 @@ function RecruiterPlans() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="w-full px-4 py-16">
 
             {/* ================= PRICING TOGGLE + DESCRIPTION ================= */}
             <div className="text-center mb-12">
@@ -502,7 +530,7 @@ function RecruiterPlans() {
             </div>
 
             {/* ================= PRICING CARDS ================= */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
               {subscriptionPlans.map((plan) => {
                   const borderColor = BORDER_COLOR[plan.color] || "border-gray-200";
                   const badgeBg = BADGE_BG[plan.color] || "bg-gray-100 text-gray-600";
@@ -517,8 +545,13 @@ function RecruiterPlans() {
                     >
                       {/* Popular badge */}
                       {plan.popular && (
+<<<<<<< HEAD
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                           <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow whitespace-nowrap">
+=======
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                          <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                             ⭐ MOST POPULAR
                           </span>
                         </div>
@@ -549,18 +582,18 @@ function RecruiterPlans() {
                       <div className="mb-4">
                         {plan.isFree ? (
                           <div>
-                            <span className="text-4xl">₹0</span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">Forever Free</span>
+                            <span className="text-3xl font-bold">₹0</span>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Forever Free</p>
                           </div>
                         ) : typeof plan.price === "number" ? (
                           <div>
-                            <span className="text-4xl">₹{plan.price.toLocaleString()}</span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">/ {plan.billing}</span>
+                            <span className="text-3xl font-bold">₹{plan.price.toLocaleString()}</span>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">/ {plan.billing}</p>
                           </div>
                         ) : (
                           <div>
-                            <span className="text-4xl">{plan.price}</span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">/ {plan.billing}</span>
+                            <span className="text-3xl font-bold">{plan.price}</span>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">/ {plan.billing}</p>
                           </div>
                         )}
                       </div>

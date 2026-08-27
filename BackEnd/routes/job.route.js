@@ -34,23 +34,6 @@
 
 // export default router;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import express from "express";
 import {
   postJob,
@@ -67,6 +50,7 @@ import {
   getExternalJobsFromFindwork,
   applyJob,
   generateJD,
+  searchJobs,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isRecruiterWithCompany from "../middlewares/isRecruiterWithCompany.js";
@@ -75,6 +59,9 @@ const router = express.Router();
 
 // AI JD Generation
 router.post("/generate-jd", isAuthenticated, generateJD);
+
+// Search jobs with filters + match score
+router.get("/search", searchJobs);
 
 // Latest jobs for slider
 router.get("/slider/latest", getLatestJobsForSlider);

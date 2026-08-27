@@ -1,45 +1,102 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import Navbar from "@/components/shared/Navbar";
-// import Footer from "@/components/shared/Footer";
-import { FiFilter } from "react-icons/fi";
-
-import FilterCard from "@/pages/job/FilterCard";
-import LatestJobs from "./LatestJobs";
-import JobSearch from "@/pages/job/JobSearch";
+import Footer from "@/components/shared/Footer";
+import {
+  FiFilter,
+  FiX,
+  FiChevronDown,
+  FiChevronUp,
+  FiMapPin,
+  FiBookmark,
+  FiShare2,
+  FiBriefcase,
+  FiFileText,
+  FiSun,
+  FiUsers,
+  FiClock,
+  FiBook,
+} from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { useLocation } from "react-router-dom";
 
-// imported helmet to apply customized meta tags
-import { Helmet } from "react-helmet-async";
+const TABS = ["Overview", "Responsibilities", "Requirements", "Benefits", "Company"];
 
-const Jobs = () => {
-  const { jobs, resetFilter, error, setSelectedJob, isLoading } = useJobDetails();
-  const location = useLocation();
+function AccordionSection({ title, defaultOpen = false, highlighted = false, children }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div
+      className={`rounded-2xl border p-4 transition-colors ${
+        highlighted
+          ? "border-blue-200 bg-blue-50/60 dark:border-blue-900 dark:bg-blue-950/30"
+          : "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+      }`}
+    >
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between text-left"
+      >
+        <span
+          className={`flex items-center gap-2 font-semibold ${
+            highlighted
+              ? "text-blue-600 dark:text-blue-400"
+              : "text-gray-900 dark:text-gray-100"
+          }`}
+        >
+          {highlighted && <HiSparkles className="shrink-0" size={16} />}
+          {title}
+        </span>
+        {open ? (
+          <FiChevronUp className="text-gray-400" size={18} />
+        ) : (
+          <FiChevronDown className="text-gray-400" size={18} />
+        )}
+      </button>
+      {open && children && <div className="mt-3">{children}</div>}
+    </div>
+  );
+}
 
+function OverviewStat({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/60">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+        <Icon size={18} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="truncate font-semibold text-gray-900 dark:text-gray-100">{value || "—"}</p>
+      </div>
+    </div>
+  );
+}
+
+export default function JobDetailsPage() {
+  const { jobs, selectedJob, setSelectedJob, filterJobs, resetFilter, searchMeta, isLoading, fetchJobs } = useJobDetails();
+
+  const [activeTab, setActiveTab] = useState("Overview");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const jobListingsRef = useRef(null);
 
-  const [filters, setFilters] = useState({
-    jobTitle: "",
-    location: [], // now an array — supports multiple selected locations + nearby suggestions
-    jobType: [],
-    workPlace: [],
-    company: "",
-    datePosted: [],
-  });
+  // Filter state
+  const [titleFilter, setTitleFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [experienceFilter, setExperienceFilter] = useState("");
+  const [workPlaceFilter, setWorkPlaceFilter] = useState("");
+  const [activeFilterCount, setActiveFilterCount] = useState(0);
 
-  // searchInfo drives the JobSearch bar UI (title input only, location input removed)
-  const [searchInfo, setSearchInfo] = useState({
-    titleKeyword: "",
-    location: "",
-  });
+  const applyFilters = useCallback((title, location, experience, workPlace) => {
+    const count = [title, location, experience, workPlace].filter(Boolean).length;
+    setActiveFilterCount(count);
+    filterJobs(title, location, undefined, workPlace, experience);
+  }, [filterJobs]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 20;
-
-  useEffect(() => {
-    resetFilter?.();
-  }, []);
+  const handleReset = useCallback(() => {
+    setTitleFilter("");
+    setLocationFilter("");
+    setExperienceFilter("");
+    setWorkPlaceFilter("");
+    setActiveFilterCount(0);
+    resetFilter();
+  }, [resetFilter]);
 
   // Pre-select job when navigating from marquee
   useEffect(() => {
@@ -130,37 +187,42 @@ const Jobs = () => {
 
 
   return (
-    <>
-      <Helmet>
-        <title>Find Latest Jobs & Hire Talent Faster | Smart Job Search - GreatHire</title>
-        <meta name="description" content="Use advanced search and apply features on GreatHire to search and apply for the latest genuine job listings based on various search criteria, Hyderabad State, India, job title, location, company, job type, flexibility of the workplace, and the date of posting." />
-      </Helmet>
+    <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
+      <Navbar />
 
-      <div className="min-h-screen flex flex-col pb-4 bg-white dark:bg-gray-900">
-        <Navbar />
+      <div className="flex-1 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        <div className="mx-auto flex w-full max-w-[1500px] gap-4 px-4 py-6 sm:px-6 lg:px-8">
+          {/* Mobile filter trigger */}
+          <div className="fixed bottom-4 right-4 z-30 lg:hidden">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-3 font-medium text-white shadow-lg transition-colors hover:bg-blue-700"
+            >
+              <FiFilter size={18} /> Filters
+            </button>
+          </div>
 
-        {/* Hero Section */}
-        <div className="pt-4 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col gap-5 my-10">
-            <span className="mx-auto px-2 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium animate-bounce">
-              No. 1 Job Hunt Website
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold leading-tight dark:text-white">
-              <span className="block">Search Jobs</span>
-              <span className="block mt-4">
-                & Get Hired{" "}
-                <span className="text-blue-700 dark:text-blue-500">Smarter, Faster, Risk Free</span>
-              </span>
-            </h1>
-    
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-full max-w-[900px]">
-                <JobSearch searchInfo={searchInfo} onSearchUpdate={handleSearchUpdate} />
+          {/* Desktop sidebar */}
+          <aside className="hidden w-[320px] shrink-0 overflow-y-auto max-h-[calc(100vh-80px)] lg:block">
+            {FilterSidebarContent}
+          </aside>
+
+          {/* Mobile sidebar overlay */}
+          {isFilterOpen && (
+            <div className="fixed inset-0 z-50 flex lg:hidden">
+              <div className="absolute inset-0 bg-black/50" onClick={() => setIsFilterOpen(false)} />
+              <div className="relative h-full w-[85vw] max-w-sm overflow-y-auto bg-white p-4 shadow-2xl dark:bg-gray-900">
+                <div className="mb-2 flex justify-end">
+                  <button onClick={() => setIsFilterOpen(false)} className="rounded-full p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <FiX size={20} />
+                  </button>
+                </div>
+                {FilterSidebarContent}
               </div>
             </div>
-          </div>
-        </div>
+          )}
 
+<<<<<<< HEAD
         {/* Jobs Listing Section */}
         <div className="w-full bg-white dark:bg-gray-900">
           <div ref={jobListingsRef} className="flex-grow w-full max-w-[1500px] mx-auto pt-2 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
@@ -171,8 +233,54 @@ const Jobs = () => {
               {/* Sidebar — ── CHANGE: reduced from lg:w-72 to lg:w-56, added pr-2 so content doesn't butt against job list ── */}
               <div className="hidden lg:block lg:w-64 flex-shrink-0 lg:pl-4 lg:pr-2 pb-4">
                 <FilterCard filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
+=======
+          {/* Detail panel */}
+          <main className="min-w-0 flex-1">
+            {isLoading ? (
+              <div className="flex h-40 items-center justify-center text-gray-500 dark:text-gray-400">
+                Loading jobs...
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
               </div>
+            ) : job ? (
+              <div className="rounded-2xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                {/* Header */}
+                <div className="flex flex-col gap-4 border-b border-gray-100 p-5 dark:border-gray-800 sm:flex-row sm:items-start sm:justify-between sm:p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-gray-200 bg-white text-2xl font-bold text-gray-400 shadow-sm dark:border-gray-700">
+                      {getInitial(job)}
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
+                        {job.jobDetails?.title}
+                      </h1>
+                      <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:text-base">
+                        <span className="font-medium text-blue-600 dark:text-blue-400">{job.jobDetails?.companyName}</span>
+                        <span className="text-gray-300 dark:text-gray-600">•</span>
+                        <span className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                          <FiMapPin size={14} /> {job.jobDetails?.location}
+                        </span>
+                        <span className="text-gray-300 dark:text-gray-600">•</span>
+                        <span className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                          <FiBriefcase size={14} /> {job.jobDetails?.workPlaceFlexibility}
+                        </span>
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        ₹{job.jobDetails?.salary}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {job.jobDetails?.urgentHiring === "Yes" && (
+                          <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-700 dark:border-green-900 dark:bg-green-950/40 dark:text-green-400">
+                            ⚡ Urgent Hiring
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-400">
+                          <FiClock size={12} /> Responds in {job.jobDetails?.respondTime} days
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
+<<<<<<< HEAD
               {/* Main area — min-w-0 prevents flex overflow */}
               <div className="flex-1 min-w-0 px-2 overflow-hidden">
                 <div className="flex items-center justify-between mb-4 lg:hidden px-4 sm:px-6">
@@ -180,45 +288,186 @@ const Jobs = () => {
                     <FiFilter size={18} /> Filters
                   </button>
                   <div className="text-sm text-gray-600 dark:text-gray-400 font-semibold">{totalFilteredJobs} jobs</div>
+=======
+                  <div className="flex shrink-0 flex-row items-start gap-2 sm:flex-col sm:items-end">
+                    {job.matchScore && (
+                      <div className="rounded-xl bg-blue-50 px-4 py-2 text-right dark:bg-blue-950/50">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">AI Match Score</p>
+                        <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{job.matchScore}%</p>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <button aria-label="Save job" className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                        <FiBookmark size={18} />
+                      </button>
+                      <button aria-label="Share job" className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                        <FiShare2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                 </div>
 
-                {isLoading ? (
-                  <div className="flex justify-center items-center h-40">
-                    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-r-transparent"></div>
+                {/* Quick overview */}
+                <div className="p-5 sm:p-8">
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                    Quick Overview
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    <OverviewStat icon={FiBriefcase} label="Experience" value={job.jobDetails?.experience} />
+                    <OverviewStat icon={FiFileText} label="Type" value={job.jobDetails?.jobType} />
+                    <OverviewStat icon={FiSun} label="Shift" value={job.jobDetails?.shift} />
+                    <OverviewStat icon={FiUsers} label="Openings" value={job.jobDetails?.numberOfOpening} />
+                    <OverviewStat icon={FiClock} label="Posted" value={`${activeDays(job.createdAt)}d ago`} />
+                    <OverviewStat icon={FiBook} label="Duration" value={job.jobDetails?.duration} />
                   </div>
-                ) : displayedJobs.length > 0 ? (
-                  <>
-                    <LatestJobs jobs={displayedJobs} />
-                    <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-4 mt-6 mb-6 px-4 sm:px-6">
-                      <button className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>← Previous</button>
-                      <span className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-300 text-center whitespace-nowrap">
-                        Page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of <span className="text-blue-600 dark:text-blue-400">{totalPages}</span>
-                      </span>
-                      <button className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>Next →</button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex justify-center items-center h-40 px-4">
-                    <span className="text-gray-500 dark:text-gray-400 text-lg">No jobs found matching your criteria</span>
+
+                  {/* Tabs */}
+                  <div className="mt-6 flex gap-6 overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+                    {TABS.map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`shrink-0 pb-3 text-sm font-medium transition-colors ${
+                          activeTab === tab
+                            ? "border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                            : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
                   </div>
-                )}
+
+                  {/* Tab content */}
+                  <div className="mt-6">
+                    {activeTab === "Overview" && (
+                      <>
+                        {/* AI Job Snapshot */}
+                        <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 dark:border-blue-900 dark:bg-blue-950/30">
+                          <p className="mb-3 flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
+                            <HiSparkles size={16} /> AI Job Snapshot
+                          </p>
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="space-y-2 text-sm">
+                              <p className="text-gray-600 dark:text-gray-300">
+                                <span className="text-gray-500 dark:text-gray-400">Skills: </span>
+                                {(job.jobDetails?.skills || []).join(", ") || "—"}
+                              </p>
+                              <p className="text-gray-600 dark:text-gray-300">
+                                <span className="text-gray-500 dark:text-gray-400">Salary Type: </span>
+                                {job.jobDetails?.salaryType || "—"}
+                              </p>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                              {job.matchScore && (
+                                <p className="text-gray-600 dark:text-gray-300">
+                                  <span className="text-gray-500 dark:text-gray-400">Match Score: </span>
+                                  <span className="text-green-600 dark:text-green-400">{job.matchScore}%</span>
+                                </p>
+                              )}
+                              <p className="text-gray-600 dark:text-gray-300">
+                                <span className="text-gray-500 dark:text-gray-400">Any Amount: </span>
+                                {job.jobDetails?.anyAmount || "—"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <h3 className="mb-2 mt-6 text-lg font-bold text-gray-900 dark:text-gray-100">About this Role</h3>
+                        <div
+                          className="leading-relaxed text-gray-600 dark:text-gray-300"
+                          dangerouslySetInnerHTML={{ __html: job.jobDetails?.details || "" }}
+                        />
+
+                        {(job.jobDetails?.responsibilities || []).length > 0 && (
+                          <>
+                            <h3 className="mb-3 mt-6 text-lg font-bold text-gray-900 dark:text-gray-100">Responsibilities</h3>
+                            <ul className="space-y-2">
+                              {job.jobDetails.responsibilities.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    {activeTab === "Responsibilities" && (
+                      <ul className="space-y-2">
+                        {(job.jobDetails?.responsibilities || []).map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {activeTab === "Requirements" && (
+                      <ul className="space-y-2">
+                        {(job.jobDetails?.qualifications || []).map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {activeTab === "Benefits" && (
+                      <ul className="space-y-2">
+                        {(job.jobDetails?.benefits || []).map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {activeTab === "Company" && (
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {job.jobDetails?.companyName} — {job.jobDetails?.location}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Sticky apply footer */}
+                <div className="sticky bottom-0 flex flex-col items-start justify-between gap-3 rounded-b-2xl border-t border-gray-100 bg-white/95 p-5 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:flex-row sm:items-center sm:p-6">
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">Ready to apply?</p>
+                    <p className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                      ⚡ Typically responds within {job.jobDetails?.respondTime} days
+                    </p>
+                  </div>
+                  <div className="flex w-full gap-2 sm:w-auto">
+                    <button aria-label="Save job" className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800">
+                      <FiBookmark size={18} />
+                    </button>
+                    <a
+                      href={`/jobs/${job._id}`}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-md transition-colors hover:bg-blue-700 sm:flex-none"
+                    >
+                      Apply Now →
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              <div className="flex h-40 items-center justify-center text-gray-500 dark:text-gray-400">
+                Select a job to see details
+              </div>
+            )}
+          </main>
         </div>
-
-        {/* Mobile Sidebar Overlay */}
-        {isFilterOpen && (
-          <div className="fixed inset-0 z-50 flex lg:hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={() => setIsFilterOpen(false)}></div>
-            <div className="relative bg-white dark:bg-gray-800 w-64 sm:w-72 h-full shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-y-auto">
-              <FilterCard filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} onClose={() => setIsFilterOpen(false)} />
-            </div>
-          </div>
-        )}
       </div>
-    </>
-  );
-};
 
-export default Jobs;
+      <Footer />
+    </div>
+  );
+}

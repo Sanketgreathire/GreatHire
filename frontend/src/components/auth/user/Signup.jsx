@@ -51,6 +51,9 @@ const inputClass =
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState({
+  autoApply: true,
+});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -260,6 +263,8 @@ const Signup = () => {
       } else if (hasExperience === false) {
         formPayload.append("experiences", JSON.stringify([]));
       }
+
+      formPayload.append("autoApply", input.autoApply);
 
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
@@ -606,7 +611,40 @@ const Signup = () => {
                           </div>
                         </div>
                         <p className="text-xs text-gray-500 mt-1"><strong>Note:</strong> PDF or DOCX (.pdf, .docx) only. Max 10MB.</p>
-                      </div>
+                      </div> 
+
+ {/* Auto Apply Toggle */}
+<div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-6 flex items-center justify-between bg-white dark:bg-gray-800">
+  <div className="pr-4">
+    <label className="font-semibold text-base text-gray-800 dark:text-white">
+      Enable Auto Apply
+    </label>
+
+    <p className="text-sm text-gray-500 mt-1">
+      Automatically apply to jobs when your profile matches at least 65% of
+      the job description.
+    </p>
+
+    {/* Short Message */}
+    <p className="text-sm text-blue-500 mt-2">
+      Auto Apply is enabled by default. To turn it off, go to Edit Profile.
+    </p>
+  </div>
+
+  {/* Toggle - ON and Disabled */}
+  <div
+    className="relative w-24 h-12 rounded-full bg-green-500 flex-shrink-0 cursor-not-allowed opacity-90"
+  >
+    {/* YES */}
+    <span className="absolute inset-0 flex items-center justify-start pl-4 text-white font-bold text-sm pointer-events-none">
+      YES
+    </span>
+
+    {/* Toggle Circle */}
+    <div className="absolute top-1 right-1 w-10 h-10 bg-white rounded-full shadow-md" />
+  </div>
+</div>
+
 
                       {/* Experience */}
                       <div>

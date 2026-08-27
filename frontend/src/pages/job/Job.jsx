@@ -20,7 +20,7 @@ const Job = ({ job }) => {
   const { user } = useSelector((state) => state.auth);
 
   const isBookmarked = useMemo(() => job?.saveJob?.includes(user?._id) || false, [job?.saveJob, user?._id]);
-  const isApplied = useMemo(() => job?.application?.some((a) => a.applicant === user?._id) || false, [job?.application, user?._id]);
+  const isApplied = useMemo(() => job?.application?.some((a) => String(a.applicant?._id || a.applicant) === String(user?._id)) || false, [job?.application, user?._id]);
   const activeDays = useMemo(() => Math.floor((Date.now() - new Date(job?.createdAt)) / 86400000), [job?.createdAt]);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const Job = ({ job }) => {
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 border">
         
         {/* Header Section with Badge and Icons */}
-        <div className="flex justify-between items-center mb-2 min-h-[28px]">
+        <div className="flex justify-between items-center min-h-[28px]">
 
           {/* Urgent Hiring Label */}
           {job?.jobDetails?.urgentHiring === "Yes" && (
@@ -106,9 +106,15 @@ const Job = ({ job }) => {
         <h3 className="text-lg font-semibold line-clamp-2 min-h-[48px] text-gray-900 dark:text-white">{job?.jobDetails?.title}</h3>
 
         {/* Company Name and Location Section */}
+<<<<<<< HEAD
         <div className="flex items-center justify-between gap-2 min-w-0">
           <div className="text-gray-700 dark:text-gray-300 font-medium truncate">{job?.jobDetails?.companyName}</div>
           <div className="text-right flex-shrink-0">
+=======
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-gray-700 dark:text-gray-300 font-medium">{job?.jobDetails?.companyName}</div>
+          <div className="text-right">
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
             <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.workPlaceFlexibility}</p>
             <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-[120px] sm:max-w-none">{job?.jobDetails?.location}</p>
           </div>

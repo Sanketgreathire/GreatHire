@@ -166,7 +166,11 @@ const userSchema = new mongoose.Schema(
       documents: {
         type: [String],
         default: [],
-      },
+      },  
+      //autoApply
+      autoApply: {
+      type: Boolean,
+      default: false, },
     },
   },
   { timestamps: true }

@@ -1,11 +1,11 @@
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
-const CompanyPhoneInput = ({ value, onChange }) => {
+const CompanyPhoneInput = ({ value, onChange, wrapperClass = "" }) => {
   const rawValue = value || "+91";
 
   return (
-    <div className="w-full gh-phone gh-phone-field">
+    <div className={`w-full gh-phone gh-phone-field relative z-50 ${wrapperClass}`}>
       <PhoneInput
         defaultCountry="in"
         value={rawValue}
@@ -19,6 +19,7 @@ const CompanyPhoneInput = ({ value, onChange }) => {
           dropdownStyle: {
             maxHeight: "180px",
             width: "100%",
+            zIndex: 9999,
           },
         }}
         onChange={(phone, meta) => {
