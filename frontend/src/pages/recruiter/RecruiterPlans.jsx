@@ -545,13 +545,8 @@ function RecruiterPlans() {
                     >
                       {/* Popular badge */}
                       {plan.popular && (
-<<<<<<< HEAD
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow whitespace-nowrap">
-=======
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
                           <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full shadow">
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                             ⭐ MOST POPULAR
                           </span>
                         </div>

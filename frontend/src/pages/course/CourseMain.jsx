@@ -756,7 +756,6 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   type="text"
                   placeholder="Your full name"
                   value={form.name}
-<<<<<<< HEAD
                   onChange={(e) => {
                     const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, "");
                     setForm({ ...form, name: filteredValue });
@@ -764,10 +763,6 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.name ? "border-red-500" : "border-gray-200"
                   }`}
-=======
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
               </div>
@@ -779,13 +774,9 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   placeholder="you@example.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-<<<<<<< HEAD
                   className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.email ? "border-red-500" : "border-gray-200"
                   }`}
-=======
-                  className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
               </div>
@@ -797,13 +788,9 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   placeholder="+91 98765 43210"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-<<<<<<< HEAD
                   className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.phone ? "border-red-500" : "border-gray-200"
                   }`}
-=======
-                  className="w-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
                 />
                 {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone}</p>}
               </div>
