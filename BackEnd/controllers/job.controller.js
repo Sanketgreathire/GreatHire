@@ -12,7 +12,7 @@ import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
-import { autoApply } from "./autoApply.service.js";
+import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
@@ -1158,6 +1158,62 @@ async function findAndNotifyMatchingCandidates(job) {
 async function sendGeneralJobAlert(job) {
   // Removed to prevent timeout - only skill-based matching is used
 }
+
+function computeMatchScore(query, job) {
+  if (!query) return null;
+  const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const fields = [
+    job.jobDetails?.title || "",
+    (job.jobDetails?.skills || []).join(" "),
+    job.jobDetails?.details || "",
+    job.jobDetails?.experience || "",
+    job.jobDetails?.location || "",
+  ].join(" ").toLowerCase();
+  const matched = keywords.filter(k => fields.includes(k)).length;
+  return Math.min(Math.round((matched / keywords.length) * 70) + 20, 95);
+}
+
+export const searchJobs = async (req, res) => {
+  try {
+    const { query, location, experience, workPlaceFlexibility, jobType, page = 1, limit = 20 } = req.query;
+    const isProduction = process.env.NODE_ENV === "production";
+    const filter = { "jobDetails.isActive": true };
+
+    if (isProduction) {
+      const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
+      filter.company = { $in: verifiedIds };
+    }
+    if (query) {
+      filter.$or = [
+        { "jobDetails.title": { $regex: query, $options: "i" } },
+        { "jobDetails.skills": { $regex: query, $options: "i" } },
+        { "jobDetails.details": { $regex: query, $options: "i" } },
+      ];
+    }
+    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
+    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
+    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
+    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [jobs, total] = await Promise.all([
+      Job.find(filter).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).populate("company", "name logo isActive").lean(),
+      Job.countDocuments(filter),
+    ]);
+
+    const results = jobs.map(job => ({ ...job, matchScore: query ? computeMatchScore(query, job) : null }));
+    if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+    return res.status(200).json({
+      success: true, total, page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
+      count: results.length, query: query || null, jobs: results,
+    });
+  } catch (error) {
+    console.error("Error searching jobs:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 export const testAutoApply = async (req, res) => {
   try {
