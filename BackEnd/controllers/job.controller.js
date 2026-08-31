@@ -12,10 +12,7 @@ import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
-<<<<<<< HEAD
-=======
-import { autoApply } from "../src/services/autoApply.service.js";
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+import { autoApply } from "./autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
@@ -258,12 +255,6 @@ export const postJob = [
 
 
 await newJob.save();
-<<<<<<< HEAD
-console.log("🚀 CALLING notifyMatchingJobSeekers");
-console.log("🚀 JOB ID:", newJob._id);
-console.log("🚀 JOB TITLE:", newJob.jobDetails.title);
-=======
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
 try {
   await notifyMatchingJobSeekers(newJob);
 
@@ -280,25 +271,8 @@ try {
 // existing code continues here
 
 
-<<<<<<< HEAD
-// console.log("🔥 JOB SAVED:", newJob._id);
-// console.log("🔥 JOB STATUS:", jobStatus);
-// console.log("🔥 JOB ACTIVE:", jobIsActive);
-
 // Auto Apply only for active jobs
 if (jobIsActive) {
-  // console.log("🔥 ABOUT TO START AUTO APPLY");
-  // console.log("Job ID:", newJob._id);
-=======
-console.log("🔥 JOB SAVED:", newJob._id);
-console.log("🔥 JOB STATUS:", jobStatus);
-console.log("🔥 JOB ACTIVE:", jobIsActive);
-
-// Auto Apply only for active jobs
-if (jobIsActive) {
-  console.log("🔥 ABOUT TO START AUTO APPLY");
-  console.log("Job ID:", newJob._id);
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
 
   try {
     await autoApply(newJob._id);
@@ -479,46 +453,14 @@ export const getAllJobs = async (req, res) => {
   try {
     const isProduction = process.env.NODE_ENV === "production";
 
-<<<<<<< HEAD
     let query = {};
 
     if (isProduction) {
-      // In production: only show active jobs from verified companies
       const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
       query = { "jobDetails.isActive": true, company: { $in: verifiedCompanyIds } };
     }
-    // In dev: return all jobs regardless of isActive or company verification
 
     const jobs = await Job.find(query)
-=======
-    console.log("VERIFIED COMPANY IDS:", verifiedCompanyIds);
-console.log("VERIFIED COMPANY COUNT:", verifiedCompanyIds.length);
-
-const totalJobs = await Job.countDocuments();
-console.log("TOTAL JOBS:", totalJobs);
-
-const activeJobs = await Job.countDocuments({
-  "jobDetails.isActive": true
-});
-console.log("ACTIVE JOBS:", activeJobs);
-
-
-
-    console.log("VERIFIED COMPANY IDS:", verifiedCompanyIds);
-console.log("VERIFIED COMPANY COUNT:", verifiedCompanyIds.length);
-
-const totalJobs = await Job.countDocuments();
-console.log("TOTAL JOBS:", totalJobs);
-
-const activeJobs = await Job.countDocuments({
-  "jobDetails.isActive": true
-});
-console.log("ACTIVE JOBS:", activeJobs);
-
-
-
-    const cursor = Job.find({ company: { $in: verifiedCompanyIds }, "jobDetails.isActive": true })
->>>>>>> 0db4679e2e4540e959addd53a206c00dd65ccd00
       .sort({ createdAt: -1 })
       .populate({ path: "application" })
       .lean();
@@ -1217,93 +1159,6 @@ async function sendGeneralJobAlert(job) {
   // Removed to prevent timeout - only skill-based matching is used
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-// Compute a simple match score (0-100) between a search query and a job
-function computeMatchScore(query, job) {
-  if (!query) return null;
-  const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
-  const fields = [
-    job.jobDetails?.title || "",
-    (job.jobDetails?.skills || []).join(" "),
-    job.jobDetails?.details || "",
-    job.jobDetails?.experience || "",
-    job.jobDetails?.location || "",
-  ].join(" ").toLowerCase();
-
-  const matched = keywords.filter(k => fields.includes(k)).length;
-  const score = Math.round((matched / keywords.length) * 70) + 20;
-  return Math.min(score, 95);
-}
-
-// Search jobs with filters + match score
-export const searchJobs = async (req, res) => {
-  try {
-    const {
-      query,
-      location,
-      experience,
-      workPlaceFlexibility,
-      jobType,
-      page = 1,
-      limit = 20,
-    } = req.query;
-
-    const isProduction = process.env.NODE_ENV === "production";
-    const filter = { "jobDetails.isActive": true };
-
-    if (isProduction) {
-      const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
-      filter.company = { $in: verifiedIds };
-    }
-
-    if (query) {
-      filter.$or = [
-        { "jobDetails.title": { $regex: query, $options: "i" } },
-        { "jobDetails.skills": { $regex: query, $options: "i" } },
-        { "jobDetails.details": { $regex: query, $options: "i" } },
-      ];
-    }
-
-    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
-    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
-    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
-    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
-
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-
-    const [jobs, total] = await Promise.all([
-      Job.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .populate("company", "name logo isActive")
-        .lean(),
-      Job.countDocuments(filter),
-    ]);
-
-    const results = jobs.map(job => ({
-      ...job,
-      matchScore: query ? computeMatchScore(query, job) : null,
-    }));
-
-    if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
-
-    return res.status(200).json({
-      success: true,
-      total,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(limit)),
-      count: results.length,
-      query: query || null,
-      jobs: results,
-    });
-  } catch (error) {
-    console.error("Error searching jobs:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-=======
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
 export const testAutoApply = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -1331,9 +1186,5 @@ export const testAutoApply = async (req, res) => {
       success: false,
       message: error.message,
     });
-<<<<<<< HEAD
-=======
->>>>>>> 0db4679e2e4540e959addd53a206c00dd65ccd00
->>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
   }
 };
