@@ -8,8 +8,8 @@ const ICON_BG = ['bg-blue-100 dark:bg-blue-900/50', 'bg-purple-100 dark:bg-purpl
 const ICON_COLOR = ['text-blue-600 dark:text-blue-400', 'text-purple-600 dark:text-purple-400', 'text-pink-600 dark:text-pink-400', 'text-green-600 dark:text-green-400'];
 
 const DEMO_JOBS = [
-  { id: 1, title: 'Software Developer', company: 'TCS', location: 'Bangalore', salary: '5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Briefcase, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { id: 2, title: 'HR Manager', company: 'Infosys', location: 'Mumbai', salary: '4-6 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
+  { id: 1, title: 'Software Developer', company: 'Solutions Private Limited', location: 'Bangalore', salary: '5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Briefcase, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 2, title: 'HR Manager', company: '', location: 'Mumbai', salary: '4-6 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
   { id: 3, title: 'Marketing Lead', company: 'Flipkart', location: 'Delhi', salary: '5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Megaphone, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
   { id: 4, title: 'Data Analyst', company: 'Wipro', location: 'Hyderabad', salary: '6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
   { id: 5, title: 'Frontend Developer', company: 'Amazon', location: 'Pune', salary: '4.5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Briefcase, iconBg: 'bg-green-100 dark:bg-green-900/50', iconColor: 'text-green-600 dark:text-green-400' },
@@ -125,7 +125,12 @@ export default function JobsHiringSection() {
                           <IconComponent className={`${job.iconColor} w-6 h-6`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base font-bold text-gray-900 dark:text-white line-clamp-1">{job.title}</h3>
+                          <h3
+                            className="text-base font-bold text-gray-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                            onClick={() => navigate('/jobs')}
+                          >
+                            {job.title}
+                          </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{job.company} · {job.location}</p>
                         </div>
                         <span className={`${job.badgeColor} px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0`}>{job.badge}</span>
@@ -153,7 +158,7 @@ export default function JobsHiringSection() {
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start sm:justify-center gap-4 sm:gap-8">
               {[
-                { Icon: ShieldCheck, label: 'Trusted by 6 Crore+ Users' },
+                { Icon: ShieldCheck, label: 'Trusted by 6 lakh+ Users' },
                 { Icon: Lock, label: 'ISO Secure Platform' },
                 { Icon: DollarSign, label: 'Zero Placement Fees' },
               ].map(({ Icon, label }) => (

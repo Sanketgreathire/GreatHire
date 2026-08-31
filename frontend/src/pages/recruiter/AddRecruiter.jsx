@@ -80,7 +80,7 @@ const AddRecruiter = () => {
                 Upgrade your plan to add more recruiters.
               </p>
               <button
-                onClick={() => window.location.href = "/recruiter/dashboard/upgrade-plans"}
+                onClick={() => window.location.href = "/packages"}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold"
               >
                 Upgrade Plan

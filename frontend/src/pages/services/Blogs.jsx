@@ -156,7 +156,7 @@ const categories = [
 // ---------------------------------------------------------------------------
 
 const FeaturedCard = memo(({ post, onNavigate }) => (
-  <div className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-3 border border-gray-100">
+  <div className="group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-3 border border-gray-100 flex flex-col h-full flex-1">
     <div className={`absolute inset-0 bg-gradient-to-br ${post.gradient} opacity-0 group-hover:opacity-10 transition-opacity`} />
     <div className="p-8">
       <div className="relative mb-6">
@@ -165,7 +165,8 @@ const FeaturedCard = memo(({ post, onNavigate }) => (
         </div>
       </div>
       <h3 className="text-2xl font-bold mb-4 text-gray-800">{post.title}</h3>
-      <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4">{post.description}</p>
+      <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4 flex-1">{post.description}</p>
+      <div className="mt-auto">
       <button
         type="button"
         onClick={() => onNavigate(`/blog/${post.id}`)}
@@ -173,6 +174,7 @@ const FeaturedCard = memo(({ post, onNavigate }) => (
       >
         Read More <ChevronRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
       </button>
+      </div>
     </div>
     <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <Star className="w-5 h-5 text-yellow-500" />
@@ -184,17 +186,19 @@ FeaturedCard.displayName = "FeaturedCard";
 const CategoryCard = memo(({ post, colorKey }) => {
   const { from, to, text } = COLOR_GRADIENTS[colorKey] ?? COLOR_GRADIENTS.blue;
   return (
-    <div className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-3">
-      <div className="p-8">
+    <div className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-3 flex flex-col h-full w-full">
+      <div className="p-8 flex flex-col flex-1">
         <div className="flex items-start gap-4 mb-6">
           <div className={`flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br ${from} ${to} flex items-center justify-center text-3xl shadow-lg`}>
             {post.icon}
           </div>
           <h3 className="text-xl font-bold text-gray-800 flex-1 leading-tight mt-1">{post.title}</h3>
         </div>
-        <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4">{post.description}</p>
+        <p className="text-gray-600 leading-relaxed mb-6 line-clamp-4 flex-1">{post.description}</p>
+        <div className="mt-auto">
         <div className={`flex items-center ${text} font-bold cursor-pointer`}>
           Learn More <ChevronRight className="w-5 h-5 transform group-hover:translate-x-2 transition-transform" />
+        </div>
         </div>
       </div>
     </div>

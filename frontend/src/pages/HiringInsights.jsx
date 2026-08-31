@@ -60,12 +60,12 @@ export default function HiringInsights() {
     <>
     <Helmet>
             <title>
-              GreatHire Blog | Career Guidance, Employment Patterns, and Perspectives on the Future of Work
+              Career Guidance, Employment Patterns, and Perspectives on the Future of Work | GreatHire
             </title>
     
             <meta
               name="description"
-              content="GreatHire Blog: Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
+              content="Your one-stop destination for expert career advice, effective hiring strategies, and interview tips, along with guidance on resume optimization and the future of work. Our insight will help both job seekers and employers deal with the most competitive markets, be it AI-driven recruitment and remote work trends or preparing for an interview and upskilling. GreatHire is based in Hyderabad State, India, and serves businesses, recruiters, and professionals throughout the Hyderabad State region with innovative hiring solutions and career guidance."
             />
           </Helmet>
     

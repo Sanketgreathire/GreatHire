@@ -122,12 +122,12 @@ const DeleteAccount = () => {
 
       {/* Check if the company exists and user is active */}
       {company && user?.isActive ? (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
-          <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md mx-4 sm:mx-0">
-            <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-6">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 w-full max-w-md mx-4 sm:mx-0">
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white text-center mb-6">
               Delete Account
             </h1>
-            <p className="text-sm text-gray-700 text-center mb-6">
+            <p className="text-sm text-gray-700 dark:text-gray-300 text-center mb-6">
               Before leaving, assign a recruiter as the new admin. Remember, you
               will lose all admin rights.
             </p>
@@ -136,7 +136,7 @@ const DeleteAccount = () => {
             <div className="mb-6">
               <label
                 htmlFor="recruiter"
-                className="block text-sm font-medium text-gray-800 mb-2"
+                className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
               >
                 Select a Recruiter
               </label>
@@ -144,9 +144,9 @@ const DeleteAccount = () => {
                 id="recruiter"
                 value={selectedEmail}
                 onChange={(e) => setSelectedEmail(e.target.value)}
-                className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg shadow-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
               >
-                <option value="">Choose a recruiter</option>
+                <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">Choose a recruiter</option>
                 {recruiters?.map(
                   (recruiter) =>
                     company?.adminEmail !== recruiter?.emailId.email && (
@@ -194,12 +194,12 @@ const DeleteAccount = () => {
           </div>
         </div>
       ) : !company ? (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">Company not created</span>
+        <p className="h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+          <span className="text-4xl text-gray-400 dark:text-gray-500">Company not created</span>
         </p>
       ) : (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">
+        <p className="h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+          <span className="text-4xl text-gray-400 dark:text-gray-500">
             You are not verified by GreatHire
           </span>
         </p>

@@ -253,6 +253,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     gender: user?.profile?.gender || "",
     qualification: user?.profile?.qualification || "",
     otherQualification: user?.profile?.otherQualification || "",
+
+    autoApply: user?.profile?.autoApply || false,
   });
 
   // State for profile image preview
@@ -674,6 +676,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     });
     formData.append("bio", input.bio || "");
     formData.append("skills", input.skills || "");
+
+    formData.append("autoApply", input.autoApply)
     formData.append("qualification", input.qualification || "");
     if (input.qualification === "Others") {
       formData.append("otherQualification", input.otherQualification || "");
@@ -726,7 +730,20 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               },
             };
         // dispatch(setUser(response.data.user));
-        dispatch(setUser(updatedUser));
+        // dispatch(setUser(updatedUser));
+
+        // updatedUser.profile.autoApply=input.autoApply;
+
+        const updatedUserWithAutoApply = {
+  ...updatedUser,
+  profile: {
+    ...updatedUser.profile,
+    autoApply: input.autoApply,
+  },
+};
+
+dispatch(setUser(updatedUserWithAutoApply));
+        
         setSelectedCategories(
           Array.isArray(updatedUser.profile?.category)
             ? updatedUser.profile.category
@@ -877,7 +894,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       name="fullname"
                       value={input.fullname}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Enter your full name"
                       required
                     />
@@ -895,7 +912,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       name="email"
                       value={input.email}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="example@gmail.com"
                       required
                     />
@@ -913,7 +930,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       name="phoneNumber"
                       value={input.phoneNumber}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Phone Number"
                       maxLength={10}
                       required
@@ -931,7 +948,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                       name="alternatePhone"
                       value={input.alternatePhone}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Alt. Phone (Optional)"
                       maxLength={10}
                     />
@@ -1000,7 +1017,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                         value={input.otherQualification}
                         onChange={handleChange}
                         required
-                        className="w-full sm:flex-1"
+                        className="w-full sm:flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                         placeholder="Enter your qualification"
                       />
                     </div>
@@ -1054,7 +1071,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     name="pincode"
                     value={input.pincode}
                     onChange={handleChange}
-                    className="w-full"
+                    className="w-full bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                     placeholder="Enter Pincode"
                     required
                   />
@@ -1159,7 +1176,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                   handleExperienceChange(index, "jobProfile", e.target.value)
                                 }
                                 placeholder="e.g., Software Developer, Data Analyst"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1174,7 +1191,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                   handleExperienceChange(index, "companyName", e.target.value)
                                 }
                                 placeholder="e.g., Infosys, Google"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1189,7 +1206,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                   handleExperienceChange(index, "duration", e.target.value)
                                 }
                                 placeholder="e.g., 2 (in years only)"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1208,7 +1225,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                   }
                                 }}
                                 placeholder="Describe your work experience in detail..."
-                                className="w-full border rounded p-2 h-32 md:h-40 lg:h-48"
+                                className="w-full border rounded p-2 h-32 md:h-40 lg:h-48 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                               {/* Word Counter */}
@@ -1234,7 +1251,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 e.target.checked
                               )
                             }
-                          />
+                          />  
                           <label className="font-medium">Currently Working</label>
                         </div>
 
@@ -1248,7 +1265,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 type="text"
                                 value={exp.currentCTC || ""}
                                 onChange={(e) => handleExperienceChange(index, "currentCTC", e.target.value)}
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 placeholder="e.g. 10 LPA"
                                 required
                               />
@@ -1263,7 +1280,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                                 onChange={(e) =>
                                   handleExperienceChange(index, "noticePeriod", e.target.value)
                                 }
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 placeholder="e.g. 15 days"
                                 required
                               />
@@ -1291,7 +1308,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     name="bio"
                     value={input.bio}
                     onChange={handleChange}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 border dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 
                     rows="3"
                     placeholder="Enter your bio..."
@@ -1312,6 +1329,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                     value={input.skills}
                     onChange={handleChange}
                     placeholder="Enter skills (comma separated)"
+                    className="bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                     required
                   />
                 </div>
@@ -1452,6 +1470,53 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               </div>
 
             </div>
+
+            {/* Auto Apply Toggle */}
+<div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-6 flex items-center justify-between bg-white dark:bg-gray-800">
+  <div className="pr-4">
+    <label
+      onClick={() =>
+        setInput((prev) => ({
+          ...prev,
+          autoApply: !prev.autoApply,
+        }))
+      }
+      className="font-semibold text-base cursor-pointer text-gray-800 dark:text-white"
+    >
+      Enable Auto Apply
+    </label>
+    <p className="text-sm text-gray-500 mt-1">
+      Automatically apply to jobs when your profile matches at least 65% of the job skills.
+    </p>
+  </div>
+
+  <div
+    onClick={() =>
+      setInput((prev) => ({
+        ...prev,
+        autoApply: !prev.autoApply,
+      }))
+    }
+    className={`relative w-24 h-12 rounded-full cursor-pointer transition-all duration-300 flex-shrink-0 ${
+      input.autoApply ? "bg-green-500" : "bg-gray-400"
+    }`}
+  >
+    <span
+      className={`absolute inset-0 flex items-center text-white font-bold text-sm transition-all duration-300 pointer-events-none ${
+        input.autoApply ? "justify-start pl-4" : "justify-end pr-4"
+      }`}
+    >
+      {input.autoApply ? "YES" : "NO"}
+    </span>
+    <div
+      className={`absolute top-1 w-10 h-10 bg-white rounded-full shadow-md transition-all duration-300 ${
+        input.autoApply ? "right-1" : "left-1"
+      }`}
+    />
+  </div>
+</div>
+
+
             {/* Submit Button */}
             <Button
               type="submit"

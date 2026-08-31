@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 
@@ -29,6 +28,15 @@ const applicationSchema = new mongoose.Schema(
       type: String,
       enum: ["Pending", "Interview Schedule", "Shortlisted", "Rejected"],
       default: "Pending",
+    },
+    // 👈 YE DO FIELDS ADD KARO:
+    isAutoApplied: {
+      type: Boolean,
+      default: false,
+    },
+    matchPercentage: {
+      type: Number,
+      default: 0,
     },
     aiInterview: {
       status: {

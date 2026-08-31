@@ -103,14 +103,20 @@ const Job = ({ job }) => {
         </div>
 
         {/* Job Title */}
-        <h3 className="text-lg font-semibold line-clamp-2 h-[48px] text-gray-900 dark:text-white">{job?.jobDetails?.title}</h3>
+        <h3 className="text-lg font-semibold line-clamp-2 min-h-[48px] text-gray-900 dark:text-white">{job?.jobDetails?.title}</h3>
 
         {/* Company Name and Location Section */}
+<<<<<<< HEAD
+        <div className="flex items-center justify-between gap-2 min-w-0">
+          <div className="text-gray-700 dark:text-gray-300 font-medium truncate">{job?.jobDetails?.companyName}</div>
+          <div className="text-right flex-shrink-0">
+=======
         <div className="flex items-center justify-between gap-2">
           <div className="text-gray-700 dark:text-gray-300 font-medium">{job?.jobDetails?.companyName}</div>
           <div className="text-right">
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
             <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.workPlaceFlexibility}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{job?.jobDetails?.location}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-[120px] sm:max-w-none">{job?.jobDetails?.location}</p>
           </div>
         </div>
 
@@ -124,9 +130,9 @@ const Job = ({ job }) => {
 
         {/* Salary, Job Type, and Duration Section */}
         <div className="text-sm flex flex-col space-y-2">
-          <div className="flex gap-2 justify-between items-center">
+          <div className="flex flex-wrap sm:flex-nowrap gap-2 justify-between items-center">
             {/* Salary */}
-            <div className="flex w-1/2">
+            <div className="flex w-full sm:w-1/2 min-w-0">
               <p className="p-1 text-center w-full font-semibold text-gray-700 dark:text-gray-300 rounded-md bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600">
                 {job?.jobDetails?.salary
                   .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
@@ -141,8 +147,8 @@ const Job = ({ job }) => {
             </div>
             
             {/* Job Type */}
-            <div className="flex w-1/2">
-              <p className="p-1 w-full font-semibold text-green-700 dark:text-green-400 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center gap-1 border border-green-200 dark:border-green-700">
+            <div className="flex w-full sm:w-1/2 min-w-0">
+              <p className="p-1 w-full truncate text-xs sm:text-sm font-semibold text-green-700 dark:text-green-400 rounded-md bg-green-100 dark:bg-green-900/30 flex items-center justify-center gap-1 border border-green-200 dark:border-green-700">
                 {job.jobDetails?.jobType}
               </p>
             </div>

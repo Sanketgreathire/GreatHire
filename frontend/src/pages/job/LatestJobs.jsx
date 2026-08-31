@@ -23,7 +23,7 @@ const LatestJobs = ({ jobs = [] }) => {
     <>
 
       <Helmet>
-        <title>Current & Best Job Openings | New Hiring Possibilities - GreatHire</title>
+        <title>Latest Job Openings, New Hiring Possibilities  | GreatHire</title>
         <meta
           name="description"
           content="Check out the current and trending job listings on GreatHire and get the edge on other job seekers today, Hyderabad State, India, with the very latest job listings offered by trusted employers. The page shows the current hiring job listings, the job search feature for job seekers to look for the right job for their desired skills and qualifications, and the current trending job listings in many fields or industries. GreatHire is a rapidly growing hiring platform for experts and trusted businesses worldwide through the innovative hiring system offered by the platform."

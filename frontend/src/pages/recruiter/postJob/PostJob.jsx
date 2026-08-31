@@ -33,7 +33,7 @@ const filterLocations = (query) => {
 /*  Shared style tokens (visual layer only — no behavioural changes)  */
 /* ------------------------------------------------------------------ */
 const cardCls =
-  "rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-sm dark:shadow-none p-5 md:p-6 transition-colors duration-300";
+  "rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.04] shadow-sm dark:shadow-none p-5 md:p-6 transition-colors duration-300 [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-slate-800 dark:[&>option]:text-slate-100";
 const labelCls =
   "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 transition-colors duration-300";
 const inputCls =

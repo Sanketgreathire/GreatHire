@@ -42,8 +42,8 @@ export async function parseJobDescription(jobDescription) {
 
   if (aiAvailable) {
     try {
-      const { embedText } = await import("../../../sourcing/ai/aiServiceClient.js");
-      const embedding = await embedText(text);
+      // const { embedText } = await import("../../../sourcing/ai/aiServiceClient.js");
+      // const embedding = await embedText(text);
       
       const extractedData = await extractWithAI(text);
       skills = extractedData.skills || [];
@@ -116,7 +116,10 @@ export async function parseJobDescription(jobDescription) {
     designation: designation || '',
     experience: experience || '',
     location: location || '',
-    seniority: seniority || '',
+    // ADD THESE
+  minExperience: 0,
+  maxExperience: 99,
+  seniorityLevel: seniority || '',
     rawText: text,
     parsedWith: aiAvailable ? 'ai' : 'regex'
   };

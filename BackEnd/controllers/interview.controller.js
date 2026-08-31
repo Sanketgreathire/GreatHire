@@ -202,13 +202,16 @@ export const fetchCallLogs = async (req, res) => {
       // Get stored questions from interview data
       const storedQuestions = application.aiInterview?.questions || "Job-related technical questions";
 
-      try {
-        const groqResponse = await groq.chat.completions.create({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            {
-              role: "user",
-              content: `You are a professional interview transcriber. Based on the following call information, generate a realistic interview transcript between an AI interviewer and a candidate.
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const maxRetries = 3;
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          const groqResponse = await groq.chat.completions.create({
+            model: "openai/gpt-oss-120b",
+            messages: [
+              {
+                role: "user",
+                content: `You are a professional interview transcriber. Based on the following call information, generate a realistic interview transcript between an AI interviewer and a candidate.
 
 Call Duration: ${callData.duration || "Unknown"} seconds
 Job Title: ${job?.jobDetails?.title || "Unknown"}
@@ -224,24 +227,25 @@ AI Agent: [question or statement]
 Candidate: [response]
 
 Make it realistic and conversational. Focus on technical questions and answers relevant to the job.`,
-            },
-          ],
-          temperature: 0.7,
-          max_tokens: 1500,
-        });
-
-        transcript = groqResponse.choices[0].message.content;
-        console.log("✓ Generated transcript using Groq API");
-      } catch (groqError) {
-        console.error("Groq API error:", groqError.message);
-        transcript = `Call Summary:
-- Duration: ${callData.duration || "Unknown"} seconds
-- Status: ${callData.status || "completed"}
-- Candidate: ${applicant?.fullname || "Unknown"}
-- Job: ${job?.jobDetails?.title || "Unknown"}
-- Interview Status: ${application.aiInterview?.status || "Scheduled"}
-
-Note: Full transcript is being processed. Please try again in a few moments.`;
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 1500,
+          });
+          transcript = groqResponse.choices[0].message.content;
+          console.log("✓ Generated transcript using Groq API");
+          break;
+        } catch (groqError) {
+          if (groqError?.status === 429 && attempt < maxRetries - 1) {
+            const retryAfter = parseInt(groqError?.headers?.["retry-after"] || "10", 10);
+            console.warn(`Groq rate limited (fetchCallLogs). Retrying in ${retryAfter}s... (attempt ${attempt + 1}/${maxRetries})`);
+            await sleep(retryAfter * 1000);
+          } else {
+            console.error("Groq API error:", groqError.message);
+            transcript = `Call Summary:\n- Duration: ${callData.duration || "Unknown"} seconds\n- Status: ${callData.status || "completed"}\n- Candidate: ${applicant?.fullname || "Unknown"}\n- Job: ${job?.jobDetails?.title || "Unknown"}\n\nNote: Full transcript is being processed. Please try again in a few moments.`;
+            break;
+          }
+        }
       }
     }
 

@@ -66,7 +66,7 @@ const ShareCard = ({ urlToShare, jobTitle, jobLocation, jobSalary, jobDuration, 
     <>
 
       <Helmet>
-        <title>Instantaneously Share Job Openings | Simple Social Job Sharing - GreatHire</title>
+        <title>Share Job Openings | Simple Social Job Sharing - GreatHire</title>
         <meta
           name="description"
           content="Share job opportunities in an instant with GreatHire’s intelligent job sharing feature. Share job information such as job, location, salary, type of job, and job duration via WhatsApp, LinkedIn, Twitter, Facebook, and Instagram, and even via copying and pasting the direct link. GreatHire is founded in Hyderabad State, India, and is one of the most contemporary hiring platforms, working on providing easy and efficient job discovery, sharing, and application."
@@ -74,7 +74,7 @@ const ShareCard = ({ urlToShare, jobTitle, jobLocation, jobSalary, jobDuration, 
       </Helmet>
 
 
-      <div className="absolute z-50 -top-2 -right-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4">
+      <div className="absolute z-50 top-2 right-2 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4">
         {/* Close Button (top-right) */}
         <div className="flex justify-end mb-2">
           <button

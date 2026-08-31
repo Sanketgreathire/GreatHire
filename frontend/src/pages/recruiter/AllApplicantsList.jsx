@@ -48,9 +48,9 @@ function Tag({ children, primary }) {
 
 function Row({ label, children }) {
   return (
-    <div className="flex items-start gap-3 mb-2">
-      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest min-w-[88px] pt-0.5 shrink-0">{label}</span>
-      <div className="flex flex-wrap gap-1.5 flex-1">{children}</div>
+    <div className="flex flex-col sm:flex-row sm:items-start gap-1 items-start sm:gap-3 mb-2">
+      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest sm:min-w-[88px] pt-0.5 shrink-0">{label}</span>
+      <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">{children}</div>
     </div>
   );
 }
@@ -285,23 +285,23 @@ const AllApplicantsList = () => {
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 sm:p-12 pt-6">
             <div className="bg-transparent">
 
-              <div className="flex justify-between mb-6">
-                <h1 className="text-3xl font-bold flex items-center gap-3">
-                  <FiUsers className="text-blue-600 text-4xl" />
+              <div className="flex flex-col gap-3 sm:gap-4 mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+                  <FiUsers className="text-blue-600 text-3xl sm:text-4xl" />
                   All Applicants
                 </h1>
-                <div className="flex items-center gap-3">
-                  <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full">
                     {selectedStatus === "All" && !searchTerm.trim()
                       ? `Total: ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`
                       : `Showing: ${visibleApplicants.length} of ${isStarterPlan ? Math.min(applicants.length, STARTER_LIMIT) : applicants.length}`}
                   </span>
                   {sortedIdsCount > 0 && applicants.length > sortedIdsCount ? (
-                    <span className="text-sm font-semibold bg-orange-100 text-orange-600 border border-orange-300 px-3 py-2 rounded-full animate-pulse">
+                    <span className="text-sm font-semibold bg-orange-100 text-orange-600 border border-orange-300 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full animate-pulse">
                       +{applicants.length - sortedIdsCount} new applicants
                     </span>
                   ) : (
-                    <span className="text-sm font-semibold bg-green-50 text-green-600 border border-green-200 px-3 py-2 rounded-full">
+                    <span className="text-sm font-semibold bg-green-50 text-green-600 border border-green-200 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full">
                       {sortedIdsCount > 0 ? "Up to date" : "Not analyzed yet"}
                     </span>
                   )}

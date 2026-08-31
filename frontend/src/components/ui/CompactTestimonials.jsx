@@ -23,9 +23,9 @@ const CompactTestimonials = () => {
     const base = new Date(2026, 0, 1);
     const months = (now.getFullYear() - base.getFullYear()) * 12 + (now.getMonth() - base.getMonth());
     return {
-      users: Math.floor((10000 + months * 250) / 1000),
-      success: Math.min(95 + months * 0.2, 99).toFixed(1),
-      rating: Math.min(4.8 + months * 0.02, 5).toFixed(1),
+      users: Math.floor((48000 + months * 250) / 100),
+      success: Math.min(85 + months * 0.2, 99).toFixed(1),
+      rating: Math.min(4.5 + months * 0.02, 5).toFixed(1),
     };
   })();
 

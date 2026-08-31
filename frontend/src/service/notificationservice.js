@@ -68,7 +68,8 @@ export const getNotificationIcon = (type) => {
     'welcome': '👋',
     'system-alert': '🔔',
     'similar-candidates': '👥',
-    'company-follow': '🏢'
+    'company-follow': '🏢',
+    'auto-apply': '🎯'
   };
   return iconMap[type] || '🔔';
 };

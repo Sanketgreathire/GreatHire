@@ -18,55 +18,52 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 // ==============================
 export const getNotifications = async (req, res) => {
   try {
-    if (!req.user?._id) {
+    // Check both req.user and req.id
+    const userId = req.user?._id || req.id;
+    const userRole = req.user?.role || "student";
+
+    if (!userId) {
       return res.status(401).json({ 
         success: false, 
         message: "Authentication required" 
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = getUserRoleModel(userRole);
     const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 50); // Max 50
+    const limit = Math.min(parseInt(req.query.limit) || 20, 50);
     const skip = (page - 1) * limit;
 
     const notifications = await Notification.find({
-      recipient: req.user._id,
+      recipient: userId,
       recipientModel: role,
     })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .lean(); // Better performance
+      .lean();
 
     const totalCount = await Notification.countDocuments({
-      recipient: req.user._id,
+      recipient: userId,
       recipientModel: role,
     });
 
-    res.status(200).json({ 
+    return res.status(200).json({ 
       success: true, 
-      notifications,
+      notifications: notifications || [],
       pagination: {
         page,
         limit,
-        total: totalCount,
-        pages: Math.ceil(totalCount / limit)
+        total: totalCount || 0,
+        pages: Math.ceil((totalCount || 0) / limit)
       }
     });
   } catch (error) {
     console.error("Error fetching notifications:", error);
-    
-    if (error.name === 'CastError') {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid user ID format" 
-      });
-    }
-    
-    res.status(500).json({ 
+    // Server crash hone ke bajaye clear error details dein
+    return res.status(500).json({ 
       success: false, 
-      message: "Failed to fetch notifications" 
+      message: error.message || "Failed to fetch notifications" 
     });
   }
 };
@@ -192,6 +189,10 @@ export const createNotification = async (data) => {
 // ==============================
 export const getAdminNotifications = async (req, res) => {
   try {
+    if (!req.user?._id) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
     // Security: Only admins can access admin notifications
     if (req.user.role !== "admin") {
       return res.status(403).json({ 
@@ -218,6 +219,10 @@ export const getAdminNotifications = async (req, res) => {
 // ==============================
 export const markAdminNotificationAsRead = async (req, res) => {
   try {
+    if (!req.user?._id) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
     // Security: Only admins can mark admin notifications as read
     if (req.user.role !== "admin") {
       return res.status(403).json({ 
@@ -254,21 +259,26 @@ export const markAdminNotificationAsRead = async (req, res) => {
 // ==============================
 export const getUnreadCount = async (req, res) => {
   try {
-    let role;
-    if (req.user.role === "recruiter") role = "Recruiter";
-    else if (req.user.role === "admin") role = "Admin";
-    else role = "User";
+    // ✅ Add Auth Check to prevent crash
+    if (!req.user?._id) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Authentication required" 
+      });
+    }
+
+    const role = getUserRoleModel(req.user.role);
 
     const count = await Notification.countDocuments({
       recipient: req.user._id,
       recipientModel: role,
-      isRead: false,
+      isRead: false, 
     });
 
-    res.status(200).json({ success: true, count });
+    return res.status(200).json({ success: true, count });
   } catch (error) {
     console.error("Error fetching unread count:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

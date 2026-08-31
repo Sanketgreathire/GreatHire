@@ -50,7 +50,8 @@ const notificationSchema = new mongoose.Schema(
           "welcome",
           "job-recommendation",
           "similar-candidates",
-          "company-follow"
+          "company-follow",
+          "auto-apply"
         ],
         message: "Invalid notification type"
       },

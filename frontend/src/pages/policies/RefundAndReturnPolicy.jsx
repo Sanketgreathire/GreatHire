@@ -13,7 +13,7 @@ const RefundAndReturnPolicy = () => {
     <>
 
       <Helmet>
-        <title>Refund and Return Guidelines | GreatHire Payments, Refunds, and Cancellations</title>
+        <title>Refund and Return Guidelines ,Payments, Refunds, and Cancellations | GreatHire</title>
         <meta
           name="description"
           content="Read the Refund and Return Policy of GreatHire carefully to get information about the payment, refund, cancellation, and exchange policies. GreatHire, located in the state of Hyderabad, India, is a firm that practices a fair refund policy, which is stated clearly to assure trust for every user."

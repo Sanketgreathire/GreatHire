@@ -48,6 +48,8 @@ export const extractPhoneFromResume = (resumeText) => {
   return match ? match[0].replace(/[\s-]/g, "") : null;
 };
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 // Generate personalized interview questions using Groq or local model
 export const generateInterviewQuestions = async (job, resumeText) => {
   const prompt = `
@@ -73,17 +75,28 @@ Return only the questions as a numbered list. Keep it conversational for a phone
   if (process.env.USE_LOCAL_MODEL === "1") {
     const { generateChatCompletion } = await import(path.join(__dirname, "local_llm.js"));
     const raw = await generateChatCompletion({ prompt });
-    // Some local runners may include extra text; attempt to return raw string
     return typeof raw === "string" ? raw.trim() : JSON.stringify(raw);
   }
 
-  const completion = await getGroq().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.5,
-  });
-
-  return completion.choices[0].message.content;
+  const maxRetries = 3;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const completion = await getGroq().chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.5,
+      });
+      return completion.choices[0].message.content;
+    } catch (err) {
+      if (err?.status === 429 && attempt < maxRetries - 1) {
+        const retryAfter = parseInt(err?.headers?.["retry-after"] || "10", 10);
+        console.warn(`Groq rate limited. Retrying in ${retryAfter}s... (attempt ${attempt + 1}/${maxRetries})`);
+        await sleep(retryAfter * 1000);
+      } else {
+        throw err;
+      }
+    }
+  }
 };
 
 // Start Bland.ai call

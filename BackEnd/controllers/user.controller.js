@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { User } from "../models/user.model.js";
+import Job from "../models/job.model.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
@@ -22,6 +23,8 @@ import { validationResult } from "express-validator";
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
 import notificationService from "../utils/notificationService.js";
+import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
+import { autoApply } from "../src/services/autoApply.service.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -306,9 +309,23 @@ export const jobseekerLogin = async (req, res) => {
       });
     }
 
-    // Notify on every login
-    await user.save();
-    pushLoginHistory(user._id, req);
+    // Track login activity without blocking authentication if the update fails
+    try {
+      user.lastActiveAt = new Date();
+      await user.save({ validateBeforeSave: false });
+    } catch (saveError) {
+      console.warn("Login tracking save skipped:", saveError.message);
+    }
+
+    try {
+      const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket?.remoteAddress || "";
+      const device = req.headers["user-agent"]?.slice(0, 200) || "";
+      await User.findByIdAndUpdate(user._id, {
+        $push: { loginHistory: { $each: [{ timestamp: new Date(), ip, device }], $slice: -50 } },
+      });
+    } catch (historyError) {
+      console.warn("Login history update skipped:", historyError.message);
+    }
 
     notificationService.notifyWelcome({
       userId: user._id,
@@ -699,6 +716,7 @@ export const updateProfile = async (req, res) => {
       bio,
       skills,
       documents,
+      autoApply,
     } = req.body;
     console.log(req.body);
     const { profilePhoto, resume } = req.files || {}; // Access files from req.files
@@ -793,6 +811,37 @@ export const updateProfile = async (req, res) => {
 
     // Updating gender 
     if (gender && user.profile.gender !== gender) user.profile.gender = gender;
+
+    if (autoApply !== undefined) {
+  user.profile.autoApply =
+    autoApply === true ||
+    autoApply === "true" ||
+    autoApply === 1 ||
+    autoApply === "1";
+  console.log("AUTO APPLY RECEIVED:", autoApply);
+  console.log("AUTO APPLY SAVED VALUE:", user.profile.autoApply);
+}
+
+if (user.profile.autoApply === true) {
+  const activeJobs = await Job.find({
+    "jobDetails.isActive": true
+  }).select("_id");
+
+  console.log(
+    `🔄 Auto Apply ON: Processing ${activeJobs.length} existing active jobs`
+  );
+
+  for (const job of activeJobs) {
+    try {
+      await autoApply(job._id);
+    } catch (err) {
+      console.error(
+        `Auto Apply failed for existing job ${job._id}:`,
+        err.message
+      );
+    }
+  }
+}
 
     // Updating qualification + otherQualification
     if (qualification && user.profile.qualification !== qualification) {
@@ -917,6 +966,23 @@ export const updateProfile = async (req, res) => {
     user.isFirstLogin = false;
 
     await user.save();
+
+    console.log(
+  "AUTO APPLY AFTER SAVE:",
+  user.profile.autoApply
+);
+
+if (user.profile.autoApply === true) {
+  try {
+    await autoApplyExistingJobsForUser(user._id);
+    console.log("✅ Existing jobs Auto Apply completed");
+  } catch (error) {
+    console.error(
+      "❌ Existing jobs Auto Apply failed:",
+      error.message
+    );
+  }
+}
 
     // extract user without password
     const updatedUser = await User.findById(userId).select("-password");
@@ -1470,15 +1536,6 @@ export const verifyRecruiterOtp = async (req, res) => {
     console.error("Verify OTP Error:", err);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-};
-
-// Helper: push a login history entry (non-blocking)
-const pushLoginHistory = (userId, req) => {
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket?.remoteAddress || "";
-  const device = req.headers["user-agent"]?.slice(0, 200) || "";
-  User.findByIdAndUpdate(userId, {
-    $push: { loginHistory: { $each: [{ timestamp: new Date(), ip, device }], $slice: -50 } },
-  }).catch(() => {});
 };
 
 export const getLoginHistory = async (req, res) => {

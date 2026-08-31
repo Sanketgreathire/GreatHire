@@ -12,7 +12,11 @@ import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
-
+<<<<<<< HEAD
+=======
+import { autoApply } from "../src/services/autoApply.service.js";
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
   try {
@@ -221,22 +225,92 @@ export const postJob = [
       const jobStatus = (!isVerified && jobsPostedSoFar === 0) ? "pending" : "active";
       const jobIsActive = jobStatus === "active";
 
-      const newJob = new Job({
-        jobDetails: {
-          companyName, urgentHiring, title, details,
-          skills: splitSkills, benefits: splitBenefits,
-          qualifications: splitQualifications, responsibilities: splitResponsibilities,
-          salary, salaryType: salaryType || "per year", experience, jobType, workPlaceFlexibility,
-          location, numberOfOpening, respondTime, duration, shift, anyAmount,
-          isActive: jobIsActive,
-          status: jobStatus,
-        },
-        questions: Array.isArray(questions) ? questions.filter(q => q.trim()) : [],
-        created_by: userId,
-        company: companyId,
-      });
+   const newJob = new Job({
+  jobDetails: {
+    companyName,
+    urgentHiring,
+    title,
+    details,
+    skills: splitSkills,
+    benefits: splitBenefits,
+    qualifications: splitQualifications,
+    responsibilities: splitResponsibilities,
+    salary,
+    salaryType: salaryType || "per year",
+    experience,
+    jobType,
+    workPlaceFlexibility,
+    location,
+    numberOfOpening,
+    respondTime,
+    duration,
+    shift,
+    anyAmount,
+    isActive: jobIsActive,
+    status: jobStatus,
+  },
+  questions: Array.isArray(questions)
+    ? questions.filter((q) => q.trim())
+    : [],
+  created_by: userId,
+  company: companyId,
+});
 
-      await newJob.save();
+
+await newJob.save();
+<<<<<<< HEAD
+console.log("🚀 CALLING notifyMatchingJobSeekers");
+console.log("🚀 JOB ID:", newJob._id);
+console.log("🚀 JOB TITLE:", newJob.jobDetails.title);
+=======
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+try {
+  await notifyMatchingJobSeekers(newJob);
+
+  console.log(
+    "✅ Job match email notification process completed"
+  );
+} catch (error) {
+  console.error(
+    "❌ Job match email notification failed:",
+    error.message
+  );
+}
+
+// existing code continues here
+
+
+<<<<<<< HEAD
+// console.log("🔥 JOB SAVED:", newJob._id);
+// console.log("🔥 JOB STATUS:", jobStatus);
+// console.log("🔥 JOB ACTIVE:", jobIsActive);
+
+// Auto Apply only for active jobs
+if (jobIsActive) {
+  // console.log("🔥 ABOUT TO START AUTO APPLY");
+  // console.log("Job ID:", newJob._id);
+=======
+console.log("🔥 JOB SAVED:", newJob._id);
+console.log("🔥 JOB STATUS:", jobStatus);
+console.log("🔥 JOB ACTIVE:", jobIsActive);
+
+// Auto Apply only for active jobs
+if (jobIsActive) {
+  console.log("🔥 ABOUT TO START AUTO APPLY");
+  console.log("Job ID:", newJob._id);
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+
+  try {
+    await autoApply(newJob._id);
+    console.log("✅ AUTO APPLY FUNCTION FINISHED");
+  } catch (error) {
+    console.error("❌ Auto Apply Error:", error);
+  }
+} else {
+  console.log("⏭️ Auto Apply skipped because job is pending");
+}
+
+
 
       // Update counters
       if (companyPlan === "FREE") {
@@ -402,40 +476,57 @@ export const applyJob = async (req, res) => {
 /** get all jobs for home page in stream manner like
 this controller does not return all jobs at once. Instead, it uses streaming to send jobs to the client incrementally, which is particularly useful when dealing with large datasets. */
 export const getAllJobs = async (req, res) => {
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache");
-
   try {
-    // Only stream jobs whose company is verified (isActive: true)
-    const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+    const isProduction = process.env.NODE_ENV === "production";
+
+<<<<<<< HEAD
+    let query = {};
+
+    if (isProduction) {
+      // In production: only show active jobs from verified companies
+      const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+      query = { "jobDetails.isActive": true, company: { $in: verifiedCompanyIds } };
+    }
+    // In dev: return all jobs regardless of isActive or company verification
+
+    const jobs = await Job.find(query)
+=======
+    console.log("VERIFIED COMPANY IDS:", verifiedCompanyIds);
+console.log("VERIFIED COMPANY COUNT:", verifiedCompanyIds.length);
+
+const totalJobs = await Job.countDocuments();
+console.log("TOTAL JOBS:", totalJobs);
+
+const activeJobs = await Job.countDocuments({
+  "jobDetails.isActive": true
+});
+console.log("ACTIVE JOBS:", activeJobs);
+
+
+
+    console.log("VERIFIED COMPANY IDS:", verifiedCompanyIds);
+console.log("VERIFIED COMPANY COUNT:", verifiedCompanyIds.length);
+
+const totalJobs = await Job.countDocuments();
+console.log("TOTAL JOBS:", totalJobs);
+
+const activeJobs = await Job.countDocuments({
+  "jobDetails.isActive": true
+});
+console.log("ACTIVE JOBS:", activeJobs);
+
+
 
     const cursor = Job.find({ company: { $in: verifiedCompanyIds }, "jobDetails.isActive": true })
+>>>>>>> 0db4679e2e4540e959addd53a206c00dd65ccd00
       .sort({ createdAt: -1 })
       .populate({ path: "application" })
-      .cursor();
+      .lean();
 
-    res.write("[");
-
-    let isFirst = true;
-    cursor.on("data", (doc) => {
-      if (!isFirst) res.write(",");
-      else isFirst = false;
-      res.write(JSON.stringify(doc.toObject()));
-    });
-
-    cursor.on("end", () => {
-      res.write("]");
-      res.end();
-    });
-
-    cursor.on("error", (error) => {
-      console.error("Error streaming jobs:", error);
-      if (!res.headersSent) res.status(500).json({ message: "Internal server error" });
-      else res.end("]");
-    });
+    return res.status(200).json(jobs);
   } catch (error) {
     console.error("Error fetching jobs:", error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -709,6 +800,25 @@ export const toggleActive = async (req, res) => {
         message: "Job not found.",
       });
     }
+    job.jobDetails.isActive = isActive;
+await job.save();
+
+// console.log("🔥 JOB ACTIVATION CHECK");
+// console.log("isActive:", isActive);
+// console.log("jobId:", jobId);
+
+    if (isActive === true) {
+  try {
+    console.log("🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:", jobId);
+
+    await autoApply(jobId);
+
+    console.log("✅ Auto Apply triggered on job activation:", jobId);
+
+  } catch (autoApplyError) {
+    console.error("Auto Apply on activation failed:", autoApplyError.message);
+  }
+}
 
     return res.status(200).json({
       success: true,
@@ -857,7 +967,7 @@ export const getJobsStatistics = async (req, res) => {
   }
 };
 
-// Helper function to find and notify matching candidates
+// // Helper function to find and notify matching candidates
 async function findAndNotifyMatchingCandidates(job) {
   try {
     const jobSkills = job.jobDetails.skills || [];
@@ -902,6 +1012,8 @@ async function findAndNotifyMatchingCandidates(job) {
               user.address.city.toLowerCase().includes(jobLocation.toLowerCase())) {
             matchScore += 10;
           }
+
+          
           
           return {
             recipient: user._id,
@@ -929,7 +1041,299 @@ async function findAndNotifyMatchingCandidates(job) {
   }
 }
 
+// Helper function to find candidates with 65% or higher job match
+// async function findAndNotifyMatchingCandidates(job) {
+//   try {
+//     const jobSkills = (job.jobDetails.skills || [])
+//       .map(skill => String(skill).trim().toLowerCase())
+//       .filter(Boolean);
+
+//     const jobLocation = String(job.jobDetails.location || "")
+//       .trim()
+//       .toLowerCase();
+
+//     const MAX_CANDIDATES = 50;
+//     const MATCH_THRESHOLD = 65;
+
+//     console.log("========================================");
+//     console.log("🔎 MATCHING CANDIDATES FOR NEW JOB");
+//     console.log("Job ID:", job._id);
+//     console.log("Job Title:", job.jobDetails.title);
+//     console.log("Job Skills:", jobSkills);
+//     console.log("Required Match:", `${MATCH_THRESHOLD}%`);
+//     console.log("========================================");
+
+//     if (jobSkills.length === 0) {
+//       console.log("⚠️ No job skills found. Matching skipped.");
+//       return;
+//     }
+
+//     // Find possible candidates first
+//     const matchingUsers = await User.find({
+//       $or: [
+//         { "profile.skills": { $exists: true, $ne: [] } },
+//         { "profile.category": { $exists: true, $ne: [] } }
+//       ]
+//     })
+//       .limit(MAX_CANDIDATES)
+//       .select("_id fullname phone email profile.skills profile.category address.city");
+
+//     if (matchingUsers.length === 0) {
+//       console.log("⚠️ No candidates found.");
+//       return;
+//     }
+
+//     const notifications = [];
+
+//     for (const user of matchingUsers) {
+//       const userSkills = (user.profile?.skills || [])
+//         .map(skill => String(skill).trim().toLowerCase())
+//         .filter(Boolean);
+
+//       const userCategories = Array.isArray(user.profile?.category)
+//         ? user.profile.category
+//             .map(category => String(category).trim().toLowerCase())
+//             .filter(Boolean)
+//         : [];
+
+//       const candidateSkills = [
+//         ...userSkills,
+//         ...userCategories
+//       ];
+
+//       if (candidateSkills.length === 0) {
+//         continue;
+//       }
+
+//       // Find matching skills
+//       const matchingSkills = jobSkills.filter(jobSkill =>
+//         candidateSkills.some(candidateSkill =>
+//           candidateSkill === jobSkill ||
+//           candidateSkill.includes(jobSkill) ||
+//           jobSkill.includes(candidateSkill)
+//         )
+//       );
+
+//       // Remove duplicate matches
+//       const uniqueMatchingSkills = [...new Set(matchingSkills)];
+
+//       // Calculate skill match percentage
+//       let matchScore = Math.round(
+//         (uniqueMatchingSkills.length / jobSkills.length) * 100
+//       );
+
+//       // Location bonus
+//       const candidateCity = String(user.address?.city || "")
+//         .trim()
+//         .toLowerCase();
+
+//       if (
+//         jobLocation &&
+//         candidateCity &&
+//         candidateCity.includes(jobLocation)
+//       ) {
+//         matchScore += 10;
+//       }
+
+//       // Never allow score above 100
+//       matchScore = Math.min(matchScore, 100);
+
+//       console.log(
+//         `👤 ${user.fullname || user.email || user._id} → ${matchScore}%`
+//       );
+
+//       // ==========================================
+//       // ONLY 65% OR ABOVE CANDIDATES ARE SELECTED
+//       // ==========================================
+//       if (matchScore < MATCH_THRESHOLD) {
+//         console.log(
+//           `❌ ${user.fullname || user.email || user._id} skipped - ${matchScore}%`
+//         );
+//         continue;
+//       }
+
+//       console.log(
+//         `✅ ${user.fullname || user.email || user._id} MATCHED - ${matchScore}%`
+//       );
+
+//       notifications.push({
+//         recipient: user._id,
+//         recipientModel: "User",
+//         type: "job-recommendation",
+//         title: "New Job Match Found!",
+//         message: `${job.jobDetails.title} at ${job.jobDetails.companyName} matches your profile (${matchScore}% match)`,
+//         relatedEntity: job._id,
+//         relatedEntityModel: "Job",
+//         priority: matchScore >= 70 ? "high" : "medium",
+//         actionUrl: `/jobs/${job._id}`,
+//         metadata: {
+//           jobTitle: job.jobDetails.title,
+//           companyName: job.jobDetails.companyName,
+//           matchScore: matchScore,
+//           location: job.jobDetails.location,
+//           salary: job.jobDetails.salary,
+//           matchingSkills: uniqueMatchingSkills
+//         }
+//       });
+
+//       // ==========================================
+//       // WHATSAPP WILL BE CALLED HERE
+//       // ==========================================
+//       //
+//       // IMPORTANT:
+//       // Candidate has passed 65% threshold.
+//       // This is the exact place where WhatsApp
+//       // message should be sent.
+//       //
+//       // We will connect your existing WhatsApp
+//       // service here after checking its code.
+//       //
+//       // ==========================================
+//     }
+
+//     // No candidate >= 65%
+//     if (notifications.length === 0) {
+//       console.log("❌ No candidates matched 65% or above.");
+//       return;
+//     }
+
+//     // Save GreatHire bell notifications
+//     await Notification.insertMany(notifications);
+
+//     console.log(
+//       `✅ ${notifications.length} candidates matched 65%+ and were notified.`
+//     );
+
+//   } catch (error) {
+//     console.error(
+//       "❌ Error finding matching candidates:",
+//       error.message
+//     );
+//   }
+// }
+
 // Helper function to send general job alerts to recent active users
 async function sendGeneralJobAlert(job) {
   // Removed to prevent timeout - only skill-based matching is used
 }
+
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// Compute a simple match score (0-100) between a search query and a job
+function computeMatchScore(query, job) {
+  if (!query) return null;
+  const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const fields = [
+    job.jobDetails?.title || "",
+    (job.jobDetails?.skills || []).join(" "),
+    job.jobDetails?.details || "",
+    job.jobDetails?.experience || "",
+    job.jobDetails?.location || "",
+  ].join(" ").toLowerCase();
+
+  const matched = keywords.filter(k => fields.includes(k)).length;
+  const score = Math.round((matched / keywords.length) * 70) + 20;
+  return Math.min(score, 95);
+}
+
+// Search jobs with filters + match score
+export const searchJobs = async (req, res) => {
+  try {
+    const {
+      query,
+      location,
+      experience,
+      workPlaceFlexibility,
+      jobType,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    const isProduction = process.env.NODE_ENV === "production";
+    const filter = { "jobDetails.isActive": true };
+
+    if (isProduction) {
+      const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
+      filter.company = { $in: verifiedIds };
+    }
+
+    if (query) {
+      filter.$or = [
+        { "jobDetails.title": { $regex: query, $options: "i" } },
+        { "jobDetails.skills": { $regex: query, $options: "i" } },
+        { "jobDetails.details": { $regex: query, $options: "i" } },
+      ];
+    }
+
+    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
+    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
+    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
+    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [jobs, total] = await Promise.all([
+      Job.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit))
+        .populate("company", "name logo isActive")
+        .lean(),
+      Job.countDocuments(filter),
+    ]);
+
+    const results = jobs.map(job => ({
+      ...job,
+      matchScore: query ? computeMatchScore(query, job) : null,
+    }));
+
+    if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+    return res.status(200).json({
+      success: true,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
+      count: results.length,
+      query: query || null,
+      jobs: results,
+    });
+  } catch (error) {
+    console.error("Error searching jobs:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+=======
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+export const testAutoApply = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    if (!jobId) {
+      return res.status(400).json({
+        success: false,
+        message: "Job ID is required",
+      });
+    }
+
+    console.log("🧪 Testing Auto Apply for Job:", jobId);
+
+    await autoApply(jobId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Auto Apply process completed",
+      jobId,
+    });
+  } catch (error) {
+    console.error("❌ Test Auto Apply Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+<<<<<<< HEAD
+=======
+>>>>>>> 0db4679e2e4540e959addd53a206c00dd65ccd00
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
+  }
+};

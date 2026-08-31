@@ -158,7 +158,7 @@ AI_SERVICE_URL=http://localhost:8001
 AI_SERVICE_API_KEY=your_ai_service_key
 
 # Gemini API (Fallback)
-GEMINI_API_KEY=AIzaSyA_J0X-wxEBk0Oc91wsNtXllzr8nAMQf-4
+
 
 # GitHub (for sourcing)
 GITHUB_TOKEN=REDACTED_GITHUB_TOKEN

@@ -36,6 +36,39 @@ const PostedJobList = () => {
   const handleApplicantsClick = useCallback((jobId) => navigate(`/recruiter/dashboard/applicants-details/${jobId}`), [navigate]);
   const handlePageChange = useCallback((newPage) => setCurrentPage(newPage), []);
 
+  const handleMatchCandidates = useCallback(async (event, jobId) => {
+    event.stopPropagation();
+
+    console.log("Match Button Clicked: ", jobId);
+    console.log("sending match request");
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/jd-matching/match-candidates/${jobId}`,
+        {},
+        { withCredentials: true,
+          timeout: 10000,
+         }
+      );
+
+      console.log("MATCH RESULT:", response.data);
+
+      if (response.data.success) {
+        toast.success(
+          response.data.queued
+            ? "Candidate matching started in background."
+            : "Candidate matching completed."
+        );
+      } else {
+        toast.error(response.data.message || "Matching failed.");
+      }
+    } catch (error) {
+      console.error("MATCH ERROR:", error.response?.data || error.message);
+      toast.error(
+        error.response?.data?.message || "Failed to start candidate matching."
+      );
+    }
+  }, []);
+
   // Fetch all jobs for the logged-in company's ID
   const fetchAllJobs = useCallback(async (companyId) => {
     try {
@@ -216,11 +249,10 @@ const PostedJobList = () => {
                             {/* Job Status — plain text badge, separate from the toggle above */}
                             <TableCell className="place-items-center">
                               <span
-                                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                                  job.jobDetails.isActive
+                                className={`text-xs font-semibold px-2.5 py-1 rounded-full ${job.jobDetails.isActive
                                     ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                                     : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                                }`}
+                                  }`}
                               >
                                 {job.jobDetails.isActive ? "🟢 Active" : "🔴 Expired"}
                               </span>
@@ -235,6 +267,12 @@ const PostedJobList = () => {
                                   className="bg-blue-700 dark:bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors duration-300"
                                 >
                                   Job Details
+                                </button>
+                                <button
+                                  onClick={(e) => handleMatchCandidates(e, job._id)}
+                                  className="bg-purple-600 dark:bg-purple-700 text-white px-3 py-1 rounded-md text-sm hover:bg-purple-700 dark:hover:bg-purple-800 transition-colors duration-300"
+                                >
+                                  Match Candidates
                                 </button>
                                 <button
                                   onClick={(e) => {

@@ -71,7 +71,16 @@ const NotificationDropdown = () => {
       const candidateId = notification.sender;
 
       navigate(`/recruiter/dashboard/applications/${jobId}/${candidateId}`);
-    }
+    }   else if (notification.type === 'auto-apply') {
+  const jobId =
+    notification.relatedEntity ||
+    notification.metadata?.jobId;
+
+  if (jobId) {
+    setIsOpen(false);
+    navigate(`/jobs/${jobId}`);
+  }
+}
   };
 
   const getTimeAgo = (date) => {

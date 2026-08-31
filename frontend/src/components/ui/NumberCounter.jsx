@@ -24,7 +24,7 @@ const NumberCounter = ({
 
       const tick = (now) => {
         const progress = Math.min((now - t0) / d, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
+        const eased = progress;
         const current = s + (e - s) * eased;
         setVal(current);
 

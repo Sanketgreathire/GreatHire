@@ -50,15 +50,28 @@ Return JSON:
     }
   }
 
-  const completion = await getGroq().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-  });
-
-  try {
-    return JSON.parse(completion.choices[0].message.content);
-  } catch {
-    return { matchScore: 50, skillsMatched: [], missingSkills: [] };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const maxRetries = 3;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const completion = await getGroq().chat.completions.create({
+        model: "openai/gpt-oss-120b",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.3,
+      });
+      try {
+        return JSON.parse(completion.choices[0].message.content);
+      } catch {
+        return { matchScore: 50, skillsMatched: [], missingSkills: [] };
+      }
+    } catch (err) {
+      if (err?.status === 429 && attempt < maxRetries - 1) {
+        const retryAfter = parseInt(err?.headers?.["retry-after"] || "10", 10);
+        console.warn(`Groq rate limited (calculateMatchScore). Retrying in ${retryAfter}s... (attempt ${attempt + 1}/${maxRetries})`);
+        await sleep(retryAfter * 1000);
+      } else {
+        return { matchScore: 50, skillsMatched: [], missingSkills: [] };
+      }
+    }
   }
 };

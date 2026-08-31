@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import axios from "axios";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -193,3 +194,127 @@ export const sendFirstJobReminderEmail = async (recruiterEmail, recruiterName, c
   }
 };
 
+export const sendJobMatchEmail = async (
+  candidateEmail,
+  candidateName,
+  jobTitle,
+  companyName
+) => {
+  try {
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: process.env.BREVO_SENDER_NAME,
+          email: process.env.BREVO_SENDER_EMAIL,
+        },
+        to: [
+          {
+            email: candidateEmail,
+            name: candidateName,
+          },
+        ],
+        subject: `New Job Match: ${jobTitle} at ${companyName}`,
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+            <div style="background-color: #ffffff; padding: 30px; border-radius: 10px;">
+
+              <h2 style="color: #1D4ED8;">
+                New Job Match 🎯
+              </h2>
+
+              <p style="color: #555;">
+                Hi <strong>${candidateName}</strong>,
+              </p>
+
+              <p style="color: #555; line-height: 1.6;">
+                We found a new job opportunity that may match your profile.
+              </p>
+
+              <div style="background-color: #f0f7ff; padding: 15px; margin: 20px 0;">
+                <p style="margin: 0 0 8px 0;">
+                  <strong>Job:</strong> ${jobTitle}
+                </p>
+
+                <p style="margin: 0;">
+                  <strong>Company:</strong> ${companyName}
+                </p>
+              </div>
+
+              <p style="color: #555; line-height: 1.6;">
+                Log in to GreatHire to view the job details and apply.
+              </p>
+
+              <p style="margin-top: 30px;">
+                Best regards,<br>
+                <strong>The GreatHire Team</strong>
+              </p>
+
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+
+              <p style="color: #999; font-size: 12px; text-align: center;">
+                This is an automated message from GreatHire. Please do not reply to this email.
+              </p>
+
+            </div>
+          </div>
+        `,
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+      }
+    );
+
+    console.log(
+      `✅ Job match email sent to ${candidateEmail}`,
+      response.data
+    );
+
+    return {
+      success: true,
+      temporaryFailure: false,
+    };
+
+  } catch (error) {
+    const status = error.response?.status;
+    const errorData = error.response?.data;
+
+    console.error(
+      `❌ Error sending job match email to ${candidateEmail}:`,
+      errorData || error.message
+    );
+
+    // Brevo rate limit / daily sending limit
+    if (status === 429) {
+      console.warn(
+        `⏳ Brevo limit/rate limit reached. Keeping ${candidateEmail} pending.`
+      );
+
+      return {
+        success: false,
+        temporaryFailure: true,
+        error: "Brevo sending limit reached",
+      };
+    }
+
+    // Other Brevo/server-side temporary errors
+    if (status >= 500) {
+      return {
+        success: false,
+        temporaryFailure: true,
+        error: "Brevo temporary server error",
+      };
+    }
+
+    // Permanent failure
+    return {
+      success: false,
+      temporaryFailure: false,
+      error: errorData?.message || error.message,
+    };
+  }
+};

@@ -63,6 +63,23 @@ const candidateJobMatchSchema = new mongoose.Schema(
       default: "COMPLETED",
     },
     batchId: { type: String, default: "", index: true },
+    
+    // Email Notification ────────────────────────────────────────────────────────
+
+  notificationStatus: {
+    type: String,
+    enum: ["PENDING", "SENT", "FAILED"],
+    default: "PENDING",
+    index: true,
+  },
+  notificationSentAt: {
+    type: Date,
+    default: null,
+  },
+  notificationError: {
+    type: String,
+    default: "",
+  },
   },
   { timestamps: true }
 );

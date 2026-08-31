@@ -51,6 +51,9 @@ const inputClass =
 const Signup = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState({
+  autoApply: true,
+});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -59,6 +62,7 @@ const Signup = () => {
     fullname: "", email: "", phoneNumber: "", password: "", inputReferralCode: "",
   });
   const [errors, setErrors] = useState({});
+  const [profileErrors, setProfileErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
   // Step 2 — Profile
@@ -143,37 +147,94 @@ const Signup = () => {
   // Step 1 — create account
   const handleCreateAccount = async (e) => {
     e.preventDefault();
-    const validationErrors = validateSignupForm(formData);
+    const validationErrors = validateSignupForm(formData) || {};
+
+    // Strict full name check: letters and single spaces between words only
+    const nameRegex = /^[a-zA-z]+(?:\s[a-zA-z]+)*$/;
+
+    if(formData.fullname && !nameRegex.test(formData.fullname.trim())){
+      validationErrors.fullname = "Name is not valid. Please input valid name.";
+    }
+
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) {
+
+    if(Object.keys(validationErrors).length > 0){
       toast.error("Please fix the errors before submitting.");
       return;
     }
+
     setLoading(true);
-    try {
+    try{
       const response = await axios.post(
         `${USER_API_END_POINT}/register`,
         { ...formData },
-        { withCredentials: true }
+        { withCredentials: true}
       );
-      if (response?.data?.success) {
-        toast.success("Account created ✅");
+
+      if (response?.data?.success){
+        toast.success("Account Created ✅");
         dispatch(setUser(response.data.user));
         setStep(2);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
+        window.scrollTo({ top: 0, behavior: "smooth"});
+      }else{
         toast.error(response?.data?.message || "Signup failed ❌");
       }
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Network error, please try again ❌");
+    } catch (err){
+      toast.error(err?.response?.data?.message || "Network error, Please try again ❌");
     } finally {
       setLoading(false);
     }
   };
 
+  // validations before proceeding to Step 2
+  const handleStep2Next = (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    if(!profileData.gender) newErrors.gender = "Please select a gender";
+    if(!profileData.qualification) newErrors.qualification = "Please choose your qulaification";
+    if(!profileData.qualification === "Other" || !profileData.qualification === "Others" && !profileData.otherQualification?.trim()){
+      newErrors.otherQualification = "Please specify your qualification";
+    }
+    if(!profileData.city?.trim()) newErrors.city = "City is required";
+    if(!profileData.state?.trim()) newErrors.state = "State is required";
+    if(!profileData.country?.trim()) newErrors.country = "Country is required";
+    if(!profileData.skills?.trim()) newErrors.skills = "Please put at least one skill";
+    if(!profileData.bio?.trim()) newErrors.bio = "Bio cannot be empty";
+
+    setProfileErrors(newErrors);
+
+    if(Object.keys(newErrors).length > 0){
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    setStep(3);
+    window.scrollTo({ top: 0, behavior: "smooth"});
+  };
+
   // Step 2 — save profile
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+
+    if(!selectedCategories || selectedCategories.length === 0){
+      toast.error("Please select at least one job category.");
+      return;
+    }
+    if(!resumeData.resume){
+      toast.error("Please upload your resume.");
+      return;
+    }
+    if(hasExperience === null){
+      toast.error("Please select whether you have work experience or you're a fresher.");
+      return;
+    }
+    if(hasExperience === true &&
+    (!experience.companyName || !experience.jobProfile)){
+      toast.error("Please fill in your company name and job profile.");
+      return;
+    }
+
     setLoading(true);
     try {
       const formPayload = new FormData();
@@ -202,6 +263,8 @@ const Signup = () => {
       } else if (hasExperience === false) {
         formPayload.append("experiences", JSON.stringify([]));
       }
+
+      formPayload.append("autoApply", input.autoApply);
 
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
@@ -396,6 +459,7 @@ const Signup = () => {
                               <option value="Female">Female</option>
                               <option value="Other">Other</option>
                             </select>
+                            {profileErrors.gender && <p className="text-red-500 text-xs mt-1">{profileErrors.gender}</p>}
                           </div>
                           <div>
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Qualification</label>
@@ -403,12 +467,14 @@ const Signup = () => {
                               <option value="">Select qualification</option>
                               {QUALIFICATIONS.map((q) => <option key={q} value={q}>{q}</option>)}
                             </select>
+                            {profileErrors.qualification && <p className="text-red-500 text-xs mt-1">{profileErrors.qualification}</p>}
                           </div>
                           {profileData.qualification === "Others" && (
                             <div className="sm:col-span-2">
                               <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Specify Qualification</label>
                               <input type="text" name="otherQualification" value={profileData.otherQualification}
                                 onChange={handleProfileChange} placeholder="Enter your qualification" className={inputClass} />
+                              {profileErrors.otherQualification && <p className="text-red-500 text-xs mt-1">{profileErrors.otherQualification}</p>}
                             </div>
                           )}
                         </div>
@@ -422,16 +488,19 @@ const Signup = () => {
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">City</label>
                             <input type="text" name="city" value={profileData.city} onChange={handleProfileChange}
                               placeholder="Your city" className={inputClass} />
+                            {profileErrors.city && <p className="text-red-500 text-xs mt-1">{profileErrors.city}</p>}
                           </div>
                           <div>
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">State</label>
                             <input type="text" name="state" value={profileData.state} onChange={handleProfileChange}
                               placeholder="Your state" className={inputClass} />
+                            {profileErrors.state && <p className="text-red-500 text-xs mt-1">{profileErrors.state}</p>}
                           </div>
                           <div>
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Country</label>
                             <input type="text" name="country" value={profileData.country} onChange={handleProfileChange}
                               placeholder="Your country" className={inputClass} />
+                            {profileErrors.country && <p className="text-red-500 text-xs mt-1">{profileErrors.country}</p>}
                           </div>
                         </div>
                       </div>
@@ -444,6 +513,7 @@ const Signup = () => {
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Skills</label>
                             <input type="text" name="skills" value={profileData.skills} onChange={handleProfileChange}
                               placeholder="e.g. JavaScript, React, Node.js (comma separated)" className={inputClass} />
+                            {profileErrors.skills && <p className="text-red-500 text-xs mt-1">{profileErrors.skills}</p>}
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate multiple skills with commas</p>
                           </div>
                           <div>
@@ -452,14 +522,15 @@ const Signup = () => {
                               maxLength={500}
                               placeholder="Tell recruiters about yourself, your goals and strengths..."
                               className="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400 resize-none" />
-                            <p className="text-xs text-gray-400 mt-1 text-right">{profileData.bio.length}/500</p>
+                            {profileErrors.bio && <p className="text-red-500 text-xs mt-1">{profileErrors.bio}</p>}
+                            <p className="text-xs text-gray-400 mt-1 text-right">{(profileData.bio || "").length}/500</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Actions */}
                       <div className="flex gap-3 pt-2">
-                        <button type="button" onClick={() => { setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                        <button type="button" onClick={handleStep2Next}
                           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg">
                           Continue →
                         </button>
@@ -492,7 +563,12 @@ const Signup = () => {
                           type="file"
                           id="resumeInput"
                           accept=".pdf, .doc, .docx"
-                          onChange={handleFileChange}
+                          onChange = { (e) => {
+                            const file = e.target.files[0];
+                            if(file){
+                              setResumeData({resume: file, resumeOriginalName: file.name});
+                            }
+                          }}
                           className="hidden"
                         />
 
@@ -535,7 +611,40 @@ const Signup = () => {
                           </div>
                         </div>
                         <p className="text-xs text-gray-500 mt-1"><strong>Note:</strong> PDF or DOCX (.pdf, .docx) only. Max 10MB.</p>
-                      </div>
+                      </div> 
+
+ {/* Auto Apply Toggle */}
+<div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-6 flex items-center justify-between bg-white dark:bg-gray-800">
+  <div className="pr-4">
+    <label className="font-semibold text-base text-gray-800 dark:text-white">
+      Enable Auto Apply
+    </label>
+
+    <p className="text-sm text-gray-500 mt-1">
+      Automatically apply to jobs when your profile matches at least 65% of
+      the job description.
+    </p>
+
+    {/* Short Message */}
+    <p className="text-sm text-blue-500 mt-2">
+      Auto Apply is enabled by default. To turn it off, go to Edit Profile.
+    </p>
+  </div>
+
+  {/* Toggle - ON and Disabled */}
+  <div
+    className="relative w-24 h-12 rounded-full bg-green-500 flex-shrink-0 cursor-not-allowed opacity-90"
+  >
+    {/* YES */}
+    <span className="absolute inset-0 flex items-center justify-start pl-4 text-white font-bold text-sm pointer-events-none">
+      YES
+    </span>
+
+    {/* Toggle Circle */}
+    <div className="absolute top-1 right-1 w-10 h-10 bg-white rounded-full shadow-md" />
+  </div>
+</div>
+
 
                       {/* Experience */}
                       <div>

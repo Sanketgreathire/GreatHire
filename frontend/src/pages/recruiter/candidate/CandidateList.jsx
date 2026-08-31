@@ -211,7 +211,7 @@ const CandidateList = () => {
 
     if (company?.creditedForCandidates <= 0) {
       toast.error("Insufficient credits. Please purchase a plan.");
-      navigate("/recruiter/dashboard/your-plans");
+      navigate("/packages");
       return;
     }
 
@@ -303,7 +303,7 @@ const CandidateList = () => {
 
     if (aiSourcingBalance < normalizedSearchCount) {
       toast.error(`Insufficient AI sourcing credits. You need ${normalizedSearchCount} credits for this search.`);
-      navigate("/recruiter/dashboard/packages");
+      navigate("/packages");
       return;
     }
 
@@ -354,7 +354,7 @@ const CandidateList = () => {
 
     if (aiSourcingBalance < 3) {
       toast.error("Insufficient AI sourcing credits. You need 3 credits to fetch contact details.");
-      navigate("/recruiter/dashboard/packages");
+      navigate("/packages");
       return;
     }
 
@@ -599,7 +599,7 @@ const CandidateList = () => {
                 Advance AI Sourcing: <strong>{aiSourcingBalance}</strong>
               </p>
               {company?.creditedForCandidates === 0 && (
-                <Button onClick={() => navigate("/recruiter/dashboard/packages")}>
+                <Button onClick={() => navigate("/packages")}>
                   Upgrade Plan
                 </Button>
               )}

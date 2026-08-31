@@ -1062,7 +1062,7 @@ function App() {
 
       <h3 className="text-3xl font-bold text-purple-600 text-center">
 
-        <NumberCounter end={200} duration={2000} suffix="+" />
+        <NumberCounter end={200} duration={18000} suffix="+" />
 
       </h3>
 

@@ -67,6 +67,16 @@
     font-display: swap;
   }
 
+select option{
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.dark select option{
+  background-color: #192230 !important;
+  color: #f8fafc !important;
+}
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
@@ -373,7 +383,11 @@
   100% { transform: translate3d(-50%, 0, 0); }
 }
 .animate-scroll {
+<<<<<<< HEAD
+  animation: scroll 150s linear infinite;
+=======
   animation: scroll 120s linear infinite;
+>>>>>>> b45073ac91393ef342b08753a5cae28f470470e3
   will-change: transform;
 }
 .animate-scroll:hover { animation-play-state: paused; }

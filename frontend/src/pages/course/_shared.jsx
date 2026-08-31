@@ -17,16 +17,16 @@ export function Stars({ count = 5 }) {
 export function FaqItem({ item }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
       >
         <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base pr-4">{item.q}</span>
-        <span className={`text-xl font-light text-gray-400 shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
+        <span className={`text-xl font-light text-gray-400 dark:text-gray-300 shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-3">{item.a}</div>
+        <div className="px-5 pb-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-3 bg-white dark:bg-gray-800">{item.a}</div>
       )}
     </div>
   );
