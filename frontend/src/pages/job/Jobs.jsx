@@ -1,227 +1,399 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/shared/Navbar";
-// import Footer from "@/components/shared/Footer";
-import { FiFilter } from "react-icons/fi";
-
-import FilterCard from "@/pages/job/FilterCard";
-import LatestJobs from "./LatestJobs";
-import JobSearch from "@/pages/job/JobSearch";
+import Footer from "@/components/shared/Footer";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiMapPin,
+  FiBookmark,
+  FiShare2,
+  FiBriefcase,
+  FiFileText,
+  FiSun,
+  FiUsers,
+  FiClock,
+  FiBook,
+} from "react-icons/fi";
+import { HiSparkles } from "react-icons/hi2";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { useLocation } from "react-router-dom";
 
-// imported helmet to apply customized meta tags
-import { Helmet } from "react-helmet-async";
+const TABS = [
+  "Overview",
+  "Responsibilities",
+  "Requirements",
+  "Benefits",
+  "Company",
+];
 
-const Jobs = () => {
-  const { jobs, resetFilter, error, setSelectedJob, isLoading } = useJobDetails();
-  const location = useLocation();
-
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const jobListingsRef = useRef(null);
-
-  const [filters, setFilters] = useState({
-    jobTitle: "",
-    location: [], // now an array — supports multiple selected locations + nearby suggestions
-    jobType: [],
-    workPlace: [],
-    company: "",
-    datePosted: [],
-  });
-
-  // searchInfo drives the JobSearch bar UI (title input only, location input removed)
-  const [searchInfo, setSearchInfo] = useState({
-    titleKeyword: "",
-    location: "",
-  });
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 20;
-
-  useEffect(() => {
-    resetFilter?.();
-  }, []);
-
-  // Pre-select job when navigating from marquee
-  useEffect(() => {
-    const jobId = location.state?.selectedJobId;
-    if (jobId && jobs?.length > 0) {
-      const job = jobs.find((j) => j._id === jobId);
-      if (job) setSelectedJob(job);
-    }
-  }, [location.state?.selectedJobId, jobs]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters]);
-
-  const handleSearchUpdate = useCallback((updates) => {
-    setSearchInfo((prev) => ({ ...prev, ...updates }));
-    setFilters((prev) => ({
-      ...prev,
-      jobTitle: updates.titleKeyword !== undefined ? updates.titleKeyword : prev.jobTitle,
-    }));
-  }, []);
-
-  const handleFilterChange = useCallback((newFilters) => {
-    setFilters(newFilters);
-    setSearchInfo((prev) => ({
-      ...prev,
-      titleKeyword: newFilters.jobTitle ?? prev.titleKeyword,
-    }));
-  }, []);
-
-//   console.log("JOBS:", jobs);
-// console.log("JOBS LENGTH:", jobs?.length);
-
-  const filteredJobs = useMemo(() => {
-    if (!jobs) return [];
-    return jobs.filter((job) => {
-      if (Array.isArray(filters.location) && filters.location.length > 0) {
-        const jobLocation = (job?.jobDetails?.location || job?.location || "").toLowerCase();
-        const matchesAny = filters.location.some((loc) =>
-          jobLocation.includes(loc.toLowerCase())
-        );
-        if (!matchesAny) return false;
-      }
-      if (filters.jobTitle) {
-        const jobTitle = (job?.jobDetails?.title || job?.job_title || "").toLowerCase();
-        const companyName = (job?.jobDetails?.companyName || "").toLowerCase();
-        const keyword = filters.jobTitle.toLowerCase();
-        if (!jobTitle.includes(keyword) && !companyName.includes(keyword)) return false;
-      }
-      if (Array.isArray(filters.jobType) && filters.jobType.length > 0) {
-        const jobType = (job?.jobDetails?.jobType || "").toLowerCase();
-        if (!filters.jobType.some((type) => jobType.includes(type.toLowerCase()))) return false;
-      }
-      if (Array.isArray(filters.workPlace) && filters.workPlace.length > 0) {
-        const workPlace = (job?.jobDetails?.workPlaceFlexibility || "").toLowerCase();
-        if (!filters.workPlace.some((wp) => workPlace.includes(wp.toLowerCase()))) return false;
-      }
-      if (filters.company) {
-        const company = (job?.jobDetails?.companyName || job?.jobDetails?.company || job?.employer_name || job?.company || "").toLowerCase();
-        if (!company.includes(filters.company.toLowerCase())) return false;
-      }
-      if (Array.isArray(filters.datePosted) && filters.datePosted.length > 0) {
-        const dateStr = job?.jobDetails?.datePosted || job?.createdAt || job?.jobDetails?.createdAt || job?.postedAt || job?.job_posted_at || null;
-        const jobDate = dateStr ? new Date(dateStr) : null;
-        if (!jobDate || isNaN(jobDate)) return false;
-        const today = new Date();
-        const dayMap = { "Last 24 hours": 1, "Last 7 days": 7, "Last 15 days": 15, "Past Month": 30 };
-        if (!filters.datePosted.some((d) => (today - jobDate) / 86400000 <= (dayMap[d] || 0))) return false;
-      }
-      return true;
-    });
-  }, [jobs, filters]);
-
-  const totalFilteredJobs = filteredJobs.length;
-  const totalPages = Math.max(1, Math.ceil(totalFilteredJobs / jobsPerPage));
-  const displayedJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters({ jobTitle: "", location: [], jobType: [], workPlace: [], company: "", datePosted: [] });
-    setSearchInfo({ titleKeyword: "", location: "" });
-    setCurrentPage(1);
-  }, []);
-
-  const handlePageChange = useCallback((pageNumber) => {
-    setCurrentPage(pageNumber);
-    if (jobListingsRef.current) {
-      const y = jobListingsRef.current.getBoundingClientRect().top + window.pageYOffset - 100;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  }, []);
-
+function AccordionSection({
+  title,
+  defaultOpen = false,
+  highlighted = false,
+  children,
+}) {
+  const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <>
-      <Helmet>
-        <title>Find Latest Jobs & Hire Talent Faster | Smart Job Search - GreatHire</title>
-        <meta name="description" content="Use advanced search and apply features on GreatHire to search and apply for the latest genuine job listings based on various search criteria, Hyderabad State, India, job title, location, company, job type, flexibility of the workplace, and the date of posting." />
-      </Helmet>
+    <div
+      className={`rounded-2xl border p-4 transition-colors ${
+        highlighted
+          ? "border-blue-200 bg-blue-50/60 dark:border-blue-900 dark:bg-blue-950/30"
+          : "border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+      }`}
+    >
+      <button
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between text-left"
+      >
+        <span
+          className={`flex items-center gap-2 font-semibold ${
+            highlighted
+              ? "text-blue-600 dark:text-blue-400"
+              : "text-gray-900 dark:text-gray-100"
+          }`}
+        >
+          {highlighted && <HiSparkles className="shrink-0" size={16} />}
+          {title}
+        </span>
 
-      <div className="min-h-screen flex flex-col pb-4 bg-white dark:bg-gray-900">
-        <Navbar />
-
-        {/* Hero Section */}
-        <div className="pt-4 pb-3 text-center px-4 sm:px-6 lg:px-12 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col gap-5 my-10">
-            <span className="mx-auto px-2 py-2 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium animate-bounce">
-              No. 1 Job Hunt Website
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold leading-tight dark:text-white">
-              <span className="block">Search Jobs</span>
-              <span className="block mt-4">
-                & Get Hired{" "}
-                <span className="text-blue-700 dark:text-blue-500">Smarter, Faster, Risk Free</span>
-              </span>
-            </h1>
-    
-            <div className="flex items-center justify-center gap-2">
-              <div className="w-full max-w-[900px]">
-                <JobSearch searchInfo={searchInfo} onSearchUpdate={handleSearchUpdate} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Jobs Listing Section */}
-        <div className="w-full bg-white dark:bg-gray-900">
-          <div ref={jobListingsRef} className="flex-grow w-full max-w-[1500px] mx-auto pt-2 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:bg-gradient-to-br dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-
-            {/* ── CHANGE: gap-4 added so sidebar and job list never touch ── */}
-            <div className="flex gap-4">
-
-              {/* Sidebar — ── CHANGE: reduced from lg:w-72 to lg:w-56, added pr-2 so content doesn't butt against job list ── */}
-              <div className="hidden lg:block lg:w-56 lg:flex-shrink-0 lg:pl-4 lg:pr-2 pb-4">
-                <FilterCard filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} />
-              </div>
-
-              {/* Main area — min-w-0 prevents flex overflow */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-4 lg:hidden px-4 sm:px-6">
-                  <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-3 py-2 rounded-md transition-colors shadow-md">
-                    <FiFilter size={18} /> Filters
-                  </button>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 font-semibold">{totalFilteredJobs} jobs</div>
-                </div>
-
-                {isLoading ? (
-                  <div className="flex justify-center items-center h-40">
-                    <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 border-r-transparent"></div>
-                  </div>
-                ) : displayedJobs.length > 0 ? (
-                  <>
-                    <LatestJobs jobs={displayedJobs} />
-                    <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-4 mt-6 mb-6 px-4 sm:px-6">
-                      <button className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>← Previous</button>
-                      <span className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-300 text-center whitespace-nowrap">
-                        Page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of <span className="text-blue-600 dark:text-blue-400">{totalPages}</span>
-                      </span>
-                      <button className="w-full sm:w-auto px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>Next →</button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex justify-center items-center h-40 px-4">
-                    <span className="text-gray-500 dark:text-gray-400 text-lg">No jobs found matching your criteria</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Sidebar Overlay */}
-        {isFilterOpen && (
-          <div className="fixed inset-0 z-50 flex lg:hidden">
-            <div className="absolute inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={() => setIsFilterOpen(false)}></div>
-            <div className="relative bg-white dark:bg-gray-800 w-64 sm:w-72 h-full shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-y-auto">
-              <FilterCard filters={filters} onFilterChange={handleFilterChange} onReset={handleResetFilters} onClose={() => setIsFilterOpen(false)} />
-            </div>
-          </div>
+        {open ? (
+          <FiChevronUp className="text-gray-400" size={18} />
+        ) : (
+          <FiChevronDown className="text-gray-400" size={18} />
         )}
-      </div>
-    </>
+      </button>
+
+      {open && children && <div className="mt-3">{children}</div>}
+    </div>
   );
+}
+
+function OverviewStat({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-800/60">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+        <Icon size={18} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="truncate font-semibold text-gray-900 dark:text-gray-100">
+          {value || "—"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const getInitial = (job) => {
+  const name = job?.jobDetails?.companyName || job?.company?.companyName || "G";
+  return name.charAt(0).toUpperCase();
 };
 
-export default Jobs;
+const getActiveDays = (createdAt) => {
+  if (!createdAt) return 0;
+  const days = Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+  return Number.isFinite(days) ? Math.max(days, 0) : 0;
+};
+
+export default function JobDetailsPage() {
+  const {
+    jobs = [],
+    selectedJob,
+    setSelectedJob,
+    isLoading,
+    error,
+  } = useJobDetails();
+
+  const [activeTab, setActiveTab] = useState("Overview");
+
+  useEffect(() => {
+    if (!selectedJob && jobs.length > 0) {
+      setSelectedJob(jobs[0]);
+    }
+  }, [jobs, selectedJob, setSelectedJob]);
+
+  const job = selectedJob || jobs[0] || null;
+
+  const activeDays = useMemo(
+    () => getActiveDays(job?.createdAt),
+    [job?.createdAt]
+  );
+
+  if (isLoading && !job) {
+    return (
+      <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
+        <Navbar />
+        <main className="flex flex-1 items-center justify-center text-gray-500 dark:text-gray-400">
+          Loading jobs...
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col bg-white dark:bg-gray-900">
+      <Navbar />
+
+      <main className="flex-1 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+          {error && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">
+              {error}
+            </div>
+          )}
+
+          {!job ? (
+            <div className="flex min-h-[400px] items-center justify-center text-gray-500 dark:text-gray-400">
+              No job available.
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="flex flex-col gap-4 border-b border-gray-100 p-5 dark:border-gray-800 sm:flex-row sm:items-start sm:justify-between sm:p-8">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-gray-200 bg-white text-2xl font-bold text-gray-400 shadow-sm dark:border-gray-700">
+                    {getInitial(job)}
+                  </div>
+
+                  <div className="min-w-0">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
+                      {job.jobDetails?.title}
+                    </h1>
+
+                    <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm sm:text-base">
+                      <span className="font-medium text-blue-600 dark:text-blue-400">
+                        {job.jobDetails?.companyName}
+                      </span>
+                      <span className="text-gray-300 dark:text-gray-600">•</span>
+                      <span className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                        <FiMapPin size={14} />
+                        {job.jobDetails?.location}
+                      </span>
+                      <span className="text-gray-300 dark:text-gray-600">•</span>
+                      <span className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
+                        <FiBriefcase size={14} />
+                        {job.jobDetails?.workPlaceFlexibility}
+                      </span>
+                    </p>
+
+                    <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      ₹{job.jobDetails?.salary}
+                    </p>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {job.jobDetails?.urgentHiring === "Yes" && (
+                        <span className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-700 dark:border-green-900 dark:bg-green-950/40 dark:text-green-400">
+                          ⚡ Urgent Hiring
+                        </span>
+                      )}
+
+                      <span className="flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-400">
+                        <FiClock size={12} />
+                        Responds in {job.jobDetails?.respondTime ?? "—"} days
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex shrink-0 flex-row items-start gap-2 sm:flex-col sm:items-end">
+                  {job.matchScore != null && (
+                    <div className="rounded-xl bg-blue-50 px-4 py-2 text-right dark:bg-blue-950/50">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        AI Match Score
+                      </p>
+                      <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                        {job.matchScore}%
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      aria-label="Save job"
+                      className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                    >
+                      <FiBookmark size={18} />
+                    </button>
+
+                    <button
+                      type="button"
+                      aria-label="Share job"
+                      className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                    >
+                      <FiShare2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 sm:p-8">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                  Quick Overview
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <OverviewStat icon={FiBriefcase} label="Experience" value={job.jobDetails?.experience} />
+                  <OverviewStat icon={FiFileText} label="Type" value={job.jobDetails?.jobType} />
+                  <OverviewStat icon={FiSun} label="Shift" value={job.jobDetails?.shift} />
+                  <OverviewStat icon={FiUsers} label="Openings" value={job.jobDetails?.numberOfOpening} />
+                  <OverviewStat icon={FiClock} label="Posted" value={`${activeDays}d ago`} />
+                  <OverviewStat icon={FiBook} label="Duration" value={job.jobDetails?.duration} />
+                </div>
+
+                <div className="mt-6 flex gap-6 overflow-x-auto border-b border-gray-200 dark:border-gray-800">
+                  {TABS.map((tab) => (
+                    <button
+                      type="button"
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`shrink-0 pb-3 text-sm font-medium transition-colors ${
+                        activeTab === tab
+                          ? "border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                          : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-6">
+                  {activeTab === "Overview" && (
+                    <>
+                      <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 dark:border-blue-900 dark:bg-blue-950/30">
+                        <p className="mb-3 flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
+                          <HiSparkles size={16} />
+                          AI Job Snapshot
+                        </p>
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2 text-sm">
+                            <p className="text-gray-600 dark:text-gray-300">
+                              <span className="text-gray-500 dark:text-gray-400">Skills: </span>
+                              {(job.jobDetails?.skills || []).join(", ") || "—"}
+                            </p>
+                            <p className="text-gray-600 dark:text-gray-300">
+                              <span className="text-gray-500 dark:text-gray-400">Salary Type: </span>
+                              {job.jobDetails?.salaryType || "—"}
+                            </p>
+                          </div>
+
+                          <div className="space-y-2 text-sm">
+                            {job.matchScore != null && (
+                              <p className="text-gray-600 dark:text-gray-300">
+                                <span className="text-gray-500 dark:text-gray-400">Match Score: </span>
+                                <span className="text-green-600 dark:text-green-400">
+                                  {job.matchScore}%
+                                </span>
+                              </p>
+                            )}
+                            <p className="text-gray-600 dark:text-gray-300">
+                              <span className="text-gray-500 dark:text-gray-400">Any Amount: </span>
+                              {job.jobDetails?.anyAmount || "—"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <AccordionSection title="About this Role" defaultOpen>
+                        <div
+                          className="leading-relaxed text-gray-600 dark:text-gray-300"
+                          dangerouslySetInnerHTML={{
+                            __html: job.jobDetails?.details || "<p>No description provided.</p>",
+                          }}
+                        />
+                      </AccordionSection>
+
+                      {(job.jobDetails?.responsibilities || []).length > 0 && (
+                        <AccordionSection title="Responsibilities">
+                          <ul className="space-y-2">
+                            {job.jobDetails.responsibilities.map((item, index) => (
+                              <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </AccordionSection>
+                      )}
+                    </>
+                  )}
+
+                  {activeTab === "Responsibilities" && (
+                    <ul className="space-y-2">
+                      {(job.jobDetails?.responsibilities || []).map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {activeTab === "Requirements" && (
+                    <ul className="space-y-2">
+                      {(job.jobDetails?.qualifications || []).map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {activeTab === "Benefits" && (
+                    <ul className="space-y-2">
+                      {(job.jobDetails?.benefits || []).map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {activeTab === "Company" && (
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {job.jobDetails?.companyName} — {job.jobDetails?.location}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 flex flex-col items-start justify-between gap-3 rounded-b-2xl border-t border-gray-100 bg-white/95 p-5 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 sm:flex-row sm:items-center sm:p-6">
+                <div>
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
+                    Ready to apply?
+                  </p>
+                  <p className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                    ⚡ Typically responds within {job.jobDetails?.respondTime ?? "—"} days
+                  </p>
+                </div>
+
+                <div className="flex w-full gap-2 sm:w-auto">
+                  <button
+                    type="button"
+                    aria-label="Save job"
+                    className="rounded-lg border border-gray-200 p-2.5 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
+                  >
+                    <FiBookmark size={18} />
+                  </button>
+
+                  <a
+                    href={`/jobs/${job._id}`}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-md transition-colors hover:bg-blue-700 sm:flex-none"
+                  >
+                    Apply Now →
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

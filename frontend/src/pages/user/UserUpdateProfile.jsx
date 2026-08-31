@@ -894,7 +894,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                       name="fullname"
                       value={input.fullname}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Enter your full name"
                       required
                     />
@@ -912,7 +912,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                       name="email"
                       value={input.email}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="example@gmail.com"
                       required
                     />
@@ -930,7 +930,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                       name="phoneNumber"
                       value={input.phoneNumber}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Phone Number"
                       maxLength={10}
                       required
@@ -948,7 +948,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                       name="alternatePhone"
                       value={input.alternatePhone}
                       onChange={handleChange}
-                      className="flex-1"
+                      className="flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                       placeholder="Alt. Phone (Optional)"
                       maxLength={10}
                     />
@@ -1017,7 +1017,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                         value={input.otherQualification}
                         onChange={handleChange}
                         required
-                        className="w-full sm:flex-1"
+                        className="w-full sm:flex-1 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                         placeholder="Enter your qualification"
                       />
                     </div>
@@ -1071,7 +1071,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                     name="pincode"
                     value={input.pincode}
                     onChange={handleChange}
-                    className="w-full"
+                    className="w-full bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                     placeholder="Enter Pincode"
                     required
                   />
@@ -1176,7 +1176,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                   handleExperienceChange(index, "jobProfile", e.target.value)
                                 }
                                 placeholder="e.g., Software Developer, Data Analyst"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1191,7 +1191,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                   handleExperienceChange(index, "companyName", e.target.value)
                                 }
                                 placeholder="e.g., Infosys, Google"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1206,7 +1206,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                   handleExperienceChange(index, "duration", e.target.value)
                                 }
                                 placeholder="e.g., 2 (in years only)"
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                             </div>
@@ -1225,7 +1225,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                   }
                                 }}
                                 placeholder="Describe your work experience in detail..."
-                                className="w-full border rounded p-2 h-32 md:h-40 lg:h-48"
+                                className="w-full border rounded p-2 h-32 md:h-40 lg:h-48 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 required
                               />
                               {/* Word Counter */}
@@ -1265,7 +1265,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                 type="text"
                                 value={exp.currentCTC || ""}
                                 onChange={(e) => handleExperienceChange(index, "currentCTC", e.target.value)}
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 placeholder="e.g. 10 LPA"
                                 required
                               />
@@ -1280,7 +1280,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                                 onChange={(e) =>
                                   handleExperienceChange(index, "noticePeriod", e.target.value)
                                 }
-                                className="w-full border rounded p-2"
+                                className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                                 placeholder="e.g. 15 days"
                                 required
                               />
@@ -1308,7 +1308,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                     name="bio"
                     value={input.bio}
                     onChange={handleChange}
-                    className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 border dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
 
                     rows="3"
                     placeholder="Enter your bio..."
@@ -1329,6 +1329,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                     value={input.skills}
                     onChange={handleChange}
                     placeholder="Enter skills (comma separated)"
+                    className="bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                     required
                   />
                 </div>

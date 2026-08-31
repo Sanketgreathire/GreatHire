@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { calculateMatchScore } from "../services/resumeMatch.service.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import Notification from "../models/notification.model.js";
@@ -132,6 +133,25 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
     });
 
     await newApplication.save();
+
+    try {
+      const resumeText = user.profile?.experience?.experienceDetails || "";
+      const matchData = await calculateMatchScore(
+        resumeText,
+        job.jobDetails.title,
+        job.jobDetails.details,
+        job.jobDetails.skills || []
+      );
+      newApplication.aiInterview = {
+        ...newApplication.aiInterview,
+        matchScore: matchData.matchScore,
+        skillsMatched: matchData.skillsMatched,
+        missingSkills: matchData.missingSkills,
+      };
+      await newApplication.save();
+    } catch (error) {
+      console.log("Match Score Error:", error.message);
+    }
 
     // Push application into job (use $push to avoid re-validating required fields on old jobs)
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });

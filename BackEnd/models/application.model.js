@@ -38,6 +38,21 @@ const applicationSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    aiInterview: {
+      status: {
+        type: String,
+        enum: ["Not Started", "Scheduled", "Completed", "Failed"],
+        default: "Not Started",
+      },
+      blandCallId: { type: String, default: "" },
+      transcript: { type: String, default: "" },
+      recordingUrl: { type: String, default: "" },
+      questions: { type: String, default: "" },
+      score: { type: Number, default: 0 },
+      matchScore: { type: Number, default: 0 },
+      skillsMatched: { type: [String], default: [] },
+      missingSkills: { type: [String], default: [] },
+    },
   },
    
   { timestamps: true }

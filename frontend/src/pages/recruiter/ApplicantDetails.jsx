@@ -50,6 +50,14 @@ const ApplicantDetails = ({
   const [loading, setLoading] = useState(0);
   const [creditDeducted, setCreditDeducted] = useState(false);
   const [freshApplicant, setFreshApplicant] = useState(null);
+  const [interviewLoading, setInterviewLoading] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [interviewQuestions, setInterviewQuestions] = useState("");
+  const [matchScore, setMatchScore] = useState(null);
+  const [showCallLogsModal, setShowCallLogsModal] = useState(false);
+  const [callTranscript, setCallTranscript] = useState("");
+  const [callRecording, setCallRecording] = useState(null);
+  const [callLogsLoading, setCallLogsLoading] = useState(false);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
 
@@ -122,6 +130,91 @@ const ApplicantDetails = ({
       toast.error("An error occurred while updating the status");
     } finally {
       setLoading(0);
+    }
+  };
+
+  const startAIInterview = async () => {
+    if (!applicantId) {
+      toast.error("Invalid applicant ID");
+      return;
+    }
+    try {
+      setInterviewLoading(true);
+      const res = await axios.post(
+        `/api/v1/interview/start/${applicantId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setMatchScore(res.data.matchScore);
+        setApplicants((prev) =>
+          prev.map((a) => a._id === app._id ? { ...a, status: "Interview Schedule" } : a)
+        );
+        toast.success(`AI Interview Call Started! Call ID: ${res.data.call.call_id}`);
+      } else {
+        toast.error(res.data.message || "Failed to start interview");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error starting interview");
+    } finally {
+      setInterviewLoading(false);
+    }
+  };
+
+  const fetchCallLogs = async () => {
+    if (!applicantId) {
+      toast.error("Invalid applicant ID");
+      return;
+    }
+    try {
+      setCallLogsLoading(true);
+      const res = await axios.post(
+        `/api/v1/interview/call-logs/${applicantId}`,
+        {},
+        { withCredentials: true }
+      );
+      console.log("Call logs response:", res.data);
+      if (res.data.success) {
+        const transcript = res.data.transcript || res.data.callData?.transcript || "No transcript available yet";
+        setCallTranscript(transcript);
+        setCallRecording(res.data.recording || null);
+        setShowCallLogsModal(true);
+        if (!transcript || transcript === "No transcript available") {
+          toast.success("Call logs loaded (transcript may still be processing)");
+        }
+      } else {
+        toast.error(res.data.message || "Failed to load call logs");
+      }
+    } catch (error) {
+      console.error("Call logs error:", error);
+      toast.error(error?.response?.data?.message || "Error loading call logs");
+    } finally {
+      setCallLogsLoading(false);
+    }
+  };
+
+  const previewInterviewQuestions = async () => {
+    if (interviewQuestions) {
+      setShowPreviewModal(true);
+      return;
+    }
+    try {
+      setInterviewLoading(true);
+      const res = await axios.post(
+        `/api/v1/interview/preview/${applicantId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setInterviewQuestions(res.data.questions || res.data.script || "");
+        setShowPreviewModal(true);
+      } else {
+        toast.error(res.data.message || "Failed to load questions");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error loading questions");
+    } finally {
+      setInterviewLoading(false);
     }
   };
 
@@ -375,28 +468,173 @@ const ApplicantDetails = ({
                 </>
               )}
 
+              {/* Interview Status & Match Score */}
+              {mergedApp?.aiInterview?.status && (
+                <>
+                  <Divider />
+                  <SectionTitle>AI Interview</SectionTitle>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">
+                      <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Status:</span>
+                      <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">{mergedApp.aiInterview.status}</span>
+                    </div>
+                    {matchScore != null && (
+                      <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
+                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Match Score:</span>
+                        <span className={`text-sm font-semibold px-3 py-1 rounded-full ${
+                          matchScore >= 70 ? "bg-green-100 text-green-700" :
+                          matchScore >= 40 ? "bg-yellow-100 text-yellow-700" :
+                          "bg-red-100 text-red-700"
+                        }`}>{matchScore}%</span>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
               {/* Actions */}
               <Divider />
-              {user?.role === "recruiter" && app.status === "Pending" ? (
-                <div className="flex gap-3">
-                  <button
-                    className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
-                    disabled={loading === 1 || loading === -1}
-                    onClick={() => updateStatus(1)}
-                  >
-                    {loading === 1 ? "Updating..." : "✅ Shortlist"}
-                  </button>
-                  <button
-                    className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
-                    disabled={loading === 1 || loading === -1}
-                    onClick={() => updateStatus(-1)}
-                  >
-                    {loading === -1 ? "Updating..." : "❌ Reject"}
-                  </button>
+              <div className="space-y-3">
+                {/* Interview Actions - Recruiter Only */}
+                {user?.role === "recruiter" && (
+                  <>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={previewInterviewQuestions}
+                        disabled={interviewLoading}
+                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {interviewLoading ? "Loading..." : "👁️ Preview"}
+                      </button>
+                      <button
+                        onClick={startAIInterview}
+                        disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
+                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
+                      </button>
+                      <button
+                        onClick={fetchCallLogs}
+                        disabled={callLogsLoading || !mergedApp?.aiInterview?.status}
+                        className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                      >
+                        {callLogsLoading ? "Loading..." : "📋 Logs"}
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {/* Shortlist/Reject Actions */}
+                {user?.role === "recruiter" && status === "Pending" ? (
+                  <div className="flex gap-3">
+                    <button
+                      className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
+                      disabled={loading === 1 || loading === -1}
+                      onClick={() => updateStatus(1)}
+                    >
+                      {loading === 1 ? "Updating..." : "✅ Shortlist"}
+                    </button>
+                    <button
+                      className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
+                      disabled={loading === 1 || loading === -1}
+                      onClick={() => updateStatus(-1)}
+                    >
+                      {loading === -1 ? "Updating..." : "❌ Reject"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className={`text-center font-semibold text-sm py-3 rounded-2xl ${STATUS_STYLES[status] || STATUS_STYLES.Pending}`}>
+                    {status}
+                  </div>
+                )}
+              </div>
+
+              {/* Preview Modal */}
+              {showPreviewModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-96 overflow-y-auto p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Interview Questions Preview</h3>
+                      <button
+                        onClick={() => setShowPreviewModal(false)}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                      {interviewQuestions}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className={`text-center font-semibold text-sm py-3 rounded-2xl ${STATUS_STYLES[status] || STATUS_STYLES.Pending}`}>
-                  {status}
+              )}
+
+              {/* Call Logs Modal */}
+              {showCallLogsModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Communication Logs</h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={fetchCallLogs}
+                          className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+                          title="Refresh transcript"
+                        >
+                          🔄 Refresh
+                        </button>
+                        <button
+                          onClick={() => setShowCallLogsModal(false)}
+                          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Transcript Section */}
+                    <div className="flex-1 overflow-y-auto mb-4">
+                      {callTranscript && callTranscript.trim() && !callTranscript.includes("not yet available") && !callTranscript.includes("being processed") ? (
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-600">
+                          <div className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-mono whitespace-pre-wrap break-words">
+                            {callTranscript}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-lg text-center">
+                          <p className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">⏳ Transcript Processing</p>
+                          <p className="text-sm text-blue-600 dark:text-blue-400 mb-4">
+                            The transcript is still being processed. This usually takes 30-60 seconds.
+                          </p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                            {callTranscript || "Click 'Refresh' to check for updates."}
+                          </p>
+                          <button
+                            onClick={fetchCallLogs}
+                            disabled={callLogsLoading}
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition"
+                          >
+                            {callLogsLoading ? "Loading..." : "🔄 Refresh Now"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Recording Section */}
+                    {callRecording && (
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">🎙️ Call Recording</h4>
+                        <audio 
+                          controls 
+                          className="w-full rounded-lg h-10 bg-gray-100 dark:bg-gray-700"
+                          controlsList="nodownload"
+                        >
+                          <source src={callRecording} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

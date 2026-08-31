@@ -6,7 +6,6 @@ import Navbar from "@/components/shared/Navbar";
 const CourseEnrollModal = lazy(() => import("@/components/CourseEnrollModal"));
 const TalkToCounsellorModal = lazy(() => import("@/components/TalkToCounsellorModal"));
 
-
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const CURRICULUM = [
@@ -103,18 +102,18 @@ const CURRICULUM = [
 ];
 
 const TOOLS = [
-  { name: "Python", color: "bg-yellow-100 text-yellow-700", icon: "🐍" },
-  { name: "Django", color: "bg-green-100 text-green-700", icon: "🌐" },
-  { name: "React", color: "bg-blue-100 text-blue-700", icon: "⚛️" },
-  { name: "MySQL", color: "bg-orange-100 text-orange-700", icon: "🗄️" },
-  { name: "PostgreSQL", color: "bg-indigo-100 text-indigo-700", icon: "🐘" },
-  { name: "MongoDB", color: "bg-emerald-100 text-emerald-700", icon: "🍃" },
-  { name: "AWS", color: "bg-yellow-100 text-yellow-800", icon: "☁️" },
-  { name: "Docker", color: "bg-sky-100 text-sky-700", icon: "🐳" },
-  { name: "Git & GitHub", color: "bg-gray-100 text-gray-700", icon: "🐙" },
-  { name: "Bootstrap", color: "bg-purple-100 text-purple-700", icon: "🅱️" },
-  { name: "REST APIs", color: "bg-pink-100 text-pink-700", icon: "🔗" },
-  { name: "JavaScript", color: "bg-yellow-100 text-yellow-600", icon: "⚡" },
+  { name: "Python", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300", icon: "🐍" },
+  { name: "Django", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300", icon: "🌐" },
+  { name: "React", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300", icon: "⚛️" },
+  { name: "MySQL", color: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300", icon: "🗄️" },
+  { name: "PostgreSQL", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300", icon: "🐘" },
+  { name: "MongoDB", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300", icon: "🍃" },
+  { name: "AWS", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300", icon: "☁️" },
+  { name: "Docker", color: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300", icon: "🐳" },
+  { name: "Git & GitHub", color: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300", icon: "🐙" },
+  { name: "Bootstrap", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300", icon: "🅱️" },
+  { name: "REST APIs", color: "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300", icon: "🔗" },
+  { name: "JavaScript", color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-300", icon: "⚡" },
 ];
 
 const HIGHLIGHTS = [
@@ -122,7 +121,7 @@ const HIGHLIGHTS = [
   { icon: "🛠️", title: "Hands-On Projects", desc: "Build 3+ real-world projects that go straight into your portfolio." },
   { icon: "👨‍🏫", title: "Industry Expert Trainers", desc: "Learn from developers with 10+ years of product & service experience." },
   { icon: "📋", title: "Regular Mock Tests", desc: "Weekly assessments and coding challenges to track your progress." },
-  { icon: "🎖️", title: "Dual Certification", desc: "Great Hire + IIT  Academy recognized certificate." },
+  { icon: "🎖️", title: "Dual Certification", desc: "Great Hire + IIT Academy recognized certificate." },
   { icon: "🔄", title: "Flexible Batches", desc: "Weekday, weekend, online & offline options to suit your schedule." },
   { icon: "💻", title: "LMS Access", desc: "Lifetime access to recorded sessions, notes, and interview material." },
   { icon: "🤝", title: "1-on-1 Mentoring", desc: "Dedicated mentor for doubt resolution and career guidance." },
@@ -180,7 +179,7 @@ const FAQS = [
   },
   {
     q: "What certifications will I receive?",
-    a: "You'll receive a Great Hire Training Certificate and an upon successful completion of the course.",
+    a: "You'll receive a Great Hire Training Certificate upon successful completion of the course.",
   },
   {
     q: "What is the course fee and are EMI options available?",
@@ -188,124 +187,13 @@ const FAQS = [
   },
 ];
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-function AccordionItem({ item, isOpen, onToggle }) {
-  return (
-    <div className={`border rounded-xl overflow-hidden transition-all duration-200 ${isOpen ? "border-blue-300 shadow-sm" : "border-gray-200"}`}>
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="shrink-0 text-xs font-bold bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full">{item.module}</span>
-          <span className="font-semibold text-gray-900 text-sm sm:text-base truncate">{item.title}</span>
-        </div>
-        <div className="flex items-center gap-3 shrink-0 ml-2">
-          <span className="hidden sm:inline text-xs text-gray-400 font-medium">{item.duration}</span>
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${isOpen ? "bg-blue-600 text-white rotate-180" : "bg-gray-100 text-gray-500"}`}>
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
-      </button>
-      {isOpen && (
-        <div className="px-5 pb-5 bg-blue-50/40 border-t border-blue-100">
-          <p className="text-xs text-blue-600 font-semibold mb-3 mt-3 uppercase tracking-wider">Topics Covered</p>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {item.topics.map((topic) => (
-              <li key={topic} className="flex items-start gap-2 text-sm text-gray-700">
-                <svg className="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                {topic}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function DemoModal({ onClose }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.phone) return;
-    setLoading(true);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, courseName: "Full Stack Python Developer", type: "demo" }),
-      });
-    } catch (_) {}
-    setLoading(false);
-    setDone(true);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 text-xl font-bold">×</button>
-        {done ? (
-          <div className="p-8 text-center">
-            <div className="text-5xl mb-4">🎓</div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">Demo Booked!</h3>
-            <p className="text-gray-500 text-sm mb-6">Our counsellor will contact you within 2 hours to confirm your free demo session.</p>
-            <button onClick={onClose} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-blue-700">Got it!</button>
-          </div>
-        ) : (
-          <div className="p-6">
-            <div className="mb-5 pb-4 border-b border-gray-100">
-              <p className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-1">Book Free Demo</p>
-              <h3 className="text-xl font-black text-gray-900">Full Stack Python Developer</h3>
-              <p className="text-sm text-gray-500 mt-1">🎯 Free demo class — no commitment required!</p>
-            </div>
-            <div className="space-y-4">
-              {[
-                { label: "Full Name", key: "name", type: "text", placeholder: "Your full name" },
-                { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" },
-                { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" },
-              ].map(({ label, key, type, placeholder }) => (
-                <div key={key}>
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">{label}</label>
-                  <input required type={type} placeholder={placeholder} value={form[key]}
-                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-              ))}
-              <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">Preferred Mode</label>
-                <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Online</option><option>Offline</option><option>Hybrid</option>
-                </select>
-              </div>
-              <button onClick={handleSubmit} disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">
-                {loading ? "Submitting..." : "Book Free Demo Class →"}
-              </button>
-              <p className="text-center text-xs text-gray-400">Free demo · No credit card required · Cancel anytime</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ─── Pricing Plans Data ───────────────────────────────────────────────────────
 
 const PRICING_PLANS = [
   {
     id: "iit",
     badge: "IIT Certification Program",
-    headerBg: "bg-blue-700",
+    headerBg: "bg-blue-700 dark:bg-blue-800",
     isIIT: true,
     price: "₹60,000",
     gst: "+ 18% GST",
@@ -323,7 +211,7 @@ const PRICING_PLANS = [
   {
     id: "employment",
     badge: "Employment Program",
-    headerBg: "bg-blue-600",
+    headerBg: "bg-blue-600 dark:bg-blue-700",
     isIIT: false,
     price: "₹38,000",
     gst: "+ 18% GST",
@@ -340,18 +228,169 @@ const PRICING_PLANS = [
   },
 ];
 
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+function AccordionItem({ item, isOpen, onToggle }) {
+  return (
+    <div className={`border rounded-xl overflow-hidden transition-all duration-200 ${isOpen ? "border-blue-300 dark:border-blue-600 shadow-sm" : "border-gray-200 dark:border-gray-700"}`}>
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors"
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="shrink-0 text-xs font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 px-2.5 py-1 rounded-full">{item.module}</span>
+          <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">{item.title}</span>
+        </div>
+        <div className="flex items-center gap-3 shrink-0 ml-2">
+          <span className="hidden sm:inline text-xs text-gray-400 dark:text-gray-400 font-medium">{item.duration}</span>
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${isOpen ? "bg-blue-600 text-white rotate-180" : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </button>
+      {isOpen && (
+        <div className="px-5 pb-5 bg-blue-50/40 dark:bg-gray-800/80 border-t border-blue-100 dark:border-gray-700">
+          <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-3 mt-3 uppercase tracking-wider">Topics Covered</p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {item.topics.map((topic) => (
+              <li key={topic} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <svg className="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {topic}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DemoModal({ onClose }) {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", mode: "Online" });
+  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({ name: "", email: "", phone: "" });
+
+  const handleSubmit = async () => {
+    let nameErr = "";
+    let emailErr = "";
+    let phoneErr = "";
+
+    if (!form.name.trim()) {
+      nameErr = "Full name is required.";
+    } else if (!/^[A-Za-z\s]+$/.test(form.name)) {
+      nameErr = "Full name can only contain letters and spaces.";
+    }
+
+    if (!form.email.trim()) {
+      emailErr = "Email address is required.";
+    }
+
+    if (!form.phone.trim()) {
+      phoneErr = "Phone number is required.";
+    }
+
+    if (nameErr || emailErr || phoneErr) {
+      setErrors({ name: nameErr, email: emailErr, phone: phoneErr });
+      return;
+    }
+
+    setErrors({ name: "", email: "", phone: "" });
+    setLoading(true);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/courses/enquiry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, courseName: "Full Stack Python Developer", type: "demo" }),
+      });
+      setLoading(false);
+      setDone(true);
+    } catch (_) {
+      setLoading(false);
+      setErrors({ name: "", email: "", phone: "Something went wrong. Please try again." });
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md relative border border-gray-100 dark:border-gray-700">
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 dark:text-gray-300 text-xl font-bold">×</button>
+        {done ? (
+          <div className="p-8 text-center">
+            <div className="text-5xl mb-4">🎓</div>
+            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Demo Booked!</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Our counsellor will contact you within 2 hours to confirm your free demo session.</p>
+            <button onClick={onClose} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-blue-700">Got it!</button>
+          </div>
+        ) : (
+          <div className="p-6">
+            <div className="mb-5 pb-4 border-b border-gray-100 dark:border-gray-700">
+              <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-widest mb-1">Book Free Demo</p>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white">Full Stack Python Developer</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">🎯 Free demo class — no commitment required!</p>
+            </div>
+            <div className="space-y-4">
+              {[
+                { label: "Full Name", key: "name", type: "text", placeholder: "Your full name" },
+                { label: "Email Address", key: "email", type: "email", placeholder: "you@example.com" },
+                { label: "Phone Number", key: "phone", type: "tel", placeholder: "+91 98765 43210" },
+              ].map(({ label, key, type, placeholder }) => (
+                <div key={key}>
+                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1.5">{label}</label>
+                  <input
+                    required type={type} placeholder={placeholder}
+                    value={form[key]}
+                    onChange={(e) => {
+                      if (key === "name") {
+                        const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, "");
+                        setForm({ ...form, name: filteredValue });
+                      } else {
+                        setForm({ ...form, [key]: e.target.value });
+                      }
+                    }}
+                    className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white ${
+                      errors[key] ? "border-red-500" : "border-gray-200 dark:border-gray-600"
+                    }`}
+                  />
+                  {errors[key] && <p className="text-red-500 text-xs mt-1 font-medium">{errors[key]}</p>}
+                </div>
+              ))}
+              <div>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1.5">Preferred Mode</label>
+                <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })}
+                  className="w-full border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option className="dark:bg-gray-800">Online</option><option className="dark:bg-gray-800">Offline</option><option className="dark:bg-gray-800">Hybrid</option>
+                </select>
+              </div>
+              <button onClick={handleSubmit} disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mt-1 disabled:opacity-60">
+                {loading ? "Submitting..." : "Book Free Demo Class →"}
+              </button>
+              <p className="text-center text-xs text-gray-400 dark:text-gray-500">Free demo · No credit card required · Cancel anytime</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Pricing Plans Section ────────────────────────────────────────────────────
 
 function PricingPlans({ onEnroll, onCounsellor }) {
   return (
-    <section className="py-14 bg-gray-50 border-t border-b border-gray-200">
+    <section className="py-14 bg-gray-50 dark:bg-gray-900 border-t border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2 flex items-center justify-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
             <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
             Choose Your Learning Path
           </h2>
-          <p className="text-gray-500 text-sm sm:text-base max-w-xl mx-auto mt-2">
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto mt-2">
             Select the program that best fits your career goals — both include placement support and lifetime LMS access.
           </p>
         </div>
@@ -359,50 +398,50 @@ function PricingPlans({ onEnroll, onCounsellor }) {
           {PRICING_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-2xl overflow-hidden border-2 shadow-lg flex flex-col transition-transform hover:-translate-y-1 duration-200 ${
-                plan.highlight ? "border-blue-400 shadow-blue-100" : "border-blue-300 shadow-blue-50"
+              className={`rounded-2xl overflow-hidden border-2 shadow-lg flex flex-col transition-transform hover:-translate-y-1 duration-200 bg-white dark:bg-gray-800 ${
+                plan.highlight ? "border-blue-400 dark:border-blue-500 shadow-blue-100 dark:shadow-none" : "border-blue-300 dark:border-blue-700 shadow-blue-50 dark:shadow-none"
               }`}
             >
               <div className={`${plan.headerBg} px-6 py-4`}>
                 <h3 className="text-white font-black text-lg sm:text-xl text-center tracking-wide">{plan.badge}</h3>
               </div>
-              <div className="bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-center gap-4 flex-wrap min-h-[64px]">
+              <div className="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-center gap-4 flex-wrap min-h-[64px]">
                 {plan.isIIT ? (
                   <>
                     <div className="flex items-center gap-2">
                       <span className="text-blue-600 font-black text-base">L</span>
-                      <span className="font-bold text-gray-800 text-sm">Great Hire</span>
-                      <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                      <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">Great Hire</span>
+                      <span className="text-[10px] text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded px-1">®</span>
                     </div>
                     <span className="text-gray-400 font-bold text-xl">+</span>
                     <div className="flex flex-col items-center">
                       <div className="flex items-center gap-1">
                         <span className="bg-blue-600 text-white font-black text-xs px-1 rounded">in</span>
-                        <span className="font-bold text-gray-800 text-sm">LinkedIn Learning</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">LinkedIn Learning</span>
                       </div>
-                      <span className="text-xs text-gray-400 mt-0.5">Knowledge Partner</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Knowledge Partner</span>
                     </div>
                   </>
                 ) : (
                   <div className="flex items-center gap-2">
                     <span className="text-blue-600 font-black text-base">L</span>
-                    <span className="font-bold text-gray-800 text-sm">Great Hire</span>
-                    <span className="text-[10px] text-blue-600 border border-blue-200 rounded px-1">®</span>
+                    <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">Great Hire</span>
+                    <span className="text-[10px] text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded px-1">®</span>
                   </div>
                 )}
               </div>
-              <div className="bg-white px-6 pt-5 pb-2">
+              <div className="bg-white dark:bg-gray-800 px-6 pt-5 pb-2">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className={`text-4xl font-black ${plan.highlight ? "text-blue-600" : "text-blue-700"}`}>{plan.price}</span>
-                  <span className="text-gray-500 text-sm font-medium">{plan.gst}</span>
+                  <span className={`text-4xl font-black ${plan.highlight ? "text-blue-600 dark:text-blue-400" : "text-blue-700 dark:text-blue-400"}`}>{plan.price}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">{plan.gst}</span>
                 </div>
-                <p className="text-xs text-gray-400 mt-1 italic">{plan.emi}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 italic">{plan.emi}</p>
               </div>
-              <div className={`mx-6 my-3 border-t ${plan.highlight ? "border-blue-100" : "border-blue-100"}`} />
-              <div className="bg-white px-6 pb-6 flex-1">
+              <div className={`mx-6 my-3 border-t ${plan.highlight ? "border-blue-100 dark:border-gray-700" : "border-blue-100 dark:border-gray-700"}`} />
+              <div className="bg-white dark:bg-gray-800 px-6 pb-6 flex-1">
                 <ul className="space-y-3">
                   {plan.features.map((feat, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
                       <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-blue-600" : "bg-blue-700"}`}>
                         <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -413,7 +452,7 @@ function PricingPlans({ onEnroll, onCounsellor }) {
                   ))}
                 </ul>
               </div>
-              <div className="bg-white px-6 pb-6 pt-2 space-y-3">
+              <div className="bg-white dark:bg-gray-800 px-6 pb-6 pt-2 space-y-3">
                 <button
                   onClick={() => onEnroll(plan.id)}
                   className={`w-full font-bold py-3.5 rounded-xl text-sm transition-colors ${
@@ -424,8 +463,8 @@ function PricingPlans({ onEnroll, onCounsellor }) {
                 </button>
                 <button
                   onClick={onCounsellor}
-                  className={`w-full font-semibold py-3 rounded-xl text-sm border-2 transition-colors bg-white ${
-                    plan.highlight ? "border-blue-400 text-blue-600 hover:bg-blue-50" : "border-blue-400 text-blue-700 hover:bg-blue-50"
+                  className={`w-full font-semibold py-3 rounded-xl text-sm border-2 transition-colors bg-white dark:bg-gray-800 ${
+                    plan.highlight ? "border-blue-400 dark:border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700" : "border-blue-400 dark:border-blue-600 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700"
                   }`}
                 >
                   Talk to our Admission Team
@@ -444,29 +483,29 @@ function PricingPlans({ onEnroll, onCounsellor }) {
 export default function PythonCoursePage() {
   const [openModule, setOpenModule] = useState(0);
   const [showEnroll, setShowEnroll] = useState(false);
+  const [enrollAmount, setEnrollAmount] = useState(38000);
   const [showIITEnroll, setShowIITEnroll] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [showCounsellor, setShowCounsellor] = useState(false);
 
   const handlePricingEnroll = (planId) => {
-    if (planId === "iit") setShowIITEnroll(true);
-    else setShowEnroll(true);
+    setEnrollAmount(planId === "iit" ? 60000 : 38000);
+    setShowEnroll(true);
   };
 
   const openEnroll = (isIIT) => {
-    if (isIIT) setShowIITEnroll(true);
-    else setShowEnroll(true);
+    setEnrollAmount(isIIT ? 60000 : 38000);
+    setShowEnroll(true);
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900">
+    <div className="min-h-screen bg-white dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100">
 
       {/* ── Navbar ── */}
-     <Navbar />
-      
+      <Navbar />
 
       {/* ── Hero ── */}
-      <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-blue-900 text-white relative overflow-hidden">
+      <section className="bg-gradient-to-br from-slate-900 via-blue-950 to-blue-900 dark:from-gray-950 dark:via-blue-950 dark:to-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none"
           style={{ backgroundImage: "radial-gradient(circle at 20% 80%, #3b82f6 0%, transparent 50%), radial-gradient(circle at 80% 20%, #6366f1 0%, transparent 50%)" }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
@@ -507,7 +546,7 @@ export default function PythonCoursePage() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={() => setShowEnroll(true)}
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                   className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
                   🚀 Enroll Now — ₹38,000
                 </button>
@@ -524,21 +563,21 @@ export default function PythonCoursePage() {
               {/* Trust badges */}
               <div className="flex flex-wrap gap-4 mt-6 text-xs text-blue-200">
                 <span className="flex items-center gap-1.5">✅ No Cost EMI Available</span>
-                <span className="flex items-center gap-1.5">✅ IIT  Certified</span>
+                <span className="flex items-center gap-1.5">✅ IIT Certified</span>
                 <span className="flex items-center gap-1.5">✅ Free Demo Class</span>
               </div>
             </div>
 
             {/* Right – Enroll card (desktop) */}
             <div className="hidden lg:block">
-              <div className="bg-white rounded-2xl shadow-2xl p-6 text-gray-900">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-1">
                   <Stars />
-                  <span className="text-sm font-bold text-gray-700">4.8</span>
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-200">4.8</span>
                   <span className="text-xs text-gray-400">(2,400+ reviews)</span>
                 </div>
-                <p className="text-3xl font-black text-blue-600 mb-1">₹38,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
+                <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI available</p>
 
                 <div className="space-y-2.5 mb-5">
                   {[
@@ -549,7 +588,7 @@ export default function PythonCoursePage() {
                     "🔄 Online + Offline modes",
                     "🎁 Lifetime LMS Access",
                   ].map((item) => (
-                    <p key={item} className="text-sm text-gray-700 flex items-center gap-2">{item}</p>
+                    <p key={item} className="text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">{item}</p>
                   ))}
                 </div>
 
@@ -557,11 +596,11 @@ export default function PythonCoursePage() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors mb-3">
                   Book Free Demo Class
                 </button>
-                <button onClick={() => setShowEnroll(true)}
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                   className="w-full bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-3 rounded-xl text-sm transition-colors">
                   🚀 Enroll Now — ₹38,000
                 </button>
-                <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure payment · Cancel anytime</p>
+                <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-3">🔒 Secure payment · Cancel anytime</p>
               </div>
             </div>
           </div>
@@ -569,18 +608,18 @@ export default function PythonCoursePage() {
       </section>
 
       {/* ── Mobile CTA strip ── */}
-      <div className="lg:hidden bg-white border-b border-gray-200 sticky top-16 z-30 shadow-sm">
+      <div className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div>
-            <p className="text-xl font-black text-blue-600 leading-none">₹38,000</p>
-            <p className="text-xs text-gray-400">EMI from ₹7,000/mo</p>
+            <p className="text-xl font-black text-blue-600 dark:text-blue-400 leading-none">₹38,000</p>
+            <p className="text-xs text-gray-400 dark:text-gray-400">EMI from ₹7,000/mo</p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowDemo(true)}
-              className="bg-white border border-blue-600 text-blue-600 font-bold px-3 py-2.5 rounded-xl text-xs whitespace-nowrap">
+              className="bg-white dark:bg-gray-800 border border-blue-600 text-blue-600 dark:text-blue-400 font-bold px-3 py-2.5 rounded-xl text-xs whitespace-nowrap">
               Free Demo
             </button>
-            <button onClick={() => setShowEnroll(true)}
+            <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
               className="bg-blue-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">
               Enroll Now
             </button>
@@ -597,15 +636,15 @@ export default function PythonCoursePage() {
 
             {/* Course Overview */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Course Overview
               </h2>
-              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-6">
-                <p className="text-gray-700 text-base leading-relaxed mb-4">
-                  The <strong>Full Stack Python Developer Course</strong> at Great Hire is a comprehensive 6-month job-oriented program designed to take you from zero to job-ready. You'll master both front-end and back-end development using Python, Django, React, and cloud deployment.
+              <div className="bg-blue-50 dark:bg-gray-800/60 border border-blue-100 dark:border-gray-700 rounded-2xl p-6 mb-6">
+                <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed mb-4">
+                  The <strong className="text-gray-900 dark:text-white">Full Stack Python Developer Course</strong> at Great Hire is a comprehensive 6-month job-oriented program designed to take you from zero to job-ready. You'll master both front-end and back-end development using Python, Django, React, and cloud deployment.
                 </p>
-                <p className="text-gray-700 text-base leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed">
                   With 3+ real-world projects, weekly mock interviews, and direct placement support through Great Hire's 500+ company network, this course is your fastest path to a high-paying tech career in Hyderabad.
                 </p>
               </div>
@@ -618,10 +657,10 @@ export default function PythonCoursePage() {
                   { icon: "🖥", label: "Mode", val: "Online + Offline" },
                   { icon: "🌐", label: "Language", val: "English / Telugu" },
                 ].map((item) => (
-                  <div key={item.label} className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
+                  <div key={item.label} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center shadow-sm">
                     <p className="text-2xl mb-1">{item.icon}</p>
-                    <p className="text-xs text-gray-400 font-medium mb-0.5">{item.label}</p>
-                    <p className="text-sm font-bold text-gray-900">{item.val}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-400 font-medium mb-0.5">{item.label}</p>
+                    <p className="text-sm font-bold text-gray-900 dark:text-white">{item.val}</p>
                   </div>
                 ))}
               </div>
@@ -629,19 +668,19 @@ export default function PythonCoursePage() {
 
             {/* Course Highlights */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Why This Course?
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {HIGHLIGHTS.map((h) => (
-                  <div key={h.title} className="flex gap-4 p-5 bg-white border border-gray-100 rounded-2xl hover:border-blue-200 hover:shadow-sm transition-all group">
-                    <div className="w-11 h-11 bg-blue-50 group-hover:bg-blue-100 rounded-xl flex items-center justify-center text-xl shrink-0 transition-colors">
+                  <div key={h.title} className="flex gap-4 p-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl hover:border-blue-200 dark:hover:border-blue-600 hover:shadow-sm transition-all group">
+                    <div className="w-11 h-11 bg-blue-50 dark:bg-gray-700 group-hover:bg-blue-100 dark:group-hover:bg-gray-600 rounded-xl flex items-center justify-center text-xl shrink-0 transition-colors">
                       {h.icon}
                     </div>
                     <div>
-                      <p className="font-bold text-gray-900 text-sm mb-0.5">{h.title}</p>
-                      <p className="text-gray-500 text-xs leading-relaxed">{h.desc}</p>
+                      <p className="font-bold text-gray-900 dark:text-white text-sm mb-0.5">{h.title}</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed">{h.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -651,11 +690,11 @@ export default function PythonCoursePage() {
             {/* Curriculum */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 flex items-center gap-2">
+                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2">
                   <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                   Course Curriculum
                 </h2>
-                <span className="text-xs text-gray-400 font-medium hidden sm:inline">{CURRICULUM.length} modules · 16 weeks</span>
+                <span className="text-xs text-gray-400 dark:text-gray-400 font-medium hidden sm:inline">{CURRICULUM.length} modules · 16 weeks</span>
               </div>
               <div className="space-y-3">
                 {CURRICULUM.map((item, i) => (
@@ -668,7 +707,7 @@ export default function PythonCoursePage() {
                 ))}
               </div>
               <div className="mt-4 text-center">
-                <button className="text-blue-600 text-sm font-semibold hover:underline">
+                <button className="text-blue-600 dark:text-blue-400 text-sm font-semibold hover:underline">
                   📥 Download Complete Syllabus PDF
                 </button>
               </div>
@@ -676,13 +715,13 @@ export default function PythonCoursePage() {
 
             {/* Tools & Technologies */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Tools & Technologies
               </h2>
               <div className="flex flex-wrap gap-3">
                 {TOOLS.map((t) => (
-                  <span key={t.name} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${t.color} border border-transparent`}>
+                  <span key={t.name} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${t.color}`}>
                     <span className="text-base">{t.icon}</span>
                     {t.name}
                   </span>
@@ -692,28 +731,28 @@ export default function PythonCoursePage() {
 
             {/* Batch Schedule */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Upcoming Batches
               </h2>
               <div className="space-y-4">
                 {BATCHES.map((b) => (
-                  <div key={b.type} className={`flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border gap-4 ${b.urgent ? "border-blue-300 bg-blue-50" : "border-gray-200 bg-white"}`}>
+                  <div key={b.type} className={`flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border gap-4 ${b.urgent ? "border-blue-300 dark:border-blue-600 bg-blue-50/50 dark:bg-gray-800/80" : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"}`}>
                     <div className="flex items-center gap-4">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 ${b.urgent ? "bg-blue-100" : "bg-gray-100"}`}>
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 ${b.urgent ? "bg-blue-100 dark:bg-blue-900/50" : "bg-gray-100 dark:bg-gray-700"}`}>
                         📅
                       </div>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-bold text-gray-900">{b.type}</p>
-                          {b.urgent && <span className="text-xs bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">Filling Fast</span>}
+                          <p className="font-bold text-gray-900 dark:text-white">{b.type}</p>
+                          {b.urgent && <span className="text-xs bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-300 font-bold px-2 py-0.5 rounded-full">Filling Fast</span>}
                         </div>
-                        <p className="text-sm text-gray-500 mt-0.5">{b.schedule} · {b.time} · {b.mode}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{b.schedule} · {b.time} · {b.mode}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 sm:flex-col sm:items-end">
-                      <p className="text-xs text-gray-500 font-medium">{b.seats}</p>
-                      <button onClick={() => setShowEnroll(true)}
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{b.seats}</p>
+                      <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors">
                         Enroll →
                       </button>
@@ -725,22 +764,22 @@ export default function PythonCoursePage() {
 
             {/* Testimonials */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Student Reviews
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 {TESTIMONIALS.map((t) => (
-                  <div key={t.name} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                  <div key={t.name} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
                     <Stars count={t.rating} />
-                    <p className="text-gray-600 text-sm leading-relaxed mt-3 mb-4 italic">"{t.text}"</p>
-                    <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mt-3 mb-4 italic">"{t.text}"</p>
+                    <div className="flex items-center gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                       <div className={`w-9 h-9 ${t.color} rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                         {t.avatar}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{t.name}</p>
-                        <p className="text-xs text-gray-400">{t.role}</p>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-400">{t.role}</p>
                       </div>
                     </div>
                   </div>
@@ -750,7 +789,7 @@ export default function PythonCoursePage() {
 
             {/* FAQs */}
             <section>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6 flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                 <span className="w-1 h-7 bg-blue-600 rounded-full inline-block"></span>
                 Frequently Asked Questions
               </h2>
@@ -766,16 +805,16 @@ export default function PythonCoursePage() {
           <div className="hidden lg:block">
             <div className="sticky top-24 space-y-5">
               {/* Enroll Card */}
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-6">
                 <div className="flex items-center gap-2 mb-1">
                   <Stars />
-                  <span className="text-sm font-bold text-gray-700">4.8</span>
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-200">4.8</span>
                   <span className="text-xs text-gray-400">(2,400+)</span>
                 </div>
-                <p className="text-3xl font-black text-blue-600 leading-none mb-1">₹38,000</p>
-                <p className="text-xs text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
+                <p className="text-3xl font-black text-blue-600 dark:text-blue-400 leading-none mb-1">₹38,000</p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 mb-5">EMI from ₹7,000/month · No cost EMI</p>
 
-                <div className="space-y-2.5 mb-5 text-sm text-gray-700">
+                <div className="space-y-2.5 mb-5 text-sm text-gray-700 dark:text-gray-300">
                   {[
                     "📅 Next batch: April 14, 2025",
                     "⏱ Duration: 6 months",
@@ -793,19 +832,19 @@ export default function PythonCoursePage() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-sm mb-3 transition-colors">
                   Book Free Demo Class
                 </button>
-                <button onClick={() => setShowEnroll(true)}
-                  className="w-full bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-3 rounded-xl text-sm mb-3 transition-colors">
+                <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
+                  className="w-full bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-3 rounded-xl text-sm transition-colors">
                   🚀 Enroll Now — ₹38,000
                 </button>
 
-                <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition-colors">
+                <button onClick={() => setShowCounsellor(true)} className="w-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold py-3 rounded-xl text-sm transition-colors">
                   📞 Talk to Counsellor
                 </button>
-                <p className="text-center text-xs text-gray-400 mt-3">🔒 Secure · No spam · Cancel anytime</p>
+                <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-3">🔒 Secure · No spam · Cancel anytime</p>
               </div>
 
               {/* Share / refer */}
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-5 text-white text-center">
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 rounded-2xl p-5 text-white text-center">
                 <p className="text-2xl mb-2">👫</p>
                 <p className="font-bold text-sm mb-1">Refer a Friend</p>
                 <p className="text-xs text-blue-100 mb-3">Earn ₹2,000 for every successful referral!</p>
@@ -829,7 +868,7 @@ export default function PythonCoursePage() {
       />
 
       {/* ── CTA Banner ── */}
-      <section className="bg-gradient-to-r from-blue-700 to-indigo-700 py-14 mt-10">
+      <section className="bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-800 dark:to-indigo-800 py-14 mt-10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">
             Start Your Python Journey Today
@@ -838,14 +877,14 @@ export default function PythonCoursePage() {
             Join 2,400+ students who've already transformed their careers with Great Hire's Full Stack Python course.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => setShowEnroll(true)}
+            <button onClick={() => { setEnrollAmount(38000); setShowEnroll(true); }}
               className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base shadow-lg whitespace-nowrap transition-colors">
               🚀 Enroll Now — ₹38,000
             </button>
             <button onClick={() => openEnroll(true)}
-                  className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
-                  🚀 Enroll Now — ₹60,000
-                </button>
+              className="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-black px-8 py-4 rounded-xl text-base transition-colors shadow-lg whitespace-nowrap">
+              🚀 Enroll Now — ₹60,000
+            </button>
             <button onClick={() => setShowDemo(true)}
               className="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-sm whitespace-nowrap transition-colors">
               🎯 Book Free Demo
@@ -859,9 +898,10 @@ export default function PythonCoursePage() {
 
       {/* ── Modal ── */}
       {showDemo && <DemoModal onClose={() => setShowDemo(false)} />}
-      {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName="Full Stack Python Developer" amount={38000} accentColor="blue" />}
-      {showIITEnroll && <CourseEnrollModal onClose={() => setShowIITEnroll(false)} courseName="Full Stack Python Developer — IIT Certification" amount={60000} accentColor="indigo" />}
-      {showCounsellor && <TalkToCounsellorModal courseName="Full Stack Python Developer" onClose={() => setShowCounsellor(false)} />}
+      <Suspense fallback={null}>
+        {showEnroll && <CourseEnrollModal onClose={() => setShowEnroll(false)} courseName="Full Stack Python Developer" amount={enrollAmount} accentColor="blue" />}
+        {showCounsellor && <TalkToCounsellorModal courseName="Full Stack Python Developer" onClose={() => setShowCounsellor(false)} />}
+      </Suspense>
     </div>
   );
 }

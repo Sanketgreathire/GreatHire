@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   Shield, HelpCircle, Activity, FileText, Briefcase,
   Settings, LogOut, User, Lock, Trash2, ExternalLink,
-  ChevronDown, ChevronUp, Send, Clock, Monitor,
+  ChevronDown, ChevronUp, Send, Clock, Monitor, Menu, X,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -411,6 +411,7 @@ const SettingsPolicy = () => {
   const { user } = useSelector((s) => s.auth);
   const leftColRef = React.useRef(null);
   const [leftHeight, setLeftHeight] = React.useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   useEffect(() => {
     if (!leftColRef.current) return;
@@ -441,44 +442,66 @@ const SettingsPolicy = () => {
 
       <div className="min-h-screen bg-[#f0f2f5] dark:bg-gray-900 flex">
         {/* Top Navbar */}
-        <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 z-30 shadow-sm">
-          <span className="text-xl font-bold">
-            <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
-          </span>
+        <header className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 sm:px-6 z-30 shadow-sm">
+          <div className="flex items-center gap-3">
+            {/* Hamburger Button for Mobile / Small Screens */}
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="md:hidden p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+
+            <span className="text-xl font-bold">
+              <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
+            </span>
+          </div>
+
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
           >
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </header>
 
-        {/* Left Sidebar */}
+        {/* Mobile Backdrop Overlay */}
+        {mobileMenuOpen && (
+          <div
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          />
+        )}
+
+        {/* Left Sidebar - Desktop Fixed, Mobile Slide-Over */}
         <aside
-          className="w-56 bg-white dark:bg-gray-800 shadow-sm flex flex-col px-4 pb-6 fixed left-0 z-20"
+          className={`fixed left-0 z-20 bg-white dark:bg-gray-800 shadow-md md:shadow-sm flex flex-col px-4 pb-6 transition-transform duration-300 ease-in-out w-56 ${
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
           style={{ height: "calc(100vh - 56px)", top: "56px", overflowY: "auto" }}
         >
           <div className="space-y-1 mb-4 pt-4">
             <button
-              onClick={() => navigate("/profile")}
+              onClick={() => { setMobileMenuOpen(false); navigate("/profile"); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <User className="w-4 h-4" /> Profile
             </button>
             <button
-              onClick={() => navigate("/ResumeAnalyzer")}
+              onClick={() => { setMobileMenuOpen(false); navigate("/ResumeAnalyzer"); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <FileText className="w-4 h-4" /> Resume Analyzer
             </button>
             <button
-              onClick={() => navigate("/jobs")}
+              onClick={() => { setMobileMenuOpen(false); navigate("/jobs"); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
               <Briefcase className="w-4 h-4" /> Jobs
             </button>
             <button
-              onClick={() => navigate("/profile/settings-policy")}
+              onClick={() => { setMobileMenuOpen(false); navigate("/profile/settings-policy"); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium text-sm"
             >
               <Shield className="w-4 h-4" /> Settings &amp; Policy
@@ -489,18 +512,18 @@ const SettingsPolicy = () => {
         </aside>
 
         {/* Main content */}
-        <main className="ml-56 flex-1 px-5 pb-6" style={{ paddingTop: "72px" }}>
-          <div className="flex gap-4 items-start">
+        <main className="ml-0 md:ml-56 flex-1 px-4 sm:px-6 pb-6 w-full max-w-full overflow-x-hidden" style={{ paddingTop: "72px" }}>
+          <div className="flex flex-col xl:flex-row gap-4 items-start">
             {/* Left column — Security + Help Desk */}
-            <div ref={leftColRef} className="flex-1 space-y-4">
+            <div ref={leftColRef} className="w-full xl:flex-1 space-y-4">
               <SecurityCard user={user} />
               <HelpDeskCard user={user} />
             </div>
 
             {/* Right column — Activity: exact same height as left column */}
             <div
-              className="w-[420px] flex-shrink-0 sticky top-[72px]"
-              style={{ height: leftHeight ? `${leftHeight}px` : 'auto' }}
+              className="w-full xl:w-[420px] flex-shrink-0 xl:sticky xl:top-[72px]"
+              style={{ height: leftHeight && window.innerWidth >= 1280 ? `${leftHeight}px` : 'auto' }}
             >
               <ActivityCard />
             </div>

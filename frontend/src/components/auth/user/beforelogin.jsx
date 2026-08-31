@@ -732,10 +732,10 @@ const GreatHireLanding = () => {
   return (
     <>
       <Helmet>
-        <title>GreatHire | Locate Jobs, Employ Talent, and Advance Your Career in India</title>
+        <title>GreatHire | Find Jobs in India, AI-Powered Job Search & Hiring Platform</title>
         <meta
           name="description"
-          content="GreatHire is India's cutting-edge job search and hiring platform connecting talent and companies with safe and open hiring solutions. AI-powered matching helps job seekers explore thousands of IT, non-IT, fresher and experienced roles daily. Recruiters get fast hiring, validated profiles and effective workforce solutions. From career counseling and resume creation to quick job applications — GreatHire makes recruiting easy, dependable and future-ready throughout India."
+          content="GreatHire is India’s leading recruitment platform connecting job seekers with companies through secure and transparent hiring practices. Leveraging AI technology, GreatHire helps job seekers with a wide array of IT, Non-IT, freshers and experienced job opportunities every day while recruiters benefit from quick hiring, reliable candidate profiles and workforce management solutions. From career advisory to resume writing and one-click job applications, GreatHire makes recruiting simple, secure and future-ready across the country."
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://greathire.in/" />
@@ -1045,7 +1045,7 @@ const GreatHireLanding = () => {
                     </span>
                   </h1>
                   <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-                    Join <span className="font-bold text-blue-600 dark:text-blue-400">6 Crore+</span> job seekers and explore{" "}
+                    Join <span className="font-bold text-blue-600 dark:text-blue-400">6 lakh+</span> job seekers and explore{" "}
                     <span className="font-bold text-purple-600 dark:text-purple-400">10,000+</span> new opportunities daily across India
                   </p>
 
@@ -1085,7 +1085,7 @@ const GreatHireLanding = () => {
                   <div className="flex gap-8 pt-6">
                     {[
                       { value: "10K+", label: "Daily Jobs", from: "from-blue-600", to: "to-purple-600" },
-                      { value: "6Cr+", label: "Job Seekers", from: "from-purple-600", to: "to-pink-600" },
+                      { value: "600K+", label: "Job Seekers", from: "from-purple-600", to: "to-pink-600" },
                       { value: "900+", label: "Cities", from: "from-pink-600", to: "to-red-600" },
                     ].map((stat) => (
                       <div key={stat.label} className="group">
@@ -1263,7 +1263,7 @@ const GreatHireLanding = () => {
                         Ready to Start Your Journey?
                       </h2>
                       <p className="text-blue-100 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-3xl mx-auto font-light">
-                        Join 6 crore+ job seekers and discover your perfect career match with AI-powered recommendations
+                        Join 6 lakh+ job seekers and discover your perfect career match with AI-powered recommendations
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center">
                         <button

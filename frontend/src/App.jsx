@@ -4,17 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setUser } from "./redux/authSlice.js";
 import { USER_API_END_POINT } from "./utils/ApiEndPoint";
-
+ 
 import JobDetailsProvider from "./context/JobDetailsContext";
 import { NotificationProvider } from './context/NotificationContext';
 import { MessageProvider } from './context/MessageContext';
-
+ 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
+import NoIndex from "./components/SEO/NoIndex.jsx";
 import WhatsAppFloat from "./components/shared/WhatsAppFloat";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
-
+ 
 // ── Auth ──
 const Home                   = lazy(() => import("./pages/Home"));
 const AuthPage               = lazy(() => import('./components/auth/user/AuthPage'));
@@ -30,7 +31,7 @@ const VerifyNumber            = lazy(() => import("./components/VerifyNumber"));
 const ForgotPassword          = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword           = lazy(() => import("./pages/ResetPassword"));
 const PageNotFound            = lazy(() => import("./pages/PageNotFound"));
-
+ 
 // ── User pages ──
 const Jobs                   = lazy(() => import("./pages/job/Jobs"));
 const JobDescription         = lazy(() => import("./pages/job/JobDescription"));
@@ -44,7 +45,7 @@ const ResumeAnalyzer         = lazy(() => import("./components/ResumeAnalyzer"))
 const ReferAndBoost          = lazy(() => import("./pages/ReferAndBoost"));
 const NotificationPage       = lazy(() => import("./components/notifications/NotificationPage"));
 const MessagingPage          = lazy(() => import("./components/messaging/MessagingPage"));
-
+ 
 // ── Service / info pages ──
 const About                  = lazy(() => import("./pages/services/About"));
 const Contact                = lazy(() => import("./pages/services/Contact"));
@@ -81,10 +82,10 @@ const ResumeMistakeBlog      = lazy(() => import("./components/ResumeMistakesBlo
 const ResumATSFriendlyBlog   = lazy(() => import("./components/ResumATSFriendlyBlog"));
 const InterviewQuestionsBlog = lazy(() => import("./components/InterviewQuestionsBlog"));
 const SwitchToITNoCoding      = lazy(() => import("./components/SwitchToITNoCoding"));
-
+ 
 const TheFuture              = lazy(() => import("./components/TheFuture"));
 const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
-
+ 
 // ── Recruiter pages ──
 const RequireCompany         = lazy(() => import("./components/recruiter/RequireCompany"));
 const RecruiterDashboard     = lazy(() => import("./pages/recruiter/RecruiterDashboard"));
@@ -111,8 +112,6 @@ const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccoun
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
 const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
-
-
 // Plan-based dashboard router
 // PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
 // FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
@@ -125,19 +124,19 @@ function DashboardRouter() {
   }
   return <RecruiterHome />;
 }
-
+ 
 // ── Admin / DigitalMarketer ──
 const AdminLogin             = lazy(() => import("./components/auth/admin/AdminLogin"));
 const AdminLayout            = lazy(() => import("./components/admin/AdminLayout"));
 const DigitalMarketerLogin   = lazy(() => import("./components/auth/digitalmarketer/DigitalMarketerLogin"));
-
+ 
 // ── Campus ──
 const CampusPlacementDashboard = lazy(() => import('@/components/Campus/campusDashboard'));
 const CollegeDetails           = lazy(() => import('@/components/Campus/CollegeDetails'));
 const CollegeLogin             = lazy(() => import('@/components/Campus/CollegeLogin'));
 const CollegeSignup            = lazy(() => import('@/components/Campus/CollegeSignup'));
 const StudentSignup            = lazy(() => import('@/components/Campus/StudentSignup'));
-
+ 
 // ── Courses ──
 const TrainingCoursesPage      = lazy(() => import('./pages/course/CourseMain'));
 const PythonCoursePage         = lazy(() => import('./pages/course/python'));
@@ -161,13 +160,13 @@ const GenerativeAIPage         = lazy(() => import('./pages/course/GenerativeAIP
 const SAPMMPage                = lazy(() => import('./pages/course/SAPMMPage'));
 const CyberSecurityPage        = lazy(() => import('./pages/course/CyberSecurityPage'));
 const PMPPage                  = lazy(() => import('./pages/course/PMPPage'));
-
+ 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
     <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
   </div>
 );
-
+ 
 // Router defined outside component — never recreated on re-render
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -178,15 +177,15 @@ const appRouter = createBrowserRouter([
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
   { path: "/login", element: <AuthPage /> },
-  { path: "/signup", element: <AuthPage /> },
+  { path: "/signup", element: <><NoIndex /><AuthPage /></> },
   { path: "/great-hire/services", element: <OurService /> },
   { path: "/contact", element: <Contact /> },
   { path: "/HowWeHire", element: <HowWeHire /> },
   { path: "/TheFutureTechnology", element: <TheFutureTechnology /> },
   { path: "/HiringInsights", element: <HiringInsights /> },
   { path: "/InsightDetail/:id", element: <InsightDetail /> },
-  { path: "/InsightsDashboard", element: <InsightsDashboard /> },
-  { path: "/InsightApproval", element: <InsightApproval /> },
+  { path: "/InsightsDashboard", element: <><NoIndex /><InsightsDashboard /></> },
+  { path: "/InsightApproval", element: <><NoIndex /><InsightApproval /></> },
   { path: "/hiring-insights/:id", element: <InsightDetail /> },
   { path: "/CareerAdvice", element: <CareerAdvice /> },
   { path: "/CareerAdvice/4", element: <ITJobsBlog /> },
@@ -196,7 +195,7 @@ const appRouter = createBrowserRouter([
   { path: "/CareerAdvice/8", element: <HRInterviewBlog /> },
   { path: "/TrendingTopics/9", element: <ResumATSFriendlyBlog /> },
   { path: "/TrendingTopics/10", element: <InterviewQuestionsBlog /> },
-
+ 
   { path: "/HiringAdvice/4", element: <HyderabadJobsBlog /> },
   { path: "/HiringAdvice/5", element: <JobPortalsBlog /> },
   { path: "/HiringAdvice/6", element: <RemoteJobsBlog /> },
@@ -216,20 +215,20 @@ const appRouter = createBrowserRouter([
   { path: "/ResumeAnalyzer", element: <ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
   { path: "/recruiter/resume-analyzer", element: <ProtectedRecruiterRoute><Navigate to="/recruiter/dashboard/resume-analyzer" replace /></ProtectedRecruiterRoute> },
   { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
-  { path: "/jobseeker-login", element: <JobseekerLogin /> },
-  { path: "/recruiter-login", element: <RecruiterLogin /> },
-  { path: "/learnerstrack-login", element: <LearnersTrackLogin /> },
-  { path: "/learnerstrack-signup", element: <LearnersTrackSignup /> },
+  { path: "/jobseeker-login", element: <><NoIndex /><JobseekerLogin /></> },
+  { path: "/recruiter-login", element: <><NoIndex /><RecruiterLogin /></> },
+  { path: "/learnerstrack-login", element: <><NoIndex /><LearnersTrackLogin /></> },
+  { path: "/learnerstrack-signup", element: <><NoIndex /><LearnersTrackSignup /></> },
   { path: "/signup-choice", element: <SignupPage /> },
   { path: "/verify-email", element: <VerifyEmail /> },
   { path: "/verify-number", element: <VerifyNumber /> },
-  { path: "/jobs", element: <ProtectedUserRoute><Jobs /></ProtectedUserRoute> },
+  { path: "/jobs", element: <Jobs /> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
-  { path: "/saved-jobs", element: <ProtectedUserRoute><SavedJobs /></ProtectedUserRoute> },
-  { path: "/apply/:jobId", element: <ProtectedUserRoute><MainApply /></ProtectedUserRoute> },
-  { path: "/profile", element: <ProtectedUserRoute><UserProfile /></ProtectedUserRoute> },
-  { path: "/profile/settings-policy", element: <ProtectedUserRoute><SettingsPolicy /></ProtectedUserRoute> },
+  { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex/><SavedJobs /></></ProtectedUserRoute> },
+  { path: "/apply/:jobId", element: <ProtectedUserRoute><><NoIndex /><MainApply /></></ProtectedUserRoute> },
+  { path: "/profile", element: <ProtectedUserRoute><><NoIndex/><UserProfile /></></ProtectedUserRoute> },
+  { path: "/profile/settings-policy", element: <ProtectedUserRoute><><NoIndex /><SettingsPolicy /></></ProtectedUserRoute> },
   { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
   { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
   { path: "/policy/privacy-policy", element: <PrivacyPolicy /> },
@@ -237,8 +236,8 @@ const appRouter = createBrowserRouter([
   { path: "/policy/terms-and-conditions", element: <TermsAndConditions /> },
   { path: "/packages", element: <RecruiterPlans /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/notifications", element: <NotificationPage /> },
-  { path: "/messages", element: <ProtectedUserRoute><MessagingPage /></ProtectedUserRoute> },
+  { path: "/notifications", element: <><NoIndex /><NotificationPage /></> },
+  { path: "/messages", element: <ProtectedUserRoute><><NoIndex /><MessagingPage /></></ProtectedUserRoute> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
   { path: "/description/:id", element: <JobDetail /> },
@@ -307,10 +306,10 @@ const appRouter = createBrowserRouter([
   { path: "/courses/pmp-training", element: <PMPPage /> },
   { path: "*", element: <PageNotFound /> },
 ]);
-
+ 
 function App() {
   const dispatch = useDispatch();
-
+ 
   useEffect(() => {
     // Defer session validation — wait for first paint to complete
     // 100ms was too fast and competed with initial render
@@ -326,7 +325,7 @@ function App() {
     }, 800);
     return () => clearTimeout(t);
   }, []);
-
+ 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
@@ -334,7 +333,7 @@ function App() {
       });
     }
   }, []);
-
+ 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
       <JobDetailsProvider>
@@ -351,5 +350,6 @@ function App() {
     </div>
   );
 }
-
+ 
 export default App;
+ 

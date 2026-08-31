@@ -78,7 +78,7 @@ const ForgotPassword = () => {
       <Navbar /> {/* Display the navigation bar */}
 
       {/* Main container for the forgot password page */}
-      <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-white to-blue-100 h-screen">
+      <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-white to-blue-100 dark:from-gray-900  dark:to-gray-800 h-screen">
 
         {/* Left Side - Background Image */}
         <div className="hidden md:block w-full md:w-2/3">
@@ -92,13 +92,13 @@ const ForgotPassword = () => {
         {/* Right Side - Forgot Password Form */}
         <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4">
           {/* Branding and title */}
-          <h1 className="text-3xl font-bold text-center">
-            Great<span className="text-blue-700">Hire</span>
+          <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+            Great<span className="text-blue-700 dark:text-blue-400">Hire</span>
           </h1>
-          <h3 className="text-2xl font-bold text-gray-800 text-center mb-6">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 text-center mb-6">
             Forgot Password
           </h3>
-          <p className="text-gray-600 text-center mb-4">
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
             Enter your email address below and we'll send you a link to reset
             your password.
           </p>
@@ -108,7 +108,7 @@ const ForgotPassword = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 Email Address
               </label>
@@ -119,7 +119,7 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-4 py-2 border bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 required
               />
             </div>
@@ -137,7 +137,7 @@ const ForgotPassword = () => {
           {/* Navigation back to login page */}
           <div className="text-center mt-6">
             <p
-              className="text-blue-600 text-sm cursor-pointer"
+              className="text-blue-600 dark:text-blue-400 hover:underline text-sm cursor-pointer"
               onClick={() => navigate("/login")}
             >
               Back to Login

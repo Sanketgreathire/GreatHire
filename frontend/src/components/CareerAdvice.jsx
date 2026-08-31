@@ -839,7 +839,7 @@ function RichBlogDetail({ blog, navigate }) {
   return (
     <>
       <Helmet>
-        <title>GreatHire — {blog.title}</title>
+        <title>{blog.title} | GreatHire</title>
         <meta name="description" content={(blog.intro || blog.description || "").slice(0, 160)} />
       </Helmet>
       <Navbar />
@@ -1014,7 +1014,7 @@ function SimpleBlogDetail({ blog, navigate }) {
   return (
     <>
       <Helmet>
-        <title>GreatHire — {blog.title}</title>
+        <title>{blog.title} | GreatHire</title>
         <meta name="description" content={(blog.description || "").slice(0, 160)} />
       </Helmet>
       <Navbar />
@@ -1071,7 +1071,9 @@ function SimpleBlogDetail({ blog, navigate }) {
 function BlogListView() {
   return (
     <>
-      <Helmet><title>GreatHire Blogs</title></Helmet>
+      <Helmet><title>Career Advice & Job Tips | GreatHire</title>
+      <meta name="description" content="Explore our career advice blogs where we give you advices on Healthy Work-Life Balance, How to develop your career in tech, ATS friendly resume building, Networking for career growth." />
+      </Helmet>
       <Navbar />
       <section className="py-16 px-4 bg-white dark:bg-gray-950 transition-colors duration-300 min-h-screen">
         <div className="max-w-7xl mx-auto">
@@ -1127,7 +1129,9 @@ const BlogPage = () => {
   if (id && !blog) {
     return (
       <>
-        <Helmet><title>GreatHire - Blog Not Found</title></Helmet>
+        <Helmet><title>Blog Not Found | GreatHire</title>
+        <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
         <Navbar />
         <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-950">
           <p className="text-xl font-bold text-gray-900 dark:text-white">Blog not found</p>

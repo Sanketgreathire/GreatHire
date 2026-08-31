@@ -175,24 +175,25 @@ const RecruiterList = () => {
             </div>
           )}
 
-          <div className="mb-4 flex justify-between px-2">
+          <div className="mb-4 flex flex-col sm:flex-row justify-between gap-3 px-2">
             <input
               type="text"
               placeholder="Search by name, email, or phone"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-2 w-64 rounded-sm border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400"
+              className="p-2 w-full sm:w-64 rounded-sm border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400"
             />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 rounded border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+              className="p-2 w-full sm:w-auto rounded border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
             >
               <option value="all">All</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
           </div>
+          <div className="overflow-x-auto shadow-md rounded-lg">
           <table className="min-w-full rounded-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
             <thead className="text-center">
               <tr>
@@ -328,6 +329,7 @@ const RecruiterList = () => {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center text-gray-400 dark:text-gray-500">
