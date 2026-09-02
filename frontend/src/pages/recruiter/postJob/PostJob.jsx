@@ -687,22 +687,43 @@ const PostJob = () => {
 
                         <div className="mb-5">
                           <Label className={labelCls}>
-                            Urgent Hiring<span className="text-red-500 dark:text-red-400 ml-1">*</span>
+                            Urgent Hiring
+                            <span className="text-red-500 dark:text-red-400 ml-1">*</span>
                           </Label>
+
                           <select
                             name="urgentHiring"
-                            className={inputCls}
+                            className={`${inputCls} bg-white text-gray-900 hover:bg-green-700 hover:text-white dark:bg-gray-800 dark:text-white dark:hover:bg-green-700`}
                             onChange={formik.handleChange}
                             value={formik.values.urgentHiring}
                           >
-                            <option value="">Select</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+                            <option
+                              value=""
+                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                            >
+                              Select
+                            </option>
+
+                            <option
+                              value="Yes"
+                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                            >
+                              Yes
+                            </option>
+
+                            <option
+                              value="No"
+                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
+                            >
+                              No
+                            </option>
                           </select>
+
                           {formik.touched.urgentHiring && formik.errors.urgentHiring && (
                             <div className={errorCls}>{formik.errors.urgentHiring}</div>
                           )}
                         </div>
+
 
                         <div>
                           <Label className={labelCls}>

@@ -10,10 +10,15 @@ export const validateUser = [
   // Email Validation
   body("email").isEmail().withMessage("Invalid email address").normalizeEmail(),
 
-  // Phone Number Validation — international E.164 format (+919876543210)
+  // Phone Number Validation — accept common formats including local mobile numbers
+  // and international numbers with or without the leading +.
   body("phoneNumber")
-    .matches(/^\+\d{6,15}$/)
-    .withMessage("Invalid phone number. Please include country code (e.g. +919876543210)"),
+    .trim()
+    .custom((value) => {
+      const normalized = String(value || "").replace(/[\s().-]/g, "");
+      return /^\+?\d{10,15}$/.test(normalized);
+    })
+    .withMessage("Invalid phone number. Please enter a valid mobile number (e.g. 9876543210 or +919876543210)"),
 
   // Password (Minimum length: 8)
   body("password")
