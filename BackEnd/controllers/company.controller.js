@@ -493,13 +493,13 @@ export const activateTrial = async (req, res) => {
     const now = new Date();
     company.trialActive = true;
     company.trialStartedAt = now;
-    company.trialExpiresAt = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        company.trialExpiresAt = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
     company.hasUsedTrial = true;
     await company.save();
 
     return res.status(200).json({
       success: true,
-      message: "Your 3-day free trial is now active. Enjoy all premium features!",
+      message: "Your 10-day free trial is now active. Enjoy all premium features!",
       company,
     });
   } catch (error) {

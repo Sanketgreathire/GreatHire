@@ -9,3 +9,9 @@ BackEnd/cookies.txt
 BackEnd/login.json
 __pycache__/
 *.pyc
+BackEnd/admin.json
+BackEnd/register.json
+BackEnd/login.json
+BackEnd/trial_*.json
+BackEnd/cookies.txt
+BackEnd/trial_cookies.txt
