@@ -61,4 +61,5 @@ export const SUPPORT_QUERIES_API_END_POINT = `${import.meta.env.VITE_API_URL || 
 
 export const RECRUITER_DASHBOARD_API = `${BASE_API}/recruiter/dashboard`;
 export const ANALYTICS_DASHBOARD_API = `${BASE_API}/analytics/dashboard`;
+export const COPILOT_API_END_POINT = `${BASE_API}/copilot`;
 

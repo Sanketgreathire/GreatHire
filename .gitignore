@@ -1,7 +1,11 @@
-node_modules
+node_modules/
 .env
 .env.*
 *.env
 *.env.bak
 JD_serivce/.env.bak
 ai-service/.env.bak
+BackEnd/cookies.txt
+BackEnd/login.json
+__pycache__/
+*.pyc

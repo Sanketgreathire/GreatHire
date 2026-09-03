@@ -250,10 +250,10 @@ recruiterMemorySchema.index({ "interactionStats.lastActivity": -1 });
 recruiterMemorySchema.index({ "insights.topSkills.skill": 1 });
 recruiterMemorySchema.index({ "insights.topLocations.location": 1 });
 
-recruiterMemorySchema.pre("save", function(next) {
+recruiterMemorySchema.pre("save", function () {
   this.lastUpdated = new Date();
-  next();
 });
+
 
 recruiterMemorySchema.methods.addSearchToHistory = function(query, intent, filters, resultCount, duration, session) {
   this.searchHistory.push({
@@ -450,22 +450,22 @@ recruiterMemorySchema.statics.updateRecruiterMemory = async function(recruiterId
   }
 
   if (updates.lastSearch) {
-    memory.addSearchToHistory(
-      updates.lastSearch.query,
-      updates.lastSearch.intent,
-      updates.lastSearch.filters,
-      updates.lastSearch.resultCount,
-      updates.lastSearch.duration || 0,
-      updates.lastSearch.session
-    );
-  }
+  await memory.addSearchToHistory(
+    updates.lastSearch.query,
+    updates.lastSearch.intent,
+    updates.lastSearch.filters,
+    updates.lastSearch.resultCount,
+    updates.lastSearch.duration || 0,
+    updates.lastSearch.session
+  );
+}
 
-  return memory.save();
+return memory.save();
 };
 
 const RecruiterMemory = mongoose.model("RecruiterMemory", recruiterMemorySchema);
 
 export default RecruiterMemory;
 
-export const getRecruiterMemory = RecruiterMemory.getRecruiterMemory;
-export const updateRecruiterMemory = RecruiterMemory.updateRecruiterMemory;
+export const getRecruiterMemory = RecruiterMemory.getRecruiterMemory.bind(RecruiterMemory);
+export const updateRecruiterMemory = RecruiterMemory.updateRecruiterMemory.bind(RecruiterMemory);

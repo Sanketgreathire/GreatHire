@@ -261,6 +261,18 @@ const DashboardNavigations = () => {
           </section>
 
           {/* Footer Navigation */}
+          <NavLink
+  to="/recruiter/dashboard/copilot"
+  className={navLinkClass}
+  onClick={() => setSidebarOpen(false)}
+>
+  {({ isActive }) => (
+    <>
+      <Bot size={25} className={iconClass(isActive)} />
+      <span>AI Copilot</span>
+    </>
+  )}
+</NavLink>
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <Settings size={25} className="text-blue-700 dark:text-blue-500" />

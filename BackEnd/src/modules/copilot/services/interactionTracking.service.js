@@ -354,8 +354,7 @@ export const trackRecruiterInteraction = async function(recruiterId, candidateId
     throw error;
   }
 };
-
-export const getRecruiterInteractions = RecruiterInteraction.getRecruiterInteractions;
-export const getInteractionStats = RecruiterInteraction.getInteractionStats;
-export const getTopCandidates = RecruiterInteraction.getTopCandidates;
-export const getCandidateInteractions = RecruiterInteraction.getCandidateInteractions;
+export const getRecruiterInteractions = RecruiterInteraction.getRecruiterInteractions.bind(RecruiterInteraction);
+export const getInteractionStats = RecruiterInteraction.getInteractionStats.bind(RecruiterInteraction);
+export const getTopCandidates = RecruiterInteraction.getTopCandidates.bind(RecruiterInteraction);
+export const getCandidateInteractions = RecruiterInteraction.getCandidateInteractions.bind(RecruiterInteraction);

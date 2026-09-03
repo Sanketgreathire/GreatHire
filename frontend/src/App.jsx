@@ -106,12 +106,12 @@ const CandidateList          = lazy(() => import("./pages/recruiter/candidate/Ca
 const CandidateInformation   = lazy(() => import("./pages/recruiter/candidate/CandidateInformation"));
 const CandidatePlans         = lazy(() => import("./pages/recruiter/candidate/CandidatePlans"));
 const CandidateDatabase      = lazy(() => import("./pages/recruiter/candidate/CandidateDatabase"));
+const CopilotChat = lazy(() => import("./pages/recruiter/CopilotChat"));
 const AllApplicantsList      = lazy(() => import("./pages/recruiter/AllApplicantsList"));
 const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccount"));
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
 const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
- 
 // Plan-based dashboard router
 // PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
 // FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
@@ -257,6 +257,7 @@ const appRouter = createBrowserRouter([
       { path: "candidate-list", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateList /></RequireCompany></Suspense> },
       { path: "candidate-information/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateInformation /></RequireCompany></Suspense> },
       { path: "candidate-database", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateDatabase /></RequireCompany></Suspense> },
+      { path: "copilot", element: <Suspense fallback={<PageLoader />}><RequireCompany><CopilotChat /></RequireCompany></Suspense> },
       { path: "candidate-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidatePlans /></RequireCompany></Suspense> },
       { path: "your-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><CurrentPlans /></RequireCompany></Suspense> },
       { path: "upgrade-plans", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterPlans /></RequireCompany></Suspense> },
