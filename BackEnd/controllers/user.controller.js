@@ -23,8 +23,7 @@ import { validationResult } from "express-validator";
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
 import notificationService from "../utils/notificationService.js";
-import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
-import { autoApply } from "../src/services/autoApply.service.js";
+import { autoApplyExistingJobsForUser, autoApply as autoApplyService } from "../src/services/autoApply.service.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -822,26 +821,7 @@ export const updateProfile = async (req, res) => {
   console.log("AUTO APPLY SAVED VALUE:", user.profile.autoApply);
 }
 
-if (user.profile.autoApply === true) {
-  const activeJobs = await Job.find({
-    "jobDetails.isActive": true
-  }).select("_id");
 
-  console.log(
-    `🔄 Auto Apply ON: Processing ${activeJobs.length} existing active jobs`
-  );
-
-  for (const job of activeJobs) {
-    try {
-      await autoApply(job._id);
-    } catch (err) {
-      console.error(
-        `Auto Apply failed for existing job ${job._id}:`,
-        err.message
-      );
-    }
-  }
-}
 
     // Updating qualification + otherQualification
     if (qualification && user.profile.qualification !== qualification) {

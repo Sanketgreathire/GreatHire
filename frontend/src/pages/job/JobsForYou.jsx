@@ -285,63 +285,66 @@ const JobsForYou = ({ jobs = [] }) => {
                 </div>
               </div>
             )}
-            {jobs?.map((job) => (
+            {jobs?.map((job) => {
+              const isSelected = selectedJobs.has(job._id);
+              const isActive = selectedJob?._id === job._id;
+              return (
               <div
                 key={job._id}
-                className={`}`}
                 onClick={() => handleJobClick(job)}
+                className={`relative rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${
+                  isActive
+                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/40"
+                    : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+                }`}
               >
-                {/* Checkbox for bulk apply (only for logged-in users who haven't applied) */}
+                {/* Checkbox */}
                 {user && !hasAppliedToJob(job._id) && (
                   <div className="absolute top-3 left-3 z-10" onClick={(e) => toggleJobSelection(e, job._id)}>
                     <input
                       type="checkbox"
-                      checked={selectedJobs.has(job._id)}
+                      checked={isSelected}
                       onChange={() => {}}
                       className="w-4 h-4 accent-blue-600 cursor-pointer"
                     />
                   </div>
                 )}
 
-                {/* Top Row: Title, Company & Urgent Badge + Share Icon */}
-                <div className="flex items-start justify-between gap-3 mb-2 pl-5">
+                {/* Top Row: Title + Company + Badges + Share */}
+                <div className="flex items-start justify-between gap-2 mb-3 pl-6">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-gray-900 leading-tight truncate dark:text-white">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2">
                       {job.jobDetails?.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1 truncate dark:text-gray-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
                       {job.jobDetails?.companyName}
                     </p>
                   </div>
-
-                  {/* Right side: Urgent Badge + Share Icon */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Urgent Hiring Badge */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
                     {job?.jobDetails?.urgentHiring === "Yes" && (
-                      <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded whitespace-nowrap dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
-                        Urgent Hiring
+                      <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full whitespace-nowrap dark:text-orange-300 dark:bg-orange-900/30 dark:border-orange-700">
+                        ⚡ Urgent
                       </span>
                     )}
-
-                    {/* Share Icon */}
+                    {hasAppliedToJob(job._id) && (
+                      <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
+                        ✓ Applied
+                      </span>
+                    )}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShareJobId(shareJobId === job._id ? null : job._id);
-                      }}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
+                      onClick={(e) => { e.stopPropagation(); setShareJobId(shareJobId === job._id ? null : job._id); }}
+                      className="p-1.5 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
                       title="Share Job"
                     >
-                      <FaShareAlt size={16} className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" />
+                      <FaShareAlt size={13} className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400" />
                     </button>
                   </div>
                 </div>
 
-                {/* Share Card - WRAPPED IN REF */}
+                {/* Share Card */}
                 {shareJobId === job._id && (
-                  <div ref={shareCardRef} onClick={(e) => e.stopPropagation()} className="relative">
+                  <div ref={shareCardRef} onClick={(e) => e.stopPropagation()} className="relative mb-2">
                     <ShareCard
-                      // urlToShare={`${window.location.origin}/jobs/${job._id}`}
                       urlToShare={`${window.location.origin}/jobs/${slugify(job.jobDetails?.title || "job")}-${job._id}`}
                       jobTitle={job.jobDetails?.title}
                       jobLocation={job.jobDetails?.location}
@@ -353,95 +356,68 @@ const JobsForYou = ({ jobs = [] }) => {
                   </div>
                 )}
 
-                {/* Benefits, Responsibilities, Qualifications Preview */}
-                <div className="mb-2 pb-2 border-b border-gray-100 dark:border-gray-700">
-                  <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                {/* Tags Row: Location, Work Mode, Job Type, Shift */}
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {job.jobDetails?.location && (
+                    <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[140px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                      📍 {job.jobDetails.location}
+                    </span>
+                  )}
+                  {job.jobDetails?.workPlaceFlexibility && (
+                    <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                      {job.jobDetails.workPlaceFlexibility}
+                    </span>
+                  )}
+                  {job.jobDetails?.jobType && (
+                    <span className="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
+                      {job.jobDetails.jobType}
+                    </span>
+                  )}
+                  {job.jobDetails?.shift && (
+                    <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[110px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                      {job.jobDetails.shift}
+                    </span>
+                  )}
+                </div>
+
+                {/* Highlights: first benefit + first qualification */}
+                {(job.jobDetails?.benefits?.[0] || job.jobDetails?.qualifications?.[0]) && (
+                  <div className="text-[11px] text-gray-500 dark:text-gray-400 space-y-0.5 mb-3">
                     {job.jobDetails?.benefits?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.benefits[0]}</span>
-                      </p>
-                    )}
-                    {job.jobDetails?.responsibilities?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.responsibilities[0]}</span>
+                      <p className="flex items-center gap-1.5 truncate">
+                        <span className="text-green-500">✓</span>{job.jobDetails.benefits[0]}
                       </p>
                     )}
                     {job.jobDetails?.qualifications?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.qualifications[0]}</span>
+                      <p className="flex items-center gap-1.5 truncate">
+                        <span className="text-blue-400">🎓</span>{job.jobDetails.qualifications[0]}
                       </p>
                     )}
                   </div>
-                </div>
+                )}
 
-                {/* Middle Row: Location, Flexibility, Job Type & Shift */}
-                <div className="flex flex-wrap gap-2 items-center mb-2">
-                  {/* Location */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[150px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.location}
-                  </span>
-
-                  {/* Workplace Flexibility */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[120px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.workPlaceFlexibility}
-                  </span>
-
-                  {/* Job Type */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.jobType}
-                  </span>
-
-                  {/* Shift */}
-                  {job.jobDetails?.shift && (
-                    <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                      {job.jobDetails?.shift}
-                    </span>
-                  )}
-
-                  {/* Applied Status Badge */}
-                  {hasAppliedToJob(job._id) && (
-                    <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded ml-auto flex-shrink-0 dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
-                      ✓ Applied
-                    </span>
-                  )}
-                </div>
-
-                {/* Bottom Row: Salary, Duration, Active Days & Response Time */}
-                <div className="flex flex-wrap justify-between items-center gap-3 text-xs border-t border-gray-100 pt-2 dark:border-gray-700">
-                  {/* Left Side - Salary & Duration */}
-                  <div className="flex gap-2 items-center min-w-0 flex-1">
-                    {/* Salary */}
-                    <span className="font-semibold text-gray-900 truncate dark:text-white">
+                {/* Bottom Row: Salary + Duration + Days ago */}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
                       {job?.jobDetails?.salary
                         .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
                         .split("-")
-                        .map((part, index) => (
-                          <span key={index}>
-                            ₹{part.trim()}
-                            {index === 0 ? " - " : ""}
-                          </span>
+                        .map((part, i) => (
+                          <span key={i}>₹{part.trim()}{i === 0 ? " – " : ""}</span>
                         ))}
                     </span>
-
-                    {/* Duration */}
-                    <span className="text-gray-600 truncate dark:text-gray-400">
-                      • {job.jobDetails?.duration}
-                    </span>
+                    {job.jobDetails?.duration && (
+                      <span className="text-[11px] text-gray-400 dark:text-gray-500 truncate">· {job.jobDetails.duration}</span>
+                    )}
                   </div>
-
-                  {/* Right Side - Active Days & Response Time */}
-                  <div className="flex gap-3 items-center text-gray-600 dark:text-gray-400 flex-shrink-0">
-                    {/* Active Days */}
-                    <span className="whitespace-nowrap">
-                      {calculateActiveDays(job?.createdAt)}d ago
-                    </span>
-                  </div>
+                  <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap flex-shrink-0">
+                    {calculateActiveDays(job?.createdAt)}d ago
+                  </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Right: Job Details Panel (Desktop & Tablet only) - FIXED WIDTH & OVERFLOW */}
