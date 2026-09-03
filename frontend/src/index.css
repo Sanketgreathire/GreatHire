@@ -67,14 +67,46 @@
     font-display: swap;
   }
 
-select option{
+select {
   background-color: #ffffff;
-  color: #0f172a;
+  color: #111827;
 }
 
-.dark select option{
-  background-color: #192230 !important;
+select:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+select option:hover,
+select option:focus {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.dark select {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+.dark select:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.dark select option {
+  background-color: #1f2937 !important;
   color: #f8fafc !important;
+}
+
+.dark select option:hover,
+.dark select option:focus {
+  background-color: #15803d !important;
+  color: #ffffff !important;
 }
 
   body {
