@@ -97,8 +97,27 @@ const RecruiterDashboard = () => {
       }
     });
 
+    // Real-time Job Credits updates (triggered when admin edits credits)
+    socket.on("companyCreditsUpdated", async ({ companyId }) => {
+      if (company && companyId === company?._id) {
+        try {
+          const response = await axios.post(
+            `${COMPANY_API_END_POINT}/company-by-userid`,
+            { userId: user?._id },
+            { withCredentials: true }
+          );
+          if (response?.data.success) {
+            dispatch(addCompany(response?.data.company));
+          }
+        } catch (err) {
+          console.error("Error refreshing company data after credits update:", err);
+        }
+      }
+    });
+
     return () => {
       socket.off("planExpired");
+      socket.off("companyCreditsUpdated");
       socket.disconnect();
     };
   }, [user?._id, company?._id, dispatch]);
