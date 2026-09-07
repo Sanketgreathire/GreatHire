@@ -31,7 +31,7 @@ const recruiterSchema = new mongoose.Schema(
     phoneNumber: {
       number: {
         type: String,
-        match: [/^\+\d{6,15}$/, "Invalid international phone number"],
+        match: [/^\+?\d{10,15}$/, "Invalid phone number"],
       },
       isVerified: {
         type: Boolean,

@@ -66,7 +66,7 @@ const subscriptionPlans = [
       "Basic Search Filters",
       "1 User",
       "No AI Features",
-      "3-Day Free Trial of All Features — No Credit Card Required",
+      "10-Day Free Trial of All Features — No Credit Card Required",
       { text: "AI Advanced Sourcing (Paid)", excluded: true },
     ],
     cta: "Start Free",

@@ -48,7 +48,7 @@ const RecruiterHome = () => {
       );
       if (data.success) {
         dispatch(addCompany(data.company));
-        toast.success("3-day trial activated! All features are unlocked (except AI Sourcing).");
+        toast.success("10-day trial activated! All features are unlocked (except AI Sourcing).");
       } else {
         toast.error(data.message || "Failed to activate trial.");
       }
@@ -174,7 +174,7 @@ const RecruiterHome = () => {
             <div className="flex items-start gap-3">
               <Sparkles className="w-8 h-8 flex-shrink-0 text-yellow-300" />
               <div>
-                <h3 className="font-bold text-lg">Unlock all premium features free for 3 days</h3>
+                <h3 className="font-bold text-lg">Unlock all premium features free for 10 days</h3>
                 <p className="text-blue-100 text-sm mt-1">
                   No credit card required. Unlimited job postings, advanced filters &amp; more.
                   <span className="opacity-80"> (AI Sourcing not included in the trial.)</span>
@@ -186,7 +186,7 @@ const RecruiterHome = () => {
               disabled={activatingTrial}
               className="whitespace-nowrap bg-white text-blue-700 font-semibold px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {activatingTrial ? "Activating…" : "🚀 Activate 3-Day Free Trial"}
+              {activatingTrial ? "Activating…" : "🚀 Activate 10-Day Free Trial"}
             </button>
           </div>
         )}

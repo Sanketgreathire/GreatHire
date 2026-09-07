@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
@@ -366,11 +367,30 @@ export const addRecruiterToCompany = async (req, res) => {
   const userId = req.id;
 
   try {
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "User not authenticated" });
+    }
+
+    if (!companyId || !mongoose.Types.ObjectId.isValid(companyId)) {
+      return res.status(400).json({ success: false, message: "Valid company ID is required." });
+    }
+
+    if (!fullname || !email || !phoneNumber || !password || !position) {
+      return res.status(400).json({ success: false, message: "All recruiter fields are required." });
+    }
+
     // Validate required fields
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+
+    const phoneCheck = validateRecruiterPhone(phoneNumber);
+    if (!phoneCheck.valid) {
+      return res.status(400).json({ success: false, message: phoneCheck.message });
+    }
+
+    const normalizedPhone = phoneCheck.phone;
 
     if (!isUserAssociated(companyId, userId)) {
       return res
@@ -382,6 +402,9 @@ export const addRecruiterToCompany = async (req, res) => {
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({ success: false, message: "Company not found" });
+    }
+    if (!Array.isArray(company.userId)) {
+      company.userId = [];
     }
     const planType = company.plan || "FREE";
     // ENTERPRISE companies have a duration-specific cap (3/6/12 team users
@@ -412,8 +435,11 @@ export const addRecruiterToCompany = async (req, res) => {
       });
     }
 
-    // Hash the password
+  // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate unique referral code
+    const referralCode = await createUniqueReferralCode();
 
     // Create new recruiter
     const recruiter = await Recruiter.create({
@@ -423,97 +449,113 @@ export const addRecruiterToCompany = async (req, res) => {
         isVerified: true,
       },
       phoneNumber: {
-        number: phoneNumber,
+        number: normalizedPhone,
         isVerified: true,
       },
       password: hashedPassword,
       position,
       isVerify: 1,
       isCompanyCreated: true,
+      isActive: true,   
+      referralCode,
     });
-
     // Update company with recruiter's ID
     await company.userId.push({ user: recruiter._id });
     await company.save();
 
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      service: "Gmail", // or your email service provider
-      auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // Your email password
-      },
-    });
+    const emailConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASS);
 
-    const mailOptions = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your Recruiter Account Has Been Created",
-      html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-              <div style="text-align: center; margin-bottom: 20px;">
-                <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
-                <p style="color: #555;">Building Smart and Powerful Recruiter Teams</p>
-              </div>
-        
-              <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullname}!</h3>
-              <p style="color: #555;">
-                We are excited to inform you that you have been added as a recruiter by your company admin. Below are your account details:
-              </p>
-              
-              <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                <tr>
-                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Full Name:</td>
-                  <td style="padding: 10px; border: 1px solid #ddd;">${fullname}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
-                  <td style="padding: 10px; border: 1px solid #ddd;">${email}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Phone Number:</td>
-                  <td style="padding: 10px; border: 1px solid #ddd;">${phoneNumber}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Position:</td>
-                  <td style="padding: 10px; border: 1px solid #ddd;">${position}</td>
-                </tr>
-              </table>
-        
-              <h4 style="color: #1e90ff;">Your Login Credentials:</h4>
-              <p style="font-weight: bold; color: #333;">Email: ${email}</p>
-              <p style="font-weight: bold; color: #333;">Password: ${password}</p>
-              
-              <p style="color: #555;">
-                Please log in to your account using the credentials above at the following link:
-                <a href="${process.env.FRONTEND_URL
-        }/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
-              </p>
-        
-              <p style="color: #555;">
-                Make sure to update your password after logging in for the first time for security purposes.
-              </p>
-        
-              <div style="margin-top: 20px; text-align: center;">
-                <p style="font-size: 14px; color: #aaa;">This is an automated email, please do not reply.</p>
-                <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
-              </div>
-            </div>
-          `,
-    };
+    if (emailConfigured) {
+      // Setup nodemailer
+      const transporter = nodemailer.createTransport({
+        service: "Gmail", // or your email service provider
+        auth: {
+          user: process.env.EMAIL_USER, // Your email
+          pass: process.env.EMAIL_PASS, // Your email password
+        },
+      });
 
-    // Send email
-    await transporter.sendMail(mailOptions);
+      const mailOptions = {
+        from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your Recruiter Account Has Been Created",
+        html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                  <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+                  <p style="color: #555;">Building Smart and Powerful Recruiter Teams</p>
+                </div>
+          
+                <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullname}!</h3>
+                <p style="color: #555;">
+                  We are excited to inform you that you have been added as a recruiter by your company admin. Below are your account details:
+                </p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Full Name:</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${fullname}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${email}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Phone Number:</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${normalizedPhone}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Position:</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${position}</td>
+                  </tr>
+                </table>
+          
+                <h4 style="color: #1e90ff;">Your Login Credentials:</h4>
+                <p style="font-weight: bold; color: #333;">Email: ${email}</p>
+                <p style="font-weight: bold; color: #333;">Password: ${password}</p>
+                
+                <p style="color: #555;">
+                  Please log in to your account using the credentials above at the following link:
+                  <a href="${process.env.FRONTEND_URL || "http://localhost:5173"}/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
+                </p>
+          
+                <p style="color: #555;">
+                  Make sure to update your password after logging in for the first time for security purposes.
+                </p>
+          
+                <div style="margin-top: 20px; text-align: center;">
+                  <p style="font-size: 14px; color: #aaa;">This is an automated email, please do not reply.</p>
+                  <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+                </div>
+              </div>
+            `,
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+      } catch (mailError) {
+        console.error("Recruiter email send failed:", mailError);
+      }
+    } else {
+      console.warn("EMAIL_USER / EMAIL_PASS not configured. Skipping recruiter welcome email.");
+    }
 
     return res.status(201).json({
       success: true,
-      message: "Recruiter added. credentials send to recruiter mail. ",
+      message: "Recruiter added successfully, credentials send to recruiter mail.",
     });
   } catch (err) {
-    console.error("Error adding recruiter:", err);
+    console.error("Error adding recruiter:", {
+      companyId,
+      userId,
+      email,
+      fullname,
+      message: err.message,
+      stack: err.stack,
+    });
     return res
       .status(500)
-      .json({ success: false, message: "Internal server error." });
+      .json({ success: false, message: "Internal server error.", details: err.message });
   }
 };
 
@@ -705,7 +747,7 @@ export const deleteAccount = async (req, res) => {
       const recruiterActive = belongs
         ? (await Recruiter.findById(userId).select("isActive").lean())?.isActive
         : false;
-      if (!belongs || !recruiterActive) {
+      if (!belongs) {
         return res.status(403).json({ message: "You are not authorized", success: false });
       }
     }
