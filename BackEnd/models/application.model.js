@@ -53,6 +53,37 @@ const applicationSchema = new mongoose.Schema(
       skillsMatched: { type: [String], default: [] },
       missingSkills: { type: [String], default: [] },
     },
+    screeningStatus: {
+      type: String,
+      enum: ["Passed", "Rejected", "Pending"],
+      default: "Pending",
+    },
+    recruitmentStatus: {
+      type: String,
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Closed"],
+      default: "Application",
+    },
+    cvSource: {
+      type: String,
+      enum: ["LinkedIn", "Indeed", "Referral", "Website", "Other"],
+      default: "Website",
+    },
+    interviewDate: {
+      type: Date,
+      default: null,
+    },
+    feedback: {
+      type: String,
+      default: "",
+    },
+    joiningDate: {
+      type: Date,
+      default: null,
+    },
+    nextAction: {
+      type: String,
+      default: "",
+    },
   },
    
   { timestamps: true }
