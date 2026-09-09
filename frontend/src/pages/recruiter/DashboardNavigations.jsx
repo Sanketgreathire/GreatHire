@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Home, X, PenSquare, Settings, Briefcase, PlusSquare,
   Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
@@ -9,6 +9,9 @@ import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 
 const DashboardNavigations = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
@@ -20,15 +23,30 @@ const DashboardNavigations = () => {
   const hasCompany = !!user?.isCompanyCreated || !!company;
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition
-   ${isActive
-      ? "bg-blue-600 text-white dark:bg-blue-700"
-      : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
+    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition ${
+      isActive
+        ? "bg-blue-600 text-white dark:bg-blue-700"
+        : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
     }`;
 
-  const disabledLinkClass = "flex items-center gap-2 px-3 py-2 rounded-lg w-full opacity-40 cursor-not-allowed pointer-events-none text-gray-500 dark:text-gray-500";
+  const disabledLinkClass =
+    "flex items-center gap-2 px-3 py-2 rounded-lg w-full opacity-40 cursor-not-allowed pointer-events-none text-gray-500 dark:text-gray-500";
 
-  const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600 dark:text-blue-400");
+  const iconClass = (isActive) =>
+    isActive ? "text-white" : "text-blue-600 dark:text-blue-400";
+
+  // Check if active status belongs to applicants main page or any detail sub-path
+  const isApplicantsActive = location.pathname.startsWith(
+    "/recruiter/dashboard/applicants-list"
+  );
+
+  const handleApplicantsClick = (e) => {
+    e.preventDefault();
+    if (!hasCompany) return;
+    setSidebarOpen(false);
+    // Hard window redirect clears component view state if nested routing is stuck
+    window.location.href = "/recruiter/dashboard/applicants-list";
+  };
 
   return (
     <>
@@ -59,9 +77,8 @@ const DashboardNavigations = () => {
                   w-64 h-screen transform
                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
                   lg:fixed lg:top-[64px] lg:left-0 lg:h-[calc(100vh-64px)] lg:w-52 lg:translate-x-0 lg:z-30 lg:overflow-y-auto
-               `}
+                `}
       >
-
         {/* Close Button (Only for Mobile) */}
         <button
           className="lg:hidden absolute top-4 right-4 text-gray-600 dark:text-gray-300"
@@ -182,18 +199,26 @@ const DashboardNavigations = () => {
                   </>
                 )}
               </NavLink>
-              <NavLink
-                to="/recruiter/dashboard/applicants-list"
-                className={hasCompany ? navLinkClass : () => disabledLinkClass}
-                onClick={() => hasCompany && setSidebarOpen(false)}
+
+              {/* Applicants Navigation Link */}
+              <a
+                href="/recruiter/dashboard/applicants-list"
+                className={
+                  hasCompany
+                    ? navLinkClass({ isActive: isApplicantsActive })
+                    : disabledLinkClass
+                }
+                onClick={handleApplicantsClick}
               >
-                {({ isActive }) => (
-                  <>
-                    <Users size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
-                    <span>Applicants</span>
-                  </>
-                )}
-              </NavLink>
+                <Users
+                  size={25}
+                  className={
+                    hasCompany ? iconClass(isApplicantsActive) : "text-gray-400"
+                  }
+                />
+                <span>Applicants</span>
+              </a>
+
               <NavLink
                 to="/recruiter/dashboard/company-details"
                 className={navLinkClass}
@@ -228,51 +253,27 @@ const DashboardNavigations = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <FileText size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
+                    <FileText size={25} className={iconClass(isActive)} />
                     <span>Resume Analyzer</span>
                   </>
                 )}
               </NavLink>
-              {/* <NavLink
-                to="/recruiter/dashboard/sourcing"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
-              >
-                {({ isActive }) => (
-                  <>
-                    <Bot size={25} className={iconClass(isActive)} />
-                    <span>AI Sourcing</span>
-                  </>
-                )}
-              </NavLink> */}
-              {/* <NavLink
-                to="/recruiter/dashboard/candidate-database"
-                className={navLinkClass}
-                onClick={() => setSidebarOpen(false)}
-              >
-                {({ isActive }) => (
-                  <>
-                    <FaDatabase size={25} className={iconClass(isActive)} />
-                    <span>Candidate Database</span>
-                  </>
-                )}
-              </NavLink> */}
             </ul>
           </section>
 
           {/* Footer Navigation */}
           <NavLink
-  to="/recruiter/dashboard/copilot"
-  className={navLinkClass}
-  onClick={() => setSidebarOpen(false)}
->
-  {({ isActive }) => (
-    <>
-      <Bot size={25} className={iconClass(isActive)} />
-      <span>AI Copilot</span>
-    </>
-  )}
-</NavLink>
+            to="/recruiter/dashboard/copilot"
+            className={navLinkClass}
+            onClick={() => setSidebarOpen(false)}
+          >
+            {({ isActive }) => (
+              <>
+                <Bot size={25} className={iconClass(isActive)} />
+                <span>AI Copilot</span>
+              </>
+            )}
+          </NavLink>
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <Settings size={25} className="text-blue-700 dark:text-blue-500" />

@@ -9,6 +9,7 @@ import axios from "axios";
 import {
   COMPANY_API_END_POINT,
   RECRUITER_API_END_POINT,
+  ADMIN_API_END_POINT,
 } from "@/utils/ApiEndPoint"; // API endpoints
 
 // Toast notifications for user feedback
@@ -58,6 +59,11 @@ const CompanyDetails = () => {
   });
   const [emailLoading, setEmailLoading] = useState(false);
 
+  // --- Job Credits editing state ---
+  const [isEditingCredits, setIsEditingCredits] = useState(false);
+  const [jobCreditsInput, setJobCreditsInput] = useState(0);
+  const [creditsLoading, setCreditsLoading] = useState(false);
+
   // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -77,6 +83,7 @@ const CompanyDetails = () => {
           email: response.data.company.email || "",
           adminEmail: response.data.company.adminEmail || "",
         });
+        setJobCreditsInput(Number(response.data.company.creditedForJobs) || 0);
       } else {
         toast.error(response.data.message || "Failed to fetch company details");
       }
@@ -123,6 +130,82 @@ const CompanyDetails = () => {
       toast.error("Failed to update emails");
     } finally {
       setEmailLoading(false);
+    }
+  };
+
+  // --- Job Credits handlers ---
+
+  // Start editing: reset the input to the current saved value
+  const startEditingCredits = () => {
+    setJobCreditsInput(Number(company?.creditedForJobs) || 0);
+    setIsEditingCredits(true);
+  };
+
+  const cancelEditingCredits = () => {
+    setJobCreditsInput(Number(company?.creditedForJobs) || 0);
+    setIsEditingCredits(false);
+  };
+
+  // +/- buttons just adjust the local (unsaved) input value
+  const incrementJobCredits = (step = 1) => {
+    setJobCreditsInput((prev) => Math.max(0, Number(prev || 0) + step));
+  };
+
+  const handleJobCreditsInputChange = (e) => {
+    const val = e.target.value;
+    if (val === "") {
+      setJobCreditsInput("");
+      return;
+    }
+    const num = Number(val);
+    if (!Number.isNaN(num)) {
+      setJobCreditsInput(Math.max(0, num));
+    }
+  };
+
+  // Save: compute the delta between the new value and the current saved value,
+  // then send it to the existing admin credits endpoint (which supports both
+  // positive deltas to increase and negative deltas to reduce credits).
+  const handleUpdateJobCredits = async () => {
+    const currentValue = Number(company?.creditedForJobs) || 0;
+    const newValue = Number(jobCreditsInput) || 0;
+    const delta = newValue - currentValue;
+
+    if (delta === 0) {
+      toast("No changes to save", { icon: "ℹ️" });
+      setIsEditingCredits(false);
+      return;
+    }
+
+    try {
+      setCreditsLoading(true);
+      const response = await axios.put(
+        `${ADMIN_API_END_POINT}/update-recruiter-credits`,
+        {
+          companyId,
+          customCreditsForJobs: delta,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        toast.success("Job credits updated successfully");
+        setCompany((prev) => ({
+          ...prev,
+          creditedForJobs: response.data.company?.creditedForJobs ?? newValue,
+          customCreditsForJobs: response.data.company?.customCreditsForJobs,
+          maxJobPosts: response.data.company?.maxJobPosts ?? prev.maxJobPosts,
+        }));
+        setJobCreditsInput(response.data.company?.creditedForJobs ?? newValue);
+        setIsEditingCredits(false);
+      } else {
+        toast.error(response.data.message || "Failed to update job credits");
+      }
+    } catch (err) {
+      console.error("Error updating job credits:", err);
+      toast.error("Failed to update job credits. Please try again.");
+    } finally {
+      setCreditsLoading(false);
     }
   };
 
@@ -253,6 +336,81 @@ const CompanyDetails = () => {
                   <p className="text-lg text-gray-900 dark:text-white font-semibold break-words">
                     {company?.industry}
                   </p>
+                </div>
+
+                {/* Job Credits */}
+                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                      Job Credits
+                    </p>
+                    {!isEditingCredits && (
+                      <button
+                        onClick={startEditingCredits}
+                        className="text-xs px-2 py-1 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </div>
+
+                  {!isEditingCredits ? (
+                    <p className="text-lg text-gray-900 dark:text-white font-semibold">
+                      {company?.creditedForJobs ?? 0}
+                    </p>
+                  ) : (
+                    <div className="mt-2 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => incrementJobCredits(-1)}
+                          disabled={creditsLoading}
+                          className="w-9 h-9 flex items-center justify-center rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white font-bold text-lg hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50"
+                          aria-label="Decrease job credits"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          min="0"
+                          value={jobCreditsInput}
+                          onChange={handleJobCreditsInputChange}
+                          disabled={creditsLoading}
+                          className="w-24 text-center px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => incrementJobCredits(1)}
+                          disabled={creditsLoading}
+                          className="w-9 h-9 flex items-center justify-center rounded-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white font-bold text-lg hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50"
+                          aria-label="Increase job credits"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Current: {company?.creditedForJobs ?? 0} → New: {jobCreditsInput === "" ? 0 : jobCreditsInput}
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={cancelEditingCredits}
+                          disabled={creditsLoading}
+                          className="px-3 py-1.5 text-sm bg-gray-500 text-white rounded-md hover:bg-gray-600 disabled:opacity-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleUpdateJobCredits}
+                          disabled={creditsLoading}
+                          className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                        >
+                          {creditsLoading ? "Saving..." : "Save"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Address */}

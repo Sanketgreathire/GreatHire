@@ -1,5 +1,5 @@
 import { Job } from "../models/job.model.js";
-import  {Application } from "../models/application.model.js";
+import { Application } from "../models/application.model.js";
 import { Company } from "../models/company.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { isUserAssociated } from "./company.controller.js";
@@ -14,20 +14,37 @@ import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
+
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
   try {
-    const { title, skills, experience, jobType, location, workPlaceFlexibility } = req.body;
-    if (!title) return res.status(400).json({ success: false, message: "Job title is required" });
+    const {
+      title,
+      skills,
+      experience,
+      jobType,
+      location,
+      workPlaceFlexibility,
+    } = req.body;
 
-    const skillList = skills ? skills.split(",").map(s => s.trim()).filter(Boolean) : [];
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Job title is required",
+      });
+    }
+
+    const skillList = skills
+      ? skills.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+
     const expText = experience || "relevant experience";
     const typeText = jobType || "Full-Time";
     const locText = location || "our office";
     const modeText = workPlaceFlexibility || "On-site";
 
     const skillsHtml = skillList.length
-      ? skillList.map(s => `<li>${s}</li>`).join("")
+      ? skillList.map((s) => `<li>${s}</li>`).join("")
       : "<li>Relevant technical skills</li><li>Strong communication skills</li>";
 
     const html = `
@@ -66,20 +83,42 @@ ${skillsHtml}
 <p>If you are passionate about your craft and eager to make an impact, we'd love to hear from you. Apply now and be part of something great!</p>
 `.trim();
 
-    return res.status(200).json({ success: true, html });
+    return res.status(200).json({
+      success: true,
+      html,
+    });
   } catch (error) {
     console.error("JD generation error:", error);
-    return res.status(500).json({ success: false, message: "Failed to generate JD" });
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to generate JD",
+    });
   }
 };
 
 // Plan limits configuration
 const PLAN_LIMITS = {
-  FREE:       { jobsPerMonth: 1,         resumeCredits: 30 },
-  STANDARD:   { jobsPerMonth: 5,         resumeCredits: 500 },
-  PREMIUM:    { jobsPerMonth: 10,        resumeCredits: 1500 },
-  PRO:        { jobsPerMonth: 25,        resumeCredits: 5000 },
-  ENTERPRISE: { jobsPerMonth: Infinity,  resumeCredits: Infinity },
+  FREE: {
+    jobsPerMonth: 1,
+    resumeCredits: 30,
+  },
+  STANDARD: {
+    jobsPerMonth: 5,
+    resumeCredits: 500,
+  },
+  PREMIUM: {
+    jobsPerMonth: 10,
+    resumeCredits: 1500,
+  },
+  PRO: {
+    jobsPerMonth: 25,
+    resumeCredits: 5000,
+  },
+  ENTERPRISE: {
+    jobsPerMonth: Infinity,
+    resumeCredits: Infinity,
+  },
 };
 
 // Free job posts for paid plans (monthly)
@@ -93,118 +132,186 @@ export const postJob = [
   check("salary").notEmpty().withMessage("Salary is required"),
   check("jobType").notEmpty().withMessage("Job type is required"),
   check("location").notEmpty().withMessage("Location is required"),
-  check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
+  check("numberOfOpening")
+    .notEmpty()
+    .withMessage("Number of openings is required"),
   check("duration").notEmpty().withMessage("Duration is required"),
   check("shift").notEmpty().withMessage("Shift is required"),
-  check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
+  check("anyAmount")
+    .notEmpty()
+    .withMessage("Please specify if applicants need to pay"),
   check("companyId").notEmpty().withMessage("Company ID is required"),
 
   async (req, res) => {
     try {
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          errors: errors.array(),
+        });
       }
 
       const {
-        companyName, urgentHiring, title, details, skills, qualifications,
-        benefits, responsibilities, experience, salary, salaryType, jobType,
-        workPlaceFlexibility, location, numberOfOpening, respondTime,
-        duration, shift, anyAmount, companyId, questions,
+        companyName,
+        urgentHiring,
+        title,
+        details,
+        skills,
+        qualifications,
+        benefits,
+        responsibilities,
+        experience,
+        salary,
+        salaryType,
+        jobType,
+        workPlaceFlexibility,
+        location,
+        numberOfOpening,
+        respondTime,
+        duration,
+        shift,
+        anyAmount,
+        companyId,
+        questions,
       } = req.body;
 
       const userId = req.id;
+
       const company = await Company.findById(companyId).lean();
       const recruiter = await Recruiter.findById(userId);
 
       if (!company) {
-        return res.status(404).json({ success: false, message: "Company not found. Please create a company first." });
+        return res.status(404).json({
+          success: false,
+          message: "Company not found. Please create a company first.",
+        });
       }
 
       // Fix bad data: "Unlimited" string stored in DB should be null
-      if (company.maxJobPosts === "9999999" || (typeof company.maxJobPosts === "string" && isNaN(company.maxJobPosts))) {
-        await Company.findByIdAndUpdate(companyId, { maxJobPosts: null });
+      if (
+        company.maxJobPosts === "9999999" ||
+        (typeof company.maxJobPosts === "string" &&
+          isNaN(company.maxJobPosts))
+      ) {
+        await Company.findByIdAndUpdate(companyId, {
+          maxJobPosts: null,
+        });
+
         company.maxJobPosts = null;
       }
 
-      // 3-day trial unlocks Enterprise-level job posting limits (never AI Sourcing).
-      const companyPlan = isTrialLive(company) ? "ENTERPRISE" : (company.plan || "FREE");
+      // 3-day trial unlocks Enterprise-level job posting limits
+      // (never AI Sourcing).
+      const companyPlan = isTrialLive(company)
+        ? "ENTERPRISE"
+        : company.plan || "FREE";
+
       const isVerified = company.isActive;
       const isFirstJob = company.freeJobsPosted === 0;
 
       // --- Unified pre-verification check (applies to ALL plans) ---
-      // Count how many jobs have been posted so far (use the correct counter per plan)
-      const jobsPostedSoFar = companyPlan === "FREE"
-        ? company.freeJobsPosted
-        : (company.planJobsPostedThisMonth || 0) + (company.paidPlanFreeJobsPosted || 0);
+      const jobsPostedSoFar =
+        companyPlan === "FREE"
+          ? company.freeJobsPosted
+          : (company.planJobsPostedThisMonth || 0) +
+            (company.paidPlanFreeJobsPosted || 0);
 
-      // Check if there are any pending jobs (first job waiting for verification)
+      // Check if there are any pending jobs
       const pendingJobs = await Job.countDocuments({
         company: companyId,
-        "jobDetails.status": "pending"
+        "jobDetails.status": "pending",
       });
 
       if (!isVerified) {
-        const hasRemainingPosts = recruiter && recruiter.remainingJobPosts > 0;
+        const hasRemainingPosts =
+          recruiter && recruiter.remainingJobPosts > 0;
+
         if (pendingJobs > 0) {
           return res.status(400).json({
             success: false,
-            message: "Your first job is currently under admin review. You can post your next job once your account is verified.",
+            message:
+              "Your first job is currently under admin review. You can post your next job once your account is verified.",
             requiresVerification: true,
             redirectTo: "/recruiter/dashboard/home",
           });
         } else if (jobsPostedSoFar >= 1 && !hasRemainingPosts) {
           return res.status(400).json({
             success: false,
-            message: "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
+            message:
+              "Your account and company are currently under admin verification. You can post one job now. Once your account is verified, you will be able to post more jobs according to your plan.",
             requiresVerification: true,
             redirectTo: "/recruiter/dashboard/home",
           });
         }
       }
 
-      // --- Plan-specific limits (only reached after verification) ---
+      // --- Plan-specific limits ---
       console.log("Remaining before post:", recruiter?.remainingJobPosts);
 
-      // ── Layer 0: Referral bonus slots (bypass all limits) ──
+      // ── Layer 0: Referral bonus slots ──
       if (recruiter && recruiter.remainingJobPosts > 0) {
         recruiter.remainingJobPosts -= 1;
         await recruiter.save();
-      } else if (company.maxJobPosts !== null && company.maxJobPosts !== undefined) {
-        // ── Admin-set maxJobPosts: takes priority over plan limits ──
-        const used = companyPlan === "FREE"
-          ? (company.freeJobsPosted || 0)
-          : (company.planJobsPostedThisMonth || 0);
+      } else if (
+        company.maxJobPosts !== null &&
+        company.maxJobPosts !== undefined
+      ) {
+        // ── Admin-set maxJobPosts ──
+        const used =
+          companyPlan === "FREE"
+            ? company.freeJobsPosted || 0
+            : company.planJobsPostedThisMonth || 0;
+
         if (used >= company.maxJobPosts) {
           return res.status(400).json({
             success: false,
-            message: "You have used all your available job posts. Please contact admin for more.",
+            message:
+              "You have used all your available job posts. Please contact admin for more.",
             redirectTo: "/recruiter/dashboard/home",
           });
         }
       } else if (companyPlan === "FREE") {
-        // ── FREE plan: check against freeJobsPosted limit ──
-        if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
+        // ── FREE plan ──
+        if (
+          company.freeJobsPosted >=
+          PLAN_LIMITS.FREE.jobsPerMonth
+        ) {
           return res.status(400).json({
             success: false,
-            message: "You have used your 1 free monthly job post. Please upgrade your plan to post more jobs.",
+            message:
+              "You have used your 1 free monthly job post. Please upgrade your plan to post more jobs.",
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
       } else {
-        // ── Paid plan: check planJobsPostedThisMonth against plan limit ──
+        // ── Paid plan ──
         const now = new Date();
-        const monthStart = company.planMonthStart ? new Date(company.planMonthStart) : null;
-        const isPaidSameMonth = monthStart &&
+        const monthStart = company.planMonthStart
+          ? new Date(company.planMonthStart)
+          : null;
+
+        const isPaidSameMonth =
+          monthStart &&
           monthStart.getMonth() === now.getMonth() &&
           monthStart.getFullYear() === now.getFullYear();
+
         if (!isPaidSameMonth) {
-          await Company.findByIdAndUpdate(companyId, { planJobsPostedThisMonth: 0, planMonthStart: now });
+          await Company.findByIdAndUpdate(companyId, {
+            planJobsPostedThisMonth: 0,
+            planMonthStart: now,
+          });
+
           company.planJobsPostedThisMonth = 0;
         }
 
-        const paidPlanLimit = PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
-        if (paidPlanLimit !== Infinity && company.planJobsPostedThisMonth >= paidPlanLimit) {
+        const paidPlanLimit =
+          PLAN_LIMITS[companyPlan]?.jobsPerMonth ?? 0;
+
+        if (
+          paidPlanLimit !== Infinity &&
+          company.planJobsPostedThisMonth >= paidPlanLimit
+        ) {
           return res.status(400).json({
             success: false,
             message: `You have used all ${paidPlanLimit} job posts for this month. Please upgrade your plan.`,
@@ -213,132 +320,192 @@ export const postJob = [
         }
       }
 
-      const splitSkills = (typeof skills === 'string') ? skills.split(",").map(s => s.trim()) : [];
-      const splitQualifications = (typeof qualifications === 'string') ? qualifications.split("\n").map(q => q.trim()) : [];
-      const splitBenefits = (typeof benefits === 'string') ? benefits.split("\n").map(b => b.trim()) : [];
-      const splitResponsibilities = (typeof responsibilities === 'string') ? responsibilities.split("\n").map(r => r.trim()) : [];
+      const splitSkills =
+        typeof skills === "string"
+          ? skills.split(",").map((s) => s.trim())
+          : [];
 
-      // First job for any unverified company → pending (acts as verification request)
-      const jobStatus = (!isVerified && jobsPostedSoFar === 0) ? "pending" : "active";
+      const splitQualifications =
+        typeof qualifications === "string"
+          ? qualifications.split("\n").map((q) => q.trim())
+          : [];
+
+      const splitBenefits =
+        typeof benefits === "string"
+          ? benefits.split("\n").map((b) => b.trim())
+          : [];
+
+      const splitResponsibilities =
+        typeof responsibilities === "string"
+          ? responsibilities.split("\n").map((r) => r.trim())
+          : [];
+
+      // First job for any unverified company → pending
+      const jobStatus =
+        !isVerified && jobsPostedSoFar === 0
+          ? "pending"
+          : "active";
+
       const jobIsActive = jobStatus === "active";
 
-   const newJob = new Job({
-  jobDetails: {
-    companyName,
-    urgentHiring,
-    title,
-    details,
-    skills: splitSkills,
-    benefits: splitBenefits,
-    qualifications: splitQualifications,
-    responsibilities: splitResponsibilities,
-    salary,
-    salaryType: salaryType || "per year",
-    experience,
-    jobType,
-    workPlaceFlexibility,
-    location,
-    numberOfOpening,
-    respondTime,
-    duration,
-    shift,
-    anyAmount,
-    isActive: jobIsActive,
-    status: jobStatus,
-  },
-  questions: Array.isArray(questions)
-    ? questions.filter((q) => q.trim())
-    : [],
-  created_by: userId,
-  company: companyId,
-});
+      const newJob = new Job({
+        jobDetails: {
+          companyName,
+          urgentHiring,
+          title,
+          details,
+          skills: splitSkills,
+          benefits: splitBenefits,
+          qualifications: splitQualifications,
+          responsibilities: splitResponsibilities,
+          salary,
+          salaryType: salaryType || "per year",
+          experience,
+          jobType,
+          workPlaceFlexibility,
+          location,
+          numberOfOpening,
+          respondTime,
+          duration,
+          shift,
+          anyAmount,
+          isActive: jobIsActive,
+          status: jobStatus,
+        },
 
+        questions: Array.isArray(questions)
+          ? questions.filter((q) => q.trim())
+          : [],
 
-await newJob.save();
-try {
-  await notifyMatchingJobSeekers(newJob);
+        created_by: userId,
+        company: companyId,
+      });
 
-  console.log(
-    "✅ Job match email notification process completed"
-  );
-} catch (error) {
-  console.error(
-    "❌ Job match email notification failed:",
-    error.message
-  );
-}
+      await newJob.save();
 
-// existing code continues here
+      try {
+        await notifyMatchingJobSeekers(newJob);
 
+        console.log(
+          "✅ Job match email notification process completed"
+        );
+      } catch (error) {
+        console.error(
+          "❌ Job match email notification failed:",
+          error.message
+        );
+      }
 
-// Auto Apply only for active jobs
-if (jobIsActive) {
-
-  try {
-    await autoApply(newJob._id);
-    console.log("✅ AUTO APPLY FUNCTION FINISHED");
-  } catch (error) {
-    console.error("❌ Auto Apply Error:", error);
-  }
-} else {
-  console.log("⏭️ Auto Apply skipped because job is pending");
-}
-
-
+      // Auto Apply only for active jobs
+      if (jobIsActive) {
+        try {
+          await autoApply(newJob._id);
+          console.log("✅ AUTO APPLY FUNCTION FINISHED");
+        } catch (error) {
+          console.error("❌ Auto Apply Error:", error);
+        }
+      } else {
+        console.log(
+          "⏭️ Auto Apply skipped because job is pending"
+        );
+      }
 
       // Update counters
       if (companyPlan === "FREE") {
-        const newFreeJobsPosted = (company.freeJobsPosted || 0) + 1;
-        const updateData = { freeJobsPosted: newFreeJobsPosted };
-        if (newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth && !company.hasUsedFreePlan) {
+        const newFreeJobsPosted =
+          (company.freeJobsPosted || 0) + 1;
+
+        const updateData = {
+          freeJobsPosted: newFreeJobsPosted,
+        };
+
+        if (
+          newFreeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth &&
+          !company.hasUsedFreePlan
+        ) {
           updateData.hasUsedFreePlan = true;
-          updateData.freePlanExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+          updateData.freePlanExpiry = new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          );
         }
-        await Company.findByIdAndUpdate(companyId, updateData);
+
+        await Company.findByIdAndUpdate(
+          companyId,
+          updateData
+        );
       } else {
         await Company.findByIdAndUpdate(companyId, {
-          planJobsPostedThisMonth: (company.planJobsPostedThisMonth || 0) + 1,
-          ...(company.planMonthStart === null ? { planMonthStart: new Date() } : {}),
+          planJobsPostedThisMonth:
+            (company.planJobsPostedThisMonth || 0) + 1,
+
+          ...(company.planMonthStart === null
+            ? { planMonthStart: new Date() }
+            : {}),
         });
       }
 
       // Notify recruiter
       try {
-        await notificationService.notifyNewJobPosted({ recruiterId: userId, jobId: newJob._id, jobTitle: title, companyName });
+        await notificationService.notifyNewJobPosted({
+          recruiterId: userId,
+          jobId: newJob._id,
+          jobTitle: title,
+          companyName,
+        });
       } catch (e) {
-        console.error('❌ Job posting notification error:', e);
+        console.error(
+          "❌ Job posting notification error:",
+          e
+        );
       }
 
       // Notify matching candidates only for active jobs
       if (jobIsActive) {
-        try { await findAndNotifyMatchingCandidates(newJob); } catch (e) { console.error('❌ Matching candidates error:', e.message); }
+        try {
+          await findAndNotifyMatchingCandidates(newJob);
+        } catch (e) {
+          console.error(
+            "❌ Matching candidates error:",
+            e.message
+          );
+        }
       }
 
-      const message = jobStatus === "pending"
-        ? "Job submitted for verification. It will be published after admin approval."
-        : "Job posted successfully.";
+      const message =
+        jobStatus === "pending"
+          ? "Job submitted for verification. It will be published after admin approval."
+          : "Job posted successfully.";
 
-      return res.status(201).json({ success: true, message, jobStatus });
+      return res.status(201).json({
+        success: true,
+        message,
+        jobStatus,
+      });
     } catch (error) {
       console.error("Error posting job:", error);
-      return res.status(500).json({ success: false, message: "Internal server error." });
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error.",
+      });
     }
-  }
+  },
 ];
 
 // Implement getExternalJobsFromFindwork
 export const getExternalJobsFromFindwork = async (req, res) => {
   try {
-    // Fetch jobs data from Findwork API
-    const response = await axios.get('https://findwork.dev/api/jobs/?search=remote');
-    
-    // Return the fetched data in response
+    const response = await axios.get(
+      "https://findwork.dev/api/jobs/?search=remote"
+    );
+
     return res.status(200).json({
       success: true,
       jobs: response.data,
     });
   } catch (error) {
     console.error("Error fetching external jobs:", error);
+
     return res.status(500).json({
       success: false,
       message: "Error fetching external jobs from Findwork.",
@@ -353,40 +520,56 @@ export const applyJob = async (req, res) => {
     const userId = req.id;
     const { answers } = req.body;
 
-    // Job exist check karo
-    const job = await Job.findById(jobId).populate('company');
+    const job = await Job.findById(jobId).populate("company");
+
     if (!job) {
-      return res.status(404).json({ success: false, message: "Job not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
     }
 
-    // Check if job is active
     if (!job.jobDetails.isActive) {
-      return res.status(400).json({ success: false, message: "This job is not active" });
+      return res.status(400).json({
+        success: false,
+        message: "This job is not active",
+      });
     }
 
-    // Check if company is verified
     if (!job.company?.isActive) {
-      return res.status(403).json({ success: false, message: "This job is no longer available" });
+      return res.status(403).json({
+        success: false,
+        message: "This job is no longer available",
+      });
     }
 
-    // User exist check karo
     const user = await User.findById(userId);
-    console.log("Applying job user check kro :", user);
+
+    console.log(
+      "Applying job user check kro :",
+      user
+    );
+
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
-    // Already applied check karo
-    const existingApplication = await Application.findOne({
-      job: jobId,
-      applicant: userId,
-    });
+    const existingApplication =
+      await Application.findOne({
+        job: jobId,
+        applicant: userId,
+      });
 
     if (existingApplication) {
-      return res.status(400).json({ success: false, message: "Already applied for this job" });
+      return res.status(400).json({
+        success: false,
+        message: "Already applied for this job",
+      });
     }
 
-    // New application create karo
     const newApplication = new Application({
       job: jobId,
       applicant: userId,
@@ -401,34 +584,40 @@ export const applyJob = async (req, res) => {
 
     await newApplication.save();
 
-    // Add application to job
     job.application.push(newApplication._id);
     await job.save();
 
-  // ✅ Send notifications
-  try {
-    console.log('📨 Sending application notification...', {
-      applicantId: userId,
-      jobId: jobId,
-      jobTitle: job.jobDetails.title,
-      companyName: job.jobDetails.companyName,
-      recruiterId: job.created_by
-    });
-    
-    await notificationService.notifyApplicationSubmitted({
-      applicantId: userId,
-      jobId: jobId,
-      jobTitle: job.jobDetails.title,
-      companyName: job.jobDetails.companyName,
-      recruiterId: job.created_by,
-      applicationId: newApplication._id
-    });
-    
-    console.log('✅ Application notification sent successfully');
-  } catch (notificationError) {
-    console.error('❌ Error sending application notification:', notificationError);
-    // Don't fail the application if notification fails
-  }
+    // Send notifications
+    try {
+      console.log(
+        "📨 Sending application notification...",
+        {
+          applicantId: userId,
+          jobId: jobId,
+          jobTitle: job.jobDetails.title,
+          companyName: job.jobDetails.companyName,
+          recruiterId: job.created_by,
+        }
+      );
+
+      await notificationService.notifyApplicationSubmitted({
+        applicantId: userId,
+        jobId: jobId,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        recruiterId: job.created_by,
+        applicationId: newApplication._id,
+      });
+
+      console.log(
+        "✅ Application notification sent successfully"
+      );
+    } catch (notificationError) {
+      console.error(
+        "❌ Error sending application notification:",
+        notificationError
+      );
+    }
 
     return res.status(201).json({
       success: true,
@@ -436,7 +625,11 @@ export const applyJob = async (req, res) => {
       application: newApplication,
     });
   } catch (error) {
-    console.error("Error applying job:", error);  // <-- yahi log bahut important hai
+    console.error(
+      "Error applying job:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -445,82 +638,136 @@ export const applyJob = async (req, res) => {
   }
 };
 
-
 // Other functions like getAllJobs, getJobById, etc.
-/** get all jobs for home page in stream manner like
-this controller does not return all jobs at once. Instead, it uses streaming to send jobs to the client incrementally, which is particularly useful when dealing with large datasets. */
+
+/**
+ * Get all jobs for home page in stream manner.
+ * This controller does not return all jobs at once.
+ * Instead, it uses streaming to send jobs to the client incrementally,
+ * which is particularly useful when dealing with large datasets.
+ */
 export const getAllJobs = async (req, res) => {
   try {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction =
+      process.env.NODE_ENV === "production";
 
     let query = {};
 
     if (isProduction) {
-      const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
-      query = { "jobDetails.isActive": true, company: { $in: verifiedCompanyIds } };
+      const verifiedCompanyIds =
+        await Company.find({
+          isActive: true,
+        }).distinct("_id");
+
+      query = {
+        "jobDetails.isActive": true,
+        company: {
+          $in: verifiedCompanyIds,
+        },
+      };
     }
 
     const jobs = await Job.find(query)
       .sort({ createdAt: -1 })
-      .populate({ path: "application" })
+      .populate({
+        path: "application",
+      })
       .lean();
 
     return res.status(200).json(jobs);
   } catch (error) {
-    console.error("Error fetching jobs:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error(
+      "Error fetching jobs:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
 
-
-// Get latest 20 jobs for slider/carousel - lightweight function
-export const getLatestJobsForSlider = async (req, res) => {
+// Get latest 20 jobs for slider/carousel
+export const getLatestJobsForSlider = async (
+  req,
+  res
+) => {
   try {
-    const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
+    const verifiedCompanyIds =
+      await Company.find({
+        isActive: true,
+      }).distinct("_id");
 
     const latestJobs = await Job.find({
       "jobDetails.isActive": true,
-      company: { $in: verifiedCompanyIds },
+      company: {
+        $in: verifiedCompanyIds,
+      },
     })
-      .select("jobDetails company created_by createdAt saveJob")
-      .populate("company", "name logo")
+      .select(
+        "jobDetails company created_by createdAt saveJob"
+      )
+      .populate(
+        "company",
+        "name logo"
+      )
       .sort({ createdAt: -1 })
       .limit(20)
       .lean();
 
-    return res.status(200).json({ success: true, jobs: latestJobs, count: latestJobs.length });
+    return res.status(200).json({
+      success: true,
+      jobs: latestJobs,
+      count: latestJobs.length,
+    });
   } catch (error) {
-    console.error("Error fetching latest jobs for slider:", error);
-    return res.status(500).json({ success: false, message: "Error fetching jobs for slider", error: error.message });
+    console.error(
+      "Error fetching latest jobs for slider:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching jobs for slider",
+      error: error.message,
+    });
   }
 };
 
-//get job by recruiter id...
-export const getJobByRecruiterId = async (req, res) => {
+// Get job by recruiter id
+export const getJobByRecruiterId = async (
+  req,
+  res
+) => {
   try {
     const recruiterId = req.params.id;
-    const page = parseInt(req.query.page, 10) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
 
-    // Calculate the number of documents to skip
+    const page =
+      parseInt(req.query.page, 10) || 1;
+
+    const limit =
+      parseInt(req.query.limit, 10) || 10;
+
     const skip = (page - 1) * limit;
 
-    // Fetch paginated jobs
-    const jobs = await Job.find({ created_by: recruiterId })
+    const jobs = await Job.find({
+      created_by: recruiterId,
+    })
       .select(
         "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
       )
       .sort({ createdAt: -1 })
-      .skip(skip) // for skipped the document
-      .limit(limit); // return only limited document
+      .skip(skip)
+      .limit(limit);
 
-    // Total job count for the recruiter
-    const totalJobs = await Job.countDocuments({ created_by: recruiterId });
+    const totalJobs =
+      await Job.countDocuments({
+        created_by: recruiterId,
+      });
 
-    // Total pages
-    const totalPages = Math.ceil(totalJobs / limit);
+    const totalPages =
+      Math.ceil(totalJobs / limit);
 
-    // Return paginated response
     return res.status(200).json({
       jobs,
       totalJobs,
@@ -529,7 +776,11 @@ export const getJobByRecruiterId = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Error fetching jobs by recruiter ID:", error);
+    console.error(
+      "Error fetching jobs by recruiter ID:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -537,27 +788,11 @@ export const getJobByRecruiterId = async (req, res) => {
   }
 };
 
-//get job by id...
-// export const getJobById = async (req, res) => {
-//   try {
-//     const jobId = req.params.id;
-//     const job = await Job.findById(jobId);
-//     if (!job) {
-//       return res.status(404).json({
-//         message: "Jobs not found.",
-//         success: false,
-//       });
-//     }
-// return res.status(200).json(job);
-
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-
-// get job by id...
-export const getJobById = async (req, res) => {
+// Get job by id
+export const getJobById = async (
+  req,
+  res
+) => {
   try {
     const jobId = req.params.id;
 
@@ -565,24 +800,39 @@ export const getJobById = async (req, res) => {
       .populate("company")
       .populate({
         path: "application",
-        populate: { path: "applicant" },
+        populate: {
+          path: "applicant",
+        },
       });
 
     if (!job) {
-      return res.status(404).json({ success: false, message: "Job not found." });
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
     }
 
     // Block public access to jobs from unverified companies
-    if (!job.company?.isActive || !job.jobDetails.isActive) {
-      return res.status(404).json({ success: false, message: "Job not found." });
+    if (
+      !job.company?.isActive ||
+      !job.jobDetails.isActive
+    ) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
     }
 
     return res.status(200).json({
       success: true,
-      job, // ✅ wrapper ke andar bhejna
+      job,
     });
   } catch (error) {
-    console.error("Error fetching job by id:", error);
+    console.error(
+      "Error fetching job by id:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -591,67 +841,108 @@ export const getJobById = async (req, res) => {
   }
 };
 
-
-// help to fecth all job of a particular company
-export const getJobByCompanyId = async (req, res) => {
+// Help to fetch all jobs of a particular company
+export const getJobByCompanyId = async (
+  req,
+  res
+) => {
   try {
     const companyId = req.params.id;
     const userId = req.id;
 
-    if (!(await isUserAssociated(companyId, userId))) {
+    if (
+      !(await isUserAssociated(
+        companyId,
+        userId
+      ))
+    ) {
       return res.status(403).json({
         message: "You are not authorized.",
         success: false,
       });
     }
 
-    // Fetch jobs by company ID
-    const jobs = await Job.find({ company: companyId })
-      .select("jobDetails.title jobDetails.isActive createdAt")
+    // IMPORTANT:
+    // companyName is stored inside jobDetails when the job is posted.
+    // It must be explicitly selected here so the recruiter frontend
+    // receives it.
+    const jobs = await Job.find({
+      company: companyId,
+    })
+      .select(
+        "jobDetails.title jobDetails.companyName jobDetails.isActive createdAt"
+      )
       .sort({ createdAt: -1 });
 
     if (jobs.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No jobs found for this company" });
+      return res.status(404).json({
+        message: "No jobs found for this company",
+        success: false,
+      });
     }
-    return res.status(200).json({ jobs, success: true });
+
+    return res.status(200).json({
+      jobs,
+      success: true,
+    });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Server error", error: err.message });
+    console.error(
+      "Error fetching jobs by company ID:",
+      err
+    );
+
+    return res.status(500).json({
+      message: "Server error",
+      error: err.message,
+      success: false,
+    });
   }
 };
 
-// job can be deleted either by recruiter or admin
+// Job can be deleted either by recruiter or admin
 export const deleteJobById = [
   // Input validation
-  check("id").isMongoId().withMessage("Invalid job ID"),
-  check("companyId").isMongoId().withMessage("Invalid company ID"),
+  check("id")
+    .isMongoId()
+    .withMessage("Invalid job ID"),
+
+  check("companyId")
+    .isMongoId()
+    .withMessage("Invalid company ID"),
 
   async (req, res) => {
     try {
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          errors: errors.array(),
+        });
       }
 
       const jobId = req.params.id;
       const { companyId } = req.body;
       const userId = req.id;
 
-      const admin = await Admin.findById(userId); // Check if user is an admin
+      const admin = await Admin.findById(userId);
 
-      // If the user is neither an admin nor a valid recruiter, deny access
-      if (!admin && companyId && !await isUserAssociated(companyId, userId)) {
+      // If user is neither admin nor valid recruiter
+      if (
+        !admin &&
+        companyId &&
+        !(await isUserAssociated(
+          companyId,
+          userId
+        ))
+      ) {
         return res.status(403).json({
           message: "You are not authorized",
           success: false,
         });
       }
 
-      // Check if the job exists
       const job = await Job.findById(jobId);
+
       if (!job) {
         return res.status(404).json({
           success: false,
@@ -659,45 +950,56 @@ export const deleteJobById = [
         });
       }
 
-      // Delete the job
       await Job.findByIdAndDelete(jobId);
 
-      // Delete all applications related to this job
-      await Application.deleteMany({ job: jobId });
+      await Application.deleteMany({
+        job: jobId,
+      });
 
-      // Respond with success message
       return res.status(200).json({
         success: true,
-        message: "Job and related applications deleted successfully.",
+        message:
+          "Job and related applications deleted successfully.",
       });
     } catch (error) {
-      console.error("Error deleting job:", error);
+      console.error(
+        "Error deleting job:",
+        error
+      );
+
       return res.status(500).json({
         success: false,
         message: "Internal server error.",
       });
     }
-  }
+  },
 ];
 
-// bookmark the job
-export const bookmarkJob = async (req, res) => {
+// Bookmark the job
+export const bookmarkJob = async (
+  req,
+  res
+) => {
   try {
     const { jobId } = req.params;
-    const userId = req.id; // Assuming req.id is the authenticated user's ID
+    const userId = req.id;
 
-    // Find the job by ID
     const job = await Job.findById(jobId);
+
     if (!job) {
-      return res.status(404).json({ message: "Job not found" });
+      return res.status(404).json({
+        message: "Job not found",
+      });
     }
 
-    // Check if user already bookmarked the job
-    const isBookmarked = job.saveJob.includes(userId);
+    const isBookmarked =
+      job.saveJob.includes(userId);
 
-    // Update saveJob field (add or remove user ID)
     if (isBookmarked) {
-      job.saveJob = job.saveJob.filter((id) => id.toString() !== userId);
+      job.saveJob = job.saveJob.filter(
+        (id) =>
+          id.toString() !== userId
+      );
     } else {
       job.saveJob.push(userId);
     }
@@ -705,36 +1007,59 @@ export const bookmarkJob = async (req, res) => {
     await job.save();
 
     res.status(200).json({
-      message: !isBookmarked ? "Save successfully" : "Unsave successfully",
+      message: !isBookmarked
+        ? "Save successfully"
+        : "Unsave successfully",
       success: true,
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({
+      message: "Server error",
+      error: err.message,
+    });
   }
 };
 
-// this controller active or de-active the job
-export const toggleActive = async (req, res) => {
+// This controller activates/deactivates the job
+export const toggleActive = async (
+  req,
+  res
+) => {
   try {
-    const { jobId, isActive, companyId } = req.body;
+    const {
+      jobId,
+      isActive,
+      companyId,
+    } = req.body;
+
     const userId = req.id;
 
-    const admin = await Admin.findById(userId); // Check if user is an admin
+    const admin = await Admin.findById(userId);
 
-    // If the user is neither an admin nor a valid recruiter, deny access
-    if (!admin && !isUserAssociated(companyId, userId)) {
+    // If user is neither admin nor valid recruiter
+    if (
+      !admin &&
+      !(await isUserAssociated(
+        companyId,
+        userId
+      ))
+    ) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
       });
     }
 
-    // Find the job by its ID and update the isActive field
-    const job = await Job.findByIdAndUpdate(
-      jobId,
-      { "jobDetails.isActive": isActive },
-      { new: true } // Return the updated document
-    );
+    const job =
+      await Job.findByIdAndUpdate(
+        jobId,
+        {
+          "jobDetails.isActive": isActive,
+        },
+        {
+          new: true,
+        }
+      );
 
     if (!job) {
       return res.status(404).json({
@@ -742,33 +1067,44 @@ export const toggleActive = async (req, res) => {
         message: "Job not found.",
       });
     }
-    job.jobDetails.isActive = isActive;
-await job.save();
 
-// console.log("🔥 JOB ACTIVATION CHECK");
-// console.log("isActive:", isActive);
-// console.log("jobId:", jobId);
+    job.jobDetails.isActive = isActive;
+
+    await job.save();
 
     if (isActive === true) {
-  try {
-    console.log("🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:", jobId);
+      try {
+        console.log(
+          "🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:",
+          jobId
+        );
 
-    await autoApply(jobId);
+        await autoApply(jobId);
 
-    console.log("✅ Auto Apply triggered on job activation:", jobId);
-
-  } catch (autoApplyError) {
-    console.error("Auto Apply on activation failed:", autoApplyError.message);
-  }
-}
+        console.log(
+          "✅ Auto Apply triggered on job activation:",
+          jobId
+        );
+      } catch (autoApplyError) {
+        console.error(
+          "Auto Apply on activation failed:",
+          autoApplyError.message
+        );
+      }
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Job status updated successfully.",
+      message:
+        "Job status updated successfully.",
       job,
     });
   } catch (error) {
-    console.error("Error toggling job status:", error);
+    console.error(
+      "Error toggling job status:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -776,59 +1112,111 @@ await job.save();
   }
 };
 
-// update the deatils of job
-export const updateJob = async (req, res) => {
+// Update the details of job
+export const updateJob = async (
+  req,
+  res
+) => {
   try {
     const { jobId } = req.params;
     const jobData = req.body;
     const userId = req.id;
     const companyId = jobData.companyId;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (
+      !(await isUserAssociated(
+        companyId,
+        userId
+      ))
+    ) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
       });
     }
 
-    // Normalize skills input: If it's a string, split it into an array; otherwise, use it as is
-    const skillsArray = Array.isArray(jobData.editedJob.skills)
-      ? jobData.editedJob.skills
-      : jobData.editedJob.skills.split(",").map((skill) => skill.trim());
+    const skillsArray =
+      Array.isArray(
+        jobData.editedJob.skills
+      )
+        ? jobData.editedJob.skills
+        : jobData.editedJob.skills
+            .split(",")
+            .map((skill) =>
+              skill.trim()
+            );
 
-    // Remove empty values from arrays (benefits, qualifications, responsibilities)
     const cleanArray = (arr) =>
-      Array.isArray(arr) ? arr.filter((item) => item.trim() !== "") : [];
+      Array.isArray(arr)
+        ? arr.filter(
+            (item) =>
+              item.trim() !== ""
+          )
+        : [];
 
-    // Find the job by its ID and update
-    const updatedJob = await Job.findByIdAndUpdate(
-      jobId,
-      {
-        $set: {
-          "jobDetails.details": jobData.editedJob.details,
-          "jobDetails.skills": skillsArray, // Convert to an array
-          "jobDetails.qualifications": cleanArray(
-            jobData.editedJob.qualifications
-          ),
-          "jobDetails.benefits": cleanArray(jobData.editedJob.benefits), // Remove empty values
-          "jobDetails.responsibilities": cleanArray(
-            jobData.editedJob.responsibilities
-          ),
-          "jobDetails.experience": jobData.editedJob.experience,
-          "jobDetails.salary": jobData.editedJob.salary,
-          "jobDetails.jobType": jobData.editedJob.jobType,
-          "jobDetails.location": jobData.editedJob.location,
-          "jobDetails.numberOfOpening": jobData.editedJob.numberOfOpening,
-          "jobDetails.respondTime": jobData.editedJob.respondTime,
-          "jobDetails.duration": jobData.editedJob.duration,
-          "jobDetails.shift": jobData.editedJob.shift,
+    const updatedJob =
+      await Job.findByIdAndUpdate(
+        jobId,
+        {
+          $set: {
+            "jobDetails.details":
+              jobData.editedJob.details,
+
+            "jobDetails.skills":
+              skillsArray,
+
+            "jobDetails.qualifications":
+              cleanArray(
+                jobData.editedJob
+                  .qualifications
+              ),
+
+            "jobDetails.benefits":
+              cleanArray(
+                jobData.editedJob.benefits
+              ),
+
+            "jobDetails.responsibilities":
+              cleanArray(
+                jobData.editedJob
+                  .responsibilities
+              ),
+
+            "jobDetails.experience":
+              jobData.editedJob.experience,
+
+            "jobDetails.salary":
+              jobData.editedJob.salary,
+
+            "jobDetails.jobType":
+              jobData.editedJob.jobType,
+
+            "jobDetails.location":
+              jobData.editedJob.location,
+
+            "jobDetails.numberOfOpening":
+              jobData.editedJob
+                .numberOfOpening,
+
+            "jobDetails.respondTime":
+              jobData.editedJob.respondTime,
+
+            "jobDetails.duration":
+              jobData.editedJob.duration,
+
+            "jobDetails.shift":
+              jobData.editedJob.shift,
+          },
         },
-      },
-      { new: true }
-    );
+        {
+          new: true,
+        }
+      );
 
     if (!updatedJob) {
-      return res.status(404).json({ message: "Job not found" });
+      return res.status(404).json({
+        message: "Job not found",
+      });
     }
 
     res.status(200).json({
@@ -838,54 +1226,77 @@ export const updateJob = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error updating job", error: err.message });
+
+    res.status(500).json({
+      message: "Error updating job",
+      error: err.message,
+    });
   }
 };
 
-// this will return stats of job
-export const getJobsStatistics = async (req, res) => {
+// This will return stats of job
+export const getJobsStatistics = async (
+  req,
+  res
+) => {
   try {
-    const companyId = req.params.id; // Accessing companyId from the URL params
-    const userId = req.id; // Assuming the user ID is stored in req.id after authentication
+    const companyId = req.params.id;
+    const userId = req.id;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (
+      !(await isUserAssociated(
+        companyId,
+        userId
+      ))
+    ) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
       });
     }
 
-    // Get all job IDs associated with the company
-    const jobs = await Job.find({ company: companyId }, { _id: 1 });
-    const jobIds = jobs.map((job) => job._id);
+    const jobs = await Job.find(
+      {
+        company: companyId,
+      },
+      {
+        _id: 1,
+      }
+    );
 
-    // Get the total number of jobs posted by the company
+    const jobIds = jobs.map(
+      (job) => job._id
+    );
+
     const totalJobs = jobs.length;
 
-    // Get the number of active jobs posted by the company
-    const activeJobs = await Job.countDocuments({
-      company: companyId,
-      "jobDetails.isActive": true,
-    });
+    const activeJobs =
+      await Job.countDocuments({
+        company: companyId,
+        "jobDetails.isActive": true,
+      });
 
-    // Get the number of inactive jobs posted by the company
-    const inactiveJobs = await Job.countDocuments({
-      company: companyId,
-      "jobDetails.isActive": false,
-    });
+    const inactiveJobs =
+      await Job.countDocuments({
+        company: companyId,
+        "jobDetails.isActive": false,
+      });
 
-    // Get the total number of applicants for the company's jobs
-    const totalApplicants = await Application.countDocuments({
-      job: { $in: jobIds },
-    });
+    const totalApplicants =
+      await Application.countDocuments({
+        job: {
+          $in: jobIds,
+        },
+      });
 
-    // Get the number of selected candidates for the company's jobs
-    const selectedCandidates = await Application.countDocuments({
-      job: { $in: jobIds },
-      status: "Shortlisted",
-    });
+    const selectedCandidates =
+      await Application.countDocuments({
+        job: {
+          $in: jobIds,
+        },
+        status: "Shortlisted",
+      });
 
-    // Format the response
     const statistics = {
       totalJobs,
       activeJobs,
@@ -895,12 +1306,14 @@ export const getJobsStatistics = async (req, res) => {
     };
 
     return res.status(200).json({
-      message: "Statistics fetched successfully",
+      message:
+        "Statistics fetched successfully",
       success: true,
       statistics,
     });
   } catch (err) {
     console.error(err);
+
     return res.status(500).json({
       message: "Server error",
       success: false,
@@ -909,313 +1322,351 @@ export const getJobsStatistics = async (req, res) => {
   }
 };
 
-// // Helper function to find and notify matching candidates
-async function findAndNotifyMatchingCandidates(job) {
+// Helper function to find and notify matching candidates
+async function findAndNotifyMatchingCandidates(
+  job
+) {
   try {
-    const jobSkills = job.jobDetails.skills || [];
-    const jobLocation = job.jobDetails.location;
-    const MAX_NOTIFICATIONS = 50; // Limit notifications to prevent timeout
-    
-    // Find users with matching skills, location, or category preferences
-    const matchingUsers = await User.find({
-      $or: [
-        { "profile.skills": { $in: jobSkills } },
-        { "address.city": { $regex: jobLocation, $options: 'i' } },
-        { "profile.category": { $in: jobSkills } }
-      ]
-    }).limit(MAX_NOTIFICATIONS).select('_id profile.skills profile.category address.city');
+    const jobSkills =
+      job.jobDetails.skills || [];
 
-    if (matchingUsers.length === 0) return;
+    const jobLocation =
+      job.jobDetails.location;
 
-    // Process notifications asynchronously without blocking
+    const MAX_NOTIFICATIONS = 50;
+
+    const matchingUsers =
+      await User.find({
+        $or: [
+          {
+            "profile.skills": {
+              $in: jobSkills,
+            },
+          },
+          {
+            "address.city": {
+              $regex: jobLocation,
+              $options: "i",
+            },
+          },
+          {
+            "profile.category": {
+              $in: jobSkills,
+            },
+          },
+        ],
+      })
+        .limit(MAX_NOTIFICATIONS)
+        .select(
+          "_id profile.skills profile.category address.city"
+        );
+
+    if (matchingUsers.length === 0) {
+      return;
+    }
+
+    // Process notifications asynchronously
     setImmediate(async () => {
       try {
-        const notifications = matchingUsers.map((user) => {
-          const userSkills = user.profile?.skills || [];
-          const userCategories = user.profile?.category || [];
-          
-          const matchingSkills = jobSkills.filter(skill => 
-            userSkills.some(userSkill => 
-              userSkill.toLowerCase().includes(skill.toLowerCase())
-            ) || userCategories.some(category =>
-              category.toLowerCase().includes(skill.toLowerCase())
-            )
-          );
-          
-          let matchScore = 30;
-          if (matchingSkills.length > 0) {
-            matchScore = Math.min(
-              Math.round((matchingSkills.length / Math.max(jobSkills.length, 1)) * 100),
-              95
-            );
-          }
-          
-          if (user.address?.city && 
-              user.address.city.toLowerCase().includes(jobLocation.toLowerCase())) {
-            matchScore += 10;
-          }
+        const notifications =
+          matchingUsers.map((user) => {
+            const userSkills =
+              user.profile?.skills || [];
 
-          
-          
-          return {
-            recipient: user._id,
-            recipientModel: 'User',
-            type: 'job-recommendation',
-            title: 'New Job Match Found!',
-            message: `${job.jobDetails.title} at ${job.jobDetails.companyName} matches your profile (${Math.min(matchScore, 95)}% match)`,
-            relatedEntity: job._id,
-            relatedEntityModel: 'Job',
-            priority: matchScore >= 70 ? 'high' : 'medium',
-            actionUrl: `/jobs/${job._id}`,
-            metadata: { jobTitle: job.jobDetails.title, companyName: job.jobDetails.companyName, matchScore: Math.min(matchScore, 95), location: job.jobDetails.location, salary: job.jobDetails.salary }
-          };
-        });
-        
-        // Bulk insert notifications
-        await Notification.insertMany(notifications);
-        console.log(`✅ Notified ${notifications.length} candidates`);
+            const userCategories =
+              user.profile?.category || [];
+
+            const matchingSkills =
+              jobSkills.filter(
+                (skill) =>
+                  userSkills.some(
+                    (userSkill) =>
+                      userSkill
+                        .toLowerCase()
+                        .includes(
+                          skill.toLowerCase()
+                        )
+                  ) ||
+                  userCategories.some(
+                    (category) =>
+                      category
+                        .toLowerCase()
+                        .includes(
+                          skill.toLowerCase()
+                        )
+                  )
+              );
+
+            let matchScore = 30;
+
+            if (
+              matchingSkills.length > 0
+            ) {
+              matchScore = Math.min(
+                Math.round(
+                  (matchingSkills.length /
+                    Math.max(
+                      jobSkills.length,
+                      1
+                    )) *
+                    100
+                ),
+                95
+              );
+            }
+
+            if (
+              user.address?.city &&
+              user.address.city
+                .toLowerCase()
+                .includes(
+                  jobLocation.toLowerCase()
+                )
+            ) {
+              matchScore += 10;
+            }
+
+            return {
+              recipient: user._id,
+              recipientModel: "User",
+              type: "job-recommendation",
+              title: "New Job Match Found!",
+              message: `${job.jobDetails.title} at ${job.jobDetails.companyName} matches your profile (${Math.min(
+                matchScore,
+                95
+              )}% match)`,
+              relatedEntity: job._id,
+              relatedEntityModel: "Job",
+              priority:
+                matchScore >= 70
+                  ? "high"
+                  : "medium",
+              actionUrl: `/jobs/${job._id}`,
+              metadata: {
+                jobTitle:
+                  job.jobDetails.title,
+                companyName:
+                  job.jobDetails.companyName,
+                matchScore: Math.min(
+                  matchScore,
+                  95
+                ),
+                location:
+                  job.jobDetails.location,
+                salary:
+                  job.jobDetails.salary,
+              },
+            };
+          });
+
+        await Notification.insertMany(
+          notifications
+        );
+
+        console.log(
+          `✅ Notified ${notifications.length} candidates`
+        );
       } catch (error) {
-        console.error("Error sending notifications:", error.message);
+        console.error(
+          "Error sending notifications:",
+          error.message
+        );
       }
     });
   } catch (error) {
-    console.error("Error finding matching candidates:", error.message);
+    console.error(
+      "Error finding matching candidates:",
+      error.message
+    );
   }
 }
 
-// Helper function to find candidates with 65% or higher job match
-// async function findAndNotifyMatchingCandidates(job) {
-//   try {
-//     const jobSkills = (job.jobDetails.skills || [])
-//       .map(skill => String(skill).trim().toLowerCase())
-//       .filter(Boolean);
-
-//     const jobLocation = String(job.jobDetails.location || "")
-//       .trim()
-//       .toLowerCase();
-
-//     const MAX_CANDIDATES = 50;
-//     const MATCH_THRESHOLD = 65;
-
-//     console.log("========================================");
-//     console.log("🔎 MATCHING CANDIDATES FOR NEW JOB");
-//     console.log("Job ID:", job._id);
-//     console.log("Job Title:", job.jobDetails.title);
-//     console.log("Job Skills:", jobSkills);
-//     console.log("Required Match:", `${MATCH_THRESHOLD}%`);
-//     console.log("========================================");
-
-//     if (jobSkills.length === 0) {
-//       console.log("⚠️ No job skills found. Matching skipped.");
-//       return;
-//     }
-
-//     // Find possible candidates first
-//     const matchingUsers = await User.find({
-//       $or: [
-//         { "profile.skills": { $exists: true, $ne: [] } },
-//         { "profile.category": { $exists: true, $ne: [] } }
-//       ]
-//     })
-//       .limit(MAX_CANDIDATES)
-//       .select("_id fullname phone email profile.skills profile.category address.city");
-
-//     if (matchingUsers.length === 0) {
-//       console.log("⚠️ No candidates found.");
-//       return;
-//     }
-
-//     const notifications = [];
-
-//     for (const user of matchingUsers) {
-//       const userSkills = (user.profile?.skills || [])
-//         .map(skill => String(skill).trim().toLowerCase())
-//         .filter(Boolean);
-
-//       const userCategories = Array.isArray(user.profile?.category)
-//         ? user.profile.category
-//             .map(category => String(category).trim().toLowerCase())
-//             .filter(Boolean)
-//         : [];
-
-//       const candidateSkills = [
-//         ...userSkills,
-//         ...userCategories
-//       ];
-
-//       if (candidateSkills.length === 0) {
-//         continue;
-//       }
-
-//       // Find matching skills
-//       const matchingSkills = jobSkills.filter(jobSkill =>
-//         candidateSkills.some(candidateSkill =>
-//           candidateSkill === jobSkill ||
-//           candidateSkill.includes(jobSkill) ||
-//           jobSkill.includes(candidateSkill)
-//         )
-//       );
-
-//       // Remove duplicate matches
-//       const uniqueMatchingSkills = [...new Set(matchingSkills)];
-
-//       // Calculate skill match percentage
-//       let matchScore = Math.round(
-//         (uniqueMatchingSkills.length / jobSkills.length) * 100
-//       );
-
-//       // Location bonus
-//       const candidateCity = String(user.address?.city || "")
-//         .trim()
-//         .toLowerCase();
-
-//       if (
-//         jobLocation &&
-//         candidateCity &&
-//         candidateCity.includes(jobLocation)
-//       ) {
-//         matchScore += 10;
-//       }
-
-//       // Never allow score above 100
-//       matchScore = Math.min(matchScore, 100);
-
-//       console.log(
-//         `👤 ${user.fullname || user.email || user._id} → ${matchScore}%`
-//       );
-
-//       // ==========================================
-//       // ONLY 65% OR ABOVE CANDIDATES ARE SELECTED
-//       // ==========================================
-//       if (matchScore < MATCH_THRESHOLD) {
-//         console.log(
-//           `❌ ${user.fullname || user.email || user._id} skipped - ${matchScore}%`
-//         );
-//         continue;
-//       }
-
-//       console.log(
-//         `✅ ${user.fullname || user.email || user._id} MATCHED - ${matchScore}%`
-//       );
-
-//       notifications.push({
-//         recipient: user._id,
-//         recipientModel: "User",
-//         type: "job-recommendation",
-//         title: "New Job Match Found!",
-//         message: `${job.jobDetails.title} at ${job.jobDetails.companyName} matches your profile (${matchScore}% match)`,
-//         relatedEntity: job._id,
-//         relatedEntityModel: "Job",
-//         priority: matchScore >= 70 ? "high" : "medium",
-//         actionUrl: `/jobs/${job._id}`,
-//         metadata: {
-//           jobTitle: job.jobDetails.title,
-//           companyName: job.jobDetails.companyName,
-//           matchScore: matchScore,
-//           location: job.jobDetails.location,
-//           salary: job.jobDetails.salary,
-//           matchingSkills: uniqueMatchingSkills
-//         }
-//       });
-
-//       // ==========================================
-//       // WHATSAPP WILL BE CALLED HERE
-//       // ==========================================
-//       //
-//       // IMPORTANT:
-//       // Candidate has passed 65% threshold.
-//       // This is the exact place where WhatsApp
-//       // message should be sent.
-//       //
-//       // We will connect your existing WhatsApp
-//       // service here after checking its code.
-//       //
-//       // ==========================================
-//     }
-
-//     // No candidate >= 65%
-//     if (notifications.length === 0) {
-//       console.log("❌ No candidates matched 65% or above.");
-//       return;
-//     }
-
-//     // Save GreatHire bell notifications
-//     await Notification.insertMany(notifications);
-
-//     console.log(
-//       `✅ ${notifications.length} candidates matched 65%+ and were notified.`
-//     );
-
-//   } catch (error) {
-//     console.error(
-//       "❌ Error finding matching candidates:",
-//       error.message
-//     );
-//   }
-// }
-
-// Helper function to send general job alerts to recent active users
+// Helper function to send general job alerts
 async function sendGeneralJobAlert(job) {
   // Removed to prevent timeout - only skill-based matching is used
 }
 
 function computeMatchScore(query, job) {
   if (!query) return null;
-  const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+  const keywords = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
   const fields = [
     job.jobDetails?.title || "",
     (job.jobDetails?.skills || []).join(" "),
     job.jobDetails?.details || "",
     job.jobDetails?.experience || "",
     job.jobDetails?.location || "",
-  ].join(" ").toLowerCase();
-  const matched = keywords.filter(k => fields.includes(k)).length;
-  return Math.min(Math.round((matched / keywords.length) * 70) + 20, 95);
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  const matched = keywords.filter(
+    (k) => fields.includes(k)
+  ).length;
+
+  return Math.min(
+    Math.round(
+      (matched / keywords.length) * 70
+    ) + 20,
+    95
+  );
 }
 
-export const searchJobs = async (req, res) => {
+export const searchJobs = async (
+  req,
+  res
+) => {
   try {
-    const { query, location, experience, workPlaceFlexibility, jobType, page = 1, limit = 20 } = req.query;
-    const isProduction = process.env.NODE_ENV === "production";
-    const filter = { "jobDetails.isActive": true };
+    const {
+      query,
+      location,
+      experience,
+      workPlaceFlexibility,
+      jobType,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    const isProduction =
+      process.env.NODE_ENV === "production";
+
+    const filter = {
+      "jobDetails.isActive": true,
+    };
 
     if (isProduction) {
-      const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
-      filter.company = { $in: verifiedIds };
+      const verifiedIds =
+        await Company.find({
+          isActive: true,
+        }).distinct("_id");
+
+      filter.company = {
+        $in: verifiedIds,
+      };
     }
+
     if (query) {
       filter.$or = [
-        { "jobDetails.title": { $regex: query, $options: "i" } },
-        { "jobDetails.skills": { $regex: query, $options: "i" } },
-        { "jobDetails.details": { $regex: query, $options: "i" } },
+        {
+          "jobDetails.title": {
+            $regex: query,
+            $options: "i",
+          },
+        },
+        {
+          "jobDetails.skills": {
+            $regex: query,
+            $options: "i",
+          },
+        },
+        {
+          "jobDetails.details": {
+            $regex: query,
+            $options: "i",
+          },
+        },
       ];
     }
-    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
-    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
-    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
-    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const [jobs, total] = await Promise.all([
-      Job.find(filter).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).populate("company", "name logo isActive").lean(),
-      Job.countDocuments(filter),
-    ]);
+    if (location) {
+      filter["jobDetails.location"] = {
+        $regex: location,
+        $options: "i",
+      };
+    }
 
-    const results = jobs.map(job => ({ ...job, matchScore: query ? computeMatchScore(query, job) : null }));
-    if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+    if (workPlaceFlexibility) {
+      filter[
+        "jobDetails.workPlaceFlexibility"
+      ] = {
+        $regex: workPlaceFlexibility,
+        $options: "i",
+      };
+    }
+
+    if (jobType) {
+      filter["jobDetails.jobType"] = {
+        $regex: jobType,
+        $options: "i",
+      };
+    }
+
+    if (experience) {
+      filter["jobDetails.experience"] = {
+        $regex: experience,
+        $options: "i",
+      };
+    }
+
+    const skip =
+      (parseInt(page) - 1) *
+      parseInt(limit);
+
+    const [jobs, total] =
+      await Promise.all([
+        Job.find(filter)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit))
+          .populate(
+            "company",
+            "name logo isActive"
+          )
+          .lean(),
+
+        Job.countDocuments(filter),
+      ]);
+
+    const results = jobs.map((job) => ({
+      ...job,
+      matchScore: query
+        ? computeMatchScore(
+            query,
+            job
+          )
+        : null,
+    }));
+
+    if (query) {
+      results.sort(
+        (a, b) =>
+          (b.matchScore || 0) -
+          (a.matchScore || 0)
+      );
+    }
 
     return res.status(200).json({
-      success: true, total, page: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(limit)),
-      count: results.length, query: query || null, jobs: results,
+      success: true,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(
+        total / parseInt(limit)
+      ),
+      count: results.length,
+      query: query || null,
+      jobs: results,
     });
   } catch (error) {
-    console.error("Error searching jobs:", error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+    console.error(
+      "Error searching jobs:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
-export const testAutoApply = async (req, res) => {
+export const testAutoApply = async (
+  req,
+  res
+) => {
   try {
     const { jobId } = req.params;
 
@@ -1226,17 +1677,24 @@ export const testAutoApply = async (req, res) => {
       });
     }
 
-    console.log("🧪 Testing Auto Apply for Job:", jobId);
+    console.log(
+      "🧪 Testing Auto Apply for Job:",
+      jobId
+    );
 
     await autoApply(jobId);
 
     return res.status(200).json({
       success: true,
-      message: "Auto Apply process completed",
+      message:
+        "Auto Apply process completed",
       jobId,
     });
   } catch (error) {
-    console.error("❌ Test Auto Apply Error:", error);
+    console.error(
+      "❌ Test Auto Apply Error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,

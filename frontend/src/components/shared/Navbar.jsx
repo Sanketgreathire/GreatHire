@@ -148,6 +148,37 @@ const ExploreDropdownPanel = memo(({ links, location, onLinkClick, onCampusClick
 // ─────────────────────────────────────────────────────────────
 // Main Navbar
 // ─────────────────────────────────────────────────────────────
+const FALLBACK_PAGE_TITLES = {
+  "/courses": "Career Training Courses | GreatHire",
+  "/courses/python-training": "Python Full Stack Developer Course | GreatHire",
+  "/courses/java-training": "Java Full Stack Developer Course | GreatHire",
+  "/courses/data-science-training": "Data Science Course | GreatHire",
+  "/courses/digital-marketing-training": "Digital Marketing Course | GreatHire",
+  "/courses/data-analytics-training": "Data Analytics Course | GreatHire",
+  "/courses/saleforce-training": "Salesforce Course | GreatHire",
+  "/courses/aws-devops-training": "AWS and DevOps Course | GreatHire",
+  "/courses/bim-training": "BIM Course | GreatHire",
+  "/courses/medical-training": "Medical Coding Course | GreatHire",
+  "/courses/testing-tools-training": "Software Testing Course | GreatHire",
+  "/courses/vlsi-training": "VLSI Design Course | GreatHire",
+  "/courses/multimedia-training": "Multimedia Design Course | GreatHire",
+  "/courses/advanced-excel-training": "Advanced Excel Course | GreatHire",
+  "/courses/autocad-training": "AutoCAD Course | GreatHire",
+  "/courses/revit-mep-training": "Revit MEP Course | GreatHire",
+  "/courses/business-analytics-training": "Business Analytics Course | GreatHire",
+  "/courses/generative-AI-training": "Generative AI Course | GreatHire",
+  "/courses/sap-fico-training": "SAP FICO Course | GreatHire",
+  "/courses/sap-mm-training": "SAP MM Course | GreatHire",
+  "/courses/cyber-security-training": "Cybersecurity Course | GreatHire",
+  "/courses/pmp-training": "PMP Certification Course | GreatHire",
+  "/jobseeker-login": "Job Seeker Login | GreatHire",
+  "/recruiter-login": "Recruiter Login | GreatHire",
+  "/recruiter/signup": "Recruiter Sign Up | GreatHire",
+  "/learnerstrack-login": "Learner Login | GreatHire",
+  "/learnerstrack-signup": "Learner Sign Up | GreatHire",
+  "/recruiter/dashboard": "Recruiter Dashboard | GreatHire",
+};
+
 const Navbar = () => {
   const { jobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
@@ -177,6 +208,13 @@ const Navbar = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const fallbackTitle = FALLBACK_PAGE_TITLES[location.pathname];
+    if (fallbackTitle) {
+      document.title = fallbackTitle;
+    }
   }, [location.pathname]);
 
   useEffect(() => {
