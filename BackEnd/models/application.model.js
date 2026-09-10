@@ -60,7 +60,7 @@ const applicationSchema = new mongoose.Schema(
     },
     recruitmentStatus: {
       type: String,
-      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Closed"],
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Rejected", "Closed"],
       default: "Application",
     },
     cvSource: {

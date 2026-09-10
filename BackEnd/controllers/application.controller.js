@@ -8,6 +8,12 @@ import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
+import {
+  transitionStage,
+  getStageHistory,
+  getCandidateAging,
+  LEGACY_STATUS_TO_STAGE,
+} from "../services/workflow.service.js";
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -302,8 +308,19 @@ export const updateStatus = async (req, res) => {
     }
 
     const previousStatus = application.status;
-    application.status = status;
-    await application.save();
+
+    // Route the change through the FSM service instead of setting
+    // application.status directly, so the move is validated against the
+    // recruitment pipeline and logged to StageHistory.
+    const targetStage = LEGACY_STATUS_TO_STAGE[status];
+    try {
+      await transitionStage(applicationId, targetStage, req.id);
+    } catch (transitionError) {
+      return res.status(transitionError.statusCode || 400).json({
+        message: transitionError.message,
+        success: false,
+      });
+    }
 
     // ✅ Send notification to applicant about status change
     await notificationService.notifyApplicationStatusChanged({
@@ -320,6 +337,73 @@ export const updateStatus = async (req, res) => {
   } catch (error) {
     console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+// Move a candidate through the recruitment pipeline (FSM-validated).
+// Body: { stage: "Screening" | "Shortlisted" | "Interview" | "Selected" | "Joined" | "Rejected" | "Closed" }
+export const transitionApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+    const newStage = req.body.stage?.trim();
+    const actorId = req.id;
+
+    if (!newStage) {
+      return res
+        .status(400)
+        .json({ message: "stage is required.", success: false });
+    }
+
+    const { application, historyEntry } = await transitionStage(
+      applicationId,
+      newStage,
+      actorId
+    );
+    const aging = await getCandidateAging(applicationId);
+
+    return res.status(200).json({
+      message: `Application moved to "${newStage}" successfully.`,
+      success: true,
+      recruitmentStatus: application.recruitmentStatus,
+      historyEntry,
+      aging,
+    });
+  } catch (error) {
+    console.error("Error transitioning application stage:", error);
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Internal server error",
+      success: false,
+    });
+  }
+};
+
+// Get the full stage history + current aging (days in current stage) for an application.
+export const getApplicationHistory = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res
+        .status(404)
+        .json({ message: "Application not found.", success: false });
+    }
+
+    const history = await getStageHistory(applicationId);
+    const aging = await getCandidateAging(applicationId);
+
+    return res.status(200).json({
+      success: true,
+      currentStage: application.recruitmentStatus,
+      aging,
+      history,
+    });
+  } catch (error) {
+    console.error("Error fetching application history:", error);
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Internal server error",
+      success: false,
+    });
   }
 };
 
