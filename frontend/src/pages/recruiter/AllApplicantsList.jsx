@@ -372,7 +372,7 @@ const AllApplicantsList = () => {
                     ? `${experiences[0].duration || ""} ${experiences[0].duration ? "yr(s)" : ""} experience as ${experiences[0].jobProfile || ""}`
                     : "Fresher";
                   const location = [app.applicant?.address?.city, app.applicant?.address?.state].filter(Boolean).join(", ") || "—";
-                  const score = scoreMap[app._id];
+                  const score = app.matchScore ?? scoreMap[app._id];
 
                   return (
                     <div key={app._id} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-5 shadow-sm hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-700 transition-all duration-200">

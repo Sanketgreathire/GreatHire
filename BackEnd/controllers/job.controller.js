@@ -14,6 +14,32 @@ import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
+import {
+  screenCandidate,
+  applyApplicationTransition,
+  getEnrichedCandidateProfile,
+} from "../services/screeningEngine.js";
+
+const screenApplicationAfterCreate = async (application, user, job) => {
+  try {
+    const candidateProfile = await getEnrichedCandidateProfile(
+      user.profile,
+      application.resume || user.profile?.resume || ""
+    );
+    const screeningResult = screenCandidate(candidateProfile, job);
+    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score: screeningResult.score,
+      changedBy: user._id,
+      notify: false,
+    });
+  } catch (screeningError) {
+    console.error("AI Screening Error:", screeningError.message);
+  }
+};
 
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
@@ -618,6 +644,8 @@ export const applyJob = async (req, res) => {
         notificationError
       );
     }
+
+    await screenApplicationAfterCreate(newApplication, user, job);
 
     return res.status(201).json({
       success: true,

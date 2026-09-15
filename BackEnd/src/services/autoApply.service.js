@@ -3,11 +3,37 @@ import { Job } from "../../models/job.model.js";
 import { Application } from "../../models/application.model.js";
 import notificationService from "../../utils/notificationService.js";
 import { calculateMatchPercentage } from "./resumeMatching.service.js";
+import {
+  screenCandidate,
+  applyApplicationTransition,
+  getEnrichedCandidateProfile,
+} from "../../services/screeningEngine.js";
 
 
 
 
 const AUTO_APPLY_THRESHOLD = 65;
+
+const screenAutoAppliedApplication = async (application, user, job) => {
+  try {
+    const candidateProfile = await getEnrichedCandidateProfile(
+      user.profile,
+      application.resume || user.profile?.resume || ""
+    );
+    const screeningResult = screenCandidate(candidateProfile, job);
+    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score: screeningResult.score,
+      changedBy: user._id,
+      notify: false,
+    });
+  } catch (screeningError) {
+    console.error("Auto Apply screening error:", screeningError.message);
+  }
+};
 
 export const autoApply = async (jobId) => {
   try {
@@ -174,7 +200,7 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
         // 12. Create Notification for User
         const jobTitle = job.jobDetails?.title || "a new job";
 
-       await notificationService.createAndEmit({
+await notificationService.createAndEmit({
   recipient: user._id,
   recipientModel: "User",
   type: "auto-apply",
@@ -191,6 +217,8 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
     autoApplied: true,
   },
 });
+
+        await screenAutoAppliedApplication(newApplication, user, job);
 
         console.log(
           `Auto Apply SUCCESS: User ${user._id} applied to Job ${jobId} with ${matchPercentage}% match`
@@ -363,6 +391,8 @@ export const autoApplyExistingJobsForUser = async (userId) => {
           },
         });
 
+        await screenAutoAppliedApplication(newApplication, user, job);
+
         console.log(
           `✅ Existing Job Auto Apply SUCCESS: User ${userId} → Job ${job._id} → ${matchPercentage}%`
         );
@@ -386,4 +416,3 @@ export const autoApplyExistingJobsForUser = async (userId) => {
     );
   }
 };
-
