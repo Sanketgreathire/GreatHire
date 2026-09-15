@@ -9,12 +9,12 @@ const stageHistorySchema = new mongoose.Schema(
     },
        fromStage: {
       type: String,
-      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Closed"],
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Rejected", "Closed"],
       default: null,
     },
     toStage: {
       type: String,
-      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Closed"],
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Rejected", "Closed"],
       required: true,
     },
     changedAt: {

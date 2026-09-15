@@ -76,6 +76,8 @@ import analyticsRoute from "./routes/analytics/analytics.route.js";
 import interviewRoute from "./routes/interview.route.js";
 import { startPlanExpiryNotifier } from "./scripts/planExpiryNotifier.js";
 
+import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
+
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
 
@@ -209,6 +211,9 @@ app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/admin/sourcing", adminSourcingRoute);
 app.use("/api/v1/admin/referring-candidates", referringCandidatesRoute);
+
+app.use("/api/v1/admin/dashboard", adminDashboardRoute);
+
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/email", emailRoute);
 app.use("/api/v1/messages", messageRoute);

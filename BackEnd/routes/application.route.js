@@ -14,6 +14,8 @@ import {
   // AI Screening & Scoring
   scoreApplicationManually,
   overrideApplication,
+  transitionApplication,
+  getApplicationHistory,
 } from "../controllers/application.controller.js";
 
 import isAuthenticated from "../middlewares/isAuthenticated.js";
@@ -74,6 +76,10 @@ router
 router
   .route("/:id/applicants")
   .get(isAuthenticated, getApplicants);
+
+// Workflow / FSM routes for the recruitment pipeline
+router.route("/:id/transition").post(isAuthenticated, transitionApplication);
+router.route("/:id/history").get(isAuthenticated, getApplicationHistory);
 
 // Admin routes
 router

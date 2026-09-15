@@ -63,3 +63,12 @@ export const RECRUITER_DASHBOARD_API = `${BASE_API}/recruiter/dashboard`;
 export const ANALYTICS_DASHBOARD_API = `${BASE_API}/analytics/dashboard`;
 export const COPILOT_API_END_POINT = `${BASE_API}/copilot`;
 
+
+// DASHBOARD ENDPOINTS
+export const DASHBOARD_KPI_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/kpi`;
+export const DASHBOARD_FUNNEL_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/funnel`;
+export const DASHBOARD_TREND_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/trend`;
+export const DASHBOARD_DEPARTMENT_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/department`;
+export const DASHBOARD_INTERVIEW_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/interview-status`;
+export const DASHBOARD_FILTER_OPTIONS_ENDPOINT = `${ADMIN_API_END_POINT}/dashboard/filter-options`;
+

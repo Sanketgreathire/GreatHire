@@ -137,6 +137,7 @@ const applicationSchema = new mongoose.Schema(
         "Joined",
         "Closed",
       ],
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Rejected", "Closed"],
       default: "Application",
     },
 

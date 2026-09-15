@@ -67,6 +67,23 @@
     font-display: swap;
   }
 
+/* Override for dashboard filters */
+.dashboard-filter:hover,
+.dashboard-filter:focus {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  outline: none;
+  border-color: #d1d5db;
+}
+
+/* Dark mode */
+.dark .dashboard-filter:hover,
+.dark .dashboard-filter:focus {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563;
+}
+
 select {
   background-color: #ffffff;
   color: #111827;
