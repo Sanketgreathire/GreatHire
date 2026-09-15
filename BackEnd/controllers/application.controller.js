@@ -9,12 +9,14 @@ import {
 } from "../services/screeningEngine.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import StageHistory from "../models/stageHistory.model.js";
 import Notification from "../models/notification.model.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
+
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -346,6 +348,110 @@ export const updateStatus = async (req, res) => {
   } catch (error) {
     console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+export const transitionApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    const { decision, score } = req.body;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    if (!decision) {
+      return res.status(400).json({
+        success: false,
+        message: "Decision is required",
+      });
+    }
+
+    if (!VALID_STATUSES.includes(decision)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid decision. Valid values: ${VALID_STATUSES.join(", ")}`,
+      });
+    }
+
+    const application = await Application.findById(applicationId)
+      .populate("applicant")
+      .populate("job");
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score,
+      changedBy: req.id,
+      notify: true,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Application transitioned successfully",
+      application,
+    });
+  } catch (error) {
+    console.error("Error transitioning application:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to transition application",
+      error: error.message,
+    });
+  }
+};
+
+export const getApplicationHistory = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    const application = await Application.findById(applicationId);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    const history = await StageHistory.find({
+      application: applicationId,
+    })
+      .populate("changedBy", "fullname emailId")
+      .sort({ changedAt: 1 });
+
+    return res.status(200).json({
+      success: true,
+      applicationId,
+      history,
+    });
+  } catch (error) {
+    console.error("Error fetching application history:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch application history",
+      error: error.message,
+    });
   }
 };
 
