@@ -20,7 +20,7 @@ import aiedgeImg from "../../assets/clientLogos/aiedge.jpeg";
 import alkalineImg from "../../assets/clientLogos/alkaline.png";
 import baklavaImg from "../../assets/clientLogos/baklava.avif";
 import bandharyglassImg from "../../assets/clientLogos/bandharyglass.png";
-import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
+// import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
 import dadusImg from "../../assets/clientLogos/dadus.avif";
 import dwlabsImg from "../../assets/clientLogos/dwlabs.jpeg";
 import genericsolImg from "../../assets/clientLogos/genericsol.jpeg";
@@ -99,7 +99,7 @@ function App() {
     { name: "Bandhary Glass", logo: bandharyglassImg },
     { name: "Alkaline", logo: alkalineImg },
     { name: "AI Edge", logo: aiedgeImg },
-    { name: "Clever Nest", logo: clevernestImg },
+    // { name: "Clever Nest", logo: clevernestImg },
     { name: "Baklava", logo: baklavaImg },
     { name: "HRH", logo: hrhImg },
     { name: "Dadus", logo: dadusImg },
