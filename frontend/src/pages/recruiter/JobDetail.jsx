@@ -586,9 +586,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT, ADMIN_JOB_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Button } from "@/components/ui/button";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/shared/Navbar";
@@ -623,6 +623,7 @@ import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
 const JobDetail = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [jobDetails, setJobDetails] = useState(null);
@@ -640,6 +641,11 @@ const JobDetail = () => {
   const [boldMode, setBoldMode] = useState(false);
   const [italicMode, setItalicMode] = useState(false);
 
+  // Admins can edit job details too (recruiters could already do this)
+  const canEditJob =
+    user?.role === "recruiter" ||
+    user?.role === "admin" ||
+    user?.role === "Owner";
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -720,18 +726,33 @@ const JobDetail = () => {
   const handleSave = async () => {
     try {
       setSaveLoading(true);
-      const response = await axios.put(
-        `${JOB_API_END_POINT}/update/${id}`,
-        { editedJob, companyId: company?._id },
-        { withCredentials: true }
-      );
+
+      const isAdminUser = user?.role === "admin" || user?.role === "Owner";
+
+      // Admins edit jobs without being tied to the job's company, so they
+      // use a dedicated admin endpoint instead of the recruiter one.
+      const url = isAdminUser
+        ? `${ADMIN_JOB_DATA_API_END_POINT}/update-job/${id}`
+        : `${JOB_API_END_POINT}/update/${id}`;
+      const payload = isAdminUser
+        ? { editedJob }
+        : { editedJob, companyId: company?._id };
+
+      const response = await axios.put(url, payload, {
+        withCredentials: true,
+      });
       if (response.data.success) {
         setJobDetails(response.data.updatedJob.jobDetails);
         setEditMode(false);
         toast.success("Job updated successfully 😊");
+      } else {
+        toast.error(response.data.message || "Failed to update job.");
       }
     } catch (error) {
       console.error("Error updating job:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to update job."
+      );
     } finally {
       setSaveLoading(false);
     }
@@ -745,6 +766,20 @@ const JobDetail = () => {
     setEditedJob(jobDetails);
     setEditMode(true);
   };
+
+  // Auto-open edit mode when navigated here with ?edit=true (e.g. from the
+  // admin jobs list "Edit" action)
+  useEffect(() => {
+    if (
+      canEditJob &&
+      jobDetails &&
+      !editMode &&
+      searchParams.get("edit") === "true"
+    ) {
+      handleEdit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobDetails, canEditJob]);
 
   // Set editor content when entering edit mode
   useEffect(() => {
@@ -866,7 +901,7 @@ const JobDetail = () => {
               <ArrowLeft className=" h-6 w-8 mr-2" />
               Back
             </Button>
-            {user?.role === "recruiter" && !editMode && (
+            {canEditJob && !editMode && (
               <Button variant="outline" onClick={handleEdit}>
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit Job

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link, Pencil } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
@@ -380,6 +380,16 @@ const Jobs = () => {
                             className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
                             size={20}
                             onClick={() => navigate(`/admin/job/details/${job._id}`)}
+                            title="View job details"
+                          />
+
+                          <Pencil
+                            className="text-indigo-500 dark:text-indigo-400 cursor-pointer hover:scale-110 transition"
+                            size={20}
+                            onClick={() =>
+                              navigate(`/admin/job/details/${job._id}?edit=true`)
+                            }
+                            title="Edit job details"
                           />
 
                           <Link
