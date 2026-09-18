@@ -16,7 +16,7 @@ import {
 } from "react-icons/fi";
 import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT, JD_MATCHING_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
@@ -86,11 +86,11 @@ const PostedJobList = () => {
 
       try {
         const response = await axios.post(
-          `http://localhost:8000/api/v1/jd-matching/match-candidates/${jobId}`,
+          `${JD_MATCHING_API_END_POINT}/match-candidates/${jobId}`,
           {},
           {
             withCredentials: true,
-            timeout: 10000,
+            timeout: 30000,
           }
         );
 
