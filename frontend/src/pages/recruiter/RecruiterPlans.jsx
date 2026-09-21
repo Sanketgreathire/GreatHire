@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Check, X, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -47,10 +47,11 @@ const PLAN_CREDITS = {
   pro:    { creditsForJobs: 25, creditsForCandidates: 5000 },
 };
 
-const PLAN_MAP = { STANDARD: "growth", PREMIUM: "scale", PRO: "pro", ENTERPRISE: "enterprise" };
+//const PLAN_MAP = { STANDARD: "growth", PREMIUM: "scale", PRO: "pro", ENTERPRISE: "enterprise" };
 
 const RPO_IDS = new Set(["full-cycle-rpo", "monthly-talent-partner", "partnership"]);
-const subscriptionPlans = [
+
+export const subscriptionPlans = [
   {
     id: "starter",
     title: "Starter Plan",
@@ -279,22 +280,22 @@ const subscriptionPlans = [
   },
 ];
 
-const PlanBadge = ({ planId, user }) => {
-  if (!user || String(user.role).toUpperCase() === "ADMIN") return null;
-  if (user.subscriptionStatus !== "ACTIVE") return null;
-  if (PLAN_MAP[user.plan] !== planId) return null;
+// const PlanBadge = ({ planId, user }) => {
+//   if (!user || String(user.role).toUpperCase() === "ADMIN") return null;
+//   if (user.subscriptionStatus !== "ACTIVE") return null;
+//   if (PLAN_MAP[user.plan] !== planId) return null;
 
-  if (user.plan === "STANDARD") return (
-    <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">VERIFIED</span>
-  );
-  if (user.plan === "PREMIUM") return (
-    <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">⭐ MOST POPULAR</span>
-  );
-  if (user.plan === "ENTERPRISE") return (
-    <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">👑 ENTERPRISE ELITE</span>
-  );
-  return null;
-};
+//   if (user.plan === "STANDARD") return (
+//     <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">VERIFIED</span>
+//   );
+//   if (user.plan === "PREMIUM") return (
+//     <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">⭐ MOST POPULAR</span>
+//   );
+//   if (user.plan === "ENTERPRISE") return (
+//     <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">👑 ENTERPRISE ELITE</span>
+//   );
+//   return null;
+// };
 
 function RecruiterPlans() {
   const { user } = useSelector((state) => state.auth);
@@ -305,7 +306,7 @@ function RecruiterPlans() {
 
   const isRecruiter = user?.role === "recruiter" && !location.pathname.includes("packages") && !location.pathname.includes("your-plans") && !location.pathname.includes("recruiter-plans");
 
-  const [selectedPlanId, setSelectedPlanId] = useState(
+  const [, setSelectedPlanId] = useState(
     subscriptionPlans.find((p) => p.popular)?.id
   );
   const [showVerificationBanner, setShowVerificationBanner] = useState(false);
@@ -324,7 +325,7 @@ function RecruiterPlans() {
         }
       })
       .catch(() => {});
-  }, [user?._id]);
+  }, [user,dispatch]);
 
   const loadRazorpayScript = useCallback(() => {
     return new Promise((resolve) => {
