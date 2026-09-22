@@ -25,7 +25,7 @@ import dadusImg from "../../assets/clientLogos/dadus.avif";
 import dwlabsImg from "../../assets/clientLogos/dwlabs.jpeg";
 import genericsolImg from "../../assets/clientLogos/genericsol.jpeg";
 import hrhImg from "../../assets/clientLogos/hrh.jpeg";
-import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
+//import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
 import smfibersImg from "../../assets/clientLogos/smfibers.svg";
 import sriramfinanceImg from "../../assets/clientLogos/sriramfinance.jpg";
 import techmahindraImg from "../../assets/clientLogos/techmahindra.png";
@@ -86,7 +86,7 @@ function App() {
     { name: "Wipro", logo: wiproImg },
     { name: "Teleperformance", logo: teleperformanceImg },
     { name: "Google", logo: googleImg },
-    { name: "Kotak Life", logo: kotaklifeImg },
+   // { name: "Kotak Life", logo: kotaklifeImg },
     { name: "DWLabs", logo: dwlabsImg },
     { name: "Voralsoft", logo: vortalsoftImg },
     { name: "Sriram Finance", logo: sriramfinanceImg },
