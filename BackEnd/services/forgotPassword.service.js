@@ -3,18 +3,100 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
+ * Safely decodes secrets that may be Base64-encoded or prefixed with base64:
+ */
+const decodeSecret = (val) => {
+  if (!val) return "";
+  const trimmed = val.replace(/^["']|["']$/g, "").trim();
+  if (trimmed.startsWith("base64:")) {
+    try {
+      return Buffer.from(trimmed.slice(7), "base64").toString("utf8");
+    } catch (_) {
+      return trimmed;
+    }
+  }
+  if (/^[A-Za-z0-9+/]+={1,2}$/.test(trimmed)) {
+    try {
+      const decoded = Buffer.from(trimmed, "base64").toString("utf8");
+      if (/^[\x20-\x7E]+$/.test(decoded)) {
+        return decoded;
+      }
+    } catch (_) {}
+  }
+  return trimmed;
+};
+
+/**
+ * Resolves Forgot Password email credentials from:
+ * 1. FORGOT_PASSWORD_BASE64 (Base64 JSON containing { user, pass })
+ * 2. Dedicated env variables (FORGOT_PASSWORD_EMAIL_USER & encoded/plaintext FORGOT_PASSWORD_EMAIL_PASS)
+ * 3. Fallback env variables (EMAIL_USER & EMAIL_PASS)
+ */
+export const resolveForgotPasswordCredentials = () => {
+  // 1. Check full Base64 hash object
+  const base64Config = (process.env.FORGOT_PASSWORD_BASE64 || process.env.FORGOT_PASSWORD_HASH || "").replace(/^["']|["']$/g, "").trim();
+  if (base64Config) {
+    try {
+      const decodedStr = Buffer.from(base64Config, "base64").toString("utf8");
+      const parsed = JSON.parse(decodedStr);
+      if (parsed.user && parsed.pass) {
+        return {
+          user: parsed.user.trim(),
+          pass: parsed.pass.trim(),
+          isDedicated: true,
+        };
+      }
+    } catch (e) {
+      console.warn("[ForgotPassword] Failed to decode FORGOT_PASSWORD_BASE64:", e.message);
+    }
+  }
+
+  // 2. Check dedicated variables
+  const dedicatedUser = (process.env.FORGOT_PASSWORD_EMAIL_USER || "").replace(/^["']|["']$/g, "").trim();
+  const rawDedicatedPass = (process.env.FORGOT_PASSWORD_EMAIL_PASS || process.env.FORGOT_PASSWORD_EMAIL_PASS_BASE64 || "").replace(/^["']|["']$/g, "").trim();
+  const dedicatedPass = decodeSecret(rawDedicatedPass);
+
+  if (dedicatedUser && dedicatedPass) {
+    return {
+      user: dedicatedUser,
+      pass: dedicatedPass,
+      isDedicated: true,
+    };
+  }
+
+  // 3. Fallback to default email credentials
+  const defaultUser = (process.env.EMAIL_USER || "").replace(/^["']|["']$/g, "").trim();
+  const rawDefaultPass = (process.env.EMAIL_PASS || "").replace(/^["']|["']$/g, "").trim();
+  const defaultPass = decodeSecret(rawDefaultPass);
+
+  if (defaultUser && defaultPass) {
+    return {
+      user: defaultUser,
+      pass: defaultPass,
+      isDedicated: false,
+    };
+  }
+
+  return {
+    user: "",
+    pass: "",
+    isDedicated: false,
+  };
+};
+
+/**
  * Get nodemailer transporter configured specifically for the Forgot Password service.
  * Supports dedicated credentials:
- *   - FORGOT_PASSWORD_EMAIL_USER / FORGOT_PASSWORD_EMAIL_PASS
+ *   - FORGOT_PASSWORD_BASE64 (Base64 JSON)
+ *   - FORGOT_PASSWORD_EMAIL_USER / FORGOT_PASSWORD_EMAIL_PASS (encoded or plain)
  *   - Falls back gracefully to EMAIL_USER / EMAIL_PASS
  */
 export const getForgotPasswordTransporter = () => {
-  const user = (process.env.FORGOT_PASSWORD_EMAIL_USER || process.env.EMAIL_USER || "").trim();
-  const pass = (process.env.FORGOT_PASSWORD_EMAIL_PASS || process.env.EMAIL_PASS || "").trim();
+  const { user, pass } = resolveForgotPasswordCredentials();
 
   if (!user || !pass) {
     throw new Error(
-      "Forgot Password email service is not configured. Please set FORGOT_PASSWORD_EMAIL_USER and FORGOT_PASSWORD_EMAIL_PASS (or EMAIL_USER and EMAIL_PASS) in your environment."
+      "Forgot Password email service is not configured. Please set FORGOT_PASSWORD_EMAIL_USER and FORGOT_PASSWORD_EMAIL_PASS (or FORGOT_PASSWORD_BASE64) in your environment."
     );
   }
 
@@ -51,8 +133,8 @@ export const getForgotPasswordTransporter = () => {
  * Returns safe public details about the currently active Forgot Password email configuration.
  */
 export const getForgotPasswordConfig = () => {
-  const usingDedicated = Boolean(process.env.FORGOT_PASSWORD_EMAIL_USER && process.env.FORGOT_PASSWORD_EMAIL_PASS);
-  const activeUser = (process.env.FORGOT_PASSWORD_EMAIL_USER || process.env.EMAIL_USER || "").trim();
+  const creds = resolveForgotPasswordCredentials();
+  const activeUser = creds.user;
   const fromName = process.env.FORGOT_PASSWORD_FROM_NAME || "GreatHire Support";
   const fromEmail = (process.env.FORGOT_PASSWORD_FROM_EMAIL || activeUser || process.env.SUPPORT_EMAIL || "").trim();
   const service = process.env.FORGOT_PASSWORD_HOST
@@ -61,11 +143,11 @@ export const getForgotPasswordConfig = () => {
 
   return {
     isConfigured: Boolean(activeUser),
-    usingDedicatedEmail: usingDedicated,
+    usingDedicatedEmail: creds.isDedicated,
     senderEmail: activeUser ? `${activeUser.slice(0, 3)}***@${activeUser.split("@")[1] || ""}` : "Not configured",
     fromHeader: `"${fromName}" <${fromEmail}>`,
     service,
-    tokenExpiry: process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "15m",
+    tokenExpiry: process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "1h",
   };
 };
 
@@ -82,7 +164,9 @@ export const verifyForgotPasswordConfig = async () => {
  */
 export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes = 15 }) => {
   const currentYear = new Date().getFullYear();
-  const safeName = userName || "User";
+  const greeting = userName && userName.trim()
+    ? `Hello <strong>${userName.trim()}</strong>,`
+    : `Hello,`;
 
   return `
 <!DOCTYPE html>
@@ -118,7 +202,7 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
               </h2>
               
               <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #4b5563;">
-                Hello <strong>${safeName}</strong>,
+                ${greeting}
               </p>
               
               <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #4b5563;">
@@ -142,14 +226,6 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
                   ⏱️ <strong>Note:</strong> This link is valid for <strong>${expiryMinutes} minutes</strong>. For your security, it can only be used once.
                 </p>
               </div>
-
-              <!-- Plain Link Fallback -->
-              <p style="margin: 20px 0 8px; font-size: 13px; color: #6b7280; line-height: 1.5;">
-                If the button above doesn't work, copy and paste this link into your web browser:
-              </p>
-              <p style="margin: 0 0 24px; font-size: 12px; color: #2563eb; word-break: break-all; line-height: 1.5;">
-                <a href="${resetURL}" target="_blank" style="color: #2563eb; text-decoration: underline;">${resetURL}</a>
-              </p>
 
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 28px 0 20px;">
 
@@ -195,12 +271,11 @@ export const sendForgotPasswordEmail = async ({ toEmail, userName, resetToken, r
   try {
     const transporter = getForgotPasswordTransporter();
 
-    // Determine Frontend Reset URL
-    let url = resetURL;
-    if (!url) {
-      const frontendBase = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/+$/, "");
-      url = `${frontendBase}/reset-password/${resetToken}`;
-    }
+    const frontendBase = (process.env.FRONTEND_URL || "https://greathire.in")
+      .replace(/^["']|["']$/g, "")
+      .trim()
+      .replace(/\/+$/, "") || "https://greathire.in";
+    const url = resetURL || `${frontendBase}/reset-password/${resetToken}`;
 
     const fromName = process.env.FORGOT_PASSWORD_FROM_NAME || "GreatHire Support";
     const activeSender = (process.env.FORGOT_PASSWORD_EMAIL_USER || process.env.EMAIL_USER || "").trim();
@@ -213,7 +288,7 @@ export const sendForgotPasswordEmail = async ({ toEmail, userName, resetToken, r
       html: buildForgotPasswordEmailHtml({
         userName,
         resetURL: url,
-        expiryMinutes: 15,
+        expiryMinutes: 60,
       }),
     };
 

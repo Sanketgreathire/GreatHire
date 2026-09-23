@@ -8,6 +8,12 @@ import { Eye, EyeOff } from "lucide-react";
 // Import image for UI
 import img5 from "../assets/webp/img5.webp";
 
+// Import navigation bar component
+import Navbar from "@/components/shared/Navbar";
+
+// Import footer component
+import Footer from "@/components/shared/Footer";
+
 // Import axios for making API requests
 import axios from "axios";
 
@@ -27,9 +33,12 @@ import Loading from "@/components/Loading";
 import PageNotFound from "./PageNotFound";
 
 import { Helmet } from "react-helmet-async";
+import { useTheme } from "@/context/ThemeContext";
 
 // ResetPassword Component - Allows users to reset their password using a token
 const ResetPassword = () => {
+  const themeContext = useTheme();
+
   // State to track page status
   const [status, setStatus] = useState("loading");
   const navigate = useNavigate();
@@ -51,6 +60,15 @@ const ResetPassword = () => {
   // State for loading indicator
   const [loading, setLoading] = useState(false);
 
+  // Ensure dark mode is active on html root
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    if (themeContext?.setTheme) {
+      themeContext.setTheme("dark");
+    }
+  }, []);
+
   // Effect hook to verify the token on component mount
   useEffect(() => {
     const verifyToken = async () => {
@@ -64,9 +82,14 @@ const ResetPassword = () => {
         if (response.data.success) {
           setDecodeData(response.data.decoded); // Store decoded token data
           setStatus("valid token"); // Set status to valid if token is verified
+        } else {
+          toast.error(response.data.message || "Reset link is invalid or expired.");
+          setStatus("page not found");
         }
       } catch (err) {
         console.log(`Error in token verification: ${err}`);
+        const errMsg = err.response?.data?.message || "Reset link is invalid or has expired.";
+        toast.error(errMsg);
         setStatus("page not found"); // Set status to error if verification fails
       }
     };
@@ -75,11 +98,25 @@ const ResetPassword = () => {
     else navigate("/"); // Redirect to home if token is missing
   }, [token]);
 
+  // Function to determine login redirect path based on user role
+  const getLoginPath = () => {
+    const role = (decoded?.role || "").toLowerCase();
+    if (role === "recruiter") {
+      return "/recruiter-login";
+    }
+    return "/jobseeker-login";
+  };
+
   // Function to handle password reset submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate password and confirm password
+    // Client-side validations
+    if (!password || password.length < 8) {
+      toast.error("Password must be at least 8 characters long.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
       return;
@@ -97,14 +134,17 @@ const ResetPassword = () => {
       );
 
       if (response.data.success) {
-        toast.success(response.data.message); // Show success message
-        navigate("/login"); // Redirect to login page
+        toast.success(response.data.message || "Password reset successfully!"); // Show success message
+        navigate(getLoginPath()); // Redirect to correct login page
       } else {
-        toast.error(response.data.message); // Show error message if reset fails
+        toast.error(response.data.message || "Failed to reset password."); // Show error message if reset fails
       }
     } catch (err) {
-      console.error(`Error in resetting password: ${err}`);
-      toast.error("Failed to reset password. Please try again.");
+      console.error("Error in resetting password:", err);
+      const errorMessage =
+        err.response?.data?.message ||
+        "Failed to reset password. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -124,7 +164,11 @@ const ResetPassword = () => {
       </Helmet>
 
       {/* Show loading indicator while verifying token */}
-      {status === "loading" && <Loading color="blue-600" />}
+      {status === "loading" && (
+        <div className="min-h-screen flex items-center justify-center bg-gray-900">
+          <Loading color="blue-600" />
+        </div>
+      )}
 
       {/* Show 404 page if token is invalid */}
       {status === "page not found" && <PageNotFound />}
@@ -132,34 +176,37 @@ const ResetPassword = () => {
       {/* Show reset password form if token is valid */}
       {status === "valid token" && (
         <>
-          <div className="flex flex-row md:flex-row-reverse bg-gradient-to-tl from-white to-blue-100 dark:from-gray-900 dark:to-gray-800 items-center justify-evenly min-h-screen py-8 px-4">
-            {/* Left Side - Image Section */}
-            <div className="hidden md:block w-full md:w-1/2 h-[500px] p-6">
+          <Navbar />
+
+          <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-gray-900 via-slate-900 to-gray-800 min-h-screen text-white">
+            {/* Left Side - Background Image */}
+            <div className="hidden md:flex w-full md:w-2/3 items-center justify-center p-8">
               <img
                 src={img5}
                 alt="Reset Password Illustration"
-                className="w-full h-full object-contain opacity-80"
+                className="w-full max-h-[550px] object-contain opacity-75"
               />
             </div>
 
             {/* Right Side - Reset Password Form */}
-            <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col space-y-4">
-              <h1 className="text-3xl font-bold text-center">
-                <span className="text-gray-900 dark:text-white">Great</span>
-                <span className="text-blue-600 dark:text-blue-400">Hire</span>
+            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0">
+              {/* Branding and title */}
+              <h1 className="text-3xl font-bold text-center text-white">
+                Great<span className="text-blue-400">Hire</span>
               </h1>
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">
+              <h3 className="text-2xl font-bold text-white text-center mb-6">
                 Reset Password
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-center text-sm mb-4">
+              <p className="text-gray-300 text-center mb-4">
                 Enter your new password below to reset it.
               </p>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* New Password Input Field */}
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="block text-sm font-medium text-gray-200"
                   >
                     New Password
                   </label>
@@ -171,13 +218,14 @@ const ResetPassword = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter new password (min length 8)"
-                      className="block w-full px-4 py-2 pr-11 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
+                      minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -189,7 +237,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    className="block text-sm font-medium text-gray-200"
                   >
                     Confirm Password
                   </label>
@@ -201,13 +249,14 @@ const ResetPassword = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
-                      className="block w-full px-4 py-2 pr-11 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
+                      minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -219,14 +268,27 @@ const ResetPassword = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 ${loading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                  className={`w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   {loading ? "Resetting..." : "Reset Password"}
                 </button>
               </form>
+
+              {/* Navigation back to login page */}
+              <div className="text-center mt-6">
+                <p
+                  className="text-blue-400 hover:text-blue-300 hover:underline text-sm cursor-pointer transition-colors"
+                  onClick={() => navigate(getLoginPath())}
+                >
+                  Back to Login
+                </p>
+              </div>
             </div>
           </div>
+
+          <Footer />
         </>
       )}
     </>
