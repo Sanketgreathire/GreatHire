@@ -160,9 +160,9 @@ export const verifyForgotPasswordConfig = async () => {
 };
 
 /**
- * Generates the responsive HTML email template for password reset.
+ * Generates the responsive HTML email template for password reset with dark mode aesthetics.
  */
-export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes = 15 }) => {
+export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes = 60 }) => {
   const currentYear = new Date().getFullYear();
   const greeting = userName && userName.trim()
     ? `Hello <strong>${userName.trim()}</strong>,`
@@ -174,21 +174,45 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
   <title>Reset Your GreatHire Password</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      supported-color-schemes: dark;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a0f1d !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      body, .email-bg {
+        background-color: #0a0f1d !important;
+      }
+      .email-card {
+        background-color: #131b2e !important;
+        border-color: #1e293b !important;
+      }
+    }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f3f4f6; padding: 40px 15px;">
+<body class="email-bg" style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0a0f1d; color: #e2e8f0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" class="email-bg" style="background-color: #0a0f1d; padding: 40px 15px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="100%" max-width="580" cellspacing="0" cellpadding="0" border="0" style="max-width: 580px; width: 100%; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04); overflow: hidden; border: 1px solid #e5e7eb;">
+        <table role="presentation" width="100%" max-width="580" cellspacing="0" cellpadding="0" border="0" class="email-card" style="max-width: 580px; width: 100%; background-color: #131b2e; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); overflow: hidden; border: 1px solid #1e293b;">
           
           <!-- Header -->
           <tr>
-            <td style="padding: 32px 32px 24px; text-align: center; background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);">
+            <td style="padding: 32px 32px 26px; text-align: center; background: linear-gradient(135deg, #0f2347 0%, #1d4ed8 100%);">
               <h1 style="margin: 0; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
                 Great<span style="color: #60a5fa;">Hire</span>
               </h1>
-              <p style="margin: 6px 0 0; font-size: 13px; color: #dbeafe; letter-spacing: 0.2px;">
+              <p style="margin: 6px 0 0; font-size: 13px; color: #bfdbfe; letter-spacing: 0.3px;">
                 Connecting Skills with Opportunity
               </p>
             </td>
@@ -196,24 +220,24 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
 
           <!-- Main Body -->
           <tr>
-            <td style="padding: 36px 32px 28px; color: #374151;">
-              <h2 style="margin: 0 0 16px; font-size: 20px; font-weight: 700; color: #111827;">
+            <td style="padding: 36px 32px 28px; color: #e2e8f0;">
+              <h2 style="margin: 0 0 18px; font-size: 22px; font-weight: 700; color: #ffffff;">
                 Reset Your Password
               </h2>
               
-              <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #4b5563;">
+              <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.6; color: #cbd5e1;">
                 ${greeting}
               </p>
               
-              <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #4b5563;">
-                We received a request to reset the password for your GreatHire account. Click the button below to choose a new password:
+              <p style="margin: 0 0 24px; font-size: 15px; line-height: 1.6; color: #cbd5e1;">
+                We received a request to reset the password for your GreatHire account. Click the button below to choose your new password:
               </p>
 
               <!-- Action Button -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 28px 0;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 30px 0;">
                 <tr>
                   <td align="center">
-                    <a href="${resetURL}" target="_blank" style="display: inline-block; background-color: #1d4ed8; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 34px; border-radius: 8px; box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);">
+                    <a href="${resetURL}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 38px; border-radius: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); letter-spacing: 0.2px;">
                       Reset Password
                     </a>
                   </td>
@@ -221,15 +245,15 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
               </table>
 
               <!-- Notice Box -->
-              <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 6px; padding: 14px 16px; margin: 24px 0 20px;">
-                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1e40af;">
+              <div style="background-color: #172554; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 14px 16px; margin: 26px 0 22px;">
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #93c5fd;">
                   ⏱️ <strong>Note:</strong> This link is valid for <strong>${expiryMinutes} minutes</strong>. For your security, it can only be used once.
                 </p>
               </div>
 
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 28px 0 20px;">
+              <hr style="border: none; border-top: 1px solid #1e293b; margin: 28px 0 20px;">
 
-              <p style="margin: 0; font-size: 13px; color: #9ca3af; line-height: 1.5;">
+              <p style="margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.5;">
                 🛡️ If you did not request a password reset, please disregard this email. Your password will remain unchanged and your account is completely safe.
               </p>
             </td>
@@ -237,12 +261,12 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
 
           <!-- Footer -->
           <tr>
-            <td style="padding: 20px 32px 28px; background-color: #f9fafb; border-top: 1px solid #f3f4f6; text-align: center;">
-              <p style="margin: 0 0 6px; font-size: 13px; color: #6b7280;">
+            <td style="padding: 22px 32px 28px; background-color: #0b1122; border-top: 1px solid #1e293b; text-align: center;">
+              <p style="margin: 0 0 6px; font-size: 13px; color: #64748b;">
                 Need assistance? Contact our support team at
-                <a href="mailto:${process.env.SUPPORT_EMAIL || 'support@greathire.in'}" style="color: #1d4ed8; text-decoration: none; font-weight: 500;">${process.env.SUPPORT_EMAIL || 'support@greathire.in'}</a>
+                <a href="mailto:${process.env.SUPPORT_EMAIL || 'support@greathire.in'}" style="color: #60a5fa; text-decoration: none; font-weight: 500;">${process.env.SUPPORT_EMAIL || 'support@greathire.in'}</a>
               </p>
-              <p style="margin: 6px 0 0; font-size: 12px; color: #9ca3af;">
+              <p style="margin: 6px 0 0; font-size: 12px; color: #475569;">
                 © ${currentYear} GreatHire. All rights reserved.
               </p>
             </td>

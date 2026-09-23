@@ -165,39 +165,73 @@ const ResetPassword = () => {
 
       {/* Show loading indicator while verifying token */}
       {status === "loading" && (
-        <div className="min-h-screen flex items-center justify-center bg-gray-200">
+        <div className="min-h-screen flex items-center justify-center bg-gray-900">
           <Loading color="blue-600" />
         </div>
       )}
 
-      {/* Show 404 page if token is invalid */}
-      {status === "page not found" && <PageNotFound />}
+      {/* Show in-page dark mode card if token is invalid or expired */}
+      {status === "page not found" && (
+        <>
+          <Navbar />
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tl from-gray-900 via-slate-900 to-gray-800 text-white px-4 py-16">
+            <div className="w-full max-w-md p-8 bg-slate-800/90 border border-gray-700/80 rounded-2xl shadow-2xl text-center space-y-6">
+              <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/30 rounded-full flex items-center justify-center mx-auto text-3xl">
+                ⚠️
+              </div>
+              <h2 className="text-2xl font-bold text-white">
+                Reset Link Expired or Invalid
+              </h2>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                This password reset link is invalid, has expired, or has already been used. For your account security, password reset links can only be used once and expire after 1 hour.
+              </p>
+              <div className="space-y-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-all duration-200"
+                >
+                  Request New Reset Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(getLoginPath())}
+                  className="w-full py-2.5 px-4 bg-transparent hover:bg-slate-700 text-gray-300 hover:text-white font-medium rounded-lg transition-all duration-200 text-sm"
+                >
+                  Back to Login
+                </button>
+              </div>
+            </div>
+          </div>
+          <Footer />
+        </>
+      )}
 
       {/* Show reset password form if token is valid */}
       {status === "valid token" && (
         <>
           <Navbar />
 
-          <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-br from-gray-200 via-gray-300 to-gray-100 min-h-screen text-gray-900">
+          <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-gray-900 via-slate-900 to-gray-800 min-h-screen text-white">
             {/* Left Side - Background Image */}
             <div className="hidden md:flex w-full md:w-2/3 items-center justify-center p-8">
               <img
                 src={img5}
                 alt="Reset Password Illustration"
-                className="w-full max-h-[550px] object-contain opacity-80"
+                className="w-full max-h-[550px] object-contain opacity-75"
               />
             </div>
 
             {/* Right Side - Reset Password Form */}
-            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0 rounded-2xl bg-gray-50/80 shadow-2xl border border-gray-200 backdrop-blur-sm">
+            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0">
               {/* Branding and title */}
-              <h1 className="text-3xl font-bold text-center text-gray-900">
-                Great<span className="text-blue-600">Hire</span>
+              <h1 className="text-3xl font-bold text-center text-white">
+                Great<span className="text-blue-400">Hire</span>
               </h1>
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
+              <h3 className="text-2xl font-bold text-white text-center mb-6">
                 Reset Password
               </h3>
-              <p className="text-gray-600 text-center mb-4">
+              <p className="text-gray-300 text-center mb-4">
                 Enter your new password below to reset it.
               </p>
 
@@ -206,7 +240,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-200"
                   >
                     New Password
                   </label>
@@ -218,14 +252,14 @@ const ResetPassword = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter new password (min length 8)"
-                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -237,7 +271,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-gray-200"
                   >
                     Confirm Password
                   </label>
@@ -249,14 +283,14 @@ const ResetPassword = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
-                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}

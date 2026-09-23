@@ -34,8 +34,8 @@ const PageNotFound = () => {
         />
       </Helmet>
 
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <p className="text-xl text-gray-900 mt-4 text-center">
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+        <p className="text-xl text-gray-900 dark:text-white mt-4 text-center">
           Oops! The page you are looking for does not exist.
         </p>
 
