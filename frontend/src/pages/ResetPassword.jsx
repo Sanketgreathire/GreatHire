@@ -165,7 +165,7 @@ const ResetPassword = () => {
 
       {/* Show loading indicator while verifying token */}
       {status === "loading" && (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="min-h-screen flex items-center justify-center bg-gray-200">
           <Loading color="blue-600" />
         </div>
       )}
@@ -178,26 +178,26 @@ const ResetPassword = () => {
         <>
           <Navbar />
 
-          <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-gray-900 via-slate-900 to-gray-800 min-h-screen text-white">
+          <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-br from-gray-200 via-gray-300 to-gray-100 min-h-screen text-gray-900">
             {/* Left Side - Background Image */}
             <div className="hidden md:flex w-full md:w-2/3 items-center justify-center p-8">
               <img
                 src={img5}
                 alt="Reset Password Illustration"
-                className="w-full max-h-[550px] object-contain opacity-75"
+                className="w-full max-h-[550px] object-contain opacity-80"
               />
             </div>
 
             {/* Right Side - Reset Password Form */}
-            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0">
+            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0 rounded-2xl bg-gray-50/80 shadow-2xl border border-gray-200 backdrop-blur-sm">
               {/* Branding and title */}
-              <h1 className="text-3xl font-bold text-center text-white">
-                Great<span className="text-blue-400">Hire</span>
+              <h1 className="text-3xl font-bold text-center text-gray-900">
+                Great<span className="text-blue-600">Hire</span>
               </h1>
-              <h3 className="text-2xl font-bold text-white text-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
                 Reset Password
               </h3>
-              <p className="text-gray-300 text-center mb-4">
+              <p className="text-gray-600 text-center mb-4">
                 Enter your new password below to reset it.
               </p>
 
@@ -206,7 +206,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-200"
+                    className="block text-sm font-medium text-gray-700"
                   >
                     New Password
                   </label>
@@ -218,14 +218,14 @@ const ResetPassword = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter new password (min length 8)"
-                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -237,7 +237,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-200"
+                    className="block text-sm font-medium text-gray-700"
                   >
                     Confirm Password
                   </label>
@@ -249,14 +249,14 @@ const ResetPassword = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
-                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-700 bg-slate-800 text-white placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="mt-1 block w-full px-4 py-2.5 pr-11 border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     >
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
