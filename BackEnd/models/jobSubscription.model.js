@@ -88,6 +88,7 @@
 
 
 import mongoose from "mongoose";
+import { starterUnlimitedJobsUntilDate } from "../utils/starterPlan.js";
 
 const jobSubscriptionSchema = new mongoose.Schema(
   {
@@ -167,6 +168,7 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
       company.plan = "FREE";
       company.teamUserLimit = null;
       company.freeJobsPosted = 0;
+      company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate();
       company.paidPlanFreeJobsPosted = 0;
       company.paidPlanFreeJobsRenewal = null;
       company.planJobsPostedThisMonth = 0;

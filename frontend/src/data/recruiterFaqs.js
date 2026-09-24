@@ -5,9 +5,9 @@ export const recruiterFaqs = [
       "GreatHire enables hiring across all major cities in India. You can filter candidates by location, remote availability, and relocation preference.",
   },
   {
-    question: "Is the Launchpad plan really free forever?",
+    question: "Is the Starter plan really free forever?",
     answer:
-      "Yes. The Launchpad plan is completely free with no expiry. It is ideal for startups and individual recruiters to begin hiring without any cost.",
+      "Yes. The Starter plan is free. It includes unlimited job postings for the first 6 months, then 1 job posting per month after that.",
   },
   {
     question: "Do job postings and resume credits have different validity?",

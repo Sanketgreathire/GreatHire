@@ -57,12 +57,12 @@ export const subscriptionPlans = [
     title: "Starter Plan",
     price: 0,
     billing: "Forever Free",
-    jobs: "1 Job / month",
+    jobs: "Unlimited for 6 months",
     resumes: "30 Applications",
     isFree: true,
     bestFor: "Best for trying the platform",
     features: [
-      "1 Job Posting every month",
+      "Unlimited Job Postings for 6 months",
       "Access to first 30 applications per job",
       "Basic Search Filters",
       "1 User",
@@ -408,7 +408,7 @@ function RecruiterPlans() {
           const response = await axios.post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true });
           if (response?.data.success) {
             dispatch(addCompany(response?.data.company));
-            toast.success("Free plan activated! You now have 1 job post every month.");
+            toast.success("Starter plan activated! Unlimited job postings for 6 months.");
             navigate("/recruiter/dashboard/post-job");
           }
         } catch { toast.error("Failed to activate free plan. Please try again."); }

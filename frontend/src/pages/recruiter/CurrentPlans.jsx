@@ -23,6 +23,7 @@ import {
   LuCrown,
 } from "react-icons/lu";
 import { FaCheckCircle } from "react-icons/fa";
+import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 
 const PLAN_LIMITS = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
 
@@ -35,13 +36,14 @@ const CurrentPlans = () => {
 
   const jobPostsRemaining = useMemo(() => {
     const plan = company?.plan || "FREE";
+    if (hasStarterUnlimitedJobs(company)) return "Unlimited";
     if (plan === "FREE") {
       return Math.max(0, (PLAN_LIMITS.FREE ?? 1) - (company?.freeJobsPosted || 0));
     }
     const limit = PLAN_LIMITS[plan] ?? 0;
     if (limit === Infinity) return "Unlimited";
     return `${Math.max(0, limit - (company?.planJobsPostedThisMonth || 0))}/${limit}`;
-  }, [company?.plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth]);
+  }, [company?.plan, company?.freeJobsPosted, company?.planJobsPostedThisMonth, company?.hasSubscription, company?.starterUnlimitedJobsUntil]);
 
   const purchaseDateStr = useMemo(
     () => (jobPlan?.purchaseDate ? format(new Date(jobPlan.purchaseDate), "dd MMM yyyy") : "N/A"),

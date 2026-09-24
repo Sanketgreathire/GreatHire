@@ -12,6 +12,11 @@ import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
+import {
+  hasStarterUnlimitedJobs,
+  isStarterCompany,
+  starterUnlimitedJobsUntilDate,
+} from "../utils/starterPlan.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
 import {
@@ -204,7 +209,8 @@ export const postJob = [
 
       const userId = req.id;
 
-      const company = await Company.findById(companyId).lean();
+      const company = await Company.findById(companyId);
+
       const recruiter = await Recruiter.findById(userId);
 
       if (!company) {
@@ -213,6 +219,13 @@ export const postJob = [
           message: "Company not found. Please create a company first.",
         });
       }
+
+      if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+        company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate();
+        await company.save();
+      }
+
+      const starterUnlimitedJobs = hasStarterUnlimitedJobs(company);
 
       // Fix bad data: "Unlimited" string stored in DB should be null
       if (
@@ -280,6 +293,7 @@ export const postJob = [
         recruiter.remainingJobPosts -= 1;
         await recruiter.save();
       } else if (
+        !(starterUnlimitedJobs && (company.maxJobPosts === 0 || company.maxJobPosts === null)) &&
         company.maxJobPosts !== null &&
         company.maxJobPosts !== undefined
       ) {
@@ -297,8 +311,8 @@ export const postJob = [
             redirectTo: "/recruiter/dashboard/home",
           });
         }
-      } else if (companyPlan === "FREE") {
-        // ── FREE plan ──
+      } else if (companyPlan === "FREE" && !starterUnlimitedJobs) {
+        // ── FREE plan (after 6-month unlimited window) ──
         if (
           company.freeJobsPosted >=
           PLAN_LIMITS.FREE.jobsPerMonth
@@ -310,7 +324,7 @@ export const postJob = [
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
-      } else {
+      } else if (companyPlan !== "FREE") {
         // ── Paid plan ──
         const now = new Date();
         const monthStart = company.planMonthStart

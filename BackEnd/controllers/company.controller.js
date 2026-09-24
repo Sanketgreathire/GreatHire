@@ -11,6 +11,10 @@ import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
 import Notification from "../models/notification.model.js";
+import {
+  isStarterCompany,
+  starterUnlimitedJobsUntilDate,
+} from "../utils/starterPlan.js";
 
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const getCandidateInformation = async (req, res) => {
@@ -332,6 +336,7 @@ export const registerCompany = async (req, res) => {
       businessFileName: businessFile ? businessFile[0].originalname : undefined,
       maxJobPosts: null,
       freePlanExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      starterUnlimitedJobsUntil: starterUnlimitedJobsUntilDate(),
     });
 
     return res.status(201).json({
@@ -404,6 +409,13 @@ export const getCompanyById = async (req, res) => {
     }
     if (companyData.customMaxJobPosts !== null && companyData.customMaxJobPosts !== undefined) {
       companyData.maxJobPosts = companyData.customMaxJobPosts;
+    }
+
+    if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+      const until = starterUnlimitedJobsUntilDate();
+      company.starterUnlimitedJobsUntil = until;
+      await company.save();
+      companyData.starterUnlimitedJobsUntil = until;
     }
 
     // Return company details
@@ -524,6 +536,10 @@ export const companyByUserId = async (req, res) => {
     });
 
     if (company) {
+      if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+        company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate();
+        await company.save();
+      }
       return res.status(200).json({ success: true, company });
     } else {
       return res.status(404).json({

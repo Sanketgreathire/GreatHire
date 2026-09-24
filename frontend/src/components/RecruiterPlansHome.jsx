@@ -275,10 +275,10 @@ const RecruiterPlansHome = () => {
       title: "Starter",
       price: 0,
       billing: "Forever Free",
-      jobs: "1 Job / month",
+      jobs: "Unlimited for 6 months",
       resumes: "30 Applications",
       features: [
-        "1 Job Posting every month",
+        "Unlimited Job Postings for 6 months",
         "First 30 applications",
         "Basic Search Filters",
       ],

@@ -11,6 +11,7 @@ import axios from "axios";
 import { allLocations, jobTitles } from "@/utils/constant";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
+import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 
 const flatLocations = Object.values(allLocations).flat();
 
@@ -82,7 +83,13 @@ const PostJob = () => {
   );
 
   const remainingPosts = useMemo(() => {
-    if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
+    const isTrialLive = !!(
+      company?.trialActive &&
+      company?.trialExpiresAt &&
+      new Date(company.trialExpiresAt) > new Date()
+    );
+    if (plan === "ENTERPRISE" || isTrialLive || hasStarterUnlimitedJobs(company)) return Infinity;
+    if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined && company.maxJobPosts !== 0) {
       const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
       return Math.max(0, company.maxJobPosts - used) + referralBonus;
     }

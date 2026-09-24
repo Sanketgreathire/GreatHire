@@ -92,6 +92,16 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 0, // Track free jobs posted before/after verification
     },
+    // Starter (FREE) plan: unlimited job postings until this date (6 months
+    // from company creation / return to FREE). After expiry, 1 job / month.
+    starterUnlimitedJobsUntil: {
+      type: Date,
+      default: () => {
+        const d = new Date();
+        d.setMonth(d.getMonth() + 6);
+        return d;
+      },
+    },
     paidPlanFreeJobsPosted: {
       type: Number,
       default: 0, // Track free jobs posted by paid plan users this month

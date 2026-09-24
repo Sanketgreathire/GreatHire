@@ -9,6 +9,7 @@ import { FiGift } from "react-icons/fi";
 import { Sparkles, Clock, ShieldOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 import { addCompany } from "@/redux/companySlice";
 
@@ -80,7 +81,7 @@ const RecruiterHome = () => {
     const plan = company?.plan || "FREE";
     const limits = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
     const referralBonus = user?.remainingJobPosts ?? 0;
-    if (plan === "ENTERPRISE" || isTrialLive) return "∞";
+    if (plan === "ENTERPRISE" || isTrialLive || hasStarterUnlimitedJobs(company)) return "∞";
     if (company?.maxJobPosts !== null && company?.maxJobPosts !== undefined) {
       const used = plan === "FREE" ? (company?.freeJobsPosted || 0) : (company?.planJobsPostedThisMonth || 0);
       return Math.max(0, company.maxJobPosts - used) + referralBonus;
