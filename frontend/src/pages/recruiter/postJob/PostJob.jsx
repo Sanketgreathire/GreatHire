@@ -15,6 +15,8 @@ import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 
 const flatLocations = Object.values(allLocations).flat();
 
+
+
 // Build a map: location string → state name for fuzzy state-name matching
 const locationStateMap = Object.entries(allLocations).reduce((acc, [state, cities]) => {
   cities.forEach(city => { acc[city] = state; });
