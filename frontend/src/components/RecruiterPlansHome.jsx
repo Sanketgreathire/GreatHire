@@ -276,7 +276,6 @@ const RecruiterPlansHome = () => {
       price: 0,
       billing: "Forever Free",
       jobs: "Unlimited for 6 months",
-      resumes: "30 Applications",
       features: [
         "Unlimited Job Postings for 6 months",
         "First 30 applications",
@@ -334,8 +333,7 @@ const RecruiterPlansHome = () => {
       title: "Enterprise — 3 Months",
       price: 7499,
       billing: "3 Months",
-      jobs: "200 Jobs",
-      resumes: "7,500 Candidates",
+      jobs: "Unlimited",
       features: [
         "Unlimited Job Postings",
         "Unlimited AI Sourcing",
@@ -350,8 +348,7 @@ const RecruiterPlansHome = () => {
       title: "Enterprise — 6 Months",
       price: 13999,
       billing: "6 Months",
-      jobs: "200 Jobs",
-      resumes: "15,000 Candidates",
+      jobs: "Unlimited",
       popular: true,
       features: [
         "Unlimited Job Postings",
@@ -367,8 +364,7 @@ const RecruiterPlansHome = () => {
       title: "Enterprise — 1 Year",
       price: 26999,
       billing: "Yearly",
-      jobs: "200 Jobs",
-      resumes: "30,000 Candidates",
+      jobs: "Unlimited",
       features: [
         "Unlimited Job Postings",
         "Unlimited AI Sourcing",
@@ -444,7 +440,8 @@ const RecruiterPlansHome = () => {
                     </div>
 
                     <p className="text-[11px] font-medium text-gray-600">
-                      {plan.jobs} • {plan.resumes}
+                      {plan.jobs}
+                      {plan.resumes && ` • ${plan.resumes}`}
                     </p>
                   </div>
 

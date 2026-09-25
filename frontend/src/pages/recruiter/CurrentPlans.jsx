@@ -122,27 +122,27 @@ const CurrentPlans = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-2 md:p-3 lg:p-4">
+        <div className="max-w-6xl mx-auto space-y-3">
 
           {/* HEADER BANNER   */}
-          <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-lg">
+          <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 rounded-2xl p-3 md:p-4 text-white relative overflow-hidden shadow-lg">
             {/* Decorative background blur */}
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-              <div className="flex items-center gap-5">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shrink-0">
-                  <LuCrown className="text-3xl text-yellow-400" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm shrink-0">
+                  <LuCrown className="text-2xl text-yellow-400" />
                 </div>
-                <div>
-                  <p className="text-blue-100 text-sm font-semibold tracking-wider uppercase mb-1">
+                <div className="min-w-0">
+                  <p className="text-blue-100 text-[11px] font-semibold tracking-wider uppercase mb-1">
                     Your Current Plan
                   </p>
-                  <h1 className="text-2xl md:text-3xl font-bold">
+                  <h1 className="text-xl md:text-2xl font-bold truncate">
                     {jobPlan ? (matchedPlan?.title || jobPlan.planName) : "No Active Plan"}
                   </h1>
-                  <p className="text-blue-100 mt-1 text-base">
+                  <p className="text-blue-100 mt-1 text-xs">
                     {jobPlan
                       ? `Enjoy exclusive benefits with the ${matchedPlan?.title || jobPlan.planName}.`
                       : "Upgrade to unlock more features."}
@@ -151,9 +151,9 @@ const CurrentPlans = () => {
               </div>
 
               {/* Status Badge */}
-              <div className="flex items-center gap-2 bg-green-500 border border-blue-500 px-4 py-2 rounded-full backdrop-blur-sm self-start sm:self-center">
-                <FaCheckCircle className="text-green-400" />
-                <span className="text-green-50 font-medium text-base">
+              <div className="flex items-center gap-2 bg-green-500 border border-blue-500 px-3 py-1.5 rounded-full backdrop-blur-sm self-start sm:self-center">
+                <FaCheckCircle className="text-green-100 text-sm" />
+                <span className="text-green-50 font-medium text-xs">
                   {jobPlan ? "Active Plan" : "Inactive"}
                 </span>
               </div>
@@ -161,52 +161,52 @@ const CurrentPlans = () => {
           </div>
 
           {/* ================= MAIN GRID ================= */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)] gap-3">
 
             {/* LEFT PANEL: PLAN OVERVIEW */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-700">
-                  <LuClipboardList className="text-3xl text-blue-600 dark:text-blue-400" />
-                  <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Plan Overview</h2>
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <LuClipboardList className="text-2xl text-blue-600 dark:text-blue-400" />
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Plan Overview</h2>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   {/* Company */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuBuilding2 className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuBuilding2 className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Company:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Company:</span>
                     </div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-xl text-right max-w-[60%]">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm text-right max-w-[58%] break-words">
                       {company.companyName}
                     </span>
                   </div>
 
                   {/* Phone */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuPhone className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuPhone className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Phone:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Phone:</span>
                     </div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-xl text-right">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm text-right break-words">
                       {company.phone}
                     </span>
                   </div>
 
                   {/* Location */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuMapPin className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuMapPin className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Location:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Location:</span>
                     </div>
-                    <div className="text-right text-xl font-semibold text-gray-800 dark:text-gray-200 max-w-[60%]">
+                    <div className="text-right text-sm font-semibold text-gray-800 dark:text-gray-200 max-w-[58%] break-words">
                       <p>{company.address?.streetAddress || "—"}</p>
                       <p>{company.address?.city || "—"}, {company.address?.state || "—"}</p>
                       <p>{company.address?.country || "—"} - {company.address?.postalCode || "—"}</p>
@@ -214,66 +214,66 @@ const CurrentPlans = () => {
                   </div>
 
                   {/* Price */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuIndianRupee className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuIndianRupee className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Price:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Price:</span>
                     </div>
-                    <span className="font-bold text-blue-500 dark:text-gray-100 text-xl">
+                    <span className="font-bold text-blue-500 dark:text-gray-100 text-sm">
                       ₹{jobPlan?.price || 0}
                     </span>
                   </div>
 
                   {/* Max Job Posts */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuBriefcase className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuBriefcase className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Max Job Posts Remaining:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Max Job Posts Remaining:</span>
                     </div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-xl">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm text-right">
                       {jobPostsRemaining}
                     </span>
                   </div>
 
                   {/* Credits */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuDatabase className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuDatabase className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Credits For Database:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Credits For Database:</span>
                     </div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-xl">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
                       {company.creditedForCandidates || 0}
                     </span>
                   </div>
 
                   {/* Purchase Date */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuCalendar className="text-2xl" />
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuCalendar className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Purchase Date:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Purchase Date:</span>
                     </div>
-                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-xl">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
                       {purchaseDateStr}
                     </span>
                   </div>
 
                   {/* Expiry Date */}
-                  <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="flex justify-between items-center gap-3 p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
                     <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <LuCalendarCheck className="text-2xl" />
+                      <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <LuCalendarCheck className="text-lg" />
                       </div>
-                      <span className="text-xl text-gray-800 dark:text-gray-200 font-semibold">Expiry Date:</span>
+                      <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Expiry Date:</span>
                     </div>
-                    <span className={`font-semibold text-xl ${isExpired ? "text-red-500" : "text-green-600 dark:text-green-400"}`}>
+                    <span className={`font-semibold text-sm ${isExpired ? "text-red-500" : "text-green-600 dark:text-green-400"}`}>
                       {expiryDateStr}
                     </span>
                   </div>
@@ -282,14 +282,14 @@ const CurrentPlans = () => {
 
               {/* Renew Button */}
               {isAdmin && (
-                <div className="mt-8">
+                  <div className="mt-4">
                   <Button
                     onClick={() => navigate("/packages")}
                     className="w-full border-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 
                     bg-transparent hover:bg-blue-500 hover:text-white dark:hover:bg-blue-900/30 font-semibold 
-                    py-8 rounded-xl transition-colors flex items-center justify-center gap-4 text-xl"
+                    py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"
                   >
-                    <LuRefreshCw className="font-semibold text-2xl " />
+                    <LuRefreshCw className="font-semibold text-lg " />
                     Renew Plan
                   </Button>
                 </div>
@@ -297,18 +297,18 @@ const CurrentPlans = () => {
             </div>
 
             {/* RIGHT PANEL: WHAT'S INCLUDED */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-gray-700">
-                  <LuStar className="text-3xl text-blue-600 dark:text-blue-400" />
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">What&apos;s Included in Your Plan</h2>
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <LuStar className="text-2xl text-blue-600 dark:text-blue-400" />
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">What&apos;s Included in Your Plan</h2>
                 </div>
 
-                <ul className="space-y-4">
+                <ul className="space-y-2">
                   {planFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-10 py-2">
-                      <FaCheckCircle className="text-green-500 mt-1 shrink-0 text-2xl" />
-                      <span className="text-gray-600 dark:text-gray-300 text-xl font-medium">
+                    <li key={index} className="flex items-start gap-2 py-0.5">
+                      <FaCheckCircle className="text-green-500 mt-0.5 shrink-0 text-base" />
+                      <span className="text-gray-600 dark:text-gray-300 text-sm font-medium leading-5">
                         {feature}
                       </span>
                     </li>
@@ -317,18 +317,18 @@ const CurrentPlans = () => {
               </div>
 
               {/* Bottom Support Box */}
-              <div className="bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-4 rounded-xl flex items-start gap-3 mt-6">
-                <LuLightbulb className="text-blue-500 mt-0.5 shrink-0 text-xl" />
+              <div className="bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-2 rounded-xl flex items-start gap-2 mt-4">
+                <LuLightbulb className="text-blue-500 mt-0.5 shrink-0 text-lg" />
                 <div>
-                  <p className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     Need to make changes?
                   </p>
-                  <p className="text-lg text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-5">
                     Upgrade, downgrade or cancel your plan anytime from your account settings.
                   </p>
                   <button
                     onClick={() => navigate("/contact")}
-                    className="text-blue-600 dark:text-blue-400 text-xl font-semibold mt-2 hover:underline flex items-center gap-1"
+                    className="text-blue-600 dark:text-blue-400 text-sm font-semibold mt-2 hover:underline flex items-center gap-1"
                   >
                     Contact Support &rarr;
                   </button>

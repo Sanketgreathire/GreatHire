@@ -58,7 +58,6 @@ export const subscriptionPlans = [
     price: 0,
     billing: "Forever Free",
     jobs: "Unlimited for 6 months",
-    resumes: "30 Applications",
     isFree: true,
     bestFor: "Best for trying the platform",
     features: [
@@ -173,8 +172,7 @@ export const subscriptionPlans = [
     durationMonths: 1,
     aiSourcingCredits: 250,
     teamUserLimit: 2,
-    jobs: "100",
-    resumes: "2,500",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Small teams with consistent hiring needs",
     features: [
@@ -201,8 +199,7 @@ export const subscriptionPlans = [
     durationMonths: 3,
     aiSourcingCredits: 750,
     teamUserLimit: 3,
-    jobs: "200",
-    resumes: "7,500",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Short-term high-volume hiring",
     features: [
@@ -229,8 +226,7 @@ export const subscriptionPlans = [
     durationMonths: 6,
     aiSourcingCredits: 1500,
     teamUserLimit: 6,
-    jobs: "200",
-    resumes: "15,000",
+    jobs: "Unlimited",
     enterprise: true,
     popular: true,
     bestFor: "Best for: Growing hiring teams",
@@ -258,8 +254,7 @@ export const subscriptionPlans = [
     durationMonths: 12,
     aiSourcingCredits: 3000,
     teamUserLimit: 12,
-    jobs: "200",
-    resumes: "30,000",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
@@ -599,9 +594,11 @@ function RecruiterPlans() {
                         <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
                           📋 {plan.jobs}
                         </span>
-                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
-                          👥 {plan.resumes}
-                        </span>
+                        {plan.resumes && (
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
+                            👥 {plan.resumes}
+                          </span>
+                        )}
                       </div>
 
                       {/* Features */}
