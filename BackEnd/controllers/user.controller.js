@@ -1,5 +1,6 @@
 // this package help to encrypt the password
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 // this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
 
@@ -10,6 +11,7 @@ import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
 import { DigitalMarketer } from "../models/digitalmarketer.model.js";
 import { Contact } from "../models/contact.model.js";
+import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 // this model help to blacklist recent logout token
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
@@ -30,7 +32,17 @@ import { autoApplyExistingJobsForUser, autoApply as autoApplyService } from "../
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: errors.array()[0]?.msg || "Invalid input.",
+        errors: errors.array(),
+      });
+    }
+
+    const { fullname, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const email = normalizeAccountEmail(req.body.email);
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {
@@ -67,7 +79,10 @@ export const register = async (req, res) => {
     }
 
     // Check existing email
-    const existingEmail = await User.findOne({ "emailId.email": email });
+    const existingEmail =
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
     if (existingEmail) {
       return res.status(400).json({
         success: false,
@@ -196,15 +211,14 @@ export const login = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const cleanEmail = (email || "").trim().toLowerCase();
-    const emailQuery = { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+    const cleanEmail = normalizeAccountEmail(email);
 
     // Check across User, Recruiter, Admin, and DigitalMarketer
     let user =
-      (await User.findOne({ "emailId.email": emailQuery })) ||
-      (await Recruiter.findOne({ "emailId.email": emailQuery })) ||
-      (await Admin.findOne({ "emailId.email": emailQuery })) ||
-      (await DigitalMarketer.findOne({ "emailId.email": emailQuery }));
+      (await findModelByEmail(User, cleanEmail)) ||
+      (await findModelByEmail(Recruiter, cleanEmail)) ||
+      (await findModelByEmail(Admin, cleanEmail)) ||
+      (await findModelByEmail(DigitalMarketer, cleanEmail));
 
     if (!user) {
       return res.status(200).json({
@@ -307,15 +321,23 @@ export const jobseekerLogin = async (req, res) => {
       });
     }
 
-    const cleanEmail = (email || "").trim().toLowerCase();
-    const emailQuery = { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+    const cleanEmail = normalizeAccountEmail(email);
 
     // Only search in User collection for job seekers
-    let user = await User.findOne({ "emailId.email": emailQuery });
+    let user = await findModelByEmail(User, cleanEmail);
 
     if (!user) {
+      const recruiterAccount =
+        (await findModelByEmail(Recruiter, cleanEmail)) ||
+        (await findModelByEmail(Admin, cleanEmail));
+      if (recruiterAccount) {
+        return res.status(200).json({
+          message: "This email is registered as a recruiter. Please use Recruiter Login.",
+          success: false,
+        });
+      }
       return res.status(200).json({
-        message: "Job seeker account not found.",
+        message: "Job seeker account not found. Please sign up or check the email you used while registering.",
         success: false,
       });
     }
@@ -411,15 +433,23 @@ export const recruiterLogin = async (req, res) => {
       });
     }
 
-    const cleanEmail = (email || "").trim().toLowerCase();
-    const emailQuery = { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+    const cleanEmail = normalizeAccountEmail(email);
 
     // Search in Recruiter and Admin collections for recruiters
-    let user = (await Recruiter.findOne({ "emailId.email": emailQuery })) || (await Admin.findOne({ "emailId.email": emailQuery }));
+    let user =
+      (await findModelByEmail(Recruiter, cleanEmail)) ||
+      (await findModelByEmail(Admin, cleanEmail));
 
     if (!user) {
+      const jobseekerAccount = await findModelByEmail(User, cleanEmail);
+      if (jobseekerAccount) {
+        return res.status(200).json({
+          message: "This email is registered as a job seeker. Please use Jobseeker Login.",
+          success: false,
+        });
+      }
       return res.status(200).json({
-        message: "Recruiter account not found.",
+        message: "Recruiter account not found. Please sign up or check the email you used while registering.",
         success: false,
       });
     }
@@ -1073,7 +1103,7 @@ export const sendMessage = async (req, res) => {
 // this controller use when user forgot the password
 export const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, role } = req.body;
 
     if (!email || typeof email !== "string") {
       return res.status(400).json({
@@ -1082,15 +1112,51 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    const cleanEmail = email.trim().toLowerCase();
-    const emailQuery = { $regex: new RegExp(`^${cleanEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+    const cleanEmail = normalizeAccountEmail(email);
+    let user = null;
+    let resolvedRole = role;
 
-    // Search across all account types
-    let user =
-      (await User.findOne({ "emailId.email": emailQuery })) ||
-      (await Recruiter.findOne({ "emailId.email": emailQuery })) ||
-      (await Admin.findOne({ "emailId.email": emailQuery })) ||
-      (await DigitalMarketer.findOne({ "emailId.email": emailQuery }));
+    if (role === "recruiter") {
+      user = await findModelByEmail(Recruiter, cleanEmail);
+    } else if (role === "student" || role === "user") {
+      user = await findModelByEmail(User, cleanEmail);
+    } else if (role === "admin") {
+      user = await findModelByEmail(Admin, cleanEmail);
+    }
+
+    if (!user) {
+      const [studentAccount, recruiterAccount, adminAccount, marketerAccount] = await Promise.all([
+        findModelByEmail(User, cleanEmail),
+        findModelByEmail(Recruiter, cleanEmail),
+        findModelByEmail(Admin, cleanEmail),
+        findModelByEmail(DigitalMarketer, cleanEmail),
+      ]);
+
+      // Prioritize candidate (student) accounts first, then recruiter
+      const foundAccounts = [
+        { doc: studentAccount, role: "student" },
+        { doc: recruiterAccount, role: "recruiter" },
+        { doc: marketerAccount, role: "digital_marketer" },
+        { doc: adminAccount, role: "admin" },
+      ].filter((item) => item.doc);
+
+      const genericWords = new Set([
+        "user", "test", "testing", "tester", "new", "admin", "recruiter",
+        "student", "candidate", "jobseeker", "job", "seeker", "null",
+        "undefined", "company", "compony", "hr", "demo", "account", "profile", "na", "none"
+      ]);
+
+      if (foundAccounts.length > 0) {
+        // Find best match that has a meaningful human name
+        const best = foundAccounts.find((item) => {
+          const n = (item.doc.fullname || item.doc.fullName || item.doc.name || "").trim().toLowerCase();
+          return n && n.length > 1 && !genericWords.has(n) && !n.startsWith("test ") && !n.endsWith(" test");
+        }) || foundAccounts[0];
+
+        user = best.doc;
+        resolvedRole = best.role;
+      }
+    }
 
     if (!user) {
       return res.status(200).json({
@@ -1099,21 +1165,71 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    // Expiry from env or default 15 minutes
-    const tokenExpiry = process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "15m";
+    // Resolve a clean, human-friendly full name
+    const genericWords = new Set([
+      "user", "test", "testing", "tester", "new", "admin", "recruiter",
+      "student", "candidate", "jobseeker", "job", "seeker", "null",
+      "undefined", "company", "compony", "hr", "demo", "account", "profile", "na", "none"
+    ]);
+
+    let userName = "";
+    const candidateNames = [
+      user.fullname,
+      user.fullName,
+      user.name,
+      user.username,
+      user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName || ""}` : null,
+    ];
+
+    for (let raw of candidateNames) {
+      if (typeof raw !== "string" || !raw.trim()) continue;
+      // Strip trailing digits (e.g. "Sravan Pilla 2" -> "Sravan Pilla")
+      let cleaned = raw.trim().replace(/\s*\d+$/, "").replace(/[0-9_#$@!%^&*()+=~`<>?/:;{}[\]|\\"]+/g, " ").trim();
+      const words = cleaned.split(/\s+/).filter(Boolean);
+      const meaningful = words.filter((w) => !genericWords.has(w.toLowerCase()));
+
+      if (meaningful.length > 0) {
+        userName = meaningful
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(" ");
+        break;
+      }
+    }
+
+    // Fallback: If no good name in database, extract clean name from email prefix without digits (e.g. sravanpilla1809 -> Sravan Pilla)
+    if (!userName) {
+      const emailPrefix = cleanEmail.split("@")[0] || "";
+      const alphaPrefix = emailPrefix.replace(/\d+/g, "");
+      const parts = alphaPrefix.split(/[._\-+]+/).filter((w) => w.length >= 2 && !genericWords.has(w.toLowerCase()));
+      if (parts.length > 0) {
+        userName = parts
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .join(" ");
+      }
+    }
+
+    // Expiry from env or default 1 hour
+    const tokenExpiry = process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "1h";
 
     // Create a secure token with user identification
     const resetToken = jwt.sign(
-      { userId: user._id, role: user.role || "user" },
+      { userId: String(user._id), email: cleanEmail, role: resolvedRole || user.role || "user" },
       process.env.SECRET_KEY,
       { expiresIn: tokenExpiry }
     );
 
+    const frontendBase = (process.env.FRONTEND_URL || "https://greathire.in")
+      .replace(/^["']|["']$/g, "")
+      .trim()
+      .replace(/\/+$/, "") || "https://greathire.in";
+    const resetURL = `${frontendBase}/reset-password/${resetToken}`;
+
     // Send reset email via dedicated Forgot Password email service
     await sendForgotPasswordEmail({
       toEmail: cleanEmail,
-      userName: user.fullname || "User",
+      userName,
       resetToken,
+      resetURL,
     });
 
     return res.status(200).json({
@@ -1134,44 +1250,70 @@ export const resetPassword = async (req, res) => {
   try {
     const { decoded, token, newPassword } = req.body;
 
-    // Resolve userId either from decoded object or from raw token
+    // Validate password type and length immediately
+    if (!newPassword || typeof newPassword !== "string" || newPassword.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long.",
+        success: false,
+      });
+    }
+
+    // Resolve userId and email either from decoded object or from raw token
     let userId = decoded?.userId;
-    if (!userId && token) {
+    let userEmail = decoded?.email;
+
+    if (token) {
       try {
         const verified = jwt.verify(token, process.env.SECRET_KEY);
-        userId = verified.userId;
+        if (verified) {
+          userId = userId || verified.userId;
+          userEmail = userEmail || verified.email;
+        }
       } catch (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(400).json({
+            message: "This password reset link has expired. Please request a new link.",
+            success: false,
+          });
+        }
         return res.status(400).json({
-          message: "Reset token has expired or is invalid. Please request a new link.",
+          message: "Reset token is invalid. Please request a new link.",
           success: false,
         });
       }
     }
 
-    if (!userId) {
+    if (!userId && !userEmail) {
       return res.status(400).json({
         message: "Invalid reset session. Please request a new password reset link.",
         success: false,
       });
     }
 
-    let user =
-      (await User.findById(userId)) ||
-      (await Recruiter.findById(userId)) ||
-      (await Admin.findById(userId)) ||
-      (await DigitalMarketer.findById(userId));
+    let user = null;
+
+    // 1. Try finding by ObjectId if valid
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      user =
+        (await User.findById(userId)) ||
+        (await Recruiter.findById(userId)) ||
+        (await Admin.findById(userId)) ||
+        (await DigitalMarketer.findById(userId));
+    }
+
+    // 2. Fallback to email query if user was not found by ID
+    if (!user && userEmail) {
+      const emailQuery = { $regex: new RegExp(`^${userEmail.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+      user =
+        (await User.findOne({ "emailId.email": emailQuery })) ||
+        (await Recruiter.findOne({ "emailId.email": emailQuery })) ||
+        (await Admin.findOne({ "emailId.email": emailQuery })) ||
+        (await DigitalMarketer.findOne({ "emailId.email": emailQuery }));
+    }
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found.",
-        success: false,
-      });
-    }
-
-    // Validate password type and length
-    if (typeof newPassword !== "string" || newPassword.length < 8) {
-      return res.status(400).json({
-        message: "Password must be at least 8 characters long.",
+        message: "User account not found. Please request a new reset link.",
         success: false,
       });
     }
@@ -1179,9 +1321,8 @@ export const resetPassword = async (req, res) => {
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update user password
-    user.password = hashedPassword;
-    await user.save();
+    // Update user password using direct update to prevent unrelated schema validation issues
+    await user.constructor.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
 
     return res.status(200).json({
       message: "Password reset successfully. You can now log in with your new password.",
@@ -1190,7 +1331,7 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("❌ Error resetting password:", error);
     return res.status(500).json({
-      message: "Internal Server Error. Failed to reset password.",
+      message: error.message || "Failed to reset password. Please try again.",
       success: false,
     });
   }
@@ -1286,9 +1427,9 @@ export const sendOtp = async (req, res) => {
     if (!email) return res.status(400).json({ success: false, message: "Email is required" });
 
     let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
 
     if (!user) {
       return res.status(200).json({ success: false, message: "User not found" });
@@ -1380,9 +1521,9 @@ export const verifyOtp = async (req, res) => {
     }
 
     let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });
@@ -1442,7 +1583,7 @@ export const verifyJobseekerOtp = async (req, res) => {
     }
 
     // Only search in User collection
-    let user = await User.findOne({ "emailId.email": email });
+    let user = await findModelByEmail(User, email);
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });
@@ -1502,7 +1643,7 @@ export const verifyRecruiterOtp = async (req, res) => {
     }
 
     // Only search in Recruiter collection
-    let user = await Recruiter.findOne({ "emailId.email": email });
+    let user = await findModelByEmail(Recruiter, email);
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });

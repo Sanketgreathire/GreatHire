@@ -8,7 +8,17 @@ export const validateUser = [
     .withMessage("Full name must be at least 3 characters long"),
 
   // Email Validation
-  body("email").isEmail().withMessage("Invalid email address").normalizeEmail(),
+  body("email")
+    .trim()
+    .isEmail()
+    .withMessage("Invalid email address")
+    .normalizeEmail({
+      gmail_remove_dots: false,
+      gmail_remove_subaddress: false,
+      outlookdotcom_remove_subaddress: false,
+      yahoo_remove_subaddress: false,
+      icloud_remove_subaddress: false,
+    }),
 
   // Phone Number Validation — accept common formats including local mobile numbers
   // and international numbers with or without the leading +.

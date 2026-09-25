@@ -24,6 +24,7 @@ import { isUserAssociated } from "./company.controller.js";
 import notificationService from "../utils/notificationService.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { validateRecruiterPhone } from "../utils/recruiterValidatePhone.js";
+import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -34,7 +35,8 @@ export const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullname, email, phoneNumber, password } = req.body;
+    const { fullname, phoneNumber, password } = req.body;
+    const email = normalizeAccountEmail(req.body.email);
     console.log("[REGISTER] Received:", { fullname, email, phoneNumber, password: "***" });
     // Fullname validation
     if (!fullname || fullname.length < 3) {
@@ -63,9 +65,9 @@ export const register = async (req, res) => {
     console.log("[REGISTER] Phone validation PASSED");
     // Check if user already exists
     let userExists =
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Admin, email));
 
     if (userExists) {
       return res.status(400).json({
