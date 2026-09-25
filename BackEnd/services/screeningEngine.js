@@ -20,6 +20,8 @@ import { Application } from "../models/application.model.js";
 import StageHistory from "../models/stageHistory.model.js";
 import notificationService from "../utils/notificationService.js";
 import mongoose from "mongoose";
+import { syncApplicationToSheet } from "./googleSheetsSyncService.js";
+import { retryWithBackoff } from "./retryWithBackoff.js";
 
 /**
  * Convert different possible values into a clean array of strings.
@@ -340,9 +342,23 @@ export const applyApplicationTransition = async ({
     application.recruitmentStatus = "Application";
   }
 
-  const toStage = application.recruitmentStatus;
+    const toStage = application.recruitmentStatus;
 
   await application.save();
+
+  // Sync to Google Sheets (Task 1 — Excel Sync), with retry + DLQ (Task 3)
+  retryWithBackoff(
+    () => syncApplicationToSheet(application),
+    {
+      jobType: "sheet-sync",
+      payload: {
+        applicationId: application._id,
+        status: application.status,
+      },
+    }
+  ).catch((err) => {
+    console.error("Retry wrapper itself failed unexpectedly:", err.message);
+  });
 
   // Record transition in StageHistory if stage changed
   try {

@@ -23,3 +23,6 @@ build/
 # Ignore pem files
 *.pem
 .cert
+
+config/credentials/
+config/*-service-account.json

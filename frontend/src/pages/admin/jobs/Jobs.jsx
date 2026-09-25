@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link, Pencil } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link, Pencil, FileSpreadsheet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
@@ -228,6 +228,23 @@ const Jobs = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full lg:w-1/3 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
+          
+          <Input
+  placeholder="Search jobs by title or company..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="w-full lg:w-1/3 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+/>
+
+<Button
+  variant="outline"
+  onClick={() => window.open(import.meta.env.VITE_GOOGLE_SHEET_URL, "_blank")}
+  className="flex items-center gap-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+>
+  <FileSpreadsheet size={18} />
+  Excel Sheet
+</Button>
+
 
           <Select
             value={status}

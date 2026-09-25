@@ -77,6 +77,7 @@ import interviewRoute from "./routes/interview.route.js";
 import { startPlanExpiryNotifier } from "./scripts/planExpiryNotifier.js";
 
 import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
+import webhookRoute from "./routes/webhook.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -145,7 +146,11 @@ app.use((req, res, next) => {
 });
 
 // ================= MIDDLEWARE =================
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -229,6 +234,7 @@ app.use("/api/v1/copilot", copilotRoute);
 app.use("/api/extension", extensionRoute);
 app.use("/api/outreach", outreachRoute);
 app.use("/api/candidates", enrichmentRoute);
+app.use("/api/candidates", webhookRoute);
 app.use("/api/recruiter-feedback", learningRoute);
 app.use("/api/talent-graph", talentGraphRoute);
 app.use("/api/discovery", discoveryRoute);

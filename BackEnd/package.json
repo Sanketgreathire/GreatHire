@@ -15,7 +15,8 @@
     "check:github-token": "node check-github-token.js",
     "verify:recruiters": "node verify-all-recruiters.js",
     "backdate:applications": "node backdate-applications.js",
-    "check:auto-reject": "node check-auto-reject-status.js"
+    "check:auto-reject": "node check-auto-reject-status.js",
+    "test:sheet": "node test-google-sheets.js"
   },
   "author": "",
   "license": "ISC",

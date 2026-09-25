@@ -1,4 +1,14 @@
 {
+  "name": "greathire-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix BackEnd install && npm --prefix frontend install",
+    "install:all": "npm install && npm --prefix BackEnd install && npm --prefix frontend install",
+    "dev:backend": "npm --prefix BackEnd run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "test:sheet": "npm --prefix BackEnd run test:sheet"
+  },
   "dependencies": {
     "@elastic/elasticsearch": "^9.4.2",
     "@react-three/fiber": "^9.4.0",
@@ -6,7 +16,6 @@
     "cheerio": "^1.2.0",
     "cherio": "^1.0.0-rc.2",
     "jspdf": "^3.0.2",
-    
     "levenshtein-distance": "^0.0.2",
     "lodash-es": "^4.18.1",
     "react-select": "^5.10.2",

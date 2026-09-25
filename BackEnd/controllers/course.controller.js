@@ -1,5 +1,5 @@
 import { CourseEnquiry } from "../models/courseEnquiry.model.js";
-import { OtpModel } from "../models/otp.model.js";
+import { CounsellorOtpModel } from "../models/counsellorOtp.model.js";
 import nodemailer from "nodemailer";
 import Razorpay from "razorpay";
 import crypto from "crypto";
@@ -16,18 +16,19 @@ export const sendCounsellorOtp = async (req, res) => {
     return res.status(400).json({ success: false, message: "Email and phone required" });
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  await OtpModel.findOneAndUpdate(
-    { phone },
-    { otp, createdAt: new Date() },
-    { upsert: true, new: true }
-  );
 
   try {
+    await CounsellorOtpModel.findOneAndUpdate(
+      { phone },
+      { phone, otp, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+
     const transporter = nodemailer.createTransport({
-      service: "gmail", // ✅ use service instead of manual host/port/tls
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Must be Gmail App Password (16 chars)
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -51,13 +52,11 @@ export const sendCounsellorOtp = async (req, res) => {
     return res.json({ success: true, message: "OTP sent to email" });
 
   } catch (err) {
-    console.error("❌ OTP email error code:", err.code);
-    console.error("❌ OTP email error message:", err.message);
+    console.error("❌ OTP send error code:", err.code);
+    console.error("❌ OTP send error message:", err.message);
 
-    // Clean up so user can retry cleanly
-    await OtpModel.deleteOne({ phone });
+    await CounsellorOtpModel.deleteOne({ phone }).catch(() => {});
 
-    // Specific messages based on nodemailer error codes
     let message = "Failed to send OTP. Please try again.";
     if (err.code === "EAUTH") message = "Email authentication failed. Contact support.";
     if (err.code === "ECONNECTION" || err.code === "ETIMEDOUT") message = "Mail server unreachable. Try again later.";
@@ -77,7 +76,7 @@ export const verifyCounsellorOtp = async (req, res) => {
   if (!phone || !otp)
     return res.status(400).json({ success: false, message: "Phone and OTP are required" });
 
-  const record = await OtpModel.findOne({ phone });
+  const record = await CounsellorOtpModel.findOne({ phone });
 
   if (!record)
     return res.status(400).json({ success: false, message: "OTP not found. Please request a new one." });
@@ -85,7 +84,7 @@ export const verifyCounsellorOtp = async (req, res) => {
   if (record.otp !== otp)
     return res.status(400).json({ success: false, message: "Invalid OTP. Please try again." });
 
-  await OtpModel.deleteOne({ phone });
+  await CounsellorOtpModel.deleteOne({ phone });
   return res.json({ success: true, message: "OTP verified successfully" });
 };
 

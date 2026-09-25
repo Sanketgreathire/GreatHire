@@ -124,6 +124,7 @@ export const jobTitles = [
     "Data Entry Operator",
     "Customer Support Representative",
   ];
+  
 
 // these location use to in home page to find job
 export const allLocations = {
