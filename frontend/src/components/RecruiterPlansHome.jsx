@@ -277,9 +277,9 @@ const RecruiterPlansHome = () => {
       billing: "Forever Free",
       jobs: "Unlimited for 6 months",
       features: [
-        "Unlimited Job Postings for 6 months",
+        "Unlimited Job Postings",
         "First 30 applications",
-        "Basic Search Filters",
+        "advance Search Filters",
       ],
     },
 
