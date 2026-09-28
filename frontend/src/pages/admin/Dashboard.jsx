@@ -525,7 +525,7 @@ const Dashboard = () => {
       <Navbar linkName={"Dashboard"} />
 
       {/* ═══════ MAIN CONTAINER   ═══════ */}
-      <div className="p-4 sm:p-6 space-y-6 bg-gray-50 dark:bg-gray-950 min-h-screen overflow-x-hidden">
+      <div className="p-4 sm:p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen overflow-x-hidden">
 
         {/* ═══════ PAGE HEADER ═══════ */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">

@@ -1,6 +1,9 @@
-import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
+import { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Mail, Pen, IdCard, FileText, Plus, Eye, Upload, Briefcase, MapPin, Phone, CheckCircle, Settings, LogOut, User, Shield, ArrowLeft } from "lucide-react";
+import {
+  Mail, Pen, IdCard, FileText, Plus, Eye, Upload, Briefcase, MapPin, Phone, CheckCircle,
+  MessageCircle, LogOut, User, Shield, ArrowLeft
+} from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { USER_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -12,7 +15,8 @@ import { MdOutlineVerified } from "react-icons/md";
 import VerifyEmail from "@/components/VerifyEmail";
 import VerifyNumber from "@/components/VerifyNumber";
 import { Helmet } from "react-helmet-async";
-
+import { useMessages } from "@/context/MessageContext";
+/* eslint-disable react/prop-types */
 const UserUpdateProfile = lazy(() => import("./UserUpdateProfile"));
 
 const statusStyles = {
@@ -51,9 +55,9 @@ const AppliedJobsInline = ({ jobs }) => {
       </div>
       {total > 1 && (
         <div className="flex items-center justify-between mt-3">
-          <button onClick={() => setPage(p => Math.max(p-1,1))} disabled={page===1} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Prev</button>
+          <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Prev</button>
           <span className="text-[11px] text-gray-500">Page {page}/{total}</span>
-          <button onClick={() => setPage(p => Math.min(p+1,total))} disabled={page===total} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Next</button>
+          <button onClick={() => setPage(p => Math.min(p + 1, total))} disabled={page === total} className="px-2 py-1 text-[11px] rounded bg-gray-100 dark:bg-gray-700 disabled:opacity-40">Next</button>
         </div>
       )}
     </div>
@@ -68,7 +72,7 @@ const DOC_ICONS = {
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [appliedLoading, setAppliedLoading] = useState(true);
   const [showAppliedJobs, setShowAppliedJobs] = useState(false);
@@ -78,6 +82,13 @@ const UserProfile = () => {
   const { user } = useSelector((state) => state.auth);
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
+
+
+  const { conversations } = useMessages();
+  const unreadCount = conversations.reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0
+  );
 
   useEffect(() => {
     if (!user?.profile?.resume) {
@@ -97,7 +108,7 @@ const UserProfile = () => {
       .then((res) => {
         if (res.data.success) setAppliedJobs(res.data.application || []);
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setAppliedLoading(false));
   }, []);
 
@@ -109,7 +120,9 @@ const UserProfile = () => {
       try {
         const parsed = JSON.parse(user.profile.experiences);
         if (Array.isArray(parsed)) list = [...parsed];
-      } catch {}
+      } catch { 
+         // Ignore malformed JSON — treat as no experiences
+      }
     }
     if (
       user?.profile?.experience &&
@@ -152,10 +165,10 @@ const UserProfile = () => {
 
   const resumeDate = user?.profile?.resumeUpdatedAt
     ? new Date(user.profile.resumeUpdatedAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
     : null;
 
   if (!user) {
@@ -166,7 +179,7 @@ const UserProfile = () => {
     );
   }
 
-  const nameInitial = (user?.fullname || "U")[0].toUpperCase();
+  //const nameInitial = (user?.fullname || "U")[0].toUpperCase();
 
   return (
     <>
@@ -201,6 +214,19 @@ const UserProfile = () => {
             </span>
           </div>
           <button
+              onClick={() => navigate("/messages")}
+              className="relative flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium transition-colors"
+              title="Messages"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">Messages</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full flex items-center justify-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </button>
+          <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
           >
@@ -220,7 +246,7 @@ const UserProfile = () => {
         <aside
           className={`fixed left-0 z-50 md:z-20 bg-white dark:bg-gray-800 shadow-sm flex flex-col px-4 pb-6 transition-transform duration-300
             w-56 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-          style={{height:'calc(100vh - 56px)', top:'56px', overflowY:'auto'}}
+          style={{ height: 'calc(100vh - 56px)', top: '56px', overflowY: 'auto' }}
         >
           {/* Nav items */}
           <div className="space-y-1 mb-4 pt-4">
@@ -242,6 +268,21 @@ const UserProfile = () => {
             >
               <Briefcase className="w-4 h-4" /> Jobs
             </button>
+
+             <button
+              onClick={() => { navigate("/messages"); setSidebarOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Messages</span>
+              {unreadCount > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </button>
+
+            
             <button
               onClick={() => { navigate("/profile/settings-policy"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
@@ -253,7 +294,7 @@ const UserProfile = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="w-full md:ml-56 flex-1 px-3 md:px-5 pb-6" style={{paddingTop:'72px'}}>
+        <main className="w-full md:ml-56 flex-1 px-3 md:px-5 pb-6" style={{ paddingTop: '72px' }}>
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Center Column */}
             <div className="flex-1 space-y-4">
@@ -264,7 +305,7 @@ const UserProfile = () => {
                     <AvatarImage
                       src={
                         user?.profile?.profilePhoto &&
-                        !user.profile.profilePhoto.includes("github.com")
+                          !user.profile.profilePhoto.includes("github.com")
                           ? user.profile.profilePhoto
                           : "/noprofile.webp"
                       }
@@ -415,8 +456,8 @@ const UserProfile = () => {
                               {exp.startDate
                                 ? `${exp.startDate} - ${exp.currentlyWorking ? "Present" : exp.endDate || ""} (${exp.duration} Year${exp.duration > 1 ? "s" : ""})`
                                 : exp.duration
-                                ? `${exp.duration} Year(s)`
-                                : ""}
+                                  ? `${exp.duration} Year(s)`
+                                  : ""}
                             </p>
                           </div>
                           {exp.employmentType && (
@@ -512,7 +553,7 @@ const UserProfile = () => {
 
               {/* ID's / Documents */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm">
-                <h2 className="font-semibold text-gray-800 dark:text-white mb-4">ID's / Documents</h2>
+                <h2 className="font-semibold text-gray-800 dark:text-white mb-4">ID&apos;ss / Documents</h2>
                 <div className="flex flex-wrap gap-3">
                   {user?.profile?.documents?.length > 0 ? (
                     user.profile.documents.map((doc, i) => (
@@ -600,7 +641,7 @@ const UserProfile = () => {
                       <Briefcase className="w-6 h-6 text-gray-400" />
                     </div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-300">No applications found</p>
-                    <p className="text-xs text-gray-400 mt-1">You haven't applied to any jobs yet. Start exploring opportunities!</p>
+                    <p className="text-xs text-gray-400 mt-1">You haven&apos;st applied to any jobs yet. Start exploring opportunities!</p>
                     <button onClick={() => navigate("/jobs")} className="mt-3 text-blue-600 text-xs hover:underline">Explore Jobs</button>
                   </div>
                 ) : (
@@ -612,7 +653,7 @@ const UserProfile = () => {
                       {showAppliedJobs ? "Hide Applications" : `View All ${appliedJobs.length} Applications`}
                     </button>
                     {showAppliedJobs && (
-                      <div className="overflow-y-auto" style={{maxHeight: '550px'}}>
+                      <div className="overflow-y-auto" style={{ maxHeight: '550px' }}>
                         <AppliedJobsInline jobs={appliedJobs} />
                       </div>
                     )}

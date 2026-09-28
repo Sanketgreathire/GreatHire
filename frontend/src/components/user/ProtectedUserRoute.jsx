@@ -1,7 +1,8 @@
 // Import necessary modules and dependencies
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types"; 
 
 const ProtectedUserRoute = ({ children }) => {
   // Access the user from your Redux store (adjust the state path as needed)
@@ -32,4 +33,7 @@ const ProtectedUserRoute = ({ children }) => {
   return <>{children}</>;
 };
 
+ProtectedUserRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 export default ProtectedUserRoute;

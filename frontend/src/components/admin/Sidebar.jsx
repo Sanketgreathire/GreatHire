@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo } from "react";
+import  { useEffect, useState, useCallback, memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
 import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes, FaUserFriends } from "react-icons/fa";
@@ -12,7 +12,7 @@ import {
   fetchApplicationStats,
   fetchUserStats,
 } from "@/redux/admin/statsSlice";
-
+import PropTypes from "prop-types";
 const navItems = [
   { name: "Dashboard",   path: "/admin/dashboard",       icon: AiOutlineDashboard      },
   { name: "Job Seekers", path: "/admin/users",            icon: FaUsers                 },
@@ -55,6 +55,15 @@ const NavItem = memo(({ item, onClick }) => (
   </li>
 ));
 NavItem.displayName = "NavItem";
+
+NavItem.propTypes = {
+  item: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
+    icon: PropTypes.elementType.isRequired,
+  }).isRequired,
+  onClick: PropTypes.func,
+};
 
 const Sidebar = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
@@ -139,8 +148,8 @@ const Sidebar = memo(() => {
           </div>
 
           {/* Nav items */}
-          <nav className="py-3 px-3" aria-label="Main navigation">
-            <ul className="space-y-1">
+          <nav className="py-3 px-3 " aria-label="Main navigation">
+            <ul className="space-y-3">
               {navItems.map((item) => (
                 <NavItem key={item.path} item={item} onClick={handleNavClick} />
               ))}
