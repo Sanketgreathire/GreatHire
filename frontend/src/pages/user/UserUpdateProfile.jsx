@@ -1328,7 +1328,7 @@ dispatch(setUser(updatedUserWithAutoApply));
                     name="skills"
                     value={input.skills}
                     onChange={handleChange}
-                    placeholder="Enter skills (comma separated)"
+                    placeholder="Enter skills (comma-separated)"
                     className="bg-white dark:bg-gray-800 text-dark dark:text-white dark:border-gray-600"
                     required
                   />

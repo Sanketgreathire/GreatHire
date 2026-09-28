@@ -615,7 +615,7 @@ function App() {
       description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
         "Designed and implemented Great Hire's proprietary AI-driven talent matching system, revolutionizing recruitment efficiency and accuracy.",
-        "Previously served as a experience in technology-driven HR solutions.",
+        "Previously worked in technology-driven HR solutions.",
         "Data-Driven Decision Making: Leveraged advanced analytics to refine hiring strategies, improving workforce planning and talent acquisition outcomes.",
         "Employee-Centric HR Policies: Developed comprehensive policies fostering inclusivity, employee engagement, and long-term retention in the organization. ",
       ],

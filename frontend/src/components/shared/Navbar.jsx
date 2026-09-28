@@ -301,7 +301,7 @@ const Navbar = () => {
         toast.success(response.data.message);
         navigate("/");
       } else {
-        toast.error("Error in logout");
+        toast.error("Error logging out. Please try again.");
       }
     } catch (err) {
       console.error("Logout error:", err);

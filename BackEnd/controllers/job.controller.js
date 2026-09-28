@@ -1050,8 +1050,8 @@ export const bookmarkJob = async (
 
     res.status(200).json({
       message: !isBookmarked
-        ? "Save successfully"
-        : "Unsave successfully",
+        ? "Saved successfully"
+        : "Removed from the saved job successfully",
       success: true,
     });
   } catch (err) {

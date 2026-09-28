@@ -375,9 +375,9 @@ const handleFileChange = (e) => {
             <Viewer fileUrl={fileURL || input.resume} />
           ) : (
             <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
-              You uploaded a .docx or .doc file. It cannot be open here.  
+              You uploaded a .docx or .doc file. It cannot be opened here.  
               <br />
-              <span className="font-bold">Go to Profile → Click "View Resume" to open it. and check it </span>
+              <span className="font-bold">Go to Profile → Click "View Resume" to open it and check it </span>
             </div>
           )}
                 <div className="mt-4 flex justify-center">

@@ -180,7 +180,7 @@ export const googleLogin = async (req, res) => {
     if (user) {
       if (role && role !== user.role) {
         res.status(200).json({
-          message: "Account already exist use another!",
+          message: "An account already exists. Please use another account!",
           success: false,
         });
       }
@@ -276,7 +276,7 @@ export const getAllRecruiters = async (req, res) => {
 
     const company = await Company.findById(companyId).select("userId").lean();
     if (!company) {
-      return res.status(400).json({ success: false, message: "Company Not found!" });
+      return res.status(400).json({ success: false, message: "Company not found!" });
     }
 
     const recruiterIds = company.userId.map((u) => u.user);
@@ -544,7 +544,7 @@ export const addRecruiterToCompany = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Recruiter added successfully, credentials send to recruiter mail.",
+      message: "Recruiter added successfully. Credentials have been sent to the recruiter's email.",
     });
   } catch (err) {
     console.error("Error adding recruiter:", {

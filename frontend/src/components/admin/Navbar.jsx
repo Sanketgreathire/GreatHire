@@ -52,10 +52,10 @@ const Navbar = memo(({ linkName }) => {
         toast.success(response.data.message);
         navigate("/admin/login");
       } else {
-        toast.error("Error in logout");
+        toast.error("Error logging out. Please try again.");
       }
     } catch (err) {
-      toast.error(`Error in logout ${err}`);
+      toast.error(`Error logging out ${err}`);
     }
   }, [dispatch, navigate]);
 

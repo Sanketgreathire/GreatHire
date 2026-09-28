@@ -61,7 +61,7 @@ const blogs = [
           q: '"What are your strengths and weaknesses?"',
           tag: "Classic Trap",
           tagColor: "#EF4444",
-          content: `Strengths: Pick 2–3 that are relevant to the role and back each with a real example. Don't say "I'm a hard worker" — say "I'm good at breaking down complex problems. In Research, I built a tool that cut data processing time by 40%." Weakness: be real. Pick something you've already started improving and explain your progress clearly. You've already improving them is what an interviewer wants to hear.`,
+          content: `Strengths: Pick 2–3 that are relevant to the role and back each with a real example. Don't say "I'm a hard worker" — say "I'm good at breaking down complex problems. In Research, I built a tool that cut data processing time by 40%." Weakness: be real. Pick something you've already started improving and explain your progress clearly. That you're already improving them is what an interviewer wants to hear.`,
         },
         {
           q: '"Why do you want to work at this company?"',

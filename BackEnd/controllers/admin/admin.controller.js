@@ -145,7 +145,7 @@ export const login = async (req, res) => {
 
     if (!user) {
       return res.status(200).json({
-        message: "Account Not found.",
+        message: "Account not found.",
         success: false,
       });
     }

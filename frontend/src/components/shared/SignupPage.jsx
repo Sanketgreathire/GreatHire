@@ -142,7 +142,7 @@ const SignupPage = () => {
                     <span className="text-2xl">🏫</span>
                   </div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    For Colleges TPO
+                    For Colleges TPOs
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Connect your students with top recruiters via campus hiring

@@ -335,7 +335,7 @@ export const verifyOTP = async (req, res) => {
   if (!otp) {
     return res.status(400).json({
       success: false,
-      message: "OTP required.",
+      message: "OTP is required.",
     });
   }
 

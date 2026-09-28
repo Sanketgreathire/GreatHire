@@ -32,9 +32,9 @@ export const validateJobApplication = [
     .isLength({ max: 750 })
     .withMessage("Experience details must be under 750 characters"),
 
-  body("jobTitle").optional().isString().withMessage("Job title is string"),
+  body("jobTitle").optional().isString().withMessage("Job title must be a string"),
 
-  body("company").optional().isString().withMessage("Company name is string"),
+  body("company").optional().isString().withMessage("Company name must be a string"),
 
   body("jobId")
     .notEmpty()

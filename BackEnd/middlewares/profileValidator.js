@@ -60,7 +60,7 @@ export const validateProfileUpdate = [
     .optional()
     .custom((value) => {
       if (value && !salaryPattern.test(value.trim())) {
-        throw new Error("Current CTC must be a number or in format like '12LPA', '12.5 LPA'");
+        throw new Error("Enter current CTC as a number or in a format such as '12LPA', '12.5 LPA'");
       }
       return true;
     }),

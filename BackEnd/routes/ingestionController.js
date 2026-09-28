@@ -47,7 +47,7 @@ export const importGithub = async (req, res) => {
     if (!usernames || !Array.isArray(usernames)) {
       return res.status(400).json({ 
         success: false, 
-        message: "GitHub usernames array required" 
+        message: "A list of GitHub usernames is required." 
       });
     }
 
