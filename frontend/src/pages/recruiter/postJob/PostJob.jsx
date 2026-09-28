@@ -71,6 +71,7 @@ const PostJob = () => {
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [customBenefit, setCustomBenefit] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -246,39 +247,6 @@ const PostJob = () => {
 
 
 
-  // Load value (edit / update mode)
-  useEffect(() => {
-    if (editorRef.current && formik.values.details) {
-      editorRef.current.innerHTML = formik.values.details;
-    }
-  }, []);
-
-
-
-
-
-
-  const handleGenerateJD = async (overrideData) => {
-    const data = overrideData || aiForm;
-    if (!data.title) { toast.error("Job title is required to generate JD"); return; }
-    setAiGenerating(true);
-    try {
-      const res = await axios.post(`${JOB_API_END_POINT}/generate-jd`, data, { withCredentials: true });
-      if (res.data.success) {
-        const html = res.data.html;
-        formik.setFieldValue("details", html);
-        if (editorRef.current) editorRef.current.innerHTML = html;
-        toast.success("Job description generated!");
-      }
-    } catch (e) {
-      const msg = e.response?.data?.message || "Failed to generate JD. Please try again.";
-      toast.error(msg);
-      console.error("JD generation error:", e.response?.data || e.message);
-    } finally {
-      setAiGenerating(false);
-    }
-  };
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -287,16 +255,17 @@ const PostJob = () => {
       title: "",
       details: "",
 
-      skills: [],
+      skills: "",
       languages: [],
-      benefits: [],
-      qualifications: [],
+      benefits: "",
+      qualifications: "",
       responsibilities: [],
 
       experience: "",
       salary: "",
       salaryMin: "",
       salaryMax: "",
+      salaryType: "per year",
       jobType: "",
       workPlaceFlexibility: "",
       location: "",
@@ -310,24 +279,154 @@ const PostJob = () => {
       anyAmount: "No",
     },
     validationSchema: Yup.object({
-      urgentHiring: Yup.string(),
-      title: Yup.string().required("Job title is required"),
-      details: Yup.string().required("Job details are required"),
-      salary: Yup.string().required("Salary is required"),
-      experience: Yup.string().required("Experience is required"),
-      jobType: Yup.string().required("Job type is required"),
-      workPlaceFlexibility: Yup.string().required("Work Place Flexibility is required"),
-      location: Yup.string().required("Location is required"),
-      companyName: Yup.string().required("Company name is required"),
-      numberOfOpening: Yup.string().required("Number of openings is required"),
-      respondTime: Yup.string().required("Response time is required"),
-      duration: Yup.string().required("Duration is required"),
-      shift: Yup.string().required("Shift is required"),
-      skills: Yup.string().required("Skills are required"),
-      benefits: Yup.string().required("Benefits are required"),
-      qualifications: Yup.string().required("Qualification is required"),
-      // responsibilities: Yup.string().required("Responsibility is required"),
-      anyAmount: Yup.string().required("Yes or no is required"),
+      // Form 1: Basic Info
+      companyName: Yup.string()
+        .trim()
+        .required("Company name is required")
+        .min(2, "Company name must be at least 2 characters")
+        .max(100, "Company name cannot exceed 100 characters"),
+      urgentHiring: Yup.string()
+        .required("Please select whether urgent hiring is needed"),
+      title: Yup.string()
+        .trim()
+        .required("Job title is required")
+        .min(2, "Job title must be at least 2 characters")
+        .max(100, "Job title cannot exceed 100 characters"),
+
+      // Form 2: Job Details
+      skills: Yup.string()
+        .trim()
+        .required("Skills are required")
+        .test("has-skills", "Please enter at least one valid skill", (val) => {
+          if (!val) return false;
+          const list = val.split(",").map((s) => s.trim()).filter(Boolean);
+          return list.length > 0;
+        }),
+      benefits: Yup.string()
+        .trim()
+        .required("Please select at least one benefit")
+        .test("has-benefits", "Please select at least one benefit", (val) => {
+          if (!val) return false;
+          const list = val.split("\n").map((b) => b.trim()).filter(Boolean);
+          return list.length > 0;
+        }),
+      qualifications: Yup.string()
+        .trim()
+        .required("Qualifications are required")
+        .test("has-qualifications", "Please enter at least one qualification", (val) => {
+          if (!val) return false;
+          const list = val.split("\n").map((q) => q.trim()).filter(Boolean);
+          return list.length > 0;
+        }),
+
+      // Form 3: Requirements
+      experience: Yup.string()
+        .trim()
+        .required("Experience is required")
+        .test("valid-experience", function (val) {
+          if (!val) return this.createError({ message: "Experience is required" });
+          if (val.includes("Fresher")) return true;
+          const fromMatch = val.match(/From (\d+)/);
+          const toMatch = val.match(/To (\d+)/);
+          if (!fromMatch && !toMatch) {
+            return this.createError({ message: "Please select From and To experience years or Fresher" });
+          }
+          if (!fromMatch) {
+            return this.createError({ message: "Please select 'From' experience years" });
+          }
+          if (!toMatch) {
+            return this.createError({ message: "Please select 'To' experience years" });
+          }
+          if (Number(fromMatch[1]) > Number(toMatch[1])) {
+            return this.createError({ message: "'To' experience cannot be less than 'From' experience" });
+          }
+          return true;
+        }),
+      salary: Yup.string()
+        .trim()
+        .required("Salary is required")
+        .test("valid-salary", function (val) {
+          const { salaryType, salaryMin, salaryMax } = this.parent;
+          if (salaryType === "Unpaid") return true;
+          if (!val) return this.createError({ message: "Salary is required" });
+
+          if (salaryType === "per month") {
+            if (!salaryMin && !salaryMax) {
+              return this.createError({ message: "Please enter minimum and maximum monthly salary" });
+            }
+            if (!salaryMin) {
+              return this.createError({ message: "Minimum monthly salary is required" });
+            }
+            if (!salaryMax) {
+              return this.createError({ message: "Maximum monthly salary is required" });
+            }
+            const min = Number(salaryMin);
+            const max = Number(salaryMax);
+            if (isNaN(min) || min < 0) {
+              return this.createError({ message: "Minimum salary must be 0 or greater" });
+            }
+            if (isNaN(max) || max <= 0) {
+              return this.createError({ message: "Maximum salary must be greater than 0" });
+            }
+            if (min > max) {
+              return this.createError({ message: "Minimum salary cannot be greater than maximum salary" });
+            }
+            return true;
+          }
+
+          if (!/\d/.test(val)) {
+            return this.createError({ message: "Please enter a valid numeric salary amount" });
+          }
+          return true;
+        }),
+      jobType: Yup.string()
+        .trim()
+        .required("Job type is required"),
+      workPlaceFlexibility: Yup.string()
+        .trim()
+        .required("Work place flexibility is required"),
+      location: Yup.string()
+        .trim()
+        .required("Location is required")
+        .min(2, "Location must be at least 2 characters"),
+
+      // Form 4: Additional Info
+      numberOfOpening: Yup.string()
+        .trim()
+        .required("Number of openings is required")
+        .test("valid-openings", "Number of openings must be a positive whole number (at least 1)", (val) => {
+          const n = Number(val);
+          return !isNaN(n) && Number.isInteger(n) && n >= 1 && n <= 10000;
+        }),
+      respondTime: Yup.string()
+        .trim()
+        .required("Response time is required")
+        .test("valid-respondTime", "Response time must be between 1 and 90 days", (val) => {
+          const n = Number(val);
+          return !isNaN(n) && Number.isInteger(n) && n >= 1 && n <= 90;
+        }),
+      duration: Yup.string()
+        .trim()
+        .required("Working days duration is required")
+        .test("valid-duration", "Please specify custom working days duration", (val) => {
+          return val !== "Other" && val.length > 0;
+        }),
+      shift: Yup.string()
+        .trim()
+        .required("Shift is required")
+        .min(2, "Shift must be at least 2 characters"),
+      anyAmount: Yup.string()
+        .required("Please specify applicant charges option"),
+
+      // Form 5: Review & Submit (Job Description)
+      details: Yup.string()
+        .trim()
+        .required("Job description is required")
+        .test("valid-details", "Job description must contain at least 20 characters of text", (val) => {
+          if (!val) return false;
+          const cleanText = val.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+          return cleanText.length >= 20;
+        }),
     }),
 
     onSubmit: async (values) => {
@@ -344,10 +443,15 @@ const PostJob = () => {
 
       setLoading(true);
       try {
+        const cleanedQuestions = (values.questions || [])
+          .map((q) => (typeof q === "string" ? q.trim() : ""))
+          .filter(Boolean);
+
         const response = await axios.post(
           `${JOB_API_END_POINT}/post-job`,
           {
             ...values,
+            questions: cleanedQuestions,
             companyId: company?._id,
           },
           {
@@ -384,38 +488,120 @@ const PostJob = () => {
 
   const handleNext = async () => {
     const currentStepFields = [
-      ["companyName", "title"], // Step 0
+      ["companyName", "urgentHiring", "title"], // Step 0
       ["skills", "benefits", "qualifications"], // Step 1
       ["experience", "salary", "jobType", "workPlaceFlexibility", "location"], // Step 2
       ["numberOfOpening", "respondTime", "duration", "shift", "anyAmount"], // Step 3
     ][step];
+
+    if (!currentStepFields) return;
+
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
     currentStepFields.forEach((field) => {
       touchedFields[field] = true;
     });
-    formik.setTouched(touchedFields);
+    formik.setTouched({ ...formik.touched, ...touchedFields });
+
     // Trigger validation and ensure required fields show error messages
-    await formik.validateForm();
-    // Debug: log values and errors to help trace why Next may be blocked
-    try {
-      // eslint-disable-next-line no-console
-      // Debug logging removed per revert request
-    } catch (e) { }
-    // Check if there are any errors or blank fields in the current step's fields
-    const hasErrors = currentStepFields.some(
-      (field) => !!formik.errors[field] || !formik.values[field]
-    );
+    const errors = await formik.validateForm();
+
+    // Check if there are any errors in the current step's fields
+    const hasErrors = currentStepFields.some((field) => !!errors[field]);
 
     if (hasErrors) {
+      toast.error("Please fill in all required fields correctly before proceeding.");
       return;
     }
+
     // Move to the next step if all fields are valid
     const nextStep = Math.min(step + 1, steps.length - 1);
     setStep(nextStep);
   };
 
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const allFields = [
+      "companyName", "urgentHiring", "title",
+      "skills", "benefits", "qualifications",
+      "experience", "salary", "jobType", "workPlaceFlexibility", "location",
+      "numberOfOpening", "respondTime", "duration", "shift", "anyAmount",
+      "details",
+    ];
+    const touchedAll = {};
+    allFields.forEach((f) => { touchedAll[f] = true; });
+    formik.setTouched(touchedAll);
+
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      if (errors.companyName || errors.urgentHiring || errors.title) {
+        toast.error("Please complete the required fields in Basic Info");
+        setStep(0);
+        return;
+      }
+      if (errors.skills || errors.benefits || errors.qualifications) {
+        toast.error("Please complete the required fields in Job Details");
+        setStep(1);
+        return;
+      }
+      if (errors.experience || errors.salary || errors.jobType || errors.workPlaceFlexibility || errors.location) {
+        toast.error("Please complete the required fields in Requirements");
+        setStep(2);
+        return;
+      }
+      if (errors.numberOfOpening || errors.respondTime || errors.duration || errors.shift || errors.anyAmount) {
+        toast.error("Please complete the required fields in Additional Info");
+        setStep(3);
+        return;
+      }
+      if (errors.details) {
+        toast.error(errors.details || "Please provide a complete job description");
+        return;
+      }
+    }
+
+    formik.handleSubmit(e);
+  };
+
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
+
+  // Load value (edit / update mode or step change)
+  useEffect(() => {
+    if (editorRef.current && formik.values.details) {
+      if (editorRef.current.innerHTML !== formik.values.details) {
+        editorRef.current.innerHTML = formik.values.details;
+      }
+    }
+  }, [step, formik.values.details]);
+
+  const handleGenerateJD = async (overrideData) => {
+    const data = overrideData || {
+      title: formik.values.title,
+      skills: formik.values.skills,
+      experience: formik.values.experience,
+      jobType: formik.values.jobType,
+      location: formik.values.location,
+      workPlaceFlexibility: formik.values.workPlaceFlexibility,
+    };
+    if (!data.title) { toast.error("Job title is required to generate JD"); return; }
+    setAiGenerating(true);
+    try {
+      const res = await axios.post(`${JOB_API_END_POINT}/generate-jd`, data, { withCredentials: true });
+      if (res.data.success) {
+        const html = res.data.html;
+        formik.setFieldValue("details", html);
+        formik.setFieldTouched("details", true, true);
+        if (editorRef.current) editorRef.current.innerHTML = html;
+        toast.success("Job description generated!");
+      }
+    } catch (e) {
+      const msg = e.response?.data?.message || "Failed to generate JD. Please try again.";
+      toast.error(msg);
+      console.error("JD generation error:", e.response?.data || e.message);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   const filteredLocations = useMemo(
     () => filterLocations(locationSearch),
@@ -668,7 +854,7 @@ const PostJob = () => {
                 </div>
               </div>
             ) : (
-              <form onSubmit={formik.handleSubmit}>
+              <form onSubmit={handleFormSubmit}>
                 <div className={`grid grid-cols-1 ${step !== 4 ? "lg:grid-cols-[1fr_340px]" : ""} gap-5`}>
 
                   {/* ------------------------------- STEP 0 ------------------------------- */}
@@ -687,6 +873,7 @@ const PostJob = () => {
                             placeholder="Enter company name"
                             className={inputCls}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.companyName}
                           />
                           {formik.touched.companyName && formik.errors.companyName && (
@@ -704,6 +891,7 @@ const PostJob = () => {
                             name="urgentHiring"
                             className={`${inputCls} bg-white text-gray-900 hover:bg-green-700 hover:text-white dark:bg-gray-800 dark:text-white dark:hover:bg-green-700`}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.urgentHiring}
                           >
                             <option
@@ -743,11 +931,14 @@ const PostJob = () => {
                               name="title"
                               type="text"
                               placeholder="Search or enter job title"
-                              className={inputCls}
+                              className={`${inputCls} hover:bg-green-700 hover:text-white hover:placeholder-white focus:bg-green-700 focus:text-white focus:placeholder-white focus:border-green-700 focus:ring-green-700/40`}
                               onChange={formik.handleChange}
                               value={formik.values.title}
                               onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
-                              onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
+                              onBlur={(e) => {
+                                formik.handleBlur(e);
+                                setTimeout(() => e.target.nextSibling?.classList?.add("hidden"), 200);
+                              }}
                               autoComplete="off"
                             />
                             <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
@@ -756,8 +947,11 @@ const PostJob = () => {
                                 .map(title => (
                                   <div
                                     key={title}
-                                    className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
-                                    onMouseDown={() => formik.setFieldValue("title", title)}
+                                    className="px-3.5 py-2 hover:bg-gray-500 hover:text-white cursor-pointer text-slate-900 dark:text-slate-100 text-sm transition-colors duration-150"
+                                    onMouseDown={() => {
+                                      formik.setFieldValue("title", title);
+                                      formik.setFieldTouched("title", true, true);
+                                    }}
                                   >
                                     {title}
                                   </div>
@@ -805,6 +999,7 @@ const PostJob = () => {
                           placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
                           className={`${inputCls} min-h-[90px]`}
                           onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
                           value={formik.values.skills}
                         />
                         {formik.touched.skills && formik.errors.skills && (
@@ -881,8 +1076,9 @@ const PostJob = () => {
                             "Flexible Schedule",
                             "Others",
                           ].map((benefit) => {
-                            const selectedBenefits = String(formik.values.benefits || "").split("\n");
-                            const checked = selectedBenefits.includes(benefit);
+                            const selectedBenefits = String(formik.values.benefits || "").split("\n").filter(Boolean);
+                            const isOthersChecked = selectedBenefits.some(b => b === "Others" || b.startsWith("Others:"));
+                            const checked = benefit === "Others" ? isOthersChecked : selectedBenefits.includes(benefit);
                             return (
                               <label
                                 key={benefit}
@@ -899,13 +1095,24 @@ const PostJob = () => {
                                   className="w-4 h-4 accent-indigo-600"
                                   checked={checked}
                                   onChange={(e) => {
-                                    let updatedBenefits = [...selectedBenefits].filter(Boolean);
-                                    if (e.target.checked) {
-                                      updatedBenefits.push(benefit);
+                                    let updatedBenefits = [...selectedBenefits];
+                                    if (benefit === "Others") {
+                                      if (e.target.checked) {
+                                        const customText = customBenefit.trim() ? `Others: ${customBenefit.trim()}` : "Others";
+                                        updatedBenefits.push(customText);
+                                      } else {
+                                        updatedBenefits = updatedBenefits.filter(b => b !== "Others" && !b.startsWith("Others:"));
+                                        setCustomBenefit("");
+                                      }
                                     } else {
-                                      updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
+                                      if (e.target.checked) {
+                                        updatedBenefits.push(benefit);
+                                      } else {
+                                        updatedBenefits = updatedBenefits.filter((b) => b !== benefit);
+                                      }
                                     }
                                     formik.setFieldValue("benefits", updatedBenefits.join("\n"));
+                                    formik.setFieldTouched("benefits", true, true);
                                   }}
                                 />
                                 <span>{benefit}</span>
@@ -914,16 +1121,28 @@ const PostJob = () => {
                           })}
                         </div>
 
-                        {String(formik.values.benefits || "").split("\n").includes("Others") && (
-                          <textarea
-                            id="benefits"
-                            name="benefits"
-                            placeholder="Enter additional benefits..."
-                            className={`${inputCls} h-24`}
-                            onChange={formik.handleChange}
-                            value={String(formik.values.benefits || "")}
-                          />
-                        )}
+                        {(() => {
+                          const selectedBenefits = String(formik.values.benefits || "").split("\n").filter(Boolean);
+                          const isOthersChecked = selectedBenefits.some(b => b === "Others" || b.startsWith("Others:"));
+                          return isOthersChecked ? (
+                            <textarea
+                              id="customBenefits"
+                              name="customBenefits"
+                              placeholder="Enter additional benefits..."
+                              className={`${inputCls} h-24`}
+                              value={customBenefit}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setCustomBenefit(val);
+                                const nonOthers = selectedBenefits.filter(b => b !== "Others" && !b.startsWith("Others:"));
+                                const otherLabel = val.trim() ? `Others: ${val.trim()}` : "Others";
+                                formik.setFieldValue("benefits", [...nonOthers, otherLabel].join("\n"));
+                                formik.setFieldTouched("benefits", true, true);
+                              }}
+                              onBlur={() => formik.setFieldTouched("benefits", true, true)}
+                            />
+                          ) : null;
+                        })()}
                         {formik.touched.benefits && formik.errors.benefits && (
                           <div className={errorCls}>{formik.errors.benefits}</div>
                         )}
@@ -937,6 +1156,7 @@ const PostJob = () => {
                           placeholder="Enter qualifications separated by new lines (eg. Bachelor, Master or diploma)"
                           className={`${inputCls} min-h-[80px]`}
                           onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
                           value={formik.values.qualifications}
                         />
                         {formik.touched.qualifications && formik.errors.qualifications && (
@@ -982,6 +1202,7 @@ const PostJob = () => {
                                 } else {
                                   formik.setFieldValue("experience", current.replace("Fresher", "").replace(/^,\s*|,\s*$/g, "").trim());
                                 }
+                                formik.setFieldTouched("experience", true, true);
                               }}
                               className="w-4 h-4 accent-indigo-600"
                             />
@@ -999,7 +1220,9 @@ const PostJob = () => {
                                   const toVal = toMatch ? ` To ${toMatch[1]}` : "";
                                   const isFresher = current.includes("Fresher") ? "Fresher, " : "";
                                   formik.setFieldValue("experience", e.target.value ? `${isFresher}From ${e.target.value}${toVal}` : `${isFresher}${toVal}`.trim());
+                                  formik.setFieldTouched("experience", true, true);
                                 }}
+                                onBlur={() => formik.setFieldTouched("experience", true, true)}
                               >
                                 <option value="">Select</option>
                                 {Array.from({ length: 11 }, (_, i) => i).map(n => (
@@ -1018,7 +1241,9 @@ const PostJob = () => {
                                   const fromVal = fromMatch ? `From ${fromMatch[1]} ` : "";
                                   const isFresher = current.includes("Fresher") ? "Fresher, " : "";
                                   formik.setFieldValue("experience", e.target.value ? `${isFresher}${fromVal}To ${e.target.value}` : `${isFresher}${fromVal}`.trim());
+                                  formik.setFieldTouched("experience", true, true);
                                 }}
+                                onBlur={() => formik.setFieldTouched("experience", true, true)}
                               >
                                 <option value="">Select</option>
                                 {Array.from({ length: 11 }, (_, i) => i).map(n => (
@@ -1048,6 +1273,7 @@ const PostJob = () => {
                                     formik.setFieldValue("salaryMin", e.target.value);
                                     formik.setFieldValue("salary", e.target.value && formik.values.salaryMax ? `${e.target.value}-${formik.values.salaryMax}` : e.target.value || formik.values.salaryMax || "");
                                   }}
+                                  onBlur={() => formik.setFieldTouched("salary", true, true)}
                                 />
                                 <input
                                   type="number"
@@ -1058,6 +1284,7 @@ const PostJob = () => {
                                     formik.setFieldValue("salaryMax", e.target.value);
                                     formik.setFieldValue("salary", formik.values.salaryMin && e.target.value ? `${formik.values.salaryMin}-${e.target.value}` : formik.values.salaryMin || e.target.value || "");
                                   }}
+                                  onBlur={() => formik.setFieldTouched("salary", true, true)}
                                 />
                               </div>
                             ) : (
@@ -1068,6 +1295,7 @@ const PostJob = () => {
                                 placeholder={formik.values.salaryType === "Unpaid" ? "0" : "Enter salary (e.g., 45000-50000)"}
                                 className={inputCls}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 value={formik.values.salaryType === "Unpaid" ? "0" : formik.values.salary}
                                 readOnly={formik.values.salaryType === "Unpaid"}
                               />
@@ -1091,6 +1319,7 @@ const PostJob = () => {
                                   formik.setFieldValue("salaryMin", "");
                                   formik.setFieldValue("salaryMax", "");
                                 }
+                                formik.setFieldTouched("salary", true, true);
                               }}
                               value={formik.values.salaryType || "per year"}
                             >
@@ -1116,6 +1345,7 @@ const PostJob = () => {
                             name="jobType"
                             className={inputCls}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             value={formik.values.jobType}
                           >
                             <option value="">Select a job type</option>
@@ -1141,7 +1371,10 @@ const PostJob = () => {
                               <button
                                 type="button"
                                 key={mode}
-                                onClick={() => formik.setFieldValue("workPlaceFlexibility", mode)}
+                                onClick={() => {
+                                  formik.setFieldValue("workPlaceFlexibility", mode);
+                                  formik.setFieldTouched("workPlaceFlexibility", true, true);
+                                }}
                                 className={`py-2.5 rounded-xl border text-sm font-medium transition-colors duration-200 ${
                                   formik.values.workPlaceFlexibility === mode
                                     ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
@@ -1165,7 +1398,7 @@ const PostJob = () => {
                             type="text"
                             id="location"
                             name="location"
-                            className={inputCls}
+                            className={`${inputCls} hover:bg-green-700 hover:text-white hover:placeholder-white focus:bg-green-700 focus:text-white focus:placeholder-white focus:border-green-700 focus:ring-green-700/40`}
                             placeholder="Enter location manually or select from dropdown"
                             value={locationSearch || formik.values.location}
                             onChange={(e) => {
@@ -1176,7 +1409,10 @@ const PostJob = () => {
                               setLocationSearch(formik.values.location);
                               setShowLocationDropdown(true);
                             }}
-                            onBlur={() => setTimeout(() => setShowLocationDropdown(false), 200)}
+                            onBlur={() => {
+                              setTimeout(() => setShowLocationDropdown(false), 200);
+                              formik.setFieldTouched("location", true, true);
+                            }}
                             autoComplete="off"
                           />
                           {showLocationDropdown && filteredLocations.length > 0 && (
@@ -1184,11 +1420,12 @@ const PostJob = () => {
                               {filteredLocations.map((loc) => (
                                 <div
                                   key={loc}
-                                  className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
+                                  className="px-3.5 py-2 hover:bg-gray-500 hover:text-white cursor-pointer text-slate-900 dark:text-slate-100 text-sm transition-colors duration-150"
                                   onMouseDown={() => {
                                     formik.setFieldValue("location", loc);
                                     setLocationSearch(loc);
                                     setShowLocationDropdown(false);
+                                    formik.setFieldTouched("location", true, true);
                                   }}
                                 >
                                   {loc}
@@ -1233,9 +1470,11 @@ const PostJob = () => {
                             <input
                               name="numberOfOpening"
                               type="number"
+                              min="1"
                               placeholder="e.g. 1, 2"
                               className={inputCls}
                               onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
                               value={formik.values.numberOfOpening}
                             />
                             {formik.touched.numberOfOpening && formik.errors.numberOfOpening && (
@@ -1250,9 +1489,12 @@ const PostJob = () => {
                             <input
                               name="respondTime"
                               type="number"
+                              min="1"
+                              max="90"
                               placeholder="e.g. 1, 2"
                               className={inputCls}
                               onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
                               value={formik.values.respondTime}
                             />
                             {formik.touched.respondTime && formik.errors.respondTime && (
@@ -1270,7 +1512,9 @@ const PostJob = () => {
                             onChange={(e) => {
                               if (e.target.value === "Other") formik.setFieldValue("duration", "Other");
                               else formik.setFieldValue("duration", e.target.value);
+                              formik.setFieldTouched("duration", true, true);
                             }}
+                            onBlur={formik.handleBlur}
                             value={["5 Days A Week", "6 Days A Week"].includes(formik.values.duration) ? formik.values.duration : formik.values.duration ? "Other" : ""}
                           >
                             <option value="">Select duration</option>
@@ -1285,6 +1529,7 @@ const PostJob = () => {
                               placeholder="Enter custom duration"
                               className={`${inputCls} mt-2`}
                               onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
                               value={formik.values.duration === "Other" ? "" : formik.values.duration}
                             />
                           )}
@@ -1301,7 +1546,11 @@ const PostJob = () => {
                             <select
                               name="shift"
                               className={inputCls}
-                              onChange={(e) => formik.setFieldValue("shift", e.target.value)}
+                              onChange={(e) => {
+                                formik.setFieldValue("shift", e.target.value);
+                                formik.setFieldTouched("shift", true, true);
+                              }}
+                              onBlur={formik.handleBlur}
                               value={formik.values.shift}
                             >
                               <option value="">Select shift</option>
@@ -1314,7 +1563,11 @@ const PostJob = () => {
                               type="text"
                               placeholder="Or enter custom shift"
                               className={inputCls}
-                              onChange={(e) => formik.setFieldValue("shift", e.target.value)}
+                              onChange={(e) => {
+                                formik.setFieldValue("shift", e.target.value);
+                                formik.setFieldTouched("shift", true, true);
+                              }}
+                              onBlur={formik.handleBlur}
                               value={formik.values.shift && !["Day shift", "Night shift", "Rotational shift"].includes(formik.values.shift) ? formik.values.shift : ""}
                             />
                           </div>
@@ -1366,13 +1619,14 @@ const PostJob = () => {
                           name="anyAmount"
                           className={inputCls}
                           onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
                           value={formik.values.anyAmount}
                         >
                           <option value="">Select</option>
                           <option value="Yes">Yes</option>
                           <option value="No">No</option>
                         </select>
-                        {formik.touched.activeColor && formik.errors.anyAmount && (
+                        {formik.touched.anyAmount && formik.errors.anyAmount && (
                           <div className={errorCls}>{formik.errors.anyAmount}</div>
                         )}
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
@@ -1437,6 +1691,7 @@ const PostJob = () => {
                           className="w-full min-h-[150px] p-3.5 border border-t-0 border-slate-200 dark:border-white/10 rounded-b-xl focus:outline-none bg-white dark:bg-white/[0.03] text-slate-900 dark:text-slate-100 text-sm [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square] [&_ol_ol]:list-[lower-alpha] [&_ol_ol_ol]:list-[lower-roman] transition-colors duration-300"
                           onKeyDown={handleKeyDown}
                           onInput={(e) => formik.setFieldValue("details", e.currentTarget.innerHTML)}
+                          onBlur={() => formik.setFieldTouched("details", true, true)}
                         />
                         {formik.touched.details && formik.errors.details && (
                           <div className={errorCls}>{formik.errors.details}</div>
