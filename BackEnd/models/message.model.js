@@ -69,6 +69,7 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
     },
+    
   },
   { timestamps: true }
 );
@@ -79,7 +80,7 @@ messageSchema.index({ sender: 1 });
 messageSchema.index({ isDeleted: 1 });
 
 // Method to mark message as read by a user
-messageSchema.methods.markAsRead = function(userId) {
+messageSchema.methods.markAsRead = function (userId) {
   const existingRead = this.readBy.find(r => r.user.toString() === userId.toString());
   if (!existingRead) {
     this.readBy.push({ user: userId, readAt: new Date() });
@@ -89,7 +90,7 @@ messageSchema.methods.markAsRead = function(userId) {
 };
 
 // Method to soft delete message
-messageSchema.methods.softDelete = function() {
+messageSchema.methods.softDelete = function () {
   this.isDeleted = true;
   this.deletedAt = new Date();
   this.content = "This message was deleted";
@@ -97,7 +98,7 @@ messageSchema.methods.softDelete = function() {
 };
 
 // Method to edit message
-messageSchema.methods.editMessage = function(newContent) {
+messageSchema.methods.editMessage = function (newContent) {
   this.content = newContent;
   this.isEdited = true;
   this.editedAt = new Date();

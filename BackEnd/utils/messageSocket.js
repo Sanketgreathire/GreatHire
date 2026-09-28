@@ -1,19 +1,49 @@
 import { getIO } from "./socket.js";
 
+const onlineUsers = new Map();
+
+export const isUserOnline = (userId) => {
+  if (!userId) return false;
+  const key = userId.toString();
+  return onlineUsers.has(key) && onlineUsers.get(key).size > 0;
+};
+
 // Enhanced socket handlers for messaging
 export const setupMessageSocketHandlers = (io) => {
   io.on("connection", (socket) => {
-    
+
+    // Handle joining personal user room (for direct messages)
+    socket.on("joinUserRoom", (userId) => {
+      socket.join(`user_${userId}`);
+      const key = userId.toString();
+      if (!onlineUsers.has(key)) onlineUsers.set(key, new Set());
+      onlineUsers.get(key).add(socket.id);
+       
+    });
+
+    socket.on("disconnect", () => {
+      for (const [uid, sockets] of onlineUsers.entries()) {
+        if (sockets.has(socket.id)) {
+          sockets.delete(socket.id);
+          if (sockets.size === 0) {
+            onlineUsers.delete(uid);
+            
+          }
+          break;
+        }
+      }
+    });
+
     // Handle joining conversation rooms for messaging
     socket.on("joinConversation", (conversationId) => {
       socket.join(`conversation_${conversationId}`);
-      console.log(`Socket ${socket.id} joined conversation ${conversationId}`);
+      
     });
 
     // Handle leaving conversation rooms
     socket.on("leaveConversation", (conversationId) => {
       socket.leave(`conversation_${conversationId}`);
-      console.log(`Socket ${socket.id} left conversation ${conversationId}`);
+       
     });
 
     // Handle typing indicators
@@ -39,6 +69,26 @@ export const setupMessageSocketHandlers = (io) => {
         isOnline: false,
         lastSeen: new Date(),
       });
+    });
+
+    // Client tells us it opened a conversation — mark all as read
+    socket.on("markAsRead", async ({ conversationId, userId }) => {
+      try {
+        const { Message } = await import("../models/message.model.js");
+        await Message.updateMany(
+          { conversation: conversationId, sender: { $ne: userId }, isRead: false },
+          { $set: { isRead: true }, $addToSet: { readBy: { user: userId, readAt: new Date() } } }
+        );
+
+        // Notify the other participant
+        socket.to(`conversation_${conversationId}`).emit("messagesRead", {
+          conversationId,
+          readBy: userId,
+          readAt: new Date(),
+        });
+      } catch (err) {
+        console.error("markAsRead error:", err);
+      }
     });
 
     // Handle message delivery confirmation

@@ -16,6 +16,7 @@ import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
 import { setIO } from "./utils/socket.js";
+import { setupMessageSocketHandlers } from "./utils/messageSocket.js";
 import notificationService from "./utils/notificationService.js";
 import { startMonthlyFreePlanRenewal } from "./utils/monthlyFreePlanRenewal.js";
 import { startAutoRejectCron } from "./utils/autoRejectApplications.js";
@@ -314,6 +315,7 @@ io.on("connection", (socket) => {
 
 setIO(io);
 notificationService.setIO(io);
+setupMessageSocketHandlers(io); 
 
 // ================= START SERVER =================
 try {

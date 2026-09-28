@@ -9,6 +9,9 @@ import {
   searchConversations,
 } from "../controllers/message.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import { searchMessages } from "../controllers/message.controller.js";
+
+
 
 const router = express.Router();
 
@@ -32,5 +35,8 @@ router.route("/messages/:messageId/edit").put(isAuthenticated, editMessage);
 
 // Delete a message
 router.route("/messages/:messageId/delete").delete(isAuthenticated, deleteMessage);
+
+//Search a messages
+router.get("/messages/search", searchMessages);
 
 export default router;
