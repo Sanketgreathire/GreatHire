@@ -584,7 +584,7 @@
 
 
 
-import React, { useEffect, useState, useRef } from "react";
+import  { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { JOB_API_END_POINT, ADMIN_JOB_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Button } from "@/components/ui/button";
@@ -607,7 +607,6 @@ import {
   MapPin,
   // DollarSign,
   Users,
-  CalendarDays,
   Sparkles,
   CheckCircle2,
   GraduationCap,
@@ -635,6 +634,7 @@ const JobDetail = () => {
   const [jobOwner, setJobOwner] = useState(null);
   const [dloading, dsetLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const { selectedJob } = useJobDetails();
 
   const editorRef = useRef(null);
@@ -805,7 +805,7 @@ const JobDetail = () => {
   const numberList = () => {
     document.execCommand("insertOrderedList");
   };
-
+// eslint-disable-next-line no-unused-vars
   const alphaList = () => {
     document.execCommand("insertOrderedList");
 
@@ -1027,6 +1027,10 @@ const JobDetail = () => {
   border border-t-0 border-gray-300 rounded-b dark:bg-gray-700 dark:border-gray-600
   focus:outline-none
   text-slate-600 dark:text-gray-300
+  
+  text-justify
+  [&_p]:text-justify
+  [&_li]:text-justify
 
   [&_ul]:list-disc
   [&_ul]:pl-6
@@ -1068,7 +1072,9 @@ const JobDetail = () => {
     dark:prose-invert
     text-slate-600 dark:text-slate-300
     text-base leading-relaxed
-
+    text-justify
+    [&_p]:text-justify
+    [&_li]:text-justify
     [&_ul]:list-disc [&_ul]:ml-6
     [&_ol]:list-decimal [&_ol]:ml-6
     [&_li]:mb-1
