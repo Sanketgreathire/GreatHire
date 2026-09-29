@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Bot, Sparkles } from "lucide-react";
+import Navbar from "@/components/shared/Navbar";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -153,16 +154,7 @@ const JobseekerLogin = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <nav className="fixed top-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-700">
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <h1 className="text-4xl font-bold text-black dark:text-white">
-            Great<span className="text-blue-600 dark:text-blue-400">Hire</span>
-          </h1>
-          <button onClick={() => navigate("/")} className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium">
-            ← Back to Home
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex-1 flex items-center justify-center py-24 px-4">
         <div className="flex w-full max-w-5xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
@@ -302,6 +294,37 @@ const JobseekerLogin = () => {
                   }
                 </button>
               </form>
+
+              {/* AI Career Assistant Feature Card */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-purple-50/90 dark:from-gray-700/60 dark:via-gray-800/60 dark:to-gray-700/60 border border-blue-100 dark:border-gray-700 flex items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md shrink-0">
+                    <Bot size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1">
+                      AI Educational Assistant
+                      <Sparkles size={12} className="text-amber-500 fill-amber-500" />
+                    </p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-300 truncate">
+                      Ask for Java jobs in Mumbai, roadmaps & prep
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent("open-jobseeker-chat", {
+                        detail: { prompt: "I want job in Mumbai and field is Java developer" },
+                      })
+                    );
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-all hover:scale-105 active:scale-95 shrink-0 flex items-center gap-1"
+                >
+                  Ask AI
+                </button>
+              </div>
 
               {/* <div className="text-center">
                 <button type="button" onClick={handleOtpClick} className="text-blue-600 dark:text-blue-400 text-sm hover:underline font-semibold">
