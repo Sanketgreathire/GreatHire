@@ -5,7 +5,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 // PDF viewer for previewing documents
-import { Viewer } from "@react-pdf-viewer/core"; 
+import { Viewer,Worker } from "@react-pdf-viewer/core"; 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 // Notification library
 import { toast } from "react-hot-toast"; 
@@ -41,7 +41,7 @@ const ReviewPage = ({ handleReview1, input, fileURL,fileType,user,filename }) =>
 
       // Send form data to the backend API
       const response = await axios.post(
-        `${APPLICATION_API_END_POINT}/apply`,
+  `${APPLICATION_API_END_POINT}/${jobId}/apply`,
         formData,
         {
           headers: {
@@ -76,16 +76,21 @@ const ReviewPage = ({ handleReview1, input, fileURL,fileType,user,filename }) =>
   };
 
   // Component to display application info
-  const InfoSection = ({ title, value }) => (
-    <div>
-      <p className="text-sm font-small">{title}</p>
-      <h3 className="text-base text-gray-500">{value}</h3>
-    </div>
-  );
+ const InfoSection = ({ title, value }) => (
+  <div>
+    <p className="text-sm font-medium text-gray-700">
+      {title}
+    </p>
+
+    <h3 className="text-base text-gray-900">
+      {value}
+    </h3>
+  </div>
+);
 
 
   return (
-    <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
+    <div className="flex justify-center flex-col p-6 bg-white text-gray-900 shadow-lg rounded-lg w-full">
       <ProgressBar percent={100} filledBackground="green" />
       <div className="flex items-center mt-4 mb-4">
         <BiArrowBack
@@ -117,8 +122,10 @@ const ReviewPage = ({ handleReview1, input, fileURL,fileType,user,filename }) =>
 
       <p className="text-gray-500 text-2xl mb-5">Resume</p>
       <div className="h-96">
-        { filename.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf"  ? (
-            <Viewer fileUrl={fileURL || input.resume} />
+       {filename.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
+  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+    <Viewer fileUrl={fileURL || input.resume} />
+  </Worker>
                   ) : (
                     <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
                       You uploaded a .docx or .doc file. It cannot be opened here.  

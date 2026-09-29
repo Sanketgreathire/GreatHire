@@ -3,18 +3,17 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 // this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
+// import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
 
 import { User } from "../models/user.model.js";
 import Job from "../models/job.model.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
-import { DigitalMarketer } from "../models/digitalmarketer.model.js";
 import { Contact } from "../models/contact.model.js";
 import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 // this model help to blacklist recent logout token
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
-import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
 
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
@@ -27,7 +26,8 @@ import { validationResult } from "express-validator";
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
 import notificationService from "../utils/notificationService.js";
-import { autoApplyExistingJobsForUser, autoApply as autoApplyService } from "../src/services/autoApply.service.js";
+import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
+import { autoApply } from "../src/services/autoApply.service.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -211,7 +211,7 @@ export const login = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const cleanEmail = normalizeAccountEmail(email);
+const cleanEmail = normalizeAccountEmail(email);
 
     // Check across User, Recruiter, Admin, and DigitalMarketer
     let user =
@@ -227,13 +227,6 @@ export const login = async (req, res) => {
       });
     }
 
-    if (!user.password) {
-      return res.status(200).json({
-        message: "No password set on this account. Please log in using Google or Phone OTP, or reset your password.",
-        success: false,
-      });
-    }
-
     //checking/comparing the password is correct or not...
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
@@ -243,13 +236,8 @@ export const login = async (req, res) => {
       });
     }
 
-    // Update lastActiveAt safely
-    try {
-      user.lastActiveAt = new Date();
-      await user.save({ validateBeforeSave: false });
-    } catch (saveErr) {
-      console.warn("User save skipped on login:", saveErr.message);
-    }
+    // Notify on every login, for both job seekers and recruiters
+    await user.save();
 
     notificationService.notifyWelcome({
       userId: user._id,
@@ -321,7 +309,7 @@ export const jobseekerLogin = async (req, res) => {
       });
     }
 
-    const cleanEmail = normalizeAccountEmail(email);
+const cleanEmail = normalizeAccountEmail(email);
 
     // Only search in User collection for job seekers
     let user = await findModelByEmail(User, cleanEmail);
@@ -338,13 +326,6 @@ export const jobseekerLogin = async (req, res) => {
       }
       return res.status(200).json({
         message: "Job seeker account not found. Please sign up or check the email you used while registering.",
-        success: false,
-      });
-    }
-
-    if (!user.password) {
-      return res.status(200).json({
-        message: "No password set on this account. Please log in using Google or Phone OTP, or reset your password.",
         success: false,
       });
     }
@@ -433,7 +414,7 @@ export const recruiterLogin = async (req, res) => {
       });
     }
 
-    const cleanEmail = normalizeAccountEmail(email);
+const cleanEmail = normalizeAccountEmail(email);
 
     // Search in Recruiter and Admin collections for recruiters
     let user =
@@ -450,13 +431,6 @@ export const recruiterLogin = async (req, res) => {
       }
       return res.status(200).json({
         message: "Recruiter account not found. Please sign up or check the email you used while registering.",
-        success: false,
-      });
-    }
-
-    if (!user.password) {
-      return res.status(200).json({
-        message: "No password set on this account. Please log in using Google or Phone OTP, or reset your password.",
         success: false,
       });
     }
@@ -784,7 +758,7 @@ export const updateProfile = async (req, res) => {
       documents,
       autoApply,
     } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const { profilePhoto, resume } = req.files || {}; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
@@ -804,6 +778,24 @@ export const updateProfile = async (req, res) => {
 
     // finding the user by userId
     let user = await User.findById(userId);
+    // TEMP: Check candidate current profile by email
+// const testCandidate = await User.findOne({
+//   "emailId.email": "peeyushrasal36@gmail.com"
+// }).lean();
+
+// console.log("🔍 TEST CANDIDATE CURRENT PROFILE:", {
+//   fullname: testCandidate?.fullname,
+//   email: testCandidate?.emailId?.email,
+//   skills: testCandidate?.profile?.skills,
+//   experiences: testCandidate?.profile?.experiences,
+//   bio: testCandidate?.profile?.bio,
+//   resume: testCandidate?.profile?.resume,
+//   designation: testCandidate?.profile?.experiences?.at(-1)?.jobProfile,
+//   location: {
+//     city: testCandidate?.address?.city,
+//     state: testCandidate?.address?.state,
+//   },
+// });
 
     // if not user return user not found
     if (!user) {
@@ -888,7 +880,26 @@ export const updateProfile = async (req, res) => {
   console.log("AUTO APPLY SAVED VALUE:", user.profile.autoApply);
 }
 
+// if (user.profile.autoApply === true) {
+//   const activeJobs = await Job.find({
+//     "jobDetails.isActive": true
+//   }).select("_id");
 
+//   console.log(
+//     `🔄 Auto Apply ON: Processing ${activeJobs.length} existing active jobs`
+//   );
+
+//   for (const job of activeJobs) {
+//     try {
+//       await autoApply(job._id);
+//     } catch (err) {
+//       console.error(
+//         `Auto Apply failed for existing job ${job._id}:`,
+//         err.message
+//       );
+//     }
+//   }
+// }
 
     // Updating qualification + otherQualification
     if (qualification && user.profile.qualification !== qualification) {
@@ -1062,7 +1073,7 @@ export const sendMessage = async (req, res) => {
 
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER, // Access from .env
         pass: process.env.EMAIL_PASS, // Access from .env
@@ -1105,7 +1116,7 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email, role } = req.body;
 
-    if (!email || typeof email !== "string") {
+if (!email || typeof email !== "string") {
       return res.status(400).json({
         message: "Please provide a valid email address.",
         success: false,
@@ -1125,12 +1136,13 @@ export const forgotPassword = async (req, res) => {
     }
 
     if (!user) {
-      const [studentAccount, recruiterAccount, adminAccount, marketerAccount] = await Promise.all([
-        findModelByEmail(User, cleanEmail),
-        findModelByEmail(Recruiter, cleanEmail),
-        findModelByEmail(Admin, cleanEmail),
-        findModelByEmail(DigitalMarketer, cleanEmail),
-      ]);
+      const [studentAccount, recruiterAccount, adminAccount, marketerAccount] =
+        await Promise.all([
+          findModelByEmail(User, cleanEmail),
+          findModelByEmail(Recruiter, cleanEmail),
+          findModelByEmail(Admin, cleanEmail),
+          findModelByEmail(DigitalMarketer, cleanEmail),
+        ]);
 
       // Prioritize candidate (student) accounts first, then recruiter
       const foundAccounts = [
@@ -1143,14 +1155,27 @@ export const forgotPassword = async (req, res) => {
       const genericWords = new Set([
         "user", "test", "testing", "tester", "new", "admin", "recruiter",
         "student", "candidate", "jobseeker", "job", "seeker", "null",
-        "undefined", "company", "compony", "hr", "demo", "account", "profile", "na", "none"
+        "undefined", "company", "compony", "hr", "demo", "account",
+        "profile", "na", "none"
       ]);
 
       if (foundAccounts.length > 0) {
         // Find best match that has a meaningful human name
         const best = foundAccounts.find((item) => {
-          const n = (item.doc.fullname || item.doc.fullName || item.doc.name || "").trim().toLowerCase();
-          return n && n.length > 1 && !genericWords.has(n) && !n.startsWith("test ") && !n.endsWith(" test");
+          const n = (
+            item.doc.fullname ||
+            item.doc.fullName ||
+            item.doc.name ||
+            ""
+          ).trim().toLowerCase();
+
+          return (
+            n &&
+            n.length > 1 &&
+            !genericWords.has(n) &&
+            !n.startsWith("test ") &&
+            !n.endsWith(" test")
+          );
         }) || foundAccounts[0];
 
         user = best.doc;
@@ -1165,7 +1190,7 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    // Resolve a clean, human-friendly full name
+// Resolve a clean, human-friendly full name
     const genericWords = new Set([
       "user", "test", "testing", "tester", "new", "admin", "recruiter",
       "student", "candidate", "jobseeker", "job", "seeker", "null",
@@ -1178,50 +1203,81 @@ export const forgotPassword = async (req, res) => {
       user.fullName,
       user.name,
       user.username,
-      user.profile?.firstName ? `${user.profile.firstName} ${user.profile.lastName || ""}` : null,
+      user.profile?.firstName
+        ? `${user.profile.firstName} ${user.profile.lastName || ""}`
+        : null,
     ];
 
     for (let raw of candidateNames) {
       if (typeof raw !== "string" || !raw.trim()) continue;
-      // Strip trailing digits (e.g. "Sravan Pilla 2" -> "Sravan Pilla")
-      let cleaned = raw.trim().replace(/\s*\d+$/, "").replace(/[0-9_#$@!%^&*()+=~`<>?/:;{}[\]|\\"]+/g, " ").trim();
+
+      let cleaned = raw
+        .trim()
+        .replace(/\s*\d+$/, "")
+        .replace(/[0-9_#$@!%^&*()+=~`<>?/:;{}[\]|\\"]+/g, " ")
+        .trim();
+
       const words = cleaned.split(/\s+/).filter(Boolean);
-      const meaningful = words.filter((w) => !genericWords.has(w.toLowerCase()));
+      const meaningful = words.filter(
+        (w) => !genericWords.has(w.toLowerCase())
+      );
 
       if (meaningful.length > 0) {
         userName = meaningful
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .map(
+            (w) =>
+              w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          )
           .join(" ");
         break;
       }
     }
 
-    // Fallback: If no good name in database, extract clean name from email prefix without digits (e.g. sravanpilla1809 -> Sravan Pilla)
+    // Fallback: extract clean name from email prefix
     if (!userName) {
       const emailPrefix = cleanEmail.split("@")[0] || "";
       const alphaPrefix = emailPrefix.replace(/\d+/g, "");
-      const parts = alphaPrefix.split(/[._\-+]+/).filter((w) => w.length >= 2 && !genericWords.has(w.toLowerCase()));
+
+      const parts = alphaPrefix
+        .split(/[._\-+]+/)
+        .filter(
+          (w) =>
+            w.length >= 2 &&
+            !genericWords.has(w.toLowerCase())
+        );
+
       if (parts.length > 0) {
         userName = parts
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+          .map(
+            (w) =>
+              w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          )
           .join(" ");
       }
     }
 
     // Expiry from env or default 1 hour
-    const tokenExpiry = process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "1h";
+    const tokenExpiry =
+      process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "1h";
 
     // Create a secure token with user identification
     const resetToken = jwt.sign(
-      { userId: String(user._id), email: cleanEmail, role: resolvedRole || user.role || "user" },
+      {
+        userId: String(user._id),
+        email: cleanEmail,
+        role: resolvedRole || user.role || "user",
+      },
       process.env.SECRET_KEY,
       { expiresIn: tokenExpiry }
     );
 
-    const frontendBase = (process.env.FRONTEND_URL || "https://greathire.in")
+    const frontendBase = (
+      process.env.FRONTEND_URL || "https://greathire.in"
+    )
       .replace(/^["']|["']$/g, "")
       .trim()
       .replace(/\/+$/, "") || "https://greathire.in";
+
     const resetURL = `${frontendBase}/reset-password/${resetToken}`;
 
     // Send reset email via dedicated Forgot Password email service
@@ -1232,14 +1288,91 @@ export const forgotPassword = async (req, res) => {
       resetURL,
     });
 
+    // Generate reset URL
+    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // or your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+
+    // const mailOptions = {
+    //   from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
+    //   to: email,
+    //   subject: "Reset Your Password",
+    //   html: `
+    //     <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+    //       <div style="text-align: center; margin-bottom: 20px;">
+    //         <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+    //         <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
+    //       </div>
+    
+    //       <h3 style="color: #333;">Hi ${user.fullname},</h3>
+    //       <p style="color: #555;">We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
+    
+    //       <div style="text-align: center; margin: 20px 0;">
+    //         <a href="${resetURL}" target="_blank" style="background-color: #1D4ED8; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
+    //           Reset Password
+    //         </a>
+    //       </div>
+    
+    //       <p style="color: #555;">
+    //         Please note: This link will expire in 5 minutes. If you didn’t request this reset, you can ignore this email.
+    //       </p>
+    
+    //       <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
+    //         <p style="font-size: 14px; color: #888;">If you need help, feel free to reach out to our support team.</p>
+    //       </div>
+    
+    //       <div style="text-align: center; margin-top: 20px;">
+    //         <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+    //       </div>
+    //     </div>
+    //   `,
+    // };
+    
+    const mailOptions = {
+  from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: "Reset Your Password",
+  html: `
+    <h2>Password Reset Request</h2>
+    <p>You requested to reset your GreatHire password.</p>
+    <p>Click the button below to reset your password:</p>
+
+    <a href="${resetURL}" 
+       style="background-color:#007bff;color:white;padding:12px 20px;
+              text-decoration:none;border-radius:5px;display:inline-block;">
+      Reset Password
+    </a>
+
+    <p>This link will expire in 5 minutes.</p>
+    <p>If you did not request this, please ignore this email.</p>
+  `,
+};
+    // Send email
+    await transporter.sendMail(mailOptions);
+
     return res.status(200).json({
-      message: "Password reset link sent successfully. Please check your email inbox.",
+      message: "Password reset link sent successfully.",
       success: true,
     });
-  } catch (error) {
-    console.error("❌ Error in forgotPassword controller:", error);
-    res.status(500).json({
-      message: error.message || "An error occurred while sending the reset link. Please try again later.",
+  } 
+  // catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: "Internal Server Error", success: false });
+  // }
+    catch (error) {
+    console.error("Forgot Password Error:", error);
+    console.error("Error Message:", error.message);
+    console.error("Error Stack:", error.stack);
+
+    return res.status(500).json({
+      message: error.message,
       success: false,
     });
   }
@@ -1248,10 +1381,14 @@ export const forgotPassword = async (req, res) => {
 // this controller reset the password of user
 export const resetPassword = async (req, res) => {
   try {
-    const { decoded, token, newPassword } = req.body;
+const { decoded, token, newPassword } = req.body;
 
     // Validate password type and length immediately
-    if (!newPassword || typeof newPassword !== "string" || newPassword.length < 8) {
+    if (
+      !newPassword ||
+      typeof newPassword !== "string" ||
+      newPassword.length < 8
+    ) {
       return res.status(400).json({
         message: "Password must be at least 8 characters long.",
         success: false,
@@ -1265,6 +1402,7 @@ export const resetPassword = async (req, res) => {
     if (token) {
       try {
         const verified = jwt.verify(token, process.env.SECRET_KEY);
+
         if (verified) {
           userId = userId || verified.userId;
           userEmail = userEmail || verified.email;
@@ -1272,12 +1410,15 @@ export const resetPassword = async (req, res) => {
       } catch (err) {
         if (err.name === "TokenExpiredError") {
           return res.status(400).json({
-            message: "This password reset link has expired. Please request a new link.",
+            message:
+              "This password reset link has expired. Please request a new link.",
             success: false,
           });
         }
+
         return res.status(400).json({
-          message: "Reset token is invalid. Please request a new link.",
+          message:
+            "Reset token is invalid. Please request a new link.",
           success: false,
         });
       }
@@ -1285,7 +1426,8 @@ export const resetPassword = async (req, res) => {
 
     if (!userId && !userEmail) {
       return res.status(400).json({
-        message: "Invalid reset session. Please request a new password reset link.",
+        message:
+          "Invalid reset session. Please request a new password reset link.",
         success: false,
       });
     }
@@ -1303,7 +1445,14 @@ export const resetPassword = async (req, res) => {
 
     // 2. Fallback to email query if user was not found by ID
     if (!user && userEmail) {
-      const emailQuery = { $regex: new RegExp(`^${userEmail.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") };
+      const escapedEmail = userEmail
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const emailQuery = {
+        $regex: new RegExp(`^${escapedEmail}$`, "i"),
+      };
+
       user =
         (await User.findOne({ "emailId.email": emailQuery })) ||
         (await Recruiter.findOne({ "emailId.email": emailQuery })) ||
@@ -1313,25 +1462,26 @@ export const resetPassword = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: "User account not found. Please request a new reset link.",
+        message:
+          "User account not found. Please request a new reset link.",
         success: false,
       });
     }
 
-    // Hash new password
+    // Hash new password my hashing 10 times
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update user password using direct update to prevent unrelated schema validation issues
     await user.constructor.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
 
     return res.status(200).json({
-      message: "Password reset successfully. You can now log in with your new password.",
+      message: "Password reset successfully.",
       success: true,
     });
   } catch (error) {
-    console.error("❌ Error resetting password:", error);
+    console.error("Error resetting password:", error);
     return res.status(500).json({
-      message: error.message || "Failed to reset password. Please try again.",
+message: error.message || "Failed to reset password. Please try again.",
       success: false,
     });
   }
@@ -1454,7 +1604,7 @@ export const sendOtp = async (req, res) => {
 
     // Send OTP via email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
@@ -1705,15 +1855,55 @@ export const getLoginHistory = async (req, res) => {
   }
 };
 
+// export const getMe = async (req, res) => {
+//   try {
+//     const user =
+//       (await User.findById(req.id).select("-password")) ||
+//       (await Recruiter.findById(req.id).select("-password"));
+//     if (!user) return res.status(404).json({ success: false, message: "User not found" });
+//     return res.status(200).json({ success: true, user });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
 export const getMe = async (req, res) => {
   try {
-    const user =
-      (await User.findById(req.id).select("-password")) ||
-      (await Recruiter.findById(req.id).select("-password"));
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-    return res.status(200).json({ success: true, user });
+    const jobSeeker = await User.findById(req.id).select("-password");
+
+    if (jobSeeker) {
+
+      // ✅ OLD USER + AUTO APPLY ON
+      if (jobSeeker.profile?.autoApply === true) {
+        await autoApplyExistingJobsForUser(jobSeeker._id);
+      }
+
+      return res.status(200).json({
+        success: true,
+        user: jobSeeker
+      });
+    }
+
+    const recruiter = await Recruiter.findById(req.id).select("-password");
+
+    if (recruiter) {
+      return res.status(200).json({
+        success: true,
+        user: recruiter
+      });
+    }
+
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("getMe error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
   }
 };
 

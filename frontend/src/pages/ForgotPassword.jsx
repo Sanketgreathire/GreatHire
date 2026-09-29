@@ -63,11 +63,13 @@ const ForgotPassword = () => {
       } else {
         toast.error(response.data.message || "Unable to send password reset link.");
       }
-    } catch (err) {
-      console.error(`Error in sending password reset link:`, err);
+} catch (err) {
+      console.error("Error in sending password reset link:", err);
+
       const errorMessage =
         err.response?.data?.message ||
         "Unable to connect to server. Please ensure the backend server is running.";
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);

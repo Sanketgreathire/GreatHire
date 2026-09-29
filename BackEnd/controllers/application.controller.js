@@ -1,22 +1,13 @@
 import { User } from "../models/user.model.js";
 import { calculateMatchScore } from "../services/resumeMatch.service.js";
-import {
-  screenCandidate,
-  scoreApplication,
-  overrideApplicationScore,
-  applyApplicationTransition,
-  getEnrichedCandidateProfile,
-} from "../services/screeningEngine.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
-import StageHistory from "../models/stageHistory.model.js";
 import Notification from "../models/notification.model.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
-
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -25,27 +16,6 @@ export const VALID_STATUSES = [
   "Shortlisted",
   "Rejected",
 ];
-
-const screenApplicationAfterCreate = async (application, user, job) => {
-  try {
-    const candidateProfile = await getEnrichedCandidateProfile(
-      user.profile,
-      application.resume || user.profile?.resume || ""
-    );
-    const screeningResult = screenCandidate(candidateProfile, job);
-    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
-
-    await applyApplicationTransition({
-      application,
-      decision,
-      score: screeningResult.score,
-      changedBy: user._id,
-      notify: false,
-    });
-  } catch (screeningError) {
-    console.error("AI Screening Error:", screeningError.message);
-  }
-};
 
 // Apply to a particular job
 export const applyJob = async (req, res) => {
@@ -62,11 +32,11 @@ export const applyJob = async (req, res) => {
       experience,
       jobTitle,
       company,
-      jobId: bodyJobId,
+      jobId,
       answers,
     } = req.body;
-    const jobId = bodyJobId || req.params.jobId;
     const resume = req.files?.resume;
+    // const { resume } = req.files;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -102,11 +72,14 @@ export const applyJob = async (req, res) => {
     if (state && state !== user.address.state) user.address.state = state;
     if (country && country !== user.address.country) user.address.country = country;
 
+    user.profile = user.profile || {};
+    user.profile.experience = user.profile.experience || {};
+
     user.profile.coverLetter = coverLetter;
-    if (!user.profile.experience) user.profile.experience = {};
     user.profile.experience.experienceDetails = experience;
     user.profile.experience.jobProfile = jobTitle;
     user.profile.experience.companyName = company;
+
 
     // Upload resume if provided
     if (resume && resume.length > 0) {
@@ -161,6 +134,7 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       resume: user.profile?.resume || "",
       answers: Array.isArray(answers) ? answers : [],
       status: "Pending",
+      autoApplied: false,
     });
 
     await newApplication.save();
@@ -196,8 +170,6 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       recruiterId: job.created_by,
       applicationId: newApplication._id,
     });
-
-    await screenApplicationAfterCreate(newApplication, user, job);
 
     res.status(201).json({
       success: true,
@@ -239,6 +211,21 @@ export const getApplicants = async (req, res) => {
 
     // Get the job to check company plan
     const job = await Job.findById(jobId).populate("company");
+
+    if (!job) {
+  return res.status(404).json({
+    success: false,
+    message: "Job not found",
+  });
+}
+
+if (job.created_by.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to view applicants for this job",
+  });
+}
+
     const companyPlan = job?.company?.plan || "FREE";
     const isFreePlan = companyPlan === "FREE";
 
@@ -247,7 +234,7 @@ export const getApplicants = async (req, res) => {
         path: "applicant",
         select: "fullname emailId phoneNumber profile address isProfileBoosted",
       })
-      .select("applicant status answers createdAt matchScore screeningStatus recruitmentStatus")
+      .select("applicant status answers createdAt")
       .sort({ createdAt: -1 })
       .limit(isFreePlan ? 30 : 0); // 0 = no limit for paid plans
 
@@ -268,6 +255,23 @@ export const getApplicants = async (req, res) => {
 export const getApplicationDetails = async (req, res) => {
   try {
     const { jobId, candidateId } = req.params;
+
+    const job = await Job.findById(jobId);
+
+if (!job) {
+  return res.status(404).json({
+    success: false,
+    message: "Job not found",
+  });
+}
+
+if (job.created_by.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to view this application",
+  });
+}
+
 
     const application = await Application.findOne({
       job: jobId,
@@ -296,9 +300,6 @@ export const getApplicationDetails = async (req, res) => {
       resumeUrl: application.applicant.profile?.resume,
       status: application.status,
       appliedAt: application.createdAt,
-      matchScore: application.matchScore,
-      screeningStatus: application.screeningStatus,
-      recruitmentStatus: application.recruitmentStatus,
     };
 
     return res.status(200).json({ success: true, data: candidateData });
@@ -337,121 +338,34 @@ export const updateStatus = async (req, res) => {
         .json({ message: "Application not found.", success: false });
     }
 
-    await applyApplicationTransition({
-      application,
-      decision: status,
-      changedBy: req.id,
-      notify: true,
+    const jobOwnerId = application.job?.created_by;
+
+if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    message: "You are not authorized to update this application.",
+    success: false,
+  });
+}
+
+    const previousStatus = application.status;
+    application.status = status;
+    await application.save();
+
+    // ✅ Send notification to applicant about status change
+    await notificationService.notifyApplicationStatusChanged({
+      applicantId: application.applicant._id,
+      jobId: application.job._id,
+      jobTitle: application.job.jobDetails.title,
+      companyName: application.job.jobDetails.companyName,
+      status: status,
+      previousStatus: previousStatus,
+      recruiterId: req.id,
     });
 
     return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {
     console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-};
-
-export const transitionApplication = async (req, res) => {
-  try {
-    const applicationId = req.params.id;
-
-    const { decision, score } = req.body;
-
-    if (!applicationId) {
-      return res.status(400).json({
-        success: false,
-        message: "Application ID is required",
-      });
-    }
-
-    if (!decision) {
-      return res.status(400).json({
-        success: false,
-        message: "Decision is required",
-      });
-    }
-
-    if (!VALID_STATUSES.includes(decision)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid decision. Valid values: ${VALID_STATUSES.join(", ")}`,
-      });
-    }
-
-    const application = await Application.findById(applicationId)
-      .populate("applicant")
-      .populate("job");
-
-    if (!application) {
-      return res.status(404).json({
-        success: false,
-        message: "Application not found",
-      });
-    }
-
-    await applyApplicationTransition({
-      application,
-      decision,
-      score,
-      changedBy: req.id,
-      notify: true,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Application transitioned successfully",
-      application,
-    });
-  } catch (error) {
-    console.error("Error transitioning application:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to transition application",
-      error: error.message,
-    });
-  }
-};
-
-export const getApplicationHistory = async (req, res) => {
-  try {
-    const applicationId = req.params.id;
-
-    if (!applicationId) {
-      return res.status(400).json({
-        success: false,
-        message: "Application ID is required",
-      });
-    }
-
-    const application = await Application.findById(applicationId);
-
-    if (!application) {
-      return res.status(404).json({
-        success: false,
-        message: "Application not found",
-      });
-    }
-
-    const history = await StageHistory.find({
-      application: applicationId,
-    })
-      .populate("changedBy", "fullname emailId")
-      .sort({ changedAt: 1 });
-
-    return res.status(200).json({
-      success: true,
-      applicationId,
-      history,
-    });
-  } catch (error) {
-    console.error("Error fetching application history:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch application history",
-      error: error.message,
-    });
   }
 };
 
@@ -519,6 +433,7 @@ export const bulkApplyJobs = async (req, res) => {
           resume: user.profile?.resume || "",
           answers: Array.isArray(answersMap[jobId]) ? answersMap[jobId] : [],
           status: "Pending",
+          autoApplied: false,
         });
 
         await newApplication.save();
@@ -537,8 +452,6 @@ export const bulkApplyJobs = async (req, res) => {
         } catch (notifErr) {
           console.error("Notification error for jobId", jobId, notifErr.message);
         }
-
-        await screenApplicationAfterCreate(newApplication, user, job);
 
         applied.push(jobId);
       } catch (jobErr) {
@@ -560,8 +473,31 @@ export const deleteApplication = async (req, res) => {
     const applicationId = req.params.id;
 
     const application = await Application.findById(applicationId);
+
     if (!application) {
       return res.status(404).json({ message: "Application not found.", success: false });
+    }
+
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    const isAdminUser =
+      user.role === "admin" || user.role === "Owner";
+
+    const isApplicant =
+      application.applicant.toString() === req.id.toString();
+
+    if (!isAdminUser && !isApplicant) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this application.",
+        success: false,
+      });
     }
 
     // Remove application from the job's application array
@@ -597,105 +533,5 @@ export const getAllApplications = async (req, res) => {
   } catch (error) {
     console.error("Error fetching all applications:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-};
-
-/**
- * Manually trigger AI screening
- *
- * POST /api/v1/application/:id/score
- */
-export const scoreApplicationManually = async (req, res) => {
-  try {
-    const applicationId = req.params.id;
-
-    if (!applicationId) {
-      return res.status(400).json({
-        success: false,
-        message: "Application ID is required",
-      });
-    }
-
-    const application = await Application.findById(applicationId);
-    if (!application) {
-      return res.status(404).json({
-        success: false,
-        message: "Application not found",
-      });
-    }
-
-    const result = await scoreApplication(applicationId, req.id);
-
-    return res.status(200).json({
-      success: true,
-      message: `Application screened successfully. Status: ${result.status}`,
-      result,
-      application: result.application,
-    });
-  } catch (error) {
-    console.error("Manual Screening Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to screen application",
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Recruiter override of AI screening
- *
- * POST /api/v1/application/:id/override-score
- */
-export const overrideApplication = async (req, res) => {
-  try {
-    const applicationId = req.params.id;
-    const decision = req.body.decision || req.body.status;
-    const overrideScore = req.body.score !== undefined ? req.body.score : req.body.matchScore;
-
-    if (!decision) {
-      return res.status(400).json({
-        success: false,
-        message: "Decision is required. Use Shortlisted or Rejected.",
-      });
-    }
-
-    if (!["Shortlisted", "Rejected"].includes(decision)) {
-      return res.status(400).json({
-        success: false,
-        message: "Decision must be Shortlisted or Rejected.",
-      });
-    }
-
-    const application = await Application.findById(applicationId);
-    if (!application) {
-      return res.status(404).json({
-        success: false,
-        message: "Application not found",
-      });
-    }
-
-    const result = await overrideApplicationScore(
-      applicationId,
-      decision,
-      req.id,
-      overrideScore
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: `Application manually ${decision.toLowerCase()}`,
-      application: result.application,
-      result,
-    });
-  } catch (error) {
-    console.error("Override Application Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to override application score",
-      error: error.message,
-    });
   }
 };

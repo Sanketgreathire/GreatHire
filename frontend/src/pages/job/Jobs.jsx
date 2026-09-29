@@ -8,7 +8,13 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { FiFilter } from "react-icons/fi";
 
 export default function Jobs() {
-  const { jobs = [], filterJobs, resetFilter, isLoading, searchMeta } = useJobDetails();
+  const {
+    jobs = [],
+    filterJobs,
+    resetFilter,
+    isLoading,
+    searchMeta,
+  } = useJobDetails();
 
   const [filters, setFilters] = useState({
     jobTitle: "",
@@ -19,14 +25,21 @@ export default function Jobs() {
     datePosted: [],
   });
 
-  const [searchInfo, setSearchInfo] = useState({ titleKeyword: "" });
-  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [searchInfo, setSearchInfo] = useState({
+    titleKeyword: "",
+  });
 
+  const [showMobileFilter, setShowMobileFilter] =
+    useState(false);
+
+  // Handle filter changes
   const handleFilterChange = useCallback(
     (newFilters) => {
       setFilters(newFilters);
+
       filterJobs(
-        newFilters.jobTitle || searchInfo.titleKeyword,
+        newFilters.jobTitle ||
+          searchInfo.titleKeyword,
         newFilters.location,
         newFilters.jobType,
         newFilters.workPlace,
@@ -36,15 +49,34 @@ export default function Jobs() {
     [filterJobs, searchInfo.titleKeyword]
   );
 
+  // Reset all filters
   const handleReset = useCallback(() => {
-    setFilters({ jobTitle: "", location: [], jobType: [], workPlace: [], company: "", datePosted: [] });
-    setSearchInfo({ titleKeyword: "" });
+    setFilters({
+      jobTitle: "",
+      location: [],
+      jobType: [],
+      workPlace: [],
+      company: "",
+      datePosted: [],
+    });
+
+    setSearchInfo({
+      titleKeyword: "",
+    });
+
     resetFilter();
   }, [resetFilter]);
 
-  const handleSearchUpdate = useCallback((update) => {
-    setSearchInfo((prev) => ({ ...prev, ...update }));
-  }, []);
+  // Update search information
+  const handleSearchUpdate = useCallback(
+    (update) => {
+      setSearchInfo((prev) => ({
+        ...prev,
+        ...update,
+      }));
+    },
+    []
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
@@ -58,33 +90,48 @@ export default function Jobs() {
             <span className="inline-block px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 text-xs font-semibold mb-3">
               No. 1 Job Hunt Website
             </span>
+
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
               Search Jobs
+
               <span className="block mt-1">
                 &amp; Get Hired{" "}
-                <span className="text-blue-600 dark:text-blue-400">Smarter, Faster, Risk Free</span>
+                <span className="text-blue-600 dark:text-blue-400">
+                  Smarter, Faster, Risk Free
+                </span>
               </span>
             </h1>
           </div>
 
           {/* Search Bar */}
-          <JobSearch searchInfo={searchInfo} onSearchUpdate={handleSearchUpdate} />
+          <JobSearch
+            searchInfo={searchInfo}
+            onSearchUpdate={handleSearchUpdate}
+          />
 
           {/* Mobile Filter Toggle */}
           <div className="flex items-center justify-between mt-4 mb-2 sm:hidden px-1">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isLoading ? "Loading..." : `${searchMeta?.total ?? jobs.length} jobs found`}
+              {isLoading
+                ? "Loading..."
+                : `${searchMeta?.total ?? jobs.length} jobs found`}
             </p>
+
             <button
-              onClick={() => setShowMobileFilter(true)}
+              type="button"
+              onClick={() =>
+                setShowMobileFilter(true)
+              }
               className="flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 text-sm font-semibold"
             >
-              <FiFilter size={16} /> Filters
+              <FiFilter size={16} />
+              Filters
             </button>
           </div>
 
           <div className="flex gap-4 mt-4 items-start">
-            {/* Sidebar Filter — desktop */}
+
+            {/* Sidebar Filter — Desktop */}
             <aside className="hidden sm:block w-56 lg:w-64 flex-shrink-0 sticky top-[80px]">
               <FilterCard
                 filters={filters}
@@ -99,7 +146,9 @@ export default function Jobs() {
                 filters={filters}
                 onFilterChange={handleFilterChange}
                 onReset={handleReset}
-                onClose={() => setShowMobileFilter(false)}
+                onClose={() =>
+                  setShowMobileFilter(false)
+                }
               />
             )}
 
@@ -114,7 +163,6 @@ export default function Jobs() {
               )}
             </div>
           </div>
-
         </div>
       </main>
 
@@ -122,3 +170,4 @@ export default function Jobs() {
     </div>
   );
 }
+

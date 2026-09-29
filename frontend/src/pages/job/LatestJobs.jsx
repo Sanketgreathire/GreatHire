@@ -4,6 +4,8 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import { Helmet } from "react-helmet-async";
 
 const LatestJobs = ({ jobs = [] }) => {
+   console.log("LatestJobs jobs:", jobs);
+  console.log("LatestJobs jobs count:", jobs.length);
   const { setSelectedJob } = useJobDetails();
   const prevJobsRef = useRef();
 

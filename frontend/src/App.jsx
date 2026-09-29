@@ -2,7 +2,8 @@ import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
+import API from "./utils/api.js";
 import { setUser } from "./redux/authSlice.js";
 import { USER_API_END_POINT } from "./utils/ApiEndPoint";
 
@@ -308,8 +309,10 @@ function App() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      axios
-        .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+      // axios
+      //   .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+      API
+  .get(`${USER_API_END_POINT}/me`)
         .then((res) => {
           if (res.data.success) {
             startTransition(() => dispatch(setUser(res.data.user)));

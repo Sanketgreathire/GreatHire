@@ -3,42 +3,16 @@ import { Job } from "../../models/job.model.js";
 import { Application } from "../../models/application.model.js";
 import notificationService from "../../utils/notificationService.js";
 import { calculateMatchPercentage } from "./resumeMatching.service.js";
-import {
-  screenCandidate,
-  applyApplicationTransition,
-  getEnrichedCandidateProfile,
-} from "../../services/screeningEngine.js";
 
 
 
 
 const AUTO_APPLY_THRESHOLD = 65;
 
-const screenAutoAppliedApplication = async (application, user, job) => {
-  try {
-    const candidateProfile = await getEnrichedCandidateProfile(
-      user.profile,
-      application.resume || user.profile?.resume || ""
-    );
-    const screeningResult = screenCandidate(candidateProfile, job);
-    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
-
-    await applyApplicationTransition({
-      application,
-      decision,
-      score: screeningResult.score,
-      changedBy: user._id,
-      notify: false,
-    });
-  } catch (screeningError) {
-    console.error("Auto Apply screening error:", screeningError.message);
-  }
-};
-
 export const autoApply = async (jobId) => {
   try {
-   console.log("🚀 AUTO APPLY FUNCTION CALLED");
-    console.log("🎯 AUTO APPLY JOB ID:", jobId);
+  //  console.log("🚀 AUTO APPLY FUNCTION CALLED");
+  //   console.log("🎯 AUTO APPLY JOB ID:", jobId);
     // 1. Find the newly posted job
     const job = await Job.findById(jobId);
 
@@ -52,31 +26,35 @@ export const autoApply = async (jobId) => {
       console.log(`Auto Apply: Job ${jobId} is not active`);
       return;
     }
-
+    
     // 3. Get users who enabled Auto Apply
     const users = await User.find({
       "profile.autoApply": true,
     });
 
-    console.log("👥 AUTO APPLY USERS FOUND:", users.length);
 
-users.forEach((user) => {
-  console.log("👤 User ID:", user._id);
-  console.log("👤 User Name:", user.fullname);
-  console.log("⚡ Auto Apply:", user.profile?.autoApply);
-});
 
-    console.log("========== AUTO APPLY DEBUG ==========");
-console.log("Auto Apply users count:", users.length);
 
-users.forEach((user) => {
-  console.log("User:", user._id);
-  console.log("Name:", user.fullname);
-  console.log("Auto Apply:", user.profile?.autoApply);
-  console.log("Skills:", user.profile?.skills);
-});
 
-console.log("======================================");
+    // console.log("👥 AUTO APPLY USERS FOUND:", users.length);
+
+// users.forEach((user) => {
+//   console.log("👤 User ID:", user._id);
+//   console.log("👤 User Name:", user.fullname);
+//   console.log("⚡ Auto Apply:", user.profile?.autoApply);
+// });
+
+//     console.log("========== AUTO APPLY DEBUG ==========");
+// console.log("Auto Apply users count:", users.length);
+
+// users.forEach((user) => {
+//   console.log("User:", user._id);
+//   console.log("Name:", user.fullname);
+//   console.log("Auto Apply:", user.profile?.autoApply);
+//   console.log("Skills:", user.profile?.skills);
+// });
+
+// console.log("======================================");
 
 
 
@@ -84,11 +62,11 @@ console.log("======================================");
     // 4. Get job skills
     const jobSkills = job.jobDetails?.skills || [];
 
-    console.log("💼 JOB SKILLS:", jobSkills);
-console.log("💼 JOB SKILLS COUNT:", jobSkills.length);
+//     console.log("💼 JOB SKILLS:", jobSkills);
+// console.log("💼 JOB SKILLS COUNT:", jobSkills.length);
 
     if (!jobSkills.length) {
-      console.log(`Auto Apply: Job ${jobId} has no skills`);
+      // console.log(`Auto Apply: Job ${jobId} has no skills`);
       return;
     }
 
@@ -98,14 +76,14 @@ console.log("💼 JOB SKILLS COUNT:", jobSkills.length);
         // Get user's skills
         const userSkills = user.profile?.skills || [];
 
-        console.log("👤 USER:", user.fullname);
-console.log("🛠️ USER SKILLS:", userSkills);
-console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
+//         console.log("👤 USER:", user.fullname);
+// console.log("🛠️ USER SKILLS:", userSkills);
+// console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
 
         if (!userSkills.length) {
-          console.log(
-            `Auto Apply: User ${user._id} has no skills`
-          );
+          // console.log(
+          //   `Auto Apply: User ${user._id} has no skills`
+          // );
           continue;
         }
 
@@ -115,6 +93,8 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
           jobSkills
         );
 
+        
+
 //         console.log("📊 MATCH CALCULATION");
 // console.log("👤 User:", user.fullname);
 // console.log("🛠️ User Skills:", userSkills);
@@ -122,15 +102,20 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
 // console.log("📈 Match Percentage:", matchPercentage + "%");
 // console.log("🎯 Required Threshold:", AUTO_APPLY_THRESHOLD + "%");
 
-        console.log(
-          `Auto Apply: User ${user._id} → Job ${jobId} → ${matchPercentage}%`
-        );
+        // console.log(
+        //   `Auto Apply: User ${user._id} → Job ${jobId} → ${matchPercentage}%`
+        // );
 
         // 7. Apply only if match is 65% or more
         if (matchPercentage < AUTO_APPLY_THRESHOLD) {
-          console.log(
-            `Auto Apply: User ${user._id} skipped (${matchPercentage}%)`
-          );
+          if (user.emailId?.email === "peeyushrasal36@gmail.com") {
+    console.log(
+      `❌ AUTO APPLY SKIPPED: ${user.fullname} → ${job.jobDetails?.title} → ${matchPercentage}%`
+    );
+  }
+          // console.log(
+          //   `Auto Apply: User ${user._id} skipped (${matchPercentage}%)`
+          // );
           continue;
         }
 
@@ -149,9 +134,9 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
 // );
 
         if (existingApplication) {
-          console.log(
-            `Auto Apply: User ${user._id} already applied`
-          );
+          // console.log(
+          //   `Auto Apply: User ${user._id} already applied`
+          // );
           continue;
         }
 
@@ -184,6 +169,7 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
           status: "Pending",
 
           isAutoApplied: true,
+          autoApplied: true,
           matchPercentage: matchPercentage,
         });
 
@@ -200,7 +186,7 @@ console.log("🛠️ USER SKILLS COUNT:", userSkills.length);
         // 12. Create Notification for User
         const jobTitle = job.jobDetails?.title || "a new job";
 
-await notificationService.createAndEmit({
+       await notificationService.createAndEmit({
   recipient: user._id,
   recipientModel: "User",
   type: "auto-apply",
@@ -217,8 +203,6 @@ await notificationService.createAndEmit({
     autoApplied: true,
   },
 });
-
-        await screenAutoAppliedApplication(newApplication, user, job);
 
         console.log(
           `Auto Apply SUCCESS: User ${user._id} applied to Job ${jobId} with ${matchPercentage}% match`
@@ -291,6 +275,14 @@ export const autoApplyExistingJobsForUser = async (userId) => {
           jobSkills
         );
 
+      
+  // console.log(
+  //   `🔎 AUTO APPLY CHECK: ${user.fullname} → ${job.jobDetails?.title} → ${matchPercentage}%`
+  // );
+
+
+        
+
 //         console.log("📊 AUTO APPLY MATCH CHECK");
 // console.log("User:", user._id);
 // console.log("User Skills:", userSkills);
@@ -298,9 +290,9 @@ export const autoApplyExistingJobsForUser = async (userId) => {
 // console.log("Match Percentage:", matchPercentage);
 // console.log("Threshold:", AUTO_APPLY_THRESHOLD);
 
-        console.log(
-          `Existing Job Match: User ${userId} → Job ${job._id} → ${matchPercentage}%`
-        );
+        // console.log(
+        //   `Existing Job Match: User ${userId} → Job ${job._id} → ${matchPercentage}%`
+        // );
 
         // 7. 65% se kam hai to skip
         if (matchPercentage < AUTO_APPLY_THRESHOLD) {
@@ -314,9 +306,9 @@ export const autoApplyExistingJobsForUser = async (userId) => {
         });
 
         if (existingApplication) {
-          console.log(
-            `Already applied: User ${userId} → Job ${job._id}`
-          );
+          // console.log(
+          //   `Already applied: User ${userId} → Job ${job._id}`
+          // );
           continue;
         }
 
@@ -344,11 +336,14 @@ export const autoApplyExistingJobsForUser = async (userId) => {
           status: "Pending",
 
           isAutoApplied: true,
+          autoApplied: true,
           matchPercentage: matchPercentage,
         });
 
         // 10. Save application
         await newApplication.save();
+
+        
 
 //         console.log("✅ APPLICATION SAVED");
 // console.log("📝 Application ID:", newApplication._id);
@@ -391,8 +386,6 @@ export const autoApplyExistingJobsForUser = async (userId) => {
           },
         });
 
-        await screenAutoAppliedApplication(newApplication, user, job);
-
         console.log(
           `✅ Existing Job Auto Apply SUCCESS: User ${userId} → Job ${job._id} → ${matchPercentage}%`
         );
@@ -416,3 +409,4 @@ export const autoApplyExistingJobsForUser = async (userId) => {
     );
   }
 };
+

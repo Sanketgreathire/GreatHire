@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 // Import hooks for handling URL parameters and navigation
 import { useParams, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
 
 // Import image for UI
 import img5 from "../assets/webp/img5.webp";
@@ -51,11 +50,9 @@ const ResetPassword = () => {
 
   // State for new password input
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   // State for confirm password input
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // State for loading indicator
   const [loading, setLoading] = useState(false);
@@ -128,7 +125,6 @@ const ResetPassword = () => {
         `${USER_API_END_POINT}/reset-password`,
         {
           decoded, // Send decoded user data
-          token, // Send token for fallback resolution
           newPassword: password, // Send new password
         }
       );
@@ -210,7 +206,7 @@ const ResetPassword = () => {
       {/* Show reset password form if token is valid */}
       {status === "valid token" && (
         <>
-          <Navbar />
+<Navbar />
 
           <div className="flex flex-row md:flex-row-reverse items-center bg-gradient-to-tl from-gray-900 via-slate-900 to-gray-800 min-h-screen text-white">
             {/* Left Side - Background Image */}
@@ -223,7 +219,7 @@ const ResetPassword = () => {
             </div>
 
             {/* Right Side - Reset Password Form */}
-            <div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0">
+<div className="w-full md:w-1/3 p-8 flex flex-col space-y-4 max-w-md mx-auto md:mx-0">
               {/* Branding and title */}
               <h1 className="text-3xl font-bold text-center text-white">
                 Great<span className="text-blue-400">Hire</span>
@@ -240,7 +236,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-200"
+className="block text-sm font-medium text-gray-200"
                   >
                     New Password
                   </label>
@@ -271,7 +267,7 @@ const ResetPassword = () => {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-200"
+className="block text-sm font-medium text-gray-200"
                   >
                     Confirm Password
                   </label>
@@ -302,7 +298,7 @@ const ResetPassword = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
+className={`w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
