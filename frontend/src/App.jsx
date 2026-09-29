@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState, startTransition } from 'react';
+import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -14,8 +14,6 @@ import { MessageProvider } from './context/MessageContext';
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import NoIndex from "./components/SEO/NoIndex.jsx";
 import WhatsAppFloat from "./components/shared/WhatsAppFloat";
-import JobseekerChatbot from "./components/chat/JobseekerChatbot";
-import GreatHireIntro from "./components/GreatHireIntro";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
@@ -48,8 +46,6 @@ const ResumeAnalyzer         = lazy(() => import("./components/ResumeAnalyzer"))
 const ReferAndBoost          = lazy(() => import("./pages/ReferAndBoost"));
 const NotificationPage       = lazy(() => import("./components/notifications/NotificationPage"));
 const MessagingPage          = lazy(() => import("./components/messaging/MessagingPage"));
-const JobSeekerCalendar      = lazy(() => import("./pages/user/JobSeekerCalendar"));
-
 
 // ── Service / info pages ──
 const About                  = lazy(() => import("./pages/services/About"));
@@ -115,7 +111,6 @@ const AllApplicantsList      = lazy(() => import("./pages/recruiter/AllApplicant
 const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccount"));
 const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
-const RecruiterCalendar       = lazy(() => import("./pages/recruiter/RecruiterCalendar"));
 const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
 const ProtectedChatRoute = lazy(() => import("./components/shared/ProtectedChatRoute"));
 
@@ -228,8 +223,6 @@ const appRouter = createBrowserRouter([
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex/><SavedJobs /></></ProtectedUserRoute> },
-  { path: "/interviews", element: <ProtectedUserRoute><Suspense fallback={<PageLoader />}><><NoIndex /><JobSeekerCalendar /></></Suspense></ProtectedUserRoute> },
-  { path: "/calendar", element: <ProtectedUserRoute><Suspense fallback={<PageLoader />}><><NoIndex /><JobSeekerCalendar /></></Suspense></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><><NoIndex /><MainApply /></></ProtectedUserRoute> },
   { path: "/profile", element: <ProtectedUserRoute><><NoIndex/><UserProfile /></></ProtectedUserRoute> },
   { path: "/profile/settings-policy", element: <ProtectedUserRoute><><NoIndex /><SettingsPolicy /></></ProtectedUserRoute> },
@@ -272,7 +265,6 @@ const appRouter = createBrowserRouter([
       { path: "job-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><JobDetail /></RequireCompany></Suspense> },
       { path: "applicants-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><AppliedCandidatesList /></RequireCompany></Suspense> },
       { path: "resume-analyzer", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterResumeAnalyzer /></RequireCompany></Suspense> },
-      { path: "calendar", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterCalendar /></RequireCompany></Suspense> },
       { path: "applications/:jobId/:candidateId", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateInformation /></RequireCompany></Suspense> },
     ],
   },
@@ -314,13 +306,6 @@ const appRouter = createBrowserRouter([
 
 function App() {
   const dispatch = useDispatch();
-  const [showIntro, setShowIntro] = useState(true);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setShowIntro(false), 16000);
-    return () => window.clearTimeout(timer);
-  }, []);
-
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -348,7 +333,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-      {showIntro && <GreatHireIntro />}
       <JobDetailsProvider>
         <NotificationProvider>
           <MessageProvider>
@@ -356,7 +340,6 @@ function App() {
               <RouterProvider router={appRouter} />
             </Suspense>
             <WhatsAppFloat />
-            <JobseekerChatbot />
           </MessageProvider>
         </NotificationProvider>
       </JobDetailsProvider>
@@ -392,5 +375,5 @@ function App() {
     </div>
   );
 }
-export default App;
 
+export default App;
