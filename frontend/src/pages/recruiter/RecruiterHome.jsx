@@ -1,27 +1,22 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useSelector } from "react-redux";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { FaUsers, FaBriefcase, FaClipboardList, FaTrophy } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
 import { FiGift } from "react-icons/fi";
-import { Sparkles, Clock, ShieldOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
-import { addCompany } from "@/redux/companySlice";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
   const { jobPlan } = useSelector((state) => state.jobPlan);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [jobsStatistics, setJobsStatistics] = useState(null);
-  const [activatingTrial, setActivatingTrial] = useState(false);
 
   // ── 3-day free trial (Starter plan only) ──────────────────────────────
   const isTrialLive = !!(
@@ -29,37 +24,6 @@ const RecruiterHome = () => {
     company?.trialExpiresAt &&
     new Date(company.trialExpiresAt) > new Date()
   );
-  const canStartTrial =
-    (company?.plan || "FREE") === "FREE" &&
-    !company?.hasSubscription &&
-    !company?.hasUsedTrial &&
-    !isTrialLive;
-  const trialDaysLeft = isTrialLive
-    ? Math.max(1, Math.ceil((new Date(company.trialExpiresAt) - new Date()) / (24 * 60 * 60 * 1000)))
-    : 0;
-
-  const handleActivateTrial = useCallback(async () => {
-    if (activatingTrial) return;
-    setActivatingTrial(true);
-    try {
-      const { data } = await axios.post(
-        `${COMPANY_API_END_POINT}/activate-trial`,
-        {},
-        { withCredentials: true }
-      );
-      if (data.success) {
-        dispatch(addCompany(data.company));
-        toast.success("10-day trial activated! All features are unlocked (except AI Sourcing).");
-      } else {
-        toast.error(data.message || "Failed to activate trial.");
-      }
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to activate trial.");
-    } finally {
-      setActivatingTrial(false);
-    }
-  }, [activatingTrial, dispatch]);
-
   const fetchJobsStatistics = useCallback(async () => {
     if (!company?._id) return;
     try {
@@ -166,42 +130,6 @@ const RecruiterHome = () => {
                 </p>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* 3-Day Free Trial CTA (Starter plan only) */}
-        {canStartTrial && (
-          <div className="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <Sparkles className="w-8 h-8 flex-shrink-0 text-yellow-300" />
-              <div>
-                <h3 className="font-bold text-lg">Unlock all premium features free for 10 days</h3>
-                <p className="text-blue-100 text-sm mt-1">
-                  No credit card required. Unlimited job postings, advanced filters &amp; more.
-                  <span className="opacity-80"> (AI Sourcing not included in the trial.)</span>
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleActivateTrial}
-              disabled={activatingTrial}
-              className="whitespace-nowrap bg-white text-blue-700 font-semibold px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {activatingTrial ? "Activating…" : "🚀 Activate 10-Day Free Trial"}
-            </button>
-          </div>
-        )}
-
-        {/* Active trial status banner */}
-        {isTrialLive && (
-          <div className="mb-6 bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-400 p-4 rounded flex items-center gap-3">
-            <Clock className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-            <p className="text-sm text-emerald-700 dark:text-emerald-300">
-              <span className="font-medium">Trial Active:</span> {trialDaysLeft} day{trialDaysLeft === 1 ? "" : "s"} left with all premium features unlocked.{" "}
-              <span className="inline-flex items-center gap-1 opacity-80">
-                <ShieldOff className="w-3.5 h-3.5" /> AI Sourcing is not included.
-              </span>
-            </p>
           </div>
         )}
 
