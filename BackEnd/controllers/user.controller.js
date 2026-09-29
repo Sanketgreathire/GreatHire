@@ -10,6 +10,7 @@ import Job from "../models/job.model.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
+import { DigitalMarketer } from "../models/digitalmarketer.model.js";
 import { Contact } from "../models/contact.model.js";
 import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 // this model help to blacklist recent logout token
@@ -28,6 +29,7 @@ import { Application } from "../models/application.model.js";
 import notificationService from "../utils/notificationService.js";
 import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
 import { autoApply } from "../src/services/autoApply.service.js";
+import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -1280,82 +1282,20 @@ if (!email || typeof email !== "string") {
 
     const resetURL = `${frontendBase}/reset-password/${resetToken}`;
 
-    // Send reset email via dedicated Forgot Password email service
-    await sendForgotPasswordEmail({
-      toEmail: cleanEmail,
-      userName,
-      resetToken,
-      resetURL,
-    });
-
-    // Generate reset URL
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
-
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      service: "gmail", // or your email service provider
-      auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // Your email password
-      },
-    });
-
-    // const mailOptions = {
-    //   from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
-    //   to: email,
-    //   subject: "Reset Your Password",
-    //   html: `
-    //     <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-    //       <div style="text-align: center; margin-bottom: 20px;">
-    //         <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
-    //         <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
-    //       </div>
-    
-    //       <h3 style="color: #333;">Hi ${user.fullname},</h3>
-    //       <p style="color: #555;">We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
-    
-    //       <div style="text-align: center; margin: 20px 0;">
-    //         <a href="${resetURL}" target="_blank" style="background-color: #1D4ED8; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
-    //           Reset Password
-    //         </a>
-    //       </div>
-    
-    //       <p style="color: #555;">
-    //         Please note: This link will expire in 5 minutes. If you didn’t request this reset, you can ignore this email.
-    //       </p>
-    
-    //       <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
-    //         <p style="font-size: 14px; color: #888;">If you need help, feel free to reach out to our support team.</p>
-    //       </div>
-    
-    //       <div style="text-align: center; margin-top: 20px;">
-    //         <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
-    //       </div>
-    //     </div>
-    //   `,
-    // };
-    
-    const mailOptions = {
-  from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-  to: email,
-  subject: "Reset Your Password",
-  html: `
-    <h2>Password Reset Request</h2>
-    <p>You requested to reset your GreatHire password.</p>
-    <p>Click the button below to reset your password:</p>
-
-    <a href="${resetURL}" 
-       style="background-color:#007bff;color:white;padding:12px 20px;
-              text-decoration:none;border-radius:5px;display:inline-block;">
-      Reset Password
-    </a>
-
-    <p>This link will expire in 5 minutes.</p>
-    <p>If you did not request this, please ignore this email.</p>
-  `,
-};
-    // Send email
-    await transporter.sendMail(mailOptions);
+    try {
+      await sendForgotPasswordEmail({
+        toEmail: cleanEmail,
+        userName,
+        resetToken,
+        resetURL,
+      });
+    } catch (emailError) {
+      console.error("Forgot password email send failed:", emailError);
+      return res.status(200).json({
+        message: "Password reset link generated successfully. Please contact support if the email does not arrive.",
+        success: false,
+      });
+    }
 
     return res.status(200).json({
       message: "Password reset link sent successfully.",
