@@ -14,9 +14,13 @@ import { MessageProvider } from './context/MessageContext';
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import NoIndex from "./components/SEO/NoIndex.jsx";
 import WhatsAppFloat from "./components/shared/WhatsAppFloat";
+import JobseekerChatbot from "./components/chat/JobseekerChatbot";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
+
+const JobSeekerCalendar = lazy(() => import("./pages/user/JobSeekerCalendar"));
+const RecruiterCalendar = lazy(() => import("./pages/recruiter/RecruiterCalendar"));
 
 // ── Auth ──
 const Home                   = lazy(() => import("./pages/Home"));
@@ -222,6 +226,7 @@ const appRouter = createBrowserRouter([
   { path: "/jobs", element: <Jobs /> },
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
+  { path: "/calendar", element: <ProtectedUserRoute><><NoIndex /><JobSeekerCalendar /></></ProtectedUserRoute> },
   { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex/><SavedJobs /></></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><><NoIndex /><MainApply /></></ProtectedUserRoute> },
   { path: "/profile", element: <ProtectedUserRoute><><NoIndex/><UserProfile /></></ProtectedUserRoute> },
@@ -264,6 +269,7 @@ const appRouter = createBrowserRouter([
       { path: "recruiter-details/:recruiterId", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruitersDetails /></RequireCompany></Suspense> },
       { path: "job-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><JobDetail /></RequireCompany></Suspense> },
       { path: "applicants-details/:id", element: <Suspense fallback={<PageLoader />}><RequireCompany><AppliedCandidatesList /></RequireCompany></Suspense> },
+      { path: "calendar", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterCalendar /></RequireCompany></Suspense> },
       { path: "resume-analyzer", element: <Suspense fallback={<PageLoader />}><RequireCompany><RecruiterResumeAnalyzer /></RequireCompany></Suspense> },
       { path: "applications/:jobId/:candidateId", element: <Suspense fallback={<PageLoader />}><RequireCompany><CandidateInformation /></RequireCompany></Suspense> },
     ],
@@ -340,6 +346,7 @@ function App() {
               <RouterProvider router={appRouter} />
             </Suspense>
             <WhatsAppFloat />
+            <JobseekerChatbot />
           </MessageProvider>
         </NotificationProvider>
       </JobDetailsProvider>

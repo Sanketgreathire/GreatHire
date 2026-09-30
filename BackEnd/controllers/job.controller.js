@@ -19,6 +19,34 @@ import {
 } from "../utils/starterPlan.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
+import {
+  screenCandidate,
+  applyApplicationTransition,
+  getEnrichedCandidateProfile,
+} from "../services/screeningEngine.js";
+
+
+const screenApplicationAfterCreate = async (application, user, job) => {
+  try {
+    const candidateProfile = await getEnrichedCandidateProfile(
+      user.profile,
+      application.resume || user.profile?.resume || ""
+    );
+    const screeningResult = screenCandidate(candidateProfile, job);
+    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score: screeningResult.score,
+      changedBy: user._id,
+      notify: false,
+    });
+  } catch (screeningError) {
+    console.error("AI Screening Error:", screeningError.message);
+  }
+};
+
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
   try {
@@ -448,103 +476,107 @@ export const getExternalJobsFromFindwork = async (req, res) => {
 };
 
 // Apply for a Job
-// export const applyJob = async (req, res) => {
-//   try {
-//     const { jobId } = req.params;
-//     const userId = req.id;
-//     const { answers } = req.body;
+export const applyJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const userId = req.id;
+    const { answers } = req.body;
 
-//     // Job exist check karo
-//     const job = await Job.findById(jobId).populate('company');
-//     if (!job) {
-//       return res.status(404).json({ success: false, message: "Job not found" });
-//     }
+    const job = await Job.findById(jobId).populate('company');
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found" });
+    }
 
-//     // Check if job is active
-//     if (!job.jobDetails.isActive) {
-//       return res.status(400).json({ success: false, message: "This job is not active" });
-//     }
+    if (!job.jobDetails?.isActive) {
+      return res.status(400).json({ success: false, message: "This job is not active" });
+    }
 
-//     // Check if company is verified
-//     if (!job.company?.isActive) {
-//       return res.status(403).json({ success: false, message: "This job is no longer available" });
-//     }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-//     // User exist check karo
-//     const user = await User.findById(userId);
-//     // console.log("Applying job user check kro :", user);
-//     if (!user) {
-//       return res.status(404).json({ success: false, message: "User not found" });
-//     }
+    const existingApplication = await Application.findOne({
+      job: jobId,
+      applicant: userId,
+    });
 
-//     // Already applied check karo
-//     const existingApplication = await Application.findOne({
-//       job: jobId,
-//       applicant: userId,
-//     });
+    if (existingApplication) {
+      return res.status(400).json({ success: false, message: "Already applied for this job" });
+    }
 
-//     if (existingApplication) {
-//       return res.status(400).json({ success: false, message: "Already applied for this job" });
-//     }
+    const applicantEmail = req.body.applicantEmail || user.emailId?.email || user.email || "noemail@example.com";
+    const applicantPhone = req.body.applicantPhone || user.phoneNumber?.number || user.phone || "";
+    const applicantResume = user.profile?.resume || user.resume || "";
 
-//     // New application create karo
-//     const newApplication = new Application({
-//       job: jobId,
-//       applicant: userId,
-//       applicantName: user.fullname,
-//       applicantEmail: user.email,
-//       applicantPhone: user.phone || "",
-//       applicantProfile: user.profile || {},
-//       resume: user.resume || "",
-//       answers: Array.isArray(answers) ? answers : [],
-//       status: "Pending",
-//     });
+    const newApplication = new Application({
+      job: jobId,
+      applicant: userId,
+      applicantName: user.fullname || "Candidate",
+      applicantEmail,
+      applicantPhone,
+      applicantProfile: user.profile || {},
+      resume: applicantResume,
+      answers: Array.isArray(answers) ? answers : [],
+      status: "Pending",
+    });
 
-//     await newApplication.save();
+    await newApplication.save();
 
-//     // Add application to job
-//     job.application.push(newApplication._id);
-//     await job.save();
+    await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
-//   // ✅ Send notifications
-//   try {
-//     console.log('📨 Sending application notification...', {
-//       applicantId: userId,
-//       jobId: jobId,
-//       jobTitle: job.jobDetails.title,
-//       companyName: job.jobDetails.companyName,
-//       recruiterId: job.created_by
-//     });
-    
-//     await notificationService.notifyApplicationSubmitted({
-//       applicantId: userId,
-//       jobId: jobId,
-//       jobTitle: job.jobDetails.title,
-//       companyName: job.jobDetails.companyName,
-//       recruiterId: job.created_by,
-//       applicationId: newApplication._id
-//     });
-    
-//     console.log('✅ Application notification sent successfully');
-//   } catch (notificationError) {
-//     console.error('❌ Error sending application notification:', notificationError);
-//     // Don't fail the application if notification fails
-//   }
+    // Send notifications
+    try {
+      console.log(
+        "📨 Sending application notification...",
+        {
+          applicantId: userId,
+          jobId: jobId,
+          jobTitle: job.jobDetails.title,
+          companyName: job.jobDetails.companyName,
+          recruiterId: job.created_by,
+        }
+      );
 
-//     return res.status(201).json({
-//       success: true,
-//       message: "Job applied successfully",
-//       application: newApplication,
-//     });
-//   } catch (error) {
-//     console.error("Error applying job:", error);  // <-- yahi log bahut important hai
-//     return res.status(500).json({
-//       success: false,
-//       message: "Internal server error",
-//       error: error.message,
-//     });
-//   }
-// };
+      await notificationService.notifyApplicationSubmitted({
+        applicantId: userId,
+        jobId: jobId,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        recruiterId: job.created_by,
+        applicationId: newApplication._id,
+      });
+
+      console.log(
+        "✅ Application notification sent successfully"
+      );
+    } catch (notificationError) {
+      console.error(
+        "❌ Error sending application notification:",
+        notificationError
+      );
+    }
+
+    await screenApplicationAfterCreate(newApplication, user, job);
+
+    return res.status(201).json({
+      success: true,
+      message: "Job applied successfully",
+      application: newApplication,
+    });
+  } catch (error) {
+    console.error(
+      "Error applying job:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 
 // Other functions like getAllJobs, getJobById, etc.
