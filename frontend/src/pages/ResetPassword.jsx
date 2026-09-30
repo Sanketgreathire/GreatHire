@@ -33,6 +33,8 @@ import PageNotFound from "./PageNotFound";
 
 import { Helmet } from "react-helmet-async";
 import { useTheme } from "@/context/ThemeContext";
+import { Eye, EyeOff } from "lucide-react";
+
 
 // ResetPassword Component - Allows users to reset their password using a token
 const ResetPassword = () => {
@@ -56,6 +58,9 @@ const ResetPassword = () => {
 
   // State for loading indicator
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Ensure dark mode is active on html root
   useEffect(() => {
