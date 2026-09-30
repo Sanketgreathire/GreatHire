@@ -725,7 +725,7 @@ const appliedJobIds = useMemo(() => {
               LEFT: JOB CARDS
           ==================================================== */}
 
-          <div className="flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 m-2 md:m-0 flex-shrink-0 overflow-y-auto scrollbar-hide h-[calc(100vh-140px)] min-h-[920px] relative">
+          <div className="flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 m-2 md:m-0 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px] relative">
 
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
@@ -1021,7 +1021,7 @@ const appliedJobIds = useMemo(() => {
           ==================================================== */}
 
           {selectedJob && (
-            <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[calc(100vh-140px)] min-h-[920px] dark:border-gray-700 dark:bg-gray-800">
+            <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[1080px] dark:border-gray-700 dark:bg-gray-800">
 
               {/* Header */}
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">

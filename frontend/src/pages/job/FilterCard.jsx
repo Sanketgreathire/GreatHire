@@ -322,7 +322,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       )}
 
       {/* Filter Card — CHANGE: reduced sm:w-[210px] md:w-[224px] to match lg:w-56 sidebar in Jobs.jsx */}
-      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
+      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 sm:max-h-none sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
         {onClose && (
           <button
             onClick={onClose}

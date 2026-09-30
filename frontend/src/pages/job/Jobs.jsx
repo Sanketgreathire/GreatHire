@@ -132,7 +132,7 @@ export default function Jobs() {
           <div className="flex gap-4 mt-4 items-start">
 
             {/* Sidebar Filter — Desktop */}
-            <aside className="hidden sm:block w-56 lg:w-64 flex-shrink-0 sticky top-[80px]">
+            <aside className="hidden sm:block w-56 lg:w-64 flex-shrink-0 sticky top-[80px] h-[1080px] overflow-y-auto">
               <FilterCard
                 filters={filters}
                 onFilterChange={handleFilterChange}
