@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const blog = {
   title: "How to Hire the Right Candidate Faster",
@@ -194,6 +196,16 @@ export default function HireRightCandidateFaster() {
     <>
       <Navbar />
       <div className="min-h-screen bg-white font-sans">
+      {/* ── BACK BUTTON ── */}
+  <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
+    <Link
+      to="/Main_blog_page"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+    >
+      <ArrowLeft className="h-4 w-4" />
+      Back to Blog
+    </Link>
+  </div>
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-rose-600 via-pink-700 to-purple-800 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">

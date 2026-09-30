@@ -277,40 +277,63 @@ const quickFacts = [
 // ── SectionCard is defined OUTSIDE PrivacyPolicy ──────────────────────────────
 
 
-function SectionCard({ section, isOpen, onToggle }) {
+ function SectionCard({ section, isOpen, onToggle }) {
   const Icon = section.icon;
 
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <article
+      className={`group relative overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+        isOpen
+          ? "border-sky-400 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-md ring-1 ring-sky-200 dark:border-sky-700 dark:from-sky-950/40 dark:via-slate-900 dark:to-indigo-950/30 dark:ring-sky-900/40"
+          : "border-slate-200 bg-white hover:border-sky-300 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-sky-800"
+      }`}
+    >
+      {/* top accent bar */}
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500 via-indigo-500 to-sky-500" />
+
+      {/* shine sweep effect */}
+      <div className="pointer-events-none absolute inset-0 z-10 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full dark:via-sky-400/10" />
+
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between px-5 py-4"
+        className="relative z-20 flex w-full items-center justify-between px-5 py-4 pt-5 text-left"
       >
         <div className="flex items-center gap-3">
-          <Icon className="h-5 w-5 text-sky-600" />
+          <div
+            className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110 ${
+              isOpen
+                ? "from-sky-500 via-sky-600 to-indigo-600 text-white shadow-sky-500/40"
+                : "from-sky-400 to-indigo-500 text-white shadow-sky-500/20"
+            }`}
+          >
+            <Icon className="h-5 w-5" />
+          </div>
 
-          <div className="text-left">
-            <h3 className="font-semibold">{section.label}</h3>
-            <p className="text-sm text-gray-500">
+          <div>
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+              {section.label}
+            </h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {section.intro}
             </p>
           </div>
         </div>
 
         <ChevronDown
-          className={`h-5 w-5 transition-transform ${
-            isOpen ? "rotate-180" : ""
+          className={`h-5 w-5 flex-shrink-0 text-slate-400 transition-transform ${
+            isOpen ? "rotate-180 text-sky-600" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="border-t p-5">
-          <ul className="space-y-2">
+        <div className="relative z-20 border-t border-sky-100 px-5 py-4 dark:border-slate-800">
+          <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
             {section.points.map((point) => (
-              <li key={point}>
-                • {point}
+              <li key={point} className="flex gap-2">
+                <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-br from-sky-500 to-indigo-500" />
+                <span>{point}</span>
               </li>
             ))}
           </ul>
@@ -348,12 +371,12 @@ function PrivacyPolicy() {
 
       <Navbar />
 
-      <header className="relative z-10 overflow-hidden border-b border-slate-200/70 bg-gradient-to-br from-cyan-100 via-sky-100 to-amber-50 pt-32 dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
+      <header className="relative z-10 overflow-hidden border-b border-slate-200/70 bg-gradient-to-br from-cyan-100 via-sky-100 to-amber-50 pt-16 dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
         <div className="pointer-events-none absolute -left-24 top-10 h-56 w-56 rounded-full bg-sky-300/40 blur-3xl dark:bg-cyan-600/20" />
         <div className="pointer-events-none absolute -right-24 bottom-8 h-56 w-56 rounded-full bg-amber-300/30 blur-3xl dark:bg-sky-600/20" />
 
-        <div className="mx-auto max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-white/60 bg-white/70 p-6 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 md:p-8">
+        <div className="mx-auto max-w-7xl px-4 pb-6 pt-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-white/60 bg-white/70 p-4 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 md:p-6">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700 dark:border-sky-800 dark:bg-sky-900/40 dark:text-sky-300">
               <Shield className="h-4 w-4" />
               Legal and Privacy Center
@@ -428,14 +451,23 @@ function PrivacyPolicy() {
 
             
 
-            {sections.map((section) => (
+            {/* {sections.map((section) => (
               <div
                 key={section.id}
                 className="p-5 rounded-xl bg-gradient-to-r from-fuchsia-500 via-violet-600 to-sky-500 text-white shadow-lg ring-1 ring-white/10"
               >
                 {section.label}
               </div>
-            ))}
+            ))} */}
+
+                {sections.map((section) => (
+  <SectionCard
+    key={section.id}
+    section={section}
+    isOpen={expandedSection === section.id}
+    onToggle={() => handleToggle(section.id)}
+  />
+))}
 
             <div className="rounded-2xl border border-sky-200 bg-sky-50/80 p-5 dark:border-sky-900 dark:bg-sky-950/30">
               <p className="text-sm font-semibold text-sky-800 dark:text-sky-300">
