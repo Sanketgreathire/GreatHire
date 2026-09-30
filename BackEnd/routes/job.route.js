@@ -50,6 +50,7 @@ import {
   getExternalJobsFromFindwork,
   // applyJob,
   generateJD,
+  adminAddJob,
   searchJobs,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
@@ -59,6 +60,7 @@ const router = express.Router();
 
 // AI JD Generation
 router.post("/generate-jd", isAuthenticated, generateJD);
+router.post("/admin-add-job", isAuthenticated, adminAddJob);
 
 // Search jobs with filters + match score
 router.get("/search", searchJobs);

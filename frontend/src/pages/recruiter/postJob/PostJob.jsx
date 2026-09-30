@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { JOB_API_END_POINT, COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT, COMPANY_API_END_POINT, ADMIN_JOB_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
@@ -61,10 +61,11 @@ const SectionHeader = ({ icon, title, subtitle }) => (
   </div>
 );
 
-const PostJob = () => {
+const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) => {
   const [step, setStep] = useState(0);
   const [chatOpen, setChatOpen] = useState(false);
-  const { company } = useSelector((state) => state.company);
+  const { company: reduxCompany } = useSelector((state) => state.company);
+  const company = adminMode ? adminCompany : reduxCompany;
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [langSearch, setLangSearch] = useState("");
@@ -430,6 +431,7 @@ const PostJob = () => {
     }),
 
     onSubmit: async (values) => {
+      if(!adminMode){
       // Block 2nd+ job for ALL plans until admin verifies
       const jobsPostedSoFar = jobsPosted;
       if (!company.isActive && jobsPostedSoFar >= 1 && remainingPosts <= 0) {
@@ -440,6 +442,7 @@ const PostJob = () => {
         toast.error("You have no remaining job posts. Please upgrade your plan.");
         return;
       }
+    }
 
       setLoading(true);
       try {
@@ -448,7 +451,7 @@ const PostJob = () => {
           .filter(Boolean);
 
         const response = await axios.post(
-          `${JOB_API_END_POINT}/post-job`,
+          adminMode ? `${JOB_API_END_POINT}/admin-add-job` : `${JOB_API_END_POINT}/post-job`,
           {
             ...values,
             questions: cleanedQuestions,
@@ -459,14 +462,17 @@ const PostJob = () => {
           }
         );
         if (response.data.success) {
-          if (company?.maxJobPosts !== null) {
+          if (!adminMode && company?.maxJobPosts !== null) {
             dispatch(decreaseMaxPostJobs(1));
           }
           const msg = response.data.jobStatus === "pending"
             ? "Job submitted! It will be published after admin verification."
             : "Job posted successfully!";
           toast.success(msg);
-          setTimeout(() => { navigate("/recruiter/dashboard/home"); }, 1000);
+          setTimeout(() => {
+            if (adminMode) onSuccess?.();
+            else navigate("/recruiter/dashboard/home"); 
+            }, 1000);
         } else {
           toast.error("Job post failed");
         }
@@ -797,7 +803,7 @@ const PostJob = () => {
             </div>
 
             {/* Verification Status Banner */}
-            {!company?.isActive && jobsPosted >= 1 && (
+            {!adminMode && !company?.isActive && jobsPosted >= 1 && (
               <div className={`${cardCls} mb-5 !p-4 border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/[0.06]`}>
                 <div className="flex items-start gap-3">
                   <svg className="h-5 w-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
@@ -811,7 +817,7 @@ const PostJob = () => {
             )}
 
             {/* Verified banner */}
-            {company?.isActive && (() => {
+            {!adminMode && company?.isActive && (() => {
               if (plan === "FREE") return company.freeJobsPosted === 1;
               return ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)) === 1;
             })() && (
@@ -827,6 +833,7 @@ const PostJob = () => {
               </div>
             )}
 
+           {!adminMode && (
             <div className={`${cardCls} !p-5 md:!p-6 mb-5 bg-gradient-to-r from-indigo-600 to-violet-600 !border-0 text-white`}>
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
@@ -836,9 +843,10 @@ const PostJob = () => {
                 <span className="text-xs font-semibold bg-white/15 px-3 py-1 rounded-full">{company.plan || "FREE"} Plan</span>
               </div>
             </div>
+            )}
 
             {/* Locked state */}
-            {!company?.isActive && jobsPosted >= 1 ? (
+            {!adminMode && !company?.isActive && jobsPosted >= 1 ? (
               <div className={`${cardCls} text-center py-14`}>
                 <svg className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

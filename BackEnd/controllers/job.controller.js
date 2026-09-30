@@ -26,7 +26,7 @@ import {
 } from "../services/screeningEngine.js";
 
 
-const screenApplicationAfterCreate = async (application, user, job) => {
+export const screenApplicationAfterCreate = async (application, user, job) => {
   try {
     const candidateProfile = await getEnrichedCandidateProfile(
       user.profile,
@@ -453,6 +453,184 @@ if (jobIsActive) {
       return res.status(500).json({ success: false, message: "Internal server error." });
     }
   }
+];
+
+// Admin adds a job on behalf of a company.
+// The job is attributed to one of the company's own recruiters, so it looks
+// exactly like the company posted it (nothing shows "posted by admin").
+export const adminAddJob = [
+  check("title").notEmpty().withMessage("Title is required"),
+  check("details").notEmpty().withMessage("Details are required"),
+  check("experience").notEmpty().withMessage("Experience is required"),
+  check("salary").notEmpty().withMessage("Salary is required"),
+  check("jobType").notEmpty().withMessage("Job type is required"),
+  check("location").notEmpty().withMessage("Location is required"),
+  check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
+  check("duration").notEmpty().withMessage("Duration is required"),
+  check("shift").notEmpty().withMessage("Shift is required"),
+  check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
+  check("companyId").isMongoId().withMessage("Valid company ID is required"),
+
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      // Only admins can use this endpoint
+      const admin = await Admin.findById(req.id);
+      if (!admin) {
+        return res.status(403).json({
+          success: false,
+          message: "You are not authorized",
+        });
+      }
+
+      const {
+        companyName,
+        urgentHiring,
+        title,
+        details,
+        skills,
+        qualifications,
+        benefits,
+        responsibilities,
+        experience,
+        salary,
+        salaryType,
+        jobType,
+        workPlaceFlexibility,
+        location,
+        numberOfOpening,
+        respondTime,
+        duration,
+        shift,
+        anyAmount,
+        companyId,
+        questions,
+      } = req.body;
+
+      const company = await Company.findById(companyId);
+      if (!company) {
+        return res.status(404).json({
+          success: false,
+          message: "Company not found.",
+        });
+      }
+
+      // Pick the recruiter the job will belong to:
+      // 1) the company's admin recruiter (matched by adminEmail),
+      // 2) otherwise the first recruiter linked to the company.
+      let recruiter = await Recruiter.findOne({
+        "emailId.email": company.adminEmail,
+      });
+
+      const belongsToCompany =
+        recruiter &&
+        company.userId.some(
+          (u) => u.user.toString() === recruiter._id.toString()
+        );
+
+      if (!belongsToCompany) {
+        const recruiterIds = company.userId.map((u) => u.user);
+        recruiter = recruiterIds.length
+          ? await Recruiter.findOne({ _id: { $in: recruiterIds } }).sort({
+              createdAt: 1,
+            })
+          : null;
+      }
+
+      if (!recruiter) {
+        return res.status(400).json({
+          success: false,
+          message: "This company has no recruiter to attach the job to.",
+        });
+      }
+
+      const splitSkills =
+        typeof skills === "string" ? skills.split(",").map((s) => s.trim()) : [];
+      const splitQualifications =
+        typeof qualifications === "string"
+          ? qualifications.split("\n").map((q) => q.trim())
+          : [];
+      const splitBenefits =
+        typeof benefits === "string"
+          ? benefits.split("\n").map((b) => b.trim())
+          : [];
+      const splitResponsibilities =
+        typeof responsibilities === "string"
+          ? responsibilities.split("\n").map((r) => r.trim())
+          : [];
+
+      const newJob = new Job({
+        jobDetails: {
+          companyName: companyName || company.companyName,
+          urgentHiring,
+          title,
+          details,
+          skills: splitSkills,
+          benefits: splitBenefits,
+          qualifications: splitQualifications,
+          responsibilities: splitResponsibilities,
+          salary,
+          salaryType: salaryType || "per year",
+          experience,
+          jobType,
+          workPlaceFlexibility,
+          location,
+          numberOfOpening,
+          respondTime,
+          duration,
+          shift,
+          anyAmount,
+          isActive: true,
+          status: "active",
+        },
+        questions: Array.isArray(questions)
+          ? questions.filter((q) => typeof q === "string" && q.trim())
+          : [],
+        created_by: recruiter._id, // the company's recruiter, not the admin
+        company: companyId,
+      });
+
+      await newJob.save();
+
+      // Job seekers can only open jobs of verified companies, so only run
+      // matching emails / auto-apply / notifications when the company is verified.
+      if (company.isActive) {
+        try {
+          await notifyMatchingJobSeekers(newJob);
+        } catch (error) {
+          console.error("❌ Job match email notification failed:", error.message);
+        }
+
+        try {
+          await autoApply(newJob._id);
+        } catch (error) {
+          console.error("❌ Auto Apply Error:", error);
+        }
+
+        try {
+          await findAndNotifyMatchingCandidates(newJob);
+        } catch (e) {
+          console.error("❌ Matching candidates error:", e.message);
+        }
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "Job posted successfully.",
+        jobStatus: "active",
+      });
+    } catch (error) {
+      console.error("Error in admin add job:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error.",
+      });
+    }
+  },
 ];
 
 // Implement getExternalJobsFromFindwork

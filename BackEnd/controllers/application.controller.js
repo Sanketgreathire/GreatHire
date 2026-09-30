@@ -8,6 +8,7 @@ import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
+import { screenApplicationAfterCreate } from "./job.controller.js";
 import {
   transitionStage,
   getStageHistory,

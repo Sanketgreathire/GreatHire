@@ -547,6 +547,15 @@ const CompanyDetails = () => {
                 {/* Buttons */}
                 <div className="col-span-full">
                   <div className="flex flex-col sm:flex-row justify-end gap-4 sm:gap-6 mt-8">
+                    {/* NEW: Add Job button */}
+  <button
+    onClick={() => navigate(`/admin/for-admin/add-job/${companyId}`)}
+    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+  >
+    + Add Job
+  </button>
+
+
                     <div className="col-span-full flex justify-end gap-4">
                       {isEditingEmails ? (
                         <>
