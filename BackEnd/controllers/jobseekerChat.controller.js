@@ -1,6 +1,9 @@
+import jwt from "jsonwebtoken";
 import Groq from "groq-sdk";
 import { Job } from "../models/job.model.js";
 import { Company } from "../models/company.model.js";
+import { User } from "../models/user.model.js";
+import { JobseekerChatLog } from "../models/jobseekerChatLog.model.js";
 
 let groqClient = null;
 const getGroqClient = () => {
@@ -8,6 +11,62 @@ const getGroqClient = () => {
     groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
   return groqClient;
+};
+
+// Helper function to record every chatbot conversation into MongoDB
+const recordChatInDatabase = async ({
+  req,
+  userMessage,
+  botReply,
+  detectedRole = "",
+  detectedLocation = "",
+  isJobSearch = false,
+  jobsCount = 0,
+  coursesCount = 0,
+  isRestricted = false,
+}) => {
+  try {
+    let userId = req.id || null;
+    let userEmail = "";
+    let userName = "";
+
+    if (!userId) {
+      const token = req.header("Authorization")?.split(" ")[1] || req.cookies?.token;
+      if (token && process.env.SECRET_KEY) {
+        try {
+          const decode = jwt.verify(token, process.env.SECRET_KEY);
+          userId = decode?.id || decode?.userId || null;
+        } catch (e) {}
+      }
+    }
+
+    if (userId) {
+      const userObj = await User.findById(userId).select("fullname email emailId").lean();
+      if (userObj) {
+        userName = userObj.fullname || "";
+        userEmail = userObj.emailId?.email || userObj.email || "";
+      }
+    }
+
+    const ipAddress = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "";
+
+    await JobseekerChatLog.create({
+      userId,
+      userEmail,
+      userName,
+      userMessage,
+      botReply,
+      detectedRole,
+      detectedLocation,
+      isJobSearch,
+      jobsCount,
+      coursesCount,
+      isRestricted,
+      ipAddress,
+    });
+  } catch (err) {
+    console.error("MongoDB Chat Logging Error:", err.message);
+  }
 };
 
 // Curated list of GreatHire Courses
@@ -254,9 +313,18 @@ export const handleJobseekerChat = async (req, res) => {
 
     // 1. Check if user is sending a greeting / intro
     if (isGreeting(lowerMsg)) {
+      const greetingReply = `👋 Hello! I am **GreatHire's Career & Education Assistant** 🎓.\n\nI can help you with:\n- 📘 **Technical Concepts & Code Explanations** (Java, Python, React, SQL, etc.)\n- 🗺️ **Learning Roadmaps & Skill Guides** for Tech Careers\n- 🎯 **Interview Questions & Preparation**\n- 💼 **Job Openings & Placement Guidance** on GreatHire\n\nWhat topic would you like to explore today?`;
+      
+      await recordChatInDatabase({
+        req,
+        userMessage: cleanMsg,
+        botReply: greetingReply,
+        isRestricted: false
+      });
+
       return res.status(200).json({
         success: true,
-        reply: `👋 Hello! I am **GreatHire's Career & Education Assistant** 🎓.\n\nI can help you with:\n- 📘 **Technical Concepts & Code Explanations** (Java, Python, React, SQL, etc.)\n- 🗺️ **Learning Roadmaps & Skill Guides** for Tech Careers\n- 🎯 **Interview Questions & Preparation**\n- 💼 **Job Openings & Placement Guidance** on GreatHire\n\nWhat topic would you like to explore today?`,
+        reply: greetingReply,
         jobs: [],
         courses: [],
         searchUrl: null,
@@ -271,6 +339,13 @@ export const handleJobseekerChat = async (req, res) => {
 
     // 2. Strict Guardrail Check: Check if message matches non-educational categories (movies, entertainment, sports, politics, etc.)
     if (OFF_TOPIC_REGEX.test(lowerMsg)) {
+      await recordChatInDatabase({
+        req,
+        userMessage: cleanMsg,
+        botReply: RESTRICT_MESSAGE,
+        isRestricted: true
+      });
+
       return res.status(200).json({
         success: true,
         reply: RESTRICT_MESSAGE,
@@ -314,6 +389,15 @@ export const handleJobseekerChat = async (req, res) => {
     // 4. Strict Educational / Career Relevance Check:
     // Any query outside educational, technical, or career guidance is restricted.
     if (!hasEducationalOrCareerIntent(lowerMsg, detectedRole, detectedLocation)) {
+      await recordChatInDatabase({
+        req,
+        userMessage: cleanMsg,
+        botReply: RESTRICT_MESSAGE,
+        detectedRole,
+        detectedLocation,
+        isRestricted: true
+      });
+
       return res.status(200).json({
         success: true,
         reply: RESTRICT_MESSAGE,
@@ -488,6 +572,15 @@ ${matchedCourses.length > 0 ? `Available GreatHire Training Courses:\n${coursesC
 
         // Check if LLM flagged the prompt as off-topic or declined
         if (botReply.includes("RESTRICT_OFF_TOPIC") || /i (can only|am only able to|am dedicated to) help with/i.test(botReply)) {
+          await recordChatInDatabase({
+            req,
+            userMessage: cleanMsg,
+            botReply: RESTRICT_MESSAGE,
+            detectedRole,
+            detectedLocation,
+            isRestricted: true
+          });
+
           return res.status(200).json({
             success: true,
             reply: RESTRICT_MESSAGE,
@@ -516,6 +609,15 @@ ${matchedCourses.length > 0 ? `Available GreatHire Training Courses:\n${coursesC
 
     // If fallback produced restriction message, return clean restricted payload
     if (botReply === RESTRICT_MESSAGE) {
+      await recordChatInDatabase({
+        req,
+        userMessage: cleanMsg,
+        botReply: RESTRICT_MESSAGE,
+        detectedRole,
+        detectedLocation,
+        isRestricted: true
+      });
+
       return res.status(200).json({
         success: true,
         reply: RESTRICT_MESSAGE,
@@ -532,6 +634,19 @@ ${matchedCourses.length > 0 ? `Available GreatHire Training Courses:\n${coursesC
     const searchUrl = isJobSearch && (detectedRole || detectedLocation)
       ? `/jobs?keyword=${encodeURIComponent(detectedRole || "")}&location=${encodeURIComponent(detectedLocation || "")}`
       : (isJobSearch ? `/jobs` : null);
+
+    // Save successful educational chat to Database
+    await recordChatInDatabase({
+      req,
+      userMessage: cleanMsg,
+      botReply,
+      detectedRole,
+      detectedLocation,
+      isJobSearch,
+      jobsCount: formattedJobs.length,
+      coursesCount: matchedCourses.length,
+      isRestricted: false
+    });
 
     return res.status(200).json({
       success: true,

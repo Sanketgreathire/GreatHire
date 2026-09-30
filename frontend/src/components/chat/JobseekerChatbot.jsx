@@ -19,6 +19,8 @@ import {
   CheckCircle2,
   ArrowRight,
   HelpCircle,
+  ShieldCheck,
+  Lock,
 } from "lucide-react";
 import { JOBSEEKER_CHAT_API_END_POINT } from "../../utils/ApiEndPoint";
 
@@ -379,7 +381,7 @@ export default function JobseekerChatbot() {
     <>
       {/* ── FLOATING LAUNCHER BUTTON (Right Side - Above WhatsApp) ── */}
       {!isOpen && (
-        <div className="fixed bottom-24 right-4 sm:bottom-[98px] sm:right-6 z-[9990] flex items-center group">
+        <div className="fixed bottom-20 right-4 sm:bottom-[98px] sm:right-6 z-[9990] flex items-center group">
           <button
             onClick={() => {
               setIsOpen(true);
@@ -387,21 +389,33 @@ export default function JobseekerChatbot() {
               setHasUnread(false);
             }}
             aria-label="Open GreatHire AI Educational Assistant"
-            className="relative flex items-center gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white pl-4 pr-5 py-3 rounded-full shadow-2xl hover:shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 backdrop-blur-sm"
+            className="relative flex items-center gap-2.5 sm:gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-2.5 sm:pl-3.5 sm:pr-5 sm:py-3 rounded-full shadow-2xl hover:shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 backdrop-blur-sm"
           >
-            {/* Pulsing indicator */}
-            <span className="relative flex h-3 w-3">
+            {/* Pulsing online indicator */}
+            <span className="relative flex h-3 w-3 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400" />
             </span>
 
-            {/* Bot Icon */}
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-              <Bot size={20} className="text-white" />
+            {/* Official GreatHire Logo Icon */}
+            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-1 shadow-inner shrink-0 overflow-hidden">
+              <img
+                src="/greathire-mark.png"
+                alt="GreatHire Logo"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                  const fallback = e.currentTarget.nextSibling;
+                  if (fallback) fallback.style.display = "flex";
+                }}
+              />
+              <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full">
+                <Bot size={16} />
+              </div>
             </div>
 
-            {/* Label */}
-            <div className="text-left">
+            {/* Desktop Label */}
+            <div className="text-left hidden sm:block">
               <div className="text-xs font-black tracking-wide flex items-center gap-1">
                 GreatHire AI <Sparkles size={12} className="text-amber-300 fill-amber-300" />
               </div>
@@ -410,9 +424,14 @@ export default function JobseekerChatbot() {
               </div>
             </div>
 
+            {/* Mobile Compact Label */}
+            <div className="text-left sm:hidden text-xs font-bold tracking-wide pr-1">
+              AI Assistant
+            </div>
+
             {/* Unread badge */}
             {hasUnread && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white shadow-sm">
                 1
               </span>
             )}
@@ -426,16 +445,28 @@ export default function JobseekerChatbot() {
           className={`fixed z-[9999] transition-all duration-300 ease-out flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl overflow-hidden
           ${
             isMinimized
-              ? "bottom-24 right-4 sm:bottom-[98px] sm:right-6 w-80 h-16"
-              : "bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 sm:w-[440px] sm:max-w-[calc(100vw-3rem)] h-[620px] max-h-[85vh]"
+              ? "bottom-20 right-4 sm:bottom-[98px] sm:right-6 w-80 h-16"
+              : "fixed inset-x-2 bottom-2 top-14 sm:top-auto sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[450px] sm:h-[630px] sm:max-h-[85vh] max-h-[calc(100vh-4rem)]"
           }`}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between select-none shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
-                  <Bot size={22} className="text-white" />
+                <div className="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center shadow-inner overflow-hidden">
+                  <img
+                    src="/greathire-mark.png"
+                    alt="GreatHire Logo"
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      const fallback = e.currentTarget.nextSibling;
+                      if (fallback) fallback.style.display = "flex";
+                    }}
+                  />
+                  <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-lg">
+                    <Bot size={18} />
+                  </div>
                 </div>
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-indigo-600" />
               </div>
@@ -447,7 +478,7 @@ export default function JobseekerChatbot() {
                   </span>
                 </h3>
                 <p className="text-[11px] text-blue-100/90 font-medium">
-                  {isLoading ? "Finding matching jobs & roadmap..." : "Educational & Job Assistant"}
+                  {isLoading ? "Analyzing roadmap & matching jobs..." : "Educational & Job Assistant"}
                 </p>
               </div>
             </div>
@@ -464,7 +495,7 @@ export default function JobseekerChatbot() {
               <button
                 onClick={() => setIsMinimized((prev) => !prev)}
                 title={isMinimized ? "Expand" : "Minimize"}
-                className="p-1.5 rounded-lg hover:bg-white/20 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg hover:bg-white/20 hover:text-white transition-colors hidden sm:block"
               >
                 {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
               </button>
@@ -482,14 +513,22 @@ export default function JobseekerChatbot() {
           {!isMinimized && (
             <>
               {/* Message scroll container */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-slate-50/50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-                {/* Educational Notice Banner */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/70 dark:border-blue-900/60 text-xs text-blue-800 dark:text-blue-300">
-                  <GraduationCap size={16} className="shrink-0 text-blue-600 dark:text-blue-400" />
-                  <span>
-                    <strong>Educational Bot:</strong> Trained exclusively on career guidance, skill
-                    roadmaps, interview preparation, and real GreatHire job openings.
-                  </span>
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 bg-gradient-to-b from-slate-50/50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+                {/* Educational & Recording Notice Banner */}
+                <div className="flex flex-col gap-2 p-3 rounded-xl bg-blue-50/90 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-900/70 text-xs text-blue-900 dark:text-blue-200 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <GraduationCap size={16} className="shrink-0 text-blue-600 dark:text-blue-400 mt-0.5" />
+                    <span>
+                      <strong>Educational Bot:</strong> Trained exclusively on career guidance, skill
+                      roadmaps, interview preparation, and real GreatHire job openings.
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2 border-t border-blue-200/70 dark:border-blue-800/70 text-[11px] text-blue-800 dark:text-blue-300 font-semibold">
+                    <ShieldCheck size={14} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <span>
+                      Your conversations are recorded by the GreatHire Team for quality assurance, safety, and guidance improvement.
+                    </span>
+                  </div>
                 </div>
 
                 {/* Messages list */}
@@ -707,7 +746,7 @@ export default function JobseekerChatbot() {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="e.g. i want job in mumbai and field is java developer..."
                     disabled={isLoading}
-                    className="flex-1 text-sm px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-800 transition-all disabled:opacity-50"
+                    className="flex-1 text-base sm:text-sm px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-800 transition-all disabled:opacity-50"
                   />
                   <button
                     type="submit"
