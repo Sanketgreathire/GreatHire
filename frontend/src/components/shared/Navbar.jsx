@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, memo, useCallback } from "react";
+import { useState, useEffect, useRef, memo, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
 import { removeJobPlan } from "@/redux/jobPlanSlice";
@@ -10,154 +11,222 @@ import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 import ThemeToggle from "../ThemeToggle";
-import { useJobDetails } from "@/context/JobDetailsContext";
+import { useMessages } from "@/context/MessageContext";
+
+// ─────────────────────────────────────────────────────────────
+// Reusable Message Icon
+// ─────────────────────────────────────────────────────────────
+const MessageIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+    />
+  </svg>
+);
+
+MessageIcon.propTypes = {
+  className: PropTypes.string,
+};
 
 // ─────────────────────────────────────────────────────────────
 // Reusable 2-column Explore Dropdown Panel
-// Left  → nav links with icons + descriptions
-// Right → Campus Hiring & Student Sign Up action cards
 // ─────────────────────────────────────────────────────────────
-const ExploreDropdownPanel = memo(({ links, location, onLinkClick, onCampusClick, onStudentClick }) => {
-  const linkIcons = {
-    Blogs: "✍️",
-    Courses: "🎓",
-    "About Us": "🏢",
-    "Contact Us": "📬",
-    "Privacy Policy": "🔒",
-    "Our Services": "⚡",
-  };
+const ExploreDropdownPanel = memo(
+  ({ links, location, onLinkClick, onCampusClick, onStudentClick }) => {
+    const linkIcons = {
+      Blogs: "✍️",
+      Courses: "🎓",
+      "About Us": "🏢",
+      "Contact Us": "📬",
+      "Privacy Policy": "🔒",
+      "Our Services": "⚡",
+    };
 
-  return (
-    // Panel container — wide enough for 2 columns
-    <div
-      className="absolute right-0 mt-2 z-50 rounded-2xl shadow-2xl border overflow-hidden bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700"
-      style={{
-        width: "min(560px, 92vw)",
-        boxShadow: "0 20px 60px rgba(99,102,241,0.13), 0 4px 16px rgba(0,0,0,0.08)",
-      }}
-    >
-      {/* Top label strip */}
-      <div className="px-5 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
-          Explore everything
-        </span>
-      </div>
+    return (
+      <div
+        className="absolute right-0 mt-2 z-50 rounded-2xl shadow-2xl border overflow-hidden bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700"
+        style={{
+          width: "min(560px, 92vw)",
+          boxShadow: "0 20px 60px rgba(99,102,241,0.13), 0 4px 16px rgba(0,0,0,0.08)",
+        }}
+      >
+        <div className="px-5 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+            Explore everything
+          </span>
+        </div>
 
-      {/* ── 2-column grid ── */}
-      <div className="grid grid-cols-2">
-
-        {/* ── LEFT: Nav Links ── */}
-        <div className="p-3 border-r border-gray-100 dark:border-gray-700">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-2 mb-2">
-            Pages
-          </p>
-          <div className="space-y-0.5">
-            {links.map(({ to, label }) => {
-              const isActive = location.pathname === to;
-              return (
-                <Link
-                  key={to}
-                  to={to}
-                  onClick={onLinkClick}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl group transition-all duration-150 ${
-                    isActive
-                      ? "bg-blue-50 dark:bg-blue-900/40"
-                      : "hover:bg-gray-50 dark:hover:bg-gray-700/60"
-                  }`}
-                >
-                  <span className="text-base leading-none w-6 text-center shrink-0">
-                    {linkIcons[label] || "🔗"}
-                  </span>
-                  <span
-                    className={`text-sm font-medium leading-tight transition-colors ${
+        <div className="grid grid-cols-2">
+          {/* LEFT: Nav Links */}
+          <div className="p-3 border-r border-gray-100 dark:border-gray-700">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-2 mb-2">
+              Pages
+            </p>
+            <div className="space-y-0.5">
+              {links.map(({ to, label }) => {
+                const isActive = location.pathname === to;
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={onLinkClick}
+                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl group transition-all duration-150 ${
                       isActive
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        ? "bg-blue-50 dark:bg-blue-900/40"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700/60"
                     }`}
                   >
-                    {label}
-                  </span>
-                  {/* Hover arrow */}
-                  <svg
-                    className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-blue-400 shrink-0"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.17 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── RIGHT: Login Buttons ── */}
-        <div className="p-4 flex flex-col justify-between gap-3">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-1">
-            Quick Access
-          </p>
-
-          <div className="flex flex-col gap-2.5 flex-1 justify-center">
-            {/* Campus Hiring */}
-            <button
-              onClick={onCampusClick}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-lg">🏛️</span>
-                Campus Hiring
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Popular</span>
-            </button>
-
-            {/* Student Sign Up */}
-            <button
-              onClick={onStudentClick}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-            >
-              <span className="flex items-center gap-2">
-                <span className="text-lg">🚀</span>
-                Student Sign Up
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Free</span>
-            </button>
+                    <span className="text-base leading-none w-6 text-center shrink-0">
+                      {linkIcons[label] || "🔗"}
+                    </span>
+                    <span
+                      className={`text-sm font-medium leading-tight transition-colors ${
+                        isActive
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                    <svg
+                      className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-blue-400 shrink-0"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.17 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Footer hint */}
-          <p className="text-[10px] text-gray-400 dark:text-gray-500 px-1 pt-2 border-t border-gray-100 dark:border-gray-700">
-            Already have an account?{" "}
-            <Link
-              to="/jobseeker-login"
-              onClick={onLinkClick}
-              className="text-blue-500 hover:underline font-medium"
-              aria-label="Sign in to your account"
-            >
-              Sign in →
-            </Link>
-          </p>
+          {/* RIGHT: Quick Access */}
+          <div className="p-4 flex flex-col justify-between gap-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-1">
+              Quick Access
+            </p>
+
+            <div className="flex flex-col gap-2.5 flex-1 justify-center">
+              <button
+                onClick={onCampusClick}
+                className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-lg">🏛️</span>
+                  Campus Hiring
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">
+                  Popular
+                </span>
+              </button>
+
+              <button
+                onClick={onStudentClick}
+                className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-lg">🚀</span>
+                  Student Sign Up
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">
+                  Free
+                </span>
+              </button>
+            </div>
+
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 px-1 pt-2 border-t border-gray-100 dark:border-gray-700">
+              Already have an account?{" "}
+              <Link
+                to="/jobseeker-login"
+                onClick={onLinkClick}
+                className="text-blue-500 hover:underline font-medium"
+                aria-label="Sign in to your account"
+              >
+                Sign in →
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
+
+ExploreDropdownPanel.displayName = "ExploreDropdownPanel";
+
+ExploreDropdownPanel.propTypes = {
+  links: PropTypes.arrayOf(
+    PropTypes.shape({
+      to: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  location: PropTypes.object.isRequired,
+  onLinkClick: PropTypes.func.isRequired,
+  onCampusClick: PropTypes.func.isRequired,
+  onStudentClick: PropTypes.func.isRequired,
+};
+
+// ─────────────────────────────────────────────────────────────
+// Fallback page titles
+// ─────────────────────────────────────────────────────────────
+const FALLBACK_PAGE_TITLES = {
+  "/courses": "Career Training Courses | GreatHire",
+  "/courses/python-training": "Python Full Stack Developer Course | GreatHire",
+  "/courses/java-training": "Java Full Stack Developer Course | GreatHire",
+  "/courses/data-science-training": "Data Science Course | GreatHire",
+  "/courses/digital-marketing-training": "Digital Marketing Course | GreatHire",
+  "/courses/data-analytics-training": "Data Analytics Course | GreatHire",
+  "/courses/saleforce-training": "Salesforce Course | GreatHire",
+  "/courses/aws-devops-training": "AWS and DevOps Course | GreatHire",
+  "/courses/bim-training": "BIM Course | GreatHire",
+  "/courses/medical-training": "Medical Coding Course | GreatHire",
+  "/courses/testing-tools-training": "Software Testing Course | GreatHire",
+  "/courses/vlsi-training": "VLSI Design Course | GreatHire",
+  "/courses/multimedia-training": "Multimedia Design Course | GreatHire",
+  "/courses/advanced-excel-training": "Advanced Excel Course | GreatHire",
+  "/courses/autocad-training": "AutoCAD Course | GreatHire",
+  "/courses/revit-mep-training": "Revit MEP Course | GreatHire",
+  "/courses/business-analytics-training": "Business Analytics Course | GreatHire",
+  "/courses/generative-AI-training": "Generative AI Course | GreatHire",
+  "/courses/sap-fico-training": "SAP FICO Course | GreatHire",
+  "/courses/sap-mm-training": "SAP MM Course | GreatHire",
+  "/courses/cyber-security-training": "Cybersecurity Course | GreatHire",
+  "/courses/pmp-training": "PMP Certification Course | GreatHire",
+  "/jobseeker-login": "Job Seeker Login | GreatHire",
+  "/recruiter-login": "Recruiter Login | GreatHire",
+  "/recruiter/signup": "Recruiter Sign Up | GreatHire",
+  "/learnerstrack-login": "Learner Login | GreatHire",
+  "/learnerstrack-signup": "Learner Sign Up | GreatHire",
+  "/recruiter/dashboard": "Recruiter Dashboard | GreatHire",
+};
 
 // ─────────────────────────────────────────────────────────────
 // Main Navbar
 // ─────────────────────────────────────────────────────────────
 const Navbar = () => {
-  const { jobs } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const isRecruiter = user?.role?.includes("recruiter");
-  // hasCompany: dual source — login-time flag OR live fetched company object
   const hasCompany = !!(user?.isCompanyCreated || company);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ✅ Messages unread count
+  const { conversations } = useMessages();
+  const unreadCount = conversations.reduce(
+    (sum, c) => sum + (c.unreadCount || 0),
+    0
+  );
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -177,6 +246,13 @@ const Navbar = () => {
 
   useEffect(() => {
     setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const fallbackTitle = FALLBACK_PAGE_TITLES[location.pathname];
+    if (fallbackTitle) {
+      document.title = fallbackTitle;
+    }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -225,7 +301,7 @@ const Navbar = () => {
         toast.success(response.data.message);
         navigate("/");
       } else {
-        toast.error("Error in logout");
+        toast.error("Error logging out. Please try again.");
       }
     } catch (err) {
       console.error("Logout error:", err);
@@ -243,16 +319,21 @@ const Navbar = () => {
   }, [dispatch, navigate, user]);
 
   const primaryNavLinks = [
-    // Dashboard only visible after company is created
-    ...(isRecruiter && hasCompany ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }] : []),
+    ...(isRecruiter && hasCompany
+      ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
+      : []),
   ];
 
   const rightNavLinks = user
     ? [
         ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
-        ...(user && !isRecruiter ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }] : []),
+        ...(user && !isRecruiter
+          ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }]
+          : []),
         ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
-        ...(isRecruiter && hasCompany ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+        ...(isRecruiter && hasCompany
+          ? [{ to: "/packages", label: "Recruiter Plans" }]
+          : []),
       ]
     : [
         { to: "/", label: "Home" },
@@ -260,66 +341,70 @@ const Navbar = () => {
         { to: "/packages", label: "Recruiter Plans" },
       ];
 
-  // Links shown inside the Explore dropdown
   const moreDropdownLinks = [
-    { to: "/Main_blog_page",        label: "Blogs" },
-    { to: "/courses",               label: "Courses" },
-    { to: "/about",                 label: "About Us" },
-    { to: "/contact",               label: "Contact Us" },
+    { to: "/Main_blog_page", label: "Blogs" },
+    { to: "/courses", label: "Courses" },
+    { to: "/about", label: "About Us" },
+    { to: "/contact", label: "Contact Us" },
     { to: "/policy/privacy-policy", label: "Privacy Policy" },
   ];
 
   const mobileNavLinks = [
     ...primaryNavLinks,
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
-    ...(user && !isRecruiter ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }] : []),
-    ...(!user || (isRecruiter && hasCompany) ? [{ to: "/packages", label: "Recruiter Plans" }] : []),
+    ...(user && !isRecruiter
+      ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }]
+      : []),
+    ...(!user || (isRecruiter && hasCompany)
+      ? [{ to: "/packages", label: "Recruiter Plans" }]
+      : []),
     { to: "/great-hire/services", label: "Our Services" },
-    { to: "/Main_blog_page",      label: "Blogs" },
-    { to: "/courses",             label: "Courses" },
-    { to: "/about",               label: "About Us" },
-    { to: "/contact",             label: "Contact Us" },
+    { to: "/Main_blog_page", label: "Blogs" },
+    { to: "/courses", label: "Courses" },
+    { to: "/about", label: "About Us" },
+    { to: "/contact", label: "Contact Us" },
   ];
 
-  // Campus Hiring click: redirect recruiter without company to create-company
-  const handleCampusClick = useCallback((closePanel) => {
-    closePanel();
-    if (isRecruiter && !hasCompany) {
-      navigate("/recruiter/dashboard/create-company");
-    } else {
-      navigate("/campus-hiring");
-    }
-    window.scrollTo(0, 0);
-  }, [isRecruiter, hasCompany, navigate]);
+  const handleCampusClick = useCallback(
+    (closePanel) => {
+      closePanel();
+      if (isRecruiter && !hasCompany) {
+        navigate("/recruiter/dashboard/create-company");
+      } else {
+        navigate("/campus-hiring");
+      }
+      window.scrollTo(0, 0);
+    },
+    [isRecruiter, hasCompany, navigate]
+  );
 
-
-  const policyLinks = [
-    { to: "/policy/privacy-policy", label: "Privacy Policy" },
-
-  ];
-
- 
+  const policyLinks = [{ to: "/policy/privacy-policy", label: "Privacy Policy" }];
 
   const activeClass = "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300";
   const inactiveClass =
     "text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:text-blue-400 dark:hover:bg-gray-700";
 
-  // Shared handler to close all dropdowns + navigate
-  const closePanelAndNavigate = useCallback((path) => {
-    setIsMoreMenuOpen(false);
-    setIsExploreMenuOpen(false);
-    setIsMenuOpen(false);
-    navigate(path);
-    window.scrollTo(0, 0);
-  }, [navigate]);
+  const closePanelAndNavigate = useCallback(
+    (path) => {
+      setIsMoreMenuOpen(false);
+      setIsExploreMenuOpen(false);
+      setIsMenuOpen(false);
+      navigate(path);
+      window.scrollTo(0, 0);
+    },
+    [navigate]
+  );
 
   return (
     <>
       <nav className="pl-8 fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300 px-4 py-3">
         <div className="flex items-center justify-between w-full">
-
           {/* Logo */}
-          <Link to={logoRedirectPath} className="cursor-pointer pl-2" aria-label="GreatHire home">
+          <Link
+            to={logoRedirectPath}
+            className="cursor-pointer pl-2"
+            aria-label="GreatHire home"
+          >
             <h2 className="text-3xl sm:text-6xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out">
               <span className="text-black dark:text-white">Great</span>
               <span className="text-blue-600">Hire</span>
@@ -329,8 +414,6 @@ const Navbar = () => {
           <div>
             {/* ── DESKTOP NAVIGATION ── */}
             <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
-
-              {/* Left: primary nav */}
               <div className="flex items-center gap-6">
                 <ul className="flex items-center gap-6">
                   {primaryNavLinks.map(({ to, label }) => (
@@ -348,12 +431,9 @@ const Navbar = () => {
                 </ul>
               </div>
 
-              {/* Right: main links + Explore dropdown + user actions */}
               <div className="flex items-center gap-4 justify-end">
                 <div className="flex items-center gap-4">
                   <ul className="flex items-center gap-4">
-
-                    {/* Direct right nav links */}
                     {rightNavLinks.map(({ to, label }) => (
                       <li key={to}>
                         <Link
@@ -367,7 +447,7 @@ const Navbar = () => {
                       </li>
                     ))}
 
-                    {/* ── "Explore" 2-column dropdown — LOGGED-IN users ── */}
+                    {/* Explore — logged in */}
                     {user && (
                       <li ref={exploreMenuRef} className="relative">
                         <button
@@ -389,7 +469,12 @@ const Navbar = () => {
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </button>
 
@@ -398,14 +483,16 @@ const Navbar = () => {
                             links={moreDropdownLinks}
                             location={location}
                             onLinkClick={() => setIsExploreMenuOpen(false)}
-                            onCampusClick={() => handleCampusClick(() => setIsExploreMenuOpen(false))}
+                            onCampusClick={() =>
+                              handleCampusClick(() => setIsExploreMenuOpen(false))
+                            }
                             onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
                       </li>
                     )}
 
-                    {/* ── "Explore" 2-column dropdown — LOGGED-OUT users ── */}
+                    {/* Explore — logged out */}
                     {!user && (
                       <li ref={moreMenuRef} className="relative">
                         <button
@@ -427,7 +514,12 @@ const Navbar = () => {
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </button>
 
@@ -436,7 +528,9 @@ const Navbar = () => {
                             links={moreDropdownLinks}
                             location={location}
                             onLinkClick={() => setIsMoreMenuOpen(false)}
-                            onCampusClick={() => handleCampusClick(() => setIsMoreMenuOpen(false))}
+                            onCampusClick={() =>
+                              handleCampusClick(() => setIsMoreMenuOpen(false))
+                            }
                             onStudentClick={() => closePanelAndNavigate("/student/signup")}
                           />
                         )}
@@ -445,7 +539,7 @@ const Navbar = () => {
                   </ul>
                 </div>
 
-                {/* User action icons */}
+                {/* User icons */}
                 <div className="flex items-center gap-4">
                   <ThemeToggle />
                   {user && (
@@ -477,11 +571,9 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* ── AUTH BUTTONS (logged out) / PROFILE (logged in) ── */}
+                {/* Auth / Profile */}
                 {!user ? (
                   <div className="flex items-center gap-2">
-
-                    {/* Recruiter Login — outline */}
                     <button
                       onClick={() => navigate("/recruiter-login")}
                       className="px-4 py-2 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all text-sm font-semibold whitespace-nowrap"
@@ -489,15 +581,12 @@ const Navbar = () => {
                       Recruiter Login
                     </button>
 
-                    {/* Jobseeker Login — solid blue */}
                     <button
                       onClick={() => navigate("/jobseeker-login")}
                       className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-semibold whitespace-nowrap"
                     >
                       Jobseeker Login
                     </button>
-
-
                   </div>
                 ) : (
                   <div ref={profileMenuRef} className="relative">
@@ -509,15 +598,30 @@ const Navbar = () => {
                       aria-label="User profile menu"
                     >
                       <img
-                        src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
+                        src={
+                          user?.profile?.profilePhoto &&
+                          !user.profile.profilePhoto.includes("github.com")
+                            ? user.profile.profilePhoto
+                            : "/noprofile.webp"
+                        }
                         alt={`${user.fullname || "User"} profile photo`}
                         className="h-8 w-8 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                       />
                       <span className="font-medium text-gray-700 dark:text-gray-200 text-sm hidden xl:block">
                         {user?.fullname}
                       </span>
-                      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <svg
+                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </button>
 
@@ -528,31 +632,65 @@ const Navbar = () => {
                           className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
                           </svg>
                           {isRecruiter ? "Recruiter" : "User"} Profile
                         </Link>
 
+                        
+
                         {!isRecruiter && (
-                          <Link
-                            to="/saved-jobs"
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                          >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                            </svg>
-                            Saved Jobs
-                          </Link>
+                          <>
+                            <Link
+                              to="/saved-jobs"
+                              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
+                              onClick={() => setIsProfileMenuOpen(false)}
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                              </svg>
+                              Saved Jobs
+                            </Link>
+                            <Link
+                              to="/calendar"
+                              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors text-gray-800 dark:text-gray-200"
+                              onClick={() => setIsProfileMenuOpen(false)}
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              My Calendar & Interviews
+                            </Link>
+                          </>
                         )}
 
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-2 w-full text-left px-4 py-2 text-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            />
                           </svg>
                           Logout
                         </button>
@@ -566,10 +704,9 @@ const Navbar = () => {
 
           {/* ── MOBILE RIGHT ICONS ── */}
           <div className="flex items-center gap-2 lg:hidden">
-              <ThemeToggle />
-              {user && <NotificationDropdown />}
-              <button
-
+            <ThemeToggle />
+            {user && <NotificationDropdown />}
+            <button
               className="flex items-center gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
@@ -578,21 +715,46 @@ const Navbar = () => {
               {!isMenuOpen ? (
                 user ? (
                   <img
-                    src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
+                    src={
+                      user?.profile?.profilePhoto &&
+                      !user.profile.profilePhoto.includes("github.com")
+                        ? user.profile.profilePhoto
+                        : "/noprofile.webp"
+                    }
                     alt={`${user?.fullname || "User"} profile photo`}
                     className="h-6 w-6 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                   />
                 ) : (
-                  <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <svg
+                    className="w-5 h-5 text-gray-700 dark:text-gray-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   </svg>
                 )
               ) : (
-                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-5 h-5 text-gray-700 dark:text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               )}
-              </button>
+            </button>
           </div>
 
           {/* ── MOBILE NAVIGATION OVERLAY ── */}
@@ -602,7 +764,6 @@ const Navbar = () => {
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
-            {/* Mobile Menu Panel */}
             <div
               ref={mobileMenuRef}
               className={`fixed top-0 right-0 h-full w-72 z-20 bg-white dark:bg-gray-800 shadow-lg transform transition-transform ${
@@ -610,31 +771,42 @@ const Navbar = () => {
               }`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Mobile User Section */}
+              {/* Mobile user header */}
               <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                 {user ? (
                   <div className="flex items-center gap-3">
                     <img
-
-                      src={user?.profile?.profilePhoto && !user.profile.profilePhoto.includes('github.com') ? user.profile.profilePhoto : "/noprofile.webp"}
-
+                      src={
+                        user?.profile?.profilePhoto &&
+                        !user.profile.profilePhoto.includes("github.com")
+                          ? user.profile.profilePhoto
+                          : "/noprofile.webp"
+                      }
                       alt={`${user?.fullname || "User"} profile photo`}
                       className="h-12 w-12 rounded-md border border-gray-300 dark:border-gray-600 object-cover"
                     />
                     <div>
-                      <p className="font-semibold text-gray-800 dark:text-gray-200">{user.fullname || "User"}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                      <p className="font-semibold text-gray-800 dark:text-gray-200">
+                        {user.fullname || "User"}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center">
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">Welcome to GreatHire</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Sign in to access all features</p>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                      Welcome to GreatHire
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Sign in to access all features
+                    </p>
                   </div>
                 )}
               </div>
 
-              {/* Mobile Navigation Links */}
+              {/* Mobile links */}
               <div className="overflow-y-auto h-full pb-32">
                 <div className="px-4 py-2" />
 
@@ -653,7 +825,7 @@ const Navbar = () => {
                   </Link>
                 ))}
 
-                {/* Mobile Policy Section */}
+                {/* Mobile policy */}
                 <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="px-4 py-2">
                     <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -672,53 +844,70 @@ const Navbar = () => {
                   ))}
                 </div>
 
-                {/* Mobile Auth / Action Buttons */}
+                {/* Mobile auth / actions */}
                 {!user ? (
                   <div className="border-t border-gray-200 dark:border-gray-700 p-4 space-y-3">
-
                     <button
-                      onClick={() => { navigate("/recruiter-login"); setIsMenuOpen(false); }}
+                      onClick={() => {
+                        navigate("/recruiter-login");
+                        setIsMenuOpen(false);
+                      }}
                       className="w-full text-blue-600 border-2 border-blue-600 px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:bg-blue-50 text-sm"
                     >
                       Recruiter Login
                     </button>
-
                     <button
-                      onClick={() => { navigate("/jobseeker-login"); setIsMenuOpen(false); }}
+                      onClick={() => {
+                        navigate("/jobseeker-login");
+                        setIsMenuOpen(false);
+                      }}
                       className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:shadow-xl text-sm"
                     >
                       Jobseeker Login
                     </button>
-
-                    {/* Campus Hiring — pink/red */}
-                    {/* <button
-                      onClick={() => { navigate("/campus-hiring"); setIsMenuOpen(false); }}
-                      className="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:shadow-xl text-sm"
-                    >
-                      Campus Hiring
-                    </button> */}
-
-                    {/* Student Sign Up — purple/indigo */}
-                    {/* <button
-                      onClick={() => { navigate("/signup"); setIsMenuOpen(false); }}
-                      className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:shadow-xl text-sm"
-                    >
-                      Student Sign Up
-                    </button> */}
                   </div>
                 ) : (
                   <div className="border-t border-gray-200 dark:border-gray-700 py-2">
+                    {/* ✅ Messages in mobile menu — with badge */}
+                    <Link
+                      to="/messages"
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <MessageIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      <span className="text-gray-700 dark:text-gray-200">
+                        Messages
+                      </span>
+                      {unreadCount > 0 && (
+                        <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </Link>
+
                     {!isRecruiter && (
-                      <Link
-                        to="/saved-jobs"
-                        className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                        </svg>
-                        <span className="text-gray-700 dark:text-gray-200">Saved Jobs</span>
-                      </Link>
+                      <>
+                        <Link
+                          to="/saved-jobs"
+                          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                          </svg>
+                          <span className="text-gray-700 dark:text-gray-200">Saved Jobs</span>
+                        </Link>
+                        <Link
+                          to="/interviews"
+                          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-gray-700 dark:text-gray-200">My Interviews</span>
+                        </Link>
+                      </>
                     )}
 
                     <Link
@@ -726,18 +915,40 @@ const Navbar = () => {
                       className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <svg
+                        className="w-5 h-5 text-gray-600 dark:text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
                       </svg>
-                      <span className="text-gray-700 dark:text-gray-200">View Profile</span>
+                      <span className="text-gray-700 dark:text-gray-200">
+                        View Profile
+                      </span>
                     </Link>
 
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-3 w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
                       </svg>
                       Logout
                     </button>
@@ -749,10 +960,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-
-      
-
-      {/* Spacer — pushes page content below fixed navbar (+ marquee for non-recruiters) */}
+      {/* Spacer — keeps content below fixed navbar */}
       <div className="h-[61px]" />
     </>
   );

@@ -8,6 +8,13 @@ import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
+import { screenApplicationAfterCreate } from "./job.controller.js";
+import {
+  transitionStage,
+  getStageHistory,
+  getCandidateAging,
+  LEGACY_STATUS_TO_STAGE,
+} from "../services/workflow.service.js";
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -35,7 +42,8 @@ export const applyJob = async (req, res) => {
       jobId,
       answers,
     } = req.body;
-    const { resume } = req.files;
+    const resume = req.files?.resume;
+    // const { resume } = req.files;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -70,6 +78,9 @@ export const applyJob = async (req, res) => {
     if (city && city !== user.address.city) user.address.city = city;
     if (state && state !== user.address.state) user.address.state = state;
     if (country && country !== user.address.country) user.address.country = country;
+
+    user.profile = user.profile || {};
+    user.profile.experience = user.profile.experience || {};
 
     user.profile.coverLetter = coverLetter;
     user.profile.experience.experienceDetails = experience;
@@ -130,6 +141,7 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       resume: user.profile?.resume || "",
       answers: Array.isArray(answers) ? answers : [],
       status: "Pending",
+      autoApplied: false,
     });
 
     await newApplication.save();
@@ -166,6 +178,8 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       applicationId: newApplication._id,
     });
 
+    await screenApplicationAfterCreate(newApplication, user, job);
+
     res.status(201).json({
       success: true,
       message: "Applied successfully",
@@ -190,7 +204,7 @@ export const getAppliedJobs = async (req, res) => {
       });
 
     if (!application) {
-      return res.status(404).json({ message: "No Applications.", success: false });
+      return res.status(404).json({ message: "No applications.", success: false });
     }
     return res.status(200).json({ application, success: true });
   } catch (error) {
@@ -206,6 +220,21 @@ export const getApplicants = async (req, res) => {
 
     // Get the job to check company plan
     const job = await Job.findById(jobId).populate("company");
+
+    if (!job) {
+  return res.status(404).json({
+    success: false,
+    message: "Job not found",
+  });
+}
+
+if (job.created_by.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to view applicants for this job",
+  });
+}
+
     const companyPlan = job?.company?.plan || "FREE";
     const isFreePlan = companyPlan === "FREE";
 
@@ -235,6 +264,23 @@ export const getApplicants = async (req, res) => {
 export const getApplicationDetails = async (req, res) => {
   try {
     const { jobId, candidateId } = req.params;
+
+    const job = await Job.findById(jobId);
+
+if (!job) {
+  return res.status(404).json({
+    success: false,
+    message: "Job not found",
+  });
+}
+
+if (job.created_by.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not authorized to view this application",
+  });
+}
+
 
     const application = await Application.findOne({
       job: jobId,
@@ -301,6 +347,15 @@ export const updateStatus = async (req, res) => {
         .json({ message: "Application not found.", success: false });
     }
 
+    const jobOwnerId = application.job?.created_by;
+
+if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
+  return res.status(403).json({
+    message: "You are not authorized to update this application.",
+    success: false,
+  });
+}
+
     const previousStatus = application.status;
     application.status = status;
     await application.save();
@@ -316,10 +371,119 @@ export const updateStatus = async (req, res) => {
       recruiterId: req.id,
     });
 
+
+
     return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {
     console.error("Error updating application status:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+export const transitionApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    const { decision, score } = req.body;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    if (!decision) {
+      return res.status(400).json({
+        success: false,
+        message: "Decision is required",
+      });
+    }
+
+    if (!VALID_STATUSES.includes(decision)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid decision. Valid values: ${VALID_STATUSES.join(", ")}`,
+      });
+    }
+
+    const application = await Application.findById(applicationId)
+      .populate("applicant")
+      .populate("job");
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score,
+      changedBy: req.id,
+      notify: true,
+    });
+
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Application transitioned successfully",
+      application,
+    });
+  } catch (error) {
+    console.error("Error transitioning application:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to transition application",
+      error: error.message,
+    });
+  }
+};
+
+export const getApplicationHistory = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    const application = await Application.findById(applicationId);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    const history = await StageHistory.find({
+      application: applicationId,
+    })
+      .populate("changedBy", "fullname emailId")
+      .sort({ changedAt: 1 });
+
+    return res.status(200).json({
+      success: true,
+      applicationId,
+      history,
+    });
+  } catch (error) {
+    console.error("Error fetching application history:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch application history",
+      error: error.message,
+    });
   }
 };
 
@@ -387,6 +551,7 @@ export const bulkApplyJobs = async (req, res) => {
           resume: user.profile?.resume || "",
           answers: Array.isArray(answersMap[jobId]) ? answersMap[jobId] : [],
           status: "Pending",
+          autoApplied: false,
         });
 
         await newApplication.save();
@@ -405,6 +570,8 @@ export const bulkApplyJobs = async (req, res) => {
         } catch (notifErr) {
           console.error("Notification error for jobId", jobId, notifErr.message);
         }
+
+        await screenApplicationAfterCreate(newApplication, user, job);
 
         applied.push(jobId);
       } catch (jobErr) {
@@ -426,8 +593,31 @@ export const deleteApplication = async (req, res) => {
     const applicationId = req.params.id;
 
     const application = await Application.findById(applicationId);
+
     if (!application) {
       return res.status(404).json({ message: "Application not found.", success: false });
+    }
+
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    const isAdminUser =
+      user.role === "admin" || user.role === "Owner";
+
+    const isApplicant =
+      application.applicant.toString() === req.id.toString();
+
+    if (!isAdminUser && !isApplicant) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this application.",
+        success: false,
+      });
     }
 
     // Remove application from the job's application array

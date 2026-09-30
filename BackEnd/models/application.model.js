@@ -34,6 +34,12 @@ const applicationSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    autoApplied: {
+  type: Boolean,
+  default: false,
+},
+
     matchPercentage: {
       type: Number,
       default: 0,

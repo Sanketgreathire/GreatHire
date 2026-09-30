@@ -352,7 +352,7 @@ function Moin_blog_page() {
       id: 3,
       title: "Impact of Global Events on Workforce",
       description:
-        "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption.Businesses adjust workforce strategies based on global stability.",
+        "Economic and political events, such as recessions, conflicts, and policy changes, influence job markets, hiring trends, and remote work adoption. Businesses adjust workforce strategies based on global stability.",
       image: "./trendingz_topic_03.webp",
       link: "/blog/mastering-remote-work",
     },

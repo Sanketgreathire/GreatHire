@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 const MessageContext = createContext();
 
@@ -13,42 +15,47 @@ export const MessageProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const [loading, setLoading] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
-  
+
   const { user } = useSelector(store => store.auth);
   const typingTimeoutRef = useRef({});
 
   // Initialize Socket.IO connection — only when user visits /messages
-  const initializeSocket = async () => {
+  useEffect(() => {
     if (!user?._id || socket) return;
 
-    const { io } = await import('socket.io-client');
-    const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
-      withCredentials: true,
-      transports: ['polling', 'websocket'],
-      reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
-    });
+    let socketInstance;
 
-    setSocket(socketInstance);
+    (async () => {
+      const { io } = await import('socket.io-client');
+      socketInstance = io(
+        import.meta.env.VITE_API_URL || 'http://localhost:8000',
+        {
+          withCredentials: true,
+          transports: ['websocket', 'polling'],
+          reconnectionDelay: 1000,
+          reconnectionAttempts: 5,
+        }
+      );
 
-    socketInstance.on('connect', () => {
-      socketInstance.emit('joinUserRoom', user._id);
-      socketInstance.emit('userOnline', user._id);
-    });
+      socketInstance.on('connect', () => {
+        socketInstance.emit('joinUserRoom', user._id);
+        socketInstance.emit('userOnline', user._id);
+      });
 
-    fetchConversations();
+      socketInstance.on('connect_error', (err) =>
+        console.error('❌ Socket error:', err.message)
+      );
+
+      setSocket(socketInstance);
+      fetchConversations();
+    })();
 
     return () => {
-      socketInstance.emit('userOffline', user._id);
-      socketInstance.disconnect();
+      if (socketInstance) {
+        socketInstance.emit('userOffline', user._id);
+        socketInstance.disconnect();
+      }
     };
-  };
-
-  useEffect(() => {
-    if (!user?._id) return;
-    // Defer socket init — don't block initial page render
-    const t = setTimeout(initializeSocket, 2000);
-    return () => clearTimeout(t);
   }, [user?._id]);
 
   // Setup Socket.IO listeners
@@ -57,26 +64,41 @@ export const MessageProvider = ({ children }) => {
 
     // New message received
     socket.on('newMessage', ({ message, conversationId }) => {
-      if (activeConversation?._id === conversationId) {
+      if (activeConversation?._id?.toString() === conversationId?.toString()) {
         setMessages(prev => [...prev, message]);
       }
-      
+
       // Update conversation list
-      setConversations(prev => 
-        prev.map(conv => 
-          conv._id === conversationId 
+      setConversations(prev =>
+        prev.map(conv =>
+          conv._id === conversationId
             ? { ...conv, lastMessage: message, lastMessageTime: message.createdAt }
             : conv
         )
       );
     });
 
-    // Conversation updated
+    // ✅ Conversation updated — PRESERVE pendingDelivery flag
     socket.on('conversationUpdated', (conversation) => {
+      // If the incoming payload is broken (missing participant), refetch from REST
+      if (!conversation?.participant) {
+        console.warn('⚠️ Broken socket payload, refetching from REST');
+        fetchConversations();
+        return;
+      }
+
       setConversations(prev => {
         const exists = prev.find(c => c._id === conversation._id);
         if (exists) {
-          return prev.map(c => c._id === conversation._id ? conversation : c);
+          return prev.map(c =>
+            c._id === conversation._id
+              ? {
+                  ...conversation,
+                  // ✅ Preserve local flag — socket payload doesn't carry it
+                  pendingDelivery: c.pendingDelivery || false,
+                }
+              : c
+          );
         }
         return [conversation, ...prev];
       });
@@ -92,7 +114,7 @@ export const MessageProvider = ({ children }) => {
     // Message edited
     socket.on('messageEdited', ({ message, conversationId }) => {
       if (activeConversation?._id === conversationId) {
-        setMessages(prev => 
+        setMessages(prev =>
           prev.map(msg => msg._id === message._id ? message : msg)
         );
       }
@@ -106,7 +128,6 @@ export const MessageProvider = ({ children }) => {
       }));
 
       if (isTyping) {
-        // Clear typing after 3 seconds
         if (typingTimeoutRef.current[userId]) {
           clearTimeout(typingTimeoutRef.current[userId]);
         }
@@ -132,6 +153,30 @@ export const MessageProvider = ({ children }) => {
       });
     });
 
+    // ✅ Messages read — clears unread + pendingDelivery
+    socket.on("messagesRead", ({ conversationId }) => {
+      if (activeConversation?._id?.toString() === conversationId?.toString()) {
+        setMessages((prev) =>
+          prev.map((m) => {
+            const senderId = m.sender?._id?.toString();
+            if (senderId === user?._id?.toString()) {
+              return { ...m, isRead: true };
+            }
+            return m;
+          })
+        );
+      }
+
+      // Clear pending delivery flag for this conversation
+      setConversations(prev =>
+        prev.map(c =>
+          c._id?.toString() === conversationId?.toString()
+            ? { ...c, pendingDelivery: false }
+            : c
+        )
+      );
+    });
+
     return () => {
       socket.off('newMessage');
       socket.off('conversationUpdated');
@@ -139,6 +184,7 @@ export const MessageProvider = ({ children }) => {
       socket.off('messageEdited');
       socket.off('userTyping');
       socket.off('userStatusChanged');
+      socket.off("messagesRead");
     };
   }, [socket, activeConversation]);
 
@@ -165,14 +211,20 @@ export const MessageProvider = ({ children }) => {
         `/api/v1/messages/conversations/${conversationId}/messages?page=${page}&limit=50`,
         { withCredentials: true }
       );
-      
+
       if (page === 1) {
         setMessages(response.data.messages);
       } else {
         setMessages(prev => [...response.data.messages, ...prev]);
       }
-      
+
       setHasMoreMessages(response.data.hasMore);
+
+      setConversations(prev =>
+        prev.map(c =>
+          c._id === conversationId ? { ...c, unreadCount: 0 } : c
+        )
+      );
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     } finally {
@@ -188,11 +240,21 @@ export const MessageProvider = ({ children }) => {
       }
 
       const response = await axios.post('/api/v1/messages/messages/send', {
-        recipientId,
-        content,
-        messageType,
-        replyTo
+        recipientId, content, messageType, replyTo
       }, { withCredentials: true });
+
+      // ✅ Mark conversation as pending delivery if recipient is offline
+      const { delivered, conversationId: convId } = response.data;
+
+      if (!delivered && convId) {
+        setConversations(prev =>
+          prev.map(c =>
+            c._id?.toString() === convId?.toString()
+              ? { ...c, pendingDelivery: true }
+              : c
+          )
+        );
+      }
 
       return response.data;
     } catch (error) {
@@ -204,7 +266,6 @@ export const MessageProvider = ({ children }) => {
   // Start conversation with role validation
   const startConversation = async (recipientId) => {
     try {
-      // Validate role compatibility before starting conversation
       if (!user) {
         throw new Error('User must be authenticated to start conversations');
       }
@@ -215,8 +276,7 @@ export const MessageProvider = ({ children }) => {
 
       const conversation = response.data.conversation;
       setActiveConversation(conversation);
-      
-      // Join conversation room
+
       if (socket) {
         socket.emit('joinConversation', conversation._id);
       }
@@ -233,13 +293,30 @@ export const MessageProvider = ({ children }) => {
     if (activeConversation?._id) {
       socket?.emit('leaveConversation', activeConversation._id);
     }
-    
+
     setActiveConversation(conversation);
     setMessages([]);
-    
+
+    // ✅ Clear unread + pendingDelivery when opening conversation
+    if (conversation?._id) {
+      setConversations(prev =>
+        prev.map(c =>
+          c._id === conversation._id
+            ? { ...c, unreadCount: 0, pendingDelivery: false }
+            : c
+        )
+      );
+    }
+
     if (conversation?._id) {
       socket?.emit('joinConversation', conversation._id);
       fetchMessages(conversation._id);
+      if (socket) {
+        socket.emit("markAsRead", {
+          conversationId: conversation._id.toString(),
+          userId: user._id.toString(),
+        });
+      }
     }
   };
 
@@ -272,7 +349,7 @@ export const MessageProvider = ({ children }) => {
       const response = await axios.put(`/api/v1/messages/messages/${messageId}/edit`, {
         content
       }, { withCredentials: true });
-      
+
       return response.data.message;
     } catch (error) {
       console.error('Failed to edit message:', error);
@@ -294,7 +371,6 @@ export const MessageProvider = ({ children }) => {
     startConversation,
     setActiveConversation: setActiveConversationHandler,
     sendTypingIndicator,
-    initializeSocket,
     deleteMessage,
     editMessage,
   };
@@ -306,6 +382,7 @@ export const MessageProvider = ({ children }) => {
   );
 };
 
+/* eslint-disable react-refresh/only-export-components */
 export const useMessages = () => {
   const context = useContext(MessageContext);
   if (!context) {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, memo } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Bell, MessageSquareText, LogOut, User } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -17,6 +17,12 @@ const Navbar = memo(({ linkName }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { notifications, setNotifications } = useNotification();
+
+  useEffect(() => {
+    if (linkName) {
+      document.title = `GreatHire Admin | ${linkName}`;
+    }
+  }, [linkName]);
 
   const handleShowNotification = useCallback(async () => {
     try {
@@ -46,10 +52,10 @@ const Navbar = memo(({ linkName }) => {
         toast.success(response.data.message);
         navigate("/admin/login");
       } else {
-        toast.error("Error in logout");
+        toast.error("Error logging out. Please try again.");
       }
     } catch (err) {
-      toast.error(`Error in logout ${err}`);
+      toast.error(`Error logging out ${err}`);
     }
   }, [dispatch, navigate]);
 

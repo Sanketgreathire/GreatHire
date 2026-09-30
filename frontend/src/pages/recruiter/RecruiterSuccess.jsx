@@ -9,7 +9,7 @@ export const RecruiterSuccess = () => {
     <>
       <Helmet>
         <title>
-          Sucessful Registration | Email Confirmation Sent - GreatHire
+          Successful Registration | Email Confirmation Sent - GreatHire
         </title>
 
         <meta

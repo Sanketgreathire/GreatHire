@@ -18,6 +18,7 @@ import {
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload, multiUpload } from "../middlewares/multer.js";
+import isAdmin from "../middlewares/isAdmin.js";
 
 const router = express.Router();
 
@@ -60,10 +61,18 @@ router.route("/report-job").post(isAuthenticated,(req, res, next) => {
     });
   }, reportJob);
 
-router.route("/jobReports/:id").delete(isAuthenticated, deleteJobReport);
+// router.route("/jobReports/:id").delete(isAuthenticated, deleteJobReport);
+router.route("/jobReports/:id").delete(
+  isAuthenticated,
+  isAdmin,
+  deleteJobReport
+);
 
 // Test route to manually expire plans
-router.route("/test-expire-plans").get(async (req, res) => {
+// router.route("/test-expire-plans").get(async (req, res) => {
+  router
+  .route("/test-expire-plans")
+  .get(isAuthenticated, isAdmin, async (req, res) => {
   try {
     const { JobSubscription } = await import("../models/jobSubscription.model.js");
     const subs = await JobSubscription.find({ status: "Active" });

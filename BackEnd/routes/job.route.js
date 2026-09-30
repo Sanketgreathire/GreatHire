@@ -22,7 +22,7 @@
 // router.route("/toggle-active").put(isAuthenticated, toggleActive);
 // router.route("/get").get(getAllJobs);
 // router.route("/jobs").get(getAllJobs);
-// router.route("/get/:id").get(getJobById); // 🟢 Now it's public
+// 🟢 Now it's public
 // router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
 // router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);
 // router.route("/delete/:id").delete(isAuthenticated, deleteJobById);
@@ -48,8 +48,9 @@ import {
   getJobByCompanyId,
   getJobsStatistics,
   getExternalJobsFromFindwork,
-  applyJob,
+  // applyJob,
   generateJD,
+  adminAddJob,
   searchJobs,
 } from "../controllers/job.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
@@ -59,6 +60,7 @@ const router = express.Router();
 
 // AI JD Generation
 router.post("/generate-jd", isAuthenticated, generateJD);
+router.post("/admin-add-job", isAuthenticated, adminAddJob);
 
 // Search jobs with filters + match score
 router.get("/search", searchJobs);
@@ -72,7 +74,6 @@ router.route("/toggle-active").put(isAuthenticated, isRecruiterWithCompany, togg
 router.route("/get").get(getAllJobs);
 router.route("/jobs").get(getAllJobs);
 router.route("/get/:id").get(getJobById); // 🟢 Now it's public
-router.get("/get/:id", getJobById);
 router.get("/:id", getJobById);
 
 router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
@@ -80,7 +81,7 @@ router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);
 router.route("/delete/:id").delete(isAuthenticated, isRecruiterWithCompany, deleteJobById);
 router.route("/update/:jobId").put(isAuthenticated, isRecruiterWithCompany, updateJob);
 router.route("/job-statistics/:id").get(isAuthenticated, isRecruiterWithCompany, getJobsStatistics);
-router.route("/apply-job/:jobId").post(isAuthenticated, applyJob); //this
+// router.route("/apply-job/:jobId").post(isAuthenticated, applyJob); //this
 
 
 // Add the new route to fetch external jobs

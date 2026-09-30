@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Check, X, ArrowLeft, Award, Zap, Shield, TrendingUp } from "lucide-react";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -47,26 +47,25 @@ const PLAN_CREDITS = {
   pro:    { creditsForJobs: 25, creditsForCandidates: 5000 },
 };
 
-const PLAN_MAP = { STANDARD: "growth", PREMIUM: "scale", PRO: "pro", ENTERPRISE: "enterprise" };
+//const PLAN_MAP = { STANDARD: "growth", PREMIUM: "scale", PRO: "pro", ENTERPRISE: "enterprise" };
 
 const RPO_IDS = new Set(["full-cycle-rpo", "monthly-talent-partner", "partnership"]);
-const subscriptionPlans = [
+
+export const subscriptionPlans = [
   {
     id: "starter",
     title: "Starter Plan",
     price: 0,
     billing: "Forever Free",
-    jobs: "1 Job / month",
-    resumes: "30 Applications",
+    jobs: "Unlimited",
     isFree: true,
     bestFor: "Best for trying the platform",
     features: [
-      "1 Job Posting every month",
-      "Access to first 30 applications per job",
-      "Basic Search Filters",
-      "1 User",
-      "No AI Features",
-      "3-Day Free Trial of All Features — No Credit Card Required",
+      "Unlimited Job Postings",
+      "Access to Job Listings",
+      "Advanced Search Filters",
+      "Single User",
+      "AI Features Not Included",
       { text: "AI Advanced Sourcing (Paid)", excluded: true },
     ],
     cta: "Start Free",
@@ -172,8 +171,7 @@ const subscriptionPlans = [
     durationMonths: 1,
     aiSourcingCredits: 250,
     teamUserLimit: 2,
-    jobs: "100",
-    resumes: "2,500",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Small teams with consistent hiring needs",
     features: [
@@ -200,8 +198,7 @@ const subscriptionPlans = [
     durationMonths: 3,
     aiSourcingCredits: 750,
     teamUserLimit: 3,
-    jobs: "200",
-    resumes: "7,500",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Short-term high-volume hiring",
     features: [
@@ -228,8 +225,7 @@ const subscriptionPlans = [
     durationMonths: 6,
     aiSourcingCredits: 1500,
     teamUserLimit: 6,
-    jobs: "200",
-    resumes: "15,000",
+    jobs: "Unlimited",
     enterprise: true,
     popular: true,
     bestFor: "Best for: Growing hiring teams",
@@ -257,8 +253,7 @@ const subscriptionPlans = [
     durationMonths: 12,
     aiSourcingCredits: 3000,
     teamUserLimit: 12,
-    jobs: "200",
-    resumes: "30,000",
+    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
@@ -279,22 +274,22 @@ const subscriptionPlans = [
   },
 ];
 
-const PlanBadge = ({ planId, user }) => {
-  if (!user || String(user.role).toUpperCase() === "ADMIN") return null;
-  if (user.subscriptionStatus !== "ACTIVE") return null;
-  if (PLAN_MAP[user.plan] !== planId) return null;
+// const PlanBadge = ({ planId, user }) => {
+//   if (!user || String(user.role).toUpperCase() === "ADMIN") return null;
+//   if (user.subscriptionStatus !== "ACTIVE") return null;
+//   if (PLAN_MAP[user.plan] !== planId) return null;
 
-  if (user.plan === "STANDARD") return (
-    <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">VERIFIED</span>
-  );
-  if (user.plan === "PREMIUM") return (
-    <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">⭐ MOST POPULAR</span>
-  );
-  if (user.plan === "ENTERPRISE") return (
-    <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">👑 ENTERPRISE ELITE</span>
-  );
-  return null;
-};
+//   if (user.plan === "STANDARD") return (
+//     <span className="absolute top-3 right-3 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 text-[10px] font-bold px-2 py-1 rounded-full">VERIFIED</span>
+//   );
+//   if (user.plan === "PREMIUM") return (
+//     <span className="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md">⭐ MOST POPULAR</span>
+//   );
+//   if (user.plan === "ENTERPRISE") return (
+//     <span className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-lg shadow-lg">👑 ENTERPRISE ELITE</span>
+//   );
+//   return null;
+// };
 
 function RecruiterPlans() {
   const { user } = useSelector((state) => state.auth);
@@ -305,7 +300,7 @@ function RecruiterPlans() {
 
   const isRecruiter = user?.role === "recruiter" && !location.pathname.includes("packages") && !location.pathname.includes("your-plans") && !location.pathname.includes("recruiter-plans");
 
-  const [selectedPlanId, setSelectedPlanId] = useState(
+  const [, setSelectedPlanId] = useState(
     subscriptionPlans.find((p) => p.popular)?.id
   );
   const [showVerificationBanner, setShowVerificationBanner] = useState(false);
@@ -324,7 +319,7 @@ function RecruiterPlans() {
         }
       })
       .catch(() => {});
-  }, [user?._id]);
+  }, [user,dispatch]);
 
   const loadRazorpayScript = useCallback(() => {
     return new Promise((resolve) => {
@@ -407,7 +402,7 @@ function RecruiterPlans() {
           const response = await axios.post(`${COMPANY_API_END_POINT}/company-by-userid`, { userId: user._id }, { withCredentials: true });
           if (response?.data.success) {
             dispatch(addCompany(response?.data.company));
-            toast.success("Free plan activated! You now have 1 job post every month.");
+            toast.success("Starter plan activated! Unlimited job postings for 6 months.");
             navigate("/recruiter/dashboard/post-job");
           }
         } catch { toast.error("Failed to activate free plan. Please try again."); }
@@ -598,9 +593,11 @@ function RecruiterPlans() {
                         <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
                           📋 {plan.jobs}
                         </span>
-                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
-                          👥 {plan.resumes}
-                        </span>
+                        {plan.resumes && (
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
+                            👥 {plan.resumes}
+                          </span>
+                        )}
                       </div>
 
                       {/* Features */}

@@ -11,11 +11,21 @@ import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import JobReport from "../models/jobReport.model.js";
 import Notification from "../models/notification.model.js";
+import {
+  isStarterCompany,
+  starterUnlimitedJobsUntilDate,
+} from "../utils/starterPlan.js";
 
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const getCandidateInformation = async (req, res) => {
   try {
     const userId = req.params.id;
+    if (!userId || !/^[0-9a-fA-F]{24}$/.test(userId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid user ID",
+  });
+}
 
     const user = await User.findById(userId).select("-password");
 
@@ -332,6 +342,7 @@ export const registerCompany = async (req, res) => {
       businessFileName: businessFile ? businessFile[0].originalname : undefined,
       maxJobPosts: null,
       freePlanExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      starterUnlimitedJobsUntil: starterUnlimitedJobsUntilDate(),
     });
 
     return res.status(201).json({
@@ -384,6 +395,13 @@ export const getCompanyById = async (req, res) => {
       });
     }
 
+    if (!/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    message: "Invalid company ID.",
+    success: false,
+  });
+}
+
     // Find company by ID
     const company = await Company.findById(companyId);
 
@@ -404,6 +422,13 @@ export const getCompanyById = async (req, res) => {
     }
     if (companyData.customMaxJobPosts !== null && companyData.customMaxJobPosts !== undefined) {
       companyData.maxJobPosts = companyData.customMaxJobPosts;
+    }
+
+    if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+      const until = starterUnlimitedJobsUntilDate();
+      company.starterUnlimitedJobsUntil = until;
+      await company.save();
+      companyData.starterUnlimitedJobsUntil = until;
     }
 
     // Return company details
@@ -493,13 +518,13 @@ export const activateTrial = async (req, res) => {
     const now = new Date();
     company.trialActive = true;
     company.trialStartedAt = now;
-    company.trialExpiresAt = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        company.trialExpiresAt = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
     company.hasUsedTrial = true;
     await company.save();
 
     return res.status(200).json({
       success: true,
-      message: "Your 3-day free trial is now active. Enjoy all premium features!",
+      message: "Your 10-day free trial is now active. Enjoy all premium features!",
       company,
     });
   } catch (error) {
@@ -518,12 +543,23 @@ export const companyByUserId = async (req, res) => {
       return res.status(400).json({ message: "User ID is required." });
     }
 
+    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
+  return res.status(400).json({
+    message: "Invalid user ID.",
+    success: false,
+  });
+}
+
     // Query the company where userId matches
     const company = await Company.findOne({
       userId: { $elemMatch: { user: new mongoose.Types.ObjectId(userId) } },
     });
 
     if (company) {
+      if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+        company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate();
+        await company.save();
+      }
       return res.status(200).json({ success: true, company });
     } else {
       return res.status(404).json({
@@ -544,6 +580,13 @@ export const updateCompany = async (req, res) => {
     const { companyWebsite, address, industry, email, phone } = req.body;
     const companyId = req.params.id;
     const userId = req.id;
+
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
 
     if (!(await isUserAssociated(companyId, userId))) {
       return res
@@ -577,13 +620,93 @@ export const updateCompany = async (req, res) => {
 };
 
 // this controller update the admin of a company. There is be a single admin of a company always and only admin can select a recruiter as admin from his / her company
-export const changeAdmin = async (req, res) => {
-  const { email, companyId, adminEmail } = req.body;
-  const userId = req.id;
+// export const changeAdmin = async (req, res) => {
+//   const { email, companyId, adminEmail } = req.body;
+//   const userId = req.id;
 
+//   if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid company ID",
+//   });
+// }
+
+//   try {
+//     // Find the company by ID
+//     const company = await Company.findById(companyId);
+
+//     if (!company) {
+//       return res.status(404).json({
+//         message: "Company not found.",
+//         success: false,
+//       });
+//     }
+
+//     // Check if the userEmail is equal to the company's admin email
+//     if (email !== company.adminEmail) {
+//       return res.status(403).json({
+//         message: "You are not authorized to change the admin.",
+//         success: false,
+//       });
+//     }
+
+//     // Check if the userId exists in the company's userId array
+//     const userExists = company.userId.some(
+//       (user) => user.user.toString() === userId
+//     );
+
+//     if (!userExists) {
+//       return res.status(404).json({
+//         message: "You are not found in the company.",
+//         success: false,
+//       });
+//     }
+
+//     // Change the company's admin email
+//     company.adminEmail = adminEmail;
+//     await company.save();
+
+//     return res.status(200).json({
+//       message: "Admin email changed successfully.",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error changing admin:", error);
+//     return res.status(500).json({
+//       message: "Internal Server Error",
+//       success: false,
+//     });
+//   }
+// };
+
+export const changeAdmin = async (req, res) => {
   try {
-    // Find the company by ID
-    const company = await Company.findById(companyId);
+    const { companyId, adminEmail } = req.body;
+    const userId = req.id;
+
+    // Validate company ID
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
+
+    // Validate new admin email
+    if (
+      !adminEmail ||
+      typeof adminEmail !== "string" ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmail.trim())
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid admin email",
+      });
+    }
+
+    const company = await Company.findById(companyId).select(
+      "userId adminEmail"
+    );
 
     if (!company) {
       return res.status(404).json({
@@ -592,28 +715,57 @@ export const changeAdmin = async (req, res) => {
       });
     }
 
-    // Check if the userEmail is equal to the company's admin email
-    if (email !== company.adminEmail) {
-      return res.status(403).json({
-        message: "You are not authorized to change the admin.",
-        success: false,
-      });
-    }
-
-    // Check if the userId exists in the company's userId array
-    const userExists = company.userId.some(
-      (user) => user.user.toString() === userId
+    // Find currently logged-in recruiter
+    const currentRecruiter = await Recruiter.findById(userId).select(
+      "emailId"
     );
 
-    if (!userExists) {
+    if (!currentRecruiter) {
       return res.status(404).json({
-        message: "You are not found in the company.",
+        message: "Current recruiter not found.",
         success: false,
       });
     }
 
-    // Change the company's admin email
-    company.adminEmail = adminEmail;
+    const currentAdminEmail = currentRecruiter.emailId?.email;
+
+    // Verify logged-in user is the current company admin
+    if (
+      !currentAdminEmail ||
+      currentAdminEmail.toLowerCase() !== company.adminEmail?.toLowerCase()
+    ) {
+      return res.status(403).json({
+        message: "Only the current admin can change the admin.",
+        success: false,
+      });
+    }
+
+    // Find new admin
+    const newAdmin = await Recruiter.findOne({
+      "emailId.email": adminEmail.trim(),
+    }).select("_id emailId");
+
+    if (!newAdmin) {
+      return res.status(404).json({
+        message: "New admin recruiter not found.",
+        success: false,
+      });
+    }
+
+    // Verify new admin belongs to this company
+    const newAdminBelongsToCompany = company.userId.some(
+      (user) => user.user.toString() === newAdmin._id.toString()
+    );
+
+    if (!newAdminBelongsToCompany) {
+      return res.status(403).json({
+        message: "New admin must belong to this company.",
+        success: false,
+      });
+    }
+
+    // Change admin
+    company.adminEmail = newAdmin.emailId.email;
     await company.save();
 
     return res.status(200).json({
@@ -622,6 +774,7 @@ export const changeAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error("Error changing admin:", error);
+
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -634,6 +787,13 @@ export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id;
     const userId = req.id;
+
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
 
     const company = await Company.findById(companyId).select("userId").lean();
     if (!company) return res.status(404).json({ message: "Company not found", success: false });
@@ -686,6 +846,85 @@ export const getCandidateData = async (req, res) => {
     } = req.body;
 
     const userId = req.id;
+
+    // Validate authenticated user
+if (!userId) {
+  return res.status(401).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+
+// Validate company ID
+if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
+
+// Validate experience range
+if (minExp !== undefined && minExp !== null) {
+  const min = Number(minExp);
+
+  if (!Number.isFinite(min) || min < 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid minimum experience",
+    });
+  }
+}
+
+if (maxExp !== undefined && maxExp !== null) {
+  const max = Number(maxExp);
+
+  if (!Number.isFinite(max) || max < 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid maximum experience",
+    });
+  }
+}
+
+if (
+  minExp !== undefined &&
+  maxExp !== undefined &&
+  Number(minExp) > Number(maxExp)
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Minimum experience cannot be greater than maximum experience",
+  });
+}
+
+// Validate last active days
+if (lastActive !== undefined && lastActive !== null) {
+  const days = Number(lastActive);
+
+  if (!Number.isInteger(days) || days < 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid last active value",
+    });
+  }
+}
+
+// Validate job description
+if (jobDescription !== undefined && jobDescription !== null) {
+  if (typeof jobDescription !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: "Job description must be a string",
+    });
+  }
+
+  if (jobDescription.length > 5000) {
+    return res.status(400).json({
+      success: false,
+      message: "Job description must be within 5000 characters",
+    });
+  }
+}
 
     // Fast auth check: single query, no Recruiter lookup
     const company = await Company.findById(companyId).select("userId hasSubscription").lean();
@@ -835,58 +1074,180 @@ export const getCandidateData = async (req, res) => {
 // if recruiter viewing applicant details, deduct 1 credit
 export const deductCandidateCredit = async (req, res) => {
   try {
-    const { companyId } = req.body;
+    const { companyId, amount = 1 } = req.body;
     const userId = req.id;
 
-    if (!companyId) {
-      return res.status(400).json({ message: "companyId is required", success: false });
+    // Validate company ID
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
     }
 
-    const company = await Company.findById(companyId).select("userId creditedForCandidates").lean();
-    if (!company) return res.status(404).json({ message: "Company not found", success: false });
-
-    const belongs = company.userId.some(u => u.user.toString() === userId.toString());
-    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
-
-    if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({ message: "Insufficient candidate credits. Please purchase a plan.", success: false });
+    // Validate amount
+    if (!Number.isInteger(amount) || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount must be a positive integer",
+      });
     }
 
-    await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
+    // Check company and user authorization
+    const company = await Company.findById(companyId)
+      .select("userId creditedForCandidates")
+      .lean();
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+        success: false,
+      });
+    }
+
+    const belongs = company.userId.some(
+      (u) => u.user.toString() === userId.toString()
+    );
+
+    if (!belongs) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Atomic credit deduction
+    const updatedCompany = await Company.findOneAndUpdate(
+      {
+        _id: companyId,
+        creditedForCandidates: { $gte: amount },
+      },
+      {
+        $inc: { creditedForCandidates: -amount },
+      },
+      {
+        new: true,
+      }
+    ).select("creditedForCandidates");
+
+    if (!updatedCompany) {
+      return res.status(400).json({
+        message:
+          "Insufficient candidate credits. Please purchase a plan.",
+        success: false,
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      remainingCredits: company.creditedForCandidates - 1,
-      message: "Credit deducted successfully"
+      remainingCredits: updatedCompany.creditedForCandidates,
+      message: "Credit deducted successfully",
     });
   } catch (error) {
     console.error("Error deducting candidate credit:", error);
-    res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message,
+    });
   }
 };
 
 // if recruiter finding the candidate and if they view the resume of candidate then one credit decrease
+// export const decreaseCandidateCredits = async (req, res) => {
+//   try {
+//     const companyId = req.params.id;
+//     const userId = req.id;
+
+//     const company = await Company.findById(companyId).select("userId creditedForCandidates").lean();
+//     if (!company) return res.status(404).json({ message: "Company not found", success: false });
+
+//     const belongs = company.userId.some(u => u.user.toString() === userId);
+//     if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
+
+//     if (company.creditedForCandidates <= 0) {
+//       return res.status(400).json({ message: "Insufficient credits", success: false });
+//     }
+
+//     await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
+
+//     return res.status(200).json({ success: true, remainingCredits: company.creditedForCandidates - 1 });
+//   } catch (error) {
+//     console.error("Error decreasing candidate credits:", error);
+//     res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
+//   }
+// };
+
 export const decreaseCandidateCredits = async (req, res) => {
   try {
     const companyId = req.params.id;
     const userId = req.id;
 
-    const company = await Company.findById(companyId).select("userId creditedForCandidates").lean();
-    if (!company) return res.status(404).json({ message: "Company not found", success: false });
-
-    const belongs = company.userId.some(u => u.user.toString() === userId);
-    if (!belongs) return res.status(403).json({ message: "You are not authorized", success: false });
-
-    if (company.creditedForCandidates <= 0) {
-      return res.status(400).json({ message: "Insufficient credits", success: false });
+    // Validate company ID
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
     }
 
-    await Company.findByIdAndUpdate(companyId, { $inc: { creditedForCandidates: -1 } });
+    // Check company and authorization
+    const company = await Company.findById(companyId)
+      .select("userId")
+      .lean();
 
-    return res.status(200).json({ success: true, remainingCredits: company.creditedForCandidates - 1 });
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+        success: false,
+      });
+    }
+
+    const belongs = company.userId.some(
+      (u) => u.user.toString() === userId.toString()
+    );
+
+    if (!belongs) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Atomic deduction: only deduct if at least 1 credit exists
+    const updatedCompany = await Company.findOneAndUpdate(
+      {
+        _id: companyId,
+        creditedForCandidates: { $gte: 1 },
+      },
+      {
+        $inc: { creditedForCandidates: -1 },
+      },
+      {
+        new: true,
+      }
+    ).select("creditedForCandidates");
+
+    if (!updatedCompany) {
+      return res.status(400).json({
+        message: "Insufficient credits",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      remainingCredits: updatedCompany.creditedForCandidates,
+    });
   } catch (error) {
     console.error("Error decreasing candidate credits:", error);
-    res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message,
+    });
   }
 };
 
@@ -896,6 +1257,34 @@ export const getCompanyApplicants = async (req, res) => {
     const { companyId } = req.params;
     const userId = req.id;
 
+    // Validate company ID
+if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
+
+// Validate authenticated user
+if (!userId) {
+  return res.status(401).json({
+    success: false,
+    message: "Unauthorized",
+  });
+}
+
+// Pagination
+const page = Math.max(parseInt(req.query.page) || 1, 1);
+
+const limit = Math.min(
+  Math.max(parseInt(req.query.limit) || 20, 1),
+  100
+);
+
+const skip = (page - 1) * limit;
+
+    
+
     if (!(await isUserAssociated(companyId, userId))) {
       return res.status(403).json({ message: "You are not authorized", success: false });
     }
@@ -903,17 +1292,45 @@ export const getCompanyApplicants = async (req, res) => {
     // Run both queries in parallel
     const jobIds = await Job.find({ company: companyId }).distinct("_id");
 
-    const applications = await Application.find({ job: { $in: jobIds } })
-      .populate("applicant", "fullname emailId phoneNumber alternatePhone address profile isProfileBoosted")
-      .populate({ path: "job", select: "jobDetails.title" })
-      .sort({ createdAt: -1 })
-      .lean();
+    // const applications = await Application.find({ job: { $in: jobIds } })
+    //   .populate("applicant", "fullname emailId phoneNumber alternatePhone address profile isProfileBoosted")
+    //   .populate({ path: "job", select: "jobDetails.title" })
+    //   .sort({ createdAt: -1 })
+    //   .lean();
 
-    res.status(200).json({
-      success: true,
-      totalApplications: applications.length,
-      applications,
-    });
+    const totalApplications = await Application.countDocuments({
+  job: { $in: jobIds },
+});
+
+const applications = await Application.find({
+  job: { $in: jobIds },
+})
+  .populate(
+    "applicant",
+    "fullname emailId phoneNumber alternatePhone address isProfileBoosted"
+  )
+  .populate({
+    path: "job",
+    select: "jobDetails.title",
+  })
+  .sort({ createdAt: -1 })
+  .skip(skip)
+  .limit(limit)
+  .lean();
+
+    // res.status(200).json({
+    //   success: true,
+    //   totalApplications: applications.length,
+    //   applications,
+    // });
+    return res.status(200).json({
+  success: true,
+  totalApplications,
+  currentPage: page,
+  totalPages: Math.ceil(totalApplications / limit),
+  limit,
+  applications,
+});
   } catch (error) {
     console.error("Error fetching applicants:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -931,10 +1348,39 @@ export const reportJob = async (req, res) => {
 
     // Basic validation
     if (!jobId || !userId || !reportTitle) {
+      
       return res
         .status(400)
         .json({ message: "Job ID, User ID, and Report Title are required." });
     }
+
+    // Validate Job ID
+if (!/^[0-9a-fA-F]{24}$/.test(jobId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid job ID.",
+  });
+}
+
+// Validate Report Title
+if (
+  typeof reportTitle !== "string" ||
+  reportTitle.trim().length < 3 ||
+  reportTitle.trim().length > 100
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Report title must be between 3 and 100 characters.",
+  });
+}
+
+// Validate Report Type
+if (typeof reportType !== "string") {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid report type.",
+  });
+}
 
     // Validate reportType is one of the allowed values
     const allowedTypes = ["offensive", "money", "incorrect", "selling", "other"];
@@ -954,12 +1400,23 @@ export const reportJob = async (req, res) => {
     }
 
     // Description max length check
-    if (description && description.length > 300) {
-      return res.status(400).json({
-        success: false,
-        message: "Description must be within 300 characters.",
-      });
-    }
+
+    
+   if (description !== undefined && description !== null) {
+  if (typeof description !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: "Description must be a string.",
+    });
+  }
+
+  if (description.length > 300) {
+    return res.status(400).json({
+      success: false,
+      message: "Description must be within 300 characters.",
+    });
+  }
+}
 
     // Add this AFTER the basic validation, BEFORE building reportData
     const existingReport = await JobReport.findOne({ userId, jobId });
@@ -1259,6 +1716,20 @@ export const deductAiSourcingCredit = async (req, res) => {
     const { companyId, amount = 1 } = req.body;
     const userId = req.id;
 
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
+
+if (!Number.isInteger(amount) || amount <= 0) {
+  return res.status(400).json({
+    success: false,
+    message: "Amount must be a positive integer",
+  });
+}
+
     const company = await Company.findById(companyId).select("userId aiSourcingCredits").lean();
     if (!company) return res.status(404).json({ success: false, message: "Company not found" });
 
@@ -1283,7 +1754,15 @@ export const deductAiSourcingCredit = async (req, res) => {
 
 export const deleteJobReport = async (req, res) => {
   try {
+
     const { id } = req.params;
+
+    if (!id || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report ID",
+      });
+    }
 
     const deleted = await JobReport.findByIdAndDelete(id);
 

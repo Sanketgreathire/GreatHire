@@ -32,7 +32,11 @@ router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/admin/applications").get(isAuthenticated, isAdmin, getAllApplications);
 router.route("/admin/application/:id").delete(isAuthenticated, isAdmin, deleteApplication);
 // Manual trigger for auto-reject (for testing/admin)
-router.route("/auto-reject/trigger").post(isAuthenticated, triggerAutoReject);
+router.route("/auto-reject/trigger").post(
+  isAuthenticated,
+  isAdmin,
+  triggerAutoReject
+);
 
 
 export default router;

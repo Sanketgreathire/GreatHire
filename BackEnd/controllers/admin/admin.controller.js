@@ -145,7 +145,7 @@ export const login = async (req, res) => {
 
     if (!user) {
       return res.status(200).json({
-        message: "Account Not found.",
+        message: "Account not found.",
         success: false,
       });
     }
@@ -300,6 +300,23 @@ export const updateRecruiterCredits = async (req, res) => {
       { $set: setData },
       { new: true }
     );
+
+    // Notify the recruiter side in real-time so the updated Job Credits
+    // (and related fields) show up instantly without a page refresh.
+    try {
+      const { getIO } = await import("../../utils/socket.js");
+      const io = getIO();
+      if (io && company) {
+        io.emit("companyCreditsUpdated", {
+          companyId: company._id.toString(),
+          creditedForJobs: company.creditedForJobs,
+          creditedForCandidates: company.creditedForCandidates,
+          maxJobPosts: company.maxJobPosts,
+        });
+      }
+    } catch (emitErr) {
+      console.error("Error emitting companyCreditsUpdated:", emitErr);
+    }
 
     return res.status(200).json({
       success: true,

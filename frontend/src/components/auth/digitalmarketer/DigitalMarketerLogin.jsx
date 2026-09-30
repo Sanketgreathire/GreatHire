@@ -19,6 +19,7 @@ const DigitalMarketerLogin = () => {
   const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
+    document.title = "Digital Marketer Login | GreatHire";
     if (user) {
       if (user.role === "digitalmarketer" || user.role === "Owner")
         navigate("/blogs");

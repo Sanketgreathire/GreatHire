@@ -20,12 +20,12 @@ import aiedgeImg from "../../assets/clientLogos/aiedge.jpeg";
 import alkalineImg from "../../assets/clientLogos/alkaline.png";
 import baklavaImg from "../../assets/clientLogos/baklava.avif";
 import bandharyglassImg from "../../assets/clientLogos/bandharyglass.png";
-import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
+// import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
 import dadusImg from "../../assets/clientLogos/dadus.avif";
 import dwlabsImg from "../../assets/clientLogos/dwlabs.jpeg";
 import genericsolImg from "../../assets/clientLogos/genericsol.jpeg";
 import hrhImg from "../../assets/clientLogos/hrh.jpeg";
-import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
+//import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
 import smfibersImg from "../../assets/clientLogos/smfibers.svg";
 import sriramfinanceImg from "../../assets/clientLogos/sriramfinance.jpg";
 import techmahindraImg from "../../assets/clientLogos/techmahindra.png";
@@ -86,7 +86,7 @@ function App() {
     { name: "Wipro", logo: wiproImg },
     { name: "Teleperformance", logo: teleperformanceImg },
     { name: "Google", logo: googleImg },
-    { name: "Kotak Life", logo: kotaklifeImg },
+   // { name: "Kotak Life", logo: kotaklifeImg },
     { name: "DWLabs", logo: dwlabsImg },
     { name: "Voralsoft", logo: vortalsoftImg },
     { name: "Sriram Finance", logo: sriramfinanceImg },
@@ -99,7 +99,7 @@ function App() {
     { name: "Bandhary Glass", logo: bandharyglassImg },
     { name: "Alkaline", logo: alkalineImg },
     { name: "AI Edge", logo: aiedgeImg },
-    { name: "Clever Nest", logo: clevernestImg },
+    // { name: "Clever Nest", logo: clevernestImg },
     { name: "Baklava", logo: baklavaImg },
     { name: "HRH", logo: hrhImg },
     { name: "Dadus", logo: dadusImg },
@@ -615,7 +615,7 @@ function App() {
       description: "Sonika Babde is a dynamic leader in human resources and organizational development, playing a crucial role in shaping HR operations at Great Hire. With a strong commitment to innovation and inclusivity, she has been instrumental in creating a culture that values diversity and empowers employees to thrive.",
       achievements: [
         "Designed and implemented Great Hire's proprietary AI-driven talent matching system, revolutionizing recruitment efficiency and accuracy.",
-        "Previously served as a experience in technology-driven HR solutions.",
+        "Previously worked in technology-driven HR solutions.",
         "Data-Driven Decision Making: Leveraged advanced analytics to refine hiring strategies, improving workforce planning and talent acquisition outcomes.",
         "Employee-Centric HR Policies: Developed comprehensive policies fostering inclusivity, employee engagement, and long-term retention in the organization. ",
       ],

@@ -1,14 +1,18 @@
 // this package help to encrypt the password
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 // this package help to create token and provide user authentication by token
 import jwt from "jsonwebtoken";
+// import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
 
 import { User } from "../models/user.model.js";
 import Job from "../models/job.model.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin/admin.model.js";
+import { DigitalMarketer } from "../models/digitalmarketer.model.js";
 import { Contact } from "../models/contact.model.js";
+import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 // this model help to blacklist recent logout token
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
@@ -25,11 +29,22 @@ import { Application } from "../models/application.model.js";
 import notificationService from "../utils/notificationService.js";
 import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
 import { autoApply } from "../src/services/autoApply.service.js";
+import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: errors.array()[0]?.msg || "Invalid input.",
+        errors: errors.array(),
+      });
+    }
+
+    const { fullname, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const email = normalizeAccountEmail(req.body.email);
 
     // Validate fullname
     if (!fullname || fullname.length < 3) {
@@ -66,7 +81,10 @@ export const register = async (req, res) => {
     }
 
     // Check existing email
-    const existingEmail = await User.findOne({ "emailId.email": email });
+    const existingEmail =
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
     if (existingEmail) {
       return res.status(400).json({
         success: false,
@@ -195,16 +213,18 @@ export const login = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    //check mail is correct or not...
+const cleanEmail = normalizeAccountEmail(email);
+
+    // Check across User, Recruiter, Admin, and DigitalMarketer
     let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({
-        "emailId.email": email,
-      }));
+      (await findModelByEmail(User, cleanEmail)) ||
+      (await findModelByEmail(Recruiter, cleanEmail)) ||
+      (await findModelByEmail(Admin, cleanEmail)) ||
+      (await findModelByEmail(DigitalMarketer, cleanEmail));
 
     if (!user) {
       return res.status(200).json({
-        message: "Account Not found.",
+        message: "Account not found.",
         success: false,
       });
     }
@@ -291,12 +311,23 @@ export const jobseekerLogin = async (req, res) => {
       });
     }
 
+const cleanEmail = normalizeAccountEmail(email);
+
     // Only search in User collection for job seekers
-    let user = await User.findOne({ "emailId.email": email });
+    let user = await findModelByEmail(User, cleanEmail);
 
     if (!user) {
+      const recruiterAccount =
+        (await findModelByEmail(Recruiter, cleanEmail)) ||
+        (await findModelByEmail(Admin, cleanEmail));
+      if (recruiterAccount) {
+        return res.status(200).json({
+          message: "This email is registered as a recruiter. Please use Recruiter Login.",
+          success: false,
+        });
+      }
       return res.status(200).json({
-        message: "Job seeker account not found.",
+        message: "Job seeker account not found. Please sign up or check the email you used while registering.",
         success: false,
       });
     }
@@ -385,12 +416,23 @@ export const recruiterLogin = async (req, res) => {
       });
     }
 
-    // Only search in Recruiter collection for recruiters
-    let user = await Recruiter.findOne({ "emailId.email": email });
+const cleanEmail = normalizeAccountEmail(email);
+
+    // Search in Recruiter and Admin collections for recruiters
+    let user =
+      (await findModelByEmail(Recruiter, cleanEmail)) ||
+      (await findModelByEmail(Admin, cleanEmail));
 
     if (!user) {
+      const jobseekerAccount = await findModelByEmail(User, cleanEmail);
+      if (jobseekerAccount) {
+        return res.status(200).json({
+          message: "This email is registered as a job seeker. Please use Jobseeker Login.",
+          success: false,
+        });
+      }
       return res.status(200).json({
-        message: "Recruiter account not found.",
+        message: "Recruiter account not found. Please sign up or check the email you used while registering.",
         success: false,
       });
     }
@@ -508,7 +550,7 @@ export const googleLogin = async (req, res) => {
     if (user) {
       if (role && role !== user.role) {
         res.status(200).json({
-          message: "Account already exist!",
+          message: "Account already exists!",
           success: false,
         });
       }
@@ -718,7 +760,7 @@ export const updateProfile = async (req, res) => {
       documents,
       autoApply,
     } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const { profilePhoto, resume } = req.files || {}; // Access files from req.files
     //console.log(req.files);
     const userId = req.id;
@@ -738,6 +780,24 @@ export const updateProfile = async (req, res) => {
 
     // finding the user by userId
     let user = await User.findById(userId);
+    // TEMP: Check candidate current profile by email
+// const testCandidate = await User.findOne({
+//   "emailId.email": "peeyushrasal36@gmail.com"
+// }).lean();
+
+// console.log("🔍 TEST CANDIDATE CURRENT PROFILE:", {
+//   fullname: testCandidate?.fullname,
+//   email: testCandidate?.emailId?.email,
+//   skills: testCandidate?.profile?.skills,
+//   experiences: testCandidate?.profile?.experiences,
+//   bio: testCandidate?.profile?.bio,
+//   resume: testCandidate?.profile?.resume,
+//   designation: testCandidate?.profile?.experiences?.at(-1)?.jobProfile,
+//   location: {
+//     city: testCandidate?.address?.city,
+//     state: testCandidate?.address?.state,
+//   },
+// });
 
     // if not user return user not found
     if (!user) {
@@ -822,26 +882,26 @@ export const updateProfile = async (req, res) => {
   console.log("AUTO APPLY SAVED VALUE:", user.profile.autoApply);
 }
 
-if (user.profile.autoApply === true) {
-  const activeJobs = await Job.find({
-    "jobDetails.isActive": true
-  }).select("_id");
+// if (user.profile.autoApply === true) {
+//   const activeJobs = await Job.find({
+//     "jobDetails.isActive": true
+//   }).select("_id");
 
-  console.log(
-    `🔄 Auto Apply ON: Processing ${activeJobs.length} existing active jobs`
-  );
+//   console.log(
+//     `🔄 Auto Apply ON: Processing ${activeJobs.length} existing active jobs`
+//   );
 
-  for (const job of activeJobs) {
-    try {
-      await autoApply(job._id);
-    } catch (err) {
-      console.error(
-        `Auto Apply failed for existing job ${job._id}:`,
-        err.message
-      );
-    }
-  }
-}
+//   for (const job of activeJobs) {
+//     try {
+//       await autoApply(job._id);
+//     } catch (err) {
+//       console.error(
+//         `Auto Apply failed for existing job ${job._id}:`,
+//         err.message
+//       );
+//     }
+//   }
+// }
 
     // Updating qualification + otherQualification
     if (qualification && user.profile.qualification !== qualification) {
@@ -903,7 +963,7 @@ if (user.profile.autoApply === true) {
 
       if (existingUser) {
         return res.status(401).json({
-          message: "Email already exist!",
+          message: "Email already exists!",
           success: false,
         });
       }
@@ -1015,7 +1075,7 @@ export const sendMessage = async (req, res) => {
 
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER, // Access from .env
         pass: process.env.EMAIL_PASS, // Access from .env
@@ -1042,7 +1102,7 @@ export const sendMessage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "our team will be in touch with you soon!",
+      message: "Our team will be in touch with you soon!",
     });
   } catch (err) {
     console.error("Error sending message:", err);
@@ -1056,12 +1116,74 @@ export const sendMessage = async (req, res) => {
 // this controller use when user forgot the password
 export const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, role } = req.body;
 
-    let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+if (!email || typeof email !== "string") {
+      return res.status(400).json({
+        message: "Please provide a valid email address.",
+        success: false,
+      });
+    }
+
+    const cleanEmail = normalizeAccountEmail(email);
+    let user = null;
+    let resolvedRole = role;
+
+    if (role === "recruiter") {
+      user = await findModelByEmail(Recruiter, cleanEmail);
+    } else if (role === "student" || role === "user") {
+      user = await findModelByEmail(User, cleanEmail);
+    } else if (role === "admin") {
+      user = await findModelByEmail(Admin, cleanEmail);
+    }
+
+    if (!user) {
+      const [studentAccount, recruiterAccount, adminAccount, marketerAccount] =
+        await Promise.all([
+          findModelByEmail(User, cleanEmail),
+          findModelByEmail(Recruiter, cleanEmail),
+          findModelByEmail(Admin, cleanEmail),
+          findModelByEmail(DigitalMarketer, cleanEmail),
+        ]);
+
+      // Prioritize candidate (student) accounts first, then recruiter
+      const foundAccounts = [
+        { doc: studentAccount, role: "student" },
+        { doc: recruiterAccount, role: "recruiter" },
+        { doc: marketerAccount, role: "digital_marketer" },
+        { doc: adminAccount, role: "admin" },
+      ].filter((item) => item.doc);
+
+      const genericWords = new Set([
+        "user", "test", "testing", "tester", "new", "admin", "recruiter",
+        "student", "candidate", "jobseeker", "job", "seeker", "null",
+        "undefined", "company", "compony", "hr", "demo", "account",
+        "profile", "na", "none"
+      ]);
+
+      if (foundAccounts.length > 0) {
+        // Find best match that has a meaningful human name
+        const best = foundAccounts.find((item) => {
+          const n = (
+            item.doc.fullname ||
+            item.doc.fullName ||
+            item.doc.name ||
+            ""
+          ).trim().toLowerCase();
+
+          return (
+            n &&
+            n.length > 1 &&
+            !genericWords.has(n) &&
+            !n.startsWith("test ") &&
+            !n.endsWith(" test")
+          );
+        }) || foundAccounts[0];
+
+        user = best.doc;
+        resolvedRole = best.role;
+      }
+    }
 
     if (!user) {
       return res.status(200).json({
@@ -1070,92 +1192,218 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    // Create a token with a 5-minute expiry
-    const resetToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "5m",
-    });
+// Resolve a clean, human-friendly full name
+    const genericWords = new Set([
+      "user", "test", "testing", "tester", "new", "admin", "recruiter",
+      "student", "candidate", "jobseeker", "job", "seeker", "null",
+      "undefined", "company", "compony", "hr", "demo", "account", "profile", "na", "none"
+    ]);
 
-    // Generate reset URL
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+    let userName = "";
+    const candidateNames = [
+      user.fullname,
+      user.fullName,
+      user.name,
+      user.username,
+      user.profile?.firstName
+        ? `${user.profile.firstName} ${user.profile.lastName || ""}`
+        : null,
+    ];
 
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      service: "Gmail", // or your email service provider
-      auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // Your email password
+    for (let raw of candidateNames) {
+      if (typeof raw !== "string" || !raw.trim()) continue;
+
+      let cleaned = raw
+        .trim()
+        .replace(/\s*\d+$/, "")
+        .replace(/[0-9_#$@!%^&*()+=~`<>?/:;{}[\]|\\"]+/g, " ")
+        .trim();
+
+      const words = cleaned.split(/\s+/).filter(Boolean);
+      const meaningful = words.filter(
+        (w) => !genericWords.has(w.toLowerCase())
+      );
+
+      if (meaningful.length > 0) {
+        userName = meaningful
+          .map(
+            (w) =>
+              w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          )
+          .join(" ");
+        break;
+      }
+    }
+
+    // Fallback: extract clean name from email prefix
+    if (!userName) {
+      const emailPrefix = cleanEmail.split("@")[0] || "";
+      const alphaPrefix = emailPrefix.replace(/\d+/g, "");
+
+      const parts = alphaPrefix
+        .split(/[._\-+]+/)
+        .filter(
+          (w) =>
+            w.length >= 2 &&
+            !genericWords.has(w.toLowerCase())
+        );
+
+      if (parts.length > 0) {
+        userName = parts
+          .map(
+            (w) =>
+              w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+          )
+          .join(" ");
+      }
+    }
+
+    // Expiry from env or default 1 hour
+    const tokenExpiry =
+      process.env.FORGOT_PASSWORD_TOKEN_EXPIRY || "1h";
+
+    // Create a secure token with user identification
+    const resetToken = jwt.sign(
+      {
+        userId: String(user._id),
+        email: cleanEmail,
+        role: resolvedRole || user.role || "user",
       },
-    });
+      process.env.SECRET_KEY,
+      { expiresIn: tokenExpiry }
+    );
 
-    const mailOptions = {
-      from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
-      to: email,
-      subject: "Reset Your Password",
-      html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
-            <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
-          </div>
-    
-          <h3 style="color: #333;">Hi ${user.fullname},</h3>
-          <p style="color: #555;">We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
-    
-          <div style="text-align: center; margin: 20px 0;">
-            <a href="${resetURL}" target="_blank" style="background-color: #1D4ED8; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
-              Reset Password
-            </a>
-          </div>
-    
-          <p style="color: #555;">
-            Please note: This link will expire in 5 minutes. If you didn’t request this reset, you can ignore this email.
-          </p>
-    
-          <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
-            <p style="font-size: 14px; color: #888;">If you need help, feel free to reach out to our support team.</p>
-          </div>
-    
-          <div style="text-align: center; margin-top: 20px;">
-            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
-          </div>
-        </div>
-      `,
-    };
+    const frontendBase = (
+      process.env.FRONTEND_URL || "https://greathire.in"
+    )
+      .replace(/^["']|["']$/g, "")
+      .trim()
+      .replace(/\/+$/, "") || "https://greathire.in";
 
-    // Send email
-    await transporter.sendMail(mailOptions);
+    const resetURL = `${frontendBase}/reset-password/${resetToken}`;
+
+    try {
+      await sendForgotPasswordEmail({
+        toEmail: cleanEmail,
+        userName,
+        resetToken,
+        resetURL,
+      });
+    } catch (emailError) {
+      console.error("Forgot password email send failed:", emailError);
+      return res.status(200).json({
+        message: "Password reset link generated successfully. Please contact support if the email does not arrive.",
+        success: false,
+      });
+    }
 
     return res.status(200).json({
       message: "Password reset link sent successfully.",
       success: true,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error", success: false });
+  } 
+  // catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ message: "Internal Server Error", success: false });
+  // }
+    catch (error) {
+    console.error("Forgot Password Error:", error);
+    console.error("Error Message:", error.message);
+    console.error("Error Stack:", error.stack);
+
+    return res.status(500).json({
+      message: error.message,
+      success: false,
+    });
   }
 };
 
 // this controller reset the password of user
 export const resetPassword = async (req, res) => {
   try {
-    const { decoded, newPassword } = req.body;
+const { decoded, token, newPassword } = req.body;
 
-    let user =
-      (await User.findById(decoded.userId)) ||
-      (await Recruiter.findById(decoded.userId)) ||
-      (await Admin.findById(decoded.userId));
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found.",
+    // Validate password type and length immediately
+    if (
+      !newPassword ||
+      typeof newPassword !== "string" ||
+      newPassword.length < 8
+    ) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters long.",
         success: false,
       });
     }
 
-    // Validate password type and length
-    if (typeof newPassword !== "string" || newPassword.length < 8) {
+    // Resolve userId and email either from decoded object or from raw token
+    let userId = decoded?.userId;
+    let userEmail = decoded?.email;
+
+    if (token) {
+      try {
+        const verified = jwt.verify(token, process.env.SECRET_KEY);
+
+        if (verified) {
+          userId = userId || verified.userId;
+          userEmail = userEmail || verified.email;
+        }
+      } catch (err) {
+        if (err.name === "TokenExpiredError") {
+          return res.status(400).json({
+            message:
+              "This password reset link has expired. Please request a new link.",
+            success: false,
+          });
+        }
+
+        return res.status(400).json({
+          message:
+            "Reset token is invalid. Please request a new link.",
+          success: false,
+        });
+      }
+    }
+
+    if (!userId && !userEmail) {
       return res.status(400).json({
-        message: "Password must be a string and at least 8 characters long.",
+        message:
+          "Invalid reset session. Please request a new password reset link.",
+        success: false,
+      });
+    }
+
+    let user = null;
+
+    // 1. Try finding by ObjectId if valid
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+      user =
+        (await User.findById(userId)) ||
+        (await Recruiter.findById(userId)) ||
+        (await Admin.findById(userId)) ||
+        (await DigitalMarketer.findById(userId));
+    }
+
+    // 2. Fallback to email query if user was not found by ID
+    if (!user && userEmail) {
+      const escapedEmail = userEmail
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const emailQuery = {
+        $regex: new RegExp(`^${escapedEmail}$`, "i"),
+      };
+
+      user =
+        (await User.findOne({ "emailId.email": emailQuery })) ||
+        (await Recruiter.findOne({ "emailId.email": emailQuery })) ||
+        (await Admin.findOne({ "emailId.email": emailQuery })) ||
+        (await DigitalMarketer.findOne({ "emailId.email": emailQuery }));
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        message:
+          "User account not found. Please request a new reset link.",
         success: false,
       });
     }
@@ -1163,9 +1411,8 @@ export const resetPassword = async (req, res) => {
     // Hash new password my hashing 10 times
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update user password
-    user.password = hashedPassword;
-    await user.save();
+    // Update user password using direct update to prevent unrelated schema validation issues
+    await user.constructor.updateOne({ _id: user._id }, { $set: { password: hashedPassword } });
 
     return res.status(200).json({
       message: "Password reset successfully.",
@@ -1174,7 +1421,7 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Error resetting password:", error);
     return res.status(500).json({
-      message: "Internal Server Error",
+message: error.message || "Failed to reset password. Please try again.",
       success: false,
     });
   }
@@ -1270,9 +1517,9 @@ export const sendOtp = async (req, res) => {
     if (!email) return res.status(400).json({ success: false, message: "Email is required" });
 
     let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
 
     if (!user) {
       return res.status(200).json({ success: false, message: "User not found" });
@@ -1297,7 +1544,7 @@ export const sendOtp = async (req, res) => {
 
     // Send OTP via email
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
@@ -1327,7 +1574,7 @@ export const sendOtp = async (req, res) => {
       </p>
       
       <p style="font-size: 16px; color: #555;">
-       If you did not request for this OTP, please contact our support team at <a href="mailto:hr@babde.tech?subject=">hr@babde.tech</a> immediately.
+       If you did not request this OTP, please contact our support team at <a href="mailto:hr@babde.tech?subject=">hr@babde.tech</a> immediately.
       </p>
       
       <br>
@@ -1364,9 +1611,9 @@ export const verifyOtp = async (req, res) => {
     }
 
     let user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await findModelByEmail(User, email)) ||
+      (await findModelByEmail(Recruiter, email)) ||
+      (await findModelByEmail(Admin, email));
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });
@@ -1426,7 +1673,7 @@ export const verifyJobseekerOtp = async (req, res) => {
     }
 
     // Only search in User collection
-    let user = await User.findOne({ "emailId.email": email });
+    let user = await findModelByEmail(User, email);
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });
@@ -1486,7 +1733,7 @@ export const verifyRecruiterOtp = async (req, res) => {
     }
 
     // Only search in Recruiter collection
-    let user = await Recruiter.findOne({ "emailId.email": email });
+    let user = await findModelByEmail(Recruiter, email);
 
     if (!user || !user.emailId.otp) {
       return res.status(400).json({ success: false, message: "Invalid request" });
@@ -1548,15 +1795,55 @@ export const getLoginHistory = async (req, res) => {
   }
 };
 
+// export const getMe = async (req, res) => {
+//   try {
+//     const user =
+//       (await User.findById(req.id).select("-password")) ||
+//       (await Recruiter.findById(req.id).select("-password"));
+//     if (!user) return res.status(404).json({ success: false, message: "User not found" });
+//     return res.status(200).json({ success: true, user });
+//   } catch (error) {
+//     return res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
 export const getMe = async (req, res) => {
   try {
-    const user =
-      (await User.findById(req.id).select("-password")) ||
-      (await Recruiter.findById(req.id).select("-password"));
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-    return res.status(200).json({ success: true, user });
+    const jobSeeker = await User.findById(req.id).select("-password");
+
+    if (jobSeeker) {
+
+      // ✅ OLD USER + AUTO APPLY ON
+      if (jobSeeker.profile?.autoApply === true) {
+        await autoApplyExistingJobsForUser(jobSeeker._id);
+      }
+
+      return res.status(200).json({
+        success: true,
+        user: jobSeeker
+      });
+    }
+
+    const recruiter = await Recruiter.findById(req.id).select("-password");
+
+    if (recruiter) {
+      return res.status(200).json({
+        success: true,
+        user: recruiter
+      });
+    }
+
+    return res.status(404).json({
+      success: false,
+      message: "User not found"
+    });
+
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("getMe error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
   }
 };
 

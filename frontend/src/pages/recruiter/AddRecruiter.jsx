@@ -34,11 +34,17 @@ const AddRecruiter = () => {
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+
+    if (!company?._id) {
+      toast.error("Company details are still loading. Please try again in a moment.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await axios.post(
         `${RECRUITER_API_END_POINT}/add-recruiter`,
-        { ...formData, companyId: company?._id },
+        { ...formData, companyId: company._id },
         { withCredentials: true }
       );
       if (response.data.success) {
@@ -104,9 +110,9 @@ const AddRecruiter = () => {
               <label className="font-bold text-gray-700 dark:text-gray-300">Full Name</label>
               <input
                 type="text"
-                name="fullname" // Updated name
+                name="fullname"
                 placeholder="Full Name"
-                value={formData.fullName} // Updated value
+                value={formData.fullname}
                 onChange={handleChange}
                 className="px-4 py-2 rounded-lg border bg-white text-gray-900 border-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required

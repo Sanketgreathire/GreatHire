@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { Company } from "../models/company.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
+import { starterUnlimitedJobsUntilDate } from "./starterPlan.js";
 
 // Runs daily at midnight
 export const startMonthlyFreePlanRenewal = () => {
@@ -35,6 +36,9 @@ export const startMonthlyFreePlanRenewal = () => {
         company.hasUsedFreePlan = false;       // Allow 1 new job post next month
         company.lastFreePlanRenewal = now;
         company.freePlanExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // Fresh 30-day window
+        if (!company.starterUnlimitedJobsUntil) {
+          company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate(now);
+        }
         await company.save();
 
         console.log(`✅ FREE plan reset for: ${company.companyName}`);

@@ -118,6 +118,11 @@ const jobSchema = new mongoose.Schema(
       ref: "Company",
       required: true,
     },
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      default: null,
+    },
     questions: {
       type: [String],
       default: [],

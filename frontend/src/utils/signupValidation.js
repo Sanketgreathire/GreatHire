@@ -13,7 +13,7 @@ export const validateSignupForm = (formData) => {
   // Accept 10-digit numbers or E.164 format with country code
   const phoneRegex = /^(\+\d{6,15}|\d{10})$/;
   if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
-    errors.phoneNumber = "Enter a valid 10-digit mobile number or include country code (e.g. +919876543210).";
+    errors.phoneNumber = "Enter a valid 10-digit mobile number or include country a code (e.g. +919876543210).";
   }
 
   if (!formData.password || formData.password.length < 8) {

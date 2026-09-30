@@ -12,8 +12,41 @@ import notificationService from "../utils/notificationService.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
+import {
+  hasStarterUnlimitedJobs,
+  isStarterCompany,
+  starterUnlimitedJobsUntilDate,
+} from "../utils/starterPlan.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { notifyMatchingJobSeekers } from "../src/services/newJobMatchNotificationService.js";
+import {
+  screenCandidate,
+  applyApplicationTransition,
+  getEnrichedCandidateProfile,
+} from "../services/screeningEngine.js";
+
+
+export const screenApplicationAfterCreate = async (application, user, job) => {
+  try {
+    const candidateProfile = await getEnrichedCandidateProfile(
+      user.profile,
+      application.resume || user.profile?.resume || ""
+    );
+    const screeningResult = screenCandidate(candidateProfile, job);
+    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
+
+    await applyApplicationTransition({
+      application,
+      decision,
+      score: screeningResult.score,
+      changedBy: user._id,
+      notify: false,
+    });
+  } catch (screeningError) {
+    console.error("AI Screening Error:", screeningError.message);
+  }
+};
+
 // AI JD Generation (template-based, no API key required)
 export const generateJD = async (req, res) => {
   try {
@@ -87,17 +120,40 @@ const PAID_PLAN_FREE_JOBS = 2;
 
 // postjob by recruiter
 export const postJob = [
-  check("title").notEmpty().withMessage("Title is required"),
+  // check("title").notEmpty().withMessage("Title is required"),
+  check("title")
+  .trim()
+  .notEmpty()
+  .withMessage("Title is required"),
+
   check("details").notEmpty().withMessage("Details are required"),
   check("experience").notEmpty().withMessage("Experience is required"),
   check("salary").notEmpty().withMessage("Salary is required"),
   check("jobType").notEmpty().withMessage("Job type is required"),
   check("location").notEmpty().withMessage("Location is required"),
-  check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
+  // check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
+  check("numberOfOpening")
+  .notEmpty()
+  .withMessage("Number of openings is required")
+  .isInt({ min: 1 })
+  .withMessage("Number of openings must be at least 1"),
+
   check("duration").notEmpty().withMessage("Duration is required"),
+  check("respondTime")
+  .notEmpty()
+  .withMessage("Response time is required"),
+
+check("workPlaceFlexibility")
+  .notEmpty()
+  .withMessage("Workplace flexibility is required"),
   check("shift").notEmpty().withMessage("Shift is required"),
   check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
-  check("companyId").notEmpty().withMessage("Company ID is required"),
+  // check("companyId").notEmpty().withMessage("Company ID is required"),
+check("companyId")
+  .notEmpty()
+  .withMessage("Company ID is required")
+  .isMongoId()
+  .withMessage("Invalid company ID"),
 
   async (req, res) => {
     try {
@@ -114,12 +170,19 @@ export const postJob = [
       } = req.body;
 
       const userId = req.id;
-      const company = await Company.findById(companyId).lean();
+const company = await Company.findById(companyId);
       const recruiter = await Recruiter.findById(userId);
 
       if (!company) {
         return res.status(404).json({ success: false, message: "Company not found. Please create a company first." });
       }
+
+      if (isStarterCompany(company) && !company.starterUnlimitedJobsUntil) {
+        company.starterUnlimitedJobsUntil = starterUnlimitedJobsUntilDate();
+        await company.save();
+      }
+
+      const starterUnlimitedJobs = hasStarterUnlimitedJobs(company);
 
       // Fix bad data: "Unlimited" string stored in DB should be null
       if (company.maxJobPosts === "9999999" || (typeof company.maxJobPosts === "string" && isNaN(company.maxJobPosts))) {
@@ -170,11 +233,16 @@ export const postJob = [
       if (recruiter && recruiter.remainingJobPosts > 0) {
         recruiter.remainingJobPosts -= 1;
         await recruiter.save();
-      } else if (company.maxJobPosts !== null && company.maxJobPosts !== undefined) {
-        // ── Admin-set maxJobPosts: takes priority over plan limits ──
-        const used = companyPlan === "FREE"
-          ? (company.freeJobsPosted || 0)
-          : (company.planJobsPostedThisMonth || 0);
+} else if (
+        !(starterUnlimitedJobs && (company.maxJobPosts === 0 || company.maxJobPosts === null)) &&
+        company.maxJobPosts !== null &&
+        company.maxJobPosts !== undefined
+      ) {
+        // Admin-set maxJobPosts
+        const used =
+          companyPlan === "FREE"
+            ? company.freeJobsPosted || 0
+            : company.planJobsPostedThisMonth || 0;
         if (used >= company.maxJobPosts) {
           return res.status(400).json({
             success: false,
@@ -182,17 +250,20 @@ export const postJob = [
             redirectTo: "/recruiter/dashboard/home",
           });
         }
-      } else if (companyPlan === "FREE") {
-        // ── FREE plan: check against freeJobsPosted limit ──
-        if (company.freeJobsPosted >= PLAN_LIMITS.FREE.jobsPerMonth) {
+          } else if (companyPlan === "FREE" && !starterUnlimitedJobs) {
+        // FREE plan after the starter unlimited window
+        if (
+          company.freeJobsPosted >=
+          PLAN_LIMITS.FREE.jobsPerMonth
+        ) {
           return res.status(400).json({
             success: false,
             message: "You have used your 1 free monthly job post. Please upgrade your plan to post more jobs.",
             redirectTo: "/recruiter/dashboard/upgrade-plans",
           });
         }
-      } else {
-        // ── Paid plan: check planJobsPostedThisMonth against plan limit ──
+             } else if (companyPlan !== "FREE") {
+        // Paid plan
         const now = new Date();
         const monthStart = company.planMonthStart ? new Date(company.planMonthStart) : null;
         const isPaidSameMonth = monthStart &&
@@ -213,7 +284,34 @@ export const postJob = [
         }
       }
 
-      const splitSkills = (typeof skills === 'string') ? skills.split(",").map(s => s.trim()) : [];
+      if (
+  !Array.isArray(skills) &&
+  (typeof skills !== "string" || !skills.trim())
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Skills are required",
+  });
+}
+
+if (
+  Array.isArray(skills) &&
+  skills.filter(
+    (skill) =>
+      typeof skill === "string" && skill.trim() !== ""
+  ).length === 0
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Skills are required",
+  });
+}
+
+      // const splitSkills = (typeof skills === 'string') ? skills.split(",").map(s => s.trim()) : [];
+      const splitSkills =
+  typeof skills === "string"
+    ? skills.split(",").map((s) => s.trim())
+    : [];
       const splitQualifications = (typeof qualifications === 'string') ? qualifications.split("\n").map(q => q.trim()) : [];
       const splitBenefits = (typeof benefits === 'string') ? benefits.split("\n").map(b => b.trim()) : [];
       const splitResponsibilities = (typeof responsibilities === 'string') ? responsibilities.split("\n").map(r => r.trim()) : [];
@@ -247,24 +345,45 @@ export const postJob = [
     status: jobStatus,
   },
   questions: Array.isArray(questions)
-    ? questions.filter((q) => q.trim())
-    : [],
+  ? questions.filter(
+      (q) => typeof q === "string" && q.trim()
+    )
+  : [],
   created_by: userId,
   company: companyId,
 });
 
 
 await newJob.save();
-try {
-  await notifyMatchingJobSeekers(newJob);
+// await autoApply(newJob._id);
 
+// console.log("========================================");
+// console.log("🚀 NEW JOB SAVED");
+// console.log("🚀 JOB ID:", newJob._id);
+// console.log("🚀 JOB TITLE:", newJob.jobDetails.title);
+// console.log("🚀 JOB STATUS:", jobStatus);
+// console.log("🚀 JOB ACTIVE:", jobIsActive);
+// console.log("========================================");
+
+// Send email ONLY when job is active
+if (jobIsActive) {
+  try {
+    // console.log("📧 STARTING MATCHED JOB SEEKER EMAIL PROCESS...");
+
+    await notifyMatchingJobSeekers(newJob);
+
+    console.log(
+      "✅ Matched Job Seeker email notification process completed"
+    );
+  } catch (error) {
+    console.error(
+      "❌ Matched Job Seeker email notification failed:",
+      error
+    );
+  }
+} else {
   console.log(
-    "✅ Job match email notification process completed"
-  );
-} catch (error) {
-  console.error(
-    "❌ Job match email notification failed:",
-    error.message
+    "⏭️ Email notification skipped because job is pending"
   );
 }
 
@@ -272,7 +391,17 @@ try {
 
 
 // Auto Apply only for active jobs
+// if (jobIsActive) {
+
+// console.log("🔥 JOB SAVED:", newJob._id);
+// console.log("🔥 JOB STATUS:", jobStatus);
+// console.log("🔥 JOB ACTIVE:", jobIsActive);
+
+// Auto Apply only for active jobs
 if (jobIsActive) {
+  // console.log("🔥 ABOUT TO START AUTO APPLY");
+  // console.log("Job ID:", newJob._id);
+
 
   try {
     await autoApply(newJob._id);
@@ -326,6 +455,184 @@ if (jobIsActive) {
   }
 ];
 
+// Admin adds a job on behalf of a company.
+// The job is attributed to one of the company's own recruiters, so it looks
+// exactly like the company posted it (nothing shows "posted by admin").
+export const adminAddJob = [
+  check("title").notEmpty().withMessage("Title is required"),
+  check("details").notEmpty().withMessage("Details are required"),
+  check("experience").notEmpty().withMessage("Experience is required"),
+  check("salary").notEmpty().withMessage("Salary is required"),
+  check("jobType").notEmpty().withMessage("Job type is required"),
+  check("location").notEmpty().withMessage("Location is required"),
+  check("numberOfOpening").notEmpty().withMessage("Number of openings is required"),
+  check("duration").notEmpty().withMessage("Duration is required"),
+  check("shift").notEmpty().withMessage("Shift is required"),
+  check("anyAmount").notEmpty().withMessage("Please specify if applicants need to pay"),
+  check("companyId").isMongoId().withMessage("Valid company ID is required"),
+
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      // Only admins can use this endpoint
+      const admin = await Admin.findById(req.id);
+      if (!admin) {
+        return res.status(403).json({
+          success: false,
+          message: "You are not authorized",
+        });
+      }
+
+      const {
+        companyName,
+        urgentHiring,
+        title,
+        details,
+        skills,
+        qualifications,
+        benefits,
+        responsibilities,
+        experience,
+        salary,
+        salaryType,
+        jobType,
+        workPlaceFlexibility,
+        location,
+        numberOfOpening,
+        respondTime,
+        duration,
+        shift,
+        anyAmount,
+        companyId,
+        questions,
+      } = req.body;
+
+      const company = await Company.findById(companyId);
+      if (!company) {
+        return res.status(404).json({
+          success: false,
+          message: "Company not found.",
+        });
+      }
+
+      // Pick the recruiter the job will belong to:
+      // 1) the company's admin recruiter (matched by adminEmail),
+      // 2) otherwise the first recruiter linked to the company.
+      let recruiter = await Recruiter.findOne({
+        "emailId.email": company.adminEmail,
+      });
+
+      const belongsToCompany =
+        recruiter &&
+        company.userId.some(
+          (u) => u.user.toString() === recruiter._id.toString()
+        );
+
+      if (!belongsToCompany) {
+        const recruiterIds = company.userId.map((u) => u.user);
+        recruiter = recruiterIds.length
+          ? await Recruiter.findOne({ _id: { $in: recruiterIds } }).sort({
+              createdAt: 1,
+            })
+          : null;
+      }
+
+      if (!recruiter) {
+        return res.status(400).json({
+          success: false,
+          message: "This company has no recruiter to attach the job to.",
+        });
+      }
+
+      const splitSkills =
+        typeof skills === "string" ? skills.split(",").map((s) => s.trim()) : [];
+      const splitQualifications =
+        typeof qualifications === "string"
+          ? qualifications.split("\n").map((q) => q.trim())
+          : [];
+      const splitBenefits =
+        typeof benefits === "string"
+          ? benefits.split("\n").map((b) => b.trim())
+          : [];
+      const splitResponsibilities =
+        typeof responsibilities === "string"
+          ? responsibilities.split("\n").map((r) => r.trim())
+          : [];
+
+      const newJob = new Job({
+        jobDetails: {
+          companyName: companyName || company.companyName,
+          urgentHiring,
+          title,
+          details,
+          skills: splitSkills,
+          benefits: splitBenefits,
+          qualifications: splitQualifications,
+          responsibilities: splitResponsibilities,
+          salary,
+          salaryType: salaryType || "per year",
+          experience,
+          jobType,
+          workPlaceFlexibility,
+          location,
+          numberOfOpening,
+          respondTime,
+          duration,
+          shift,
+          anyAmount,
+          isActive: true,
+          status: "active",
+        },
+        questions: Array.isArray(questions)
+          ? questions.filter((q) => typeof q === "string" && q.trim())
+          : [],
+        created_by: recruiter._id, // the company's recruiter, not the admin
+        company: companyId,
+      });
+
+      await newJob.save();
+
+      // Job seekers can only open jobs of verified companies, so only run
+      // matching emails / auto-apply / notifications when the company is verified.
+      if (company.isActive) {
+        try {
+          await notifyMatchingJobSeekers(newJob);
+        } catch (error) {
+          console.error("❌ Job match email notification failed:", error.message);
+        }
+
+        try {
+          await autoApply(newJob._id);
+        } catch (error) {
+          console.error("❌ Auto Apply Error:", error);
+        }
+
+        try {
+          await findAndNotifyMatchingCandidates(newJob);
+        } catch (e) {
+          console.error("❌ Matching candidates error:", e.message);
+        }
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "Job posted successfully.",
+        jobStatus: "active",
+      });
+    } catch (error) {
+      console.error("Error in admin add job:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error.",
+      });
+    }
+  },
+];
+
 // Implement getExternalJobsFromFindwork
 export const getExternalJobsFromFindwork = async (req, res) => {
   try {
@@ -353,30 +660,20 @@ export const applyJob = async (req, res) => {
     const userId = req.id;
     const { answers } = req.body;
 
-    // Job exist check karo
     const job = await Job.findById(jobId).populate('company');
     if (!job) {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
 
-    // Check if job is active
-    if (!job.jobDetails.isActive) {
+    if (!job.jobDetails?.isActive) {
       return res.status(400).json({ success: false, message: "This job is not active" });
     }
 
-    // Check if company is verified
-    if (!job.company?.isActive) {
-      return res.status(403).json({ success: false, message: "This job is no longer available" });
-    }
-
-    // User exist check karo
     const user = await User.findById(userId);
-    console.log("Applying job user check kro :", user);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Already applied check karo
     const existingApplication = await Application.findOne({
       job: jobId,
       applicant: userId,
@@ -386,49 +683,59 @@ export const applyJob = async (req, res) => {
       return res.status(400).json({ success: false, message: "Already applied for this job" });
     }
 
-    // New application create karo
+    const applicantEmail = req.body.applicantEmail || user.emailId?.email || user.email || "noemail@example.com";
+    const applicantPhone = req.body.applicantPhone || user.phoneNumber?.number || user.phone || "";
+    const applicantResume = user.profile?.resume || user.resume || "";
+
     const newApplication = new Application({
       job: jobId,
       applicant: userId,
-      applicantName: user.fullname,
-      applicantEmail: user.email,
-      applicantPhone: user.phone || "",
+      applicantName: user.fullname || "Candidate",
+      applicantEmail,
+      applicantPhone,
       applicantProfile: user.profile || {},
-      resume: user.resume || "",
+      resume: applicantResume,
       answers: Array.isArray(answers) ? answers : [],
       status: "Pending",
     });
 
     await newApplication.save();
 
-    // Add application to job
-    job.application.push(newApplication._id);
-    await job.save();
+    await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
-  // ✅ Send notifications
-  try {
-    console.log('📨 Sending application notification...', {
-      applicantId: userId,
-      jobId: jobId,
-      jobTitle: job.jobDetails.title,
-      companyName: job.jobDetails.companyName,
-      recruiterId: job.created_by
-    });
-    
-    await notificationService.notifyApplicationSubmitted({
-      applicantId: userId,
-      jobId: jobId,
-      jobTitle: job.jobDetails.title,
-      companyName: job.jobDetails.companyName,
-      recruiterId: job.created_by,
-      applicationId: newApplication._id
-    });
-    
-    console.log('✅ Application notification sent successfully');
-  } catch (notificationError) {
-    console.error('❌ Error sending application notification:', notificationError);
-    // Don't fail the application if notification fails
-  }
+    // Send notifications
+    try {
+      console.log(
+        "📨 Sending application notification...",
+        {
+          applicantId: userId,
+          jobId: jobId,
+          jobTitle: job.jobDetails.title,
+          companyName: job.jobDetails.companyName,
+          recruiterId: job.created_by,
+        }
+      );
+
+      await notificationService.notifyApplicationSubmitted({
+        applicantId: userId,
+        jobId: jobId,
+        jobTitle: job.jobDetails.title,
+        companyName: job.jobDetails.companyName,
+        recruiterId: job.created_by,
+        applicationId: newApplication._id,
+      });
+
+      console.log(
+        "✅ Application notification sent successfully"
+      );
+    } catch (notificationError) {
+      console.error(
+        "❌ Error sending application notification:",
+        notificationError
+      );
+    }
+
+    await screenApplicationAfterCreate(newApplication, user, job);
 
     return res.status(201).json({
       success: true,
@@ -436,7 +743,11 @@ export const applyJob = async (req, res) => {
       application: newApplication,
     });
   } catch (error) {
-    console.error("Error applying job:", error);  // <-- yahi log bahut important hai
+    console.error(
+      "Error applying job:",
+      error
+    );
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -456,21 +767,40 @@ export const getAllJobs = async (req, res) => {
     let query = {};
 
     if (isProduction) {
-      const verifiedCompanyIds = await Company.find({ isActive: true }).distinct("_id");
-      query = { "jobDetails.isActive": true, company: { $in: verifiedCompanyIds } };
+      const verifiedCompanyIds = await Company.find({
+        isActive: true,
+      }).distinct("_id");
+
+      console.log("VERIFIED COMPANY IDS:", verifiedCompanyIds);
+      console.log("VERIFIED COMPANY COUNT:", verifiedCompanyIds.length);
+
+      query = {
+        "jobDetails.isActive": true,
+        company: { $in: verifiedCompanyIds },
+      };
+    } else {
+      query = {};
     }
 
     const jobs = await Job.find(query)
       .sort({ createdAt: -1 })
-      .populate({ path: "application" })
+      .populate("application")
       .lean();
 
+    console.log("NODE_ENV:", process.env.NODE_ENV);
+    console.log("JOBS RETURNED:", jobs.length);
+
     return res.status(200).json(jobs);
+
   } catch (error) {
     console.error("Error fetching jobs:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
+
 
 
 // Get latest 20 jobs for slider/carousel - lightweight function
@@ -496,43 +826,129 @@ export const getLatestJobsForSlider = async (req, res) => {
 };
 
 //get job by recruiter id...
+// export const getJobByRecruiterId = async (req, res) => {
+//   try {
+//     const recruiterId = req.params.id;
+//     // const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+//     // const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
+
+//     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+
+// const limit = Math.min(
+//   Math.max(parseInt(req.query.limit, 10) || 10, 1),
+//   100
+// );
+
+//     if (!recruiterId || !/^[0-9a-fA-F]{24}$/.test(recruiterId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid recruiter ID",
+//   });
+// }
+
+// if (recruiterId !== req.id.toString()) {
+//       return res.status(403).json({
+//         success: false,
+//         message: "You are not authorized to view these jobs",
+//       });
+//     }
+
+
+//     // Calculate the number of documents to skip
+//     const skip = (page - 1) * limit;
+
+//     // Fetch paginated jobs
+//     const jobs = await Job.find({ created_by: recruiterId })
+//       .select(
+//         "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
+//       )
+//       .sort({ createdAt: -1 })
+//       .skip(skip) // for skipped the document
+//       .limit(limit); // return only limited document
+
+//     // Total job count for the recruiter
+//     const totalJobs = await Job.countDocuments({ created_by: recruiterId });
+
+//     // Total pages
+//     const totalPages = Math.ceil(totalJobs / limit);
+
+//     // Return paginated response
+//     return res.status(200).json({
+//       jobs,
+//       totalJobs,
+//       totalPages,
+//       currentPage: page,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching jobs by recruiter ID:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Internal server error.",
+//     });
+//   }
+// };
+
 export const getJobByRecruiterId = async (req, res) => {
   try {
     const recruiterId = req.params.id;
-    const page = parseInt(req.query.page, 10) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
 
-    // Calculate the number of documents to skip
+    if (!recruiterId || !/^[0-9a-fA-F]{24}$/.test(recruiterId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid recruiter ID",
+      });
+    }
+
+    if (recruiterId !== req.id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to view these jobs",
+      });
+    }
+
+    const page = Math.max(
+      parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(
+        parseInt(req.query.limit, 10) || 10,
+        1
+      ),
+      100
+    );
+
     const skip = (page - 1) * limit;
 
-    // Fetch paginated jobs
-    const jobs = await Job.find({ created_by: recruiterId })
+    const jobs = await Job.find({
+      created_by: recruiterId,
+    })
       .select(
         "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
       )
       .sort({ createdAt: -1 })
-      .skip(skip) // for skipped the document
-      .limit(limit); // return only limited document
+      .skip(skip)
+      .limit(limit);
 
-    // Total job count for the recruiter
-    const totalJobs = await Job.countDocuments({ created_by: recruiterId });
+    const totalJobs = await Job.countDocuments({
+      created_by: recruiterId,
+    });
 
-    // Total pages
-    const totalPages = Math.ceil(totalJobs / limit);
-
-    // Return paginated response
     return res.status(200).json({
+      success: true,
       jobs,
       totalJobs,
-      totalPages,
       currentPage: page,
-      success: true,
+      totalPages: Math.ceil(totalJobs / limit),
     });
   } catch (error) {
-    console.error("Error fetching jobs by recruiter ID:", error);
+    console.error("Error fetching recruiter jobs:", error);
+
     return res.status(500).json({
       success: false,
-      message: "Internal server error.",
+      message: "Internal server error",
     });
   }
 };
@@ -561,28 +977,64 @@ export const getJobById = async (req, res) => {
   try {
     const jobId = req.params.id;
 
-    const job = await Job.findById(jobId)
-      .populate("company")
-      .populate({
-        path: "application",
-        populate: { path: "applicant" },
-      });
+    console.log("🔎 GET JOB BY ID:", jobId);
 
-    if (!job) {
-      return res.status(404).json({ success: false, message: "Job not found." });
+    if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid job ID.",
+      });
     }
 
-    // Block public access to jobs from unverified companies
-    if (!job.company?.isActive || !job.jobDetails.isActive) {
-      return res.status(404).json({ success: false, message: "Job not found." });
+    const job = await Job.findById(jobId)
+      .populate("company")
+
+    if (!job) {
+      console.log("❌ JOB DOES NOT EXIST:", jobId);
+
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
+    }
+
+    console.log("✅ JOB FOUND:", job._id);
+    console.log(
+      "🏢 COMPANY ACTIVE:",
+      job.company?.isActive
+    );
+    console.log(
+      "💼 JOB ACTIVE:",
+      job.jobDetails?.isActive
+    );
+    console.log(
+      "📌 JOB STATUS:",
+      job.jobDetails?.status
+    );
+
+    // Only active + verified jobs can be publicly viewed
+    if (
+      !job.company?.isActive ||
+      !job.jobDetails?.isActive
+    ) {
+      console.log(
+        "❌ JOB BLOCKED BECAUSE COMPANY/JOB IS INACTIVE"
+      );
+
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
     }
 
     return res.status(200).json({
       success: true,
-      job, // ✅ wrapper ke andar bhejna
+      job,
     });
+
   } catch (error) {
-    console.error("Error fetching job by id:", error);
+    console.error("❌ Error fetching job by id:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -596,6 +1048,12 @@ export const getJobById = async (req, res) => {
 export const getJobByCompanyId = async (req, res) => {
   try {
     const companyId = req.params.id;
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
     const userId = req.id;
 
     if (!(await isUserAssociated(companyId, userId))) {
@@ -624,34 +1082,136 @@ export const getJobByCompanyId = async (req, res) => {
 };
 
 // job can be deleted either by recruiter or admin
+// export const deleteJobById = [
+//   // Input validation
+//   // check("id").isMongoId().withMessage("Invalid job ID"),
+//   // check("companyId").isMongoId().withMessage("Invalid company ID"),
+
+//   check("companyId")
+//   .notEmpty()
+//   .withMessage("Company ID is required")
+//   .isMongoId()
+//   .withMessage("Invalid company ID"),
+
+//   async (req, res) => {
+//     try {
+//       const errors = validationResult(req);
+//       if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() });
+//       }
+
+//       const jobId = req.params.id;
+//       const { companyId } = req.body;
+//       const userId = req.id;
+
+//       if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid job ID",
+//   });
+// }
+
+//       // const admin = await Admin.findById(userId); // Check if user is an admin
+
+//       // // If the user is neither an admin nor a valid recruiter, deny access
+//       // if (!admin && !(await isUserAssociated(companyId, userId))) {
+//       //   return res.status(403).json({
+//       //     message: "You are not authorized",
+//       //     success: false,
+//       //   });
+//       // }
+
+//       // // Check if the job exists
+//       // const job = await Job.findById(jobId);
+//       // if (!job) {
+//       //   return res.status(404).json({
+//       //     success: false,
+//       //     message: "Job not found.",
+//       //   });
+//       // }
+
+//       const job = await Job.findById(jobId);
+
+// if (!job) {
+//   return res.status(404).json({
+//     success: false,
+//     message: "Job not found.",
+//   });
+// }
+
+// const admin = await Admin.findById(userId);
+
+// if (!admin) {
+//   const jobCompanyId = job.company?.toString();
+
+//   if (!jobCompanyId || jobCompanyId !== companyId.toString()) {
+//     return res.status(403).json({
+//       message: "You are not authorized",
+//       success: false,
+//     });
+//   }
+
+//   if (!(await isUserAssociated(jobCompanyId, userId))) {
+//     return res.status(403).json({
+//       message: "You are not authorized",
+//       success: false,
+//     });
+//   }
+// }
+
+//       // Delete the job
+//       await Job.findByIdAndDelete(jobId);
+
+//       // Delete all applications related to this job
+//       await Application.deleteMany({ job: jobId });
+
+//       // Respond with success message
+//       return res.status(200).json({
+//         success: true,
+//         message: "Job and related applications deleted successfully.",
+//       });
+//     } catch (error) {
+//       console.error("Error deleting job:", error);
+//       return res.status(500).json({
+//         success: false,
+//         message: "Internal server error.",
+//       });
+//     }
+//   }
+// ];
+
 export const deleteJobById = [
-  // Input validation
-  check("id").isMongoId().withMessage("Invalid job ID"),
-  check("companyId").isMongoId().withMessage("Invalid company ID"),
+  check("companyId")
+    .notEmpty()
+    .withMessage("Company ID is required")
+    .isMongoId()
+    .withMessage("Invalid company ID"),
 
   async (req, res) => {
     try {
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          errors: errors.array(),
+        });
       }
 
       const jobId = req.params.id;
       const { companyId } = req.body;
       const userId = req.id;
 
-      const admin = await Admin.findById(userId); // Check if user is an admin
-
-      // If the user is neither an admin nor a valid recruiter, deny access
-      if (!admin && companyId && !await isUserAssociated(companyId, userId)) {
-        return res.status(403).json({
-          message: "You are not authorized",
+      // Validate Job ID
+      if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+        return res.status(400).json({
           success: false,
+          message: "Invalid job ID",
         });
       }
 
-      // Check if the job exists
+      // Find the actual job first
       const job = await Job.findById(jobId);
+
       if (!job) {
         return res.status(404).json({
           success: false,
@@ -659,31 +1219,61 @@ export const deleteJobById = [
         });
       }
 
+      // Check if user is an admin
+      const admin = await Admin.findById(userId);
+
+      // Non-admin users must be associated with the job's actual company
+      if (!admin) {
+        const jobCompanyId = job.company?.toString();
+
+        if (!jobCompanyId || jobCompanyId !== companyId.toString()) {
+          return res.status(403).json({
+            message: "You are not authorized",
+            success: false,
+          });
+        }
+
+        if (!(await isUserAssociated(jobCompanyId, userId))) {
+          return res.status(403).json({
+            message: "You are not authorized",
+            success: false,
+          });
+        }
+      }
+
       // Delete the job
       await Job.findByIdAndDelete(jobId);
 
-      // Delete all applications related to this job
+      // Delete related applications
       await Application.deleteMany({ job: jobId });
 
-      // Respond with success message
       return res.status(200).json({
         success: true,
         message: "Job and related applications deleted successfully.",
       });
     } catch (error) {
       console.error("Error deleting job:", error);
+
       return res.status(500).json({
         success: false,
         message: "Internal server error.",
       });
     }
-  }
+  },
 ];
 
 // bookmark the job
 export const bookmarkJob = async (req, res) => {
   try {
     const { jobId } = req.params;
+
+    if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid job ID",
+  });
+}
+
     const userId = req.id; // Assuming req.id is the authenticated user's ID
 
     // Find the job by ID
@@ -693,11 +1283,16 @@ export const bookmarkJob = async (req, res) => {
     }
 
     // Check if user already bookmarked the job
-    const isBookmarked = job.saveJob.includes(userId);
+    // const isBookmarked = job.saveJob.includes(userId);
+    const isBookmarked = job.saveJob.some(
+  (id) => id.toString() === userId.toString()
+);
 
     // Update saveJob field (add or remove user ID)
     if (isBookmarked) {
-      job.saveJob = job.saveJob.filter((id) => id.toString() !== userId);
+     job.saveJob = job.saveJob.filter(
+  (id) => id.toString() !== userId.toString()
+);
     } else {
       job.saveJob.push(userId);
     }
@@ -705,7 +1300,9 @@ export const bookmarkJob = async (req, res) => {
     await job.save();
 
     res.status(200).json({
-      message: !isBookmarked ? "Save successfully" : "Unsave successfully",
+message: !isBookmarked
+        ? "Saved successfully"
+        : "Removed from the saved job successfully",
       success: true,
     });
   } catch (err) {
@@ -714,26 +1311,155 @@ export const bookmarkJob = async (req, res) => {
 };
 
 // this controller active or de-active the job
+// export const toggleActive = async (req, res) => {
+//   try {
+//     const { jobId, isActive, companyId } = req.body;
+//     const userId = req.id;
+
+//     if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid job ID",
+//   });
+// }
+
+// if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid company ID",
+//   });
+// }
+
+// if (typeof isActive !== "boolean") {
+//   return res.status(400).json({
+//     success: false,
+//     message: "isActive must be true or false",
+//   });
+// }
+
+//     const admin = await Admin.findById(userId); // Check if user is an admin
+
+//     // If the user is neither an admin nor a valid recruiter, deny access
+//     if (!admin && !(await isUserAssociated(companyId, userId))) {
+//       return res.status(403).json({
+//         message: "You are not authorized",
+//         success: false,
+//       });
+//     }
+
+//     // Find the job by its ID and update the isActive field
+//     const job = await Job.findByIdAndUpdate(
+//       jobId,
+//       { "jobDetails.isActive": isActive },
+//       { new: true } // Return the updated document
+//     );
+
+//     if (!job) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Job not found.",
+//       });
+//     }
+//     job.jobDetails.isActive = isActive;
+// await job.save();
+
+// // console.log("🔥 JOB ACTIVATION CHECK");
+// // console.log("isActive:", isActive);
+// // console.log("jobId:", jobId);
+
+//     if (isActive === true) {
+//   try {
+//     console.log("🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:", jobId);
+
+//     await autoApply(jobId);
+
+//     console.log("✅ Auto Apply triggered on job activation:", jobId);
+
+//   } catch (autoApplyError) {
+//     console.error("Auto Apply on activation failed:", autoApplyError.message);
+//   }
+// }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Job status updated successfully.",
+//       job,
+//     });
+//   } catch (error) {
+//     console.error("Error toggling job status:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Internal server error.",
+//     });
+//   }
+// };
+
 export const toggleActive = async (req, res) => {
   try {
     const { jobId, isActive, companyId } = req.body;
     const userId = req.id;
 
-    const admin = await Admin.findById(userId); // Check if user is an admin
-
-    // If the user is neither an admin nor a valid recruiter, deny access
-    if (!admin && !isUserAssociated(companyId, userId)) {
-      return res.status(403).json({
-        message: "You are not authorized",
+    // Validate Job ID
+    if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+      return res.status(400).json({
         success: false,
+        message: "Invalid job ID",
       });
     }
 
-    // Find the job by its ID and update the isActive field
+    // Validate Company ID
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
+
+    // Validate isActive
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({
+        success: false,
+        message: "isActive must be true or false",
+      });
+    }
+
+    // Find the actual job first
+    const existingJob = await Job.findById(jobId);
+
+    if (!existingJob) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
+    }
+
+    // Check if user is an admin
+    const admin = await Admin.findById(userId);
+
+    // Non-admin users must be associated with the job's actual company
+    if (!admin) {
+      const jobCompanyId = existingJob.company?.toString();
+
+      if (!jobCompanyId || jobCompanyId !== companyId.toString()) {
+        return res.status(403).json({
+          message: "You are not authorized",
+          success: false,
+        });
+      }
+
+      if (!(await isUserAssociated(jobCompanyId, userId))) {
+        return res.status(403).json({
+          message: "You are not authorized",
+          success: false,
+        });
+      }
+    }
+
+    // Update the job active status
     const job = await Job.findByIdAndUpdate(
       jobId,
       { "jobDetails.isActive": isActive },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!job) {
@@ -742,25 +1468,28 @@ export const toggleActive = async (req, res) => {
         message: "Job not found.",
       });
     }
+
     job.jobDetails.isActive = isActive;
-await job.save();
+    await job.save();
 
-// console.log("🔥 JOB ACTIVATION CHECK");
-// console.log("isActive:", isActive);
-// console.log("jobId:", jobId);
-
+    // Auto Apply only when job becomes active
     if (isActive === true) {
-  try {
-    console.log("🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:", jobId);
+      try {
+        console.log("🔥 CALLING AUTO APPLY FROM JOB ACTIVATION:", jobId);
 
-    await autoApply(jobId);
+        await autoApply(jobId);
 
-    console.log("✅ Auto Apply triggered on job activation:", jobId);
-
-  } catch (autoApplyError) {
-    console.error("Auto Apply on activation failed:", autoApplyError.message);
-  }
-}
+        console.log(
+          "✅ Auto Apply triggered on job activation:",
+          jobId
+        );
+      } catch (autoApplyError) {
+        console.error(
+          "Auto Apply on activation failed:",
+          autoApplyError.message
+        );
+      }
+    }
 
     return res.status(200).json({
       success: true,
@@ -769,6 +1498,7 @@ await job.save();
     });
   } catch (error) {
     console.error("Error toggling job status:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -777,6 +1507,147 @@ await job.save();
 };
 
 // update the deatils of job
+// export const updateJob = async (req, res) => {
+//   try {
+//     const { jobId } = req.params;
+//     const jobData = req.body;
+//     const userId = req.id;
+//     const companyId = jobData.companyId;
+
+//     if (!jobData.editedJob || typeof jobData.editedJob !== "object") {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Job data is required",
+//   });
+// }
+
+// const requiredFields = [
+//   "details",
+//   "experience",
+//   "salary",
+//   "jobType",
+//   "location",
+//   "numberOfOpening",
+//   "respondTime",
+//   "duration",
+//   "workPlaceFlexibility",
+// ];
+
+// for (const field of requiredFields) {
+//   if (
+//     jobData.editedJob[field] === undefined ||
+//     jobData.editedJob[field] === null ||
+//     String(jobData.editedJob[field]).trim() === ""
+//   ) {
+//     return res.status(400).json({
+//       success: false,
+//       message: `${field} is required`,
+//     });
+//   }
+// }
+
+//     if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid job ID",
+//   });
+// }
+
+// if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Invalid company ID",
+//   });
+// }
+
+//     if (!(await isUserAssociated(companyId, userId))) {
+//       return res.status(403).json({
+//         message: "You are not authorized",
+//         success: false,
+//       });
+//     }
+
+// const skills = jobData.editedJob.skills;
+
+// if (
+//   (Array.isArray(skills) &&
+//     skills.filter(
+//       (skill) => typeof skill === "string" && skill.trim() !== ""
+//     ).length === 0) ||
+//   (!Array.isArray(skills) &&
+//     (typeof skills !== "string" || !skills.trim()))
+// ) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Skills are required",
+//   });
+// }
+
+//     // Normalize skills input: If it's a string, split it into an array; otherwise, use it as is
+//     // const skillsArray = Array.isArray(jobData.editedJob.skills)
+//     //   ? jobData.editedJob.skills
+//     //   : jobData.editedJob.skills.split(",").map((skill) => skill.trim());
+
+//     const skillsArray = Array.isArray(skills)
+//   ? skills.filter(
+//       (skill) => typeof skill === "string" && skill.trim() !== ""
+//     )
+//   : skills
+//       .split(",")
+//       .map((skill) => skill.trim())
+//       .filter(Boolean);
+
+//     // Remove empty values from arrays (benefits, qualifications, responsibilities)
+//     const cleanArray = (arr) =>
+//   Array.isArray(arr)
+//     ? arr.filter(
+//         (item) => typeof item === "string" && item.trim() !== ""
+//       )
+//     : [];
+
+//     // Find the job by its ID and update
+//     const updatedJob = await Job.findByIdAndUpdate(
+//       jobId,
+//       {
+//         $set: {
+//           "jobDetails.details": jobData.editedJob.details,
+//           "jobDetails.skills": skillsArray, // Convert to an array
+//           "jobDetails.qualifications": cleanArray(
+//             jobData.editedJob.qualifications
+//           ),
+//           "jobDetails.benefits": cleanArray(jobData.editedJob.benefits), // Remove empty values
+//           "jobDetails.responsibilities": cleanArray(
+//             jobData.editedJob.responsibilities
+//           ),
+//           "jobDetails.experience": jobData.editedJob.experience,
+//           "jobDetails.salary": jobData.editedJob.salary,
+//           "jobDetails.jobType": jobData.editedJob.jobType,
+//           "jobDetails.location": jobData.editedJob.location,
+//           "jobDetails.numberOfOpening": jobData.editedJob.numberOfOpening,
+//           "jobDetails.respondTime": jobData.editedJob.respondTime,
+//           "jobDetails.duration": jobData.editedJob.duration,
+//           "jobDetails.shift": jobData.editedJob.shift,
+//           "jobDetails.workPlaceFlexibility": jobData.editedJob.workPlaceFlexibility,
+//         },
+//       },
+//       { new: true, runValidators: true }
+//     );
+
+//     if (!updatedJob) {
+//       return res.status(404).json({ message: "Job not found" });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Job updated successfully",
+//       updatedJob,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Error updating job", error: err.message });
+//   }
+// };
+
 export const updateJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -784,33 +1655,127 @@ export const updateJob = async (req, res) => {
     const userId = req.id;
     const companyId = jobData.companyId;
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!jobData.editedJob || typeof jobData.editedJob !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Job data is required",
+      });
+    }
+
+    const requiredFields = [
+      "details",
+      "experience",
+      "salary",
+      "jobType",
+      "location",
+      "numberOfOpening",
+      "respondTime",
+      "duration",
+      "workPlaceFlexibility",
+    ];
+
+    for (const field of requiredFields) {
+      if (
+        jobData.editedJob[field] === undefined ||
+        jobData.editedJob[field] === null ||
+        String(jobData.editedJob[field]).trim() === ""
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: `${field} is required`,
+        });
+      }
+    }
+
+    if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid job ID",
+      });
+    }
+
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
+
+    // Find the actual job first
+    const existingJob = await Job.findById(jobId);
+
+    if (!existingJob) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
+    }
+
+    // Check actual company of the job
+    const jobCompanyId = existingJob.company?.toString();
+
+    if (!jobCompanyId || jobCompanyId !== companyId.toString()) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
       });
     }
 
-    // Normalize skills input: If it's a string, split it into an array; otherwise, use it as is
-    const skillsArray = Array.isArray(jobData.editedJob.skills)
-      ? jobData.editedJob.skills
-      : jobData.editedJob.skills.split(",").map((skill) => skill.trim());
+    // Check if user is associated with the actual job company
+    if (!(await isUserAssociated(jobCompanyId, userId))) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
 
-    // Remove empty values from arrays (benefits, qualifications, responsibilities)
+    const skills = jobData.editedJob.skills;
+
+    if (
+      (Array.isArray(skills) &&
+        skills.filter(
+          (skill) =>
+            typeof skill === "string" && skill.trim() !== ""
+        ).length === 0) ||
+      (!Array.isArray(skills) &&
+        (typeof skills !== "string" || !skills.trim()))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Skills are required",
+      });
+    }
+
+    const skillsArray = Array.isArray(skills)
+      ? skills.filter(
+          (skill) =>
+            typeof skill === "string" && skill.trim() !== ""
+        )
+      : skills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter(Boolean);
+
     const cleanArray = (arr) =>
-      Array.isArray(arr) ? arr.filter((item) => item.trim() !== "") : [];
+      Array.isArray(arr)
+        ? arr.filter(
+            (item) =>
+              typeof item === "string" && item.trim() !== ""
+          )
+        : [];
 
-    // Find the job by its ID and update
     const updatedJob = await Job.findByIdAndUpdate(
       jobId,
       {
         $set: {
           "jobDetails.details": jobData.editedJob.details,
-          "jobDetails.skills": skillsArray, // Convert to an array
+          "jobDetails.skills": skillsArray,
           "jobDetails.qualifications": cleanArray(
             jobData.editedJob.qualifications
           ),
-          "jobDetails.benefits": cleanArray(jobData.editedJob.benefits), // Remove empty values
+          "jobDetails.benefits": cleanArray(
+            jobData.editedJob.benefits
+          ),
           "jobDetails.responsibilities": cleanArray(
             jobData.editedJob.responsibilities
           ),
@@ -818,27 +1783,41 @@ export const updateJob = async (req, res) => {
           "jobDetails.salary": jobData.editedJob.salary,
           "jobDetails.jobType": jobData.editedJob.jobType,
           "jobDetails.location": jobData.editedJob.location,
-          "jobDetails.numberOfOpening": jobData.editedJob.numberOfOpening,
-          "jobDetails.respondTime": jobData.editedJob.respondTime,
+          "jobDetails.numberOfOpening":
+            jobData.editedJob.numberOfOpening,
+          "jobDetails.respondTime":
+            jobData.editedJob.respondTime,
           "jobDetails.duration": jobData.editedJob.duration,
           "jobDetails.shift": jobData.editedJob.shift,
+          "jobDetails.workPlaceFlexibility":
+            jobData.editedJob.workPlaceFlexibility,
         },
       },
-      { new: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!updatedJob) {
-      return res.status(404).json({ message: "Job not found" });
+      return res.status(404).json({
+        message: "Job not found",
+      });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Job updated successfully",
       updatedJob,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error updating job", error: err.message });
+
+    return res.status(500).json({
+      success: false,
+      message: "Error updating job",
+      error: err.message,
+    });
   }
 };
 
@@ -846,9 +1825,15 @@ export const updateJob = async (req, res) => {
 export const getJobsStatistics = async (req, res) => {
   try {
     const companyId = req.params.id; // Accessing companyId from the URL params
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid company ID",
+  });
+}
     const userId = req.id; // Assuming the user ID is stored in req.id after authentication
 
-    if (!isUserAssociated(companyId, userId)) {
+    if (!(await isUserAssociated(companyId, userId))) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
@@ -1176,6 +2161,27 @@ function computeMatchScore(query, job) {
 export const searchJobs = async (req, res) => {
   try {
     const { query, location, experience, workPlaceFlexibility, jobType, page = 1, limit = 20 } = req.query;
+
+    const escapeRegex = (value) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const safeQuery =
+  typeof query === "string" ? escapeRegex(query.trim()) : "";
+
+const safeLocation =
+  typeof location === "string" ? escapeRegex(location.trim()) : "";
+
+const safeExperience =
+  typeof experience === "string" ? escapeRegex(experience.trim()) : "";
+
+const safeWorkPlaceFlexibility =
+  typeof workPlaceFlexibility === "string"
+    ? escapeRegex(workPlaceFlexibility.trim())
+    : "";
+
+const safeJobType =
+  typeof jobType === "string" ? escapeRegex(jobType.trim()) : "";
+
     const isProduction = process.env.NODE_ENV === "production";
     const filter = { "jobDetails.isActive": true };
 
@@ -1183,30 +2189,83 @@ export const searchJobs = async (req, res) => {
       const verifiedIds = await Company.find({ isActive: true }).distinct("_id");
       filter.company = { $in: verifiedIds };
     }
-    if (query) {
-      filter.$or = [
-        { "jobDetails.title": { $regex: query, $options: "i" } },
-        { "jobDetails.skills": { $regex: query, $options: "i" } },
-        { "jobDetails.details": { $regex: query, $options: "i" } },
-      ];
-    }
-    if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
-    if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
-    if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
-    if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+    if (safeQuery) {
+  filter.$or = [
+    { "jobDetails.title": { $regex: safeQuery, $options: "i" } },
+    { "jobDetails.skills": { $regex: safeQuery, $options: "i" } },
+    { "jobDetails.details": { $regex: safeQuery, $options: "i" } },
+  ];
+}
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const [jobs, total] = await Promise.all([
-      Job.find(filter).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).populate("company", "name logo isActive").lean(),
-      Job.countDocuments(filter),
-    ]);
+if (safeLocation) {
+  filter["jobDetails.location"] = {
+    $regex: safeLocation,
+    $options: "i",
+  };
+}
 
-    const results = jobs.map(job => ({ ...job, matchScore: query ? computeMatchScore(query, job) : null }));
+if (safeWorkPlaceFlexibility) {
+  filter["jobDetails.workPlaceFlexibility"] = {
+    $regex: safeWorkPlaceFlexibility,
+    $options: "i",
+  };
+}
+
+if (safeJobType) {
+  filter["jobDetails.jobType"] = {
+    $regex: safeJobType,
+    $options: "i",
+  };
+}
+
+if (safeExperience) {
+  filter["jobDetails.experience"] = {
+    $regex: safeExperience,
+    $options: "i",
+  };
+}
+    // if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
+    // if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
+    // if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
+    // if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+
+    const currentPage = Math.max(parseInt(page, 10) || 1, 1);
+
+const currentLimit = Math.min(
+  Math.max(parseInt(limit, 10) || 20, 1),
+  100
+);
+
+const skip = (currentPage - 1) * currentLimit;
+
+    // const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+   const [jobs, total] = await Promise.all([
+  Job.find(filter)
+    .sort({ createdAt: -1 })
+    // .skip(skip)
+    // .limit(parseInt(limit))
+    .skip(skip)
+.limit(currentLimit)
+    .populate("company", "name logo isActive")
+    .populate("application", "applicant autoApplied isAutoApplied matchPercentage")
+    .lean(),
+
+  Job.countDocuments(filter),
+]);
+
+    const results = jobs.map(job => ({ ...job, 
+      matchScore: safeQuery
+  ? computeMatchScore(query, job)
+  : null }));
     if (query) results.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
 
     return res.status(200).json({
-      success: true, total, page: parseInt(page),
-      totalPages: Math.ceil(total / parseInt(limit)),
+      success: true, total, 
+      // page: parseInt(page),
+      // totalPages: Math.ceil(total / parseInt(limit)),
+      page: currentPage,
+totalPages: Math.ceil(total / currentLimit),
       count: results.length, query: query || null, jobs: results,
     });
   } catch (error) {
@@ -1219,12 +2278,12 @@ export const testAutoApply = async (req, res) => {
   try {
     const { jobId } = req.params;
 
-    if (!jobId) {
-      return res.status(400).json({
-        success: false,
-        message: "Job ID is required",
-      });
-    }
+    if (!jobId || !/^[0-9a-fA-F]{24}$/.test(jobId)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid job ID",
+  });
+}
 
     console.log("🧪 Testing Auto Apply for Job:", jobId);
 

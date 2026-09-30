@@ -1,5 +1,5 @@
 // Jobs.jsx — Admin page for managing job listings, including viewing stats, searching, filtering, toggling active status, and deleting jobs.
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link } from "lucide-react";
+import { Briefcase, FileText, CheckCircle, XCircle, Trash, Eye, Link, Pencil, FileSpreadsheet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
 import Navbar from "@/components/admin/Navbar";
@@ -60,7 +60,10 @@ const Jobs = () => {
     return () => observer.disconnect();
   }, []);
 
-  const toggleActive = async (jobId, isActive, companyId) => {
+  const toggleActive = async (e, jobId, isActive, companyId) => {
+    // Prevent row click from firing when toggling the switch
+    if (e) e.stopPropagation();
+
     try {
       setLoading((prev) => ({ ...prev, [jobId]: true }));
       const response = await axios.put(
@@ -74,7 +77,10 @@ const Jobs = () => {
             job._id === jobId ? { ...job, isActive } : job
           )
         );
-        if (user?.role !== "recruiter") dispatch(fetchJobStats());
+        if (user?.role !== "recruiter") {
+          dispatch(fetchJobStats());
+          dispatch(fetchApplicationStats());
+        }
         toast.success(response.data.message);
       } else toast.error(response.data.message);
     } catch {
@@ -106,7 +112,8 @@ const Jobs = () => {
     }
   };
 
-  const copyJobLink = (jobId) => {
+  const copyJobLink = (e, jobId) => {
+    if (e) e.stopPropagation();
     const url = `${window.location.origin}/jobs/${jobId}`;
     navigator.clipboard
       .writeText(url)
@@ -126,10 +133,9 @@ const Jobs = () => {
       );
       if (response.data.success) {
         const sorted = [...response.data.jobs].sort((a, b) => {
-          // Extract timestamp from MongoDB ObjectId (first 4 bytes)
           const timeA = parseInt(a._id.substring(0, 8), 16);
           const timeB = parseInt(b._id.substring(0, 8), 16);
-          return timeB - timeA; // newest first
+          return timeB - timeA;
         });
         setJobList(sorted);
       }
@@ -138,9 +144,16 @@ const Jobs = () => {
     }
   };
 
+  // ✅ FIX: Fetch jobs + stats together on mount so cards show real numbers
   useEffect(() => {
-    if (user) fetchJobList();
-  }, [user]);
+    if (user) {
+      fetchJobList();
+      if (user.role !== "recruiter") {
+        dispatch(fetchJobStats());
+        dispatch(fetchApplicationStats());
+      }
+    }
+  }, [user, dispatch]);
 
   // Helper to format experience value
   const formatExperience = (experience) => {
@@ -229,6 +242,15 @@ const Jobs = () => {
             className="w-full lg:w-1/3 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
 
+          <Button
+            variant="outline"
+            onClick={() => window.open(import.meta.env.VITE_GOOGLE_SHEET_URL, "_blank")}
+            className="flex items-center gap-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+          >
+            <FileSpreadsheet size={18} />
+            Excel Sheet
+          </Button>
+
           <Select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -288,7 +310,6 @@ const Jobs = () => {
                   <TableHead className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                     Job Details
                   </TableHead>
-                  {/* ✅ Experience Column Header */}
                   <TableHead className="font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
                     Experience
                   </TableHead>
@@ -324,7 +345,8 @@ const Jobs = () => {
                   paginatedJobs.map((job) => (
                     <TableRow
                       key={job._id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition border-b border-gray-200 dark:border-gray-700"
+                      onClick={() => navigate(`/admin/job/details/${job._id}`)}
+                      className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition border-b border-gray-200 dark:border-gray-700"
                     >
                       {/* Job Details */}
                       <TableCell className="min-w-[260px]">
@@ -338,7 +360,7 @@ const Jobs = () => {
                         </p>
                       </TableCell>
 
-                      {/* ✅ Experience Column Cell */}
+                      {/* Experience */}
                       <TableCell className="whitespace-nowrap">
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {formatExperience(job.experience)}
@@ -375,17 +397,34 @@ const Jobs = () => {
 
                       {/* Actions */}
                       <TableCell>
-                        <div className="flex flex-wrap justify-center items-center gap-3 min-w-[160px]">
+                        <div
+                          className="flex flex-wrap justify-center items-center gap-3 min-w-[160px]"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <Eye
                             className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
                             size={20}
-                            onClick={() => navigate(`/admin/job/details/${job._id}`)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/job/details/${job._id}`);
+                            }}
+                            title="View job details"
+                          />
+
+                          <Pencil
+                            className="text-indigo-500 dark:text-indigo-400 cursor-pointer hover:scale-110 transition"
+                            size={20}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/job/details/${job._id}?edit=true`);
+                            }}
+                            title="Edit job details"
                           />
 
                           <Link
                             className="text-gray-500 dark:text-gray-400 cursor-pointer hover:scale-110 transition"
                             size={20}
-                            onClick={() => copyJobLink(job._id)}
+                            onClick={(e) => copyJobLink(e, job._id)}
                             title="Copy job link"
                           />
 
@@ -396,8 +435,9 @@ const Jobs = () => {
                           ) : (
                             <Switch
                               checked={job.isActive}
-                              onChange={() =>
-                                toggleActive(job._id, !job.isActive, job.companyId)
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={(e) =>
+                                toggleActive(e, job._id, !job.isActive, job.companyId)
                               }
                               color="primary"
                             />
@@ -411,7 +451,8 @@ const Jobs = () => {
                             <Trash
                               className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition"
                               size={20}
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setSelectedJob(job);
                                 setShowDeleteModal(true);
                               }}

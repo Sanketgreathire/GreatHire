@@ -33,12 +33,12 @@ const NotificationDropdown = () => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen && user && loadNotifications) {
-      setLoading(true);
-      loadNotifications().finally(() => setLoading(false));
-    }
-  }, [isOpen, user, loadNotifications]);
+  // useEffect(() => {
+  //   if (isOpen && user && loadNotifications) {
+  //     setLoading(true);
+  //     loadNotifications().finally(() => setLoading(false));
+  //   }
+  // }, [isOpen, user, loadNotifications]);
 
   const handleMarkAsRead = useCallback(
     async (id) => {

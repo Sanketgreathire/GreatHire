@@ -67,14 +67,63 @@
     font-display: swap;
   }
 
-select option{
-  background-color: #ffffff;
-  color: #0f172a;
+/* Override for dashboard filters */
+.dashboard-filter:hover,
+.dashboard-filter:focus {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  outline: none;
+  border-color: #d1d5db;
 }
 
-.dark select option{
-  background-color: #192230 !important;
+/* Dark mode */
+.dark .dashboard-filter:hover,
+.dark .dashboard-filter:focus {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563;
+}
+
+select {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+select:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+select option:hover,
+select option:focus {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.dark select {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+.dark select:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.dark select option {
+  background-color: #1f2937 !important;
   color: #f8fafc !important;
+}
+
+.dark select option:hover,
+.dark select option:focus {
+  background-color: #15803d !important;
+  color: #ffffff !important;
 }
 
   body {

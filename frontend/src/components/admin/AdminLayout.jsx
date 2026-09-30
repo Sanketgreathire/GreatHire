@@ -8,6 +8,7 @@ const Users             = lazy(() => import("../../pages/admin/users/Users"));
 const UserDetails       = lazy(() => import("@/pages/admin/users/UserDetails"));
 const CompanyList       = lazy(() => import("@/pages/admin/companies/CompanyList"));
 const CompanyDetails    = lazy(() => import("@/pages/admin/companies/CompanyDetails"));
+const AdminAddJob       = lazy(() => import("@/pages/admin/companies/AdminAddJob"));
 const RecruitersList    = lazy(() => import("@/pages/admin/recruiters/RecruitersList"));
 const Recruiters        = lazy(() => import("../../pages/admin/recruiters/Recruiters.jsx"));
 const RecruitersDetails = lazy(() => import("@/pages/recruiter/rec_job_details/RecruitersDetails"));
@@ -50,6 +51,7 @@ const AdminLayout = () => {
               <Route path="user-details/:userId"                 element={<UserDetails />} />
               <Route path="companies"                            element={<CompanyList />} />
               <Route path="for-admin/company-details/:companyId" element={<CompanyDetails />} />
+              <Route path="for-admin/add-job/:companyId"          element={<AdminAddJob />} />
               <Route path="recruiters-list"                      element={<RecruitersList />} />
               <Route path="recruiters/:companyId"                element={<Recruiters />} />
               <Route path="recruiter/details/:recruiterId"       element={<RecruitersDetails />} />

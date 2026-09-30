@@ -262,7 +262,7 @@ export const recruitkarContact = async (req, res) => {
     const { linkedin_url, profile } = req.body;
     const recruiterId = req.id;
 
-    if (!linkedin_url) return res.status(400).json({ success: false, message: 'linkedin_url required.' });
+    if (!linkedin_url) return res.status(400).json({ success: false, message: 'linkedin_url is required.' });
 
     const { data } = await rk.post('/person/contact', { linkedin_urls: [linkedin_url] });
     const contact = data?.[0]?.matches?.[0]?.person_data?.contact;

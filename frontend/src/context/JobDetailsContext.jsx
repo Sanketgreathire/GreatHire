@@ -155,28 +155,34 @@ const JobDetailsProvider = ({ children }) => {
   }, [originalJobsList]);
 
   const addApplicationToJob = useCallback((jobId, newApplication) => {
-    const add = (jobs) =>
-      jobs.map((job) =>
-        job._id === jobId
-          ? {
-              ...job,
-              application: [...(job.application || []), newApplication],
-            }
-          : job
-      );
-
-    setJobsList(add);
-    setOriginalJobsList(add);
-
-    setSelectedJob((prev) =>
-      prev && prev._id === jobId
+  const add = (jobs) =>
+    jobs.map((job) =>
+      String(job._id) === String(jobId)
         ? {
-            ...prev,
-            application: [...(prev.application || []), newApplication],
+            ...job,
+            application: [
+              ...(job.application || []),
+              newApplication,
+            ],
           }
-        : prev
+        : job
     );
-  }, []);
+
+  setJobsList(add);
+  setOriginalJobsList(add);
+
+  setSelectedJob((prev) =>
+    prev && String(prev._id) === String(jobId)
+      ? {
+          ...prev,
+          application: [
+            ...(prev.application || []),
+            newApplication,
+          ],
+        }
+      : prev
+  );
+}, []);
 
   const contextValue = useMemo(
     () => ({

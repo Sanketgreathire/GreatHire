@@ -2,13 +2,15 @@ import { Company } from "../../models/company.model.js";
 import { Job } from "../../models/job.model.js";
 import { Application } from "../../models/application.model.js";
 import { Recruiter } from "../../models/recruiter.model.js";
+import { isTrialLive } from "../../utils/trial.js";
+import { hasStarterUnlimitedJobs } from "../../utils/starterPlan.js";
 
 export const getDashboardAnalytics = async (req, res) => {
   try {
     const recruiterId = req.id;
 
     const company = await Company.findOne({ "userId.user": recruiterId })
-      .select("_id plan creditedForJobs creditedForCandidates maxJobPosts userId freeJobsPosted planJobsPostedThisMonth paidPlanFreeJobsPosted")
+      .select("_id plan creditedForJobs creditedForCandidates maxJobPosts userId freeJobsPosted planJobsPostedThisMonth paidPlanFreeJobsPosted hasSubscription starterUnlimitedJobsUntil trialActive trialExpiresAt")
       .lean();
 
     if (!company) {
@@ -48,7 +50,10 @@ export const getDashboardAnalytics = async (req, res) => {
       ? (company.freeJobsPosted || 0)
       : (company.planJobsPostedThisMonth || 0);
     const planLimit = PLAN_LIMITS[plan] ?? 1;
-    const remainingJobPosts = planLimit === Infinity ? "∞" : Math.max(0, planLimit - jobsUsed);
+    const remainingJobPosts =
+      planLimit === Infinity || isTrialLive(company) || hasStarterUnlimitedJobs(company)
+        ? "∞"
+        : Math.max(0, planLimit - jobsUsed);
 
     // Applications trend — last 7 days
     const trendMap = {};
@@ -159,7 +164,7 @@ export const getDashboardAnalytics = async (req, res) => {
         ? `${interviewed} interviews scheduled`
         : "No interviews scheduled yet",
       remainingJobPosts === "∞"
-        ? "Unlimited job posts available on your Enterprise plan"
+        ? "Unlimited job posts available on your current plan"
         : `${remainingJobPosts} job posts remaining this month`,
     ];
 

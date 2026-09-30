@@ -45,29 +45,53 @@ export const NotificationProvider = ({ children }) => {
   }, [user?._id]);
 
   // Fetch notifications from API with better error handling
-  const loadNotifications = useCallback(async () => {
-    if (!user?._id || !user?.role) return;
-    try {
-      const notificationsData = await fetchNotifications();
-      setNotifications(notificationsData);
-    } catch (err) {
-      if (err?.response?.status === 401) {
-        dispatch(logOut());
-        return;
-      }
-      console.error('Failed to fetch notifications:', err);
+
+const loadNotifications = useCallback(async () => {
+  if (!user?._id || !user?.role) return;
+
+  try {
+    const notificationsData = await fetchNotifications();
+
+    // Don't overwrite existing socket notifications with an empty response
+    setNotifications((prev) => {
+      const merged = [...notificationsData, ...prev];
+
+      // Remove duplicate notifications
+      const uniqueNotifications = merged.filter(
+        (notification, index, self) =>
+          index ===
+          self.findIndex((n) => n._id === notification._id)
+      );
+
+      // Latest notifications first
+      return uniqueNotifications.sort(
+        (a, b) =>
+          new Date(b.createdAt) - new Date(a.createdAt)
+      );
+    });
+  } catch (err) {
+    if (err?.response?.status === 401) {
+      dispatch(logOut());
+      return;
     }
-    try {
-      const countData = await getUnreadCount();
-      setUnreadCount(countData);
-    } catch (err) {
-      if (err?.response?.status === 401) {
-        dispatch(logOut());
-        return;
-      }
-      console.error('Failed to fetch unread count:', err);
+
+    console.error("Failed to fetch notifications:", err);
+  }
+
+  try {
+    const countData = await getUnreadCount();
+    setUnreadCount(countData);
+  } catch (err) {
+    if (err?.response?.status === 401) {
+      dispatch(logOut());
+      return;
     }
-  }, [user?._id, user?.role, dispatch]);
+
+    console.error("Failed to fetch unread count:", err);
+  }
+}, [user?._id, user?.role, dispatch]);
+
+
 
   // Setup Socket.IO listeners
   useEffect(() => {

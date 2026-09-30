@@ -192,7 +192,7 @@ const Signup = () => {
     const newErrors = {};
 
     if(!profileData.gender) newErrors.gender = "Please select a gender";
-    if(!profileData.qualification) newErrors.qualification = "Please choose your qulaification";
+    if(!profileData.qualification) newErrors.qualification = "Please choose your qualification";
     if(!profileData.qualification === "Other" || !profileData.qualification === "Others" && !profileData.otherQualification?.trim()){
       newErrors.otherQualification = "Please specify your qualification";
     }
@@ -512,7 +512,7 @@ const Signup = () => {
                           <div>
                             <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">Skills</label>
                             <input type="text" name="skills" value={profileData.skills} onChange={handleProfileChange}
-                              placeholder="e.g. JavaScript, React, Node.js (comma separated)" className={inputClass} />
+                              placeholder="e.g. JavaScript, React, Node.js (comma-separated)" className={inputClass} />
                             {profileErrors.skills && <p className="text-red-500 text-xs mt-1">{profileErrors.skills}</p>}
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate multiple skills with commas</p>
                           </div>

@@ -16,6 +16,7 @@ import { Server } from "socket.io";
 
 import connectDB from "./utils/db.js";
 import { setIO } from "./utils/socket.js";
+import { setupMessageSocketHandlers } from "./utils/messageSocket.js";
 import notificationService from "./utils/notificationService.js";
 import { startMonthlyFreePlanRenewal } from "./utils/monthlyFreePlanRenewal.js";
 import { startAutoRejectCron } from "./utils/autoRejectApplications.js";
@@ -75,6 +76,10 @@ import eventsRoute from "./src/modules/events/routes/events.routes.js";
 import analyticsRoute from "./routes/analytics/analytics.route.js";
 import interviewRoute from "./routes/interview.route.js";
 import { startPlanExpiryNotifier } from "./scripts/planExpiryNotifier.js";
+
+import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
+import webhookRoute from "./routes/webhook.route.js";
+import jobseekerChatRoute from "./routes/jobseekerChat.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -143,7 +148,11 @@ app.use((req, res, next) => {
 });
 
 // ================= MIDDLEWARE =================
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -209,6 +218,9 @@ app.use("/api/v1/admin/job/data", adminJobDataRoute);
 app.use("/api/v1/admin/application/data", adminApplicationDataRoute);
 app.use("/api/v1/admin/sourcing", adminSourcingRoute);
 app.use("/api/v1/admin/referring-candidates", referringCandidatesRoute);
+
+app.use("/api/v1/admin/dashboard", adminDashboardRoute);
+
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/email", emailRoute);
 app.use("/api/v1/messages", messageRoute);
@@ -224,6 +236,7 @@ app.use("/api/v1/copilot", copilotRoute);
 app.use("/api/extension", extensionRoute);
 app.use("/api/outreach", outreachRoute);
 app.use("/api/candidates", enrichmentRoute);
+app.use("/api/candidates", webhookRoute);
 app.use("/api/recruiter-feedback", learningRoute);
 app.use("/api/talent-graph", talentGraphRoute);
 app.use("/api/discovery", discoveryRoute);
@@ -236,6 +249,7 @@ app.use("/api/talent-signals", talentSignalsRoute);
 app.use("/api/events", eventsRoute);
 app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/interview", interviewRoute);
+app.use("/api/v1/jobseeker-chat", jobseekerChatRoute);
 
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 
@@ -303,6 +317,7 @@ io.on("connection", (socket) => {
 
 setIO(io);
 notificationService.setIO(io);
+setupMessageSocketHandlers(io); 
 
 // ================= START SERVER =================
 try {

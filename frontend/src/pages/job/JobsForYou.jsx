@@ -2,49 +2,67 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { CiBookmark } from "react-icons/ci";
-import { FaBookmark, FaHeart, FaShareAlt } from "react-icons/fa";
+import { FaBookmark, FaShareAlt } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import JobMajorDetails from "./JobMajorDetails";
 import ShareCard from "./ShareJob";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
-import { JOB_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import {
+  JOB_API_END_POINT,
+  APPLICATION_API_END_POINT,
+} from "@/utils/ApiEndPoint";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { AlertCircle, User, Phone, Mail, FileText, Briefcase, Star, GraduationCap } from 'lucide-react';
+import {
+  AlertCircle,
+  User,
+  Phone,
+  Mail,
+  FileText,
+  Briefcase,
+  Star,
+  GraduationCap,
+} from "lucide-react";
 import { slugify } from "@/utils/slugify";
-
-// imported helmet to apply customized meta tags 
 import { Helmet } from "react-helmet-async";
 
 const JobsForYou = ({ jobs = [] }) => {
-  // Access functions from context
-  const { selectedJob, setSelectedJob, toggleBookmarkStatus, addApplicationToJob } = useJobDetails();
+  const {
+    selectedJob,
+    setSelectedJob,
+    toggleBookmarkStatus,
+    addApplicationToJob,
+  } = useJobDetails();
+
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  // State for small screen job details
   const [showJobDetails, setShowJobDetails] = useState(false);
   const [shareJobId, setShareJobId] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // ========== BULK APPLY STATE ==========
+  // Bulk Apply
   const [selectedJobs, setSelectedJobs] = useState(new Set());
   const [isBulkApplying, setIsBulkApplying] = useState(false);
 
-  // ========== QUESTIONS MODAL STATE ==========
-  const [questionsModal, setQuestionsModal] = useState(null); // { jobId, questions, isBulk }
+  // Questions Modal
+  const [questionsModal, setQuestionsModal] = useState(null);
   const [questionAnswers, setQuestionAnswers] = useState([]);
 
-  // Ref to track the scrollable container & share card container
   const jobContainerRef = useRef(null);
   const shareCardRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
 
-  // ========== CLICK OUTSIDE HANDLER FOR SHARE CARD ==========
+  // =========================================================
+  // CLICK OUTSIDE SHARE CARD
+  // =========================================================
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (shareCardRef.current && !shareCardRef.current.contains(e.target)) {
+      if (
+        shareCardRef.current &&
+        !shareCardRef.current.contains(e.target)
+      ) {
         setShareJobId(null);
       }
     };
@@ -58,7 +76,9 @@ const JobsForYou = ({ jobs = [] }) => {
     };
   }, [shareJobId]);
 
-  // ========== RESPONSIVE HANDLER ==========
+  // =========================================================
+  // RESPONSIVE HANDLER
+  // =========================================================
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -67,18 +87,32 @@ const JobsForYou = ({ jobs = [] }) => {
     };
 
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
-  // ========== SCROLL MANAGEMENT ==========
+  // =========================================================
+  // SCROLL MANAGEMENT
+  // =========================================================
   useEffect(() => {
     if (jobContainerRef.current) {
       jobContainerRef.current.scrollTop = 0;
     }
-    const heading = document.getElementById('job-openings-heading');
+
+    const heading = document.getElementById("job-openings-heading");
+
     if (heading) {
-      const y = heading.getBoundingClientRect().top + window.pageYOffset - 100;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const y =
+        heading.getBoundingClientRect().top +
+        window.pageYOffset -
+        100;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth",
+      });
     }
   }, [selectedJob]);
 
@@ -88,381 +122,933 @@ const JobsForYou = ({ jobs = [] }) => {
     }
   }, []);
 
-  // ========== UTILITY FUNCTIONS ==========
+  // =========================================================
+  // UTILITY FUNCTIONS
+  // =========================================================
 
-  const isApplied = useMemo(() =>
-    selectedJob?.application?.some(
-      (app) => String(app.applicant) === String(user?._id) ||
-               app.applicant?._id?.toString() === String(user?._id)
-    ) || false
-  , [selectedJob?.application, user?._id]);
+  const isApplied = useMemo(
+    () =>
+      selectedJob?.application?.some(
+        (app) =>
+          String(app.applicant) === String(user?._id) ||
+          app.applicant?._id?.toString() === String(user?._id)
+      ) || false,
+    [selectedJob?.application, user?._id]
+  );
+const appliedJobIds = useMemo(() => {
+  if (!user?._id) return new Set();
 
-  const appliedJobIds = useMemo(() => {
-    if (!user?._id) return new Set();
-    return new Set(
-      jobs
-        .filter(job => job?.application?.some(
-          app => String(app.applicant) === String(user._id) ||
-                 app.applicant?._id?.toString() === String(user._id)
-        ))
-        .map(job => job._id)
-    );
-  }, [jobs, user?._id]);
+  return new Set(
+    jobs
+      .filter((job) =>
+        job?.application?.some(
+          (app) =>
+            String(app.applicant) === String(user._id) ||
+            String(app.applicant?._id) === String(user._id)
+        )
+      )
+      .map((job) => String(job._id))
+  );
+}, [jobs, user?._id]);
 
-  const hasAppliedToJob = useCallback((jobId) => appliedJobIds.has(jobId), [appliedJobIds]);
+ const hasAppliedToJob = useCallback(
+  (jobId) => appliedJobIds.has(String(jobId)),
+  [appliedJobIds]
+);
 
-  const isJobBookmarked = useCallback((userId) =>
-    selectedJob?.saveJob?.includes(userId)
-  , [selectedJob?.saveJob]);
+  const isJobBookmarked = useCallback(
+    (userId) =>
+      selectedJob?.saveJob?.some(
+        (id) => String(id) === String(userId)
+      ),
+    [selectedJob?.saveJob]
+  );
 
   const calculateActiveDays = useCallback((createdAt) => {
-    return Math.floor((Date.now() - new Date(createdAt)) / 86400000);
+    if (!createdAt) return 0;
+
+    const createdDate = new Date(createdAt);
+
+    if (Number.isNaN(createdDate.getTime())) {
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      Math.floor(
+        (Date.now() - createdDate.getTime()) / 86400000
+      )
+    );
   }, []);
 
-  // --- PROFILE COMPLETION CHECK LOGIC ---
+  // =========================================================
+  // PROFILE COMPLETION CHECK
+  // =========================================================
+
   const getMissingProfileFields = (userData = user) => {
-    if (!userData) return [{ label: "Login / User Data", icon: User }];
-    const missing = [];
-    const email = userData?.emailId?.email || userData?.email;
-    if (!email || String(email).trim() === "") missing.push({ label: "Email Address", icon: Mail });
-    const phone = userData?.phoneNumber?.number || userData?.phoneNumber;
-    if (!phone || String(phone).trim() === "") missing.push({ label: "Contact Number", icon: Phone });
-    const resume = userData?.profile?.resume;
-    if (!resume || String(resume).trim() === "") missing.push({ label: "Resume/CV", icon: FileText });
-    const gender = userData?.profile?.gender || userData?.gender;
-    if (!gender || String(gender).trim() === "") missing.push({ label: "Gender", icon: User });
-    const qualification = userData?.profile?.qualification;
-    const otherQualification = userData?.profile?.otherQualification;
-    if (!qualification || String(qualification).trim() === "") {
-      missing.push({ label: "Highest Qualification", icon: GraduationCap });
-    } else if (qualification === "Others" && (!otherQualification || String(otherQualification).trim() === "")) {
-      missing.push({ label: "Other Qualification Details", icon: GraduationCap });
+    if (!userData) {
+      return [
+        {
+          label: "Login / User Data",
+          icon: User,
+        },
+      ];
     }
-    const skillsArr = Array.isArray(userData?.profile?.skills) && userData.profile.skills.length > 0
-      ? userData.profile.skills
-      : typeof userData?.profile?.skills === "string" && userData.profile.skills.trim().length > 0
-        ? userData.profile.skills.split(",").map(s => s.trim()).filter(Boolean)
+
+    const missing = [];
+
+    const email =
+      userData?.emailId?.email || userData?.email;
+
+    if (!email || String(email).trim() === "") {
+      missing.push({
+        label: "Email Address",
+        icon: Mail,
+      });
+    }
+
+    const phone =
+      userData?.phoneNumber?.number ||
+      userData?.phoneNumber;
+
+    if (!phone || String(phone).trim() === "") {
+      missing.push({
+        label: "Contact Number",
+        icon: Phone,
+      });
+    }
+
+    const resume = userData?.profile?.resume;
+
+    if (!resume || String(resume).trim() === "") {
+      missing.push({
+        label: "Resume/CV",
+        icon: FileText,
+      });
+    }
+
+    const gender =
+      userData?.profile?.gender ||
+      userData?.gender;
+
+    if (!gender || String(gender).trim() === "") {
+      missing.push({
+        label: "Gender",
+        icon: User,
+      });
+    }
+
+    const qualification =
+      userData?.profile?.qualification;
+
+    const otherQualification =
+      userData?.profile?.otherQualification;
+
+    if (
+      !qualification ||
+      String(qualification).trim() === ""
+    ) {
+      missing.push({
+        label: "Highest Qualification",
+        icon: GraduationCap,
+      });
+    } else if (
+      qualification === "Others" &&
+      (!otherQualification ||
+        String(otherQualification).trim() === "")
+    ) {
+      missing.push({
+        label: "Other Qualification Details",
+        icon: GraduationCap,
+      });
+    }
+
+    const skillsArr =
+      Array.isArray(userData?.profile?.skills) &&
+      userData.profile.skills.length > 0
+        ? userData.profile.skills
+        : typeof userData?.profile?.skills === "string" &&
+          userData.profile.skills.trim().length > 0
+        ? userData.profile.skills
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [];
-    if (!skillsArr || skillsArr.length === 0) missing.push({ label: "Skills", icon: Briefcase });
+
+    if (!skillsArr || skillsArr.length === 0) {
+      missing.push({
+        label: "Skills",
+        icon: Briefcase,
+      });
+    }
+
     const bio = userData?.profile?.bio;
-    if (!bio || String(bio).trim() === "") missing.push({ label: "Profile Summary/Bio", icon: FileText });
+
+    if (!bio || String(bio).trim() === "") {
+      missing.push({
+        label: "Profile Summary/Bio",
+        icon: FileText,
+      });
+    }
+
     return missing;
   };
 
-  const missingFields = useMemo(() => getMissingProfileFields(user), [user]);
-  const profileComplete = useMemo(() => missingFields.length === 0, [missingFields]);
-  const completionPercentage = useMemo(() => Math.round(((7 - missingFields.length) / 7) * 100), [missingFields]);
+  const missingFields = useMemo(
+    () => getMissingProfileFields(user),
+    [user]
+  );
 
-  const handleBookmark = useCallback(async (jobId) => {
-    try {
-      const response = await axios.get(`${JOB_API_END_POINT}/bookmark-job/${jobId}`, { withCredentials: true });
-      if (response.data.success) { toggleBookmarkStatus(jobId, user?._id); toast.success(response.data.message); }
-    } catch {}
-  }, [user?._id, toggleBookmarkStatus]);
+  const profileComplete = useMemo(
+    () => missingFields.length === 0,
+    [missingFields]
+  );
 
-  const handleJobClick = useCallback((job) => {
-    setSelectedJob(job); setShareJobId(null);
-    if (window.innerWidth < 768) setShowJobDetails(true);
-  }, [setSelectedJob]);
+  const completionPercentage = useMemo(
+    () =>
+      Math.round(
+        ((7 - missingFields.length) / 7) * 100
+      ),
+    [missingFields]
+  );
 
-  const handleNavigateToProfile = useCallback(() => navigate('/profile'), [navigate]);
+  // =========================================================
+  // BOOKMARK
+  // =========================================================
 
-  const toggleJobSelection = useCallback((e, jobId) => {
-    e.stopPropagation();
-    if (hasAppliedToJob(jobId)) return;
-    setSelectedJobs((prev) => { const next = new Set(prev); next.has(jobId) ? next.delete(jobId) : next.add(jobId); return next; });
-  }, [hasAppliedToJob]);
+  const handleBookmark = useCallback(
+    async (jobId) => {
+      try {
+        const response = await axios.get(
+          `${JOB_API_END_POINT}/bookmark-job/${jobId}`,
+          {
+            withCredentials: true,
+          }
+        );
 
-  const submitApply = useCallback(async (jobId, answers) => {
-    try {
-      const response = await axios.post(`${JOB_API_END_POINT}/apply-job/${jobId}`,
-        { applicant: user._id, applicantName: user.fullname || user.name, applicantEmail: user.emailId?.email || user.email, applicantPhone: user.phoneNumber?.number || user.phoneNumber, applicantProfile: user.profile, answers },
-        { withCredentials: true }
+        if (response.data.success) {
+          toggleBookmarkStatus(jobId, user?._id);
+          toast.success(response.data.message);
+        }
+      } catch (error) {
+        console.error("Bookmark error:", error);
+
+        toast.error(
+          error?.response?.data?.message ||
+            "Unable to update bookmark"
+        );
+      }
+    },
+    [user?._id, toggleBookmarkStatus]
+  );
+
+  // =========================================================
+  // JOB CLICK
+  // =========================================================
+
+  const handleJobClick = useCallback(
+    (job) => {
+      setSelectedJob(job);
+      setShareJobId(null);
+
+      if (window.innerWidth < 768) {
+        setShowJobDetails(true);
+      }
+    },
+    [setSelectedJob]
+  );
+
+  const handleNavigateToProfile = useCallback(
+    () => navigate("/profile"),
+    [navigate]
+  );
+
+  // =========================================================
+  // JOB SELECTION
+  // =========================================================
+
+  const toggleJobSelection = useCallback(
+    (e, jobId) => {
+      e.stopPropagation();
+
+      if (hasAppliedToJob(jobId)) return;
+
+      setSelectedJobs((prev) => {
+        const next = new Set(prev);
+
+        if (next.has(jobId)) {
+          next.delete(jobId);
+        } else {
+          next.add(jobId);
+        }
+
+        return next;
+      });
+    },
+    [hasAppliedToJob]
+  );
+
+  // =========================================================
+  // SINGLE APPLY API
+  // =========================================================
+
+  const submitApply = useCallback(
+    async (jobId, answers) => {
+      if (!user?._id) {
+        toast.error("Please login to apply.");
+        return;
+      }
+
+      try {
+        // const response = await axios.post(
+        //   `${JOB_API_END_POINT}/apply-job/${jobId}`,
+        const response = await axios.post(
+  `${APPLICATION_API_END_POINT}/${jobId}/apply`,
+         {
+  applicant: user._id,
+  fullname: user.fullname || user.name,
+  email: user.emailId?.email || user.email,
+  number:
+    user.phoneNumber?.number ||
+    user.phoneNumber,
+  jobId: jobId,
+  applicantProfile: user.profile,
+  answers,
+},
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.success) {
+          toast.success("Applied Successfully");
+
+          setSelectedJob((prev) => {
+  if (!prev) return prev;
+
+  return {
+    ...prev,
+    application: [
+      ...(prev.application || []),
+      {
+        applicant: user._id,
+        autoApplied: false,
+        isAutoApplied: false,
+      },
+    ],
+  };
+});
+        }
+      } catch (error) {
+        console.error("Apply error:", error);
+
+        toast.error(
+          error?.response?.data?.message ||
+            "Something went wrong!"
+        );
+      }
+    },
+    [user, setSelectedJob]
+  );
+
+  // =========================================================
+  // BULK APPLY
+  // =========================================================
+
+  const handleBulkApply = useCallback(
+    async (answersMap = {}) => {
+      if (!user) {
+        navigate("/jobseeker-login", {
+          state: {
+            from: "/jobs",
+          },
+        });
+
+        return;
+      }
+
+      if (selectedJobs.size === 0) {
+        toast.error("No jobs selected");
+        return;
+      }
+
+      if (missingFields.length > 0) {
+        toast.error(
+          `Complete your profile before applying: ${missingFields
+            .map((f) => f.label)
+            .join(", ")}.`,
+          {
+            duration: 6000,
+          }
+        );
+
+        return;
+      }
+
+      const jobsNeedingAnswers = [];
+
+      for (const jobId of selectedJobs) {
+        const job = jobs.find(
+          (j) => j._id === jobId
+        );
+
+        if (
+          job?.questions?.length > 0 &&
+          !answersMap[jobId]
+        ) {
+          jobsNeedingAnswers.push(job);
+        }
+      }
+
+      if (jobsNeedingAnswers.length > 0) {
+        const job = jobsNeedingAnswers[0];
+
+        setQuestionAnswers(
+          job.questions.map((q) => ({
+            question: q,
+            answer: "",
+          }))
+        );
+
+        setQuestionsModal({
+          jobId: job._id,
+          questions: job.questions,
+          isBulk: true,
+          pendingAnswersMap: answersMap,
+        });
+
+        return;
+      }
+
+      setIsBulkApplying(true);
+
+      try {
+        const response = await axios.post(
+          `${APPLICATION_API_END_POINT}/bulk-apply`,
+          {
+            jobIds: Array.from(selectedJobs),
+            answersMap,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.success) {
+          const {
+            applied = [],
+            skipped = [],
+          } = response.data;
+
+          if (applied.length > 0) {
+            toast.success(
+              `Applied to ${applied.length} job(s) successfully!`
+            );
+
+            applied.forEach((jobId) => {
+              addApplicationToJob(jobId, {
+                applicant: user._id,
+              });
+            });
+          }
+
+          if (skipped.length > 0) {
+            toast.error(
+              `${skipped.length} job(s) skipped (already applied or inactive).`
+            );
+          }
+
+          setSelectedJobs(new Set());
+        }
+      } catch (error) {
+        console.error("Bulk apply error:", error);
+
+        toast.error(
+          error?.response?.data?.message ||
+            "Bulk apply failed. Try again."
+        );
+      } finally {
+        setIsBulkApplying(false);
+      }
+    },
+    [
+      user,
+      selectedJobs,
+      jobs,
+      missingFields,
+      addApplicationToJob,
+      navigate,
+    ]
+  );
+
+  // =========================================================
+  // SINGLE APPLY
+  // =========================================================
+
+  const handleApply = useCallback(
+    async (jobId) => {
+      if (!user) {
+        navigate("/jobseeker-login", {
+          state: {
+            from: "/jobs",
+          },
+        });
+
+        return;
+      }
+
+      if (hasAppliedToJob(jobId)) {
+        toast.error("Already applied");
+        return;
+      }
+
+      if (missingFields.length > 0) {
+        toast.error(
+          `Please complete the following details in your profile before applying: ${missingFields
+            .map((f) => f.label)
+            .join(", ")}.`,
+          {
+            duration: 6000,
+          }
+        );
+
+        return;
+      }
+
+      const job = jobs.find(
+        (j) => j._id === jobId
       );
-      if (response.data.success) {
-        toast.success("Applied Successfully");
-        setSelectedJob((prev) => ({ ...prev, application: [...(prev.application || []), { applicant: user._id }] }));
+
+      if (job?.questions?.length > 0) {
+        setQuestionAnswers(
+          job.questions.map((q) => ({
+            question: q,
+            answer: "",
+          }))
+        );
+
+        setQuestionsModal({
+          jobId,
+          questions: job.questions,
+          isBulk: false,
+        });
+
+        return;
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!");
-    }
-  }, [user, setSelectedJob]);
 
-  const handleBulkApply = useCallback(async (answersMap = {}) => {
-    if (!user) { navigate('/jobseeker-login', { state: { from: '/jobs' } }); return; }
-    if (selectedJobs.size === 0) { toast.error("No jobs selected"); return; }
-    if (missingFields.length > 0) {
-      toast.error(`Complete your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
-      return;
-    }
-    const jobsNeedingAnswers = [];
-    for (const jobId of selectedJobs) {
-      const job = jobs.find(j => j._id === jobId);
-      if (job?.questions?.length > 0 && !answersMap[jobId]) jobsNeedingAnswers.push(job);
-    }
-    if (jobsNeedingAnswers.length > 0) {
-      const job = jobsNeedingAnswers[0];
-      setQuestionAnswers(job.questions.map(q => ({ question: q, answer: "" })));
-      setQuestionsModal({ jobId: job._id, questions: job.questions, isBulk: true, pendingAnswersMap: answersMap });
-      return;
-    }
-    setIsBulkApplying(true);
-    try {
-      const response = await axios.post(`${APPLICATION_API_END_POINT}/bulk-apply`, { jobIds: Array.from(selectedJobs), answersMap }, { withCredentials: true });
-      if (response.data.success) {
-        const { applied, skipped } = response.data;
-        if (applied.length > 0) { toast.success(`Applied to ${applied.length} job(s) successfully!`); applied.forEach(jobId => addApplicationToJob(jobId, { applicant: user._id })); }
-        if (skipped.length > 0) toast.error(`${skipped.length} job(s) skipped (already applied or inactive).`);
-        setSelectedJobs(new Set());
+      await submitApply(jobId, []);
+    },
+    [
+      user,
+      hasAppliedToJob,
+      missingFields,
+      jobs,
+      submitApply,
+      navigate,
+    ]
+  );
+
+  // =========================================================
+  // QUESTIONS SUBMIT
+  // =========================================================
+
+  const handleQuestionsSubmit = useCallback(
+    async () => {
+      if (
+        questionAnswers.some(
+          (a) => !a.answer.trim()
+        )
+      ) {
+        toast.error(
+          "Please answer all questions before submitting."
+        );
+
+        return;
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Bulk apply failed. Try again.");
-    } finally { setIsBulkApplying(false); }
-  }, [user, selectedJobs, jobs, missingFields, addApplicationToJob]);
 
-  const handleApply = useCallback(async (jobId) => {
-    if (!user) { navigate('/jobseeker-login', { state: { from: '/jobs' } }); return; }
-    if (hasAppliedToJob(jobId)) { toast.error("Already applied"); return; }
-    if (missingFields.length > 0) {
-      toast.error(`Please complete the following details in your profile before applying: ${missingFields.map(f => f.label).join(", ")}.`, { duration: 6000 });
-      return;
-    }
-    const job = jobs.find(j => j._id === jobId);
-    if (job?.questions?.length > 0) {
-      setQuestionAnswers(job.questions.map(q => ({ question: q, answer: "" })));
-      setQuestionsModal({ jobId, questions: job.questions, isBulk: false });
-      return;
-    }
-    await submitApply(jobId, []);
-  }, [user, hasAppliedToJob, missingFields, jobs, submitApply]);
+      if (!questionsModal) return;
 
-  const handleQuestionsSubmit = useCallback(async () => {
-    if (questionAnswers.some(a => !a.answer.trim())) { toast.error("Please answer all questions before submitting."); return; }
-    const { jobId, isBulk, pendingAnswersMap } = questionsModal;
-    setQuestionsModal(null);
-    if (isBulk) { await handleBulkApply({ ...pendingAnswersMap, [jobId]: questionAnswers }); }
-    else { await submitApply(jobId, questionAnswers); }
-  }, [questionAnswers, questionsModal, handleBulkApply, submitApply]);
+      const {
+        jobId,
+        isBulk,
+        pendingAnswersMap,
+      } = questionsModal;
 
-  // ========== RENDER ==========
+      setQuestionsModal(null);
+
+      if (isBulk) {
+        await handleBulkApply({
+          ...(pendingAnswersMap || {}),
+          [jobId]: questionAnswers,
+        });
+      } else {
+        await submitApply(
+          jobId,
+          questionAnswers
+        );
+      }
+    },
+    [
+      questionAnswers,
+      questionsModal,
+      handleBulkApply,
+      submitApply,
+    ]
+  );
+
+  // =========================================================
+  // RENDER
+  // =========================================================
+
   return (
     <>
-
       <Helmet>
-        <title>Jobs Recommended for You | Easily Apply Using Smart Matching - GreatHire</title>
+        <title>
+          Jobs Recommended for You | Easily Apply Using
+          Smart Matching - GreatHire
+        </title>
+
         <meta
           name="description"
           content="GreatHire is a contemporary recruitment portal where talented individuals are paired with authentic organizations for the sectors of technology, business, healthcare, and new sectors within the boundaries of the state of Hyderabad. GreatHire will provide intelligent suggestions for jobs based on your profile, skills, and preferences. Search job openings, compare salaries, explore job details with a one-click functionality, bookmark jobs you like, and apply to jobs without switching screens. The purpose of this webpage is to reduce job searching efforts where more accuracy and response rates can be obtained."
         />
       </Helmet>
 
-
       <div className="w-full mt-4 dark:bg-gray-900">
-        {/* Job List Container - FIXED OVERFLOW */}
+        {/* =====================================================
+            JOB LIST CONTAINER
+        ====================================================== */}
+
         <div className="flex justify-center gap-4 dark:bg-gray-900 w-full">
 
-          {/* Left: Job Cards List - FIXED WIDTH & OVERFLOW */}
+          {/* ===================================================
+              LEFT: JOB CARDS
+          ==================================================== */}
+
           <div className="flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 m-2 md:m-0 flex-shrink-0 overflow-y-auto scrollbar-hide h-[calc(100vh-140px)] min-h-[920px] relative">
 
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
               <div className="sticky top-0 z-10 flex items-center justify-between bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
-                <span className="text-sm font-semibold">{selectedJobs.size} job(s) selected</span>
+                <span className="text-sm font-semibold">
+                  {selectedJobs.size} job(s) selected
+                </span>
+
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setSelectedJobs(new Set())}
+                    type="button"
+                    onClick={() =>
+                      setSelectedJobs(new Set())
+                    }
                     className="text-xs px-3 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-colors"
                   >
                     Clear
                   </button>
+
                   <button
-                    onClick={() => handleBulkApply()}
+                    type="button"
+                    onClick={() =>
+                      handleBulkApply()
+                    }
                     disabled={isBulkApplying}
                     className="text-xs px-3 py-1 bg-white text-blue-700 font-bold hover:bg-blue-50 rounded-md transition-colors disabled:opacity-60"
                   >
-                    {isBulkApplying ? "Applying..." : "Apply Selected Jobs"}
+                    {isBulkApplying
+                      ? "Applying..."
+                      : "Apply Selected Jobs"}
                   </button>
                 </div>
               </div>
             )}
-            {jobs?.map((job) => (
-              <div
-                key={job._id}
-                className={`}`}
-                onClick={() => handleJobClick(job)}
-              >
-                {/* Checkbox for bulk apply (only for logged-in users who haven't applied) */}
-                {user && !hasAppliedToJob(job._id) && (
-                  <div className="absolute top-3 left-3 z-10" onClick={(e) => toggleJobSelection(e, job._id)}>
-                    <input
-                      type="checkbox"
-                      checked={selectedJobs.has(job._id)}
-                      onChange={() => {}}
-                      className="w-4 h-4 accent-blue-600 cursor-pointer"
-                    />
-                  </div>
-                )}
 
-                {/* Top Row: Title, Company & Urgent Badge + Share Icon */}
-                <div className="flex items-start justify-between gap-3 mb-2 pl-5">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-gray-900 leading-tight truncate dark:text-white">
-                      {job.jobDetails?.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1 truncate dark:text-gray-400">
-                      {job.jobDetails?.companyName}
-                    </p>
+            {/* Jobs */}
+            {jobs?.map((job) => {
+              const isSelected =
+                selectedJobs.has(job._id);
+
+              const isActive =
+                selectedJob?._id === job._id;
+
+              const salary =
+                job?.jobDetails?.salary;
+
+              return (
+                <div
+                  key={job._id}
+                  onClick={() =>
+                    handleJobClick(job)
+                  }
+                  className={`relative rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${
+                    isActive
+                      ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/40"
+                      : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+                  }`}
+                >
+                  {/* Checkbox */}
+                  {user &&
+                    !hasAppliedToJob(
+                      job._id
+                    ) && (
+                      <div
+                        className="absolute top-3 left-3 z-10"
+                        onClick={(e) =>
+                          toggleJobSelection(
+                            e,
+                            job._id
+                          )
+                        }
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => {}}
+                          aria-label={`Select ${
+                            job?.jobDetails?.title ||
+                            "job"
+                          }`}
+                          className="w-4 h-4 accent-blue-600 cursor-pointer"
+                        />
+                      </div>
+                    )}
+
+                  {/* Top Row */}
+                  <div className="flex items-start justify-between gap-2 mb-3 pl-6">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2">
+                        {job.jobDetails?.title}
+                      </h3>
+
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                        {job.jobDetails?.companyName}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                      {job?.jobDetails
+                        ?.urgentHiring === "Yes" && (
+                        <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full whitespace-nowrap dark:text-orange-300 dark:bg-orange-900/30 dark:border-orange-700">
+                          ⚡ Urgent
+                        </span>
+                      )}
+
+                      {hasAppliedToJob(
+                        job._id
+                      ) && (
+                        <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
+                          ✓ Applied
+                        </span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          setShareJobId(
+                            shareJobId === job._id
+                              ? null
+                              : job._id
+                          );
+                        }}
+                        className="p-1.5 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
+                        title="Share Job"
+                        aria-label="Share Job"
+                      >
+                        <FaShareAlt
+                          size={13}
+                          className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
+                        />
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Right side: Urgent Badge + Share Icon */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Urgent Hiring Badge */}
-                    {job?.jobDetails?.urgentHiring === "Yes" && (
-                      <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded whitespace-nowrap dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
-                        Urgent Hiring
+                  {/* Share Card */}
+                  {shareJobId === job._id && (
+                    <div
+                      ref={shareCardRef}
+                      onClick={(e) =>
+                        e.stopPropagation()
+                      }
+                      className="relative mb-2"
+                    >
+                      <ShareCard
+                        urlToShare={`${window.location.origin}/jobs/${slugify(
+                          job.jobDetails?.title ||
+                            "job"
+                        )}-${job._id}`}
+                        jobTitle={
+                          job.jobDetails?.title
+                        }
+                        jobLocation={
+                          job.jobDetails?.location
+                        }
+                        jobSalary={
+                          job.jobDetails?.salary
+                        }
+                        jobDuration={
+                          job.jobDetails?.duration
+                        }
+                        jobType={
+                          job.jobDetails?.jobType
+                        }
+                        onClose={() =>
+                          setShareJobId(null)
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {job.jobDetails?.location && (
+                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[140px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                        📍{" "}
+                        {job.jobDetails.location}
                       </span>
                     )}
 
-                    {/* Share Icon */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShareJobId(shareJobId === job._id ? null : job._id);
-                      }}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
-                      title="Share Job"
-                    >
-                      <FaShareAlt size={16} className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Share Card - WRAPPED IN REF */}
-                {shareJobId === job._id && (
-                  <div ref={shareCardRef} onClick={(e) => e.stopPropagation()} className="relative">
-                    <ShareCard
-                      // urlToShare={`${window.location.origin}/jobs/${job._id}`}
-                      urlToShare={`${window.location.origin}/jobs/${slugify(job.jobDetails?.title || "job")}-${job._id}`}
-                      jobTitle={job.jobDetails?.title}
-                      jobLocation={job.jobDetails?.location}
-                      jobSalary={job.jobDetails?.salary}
-                      jobDuration={job.jobDetails?.duration}
-                      jobType={job.jobDetails?.jobType}
-                      onClose={() => setShareJobId(null)}
-                    />
-                  </div>
-                )}
-
-                {/* Benefits, Responsibilities, Qualifications Preview */}
-                <div className="mb-2 pb-2 border-b border-gray-100 dark:border-gray-700">
-                  <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                    {job.jobDetails?.benefits?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.benefits[0]}</span>
-                      </p>
+                    {job.jobDetails
+                      ?.workPlaceFlexibility && (
+                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                        {
+                          job.jobDetails
+                            .workPlaceFlexibility
+                        }
+                      </span>
                     )}
-                    {job.jobDetails?.responsibilities?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.responsibilities[0]}</span>
-                      </p>
+
+                    {job.jobDetails?.jobType && (
+                      <span className="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
+                        {job.jobDetails.jobType}
+                      </span>
                     )}
-                    {job.jobDetails?.qualifications?.[0] && (
-                      <p className="flex items-start gap-2">
-                        <span className="text-gray-400 mt-0.5 flex-shrink-0 dark:text-gray-500">•</span>
-                        <span className="truncate">{job.jobDetails.qualifications[0]}</span>
-                      </p>
+
+                    {job.jobDetails?.shift && (
+                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[110px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                        {job.jobDetails.shift}
+                      </span>
                     )}
                   </div>
-                </div>
 
-                {/* Middle Row: Location, Flexibility, Job Type & Shift */}
-                <div className="flex flex-wrap gap-2 items-center mb-2">
-                  {/* Location */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[150px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.location}
-                  </span>
-
-                  {/* Workplace Flexibility */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[120px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.workPlaceFlexibility}
-                  </span>
-
-                  {/* Job Type */}
-                  <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                    {job.jobDetails?.jobType}
-                  </span>
-
-                  {/* Shift */}
-                  {job.jobDetails?.shift && (
-                    <span className="text-xs text-gray-700 bg-gray-50 border border-gray-200 px-2 py-1 rounded truncate max-w-[100px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                      {job.jobDetails?.shift}
-                    </span>
-                  )}
-
-                  {/* Applied Status Badge */}
-                  {hasAppliedToJob(job._id) && (
-                    <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded ml-auto flex-shrink-0 dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
-                      ✓ Applied
-                    </span>
-                  )}
-                </div>
-
-                {/* Bottom Row: Salary, Duration, Active Days & Response Time */}
-                <div className="flex flex-wrap justify-between items-center gap-3 text-xs border-t border-gray-100 pt-2 dark:border-gray-700">
-                  {/* Left Side - Salary & Duration */}
-                  <div className="flex gap-2 items-center min-w-0 flex-1">
-                    {/* Salary */}
-                    <span className="font-semibold text-gray-900 truncate dark:text-white">
-                      {job?.jobDetails?.salary
-                        .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                        .split("-")
-                        .map((part, index) => (
-                          <span key={index}>
-                            ₹{part.trim()}
-                            {index === 0 ? " - " : ""}
+                  {/* Highlights */}
+                  {(job.jobDetails?.benefits?.[0] ||
+                    job.jobDetails
+                      ?.qualifications?.[0]) && (
+                    <div className="text-[11px] text-gray-500 dark:text-gray-400 space-y-0.5 mb-3">
+                      {job.jobDetails
+                        ?.benefits?.[0] && (
+                        <p className="flex items-center gap-1.5 truncate">
+                          <span className="text-green-500">
+                            ✓
                           </span>
-                        ))}
-                    </span>
+                          {
+                            job.jobDetails
+                              .benefits[0]
+                          }
+                        </p>
+                      )}
 
-                    {/* Duration */}
-                    <span className="text-gray-600 truncate dark:text-gray-400">
-                      • {job.jobDetails?.duration}
-                    </span>
-                  </div>
+                      {job.jobDetails
+                        ?.qualifications?.[0] && (
+                        <p className="flex items-center gap-1.5 truncate">
+                          <span className="text-blue-400">
+                            🎓
+                          </span>
+                          {
+                            job.jobDetails
+                              .qualifications[0]
+                          }
+                        </p>
+                      )}
+                    </div>
+                  )}
 
-                  {/* Right Side - Active Days & Response Time */}
-                  <div className="flex gap-3 items-center text-gray-600 dark:text-gray-400 flex-shrink-0">
-                    {/* Active Days */}
-                    <span className="whitespace-nowrap">
-                      {calculateActiveDays(job?.createdAt)}d ago
+                  {/* Bottom Row */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                        {typeof salary === "string" &&
+                        salary.trim() ? (
+                          salary
+                            .replace(
+                              /(\d{1,3})(?=(\d{3})+(?!\d))/g,
+                              "$1,"
+                            )
+                            .split("-")
+                            .map(
+                              (part, i) => (
+                                <span
+                                  key={i}
+                                >
+                                  ₹{part.trim()}
+                                  {i === 0
+                                    ? " – "
+                                    : ""}
+                                </span>
+                              )
+                            )
+                        ) : (
+                          "Salary not specified"
+                        )}
+                      </span>
+
+                      {job.jobDetails
+                        ?.duration && (
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500 truncate">
+                          ·{" "}
+                          {
+                            job.jobDetails
+                              .duration
+                          }
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap flex-shrink-0">
+                      {calculateActiveDays(
+                        job?.createdAt
+                      )}
+                      d ago
                     </span>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Right: Job Details Panel (Desktop & Tablet only) - FIXED WIDTH & OVERFLOW */}
+          {/* ===================================================
+              RIGHT: DESKTOP JOB DETAILS
+          ==================================================== */}
+
           {selectedJob && (
             <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[calc(100vh-140px)] min-h-[920px] dark:border-gray-700 dark:bg-gray-800">
 
-              {/* Header (Sticky) */}
+              {/* Header */}
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">
-                {/* Bookmark Icon - Top Right Corner */}
+
+                {/* Bookmark */}
                 {!isApplied && user && (
                   <div className="absolute top-5 right-6">
-                    {isJobBookmarked(user?._id) ? (
+                    {isJobBookmarked(
+                      user?._id
+                    ) ? (
                       <FaBookmark
                         size={26}
-                        onClick={() => handleBookmark(selectedJob._id)}
+                        onClick={() =>
+                          handleBookmark(
+                            selectedJob._id
+                          )
+                        }
                         className="text-cyan-600 cursor-pointer hover:text-cyan-700 transition-colors dark:text-cyan-400 dark:hover:text-cyan-300"
                       />
                     ) : (
                       <CiBookmark
                         size={26}
-                        onClick={() => handleBookmark(selectedJob._id)}
+                        onClick={() =>
+                          handleBookmark(
+                            selectedJob._id
+                          )
+                        }
                         className="cursor-pointer text-sky-500 hover:text-sky-600 transition-colors dark:text-sky-400 dark:hover:text-sky-300"
                       />
                     )}
@@ -474,171 +1060,258 @@ const JobsForYou = ({ jobs = [] }) => {
                   {selectedJob?.jobDetails?.title}
                 </h3>
 
-                {/* Company Name and Location Row */}
+                {/* Company / Location */}
                 <div className="flex justify-between items-center gap-4 pr-12">
-                  {/* Company Name - Left Side */}
                   <p className="lg:text-lg md:text-md font-semibold text-cyan-900 truncate dark:text-gray-200">
-                    {selectedJob?.jobDetails?.companyName}
+                    {
+                      selectedJob?.jobDetails
+                        ?.companyName
+                    }
                   </p>
 
-                  {/* Location - Right Side */}
                   <p className="lg:text-lg md:text-md text-sky-900 flex items-center gap-1.5 flex-shrink-0 dark:text-gray-200">
-                    <span className="lg:text-xl md:text-md">📍</span>
-                    <span className="whitespace-nowrap">{selectedJob?.jobDetails?.location}</span>
+                    <span className="lg:text-xl md:text-md">
+                      📍
+                    </span>
+
+                    <span className="whitespace-nowrap">
+                      {
+                        selectedJob?.jobDetails
+                          ?.location
+                      }
+                    </span>
                   </p>
                 </div>
 
-                {/* Salary & Response Time Row */}
+                {/* Salary / Response */}
                 <div className="flex justify-between items-center gap-3 pt-1">
-                  {/* Salary - Left Side */}
+
+                  {/* Salary */}
                   <div className="flex-1 px-3 py-1.5 font-bold text-sky-900 rounded-xl bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-300 flex items-center justify-center shadow-sm dark:from-sky-900/30 dark:to-cyan-900/30 dark:border-sky-700 dark:text-white">
-                    {selectedJob?.jobDetails?.salary
-                      .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                      .split(" - ")
-                      .map((part, index) => (
-                        <span key={index}>
-                          ₹{part.trim()}
-                          {index === 0 ? " - " : ""}
-                        </span>
-                      ))}
+                    {typeof selectedJob
+                      ?.jobDetails?.salary ===
+                      "string" &&
+                    selectedJob.jobDetails.salary.trim() ? (
+                      selectedJob.jobDetails.salary
+                        .replace(
+                          /(\d{1,3})(?=(\d{3})+(?!\d))/g,
+                          "$1,"
+                        )
+                        .split(" - ")
+                        .map(
+                          (part, index) => (
+                            <span
+                              key={index}
+                            >
+                              ₹{part.trim()}
+                              {index === 0
+                                ? " - "
+                                : ""}
+                            </span>
+                          )
+                        )
+                    ) : (
+                      <span>Salary not specified</span>
+                    )}
                   </div>
 
-                  {/* Response Time - Right Side */}
+                  {/* Response Time */}
                   <div className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold text-cyan-900 bg-gradient-to-r from-cyan-90 to-blue-10 border-2 border-cyan-500 rounded-xl shadow-sm dark:from-cyan-900/30 dark:to-blue-900/30 dark:border-cyan-700 dark:text-cyan-200">
-                    <AiOutlineThunderbolt className="flex-shrink-0 text-cyan-600 dark:text-cyan-400" size={18} />
+                    <AiOutlineThunderbolt
+                      className="flex-shrink-0 text-cyan-600 dark:text-cyan-400"
+                      size={18}
+                    />
+
                     <span className="truncate">
-                      Typically Responds in {selectedJob?.jobDetails?.respondTime} day(s)
+                      Typically Responds in{" "}
+                      {
+                        selectedJob?.jobDetails
+                          ?.respondTime
+                      }{" "}
+                      day(s)
                     </span>
                   </div>
                 </div>
-                
-                {/* Apply Button - Full Width */}
+
+                {/* Apply Button */}
                 <div className="pt-2">
                   <div
-                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${isApplied
-                      ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
-                      : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
-                      }`}
+                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${
+                      isApplied
+                        ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
+                    }`}
                   >
                     {isApplied ? (
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-xl">✓</span> Applied
+                        <span className="text-xl">
+                          ✓
+                        </span>
+                        Applied
                       </div>
                     ) : !user ? (
                       <button
+                        type="button"
                         className="w-full flex items-center justify-center gap-2"
-                        onClick={() => navigate('/jobseeker-login', { state: { from: '/jobs' } })}
+                        onClick={() =>
+                          navigate(
+                            "/jobseeker-login",
+                            {
+                              state: {
+                                from: "/jobs",
+                              },
+                            }
+                          )
+                        }
                       >
                         Login to Apply
                       </button>
                     ) : (
                       <div
                         className="relative group w-full"
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onMouseEnter={() =>
+                          setIsHovered(true)
+                        }
+                        onMouseLeave={() =>
+                          setIsHovered(false)
+                        }
                       >
                         <button
-                          className={`w-full flex items-center justify-center gap-2 ${!profileComplete
-                            ? "cursor-not-allowed"
-                            : ""
-                            }`}
-                          onClick={() => handleApply(selectedJob._id)}
-                          disabled={!profileComplete}
+                          type="button"
+                          className={`w-full flex items-center justify-center gap-2 ${
+                            !profileComplete
+                              ? "cursor-not-allowed"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleApply(
+                              selectedJob._id
+                            )
+                          }
+                          disabled={
+                            !profileComplete
+                          }
                         >
                           Apply Now
                         </button>
 
-                        {/* Beautiful Tooltip */}
+                        {/* Tooltip */}
                         {!profileComplete && (
                           <div
-                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${isHovered
-                              ? "opacity-100 visible translate-y-0"
-                              : "opacity-0 invisible translate-y-2"
-                              }`}
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${
+                              isHovered
+                                ? "opacity-100 visible translate-y-0"
+                                : "opacity-0 invisible translate-y-2"
+                            }`}
                           >
                             <div className="relative w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-purple-500/20 backdrop-blur-xl dark:from-slate-900 dark:to-slate-950">
-                              {/* Animated background gradient */}
-                              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-violet-500/10 to-purple-500/10 animate-pulse"></div>
 
-                              {/* Content */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-violet-500/10 to-purple-500/10 animate-pulse" />
+
                               <div className="relative p-6">
+
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-4">
                                   <div className="flex items-center gap-3">
                                     <div className="p-2 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg">
                                       <Star className="w-5 h-5 text-white" />
                                     </div>
+
                                     <div>
                                       <h3 className="text-white font-bold text-lg">
                                         Complete Your Profile
                                       </h3>
-                                      <p className="text-gray-400 text-xs">Unlock all features</p>
+
+                                      <p className="text-gray-400 text-xs">
+                                        Unlock all features
+                                      </p>
                                     </div>
                                   </div>
                                 </div>
 
-                                {/* Progress Bar */}
+                                {/* Progress */}
                                 <div className="mb-5">
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs text-gray-400">Profile Completion</span>
+                                    <span className="text-xs text-gray-400">
+                                      Profile Completion
+                                    </span>
+
                                     <span className="text-xs font-bold text-purple-400">
-                                      {completionPercentage}%
+                                      {
+                                        completionPercentage
+                                      }
+                                      %
                                     </span>
                                   </div>
+
                                   <div className="h-2 bg-slate-700 rounded-full dark:bg-slate-800">
                                     <div
                                       className="h-full bg-gradient-to-r from-purple-500 to-violet-600 rounded-full transition-all duration-500 relative"
-                                      style={{ width: `${completionPercentage}%` }}
+                                      style={{
+                                        width: `${completionPercentage}%`,
+                                      }}
                                     >
-                                      <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
+                                      <div className="absolute inset-0 bg-white/30 animate-pulse" />
                                     </div>
                                   </div>
                                 </div>
 
                                 {/* Missing Fields */}
                                 <div className="space-y-3">
-                                  {missingFields.map((field, index) => {
-                                    const Icon = field.icon;
-                                    return (
-                                      <div
-                                        key={index}
-                                        className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-xl border border-slate-600/50 hover:border-purple-500/50 transition-all duration-200 group/item hover:bg-slate-700/70 dark:bg-slate-800/50 dark:border-slate-700/50 dark:hover:bg-slate-800/70"
-                                        style={{
-                                          animationDelay: `${index * 100}ms`,
-                                          animation: isHovered
-                                            ? "slideIn 0.3s ease-out forwards"
-                                            : "none",
-                                        }}
-                                      >
-                                        <div className="p-2 bg-gradient-to-br from-purple-500/20 to-violet-600/20 rounded-lg group-hover/item:from-purple-500/30 group-hover/item:to-violet-600/30 transition-all dark:from-purple-600/30 dark:to-violet-700/30">
-                                          <Icon className="w-4 h-4 text-purple-400" />
+                                  {missingFields.map(
+                                    (field, index) => {
+                                      const Icon =
+                                        field.icon;
+
+                                      return (
+                                        <div
+                                          key={index}
+                                          className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-xl border border-slate-600/50 hover:border-purple-500/50 transition-all duration-200 group/item hover:bg-slate-700/70 dark:bg-slate-800/50 dark:border-slate-700/50 dark:hover:bg-slate-800/70"
+                                          style={{
+                                            animationDelay: `${index * 100}ms`,
+                                            animation:
+                                              isHovered
+                                                ? "slideIn 0.3s ease-out forwards"
+                                                : "none",
+                                          }}
+                                        >
+                                          <div className="p-2 bg-gradient-to-br from-purple-500/20 to-violet-600/20 rounded-lg group-hover/item:from-purple-500/30 group-hover/item:to-violet-600/30 transition-all dark:from-purple-600/30 dark:to-violet-700/30">
+                                            <Icon className="w-4 h-4 text-purple-400" />
+                                          </div>
+
+                                          <span className="text-sm text-gray-300 flex-1 dark:text-gray-200">
+                                            {
+                                              field.label
+                                            }
+                                          </span>
+
+                                          <AlertCircle className="w-4 h-4 text-yellow-400 opacity-50 group-hover/item:opacity-100 transition-opacity" />
                                         </div>
-                                        <span className="text-sm text-gray-300 flex-1 dark:text-gray-200">
-                                          {field.label}
-                                        </span>
-                                        <AlertCircle className="w-4 h-4 text-yellow-400 opacity-50 group-hover/item:opacity-100 transition-opacity" />
-                                      </div>
-                                    );
-                                  })}
+                                      );
+                                    }
+                                  )}
                                 </div>
 
-                                {/* CTA Button */}
+                                {/* CTA */}
                                 <button
-                                  onClick={handleNavigateToProfile}
+                                  type="button"
+                                  onClick={
+                                    handleNavigateToProfile
+                                  }
                                   className="w-full mt-5 py-3 bg-gradient-to-r from-purple-500 to-violet-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                                 >
                                   Complete Profile Now
                                 </button>
                               </div>
 
-                              {/* Decorative elements */}
-                              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-                              <div className="absolute bottom-0 left-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl"></div>
+                              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl" />
+
+                              <div className="absolute bottom-0 left-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl" />
                             </div>
 
                             {/* Arrow */}
                             <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-2">
-                              <div className="w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-900 dark:to-slate-950 rotate-45 border-r border-b border-purple-500/20"></div>
+                              <div className="w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-900 dark:to-slate-950 rotate-45 border-r border-b border-purple-500/20" />
                             </div>
                           </div>
                         )}
@@ -654,72 +1327,123 @@ const JobsForYou = ({ jobs = [] }) => {
                 onScroll={handleScroll}
                 className="overflow-y-auto scrollbar-hide flex-1 px-4 py-4 dark:text-gray-200"
               >
-                <JobMajorDetails selectedJob={selectedJob} />
+                <JobMajorDetails
+                  selectedJob={selectedJob}
+                />
               </div>
             </div>
           )}
         </div>
 
-        {/* Mobile: Full-Screen Job Details */}
+        {/* =====================================================
+            MOBILE JOB DETAILS
+        ====================================================== */}
+
         {showJobDetails && selectedJob && (
           <div className="lg:hidden fixed inset-0 bg-white dark:bg-gray-800 z-50 shadow-xl transition-transform duration-300 ease-in-out overflow-y-auto">
 
             {/* Close Button */}
             <button
+              type="button"
               className="fixed top-[80px] right-4 bg-gray-200 dark:bg-gray-700 p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-200 z-[100] flex items-center justify-center w-10 h-10"
-              onClick={() => setShowJobDetails(false)}
+              onClick={() =>
+                setShowJobDetails(false)
+              }
+              aria-label="Close job details"
             >
               <IoMdClose size={22} />
             </button>
 
-            {/* Content */}
             <div className="p-6 pt-20 pb-24">
+
+              {/* Title */}
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white pr-12">
                 {selectedJob?.jobDetails?.title}
               </h3>
+
               <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                {selectedJob?.jobDetails?.companyName}
+                {
+                  selectedJob?.jobDetails
+                    ?.companyName
+                }
               </p>
+
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                {selectedJob?.jobDetails?.location}
+                {
+                  selectedJob?.jobDetails
+                    ?.location
+                }
               </p>
 
               {/* Salary */}
               <p className="mt-2 px-3 py-1 font-semibold text-gray-700 dark:text-gray-300 rounded-md w-fit bg-gray-200 dark:bg-gray-700 max-w-full break-words">
-                {selectedJob?.jobDetails?.salary
-                  .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                  .split("-")
-                  .map((part, index) => (
-                    <span key={index}>
-                      ₹{part.trim()}
-                      {index === 0 ? " - " : ""}
-                    </span>
-                  ))}
+                {typeof selectedJob
+                  ?.jobDetails?.salary ===
+                  "string" &&
+                selectedJob.jobDetails.salary.trim() ? (
+                  selectedJob.jobDetails.salary
+                    .replace(
+                      /(\d{1,3})(?=(\d{3})+(?!\d))/g,
+                      "$1,"
+                    )
+                    .split("-")
+                    .map(
+                      (part, index) => (
+                        <span
+                          key={index}
+                        >
+                          ₹{part.trim()}
+                          {index === 0
+                            ? " - "
+                            : ""}
+                        </span>
+                      )
+                    )
+                ) : (
+                  "Salary not specified"
+                )}
               </p>
 
-              {/* Response Time */}
+              {/* Response */}
               <div className="mt-2 flex items-center text-sm text-blue-800 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-md w-fit max-w-full">
                 <AiOutlineThunderbolt className="mr-1 flex-shrink-0" />
-                <span className="truncate">Typically Responds in {selectedJob?.jobDetails?.respondTime} days</span>
+
+                <span className="truncate">
+                  Typically Responds in{" "}
+                  {
+                    selectedJob?.jobDetails
+                      ?.respondTime
+                  }{" "}
+                  days
+                </span>
               </div>
 
-              {/* Bookmark Button */}
+              {/* Bookmark */}
               <div className="p-2 flex items-center gap-8 border-b dark:border-gray-700 ml-4 mt-4">
-                {user && (
-                  isJobBookmarked(user?._id) ? (
+                {user &&
+                  (isJobBookmarked(
+                    user?._id
+                  ) ? (
                     <FaBookmark
                       size={25}
-                      onClick={() => handleBookmark(selectedJob._id)}
+                      onClick={() =>
+                        handleBookmark(
+                          selectedJob._id
+                        )
+                      }
                       className="text-green-700 dark:text-green-400 cursor-pointer"
                     />
                   ) : (
                     <CiBookmark
                       size={25}
-                      onClick={() => handleBookmark(selectedJob._id)}
+                      onClick={() =>
+                        handleBookmark(
+                          selectedJob._id
+                        )
+                      }
                       className="cursor-pointer dark:text-gray-400"
                     />
-                  )
-                )}
+                  ))}
               </div>
 
               {/* Job Details */}
@@ -727,69 +1451,111 @@ const JobsForYou = ({ jobs = [] }) => {
                 <p className="font-semibold text-gray-700 dark:text-gray-300">
                   Job Type:{" "}
                   <span className="text-sm text-gray-500 dark:text-gray-400 break-words">
-                    {selectedJob?.jobDetails?.jobType}
+                    {
+                      selectedJob?.jobDetails
+                        ?.jobType
+                    }
                   </span>
                 </p>
-                {selectedJob?.jobDetails?.shift && (
+
+                {selectedJob?.jobDetails
+                  ?.shift && (
                   <p className="font-semibold text-gray-700 dark:text-gray-300">
                     Shift:{" "}
                     <span className="text-sm text-gray-500 dark:text-gray-400 break-words">
-                      {selectedJob?.jobDetails?.shift}
+                      {
+                        selectedJob?.jobDetails
+                          ?.shift
+                      }
                     </span>
                   </p>
                 )}
+
                 <p className="font-semibold text-gray-700 dark:text-gray-300">
                   Duration:{" "}
                   <span className="text-sm text-gray-500 dark:text-gray-400 break-words">
-                    {selectedJob?.jobDetails?.duration}
+                    {
+                      selectedJob?.jobDetails
+                        ?.duration
+                    }
                   </span>
                 </p>
               </div>
 
               <div className="mt-4">
-                <JobMajorDetails selectedJob={selectedJob} />
+                <JobMajorDetails
+                  selectedJob={selectedJob}
+                />
               </div>
             </div>
 
-            {/* Apply Button (Fixed at Bottom) */}
+            {/* Mobile Apply Button */}
             <div className="fixed bottom-0 left-0 w-full p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700 flex justify-center shadow-lg">
               {isApplied ? (
-                <button className="bg-green-600 text-white px-6 py-3 rounded-lg w-full max-w-md">
+                <button
+                  type="button"
+                  className="bg-green-600 text-white px-6 py-3 rounded-lg w-full max-w-md"
+                >
                   Applied
                 </button>
               ) : !user ? (
                 <button
+                  type="button"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md font-semibold"
-                  onClick={() => navigate('/jobseeker-login', { state: { from: '/jobs' } })}
+                  onClick={() =>
+                    navigate(
+                      "/jobseeker-login",
+                      {
+                        state: {
+                          from: "/jobs",
+                        },
+                      }
+                    )
+                  }
                 >
                   Login to Apply
                 </button>
               ) : (
                 <div className="relative group w-full max-w-md">
                   <button
-                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${!profileComplete
-                      ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
-                      : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
-                      }`}
-                    onClick={() => handleApply(selectedJob._id)}
+                    type="button"
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${
+                      !profileComplete
+                        ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
+                        : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
+                    }`}
+                    onClick={() =>
+                      handleApply(
+                        selectedJob._id
+                      )
+                    }
                     disabled={!profileComplete}
                   >
                     Apply Now
                   </button>
 
-                  {/* Tooltip for incomplete profile - Mobile */}
+                  {/* Mobile Tooltip */}
                   {!profileComplete && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-3 bg-gray-900 dark:bg-gray-950 text-white text-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 w-64 z-50">
-                      <p className="font-semibold mb-2">Complete Your Profile:</p>
+                      <p className="font-semibold mb-2">
+                        Complete Your Profile:
+                      </p>
+
                       <ul className="list-disc list-inside space-y-1">
-                        {missingFields.map((field, index) => (
-                          <li key={index} className="text-xs">
-                            {field.label}
-                          </li>
-                        ))}
+                        {missingFields.map(
+                          (field, index) => (
+                            <li
+                              key={index}
+                              className="text-xs"
+                            >
+                              {field.label}
+                            </li>
+                          )
+                        )}
                       </ul>
+
                       <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                        <div className="border-8 border-transparent border-t-gray-900 dark:border-t-gray-950"></div>
+                        <div className="border-8 border-transparent border-t-gray-900 dark:border-t-gray-950" />
                       </div>
                     </div>
                   )}
@@ -798,54 +1564,87 @@ const JobsForYou = ({ jobs = [] }) => {
             </div>
           </div>
         )}
+
+        {/* Animation */}
         <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-10px);
+          @keyframes slideIn {
+            from {
+              opacity: 0;
+              transform: translateX(-10px);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
           }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+        `}</style>
       </div>
 
-      {/* Questions Modal */}
+      {/* =====================================================
+          QUESTIONS MODAL
+      ====================================================== */}
+
       {questionsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg p-6">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Employer Questions</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Please answer all questions to complete your application.</p>
+
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">
+              Employer Questions
+            </h2>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              Please answer all questions to
+              complete your application.
+            </p>
+
             <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
-              {questionAnswers.map((qa, idx) => (
-                <div key={idx}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Q{idx + 1}: {qa.question}
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Your answer"
-                    value={qa.answer}
-                    onChange={(e) => {
-                      const updated = [...questionAnswers];
-                      updated[idx] = { ...updated[idx], answer: e.target.value };
-                      setQuestionAnswers(updated);
-                    }}
-                  />
-                </div>
-              ))}
+              {questionAnswers.map(
+                (qa, idx) => (
+                  <div key={idx}>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Q{idx + 1}:{" "}
+                      {qa.question}
+                    </label>
+
+                    <input
+                      type="text"
+                      className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Your answer"
+                      value={qa.answer}
+                      onChange={(e) => {
+                        const updated = [
+                          ...questionAnswers,
+                        ];
+
+                        updated[idx] = {
+                          ...updated[idx],
+                          answer: e.target.value,
+                        };
+
+                        setQuestionAnswers(
+                          updated
+                        );
+                      }}
+                    />
+                  </div>
+                )
+              )}
             </div>
+
             <div className="flex justify-end gap-3 mt-5">
               <button
-                onClick={() => setQuestionsModal(null)}
+                type="button"
+                onClick={() =>
+                  setQuestionsModal(null)
+                }
                 className="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
+
               <button
+                type="button"
                 onClick={handleQuestionsSubmit}
                 className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
               >
@@ -860,3 +1659,4 @@ const JobsForYou = ({ jobs = [] }) => {
 };
 
 export default JobsForYou;
+

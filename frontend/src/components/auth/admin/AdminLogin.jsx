@@ -19,6 +19,7 @@ const AdminLogin = () => {
   const [loading, setLoading] = useState(false);  // Add loading state
 
   useEffect(() => {
+    document.title = "Admin Login | GreatHire";
     if (user) {
       if (user.role === "admin" || user.role === "Owner")
         navigate("/admin/dashboard");

@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useMessages } from '../../context/MessageContext';
 import { useSelector } from 'react-redux';
 import { formatDistanceToNow } from 'date-fns';
-import { 
-  Send, 
-  MoreVertical, 
-  Edit3, 
-  Trash2, 
-  Reply, 
+import {
+  Send,
+  MoreVertical,
+  Edit3,
+  Trash2,
+  Reply,
   User,
   Phone,
   Video,
@@ -20,12 +20,13 @@ import {
   Camera
 } from 'lucide-react';
 import LastSeenStatus from '@/components/shared/LastSeenStatus'; // Make sure to import the LastSeenStatus component
+import toast from 'react-hot-toast';
 
 const ChatInterface = () => {
-  const { 
-    activeConversation, 
-    messages, 
-    sendMessage, 
+  const {
+    activeConversation,
+    messages,
+    sendMessage,
     sendTypingIndicator,
     deleteMessage,
     editMessage,
@@ -35,7 +36,7 @@ const ChatInterface = () => {
     hasMoreMessages,
     fetchMessages
   } = useMessages();
-  
+
   const { user } = useSelector(store => store.auth);
   const [newMessage, setNewMessage] = useState('');
   const [editingMessage, setEditingMessage] = useState(null);
@@ -63,35 +64,39 @@ const ChatInterface = () => {
   }, [activeConversation]);
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
-    
-    if (!newMessage.trim() || !activeConversation) return;
+  e.preventDefault();
+  
+  if (!newMessage.trim() || !activeConversation) return;
 
-    try {
-      await sendMessage(
-        activeConversation.participant._id, 
-        newMessage.trim(),
-        'text',
-        replyingTo?._id
-      );
-      setNewMessage('');
-      setReplyingTo(null);
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    }
-  };
+  try {
+    const result = await sendMessage(
+      activeConversation.participant._id, 
+      newMessage.trim(),
+      'text',
+      replyingTo?._id
+    );
+
+    setNewMessage('');
+    setReplyingTo(null);
+
+    
+  } catch (error) {
+    console.error('Failed to send message:', error);
+    toast.error("Failed to send message");
+  }
+};
 
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
-    
+
     // Send typing indicator
     sendTypingIndicator(true);
-    
+
     // Clear previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     // Stop typing after 1 second of inactivity
     typingTimeoutRef.current = setTimeout(() => {
       sendTypingIndicator(false);
@@ -129,7 +134,7 @@ const ChatInterface = () => {
 
   const handleEditMessage = async (messageId) => {
     if (!editContent.trim()) return;
-    
+
     try {
       await editMessage(messageId, editContent.trim());
       setEditingMessage(null);
@@ -162,8 +167,10 @@ const ChatInterface = () => {
     inputRef.current?.focus();
   };
 
-  const isTyping = activeConversation && typingUsers[activeConversation.participant._id];
-  const isOnline = activeConversation && onlineUsers.has(activeConversation.participant._id);
+
+  const partnerId = activeConversation?.participant?._id;
+  const isTyping = partnerId ? typingUsers[partnerId] : false;
+  const isOnline = partnerId ? onlineUsers.has(partnerId) : false;
 
   if (!activeConversation) {
     return (
@@ -174,6 +181,23 @@ const ChatInterface = () => {
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
           <p className="text-gray-500 dark:text-gray-800">Choose a conversation from the sidebar to start messaging</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If conversation exists but participant is missing (bad data), show a fallback
+  if (!activeConversation.participant) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-400">
+        <div className="text-center">
+          <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
+            <User className="w-12 h-12 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Conversation unavailable</h3>
+          <p className="text-gray-500 dark:text-gray-800">
+            This conversation is missing participant data. Please try refreshing.
+          </p>
         </div>
       </div>
     );
@@ -201,19 +225,21 @@ const ChatInterface = () => {
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
               )}
             </div>
-            
+
             <div>
               <h3 className="font-medium text-gray-900">
                 {activeConversation.participant?.fullname || 'Unknown User'}
               </h3>
-              <LastSeenStatus 
-                userId={activeConversation.participant?._id}
-                showOnlineIndicator={false}
-                className="text-sm"
-                isOnlineFromContext={isOnline}
-              />
-              {isTyping && (
+
+              {isTyping ? (
                 <p className="text-xs text-blue-500 animate-pulse">typing...</p>
+              ) : (
+                <LastSeenStatus
+                  userId={activeConversation.participant?._id}
+                  showOnlineIndicator={false}
+                  className="text-sm"
+                  isOnlineFromContext={isOnline}
+                />
               )}
             </div>
           </div>
@@ -250,11 +276,12 @@ const ChatInterface = () => {
                 </button>
               </div>
             )}
-            
+
             {messages.map((message) => {
+              if (!message || !message.sender) return null;
               const isOwn = message.sender._id === user._id;
               const isEditing = editingMessage === message._id;
-              
+
               return (
                 <div key={message._id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs lg:max-w-md ${isOwn ? 'order-2' : 'order-1'}`}>
@@ -265,14 +292,13 @@ const ChatInterface = () => {
                         <p className="truncate">{message.replyTo.content}</p>
                       </div>
                     )}
-                    
+
                     <div className={`relative group ${isOwn ? 'ml-auto' : 'mr-auto'}`}>
                       <div
-                        className={`px-4 py-2 rounded-lg ${
-                          isOwn
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 text-gray-900'
-                        }`}
+                        className={`px-4 py-2 rounded-lg ${isOwn
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 text-gray-900'
+                          }`}
                       >
                         {isEditing ? (
                           <div className="space-y-2">
@@ -305,13 +331,18 @@ const ChatInterface = () => {
                         ) : (
                           <>
                             <p className="text-sm">{message.content}</p>
+                            {isOwn && (
+                              <span className="text-xs ml-2 opacity-70">
+                                {message.isRead ? "✓✓" : "✓"}
+                              </span>
+                            )}
                             {message.isEdited && (
                               <p className="text-xs opacity-75 mt-1">(edited)</p>
                             )}
                           </>
                         )}
                       </div>
-                      
+
                       {/* Message actions */}
                       {isOwn && !isEditing && (
                         <div className="absolute top-0 right-0 transform translate-x-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -322,7 +353,7 @@ const ChatInterface = () => {
                             >
                               <MoreVertical className="w-4 h-4" />
                             </button>
-                            
+
                             {showDropdown === message._id && (
                               <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                                 <button
@@ -351,7 +382,7 @@ const ChatInterface = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {!isOwn && !isEditing && (
                         <div className="absolute top-0 left-0 transform -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
@@ -363,7 +394,7 @@ const ChatInterface = () => {
                         </div>
                       )}
                     </div>
-                    
+
                     <p className={`text-xs text-gray-500 mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                       {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
                     </p>
@@ -408,7 +439,7 @@ const ChatInterface = () => {
             >
               <Paperclip className="w-5 h-5" />
             </button>
-            
+
             {showAttachmentMenu && (
               <div className="absolute bottom-full left-0 mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                 <div className="p-2">
@@ -436,7 +467,7 @@ const ChatInterface = () => {
                 </div>
               </div>
             )}
-            
+
             <input
               ref={fileInputRef}
               type="file"
@@ -462,7 +493,7 @@ const ChatInterface = () => {
                 }
               }}
             />
-            
+
             {/* Emoji Button */}
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
               <button
@@ -472,7 +503,7 @@ const ChatInterface = () => {
               >
                 <Smile className="w-5 h-5" />
               </button>
-              
+
               {showEmojiPicker && (
                 <div className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                   <div className="p-3">
@@ -506,11 +537,10 @@ const ChatInterface = () => {
             <button
               type="button"
               onClick={handleVoiceRecord}
-              className={`p-2 rounded-lg transition-colors ${
-                isRecording 
-                  ? 'bg-red-500 text-white hover:bg-red-600' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              className={`p-2 rounded-lg transition-colors ${isRecording
+                ? 'bg-red-500 text-white hover:bg-red-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
               <Mic className={`w-5 h-5 ${isRecording ? 'animate-pulse' : ''}`} />
             </button>

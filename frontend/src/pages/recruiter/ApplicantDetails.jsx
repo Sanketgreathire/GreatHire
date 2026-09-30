@@ -53,7 +53,8 @@ const ApplicantDetails = ({
   const [interviewLoading, setInterviewLoading] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [interviewQuestions, setInterviewQuestions] = useState("");
-  const [matchScore, setMatchScore] = useState(null);
+  const [matchScore, setMatchScore] = useState(app?.matchScore ?? null);
+  const [screeningLoading, setScreeningLoading] = useState(false);
   const [showCallLogsModal, setShowCallLogsModal] = useState(false);
   const [callTranscript, setCallTranscript] = useState("");
   const [callRecording, setCallRecording] = useState(null);
@@ -128,6 +129,73 @@ const ApplicantDetails = ({
       }
     } catch {
       toast.error("An error occurred while updating the status");
+    } finally {
+      setLoading(0);
+    }
+  };
+
+  const handleScreenManually = async () => {
+    if (!applicantId) {
+      toast.error("Invalid applicant ID");
+      return;
+    }
+    try {
+      setScreeningLoading(true);
+      const res = await axios.post(
+        `${APPLICATION_API_END_POINT}/${applicantId}/score`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        const score = res.data.result?.score ?? res.data.application?.matchScore;
+        const newStatus = res.data.application?.status || (score >= 75 ? "Shortlisted" : "Rejected");
+        setMatchScore(score);
+        setApplicants((prev) =>
+          prev.map((a) =>
+            a._id === app._id
+              ? {
+                  ...a,
+                  status: newStatus,
+                  matchScore: score,
+                  screeningStatus: res.data.application?.screeningStatus,
+                }
+              : a
+          )
+        );
+        toast.success(`Screened successfully: ${score}% (${newStatus})`);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Screening failed");
+    } finally {
+      setScreeningLoading(false);
+    }
+  };
+
+  const handleOverrideDecision = async (decision) => {
+    if (!applicantId) return;
+    try {
+      setLoading(decision === "Shortlisted" ? 1 : 2);
+      const res = await axios.post(
+        `${APPLICATION_API_END_POINT}/${applicantId}/override-score`,
+        { decision },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setApplicants((prev) =>
+          prev.map((a) =>
+            a._id === app._id
+              ? {
+                  ...a,
+                  status: decision,
+                  screeningStatus: decision === "Shortlisted" ? "Passed" : "Rejected",
+                }
+              : a
+          )
+        );
+        toast.success(`Application overridden to ${decision}`);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Override failed");
     } finally {
       setLoading(0);
     }
@@ -468,7 +536,30 @@ const ApplicantDetails = ({
                 </>
               )}
 
-              {/* Interview Status & Match Score */}
+              {/* AI Screening Score */}
+              {(matchScore != null || mergedApp?.matchScore != null) && (
+                <>
+                  <Divider />
+                  <SectionTitle>AI Screening</SectionTitle>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">Screening Score</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Result: {mergedApp?.screeningStatus || ((matchScore ?? mergedApp?.matchScore) >= 75 ? "Passed" : "Rejected")}
+                        </span>
+                      </div>
+                      <span className={`text-sm font-bold px-3 py-1 rounded-full ${
+                        (matchScore ?? mergedApp?.matchScore) >= 75 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                        (matchScore ?? mergedApp?.matchScore) >= 50 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300" :
+                        "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                      }`}>{(matchScore ?? mergedApp?.matchScore)}%</span>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Interview Status */}
               {mergedApp?.aiInterview?.status && (
                 <>
                   <Divider />
@@ -478,16 +569,6 @@ const ApplicantDetails = ({
                       <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Status:</span>
                       <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">{mergedApp.aiInterview.status}</span>
                     </div>
-                    {matchScore != null && (
-                      <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
-                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Match Score:</span>
-                        <span className={`text-sm font-semibold px-3 py-1 rounded-full ${
-                          matchScore >= 70 ? "bg-green-100 text-green-700" :
-                          matchScore >= 40 ? "bg-yellow-100 text-yellow-700" :
-                          "bg-red-100 text-red-700"
-                        }`}>{matchScore}%</span>
-                      </div>
-                    )}
                   </div>
                 </>
               )}
@@ -498,25 +579,32 @@ const ApplicantDetails = ({
                 {/* Interview Actions - Recruiter Only */}
                 {user?.role === "recruiter" && (
                   <>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={handleScreenManually}
+                        disabled={screeningLoading}
+                        className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
+                      >
+                        {screeningLoading ? "Screening..." : "⚡ Screen AI"}
+                      </button>
                       <button
                         onClick={previewInterviewQuestions}
                         disabled={interviewLoading}
-                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                       >
                         {interviewLoading ? "Loading..." : "👁️ Preview"}
                       </button>
                       <button
                         onClick={startAIInterview}
                         disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
-                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                       >
                         {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
                       </button>
                       <button
                         onClick={fetchCallLogs}
                         disabled={callLogsLoading || !mergedApp?.aiInterview?.status}
-                        className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-sm transition shadow-sm"
+                        className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                       >
                         {callLogsLoading ? "Loading..." : "📋 Logs"}
                       </button>
@@ -525,26 +613,26 @@ const ApplicantDetails = ({
                 )}
 
                 {/* Shortlist/Reject Actions */}
-                {user?.role === "recruiter" && status === "Pending" ? (
+                {user?.role === "recruiter" && (
                   <div className="flex gap-3">
                     <button
-                      className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
-                      disabled={loading === 1 || loading === -1}
-                      onClick={() => updateStatus(1)}
+                      className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${
+                        mergedApp?.status === "Shortlisted" ? "bg-green-600 ring-2 ring-green-300" : "bg-green-500 hover:bg-green-600"
+                      }`}
+                      disabled={loading !== 0}
+                      onClick={() => handleOverrideDecision("Shortlisted")}
                     >
-                      {loading === 1 ? "Updating..." : "✅ Shortlist"}
+                      {loading === 1 ? "Updating..." : mergedApp?.status === "Shortlisted" ? "✓ Shortlisted" : "✅ Shortlist"}
                     </button>
                     <button
-                      className="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50"
-                      disabled={loading === 1 || loading === -1}
-                      onClick={() => updateStatus(-1)}
+                      className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${
+                        mergedApp?.status === "Rejected" ? "bg-red-600 ring-2 ring-red-300" : "bg-red-500 hover:bg-red-600"
+                      }`}
+                      disabled={loading !== 0}
+                      onClick={() => handleOverrideDecision("Rejected")}
                     >
-                      {loading === -1 ? "Updating..." : "❌ Reject"}
+                      {loading === 2 ? "Updating..." : mergedApp?.status === "Rejected" ? "✕ Rejected" : "❌ Reject"}
                     </button>
-                  </div>
-                ) : (
-                  <div className={`text-center font-semibold text-sm py-3 rounded-2xl ${STATUS_STYLES[status] || STATUS_STYLES.Pending}`}>
-                    {status}
                   </div>
                 )}
               </div>

@@ -7,7 +7,7 @@ import { MdInfo } from "react-icons/md";
 // Importing Back Arrow icon for navigation
 import { BiArrowBack } from "react-icons/bi"; 
 // Importing PDF viewer for displaying documents
-import { Viewer } from "@react-pdf-viewer/core"; 
+import { Viewer, Worker } from "@react-pdf-viewer/core"; 
 // Importing PDF viewer styles
 import "@react-pdf-viewer/core/lib/styles/index.css";
 // Importing File Remove icon for UI 
@@ -73,7 +73,6 @@ const ApplyForm = ({ setRight }) => {
   const [fileURL, setFileURL] = useState(null);
   const [fileType, setFileType] = useState("");
   const [filename, setFilename] = useState(user?.profile?.resumeOriginalName || "");
-
 
   // Validation errors
   const [errors, setErrors] = useState({});
@@ -219,7 +218,6 @@ const handleFileChange = (e) => {
   }
 };
 
-
   return (
     <div>
       {step1 && (
@@ -242,7 +240,7 @@ const handleFileChange = (e) => {
               name="fullname"
               onChange={handleChange}
               value={input.fullname}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+             className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             />
             {errors.fullname && (
               <p className="text-red-600 text-sm">{errors.fullname}</p>
@@ -256,7 +254,7 @@ const handleFileChange = (e) => {
               name="number"
               onChange={handleChange}
               value={input.number}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             />
             {errors.number && (
               <p className="text-red-600 text-sm">{errors.number}</p>
@@ -270,7 +268,7 @@ const handleFileChange = (e) => {
               name="email"
               onChange={handleChange}
               value={input.email}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             />
             {errors.email && (
               <p className="text-red-600 text-sm">{errors.email}</p>
@@ -289,7 +287,7 @@ const handleFileChange = (e) => {
                     placeholder="City"
                     onChange={handleChange}
                     value={input.city || ""}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
                   />
                 </div>
 
@@ -301,7 +299,7 @@ const handleFileChange = (e) => {
                     placeholder="State"
                     onChange={handleChange}
                     value={input.state || ""}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
                   />
                 </div>
 
@@ -313,7 +311,7 @@ const handleFileChange = (e) => {
                     placeholder="Country"
                     onChange={handleChange}
                     value={input.country || ""}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                   className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
                   />
                 </div>
               </div>
@@ -372,12 +370,14 @@ const handleFileChange = (e) => {
           {fileURL || input.resume ? (
         <div className="h-96 flex flex-col items-center">
           {filename.split(".").pop().toLowerCase() === "pdf" || fileType === "pdf" ? (
-            <Viewer fileUrl={fileURL || input.resume} />
+  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+    <Viewer fileUrl={fileURL || input.resume} />
+  </Worker>
           ) : (
             <div className="text-center text-red-600 font-medium p-4 bg-red-100 rounded-lg">
-              You uploaded a .docx or .doc file. It cannot be open here.  
+              You uploaded a .docx or .doc file. It cannot be opened here.  
               <br />
-              <span className="font-bold">Go to Profile → Click "View Resume" to open it. and check it </span>
+              <span className="font-bold">Go to Profile → Click "View Resume" to open it and check it </span>
             </div>
           )}
                 <div className="mt-4 flex justify-center">
@@ -491,7 +491,7 @@ const handleFileChange = (e) => {
             type="text"
             name="jobTitle"
             onChange={handleChange}
-            className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             value={input.jobTitle}
           />
 
@@ -505,11 +505,11 @@ const handleFileChange = (e) => {
             type="text"
             name="company"
             onChange={handleChange}
-            className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             value={input.company}
           />
 
-          <h4 className="text-lg font-bold mt-6">
+          <h4 className="text-lg font-bold mt-6 text-gray-900">
             Add Your Experience{" "}
             <span className="text-gray-400">(optional)</span>
           </h4>
@@ -518,7 +518,7 @@ const handleFileChange = (e) => {
             name="experience"
             onChange={(e) => handleCharLimitChange(e, "experience")}
             rows="6"
-            className="mt-4 w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             placeholder="Add Experience..."
             value={input.experience}
           ></textarea>
@@ -573,7 +573,7 @@ const handleFileChange = (e) => {
             Want to include any supporting documents?
           </h3>
 
-          <h4 className="text-lg font-bold mt-6">
+          <h4 className="text-lg font-bold mt-6 text-gray-900">
             Cover letter <span className="text-gray-400">(optional)</span>
           </h4>
 
@@ -585,7 +585,7 @@ const handleFileChange = (e) => {
           >
             <CgFileRemove className="text-gray-500 mr-4" />
             <section className="flex-grow">
-              <h5 className="text-base font-semibold">
+              <h5 className="text-base font-semibold text-gray-900">
                 Apply without cover letter
               </h5>
               <p className="text-sm text-gray-500">
@@ -603,7 +603,7 @@ const handleFileChange = (e) => {
           >
             <FaFileSignature className="text-gray-500 mr-4" />
             <section className="flex-grow">
-              <h5 className="text-base font-semibold">Write cover letter</h5>
+              <h5 className="text-base font-semibold text-gray-900">Write cover letter</h5>
               <p className="text-sm text-gray-500">
                 Explain how you're a good fit
               </p>
@@ -614,12 +614,14 @@ const handleFileChange = (e) => {
           {coverLetter && (
             <>
               <textarea
-                className="w-full p-3 border border-gray-300 rounded-md mt-4"
-                rows="6"
-                placeholder="Write your cover letter here..."
-                value={input.coverLetter}
-                onChange={(e) => handleCharLimitChange(e, "coverLetter")}
-              />
+  className="w-full p-3 border border-gray-300 rounded-md mt-4 
+             text-gray-900 bg-white placeholder-gray-500 
+             focus:outline-none focus:ring-2 focus:ring-blue-500"
+  rows="6"
+  placeholder="Write your cover letter here..."
+  value={input.coverLetter}
+  onChange={(e) => handleCharLimitChange(e, "coverLetter")}
+/>
               <p className="text-sm text-gray-600 mt-2">
                 {input.coverLetter ? input.coverLetter.trim().length : 0} /{" "}
                 {maxChars} characters
@@ -684,7 +686,6 @@ const handleFileChange = (e) => {
 export default ApplyForm;
 
 
-
 // const JobsForYou =({job})=>{
 // const handleApply= async(jobId)=>{
 //   const userId = localStorage.getItem("userId"); //it will define the user id
@@ -716,8 +717,8 @@ export default ApplyForm;
 //    </div>
 // )
 
-
 // export default ApplyForm;
+
 
 
 
