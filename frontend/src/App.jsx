@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, startTransition } from 'react';
+ import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -18,6 +18,12 @@ import JobseekerChatbot from "./components/chat/JobseekerChatbot";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
+import CreatingSuccessfulCV from './components/CreatingSuccesfulCVBlogs.jsx';
+import ATSOptimizationBlog from './components/AtsoptimizationBlog.jsx';
+import UsingKeywordsBlog from './components/UsingkeywordsBlogs.jsx';
+import InterviewPreparationBlog from './components/Interviewpreparationblog.jsx';
+import BehavioralInterviewTechniquesBlog from './components/Behavioralinterviewtechniquesblog .jsx';
+import CulturalFitAssessmentBlog from './components/Culturalfitassessmentblog.jsx';
 
 const JobSeekerCalendar = lazy(() => import("./pages/user/JobSeekerCalendar"));
 const RecruiterCalendar = lazy(() => import("./pages/recruiter/RecruiterCalendar"));
@@ -28,6 +34,7 @@ const AuthPage               = lazy(() => import('./components/auth/user/AuthPag
 const JobseekerLogin         = lazy(() => import('@/components/auth/user/JobseekerLogin'));
 const RecruiterLogin         = lazy(() => import('@/components/auth/recruiter/RecruiterLogin'));
 const SignupPage              = lazy(() => import("./components/shared/SignupPage"));
+const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
 const RecruiterSignup         = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
 const LearnersTrackLogin      = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
 const LearnersTrackSignup     = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
@@ -81,9 +88,9 @@ const CareerAfterGraduation  = lazy(() => import("./components/Careeroptionafter
 const ITvsNonITJobs          = lazy(() => import("./components/ITvsNonITJobs"));
 const HighPayingSkills3Months = lazy(() => import("./components/HighPayingSkills3Months"));
 const HireRightCandidateFaster = lazy(() => import("./components/HireRightCandidateFaster"));
-const HiringMistakeBlog      = lazy(() => import("./components/HiringMistakesBlog"));
-const ResumeMistakeBlog      = lazy(() => import("./components/ResumeMistakesBlog"));
-const ResumATSFriendlyBlog   = lazy(() => import("./components/ResumATSFriendlyBlog"));
+const HiringMistakeBlog = lazy(() => import("./components/HiringMistakesBlog"));
+const ResumeMistakeBlog = lazy(() => import("./components/ResumeMistakesBlog"));
+const ResumATSFriendlyBlog = lazy(() => import("./components/ResumATSFriendlyBlog"));
 const InterviewQuestionsBlog = lazy(() => import("./components/InterviewQuestionsBlog"));
 const SwitchToITNoCoding      = lazy(() => import("./components/SwitchToITNoCoding"));
 
@@ -91,33 +98,35 @@ const TheFuture              = lazy(() => import("./components/TheFuture"));
 const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
 
 // ── Recruiter pages ──
-const RequireCompany         = lazy(() => import("./components/recruiter/RequireCompany"));
-const RecruiterDashboard     = lazy(() => import("./pages/recruiter/RecruiterDashboard"));
-const RecruiterHome          = lazy(() => import("./pages/recruiter/RecruiterHome"));
-const PostJob                = lazy(() => import("./pages/recruiter/postJob/PostJob"));
-const RecruiterProfile       = lazy(() => import("./pages/recruiter/RecruiterProfile"));
-const AddRecruiter           = lazy(() => import("./pages/recruiter/AddRecruiter"));
-const CompanyDetails         = lazy(() => import("./pages/recruiter/CompanyDetails"));
-const CreateCompany          = lazy(() => import("./pages/recruiter/CreateCompany"));
-const PostedJobList          = lazy(() => import("./pages/recruiter/PostedJobList"));
-const RecruiterPlans         = lazy(() => import("./pages/recruiter/RecruiterPlans"));
-const JobDetail              = lazy(() => import("./pages/recruiter/JobDetail"));
-const RecruiterList          = lazy(() => import("./pages/recruiter/RecruiterList"));
-const AppliedCandidatesList  = lazy(() => import("./pages/recruiter/AppliedCandidatesList"));
-const RecruitersDetails      = lazy(() => import("./pages/recruiter/rec_job_details/RecruitersDetails"));
-const CurrentPlans           = lazy(() => import("./pages/recruiter/CurrentPlans"));
-const CandidateList          = lazy(() => import("./pages/recruiter/candidate/CandidateList"));
-const CandidateInformation   = lazy(() => import("./pages/recruiter/candidate/CandidateInformation"));
-const CandidatePlans         = lazy(() => import("./pages/recruiter/candidate/CandidatePlans"));
-const CandidateDatabase      = lazy(() => import("./pages/recruiter/candidate/CandidateDatabase"));
+const RequireCompany = lazy(() => import("./components/recruiter/RequireCompany"));
+const RecruiterDashboard = lazy(() => import("./pages/recruiter/RecruiterDashboard"));
+const RecruiterHome = lazy(() => import("./pages/recruiter/RecruiterHome"));
+const PostJob = lazy(() => import("./pages/recruiter/postJob/PostJob"));
+const RecruiterProfile = lazy(() => import("./pages/recruiter/RecruiterProfile"));
+const AddRecruiter = lazy(() => import("./pages/recruiter/AddRecruiter"));
+const CompanyDetails = lazy(() => import("./pages/recruiter/CompanyDetails"));
+const CreateCompany = lazy(() => import("./pages/recruiter/CreateCompany"));
+const PostedJobList = lazy(() => import("./pages/recruiter/PostedJobList"));
+const RecruiterPlans = lazy(() => import("./pages/recruiter/RecruiterPlans"));
+const JobDetail = lazy(() => import("./pages/recruiter/JobDetail"));
+const RecruiterList = lazy(() => import("./pages/recruiter/RecruiterList"));
+const AppliedCandidatesList = lazy(() => import("./pages/recruiter/AppliedCandidatesList"));
+const RecruitersDetails = lazy(() => import("./pages/recruiter/rec_job_details/RecruitersDetails"));
+const CurrentPlans = lazy(() => import("./pages/recruiter/CurrentPlans"));
+const CandidateList = lazy(() => import("./pages/recruiter/candidate/CandidateList"));
+const CandidateInformation = lazy(() => import("./pages/recruiter/candidate/CandidateInformation"));
+const CandidatePlans = lazy(() => import("./pages/recruiter/candidate/CandidatePlans"));
+const CandidateDatabase = lazy(() => import("./pages/recruiter/candidate/CandidateDatabase"));
 const CopilotChat = lazy(() => import("./pages/recruiter/CopilotChat"));
-const AllApplicantsList      = lazy(() => import("./pages/recruiter/AllApplicantsList"));
-const DeleteAccount          = lazy(() => import("./pages/recruiter/DeleteAccount"));
-const InviteAndEarn          = lazy(() => import("./pages/recruiter/InviteAndEarn"));
+const AllApplicantsList = lazy(() => import("./pages/recruiter/AllApplicantsList"));
+const DeleteAccount = lazy(() => import("./pages/recruiter/DeleteAccount"));
+const InviteAndEarn = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
 const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
-const ProtectedChatRoute = lazy(() => import("./components/shared/ProtectedChatRoute"));
-
+const ProtectedChatRoute      = lazy(() => import("./components/shared/ProtectedChatRoute"));
+// Plan-based dashboard router
+// PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
+// FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
 const PREMIUM_PLANS = ["PRO", "ENTERPRISE"];
 function DashboardRouter() {
   const { company } = useSelector((s) => s.company);
@@ -170,11 +179,12 @@ const PageLoader = () => (
   </div>
 );
 
+// Router defined outside component — never recreated on re-render
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/Main_blog_page", element: <MainBlogPage /> },
   { path: "/blogs", element: <BlogsPage /> },
-  { path: "/blogs/:slug", element: <MainBlogPage /> },
+  { path: "/blogs/:slug", element: <MainBlogPage /> },  // or BlogsPage — whichever is intended
   { path: "/blog/:id", element: <BlogDetail /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },
@@ -209,6 +219,13 @@ const appRouter = createBrowserRouter([
   { path: "/CarouselItems/1", element: <HireRightCandidateFaster /> },
   { path: "/CarouselItems/2", element: <HiringMistakeBlog /> },
   { path: "/CarouselItems/3", element: <CandidateScreeningBlog /> },
+  { path: "/CarouselItems/4", element: <CreatingSuccessfulCV /> },
+  { path: "/CarouselItems/5", element: <ATSOptimizationBlog /> },
+  { path: "/CarouselItems/6", element: <UsingKeywordsBlog /> },
+  { path: "/CarouselItems/7", element: <InterviewPreparationBlog /> },
+  { path: "/CarouselItems/8", element: <BehavioralInterviewTechniquesBlog /> },
+  { path: "/CarouselItems/9", element: <CulturalFitAssessmentBlog /> },
+
   { path: "/TrendingTopics/7", element: <SwitchToITNoCoding /> },
   { path: "/CareerAdvice/:id", element: <CareerAdvice /> },
   { path: "/TheFuture", element: <TheFuture /> },
@@ -227,9 +244,9 @@ const appRouter = createBrowserRouter([
   { path: "/jobs/:jobId", element: <JobDescription /> },
   { path: "/description", element: <JobDescription /> },
   { path: "/calendar", element: <ProtectedUserRoute><><NoIndex /><JobSeekerCalendar /></></ProtectedUserRoute> },
-  { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex/><SavedJobs /></></ProtectedUserRoute> },
+  { path: "/saved-jobs", element: <ProtectedUserRoute><><NoIndex /><SavedJobs /></></ProtectedUserRoute> },
   { path: "/apply/:jobId", element: <ProtectedUserRoute><><NoIndex /><MainApply /></></ProtectedUserRoute> },
-  { path: "/profile", element: <ProtectedUserRoute><><NoIndex/><UserProfile /></></ProtectedUserRoute> },
+  { path: "/profile", element: <ProtectedUserRoute><><NoIndex /><UserProfile /></></ProtectedUserRoute> },
   { path: "/profile/settings-policy", element: <ProtectedUserRoute><><NoIndex /><SettingsPolicy /></></ProtectedUserRoute> },
   { path: "/report-job", element: <ProtectedUserRoute><ReportJob /></ProtectedUserRoute> },
   { path: "/success", element: <ProtectedUserRoute><Success /></ProtectedUserRoute> },
@@ -324,7 +341,7 @@ function App() {
             startTransition(() => dispatch(setUser(res.data.user)));
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }, 800);
     return () => clearTimeout(t);
   }, [dispatch]);

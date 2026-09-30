@@ -227,7 +227,7 @@ function Moin_blog_page() {
       title: "How to Get a Job as a Fresher Without Experience",
       description:
         "Breaking into the job market as a fresher can be challenging, but with the right approach and preparation, you can land your dream job. Here are some tips to help you get started.",
-      image: "/careeradvice_5.webp",
+      image: "/how-to-get-a-job-as-a-fresher.jpg",
       category: "Career Advice",
       author: "Moin Shaikh",
       date: "December 20, 2024",
@@ -237,7 +237,7 @@ function Moin_blog_page() {
       title: "Best Resume Format for Freshers (With Free Template)",
       description:
         "A well-crafted resume is crucial for freshers to make a strong first impression on potential employers. The best resume format for freshers typically includes a clear and concise layout, highlighting key sections such as contact information, objective statement, education, skills, and any relevant internships or projects. Using a clean design with bullet points and appropriate keywords can help your resume stand out in applicant tracking systems (ATS) and increase your chances of landing an interview.",
-      image: "/careeradvice_6.webp",
+      image: "/bestResume.web.p.webp",
       category: "Career Advice",
       author: "Moin Shaikh",
       date: "December 20, 2024",
@@ -247,7 +247,7 @@ function Moin_blog_page() {
       title: "Top Skills Companies Look for in Freshers in 2026",
       description:
         "In 2026, companies are seeking freshers with a blend of technical and soft skills. Key technical skills include proficiency in programming languages, data analysis, and digital literacy. Soft skills such as communication, adaptability, problem-solving, and teamwork are equally important. Freshers who demonstrate a willingness to learn and a proactive attitude towards upskilling will have a competitive edge in the job market.",
-      image: "/careeradvice_7.webp",
+      image: "/topSkill.jpg",
       category: "Career Advice",
       author: "Moin Shaikh",
       date: "December 20, 2024",
@@ -257,7 +257,7 @@ function Moin_blog_page() {
       title: "How to Crack Your First HR Interview",
       description:
         "Cracking your first HR interview requires preparation and confidence. Research the company, understand the role, and practice common HR questions. Focus on showcasing your skills, experiences, and cultural fit. GreatHire.in provides resources and job opportunities to help you succeed in your career journey.",
-      image: "/careeradvice_8.webp",
+      image: "/HRinterviewtip.webp",
       category: "Career Advice",
       author: "Moin Shaikh",
       date: "December 20, 2024",
@@ -294,7 +294,7 @@ function Moin_blog_page() {
       title: "How to Find Jobs in Hyderabad Fast (Complete Guide)",
       description:
         "Finding jobs in Hyderabad quickly requires a strategic approach. Start by updating your resume and LinkedIn profile, and utilize job portals like GreatHire.in to access the latest opportunities. Networking with local professionals, attending job fairs, and connecting with recruiters can also accelerate your job search in Hyderabad's competitive market.",
-      image: "/Hiringadvice_4.webp",
+      image: "/findJodInHydrabad.webp",
       link: "/HiringAdvice/4",
     },
     {
@@ -302,7 +302,7 @@ function Moin_blog_page() {
       title: "Top Job Portals in India Compared",
       description:
         "Finding the right job portal in India can significantly impact your job search. GreatHire.in stands out with its user-friendly interface, personalized job recommendations, and real-time updates. Compared to other portals, GreatHire.in offers a more tailored experience, connecting you with opportunities that align with your skills and career goals.",
-      image: "/Hiringadvice_5.webp",
+      image: "/bestJobPortale.webp",
       link: "/HiringAdvice/5",
     },
     {
@@ -310,7 +310,7 @@ function Moin_blog_page() {
       title: "Remote Jobs in India",
       description:
         "Remote jobs in India are on the rise, offering flexibility and access to global opportunities. GreatHire.in helps you find remote positions across various industries, from tech to customer service. With the right skills and a proactive approach, you can thrive in India's growing remote work landscape.",
-      image: "/Hiringadvice_6.webp",
+      image: "/REMOTE-JOBS-copy.webp",
       link: "/HiringAdvice/6",
     },
     {
@@ -318,7 +318,7 @@ function Moin_blog_page() {
       title: "Walk-in Interviews in Hyderabad",
       description:
         "Walk-in interviews in Hyderabad offer a direct way to connect with potential employers. GreatHire.in provides information on upcoming walk-in events and helps you prepare for these opportunities.",
-      image: "/Hiringadvice_7.webp",
+      image: "/Walk-in-Interview1 - Copy.webp",
       link: "/HiringAdvice/7",
     },
     {
@@ -326,7 +326,7 @@ function Moin_blog_page() {
       title: "How to Apply for 50 Jobs a Day",
       description:
         " Applying for 50 jobs a day requires organization, efficiency, and the right tools. Use job portals like GreatHire.in to quickly find relevant opportunities, and create a streamlined application process with a well-crafted resume and cover letter templates. Prioritize quality over quantity by tailoring your applications to each role, and stay consistent in your job search efforts.",
-      image: "/Hiringadvice_8.webp",
+      image: "/applyfor50job.webp",
       link: "/HiringAdvice/8",
     },
   ];
@@ -361,7 +361,7 @@ function Moin_blog_page() {
       title: "Best Career Options After Graduation in India",
       description:
         "Graduates in India have diverse career options, including IT, engineering, healthcare, finance, and emerging fields like data science and AI. GreatHire.in provides insights and job opportunities to help you navigate the post-graduation job market and find the right path for your skills and interests.",
-      image: "/trendingtopics_4.webp",
+      image: "/BestCarrerOptionAfterGraduation.webp",
       link: "/TrendingTopics/4",
     },
     {
@@ -369,7 +369,7 @@ function Moin_blog_page() {
       title: "IT vs Non-IT Jobs",
       description:
         "IT jobs focus on technology, software development, and data analysis, while non-IT roles span healthcare, finance, education, and more. Both sectors offer growth opportunities, with IT emphasizing technical skills and non-IT valuing interpersonal and industry-specific expertise. GreatHire.in connects you with the right opportunities in both fields based on your skills and career goals.",
-      image: "/trendingtopics_5.webp",
+      image: "/IT-Non-ITrecruitment-min.webp",
       link: "/TrendingTopics/5",
     },
     {
@@ -377,7 +377,8 @@ function Moin_blog_page() {
       title: "Top High-Paying Skills You Can Learn in 3 Months",
       description:
         "In-demand, high-paying skills that can be learned in 3 months include data analysis, digital marketing, coding (Python, JavaScript), UX/UI design, and cloud computing. These skills are highly sought after by employers and can significantly boost your career prospects. GreatHire.in offers resources and job opportunities to help you acquire these skills and connect with top employers.",
-      image: "/trendingtopics_6.webp",
+      image: "/heigh paying skills.webp",
+    
       link: "/TrendingTopics/6",
     },
     {
@@ -385,7 +386,7 @@ function Moin_blog_page() {
       title: "Switching to IT Without Coding Experience",
       description:
         "Transitioning to the IT field without a coding background is possible with the right skills and training. GreatHire.in provides resources and job opportunities to help you make this career change successfully.",
-      image: "/trendingtopics_7.webp",
+      image: "/SWITCH-FROM-NON-IT-TO-IT-CAREER-blog.jpg",
       link: "/TrendingTopics/7",
     },
     {
@@ -393,7 +394,7 @@ function Moin_blog_page() {
       title: "Resume Mistakes That Get You Rejected Instantly",
       description:
         "Common resume mistakes that lead to instant rejection include typos, poor formatting, lack of relevant keywords, and including irrelevant information. GreatHire.in offers expert guidance to help you create a standout resume that avoids these pitfalls and increases your chances of landing an interview.",
-      image: "/trendingtopics_8.webp",
+      image: "/resumemistake.webp",
       link: "/TrendingTopics/8",
     },
     {
@@ -401,7 +402,7 @@ function Moin_blog_page() {
       title: "Resume ATS-Friendly Tips",
       description:
         "Creating an ATS-friendly resume is crucial for getting past automated screening systems. GreatHire.in provides expert guidance to help you optimize your resume for ATS, increasing your chances of landing an interview.",
-      image: "/trendingtopics_9.webp",
+      image: "/ATSfriendlyresume.webp",
       link: "/TrendingTopics/9",
     },
     {
@@ -409,7 +410,7 @@ function Moin_blog_page() {
       title: "Top 20 Common Interview Questions and Best Answers",
       description:
         "Preparing for common interview questions is essential for success. GreatHire.in provides expert tips and resources to help you craft strong answers to the top 20 interview questions, increasing your confidence and improving your chances of landing your dream job.",
-      image: "/trendingtopics_10.webp",
+      image: "/Top_20+_HR_Interview_Questions_with_Answers.png",
       link: "/TrendingTopics/10",
     },
   ];
@@ -418,16 +419,16 @@ function Moin_blog_page() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const carouselItems = [
-    {
-      id: 1,
-      category: "Recruiter / HR Insights",
-      title: "How to Hire the Right Candidate Faster",
-      date: "19 Dec, 2025",
-      image: "./Resume_bg.webp",
-      description:
-        "Hiring the right candidate faster requires a strategic approach that combines clear job descriptions, efficient screening processes, and effective communication. GreatHire.in offers AI-powered tools and expert insights to help recruiters streamline their hiring process, identify top talent quickly, and make informed decisions that lead to successful hires.",
-      link: "/CarouselItems/1",
-    },
+    // {
+    //   id: 1,
+    //   category: "Recruiter / HR Insights",
+    //   title: "How to Hire the Right Candidate Faster",
+    //   date: "19 Dec, 2025",
+    //   image: "./Resume_bg.webp",
+    //   description:
+    //     "Hiring the right candidate faster requires a strategic approach that combines clear job descriptions, efficient screening processes, and effective communication. GreatHire.in offers AI-powered tools and expert insights to help recruiters streamline their hiring process, identify top talent quickly, and make informed decisions that lead to successful hires.",
+    //   link: "/CarouselItems/1",
+    // },
      {
       id: 1,
       category: "Recruiter / HR Insights",
@@ -466,7 +467,7 @@ function Moin_blog_page() {
       image: "./Resume_bg.webp",
       description:
         "A well-crafted resume is your first opportunity to make a lasting impression on a potential employer. It should clearly highlight your skills, accomplishments, and professional experience using a clean, consistent structure and relevant keywords. GreatHire.in supports candidates by offering ATS-friendly resume guidance, ensuring your profile gains maximum visibility and reaches the right recruiters faster.",
-      link: "/CarouselItems/1",
+      link: "/CarouselItems/4",
     },
     {
       id: 5,
@@ -476,7 +477,7 @@ function Moin_blog_page() {
       image: "./ATS_bg.webp",
       description:
         "Gaining awareness in the competitive job market of today requires an ATS-friendly resume. Applicant tracking systems (ATS) automatically analyze and assess resumes based on predetermined criteria, including pertinent keywords, abilities, job titles, and formatting, before they are sent to a recruiter. Regardless of a candidate's qualifications, resumes that are not suited for applicant tracking systems may be eliminated early in the process. Making an ATS-compliant resume guarantees that recruiting experts analyze your profile and improves your chances of passing first screenings.",
-      link: "#",
+      link: "/CarouselItems/5",
     },
     {
       id: 6,
@@ -486,7 +487,7 @@ function Moin_blog_page() {
       description:
         "Strategically incorporating industry-specific keywords into your resume can significantly improve its visibility to Applicant Tracking Systems. By carefully reviewing job descriptions, you can identify the skills, phrases, and qualifications that employers prioritize. Naturally weaving these keywords throughout your resume improves ATS matching accuracy and increases the likelihood of your profile being shortlisted.",
       image: "./Keyword_bg.webp",
-      link: "#",
+      link: "/CarouselItems/6",
     },
     {
       id: 7,
@@ -496,7 +497,7 @@ function Moin_blog_page() {
       description:
         "A structured interview process helps employers evaluate candidates across key dimensions, including problem-solving ability, cultural alignment, and behavioral competencies. GreatHire.in enhances this process with AI-powered tools and professional insights, enabling recruiters to make faster, more informed hiring decisions and connect with the talent best suited for their organization.",
       image: "./Interview_bg.webp",
-      link: "#",
+      link: "/CarouselItems/7",
     },
     {
       id: 8,
@@ -506,7 +507,7 @@ function Moin_blog_page() {
       description:
         "Behavioral interview techniques are designed to assess how candidates have handled real-world situations in the past, offering valuable insight into their future performance. By evaluating responses to structured questions around teamwork, conflict resolution, and decision-making, employers can identify candidates who are not only skilled but also a strong fit for the team. GreatHire.in provides AI-powered tools and expert insights to help streamline this process.",
       image: "./HR_Insight_02.webp",
-      link: "#",
+      link: "/CarouselItems/8",
     },
     {
       id: 9,
@@ -516,7 +517,7 @@ function Moin_blog_page() {
       description:
         "A cultural fit assessment evaluates how well a candidate aligns with an organization's values, team dynamics, and workplace environment. Beyond technical qualifications, it examines communication styles, work ethics, and behavioral tendencies to determine whether a candidate's approach to collaboration and decision-making complements the company's long-term vision. Organizations that prioritize cultural alignment tend to see stronger employee engagement, higher retention, and greater overall performance.",
       image: "./HR_Insight_03.webp",
-      link: "#",
+      link: "/CarouselItems/9",
     },
   ];
 
@@ -2739,16 +2740,15 @@ color: rgb(160, 67, 246);
                       {item.description}
                     </p>
                     {/* Read More Button */}
-                    {item.link && item.link !== "#" && (
-                      <div className="flex justify-center">
-                        <Link
-                          to={item.link}
-                          className="inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2.5 rounded-full text-xs font-medium shadow-md hover:scale-105 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
-                        >
-                          Read More <span>→</span>
-                        </Link>
-                      </div>
-                    )}
+                     
+                    <div className="flex justify-center">
+                      <Link
+                        to={item.link && item.link !== "#" ? item.link : "/blog"}
+                        className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-5 rounded-full text-sm font-semibold shadow-md hover:scale-105 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+                      >
+                        Read More <span>→</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -2984,12 +2984,12 @@ color: rgb(160, 67, 246);
 
       {/* ================= FUTURE OF HIRING SECTION ================= */}
       <section className="w-full py-20 px-6 bg-white dark:bg-gray-900" id="future-of-hiring">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="max-w-6xl mx-auto text-left">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">
             Creating the <span className="highlight-text"> Future of Employment</span>
           </h2>
 
-          <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-14 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-14 leading-relaxed text-center">
             "At GreatHire, we help employers make faster, smarter, and more
             meaningful hiring decisions by combining human knowledge with
             intelligent technology."
