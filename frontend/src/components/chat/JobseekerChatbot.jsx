@@ -243,9 +243,9 @@ export default function JobseekerChatbot() {
     user && (user.role === "student" || user.role === "candidate" || user.role === "jobseeker")
   );
 
-  if (!isJobseeker) {
-    return null;
-  }
+  // if (!isJobseeker) {
+  //   return null;
+  // }
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -376,6 +376,10 @@ export default function JobseekerChatbot() {
   const handleNavigate = (url) => {
     window.location.assign(url);
   };
+
+  if (!isJobseeker) {
+  return null;
+}
 
   return (
     <>

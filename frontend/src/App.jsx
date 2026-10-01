@@ -1,11 +1,11 @@
  import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+// import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import API from "./utils/api.js";
 import { setUser } from "./redux/authSlice.js";
-import { USER_API_END_POINT } from "./utils/ApiEndPoint";
+// import { USER_API_END_POINT } from "./utils/ApiEndPoint";
 
 import JobDetailsProvider from "./context/JobDetailsContext";
 import { NotificationProvider } from './context/NotificationContext';
@@ -34,7 +34,7 @@ const AuthPage               = lazy(() => import('./components/auth/user/AuthPag
 const JobseekerLogin         = lazy(() => import('@/components/auth/user/JobseekerLogin'));
 const RecruiterLogin         = lazy(() => import('@/components/auth/recruiter/RecruiterLogin'));
 const SignupPage              = lazy(() => import("./components/shared/SignupPage"));
-const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
+// const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
 const RecruiterSignup         = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
 const LearnersTrackLogin      = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
 const LearnersTrackSignup     = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
@@ -335,7 +335,7 @@ function App() {
       // axios
       //   .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
       API
-  .get(`${USER_API_END_POINT}/me`)
+  .get("/v1/user/me")
         .then((res) => {
           if (res.data.success) {
             startTransition(() => dispatch(setUser(res.data.user)));
