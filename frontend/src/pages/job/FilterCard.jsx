@@ -296,6 +296,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       workPlace: [],
       company: "",
       datePosted: [],
+      fresher: false,
     };
     setLocationSearch("");
     setActiveSearchLocation("");
@@ -507,7 +508,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
           {/* Checkbox Filters */}
           {["datePosted"].map((category) => (
-            <div key={category} className="mb-6 pb-8">
+            <div key={category} className="mb-4">
               <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
                 {formatLabel(category)}
               </h3>
@@ -531,6 +532,27 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
               </div>
             </div>
           ))}
+
+          {/* Fresher Filter */}
+          <div className="mb-6 pb-6">
+            <label className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
+              <input
+                type="checkbox"
+                id="fresher"
+                checked={Boolean(filters?.fresher)}
+                onChange={(e) =>
+                  onFilterChange?.({
+                    ...filters,
+                    fresher: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
+              />
+              <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium transition-colors">
+                Fresher
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Reset Button - Fixed at bottom on mobile */}

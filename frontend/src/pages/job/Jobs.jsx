@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import FilterCard from "./FilterCard";
@@ -23,6 +23,7 @@ export default function Jobs() {
     workPlace: [],
     company: "",
     datePosted: [],
+    fresher: false,
   });
 
   const [searchInfo, setSearchInfo] = useState({
@@ -43,7 +44,7 @@ export default function Jobs() {
         newFilters.location,
         newFilters.jobType,
         newFilters.workPlace,
-        undefined
+        newFilters.fresher ? "Fresher" : undefined
       );
     },
     [filterJobs, searchInfo.titleKeyword]
@@ -58,6 +59,7 @@ export default function Jobs() {
       workPlace: [],
       company: "",
       datePosted: [],
+      fresher: false,
     });
 
     setSearchInfo({
@@ -77,6 +79,22 @@ export default function Jobs() {
     },
     []
   );
+
+  // Memoized displayed jobs (applies client-side fresher filtering as well)
+  const displayedJobs = useMemo(() => {
+    if (!filters.fresher) return jobs;
+    return jobs.filter((job) => {
+      const exp = (job?.jobDetails?.experience || "").toLowerCase();
+      return (
+        exp.includes("fresher") ||
+        exp.includes("0 to 0") ||
+        exp.includes("from 0") ||
+        exp.includes("0-0") ||
+        exp.includes("0 year") ||
+        exp.includes("0 - 1")
+      );
+    });
+  }, [jobs, filters.fresher]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
@@ -114,7 +132,7 @@ export default function Jobs() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isLoading
                 ? "Loading..."
-                : `${searchMeta?.total ?? jobs.length} jobs found`}
+                : `${filters.fresher ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
             </p>
 
             <button
@@ -159,7 +177,7 @@ export default function Jobs() {
                   Loading jobs...
                 </div>
               ) : (
-                <LatestJobs jobs={jobs} />
+                <LatestJobs jobs={displayedJobs} />
               )}
             </div>
           </div>
