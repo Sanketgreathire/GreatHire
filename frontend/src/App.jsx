@@ -15,6 +15,7 @@ import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import NoIndex from "./components/SEO/NoIndex.jsx";
 import WhatsAppFloat from "./components/shared/WhatsAppFloat";
 import JobseekerChatbot from "./components/chat/JobseekerChatbot";
+import RecruiterChatbot from "./components/chat/RecruiterChatbot";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
 import WalkInHyderabadBlog from './components/Walkinhyderabadblog.jsx';
 import CandidateScreeningBlog from './components/CandidateScreeningBlog.jsx';
@@ -364,6 +365,7 @@ function App() {
             </Suspense>
             <WhatsAppFloat />
             <JobseekerChatbot />
+            <RecruiterChatbot />
           </MessageProvider>
         </NotificationProvider>
       </JobDetailsProvider>

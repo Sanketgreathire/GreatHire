@@ -81,6 +81,7 @@ import { startPlanExpiryNotifier } from "./scripts/planExpiryNotifier.js";
 import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
 import webhookRoute from "./routes/webhook.route.js";
 import jobseekerChatRoute from "./routes/jobseekerChat.route.js";
+import recruiterChatRoute from "./routes/recruiterChat.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -251,6 +252,7 @@ app.use("/api/events", eventsRoute);
 app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/interview", interviewRoute);
 app.use("/api/v1/jobseeker-chat", jobseekerChatRoute);
+app.use("/api/v1/recruiter-chat", recruiterChatRoute);
 app.use("/api/v1/calendar", calendarRoute);
 
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
