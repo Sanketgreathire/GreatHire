@@ -241,10 +241,6 @@ export default function JobseekerChatbot() {
   // Render chatbot for candidates and guest visitors (non-recruiters)
   const isJobseekerOrGuest = !user || (user && user.role !== "recruiter" && user.role !== "admin");
 
-  if (!isJobseekerOrGuest) {
-    return null;
-  }
-
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [input, setInput] = useState("");
@@ -299,6 +295,11 @@ export default function JobseekerChatbot() {
     window.addEventListener("open-jobseeker-chat", handleOpenChat);
     return () => window.removeEventListener("open-jobseeker-chat", handleOpenChat);
   }, []);
+
+  // Guard: only render for jobseekers/guests (after all hooks)
+  if (!isJobseekerOrGuest) {
+    return null;
+  }
 
   const handleSendMessage = async (textToSend) => {
     const query = typeof textToSend === "string" ? textToSend : input;
@@ -374,10 +375,6 @@ export default function JobseekerChatbot() {
   const handleNavigate = (url) => {
     window.location.assign(url);
   };
-
-  if (!isJobseeker) {
-  return null;
-}
 
   return (
     <>

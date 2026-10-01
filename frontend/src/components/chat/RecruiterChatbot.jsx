@@ -165,11 +165,6 @@ function FormattedMessage({ content }) {
 export default function RecruiterChatbot() {
   const { user } = useSelector((store) => store.auth);
 
-  // STRICT ACCESS CHECK: Only render for Recruiter role (or admin during testing)
-  if (!user || (user.role !== "recruiter" && user.role !== "admin")) {
-    return null;
-  }
-
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState([INITIAL_RECRUITER_MESSAGE]);
@@ -189,6 +184,11 @@ export default function RecruiterChatbot() {
       setTimeout(() => inputRef.current?.focus(), 150);
     }
   }, [isOpen, messages, scrollToBottom]);
+
+  // STRICT ACCESS CHECK: Only render for Recruiter role (or admin during testing)
+  if (!user || (user.role !== "recruiter" && user.role !== "admin")) {
+    return null;
+  }
 
   const handleCopyText = (msgId, text) => {
     try {
