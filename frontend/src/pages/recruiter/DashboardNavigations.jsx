@@ -85,7 +85,7 @@ const DashboardNavigations = () => {
         <div className="flex flex-col h-full p-3 justify-between">
           {/* Main Navigation */}
           <section>
-            <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <h2 className="flex gap-2 items-center px-3 text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
               <LayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
               <span>Dashboard</span>
             </h2>
@@ -103,7 +103,7 @@ const DashboardNavigations = () => {
                 )}
               </NavLink>
 
-              <li className="relative ml-1">
+              <li className="relative">
                 <button
                   type="button"
                   onClick={() => setCreateNewOpen((prev) => !prev)}
@@ -285,7 +285,7 @@ const DashboardNavigations = () => {
 
           {/* Settings Section */}
           <section>
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <h2 className="flex items-center gap-2 px-3 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <Settings size={25} className="text-blue-700 dark:text-blue-500" />
               <span>Settings</span>
             </h2>
