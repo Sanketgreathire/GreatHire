@@ -296,6 +296,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       workPlace: [],
       company: "",
       datePosted: [],
+      fresher: false,
     };
     setLocationSearch("");
     setActiveSearchLocation("");
@@ -322,7 +323,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       )}
 
       {/* Filter Card — CHANGE: reduced sm:w-[210px] md:w-[224px] to match lg:w-56 sidebar in Jobs.jsx */}
-      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 max-h-screen sm:max-h-[155vh] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
+      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 sm:max-h-none sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
         {onClose && (
           <button
             onClick={onClose}
@@ -507,7 +508,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
           {/* Checkbox Filters */}
           {["datePosted"].map((category) => (
-            <div key={category} className="mb-6 pb-8">
+            <div key={category} className="mb-4">
               <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
                 {formatLabel(category)}
               </h3>
@@ -531,6 +532,27 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
               </div>
             </div>
           ))}
+
+          {/* Fresher Filter */}
+          <div className="mb-6 pb-6">
+            <label className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
+              <input
+                type="checkbox"
+                id="fresher"
+                checked={Boolean(filters?.fresher)}
+                onChange={(e) =>
+                  onFilterChange?.({
+                    ...filters,
+                    fresher: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
+              />
+              <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium transition-colors">
+                Fresher
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Reset Button - Fixed at bottom on mobile */}

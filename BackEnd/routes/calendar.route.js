@@ -102,7 +102,7 @@ router.get("/recruiter-events", isAuthenticated, async (req, res) => {
       $or: [
         { status: "Interview Schedule" },
         { interviewDate: { $ne: null } },
-        { calendarEventId: { $ne: null } },
+        { calendarEventId: { $nin: [null, ""] } },
       ],
     })
       .populate({
@@ -167,7 +167,7 @@ router.get("/jobseeker-events", isAuthenticated, async (req, res) => {
       $or: [
         { status: "Interview Schedule" },
         { interviewDate: { $ne: null } },
-        { calendarEventId: { $ne: null } },
+        { calendarEventId: { $nin: [null, ""] } },
       ],
     })
       .populate({

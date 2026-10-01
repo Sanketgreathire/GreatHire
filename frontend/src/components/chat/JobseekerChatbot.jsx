@@ -379,59 +379,65 @@ export default function JobseekerChatbot() {
 
   return (
     <>
-      {/* ── FLOATING LAUNCHER BUTTON (Right Side - Above WhatsApp) ── */}
+      {/* ── FLOATING LAUNCHER BUTTON (Rectangle on Laptop, Pure Circle on Mobile) ── */}
       {!isOpen && (
-        <div className="fixed bottom-20 right-4 sm:bottom-[98px] sm:right-6 z-[9990] flex items-center group">
+        <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
+          {/* Hover Tooltip (Laptop/Desktop) */}
+          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md whitespace-nowrap transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
+            <span>GreatHire AI Assistant</span>
+            <Sparkles size={12} className="text-amber-300 fill-amber-300" />
+          </div>
+
           <button
             onClick={() => {
               setIsOpen(true);
               setIsMinimized(false);
               setHasUnread(false);
             }}
-            aria-label="Open GreatHire AI Educational Assistant"
-            className="relative flex items-center gap-2.5 sm:gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-2.5 sm:pl-3.5 sm:pr-5 sm:py-3 rounded-full shadow-2xl hover:shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all duration-300 border border-white/20 backdrop-blur-sm"
+            aria-label="Open GreatHire AI Assistant"
+            className="group relative flex items-center bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-blue-500/20 dark:border-gray-700/80 shadow-[0_12px_32px_rgba(11,26,45,0.18)] hover:shadow-[0_16px_36px_rgba(37,99,235,0.25)] hover:-translate-y-1 active:scale-95 transition-all duration-300 backdrop-blur-md p-1.5 rounded-full w-14 h-14 justify-center sm:w-auto sm:h-auto sm:p-2 sm:pl-2.5 sm:pr-4 sm:rounded-[22px] sm:gap-2.5"
           >
-            {/* Pulsing online indicator */}
-            <span className="relative flex h-3 w-3 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400" />
-            </span>
-
-            {/* Official GreatHire Logo Icon */}
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-1 shadow-inner shrink-0 overflow-hidden">
+            {/* Avatar Box with 3D Character & Corner AI Badge */}
+            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full sm:rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-800 border border-blue-100 dark:border-gray-700 flex items-center justify-center p-0.5 shrink-0 overflow-visible shadow-xs">
               <img
-                src="/greathire-mark.png"
-                alt="GreatHire Logo"
-                className="w-full h-full object-contain"
+                src="/ai-avatar.png"
+                alt="GreatHire AI Avatar"
+                className="w-full h-full object-cover rounded-full sm:rounded-[12px] transform group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                   const fallback = e.currentTarget.nextSibling;
                   if (fallback) fallback.style.display = "flex";
                 }}
               />
-              <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full">
-                <Bot size={16} />
+              <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full font-black text-xs">
+                GH
+              </div>
+
+              {/* Bottom-Right Corner AI Badge */}
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md border-2 border-white dark:border-gray-900 z-10">
+                <Sparkles size={11} className="text-amber-300 fill-amber-300" />
               </div>
             </div>
 
-            {/* Desktop Label */}
-            <div className="text-left hidden sm:block">
-              <div className="text-xs font-black tracking-wide flex items-center gap-1">
-                GreatHire AI <Sparkles size={12} className="text-amber-300 fill-amber-300" />
+            {/* Text Copy Section (Laptop / Desktop Only) */}
+            <div className="text-left hidden sm:flex flex-col justify-center min-w-0 pr-1">
+              <div className="flex items-center gap-1.5">
+                <strong className="text-xs font-extrabold text-gray-900 dark:text-white tracking-tight leading-none">
+                  GreatHire AI
+                </strong>
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
               </div>
-              <div className="text-[11px] text-blue-100 font-medium leading-none">
+              <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 leading-tight mt-0.5">
                 Career & Education Bot
-              </div>
-            </div>
-
-            {/* Mobile Compact Label */}
-            <div className="text-left sm:hidden text-xs font-bold tracking-wide pr-1">
-              AI Assistant
+              </span>
             </div>
 
             {/* Unread badge */}
             {hasUnread && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white shadow-sm">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white shadow-sm z-20">
                 1
               </span>
             )}
@@ -453,22 +459,22 @@ export default function JobseekerChatbot() {
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between select-none shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-9 h-9 rounded-xl bg-white p-1 flex items-center justify-center shadow-inner overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center shadow-inner overflow-hidden border-2 border-white/60">
                   <img
-                    src="/greathire-mark.png"
-                    alt="GreatHire Logo"
-                    className="w-full h-full object-contain"
+                    src="/ai-avatar.png"
+                    alt="GreatHire AI Avatar"
+                    className="w-full h-full object-cover rounded-full"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                       const fallback = e.currentTarget.nextSibling;
                       if (fallback) fallback.style.display = "flex";
                     }}
                   />
-                  <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-lg">
-                    <Bot size={18} />
+                  <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full font-bold text-xs">
+                    GH
                   </div>
                 </div>
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-indigo-600" />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-indigo-600" />
               </div>
               <div>
                 <h3 className="font-bold text-sm tracking-wide flex items-center gap-1.5">
@@ -711,8 +717,8 @@ export default function JobseekerChatbot() {
                 {/* Loading indicator */}
                 {isLoading && (
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shrink-0 mt-0.5">
-                      <Bot size={16} />
+                    <div className="w-7 h-7 rounded-full overflow-hidden bg-white border border-blue-200 shadow-xs shrink-0 mt-0.5">
+                      <img src="/ai-avatar.png" alt="AI Avatar" className="w-full h-full object-cover" />
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
                       <div className="flex items-center gap-1">
