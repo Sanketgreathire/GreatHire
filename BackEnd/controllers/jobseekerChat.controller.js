@@ -56,12 +56,12 @@ const recordChatInDatabase = async ({
       userName,
       userMessage,
       botReply,
-      detectedRole,
-      detectedLocation,
-      isJobSearch,
-      jobsCount,
-      coursesCount,
-      isRestricted,
+      detectedRole: String(detectedRole || ""),
+      detectedLocation: String(detectedLocation || ""),
+      isJobSearch: Boolean(isJobSearch),
+      jobsCount: Number(jobsCount) || 0,
+      coursesCount: Number(coursesCount) || 0,
+      isRestricted: Boolean(isRestricted),
       ipAddress,
     });
   } catch (err) {
@@ -413,12 +413,18 @@ export const handleJobseekerChat = async (req, res) => {
     const JOB_SEARCH_REGEX = /\b(job|jobs|job link|job links|opening|openings|vacancy|vacancies|hiring|recruitment|hire|recruit|placement|internship|internships|apply|application|want a job|need a job|find jobs?|search jobs?|look for jobs?|looking for jobs?|work in|work at|salaries|salary range)\b/i;
 
     const isExplicitJobSearch = JOB_SEARCH_REGEX.test(lowerMsg);
-    const isAskingForLocationJob = detectedLocation && (lowerMsg.includes("in " + detectedLocation) || lowerMsg.includes("at " + detectedLocation)) && (detectedRole || lowerMsg.includes("developer") || lowerMsg.includes("engineer"));
+    const isAskingForLocationJob = Boolean(
+      detectedLocation &&
+      (lowerMsg.includes("in " + detectedLocation) || lowerMsg.includes("at " + detectedLocation)) &&
+      (detectedRole || lowerMsg.includes("developer") || lowerMsg.includes("engineer"))
+    );
 
     // Check if it's a conceptual question (e.g. "what is mean by java", "explain spring boot", "what is oops")
     const isConceptQuestion = /\b(what is|what's|what is mean by|what does .* mean|meaning of|define|definition of|explain|tell me about|tell about|how does .* work|features of|why use|difference between|what are)\b/i.test(lowerMsg);
 
-    const isJobSearch = (isExplicitJobSearch || isAskingForLocationJob) && (!isConceptQuestion || isExplicitJobSearch);
+    const isJobSearch = Boolean(
+      (isExplicitJobSearch || isAskingForLocationJob) && (!isConceptQuestion || isExplicitJobSearch)
+    );
 
     // 5. Query MongoDB for matching jobs ONLY when job search is requested
     let matchedJobs = [];
@@ -468,14 +474,20 @@ export const handleJobseekerChat = async (req, res) => {
         // If location-specific search returned 0 results, search nationally for the role so the user still gets real openings
         if (matchedJobs.length === 0 && detectedRole && detectedLocation) {
           matchedJobs = await Job.find({
-            $or: [
-              { "jobDetails.status": "active" },
-              { "jobDetails.isActive": true }
+            $and: [
+              {
+                $or: [
+                  { "jobDetails.status": "active" },
+                  { "jobDetails.isActive": true },
+                ],
+              },
+              {
+                $or: [
+                  { "jobDetails.title": { $regex: detectedRole, $options: "i" } },
+                  { "jobDetails.skills": { $regex: detectedRole, $options: "i" } },
+                ],
+              },
             ],
-            $or: [
-              { "jobDetails.title": { $regex: detectedRole, $options: "i" } },
-              { "jobDetails.skills": { $regex: detectedRole, $options: "i" } }
-            ]
           })
             .select("jobDetails company createdAt")
             .populate("company", "name logo")

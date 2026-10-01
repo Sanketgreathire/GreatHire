@@ -75,6 +75,7 @@ import talentSignalsRoute from "./src/modules/talentSignals/routes/talentSignals
 import eventsRoute from "./src/modules/events/routes/events.routes.js";
 import analyticsRoute from "./routes/analytics/analytics.route.js";
 import interviewRoute from "./routes/interview.route.js";
+import calendarRoute from "./routes/calendar.route.js";
 import { startPlanExpiryNotifier } from "./scripts/planExpiryNotifier.js";
 
 import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
@@ -250,6 +251,7 @@ app.use("/api/events", eventsRoute);
 app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/interview", interviewRoute);
 app.use("/api/v1/jobseeker-chat", jobseekerChatRoute);
+app.use("/api/v1/calendar", calendarRoute);
 
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 
