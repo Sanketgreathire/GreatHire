@@ -754,14 +754,14 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                 <input
                   required
                   type="text"
-                  placeholder="Your full name"
+                  placeholder="Enter your full name"
                   value={form.name}
                   onChange={(e) => {
                     const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, "");
                     setForm({ ...form, name: filteredValue });
                   }}
-                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.name ? "border-red-500" : "border-gray-200"
+                 className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.name ? "border-red-500" : "border-gray-200"
                   }`}
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
@@ -771,11 +771,11 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                 <input
                   required
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.email ? "border-red-500" : "border-gray-200"
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.name ? "border-red-500" : "border-gray-200"
                   }`}
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
@@ -783,15 +783,23 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
               <div>
                 <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1.5">Phone Number</label>
                 <input
-                  required
-                  type="tel"
-                  placeholder="+91 98765 43210"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.phone ? "border-red-500" : "border-gray-200"
-                  }`}
-                />
+  required
+  type="tel"
+  inputMode="numeric"
+  maxLength={12}
+  placeholder="Enter 10 digits number"
+  value={form.phone}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+
+    if (value.length <= 12) {
+      setForm({ ...form, phone: value });
+    }
+  }}
+  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+    errors.phone ? "border-red-500" : "border-gray-200"
+  }`}
+/>
                 {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone}</p>}
               </div>
               <div>

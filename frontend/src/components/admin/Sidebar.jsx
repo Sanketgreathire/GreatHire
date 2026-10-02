@@ -134,7 +134,7 @@ const Sidebar = memo(() => {
         `}
       >
         {/* TOP: mobile close row + nav */}
-        <div className="flex flex-col min-h-0 overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Mobile close row */}
           <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">Menu</span>
@@ -147,8 +147,13 @@ const Sidebar = memo(() => {
             </button>
           </div>
 
-          {/* Nav items */}
-          <nav className="py-3 px-3 " aria-label="Main navigation">
+          {/* Nav items — static h-auto bg-transparent border-0 overrides
+              critical.css's global nav rule (position:fixed, height:61px,
+              background, border) that hijacked this element */}
+          <nav
+            className="static h-auto bg-transparent border-0 flex-1 min-h-0 overflow-y-auto py-3 px-3"
+            aria-label="Main navigation"
+          >
             <ul className="space-y-3">
               {navItems.map((item) => (
                 <NavItem key={item.path} item={item} onClick={handleNavClick} />

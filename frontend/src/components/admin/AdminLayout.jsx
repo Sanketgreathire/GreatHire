@@ -41,7 +41,7 @@ const AdminLayout = () => {
 
         <Sidebar />
 
-        <div className="flex-1 mt-16 md:ml-52 bg-gray-100 dark:bg-gray-900 min-h-screen w-full overflow-x-hidden px-3 sm:px-4 md:px-6 transition-all duration-300">
+        <div className="flex-1 mt-16 md:ml-64 bg-gray-100 dark:bg-gray-900 min-h-screen w-full overflow-x-hidden px-3 sm:px-4 md:px-6 transition-all duration-300">
           <Suspense fallback={<Loader />}>
             <Routes>
               <Route path="/"                                    element={<Navigate to="dashboard" replace />} />
