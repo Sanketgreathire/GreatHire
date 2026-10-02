@@ -121,8 +121,9 @@ const Courses = () => {
       <Navbar linkName="Courses" />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
 
-        {/* Stat Cards */}
-        <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Stat Cards — 2 cols from sm up (4-col at md collided with the
+            208px admin sidebar → 98px cards), full 4-col only at xl */}
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {stats.map((s, i) => (
             <Card
               key={i}

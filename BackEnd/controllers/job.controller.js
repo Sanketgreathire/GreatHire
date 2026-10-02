@@ -1764,13 +1764,21 @@ export const updateJob = async (req, res) => {
           )
         : [];
 
+    const toQualificationArray = (value) => {
+      if (Array.isArray(value)) return cleanArray(value);
+      return String(value || "")
+        .split(/[\n,]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    };
+
     const updatedJob = await Job.findByIdAndUpdate(
       jobId,
       {
         $set: {
           "jobDetails.details": jobData.editedJob.details,
           "jobDetails.skills": skillsArray,
-          "jobDetails.qualifications": cleanArray(
+          "jobDetails.qualifications": toQualificationArray(
             jobData.editedJob.qualifications
           ),
           "jobDetails.benefits": cleanArray(

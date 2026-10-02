@@ -318,7 +318,8 @@ export default function App() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterCollege, setFilterCollege] = useState("All");
   const [activeTab, setActiveTab] = useState("profile");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Closed by default (mobile drawer); always visible on lg+ via lg:translate-x-0
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const stats = useMemo(() => ({
     total: CANDIDATES.length,
@@ -348,10 +349,21 @@ export default function App() {
         className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col"
         style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", height: "calc(100vh - 64px)" }}
       >
-      <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
+      <div className="relative flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
 
-        {/* ── Left Sidebar ── */}
-        <aside className={`${sidebarOpen ? "w-80" : "w-0"} transition-all duration-300 overflow-hidden flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex flex-col`}>
+        {/* Backdrop — mobile drawer only */}
+        {sidebarOpen && (
+          <div
+            className="lg:hidden absolute inset-0 bg-black/40 z-30"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* ── Left Sidebar ──
+            Mobile/tablet: overlay drawer (absolute + translate).
+            lg+: in-flow column, always visible (lg:static + lg:translate-x-0). */}
+        <aside className={`w-80 transition-all duration-300 overflow-hidden flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md flex flex-col absolute inset-y-0 left-0 z-40 shadow-2xl lg:static lg:z-auto lg:translate-x-0 lg:shadow-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="p-4 flex flex-col gap-3 flex-1 overflow-hidden">
 
             {/* Search */}
@@ -405,7 +417,7 @@ export default function App() {
               {filtered.map((c, i) => {
                 const sc = STATUS_CONFIG[c.status] || STATUS_CONFIG.Applied;
                 return (
-                  <button key={c.id} onClick={() => { setSelected(c.id); setActiveTab("profile"); }}
+                  <button key={c.id} onClick={() => { setSelected(c.id); setActiveTab("profile"); setSidebarOpen(false); }}
                     className={`w-full text-left p-3 rounded-xl border transition-all ${
                       selected === c.id
                         ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700 shadow-sm"
@@ -436,8 +448,19 @@ export default function App() {
         {/* ── Main Content ── */}
         <main className="flex-1 overflow-y-auto">
 
+          {/* Mobile/tablet: open the filters drawer */}
+          <div className="px-4 pt-4 lg:hidden">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-200 shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+              Filters &amp; Candidates
+            </button>
+          </div>
+
           {/* Stats Row */}
-          <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
             <StatCard label="Total" value={stats.total} sub="Candidates" accent="blue" />
             <StatCard label="Placed" value={stats.placed} sub={`${Math.round(stats.placed/stats.total*100)}% rate`} accent="green" />
             <StatCard label="Shortlisted" value={stats.shortlisted} sub="In pipeline" accent="yellow" />

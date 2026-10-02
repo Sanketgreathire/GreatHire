@@ -24,6 +24,7 @@ import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import * as XLSX from "xlsx";
 
 const Jobs = () => {
   const [search, setSearch] = useState("");
@@ -203,6 +204,36 @@ const Jobs = () => {
     page * itemsPerPage
   );
 
+  // Export the currently filtered jobs list as a real Excel (.xlsx) file
+  const exportToExcel = () => {
+    try {
+      if (filteredJobs.length === 0) {
+        toast.error("No jobs available to export.");
+        return;
+      }
+      const rows = filteredJobs.map((job) => ({
+        "Job Title": job.title || "",
+        "Job Type": job.jobType || "",
+        Shift: job.shift || "",
+        Location: job.location || "",
+        Salary: job.salary || "",
+        Experience: formatExperience(job.experience),
+        Company: job.companyName || "",
+        "Posted Date": job.postedDate || "",
+        Applications: job.numberOfApplications ?? 0,
+        Status: job.isActive ? "Active" : "Deactive",
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Jobs");
+      XLSX.writeFile(workbook, "greathire-jobs.xlsx");
+      toast.success("Excel file downloaded successfully.");
+    } catch (err) {
+      console.error("Error exporting jobs to Excel", err);
+      toast.error("Error exporting jobs to Excel.");
+    }
+  };
+
   return (
     <>
       <Navbar linkName="Jobs" />
@@ -244,7 +275,7 @@ const Jobs = () => {
 
           <Button
             variant="outline"
-            onClick={() => window.open(import.meta.env.VITE_GOOGLE_SHEET_URL, "_blank")}
+            onClick={exportToExcel}
             className="flex items-center gap-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
           >
             <FileSpreadsheet size={18} />

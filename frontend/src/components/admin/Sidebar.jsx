@@ -147,8 +147,8 @@ const Sidebar = memo(() => {
             </button>
           </div>
 
-          {/* Nav items — static h-auto bg-transparent border-0 overrides
-              critical.css's global nav rule (position:fixed, height:61px,
+          {/* Nav items — `static h-auto bg-transparent border-0` overrides
+              critical.css's global `nav` rule (position:fixed, height:61px,
               background, border) that hijacked this element */}
           <nav
             className="static h-auto bg-transparent border-0 flex-1 min-h-0 overflow-y-auto py-3 px-3"

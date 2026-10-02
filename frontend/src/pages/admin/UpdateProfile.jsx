@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 // Component for updating user profile
 const UpdateProfile = ({ open, setOpen }) => {

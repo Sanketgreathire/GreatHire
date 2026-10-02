@@ -95,29 +95,8 @@ const Navbar = memo(({ linkName }) => {
       : "/src/assets/noprofile.webp";
 
   return (
-    <nav
-      className="
-        fixed
-        top-0
-        left-0
-        right-0
-        z-30
-        h-16
-        bg-white
-        dark:bg-gray-800
-        border-b
-        border-gray-200
-        dark:border-gray-700
-        flex
-        items-center
-        justify-between
-        pr-4
-        pl-14
-        md:pr-6
-        md:pl-6
-        transition-colors
-      "
-    >
+    <nav className="fixed top-0 left-0 right-0 z-30 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between pr-4 pl-14 md:pr-6 md:pl-6 transition-colors">
+
       {/* LEFT — Logo */}
       <Link
         to="/admin/dashboard"

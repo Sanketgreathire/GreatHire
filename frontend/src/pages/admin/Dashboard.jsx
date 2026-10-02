@@ -1036,7 +1036,7 @@ const Dashboard = () => {
           </div>
 
           {jobPostings.length > 0 && (
-            <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center mt-6 gap-3">
+            <div className="flex flex-col items-center gap-3 mt-6 sm:flex-row sm:justify-between sm:items-center">
               <Button
                 variant="outline"
                 disabled={currentPage === 1}

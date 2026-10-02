@@ -3,6 +3,16 @@ import { Job } from "../../models/job.model.js";
 const cleanArray = (arr) =>
   Array.isArray(arr) ? arr.filter((item) => String(item).trim() !== "") : [];
 
+// Qualifications may arrive as an array (untouched field) or as a
+// comma/newline-separated string typed in the edit form — normalize both.
+const toQualificationArray = (value) => {
+  if (Array.isArray(value)) return cleanArray(value);
+  return String(value || "")
+    .split(/[\n,]/)
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+};
+
 // returing total jobs, total active jobs, total deactive jobs
 export const getJobStats = async (req, res) => {
   try {
@@ -100,7 +110,9 @@ export const updateJobByAdmin = async (req, res) => {
         $set: {
           "jobDetails.details": edited.details,
           "jobDetails.skills": skillsArray,
-          "jobDetails.qualifications": cleanArray(edited.qualifications),
+          "jobDetails.qualifications": toQualificationArray(
+            edited.qualifications
+          ),
           "jobDetails.benefits": cleanArray(edited.benefits),
           "jobDetails.responsibilities": cleanArray(edited.responsibilities),
           "jobDetails.experience": edited.experience,
