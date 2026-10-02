@@ -23,12 +23,14 @@ export const validateUser = [
   // Phone Number Validation — accept common formats including local mobile numbers
   // and international numbers with or without the leading +.
   body("phoneNumber")
-    .trim()
-    .custom((value) => {
-      const normalized = String(value || "").replace(/[\s().-]/g, "");
-      return /^\+?\d{10,15}$/.test(normalized);
-    })
-    .withMessage("Invalid phone number. Please enter a valid mobile number (e.g. 9876543210 or +919876543210)"),
+  .trim()
+  .custom((value) => {
+    const normalized = String(value || "").replace(/[\s().-]/g, "");
+    return /^\+?\d{10,15}$/.test(normalized);
+  })
+  .withMessage(
+    "Invalid phone number. Please enter a valid mobile number (e.g. 9876543210 or +919876543210)"
+  ),
 
   // Password (Minimum length: 8)
   body("password")

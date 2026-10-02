@@ -29,6 +29,19 @@ const applicationSchema = new mongoose.Schema(
       enum: ["Pending", "Interview Schedule", "Shortlisted", "Rejected"],
       default: "Pending",
     },
+    screeningStatus: {
+      type: String,
+      enum: ["Pending", "Passed", "Rejected"],
+      default: "Pending",
+    },
+    recruitmentStatus: {
+      type: String,
+      default: "Application",
+    },
+    matchScore: {
+      type: Number,
+      default: 0,
+    },
     // 👈 YE DO FIELDS ADD KARO:
     isAutoApplied: {
       type: Boolean,

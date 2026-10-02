@@ -1,5 +1,6 @@
 import express from "express";
-// edited import part
+
+
 import {
   applyJob,
   getApplicants,
@@ -10,9 +11,8 @@ import {
   getAllApplications,
   triggerAutoReject,
   bulkApplyJobs,
-downloadResume,
-  scoreApplicationManually,
-  overrideApplication,
+transitionApplication,  // add for shortlist and reject
+  downloadResume,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -27,16 +27,19 @@ router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
-// Manual AI screening
-router.post("/:id/score", isAuthenticated, scoreApplicationManually);
-
-// Recruiter manually overrides AI screening decision
-router.post("/:id/override-score", isAuthenticated, overrideApplication);
-
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
-router.route("/download-resume/:applicationId").get(isAuthenticated, downloadResume);
+// Shortlist and reject — override AI screening decision
+router.route("/:id/override-score").post(
+  isAuthenticated,
+  transitionApplication
+);
 
+// Download applicant resume
+router.route("/download-resume/:applicationId").get(
+  isAuthenticated,
+  downloadResume
+)
 // Admin routes
 router.route("/admin/applications").get(isAuthenticated, isAdmin, getAllApplications);
 router.route("/admin/application/:id").delete(isAuthenticated, isAdmin, deleteApplication);

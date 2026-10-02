@@ -3,6 +3,7 @@ import { useMessages } from '../../context/MessageContext';
 import { useSelector } from 'react-redux';
 import { formatDistanceToNow } from 'date-fns';
 import {
+  ArrowLeft,
   Send,
   MoreVertical,
   Edit3,
@@ -25,6 +26,7 @@ import toast from 'react-hot-toast';
 const ChatInterface = () => {
   const {
     activeConversation,
+    setActiveConversation,
     messages,
     sendMessage,
     sendTypingIndicator,
@@ -206,9 +208,17 @@ const ChatInterface = () => {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* Chat Header */}
-      <div className="bg-white dark:bg-gray-50 border-b border-gray-200 dark:border-gray-800 px-6 py-[11px]">
+<div className="bg-white dark:bg-gray-50 border-b border-gray-200 dark:border-gray-800 px-3 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex min-w-0 items-center space-x-2 sm:space-x-3">
+            <button
+              type="button"
+              onClick={() => setActiveConversation(null)}
+              className="md:hidden shrink-0 p-2 -ml-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+              aria-label="Back to conversations"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="relative">
               {activeConversation.participant?.profilePhoto ? (
                 <img
@@ -226,8 +236,8 @@ const ChatInterface = () => {
               )}
             </div>
 
-            <div>
-              <h3 className="font-medium text-gray-900">
+            <div className="min-w-0">
+              <h3 className="font-medium text-gray-900 truncate">
                 {activeConversation.participant?.fullname || 'Unknown User'}
               </h3>
 
@@ -244,11 +254,11 @@ const ChatInterface = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+          <div className="flex shrink-0 items-center space-x-1 sm:space-x-2">
+            <button className="hidden sm:inline-flex p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
               <Phone className="w-5 h-5" />
             </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+            <button className="hidden sm:inline-flex p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
               <Video className="w-5 h-5" />
             </button>
             <button className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
@@ -483,12 +493,7 @@ const ChatInterface = () => {
               value={newMessage}
               onChange={handleTyping}
               placeholder="Type a message..."
-              className="w-full px-3 py-2 pr-12 
-              border border-gray-300 dark:border-gray-600 
-              rounded-lg 
-               dark:bg-gray-100 
-               text-gray-900 dark:text-gray-900 
-               placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+className="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900 dark:text-gray-900 bg-white dark:bg-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               rows="1"
               style={{ minHeight: '40px', maxHeight: '120px' }}
               onKeyPress={(e) => {

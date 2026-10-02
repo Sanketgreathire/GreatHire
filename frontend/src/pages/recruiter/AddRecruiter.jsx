@@ -54,9 +54,27 @@ const AddRecruiter = () => {
       } else {
         toast.error(response.data.message);
       }
+    // } catch (err) {
+    //   toast.error(err.response?.data?.message || "Something went wrong");
+    // } finally {
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong");
-    } finally {
+  console.log("ADD RECRUITER STATUS:", err.response?.status);
+  console.log("ADD RECRUITER RESPONSE:", err.response?.data);
+
+  const validationErrors = err.response?.data?.errors;
+
+  if (validationErrors?.length) {
+    validationErrors.forEach((error) => {
+      toast.error(`${error.path}: ${error.msg}`);
+    });
+  } else {
+    toast.error(
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      "Something went wrong"
+    );
+  }
+} finally {
       setLoading(false);
     }
   }, [formData, company?._id, dispatch]);

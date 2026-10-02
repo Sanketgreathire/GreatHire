@@ -83,47 +83,20 @@ const NotificationPage = () => {
     return `${Math.floor(diff / 86400)} days ago`;
   };
 
-  //new added
-  
   const getNotificationTypeIcon = (type) => {
-  const normalizedType = String(type || "").toLowerCase().trim();
-
-  const map = {
-    "application-submitted": (
-      <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-    ),
-    "application-status-changed": (
-      <FileText className="w-5 h-5 text-green-600 dark:text-green-400" />
-    ),
-    "application-shortlisted": (
-      <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-    ),
-    "application-rejected": (
-      <FileText className="w-5 h-5 text-red-600 dark:text-red-400" />
-    ),
-    "job-recommendation": (
-      <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-    ),
-    "job-posted": (
-      <Briefcase className="w-5 h-5 text-green-600 dark:text-green-400" />
-    ),
-    "similar-candidates": (
-      <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-    ),
-    "profile-viewed": (
-      <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-    ),
-
-    // Welcome notification emoji
-    welcome: <span className="text-2xl leading-none">👋</span>,
+    const map = {
+      'application-submitted': <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />,
+      'application-status-changed': <FileText className="w-5 h-5 text-green-600 dark:text-green-400" />,
+      'application-shortlisted': <Star className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />,
+      'application-rejected': <FileText className="w-5 h-5 text-red-600 dark:text-red-400" />,
+      'job-recommendation': <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />,
+      'job-posted': <Briefcase className="w-5 h-5 text-green-600 dark:text-green-400" />,
+      'similar-candidates': <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />,
+      'profile-viewed': <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />,
+      welcome: <Bell className="w-5 h-5 text-green-600 dark:text-green-400" />
+    };
+    return map[type] || <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />;
   };
-
-  return (
-    map[normalizedType] || (
-      <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-    )
-  );
-};
 
   if (loading) {
     return (

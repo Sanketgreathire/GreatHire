@@ -66,6 +66,7 @@ export const JD_MATCHING_API_END_POINT = `${BASE_API}/jd-matching`;
 export const JOBSEEKER_CHAT_API_END_POINT = `${BASE_API}/jobseeker-chat`;
 export const RECRUITER_CHAT_API_END_POINT = `${BASE_API}/recruiter-chat`;
 export const CALENDAR_API_END_POINT = `${BASE_API}/calendar`;
+export const INTERVIEW_API_END_POINT = `${BASE_API}/interview`;
 
 
 // DASHBOARD ENDPOINTS
