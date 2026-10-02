@@ -1,5 +1,7 @@
 import Notification from "../models/notification.model.js";
 import mongoose from "mongoose";
+import { Contact } from "../models/contact.model.js";
+import nodemailer from "nodemailer";
 
 // Helper function to get user role model
 const getUserRoleModel = (role) => {
@@ -369,5 +371,139 @@ export const testNotification = async (req, res) => {
       success: false, 
       message: "Failed to create test notification" 
     });
+  }
+};
+
+// ==============================
+// Admin Messages (contact form)
+// ==============================
+const toMessage = (c) => ({
+  id: c._id,
+  type: "contact",
+  name: c.name,
+  email: c.email,
+  phoneNumber: c.phoneNumber,
+  message: c.message,
+  status: c.status,
+  createdAt: c.createdAt,
+});
+
+const requireAdmin = (req, res) => {
+  if (!req.user?._id) {
+    res.status(401).json({ success: false, message: "Authentication required" });
+    return false;
+  }
+  if (req.user.role !== "admin") {
+    res.status(403).json({ success: false, message: "Access denied. Admin privileges required." });
+    return false;
+  }
+  return true;
+};
+
+export const getAllMessages = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+    const contacts = await Contact.find().sort({ createdAt: -1 }).lean();
+    return res.status(200).json({ success: true, messages: contacts.map(toMessage) });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const getUnseenMessages = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+    const contacts = await Contact.find({ status: "unseen" }).sort({ createdAt: -1 }).lean();
+    return res.status(200).json({ success: true, messages: contacts.map(toMessage) });
+  } catch (error) {
+    console.error("Error fetching unseen messages:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const deleteContactMessage = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+    const { id } = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ success: false, message: "Invalid message ID" });
+    }
+    const deleted = await Contact.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Message not found" });
+    }
+    return res.status(200).json({ success: true, message: "Message deleted" });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const deleteAllMessages = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+    await Contact.deleteMany({});
+    return res.status(200).json({ success: true, message: "All messages deleted" });
+  } catch (error) {
+    console.error("Error deleting all messages:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const sendReply = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+    const { msgId, type, replyMessage } = req.body;
+
+    if (!msgId || !isValidObjectId(msgId) || !replyMessage?.trim()) {
+      return res.status(400).json({ success: false, message: "Message ID and reply are required" });
+    }
+    if (type !== "contact") {
+      return res.status(400).json({ success: false, message: "Replies are only supported for contact messages" });
+    }
+
+    const contact = await Contact.findById(msgId);
+    if (!contact || !contact.email) {
+      return res.status(404).json({ success: false, message: "Message or recipient email not found" });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM || `"GreatHire" <${process.env.EMAIL_USER}>`,
+      to: contact.email,
+      subject: "Reply from GreatHire",
+      text: replyMessage.trim(),
+    });
+
+    await Contact.findByIdAndUpdate(msgId, { status: "seen" });
+    return res.status(200).json({ success: true, message: "Reply sent" });
+  } catch (error) {
+    console.error("Error sending reply:", error);
+    return res.status(500).json({ success: false, message: "Failed to send reply" });
+  }
+};
+
+export const markMessagesSeen = async (req, res) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+
+    // Contact messages the admin hasn't opened yet
+    await Contact.updateMany({ status: "unseen" }, { status: "seen" });
+
+    // Clear the bell badge (it counts unread admin notifications)
+    await Notification.updateMany(
+      { recipient: req.user._id, recipientModel: "Admin", isRead: false },
+      { isRead: true, readAt: new Date() }
+    );
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error marking messages as seen:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

@@ -7,7 +7,13 @@ import {
   markAdminNotificationAsRead,
   getUnreadCount,
   testNotification,
-  deleteNotification
+  deleteNotification,
+  getAllMessages,
+  getUnseenMessages,
+  deleteContactMessage,
+  deleteAllMessages,
+  sendReply,
+  markMessagesSeen
 } from "../controllers/notification.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 
@@ -24,5 +30,14 @@ router.post("/test", isAuthenticated, testNotification);             // Test not
 // 🔹 Admin Routes
 router.get("/admin", isAuthenticated, getAdminNotifications);        // Get all admin notifications
 router.put("/admin/:id/read", isAuthenticated, markAdminNotificationAsRead); // Mark admin notification as read
+
+
+// 🔹 Admin Messages
+router.get("/getAll-messages", isAuthenticated, getAllMessages);
+router.get("/unseen/messages", isAuthenticated, getUnseenMessages);
+router.delete("/deleteMessages", isAuthenticated, deleteAllMessages); // must stay above "/:id"
+router.delete("/contacts/:id", isAuthenticated, deleteContactMessage);
+router.post("/sendreply", isAuthenticated, sendReply);
+router.put("/mark-seen", isAuthenticated, markMessagesSeen);
 
 export default router;

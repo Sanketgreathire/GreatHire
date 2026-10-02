@@ -130,11 +130,11 @@ const useNotification = () => {
     if (!user) return;
     
     try {
-      const { data } = await axios.get(`${NOTIFICATION_API_END_POINT}/unseen`, {
+      const { data } = await axios.get(`${NOTIFICATION_API_END_POINT}/unread-count`, {
         withCredentials: true,
       });
       if (data.success && mountedRef.current) {
-        setNotifications(data.totalUnseenNotifications);
+        setNotifications(data.count);
       }
     } catch (error) {
       console.error("Error fetching notifications:", error);

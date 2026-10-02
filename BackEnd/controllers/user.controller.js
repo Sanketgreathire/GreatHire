@@ -1858,6 +1858,14 @@ export const getMe = async (req, res) => {
       });
     }
 
+    const admin = await Admin.findById(req.id).select("-password");
+     if (admin) {
+      return res.status(200).json({
+        success: true,
+        user: admin
+      });
+    }
+
     return res.status(404).json({
       success: false,
       message: "User not found"
