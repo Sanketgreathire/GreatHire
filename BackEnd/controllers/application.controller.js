@@ -1,3 +1,8 @@
+import fs from "fs";                         
+import path from "path";                     
+import axios from "axios";                  
+
+
 import { User } from "../models/user.model.js";
 import { calculateMatchScore } from "../services/resumeMatch.service.js";
 import { Job } from "../models/job.model.js";
@@ -653,5 +658,51 @@ export const getAllApplications = async (req, res) => {
   } catch (error) {
     console.error("Error fetching all applications:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// ===== Download resume with proper content-type headers =====
+export const downloadResume = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    const application = await Application.findById(applicationId)
+      .populate("applicant", "profile.resume profile.resumeOriginalName");
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const resumeUrl = application.applicant?.profile?.resume;
+    const originalName =
+      application.applicant?.profile?.resumeOriginalName || "resume.pdf";
+
+    if (!resumeUrl) {
+      return res.status(404).json({ message: "Resume not uploaded" });
+    }
+
+    // Case 1: Local file on server
+    if (resumeUrl.startsWith("/")) {
+      const filePath = path.join(process.cwd(), resumeUrl);
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: "File not found" });
+      }
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+      return fs.createReadStream(filePath).pipe(res);
+    }
+
+    // Case 2: Cloudinary URL — fetch binary + stream with correct headers
+    const response = await axios.get(resumeUrl, {
+      responseType: "arraybuffer",
+    });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+    return res.send(Buffer.from(response.data));
+  } catch (error) {
+    console.error("Resume download error:", error.message);
+    return res.status(500).json({ message: "Failed to download resume" });
   }
 };

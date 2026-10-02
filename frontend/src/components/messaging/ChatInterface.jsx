@@ -64,27 +64,27 @@ const ChatInterface = () => {
   }, [activeConversation]);
 
   const handleSendMessage = async (e) => {
-  e.preventDefault();
-  
-  if (!newMessage.trim() || !activeConversation) return;
+    e.preventDefault();
 
-  try {
-    const result = await sendMessage(
-      activeConversation.participant._id, 
-      newMessage.trim(),
-      'text',
-      replyingTo?._id
-    );
+    if (!newMessage.trim() || !activeConversation) return;
 
-    setNewMessage('');
-    setReplyingTo(null);
+    try {
+      await sendMessage(
+        activeConversation.participant._id,
+        newMessage.trim(),
+        'text',
+        replyingTo?._id
+      );
 
-    
-  } catch (error) {
-    console.error('Failed to send message:', error);
-    toast.error("Failed to send message");
-  }
-};
+      setNewMessage('');
+      setReplyingTo(null);
+
+
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error("Failed to send message");
+    }
+  };
 
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
@@ -175,7 +175,7 @@ const ChatInterface = () => {
   if (!activeConversation) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-400">
-        <div className="text-center">
+        <div className="text-center p-6">
           <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
             <User className="w-12 h-12 text-gray-400" />
           </div>
@@ -206,7 +206,7 @@ const ChatInterface = () => {
   return (
     <div className="flex-1 flex flex-col h-full">
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white dark:bg-gray-50 border-b border-gray-200 dark:border-gray-800 px-6 py-[11px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
@@ -259,7 +259,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-100">
         {loading && messages.length === 0 ? (
           <div className="flex justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -296,8 +296,8 @@ const ChatInterface = () => {
                     <div className={`relative group ${isOwn ? 'ml-auto' : 'mr-auto'}`}>
                       <div
                         className={`px-4 py-2 rounded-lg ${isOwn
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-900'
+                          ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white'
+                          : 'bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 border border-gray-200 dark:border-gray-600'
                           }`}
                       >
                         {isEditing ? (
@@ -428,7 +428,7 @@ const ChatInterface = () => {
       )}
 
       {/* Message Input */}
-      <div className="bg-white border-t border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-50 border-t border-gray-200 dark:border-gray-700 p-4">
         <form onSubmit={handleSendMessage} className="flex items-end space-x-2">
           {/* Attachment Button */}
           <div className="relative">
@@ -483,7 +483,12 @@ const ChatInterface = () => {
               value={newMessage}
               onChange={handleTyping}
               placeholder="Type a message..."
-              className="w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 pr-12 
+              border border-gray-300 dark:border-gray-600 
+              rounded-lg 
+               dark:bg-gray-100 
+               text-gray-900 dark:text-gray-900 
+               placeholder-gray-500 dark:placeholder-gray-400 resize-none"
               rows="1"
               style={{ minHeight: '40px', maxHeight: '120px' }}
               onKeyPress={(e) => {

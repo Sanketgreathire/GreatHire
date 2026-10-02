@@ -719,13 +719,39 @@ export const logout = async (req, res) => {
 // for uploading services
 export const uploadResumeToCloudinary = async (fileBuffer, fileName) => {
   try {
+    // 1. Get the extension (e.g., "pdf", "docx")
+    const ext = (fileName.split(".").pop() || "pdf").toLowerCase();
+
+    // 2. Strip extension from public_id (Cloudinary adds it back)
+    const publicId = fileName.replace(/\.[^/.]+$/, "");
+
+    // 3. Decide Cloudinary resource type + format
+    //    - PDF  → image + pdf  → renders in browser  
+    //    - DOC/DOCX → raw     → downloadable only
+    const isPdf = ext === "pdf";
+    const isDoc = ["doc", "docx"].includes(ext);
+
+    // Safety: only allow pdf, doc, docx
+    if (!isPdf && !isDoc) {
+      throw new Error("Unsupported resume format. Only PDF, DOC, DOCX allowed.");
+    }
+
+    const uploadOptions = isPdf
+      ? {
+          resource_type: "image",
+          format: "pdf",
+          public_id: publicId,
+          folder: "resumes",
+        }
+      : {
+          resource_type: "raw",         // doc/docx → raw
+          public_id: `${publicId}.${ext}`, // keep full name
+          folder: "resumes",
+        };
+
     return await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        {
-          resource_type: "raw",
-          public_id: fileName,
-          folder: "resumes",
-        },
+        uploadOptions,
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -734,7 +760,7 @@ export const uploadResumeToCloudinary = async (fileBuffer, fileName) => {
     });
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
-    throw new Error("Error uploading resume to Cloudinary");
+    throw new Error("Error uploading resume to Cloudinary: " + error.message);
   }
 };
 
