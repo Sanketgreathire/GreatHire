@@ -64,6 +64,7 @@ export const ANALYTICS_DASHBOARD_API = `${BASE_API}/analytics/dashboard`;
 export const COPILOT_API_END_POINT = `${BASE_API}/copilot`;
 export const JD_MATCHING_API_END_POINT = `${BASE_API}/jd-matching`;
 export const JOBSEEKER_CHAT_API_END_POINT = `${BASE_API}/jobseeker-chat`;
+export const RECRUITER_CHAT_API_END_POINT = `${BASE_API}/recruiter-chat`;
 export const CALENDAR_API_END_POINT = `${BASE_API}/calendar`;
 
 

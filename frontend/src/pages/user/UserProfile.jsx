@@ -120,8 +120,8 @@ const UserProfile = () => {
       try {
         const parsed = JSON.parse(user.profile.experiences);
         if (Array.isArray(parsed)) list = [...parsed];
-      } catch { 
-         // Ignore malformed JSON — treat as no experiences
+      } catch {
+        // Ignore malformed JSON — treat as no experiences
       }
     }
     if (
@@ -213,19 +213,7 @@ const UserProfile = () => {
               <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
             </span>
           </div>
-          <button
-              onClick={() => navigate("/messages")}
-              className="relative flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium transition-colors"
-              title="Messages"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Messages</span>
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-red-500 rounded-full flex items-center justify-center">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </button>
+          
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium transition-colors"
@@ -269,7 +257,7 @@ const UserProfile = () => {
               <Briefcase className="w-4 h-4" /> Jobs
             </button>
 
-             <button
+            <button
               onClick={() => { navigate("/messages"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
             >
@@ -282,7 +270,7 @@ const UserProfile = () => {
               )}
             </button>
 
-            
+
             <button
               onClick={() => { navigate("/profile/settings-policy"); setSidebarOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
@@ -601,14 +589,12 @@ const UserProfile = () => {
                 </div>
                 <div className="mt-4 space-y-2">
                   {user?.profile?.resume ? (
-                    <a
-                      href={user.profile.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => window.open(user.profile.resume, "_blank", "noopener,noreferrer")}
                       className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 rounded-lg transition-colors"
                     >
                       <Eye className="w-4 h-4" /> View Resume
-                    </a>
+                    </button>
                   ) : (
                     <p className="text-center text-gray-400 text-sm">No resume uploaded</p>
                   )}

@@ -238,14 +238,8 @@ function processBoldAndCode(text) {
 export default function JobseekerChatbot() {
   const { user } = useSelector((state) => state.auth || {});
 
-  // STRICT RULE: Only render chatbot for logged-in Job Seekers (student / candidate / jobseeker)
-  const isJobseeker = Boolean(
-    user && (user.role === "student" || user.role === "candidate" || user.role === "jobseeker")
-  );
-
-  if (!isJobseeker) {
-    return null;
-  }
+  // Render chatbot for candidates and guest visitors (non-recruiters)
+  const isJobseekerOrGuest = !user || (user && user.role !== "recruiter" && user.role !== "admin");
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -301,6 +295,11 @@ export default function JobseekerChatbot() {
     window.addEventListener("open-jobseeker-chat", handleOpenChat);
     return () => window.removeEventListener("open-jobseeker-chat", handleOpenChat);
   }, []);
+
+  // Guard: only render for jobseekers/guests (after all hooks)
+  if (!isJobseekerOrGuest) {
+    return null;
+  }
 
   const handleSendMessage = async (textToSend) => {
     const query = typeof textToSend === "string" ? textToSend : input;

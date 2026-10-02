@@ -2153,34 +2153,42 @@ function computeMatchScore(query, job) {
     job.jobDetails?.details || "",
     job.jobDetails?.experience || "",
     job.jobDetails?.location || "",
+    job.jobDetails?.companyName || "",
+    job.company?.companyName || "",
+    job.company?.name || "",
   ].join(" ").toLowerCase();
   const matched = keywords.filter(k => fields.includes(k)).length;
-  return Math.min(Math.round((matched / keywords.length) * 70) + 20, 95);
+  let score = Math.min(Math.round((matched / keywords.length) * 70) + 20, 95);
+  const trimmedLower = query.trim().toLowerCase();
+  if (trimmedLower && fields.includes(trimmedLower)) {
+    score = Math.min(score + 5, 95);
+  }
+  return score;
 }
 
 export const searchJobs = async (req, res) => {
   try {
-    const { query, location, experience, workPlaceFlexibility, jobType, page = 1, limit = 20 } = req.query;
+    const { query, location, experience, workPlaceFlexibility, jobType, company, page = 1, limit = 20 } = req.query;
 
     const escapeRegex = (value) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-const safeQuery =
-  typeof query === "string" ? escapeRegex(query.trim()) : "";
+    const safeQuery =
+      typeof query === "string" ? escapeRegex(query.trim()) : "";
 
-const safeLocation =
-  typeof location === "string" ? escapeRegex(location.trim()) : "";
+    const safeLocation =
+      typeof location === "string" ? escapeRegex(location.trim()) : "";
 
-const safeExperience =
-  typeof experience === "string" ? escapeRegex(experience.trim()) : "";
+    const safeExperience =
+      typeof experience === "string" ? escapeRegex(experience.trim()) : "";
 
-const safeWorkPlaceFlexibility =
-  typeof workPlaceFlexibility === "string"
-    ? escapeRegex(workPlaceFlexibility.trim())
-    : "";
+    const safeWorkPlaceFlexibility =
+      typeof workPlaceFlexibility === "string"
+        ? escapeRegex(workPlaceFlexibility.trim())
+        : "";
 
-const safeJobType =
-  typeof jobType === "string" ? escapeRegex(jobType.trim()) : "";
+    const safeJobType =
+      typeof jobType === "string" ? escapeRegex(jobType.trim()) : "";
 
     const isProduction = process.env.NODE_ENV === "production";
     const filter = { "jobDetails.isActive": true };
@@ -2190,69 +2198,133 @@ const safeJobType =
       filter.company = { $in: verifiedIds };
     }
     if (safeQuery) {
-  filter.$or = [
-    { "jobDetails.title": { $regex: safeQuery, $options: "i" } },
-    { "jobDetails.skills": { $regex: safeQuery, $options: "i" } },
-    { "jobDetails.details": { $regex: safeQuery, $options: "i" } },
-  ];
-}
+      const queryRegex = new RegExp(safeQuery, "i");
+      const matchingCompanyIds = await Company.find({
+        $or: [
+          { companyName: queryRegex },
+          { name: queryRegex },
+        ],
+      }).distinct("_id");
 
-if (safeLocation) {
-  filter["jobDetails.location"] = {
-    $regex: safeLocation,
-    $options: "i",
-  };
-}
+      const orConditions = [
+        { "jobDetails.title": { $regex: safeQuery, $options: "i" } },
+        { "jobDetails.skills": { $regex: safeQuery, $options: "i" } },
+        { "jobDetails.details": { $regex: safeQuery, $options: "i" } },
+        { "jobDetails.companyName": { $regex: safeQuery, $options: "i" } },
+      ];
 
-if (safeWorkPlaceFlexibility) {
-  filter["jobDetails.workPlaceFlexibility"] = {
-    $regex: safeWorkPlaceFlexibility,
-    $options: "i",
-  };
-}
+      if (matchingCompanyIds && matchingCompanyIds.length > 0) {
+        orConditions.push({
+          company: {
+            $in: matchingCompanyIds,
+          },
+        });
+      }
 
-if (safeJobType) {
-  filter["jobDetails.jobType"] = {
-    $regex: safeJobType,
-    $options: "i",
-  };
-}
+      const words = query.trim().split(/\s+/).filter(Boolean);
+      if (words.length > 1) {
+        const wordConditions = await Promise.all(
+          words.map(async (word) => {
+            const escapedWord = escapeRegex(word);
+            const wordRegex = new RegExp(escapedWord, "i");
+            const compIds = await Company.find({
+              $or: [
+                { companyName: wordRegex },
+                { name: wordRegex },
+              ],
+            }).distinct("_id");
 
-if (safeExperience) {
-  filter["jobDetails.experience"] = {
-    $regex: safeExperience,
-    $options: "i",
-  };
-}
-    // if (location) filter["jobDetails.location"] = { $regex: location, $options: "i" };
-    // if (workPlaceFlexibility) filter["jobDetails.workPlaceFlexibility"] = { $regex: workPlaceFlexibility, $options: "i" };
-    // if (jobType) filter["jobDetails.jobType"] = { $regex: jobType, $options: "i" };
-    // if (experience) filter["jobDetails.experience"] = { $regex: experience, $options: "i" };
+            const wordOr = [
+              { "jobDetails.title": { $regex: escapedWord, $options: "i" } },
+              { "jobDetails.skills": { $regex: escapedWord, $options: "i" } },
+              { "jobDetails.details": { $regex: escapedWord, $options: "i" } },
+              { "jobDetails.companyName": { $regex: escapedWord, $options: "i" } },
+            ];
+            if (compIds && compIds.length > 0) {
+              wordOr.push({ company: { $in: compIds } });
+            }
+            return { $or: wordOr };
+          })
+        );
+
+        orConditions.push({ $and: wordConditions });
+      }
+
+      filter.$or = orConditions;
+    }
+
+    if (company && typeof company === "string" && company.trim()) {
+      const safeCompany = escapeRegex(company.trim());
+      const companyRegex = new RegExp(safeCompany, "i");
+      const compIds = await Company.find({
+        $or: [
+          { companyName: companyRegex },
+          { name: companyRegex },
+        ],
+      }).distinct("_id");
+
+      const companyOr = [
+        { "jobDetails.companyName": { $regex: safeCompany, $options: "i" } },
+      ];
+      if (compIds && compIds.length > 0) {
+        companyOr.push({ company: { $in: compIds } });
+      }
+
+      if (filter.$and) {
+        filter.$and.push({ $or: companyOr });
+      } else {
+        filter.$and = [{ $or: companyOr }];
+      }
+    }
+
+    if (safeLocation) {
+      filter["jobDetails.location"] = {
+        $regex: safeLocation,
+        $options: "i",
+      };
+    }
+
+    if (safeWorkPlaceFlexibility) {
+      filter["jobDetails.workPlaceFlexibility"] = {
+        $regex: safeWorkPlaceFlexibility,
+        $options: "i",
+      };
+    }
+
+    if (safeJobType) {
+      filter["jobDetails.jobType"] = {
+        $regex: safeJobType,
+        $options: "i",
+      };
+    }
+
+    if (safeExperience) {
+      filter["jobDetails.experience"] = {
+        $regex: safeExperience,
+        $options: "i",
+      };
+    }
 
     const currentPage = Math.max(parseInt(page, 10) || 1, 1);
 
-const currentLimit = Math.min(
-  Math.max(parseInt(limit, 10) || 20, 1),
-  100
-);
+    const currentLimit = Math.min(
+      Math.max(parseInt(limit, 10) || 20, 1),
+      100
+    );
 
-const skip = (currentPage - 1) * currentLimit;
-
-    // const skip = (parseInt(page) - 1) * parseInt(limit);
+    const skip = (currentPage - 1) * currentLimit;
     
-   const [jobs, total] = await Promise.all([
-  Job.find(filter)
-    .sort({ createdAt: -1 })
-    // .skip(skip)
-    // .limit(parseInt(limit))
-    .skip(skip)
-.limit(currentLimit)
-    .populate("company", "name logo isActive")
-    .populate("application", "applicant autoApplied isAutoApplied matchPercentage")
-    .lean(),
+    const [jobs, total] = await Promise.all([
+      Job.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(currentLimit)
+        .populate("company", "companyName name logo isActive")
+        .populate("application", "applicant autoApplied isAutoApplied matchPercentage")
+        .lean(),
 
-  Job.countDocuments(filter),
-]);
+      Job.countDocuments(filter),
+    ]);
 
     const results = jobs.map(job => ({ ...job, 
       matchScore: safeQuery

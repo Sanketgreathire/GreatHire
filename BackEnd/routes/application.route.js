@@ -11,6 +11,7 @@ import {
   getAllApplications,
   triggerAutoReject,
   bulkApplyJobs,
+  downloadResume, 
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -27,6 +28,7 @@ router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplication
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
+router.route("/download-resume/:applicationId").get(isAuthenticated, downloadResume);
 
 // Admin routes
 router.route("/admin/applications").get(isAuthenticated, isAdmin, getAllApplications);
