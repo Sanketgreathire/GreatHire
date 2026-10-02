@@ -23,7 +23,7 @@ import CreatingSuccessfulCV from './components/CreatingSuccesfulCVBlogs.jsx';
 import ATSOptimizationBlog from './components/AtsoptimizationBlog.jsx';
 import UsingKeywordsBlog from './components/UsingkeywordsBlogs.jsx';
 import InterviewPreparationBlog from './components/Interviewpreparationblog.jsx';
-import BehavioralInterviewTechniquesBlog from './components/Behavioralinterviewtechniquesblog .jsx';
+import BehavioralInterviewTechniquesBlog from './components/Behavioralinterviewtechniquesblog.jsx';
 import CulturalFitAssessmentBlog from './components/Culturalfitassessmentblog.jsx';
 
 const JobSeekerCalendar = lazy(() => import("./pages/user/JobSeekerCalendar"));
@@ -76,7 +76,7 @@ const InsightDetail          = lazy(() => import("./pages/InsightDetail"));
 const InsightsDashboard      = lazy(() => import("./pages/InsightsDashboard"));
 const InsightApproval        = lazy(() => import("./pages/InsightApproval"));
 const CareerAdvice           = lazy(() => import("./components/CareerAdvice"));
-const ITJobsBlog             = lazy(() => import("./components/Itjobsblog "));
+const ITJobsBlog             = lazy(() => import("./components/Itjobsblog.jsx"));
 const FresherNExp            = lazy(() => import("./components/Fresher_N_Exp"));
 const ResumeFresherGuide     = lazy(() => import("./components/ResumeFresherGuide"));
 const SkillsFreshers         = lazy(() => import("./components/SkillsFreshers"));
