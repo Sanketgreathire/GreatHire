@@ -258,39 +258,53 @@ app.use("/api/v1/calendar", calendarRoute);
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 
 // ================= FRONTEND =================
-app.use(
-  "/assets",
-  expressStaticGzip(path.join(__dirname, "../frontend/dist/assets"), {
-    enableBrotli: true,
-    orderPreference: ["br", "gz"],
-    customCompressions: [{ encodingName: "br", fileExtension: "br" }],
-    serveStatic: {
-      maxAge: 31536000,
-      immutable: true,
-      etag: false,
-      lastModified: false,
-      setHeaders: (res) => {
-        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+
+// Edited part Serve built frontend files only in production.
+// During development, Vite serves the frontend on localhost:5173.
+if (process.env.NODE_ENV === "production") {
+  const frontendDistPath = path.join(__dirname, "../frontend/dist");
+
+  app.use(
+    "/assets",
+    expressStaticGzip(path.join(frontendDistPath, "assets"), {
+      enableBrotli: true,
+      orderPreference: ["br", "gz"],
+      customCompressions: [{ encodingName: "br", fileExtension: "br" }],
+      serveStatic: {
+        maxAge: 31536000,
+        immutable: true,
+        etag: false,
+        lastModified: false,
+        setHeaders: (res) => {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        },
       },
-    },
-  })
-);
+    })
+  );
 
-app.use(
-  express.static(path.join(__dirname, "../frontend/dist"), {
-    maxAge: "1d",
-    etag: true,
-    lastModified: true,
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".html")) res.setHeader("Cache-Control", "no-cache");
-    },
-  })
-);
+  app.use(
+    express.static(frontendDistPath, {
+      maxAge: "1d",
+      etag: true,
+      lastModified: true,
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) {
+          res.setHeader("Cache-Control", "no-cache");
+        }
+      },
+    })
+  );
 
-app.get("*", (req, res) => {
-  res.setHeader("Cache-Control", "no-cache");
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-});
+  // Frontend fallback only for non-API routes
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) {
+      return next();
+    }
+
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+}
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {

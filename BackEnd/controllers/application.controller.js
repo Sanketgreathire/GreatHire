@@ -21,6 +21,11 @@ import {
   LEGACY_STATUS_TO_STAGE,
 } from "../services/workflow.service.js";
 
+import {
+  scoreApplication,
+  overrideApplicationScore,
+} from "../services/screeningEngine.js";
+
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
   "Pending",
@@ -661,7 +666,6 @@ export const getAllApplications = async (req, res) => {
   }
 };
 
-
 // ===== Download resume with proper content-type headers =====
 export const downloadResume = async (req, res) => {
   try {
@@ -685,11 +689,17 @@ export const downloadResume = async (req, res) => {
     // Case 1: Local file on server
     if (resumeUrl.startsWith("/")) {
       const filePath = path.join(process.cwd(), resumeUrl);
+
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({ message: "File not found" });
       }
+
       res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${originalName}"`
+      );
+
       return fs.createReadStream(filePath).pipe(res);
     }
 
@@ -699,10 +709,115 @@ export const downloadResume = async (req, res) => {
     });
 
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${originalName}"`
+    );
+
     return res.send(Buffer.from(response.data));
   } catch (error) {
     console.error("Resume download error:", error.message);
-    return res.status(500).json({ message: "Failed to download resume" });
+
+    return res.status(500).json({
+      message: "Failed to download resume",
+    });
+  }
+};
+
+// Manually trigger AI screening
+export const scoreApplicationManually = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    const application = await Application.findById(applicationId);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    const result = await scoreApplication(applicationId, req.id);
+
+    return res.status(200).json({
+      success: true,
+      message: `Application screened successfully. Status: ${result.status}`,
+      result,
+      application: result.application,
+    });
+  } catch (error) {
+    console.error("Manual Screening Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to screen application",
+      error: error.message,
+    });
+  }
+};
+
+// Recruiter manually overrides screening decision
+export const overrideApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+    const decision = req.body.decision || req.body.status;
+
+    const overrideScore =
+      req.body.score !== undefined
+        ? req.body.score
+        : req.body.matchScore;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    if (!["Shortlisted", "Rejected"].includes(decision)) {
+      return res.status(400).json({
+        success: false,
+        message: "Decision must be Shortlisted or Rejected",
+      });
+    }
+
+    const application = await Application.findById(applicationId);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    const result = await overrideApplicationScore(
+      applicationId,
+      decision,
+      req.id,
+      overrideScore
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `Application manually ${decision.toLowerCase()}`,
+      application: result.application,
+      result,
+    });
+  } catch (error) {
+    console.error("Override Application Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to override application score",
+      error: error.message,
+    });
   }
 };

@@ -47,10 +47,16 @@ const ApplicantDetails = ({
   setApplicants,
   shouldDeductCredit = false,
 }) => {
+//first three state newly added
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isStartLoading, setIsStartLoading] = useState(false);
+  const [interviewStatus, setInterviewStatus] = useState(app?.aiInterview?.status || "");
+
   const [loading, setLoading] = useState(0);
   const [creditDeducted, setCreditDeducted] = useState(false);
   const [freshApplicant, setFreshApplicant] = useState(null);
-  const [interviewLoading, setInterviewLoading] = useState(false);
+  // for interview questions and call logs comments, added new states
+  // const [interviewLoading, setInterviewLoading] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [interviewQuestions, setInterviewQuestions] = useState("");
   const [matchScore, setMatchScore] = useState(app?.matchScore ?? null);
@@ -61,6 +67,12 @@ const ApplicantDetails = ({
   const [callLogsLoading, setCallLogsLoading] = useState(false);
   const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
+
+//newly added useEffect to set interviewStatus when app changes
+useEffect(() => {
+  setInterviewStatus(app?.aiInterview?.status || "");
+}, [app?._id, app?.aiInterview?.status]);
+
 
   // Always fetch fresh applicant data on open
   useEffect(() => {
@@ -201,34 +213,63 @@ const ApplicantDetails = ({
     }
   };
 
-  const startAIInterview = async () => {
-    if (!applicantId) {
-      toast.error("Invalid applicant ID");
-      return;
-    }
-    try {
-      setInterviewLoading(true);
-      const res = await axios.post(
-        `/api/v1/interview/start/${applicantId}`,
-        {},
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        setMatchScore(res.data.matchScore);
-        setApplicants((prev) =>
-          prev.map((a) => a._id === app._id ? { ...a, status: "Interview Schedule" } : a)
-        );
-        toast.success(`AI Interview Call Started! Call ID: ${res.data.call.call_id}`);
-      } else {
-        toast.error(res.data.message || "Failed to start interview");
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Error starting interview");
-    } finally {
-      setInterviewLoading(false);
-    }
-  };
 
+  // edited function to start AI interview
+ const startAIInterview = async () => {
+  if (!applicantId) {
+    toast.error("Invalid applicant ID");
+    return;
+  }
+
+  try {
+    setIsStartLoading(true);
+
+    const res = await axios.post(
+      `/api/v1/interview/start/${applicantId}`,
+      {},
+      { withCredentials: true }
+    );
+
+    if (res.data.success) {
+      const newInterviewStatus =
+        res.data.aiInterview?.status ||
+        res.data.status ||
+        "Scheduled";
+
+      // Immediately update this modal's status
+      setInterviewStatus(newInterviewStatus);
+
+      // Update parent applicants list too
+      setApplicants((prev) =>
+        prev.map((a) =>
+          a._id === app._id
+            ? {
+                ...a,
+                status: "Interview Schedule",
+                aiInterview: {
+                  ...(a.aiInterview || {}),
+                  ...(res.data.aiInterview || {}),
+                  status: newInterviewStatus,
+                },
+              }
+            : a
+        )
+      );
+
+      toast.success(
+        `AI Interview Call Started! Call ID: ${res.data.call?.call_id || "Created"}`
+      );
+    } else {
+      toast.error(res.data.message || "Failed to start interview");
+    }
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message || "Error starting interview"
+    );
+  } finally {
+    setIsStartLoading(false);
+  }
+};
   const fetchCallLogs = async () => {
     if (!applicantId) {
       toast.error("Invalid applicant ID");
@@ -267,7 +308,8 @@ const ApplicantDetails = ({
       return;
     }
     try {
-      setInterviewLoading(true);
+      //edit setIsPreviewLoading to true
+      setIsPreviewLoading(true);
       const res = await axios.post(
         `/api/v1/interview/preview/${applicantId}`,
         {},
@@ -282,7 +324,8 @@ const ApplicantDetails = ({
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error loading questions");
     } finally {
-      setInterviewLoading(false);
+      //edit setIsPreviewLoading to false
+      setIsPreviewLoading(false);
     }
   };
 
@@ -559,19 +602,25 @@ const ApplicantDetails = ({
                 </>
               )}
 
-              {/* Interview Status */}
-              {mergedApp?.aiInterview?.status && (
-                <>
-                  <Divider />
-                  <SectionTitle>AI Interview</SectionTitle>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">
-                      <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Status:</span>
-                      <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">{mergedApp.aiInterview.status}</span>
-                    </div>
-                  </div>
-                </>
-              )}
+             {/* Interview Status */}
+             {/* updated to show interview status only if it exists */}
+{interviewStatus && (
+  <>
+    <Divider />
+    <SectionTitle>AI Interview</SectionTitle>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">
+        <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+          Status:
+        </span>
+
+        <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+          {interviewStatus}
+        </span>
+      </div>
+    </div>
+  </>
+)}
 
               {/* Actions */}
               <Divider />
@@ -588,22 +637,28 @@ const ApplicantDetails = ({
                         {screeningLoading ? "Screening..." : "⚡ Screen AI"}
                       </button>
                       <button
-                        onClick={previewInterviewQuestions}
-                        disabled={interviewLoading}
-                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
-                      >
-                        {interviewLoading ? "Loading..." : "👁️ Preview"}
-                      </button>
-                      <button
-                        onClick={startAIInterview}
-                        disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}
-                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
-                      >
-                        {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}
-                      </button>
+  onClick={previewInterviewQuestions}
+  disabled={isPreviewLoading}
+  className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
+>
+  {isPreviewLoading ? "Loading..." : "👁️ Preview"}
+</button>
+{/* updated to disable button if interviewStatus is "Scheduled" */}
+<button
+  onClick={startAIInterview}
+  disabled={isStartLoading || interviewStatus === "Scheduled"}
+  className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
+>
+  {isStartLoading
+    ? "Scheduling..."
+    : interviewStatus === "Scheduled"
+      ? "📞 Call Scheduled"
+      : "📞 AI Call"}
+</button>
                       <button
                         onClick={fetchCallLogs}
-                        disabled={callLogsLoading || !mergedApp?.aiInterview?.status}
+                        /* updated to disable button if callLogsLoading or interviewStatus is not available */
+                        disabled={callLogsLoading || !interviewStatus}
                         className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                       >
                         {callLogsLoading ? "Loading..." : "📋 Logs"}
@@ -662,7 +717,7 @@ const ApplicantDetails = ({
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                   <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col p-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Communication Logs</h3>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Logs</h3>
                       <div className="flex gap-2">
                         <button
                           onClick={fetchCallLogs}

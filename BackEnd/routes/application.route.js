@@ -1,6 +1,5 @@
 import express from "express";
-
-
+// edited import part
 import {
   applyJob,
   getApplicants,
@@ -11,7 +10,9 @@ import {
   getAllApplications,
   triggerAutoReject,
   bulkApplyJobs,
-  downloadResume, 
+downloadResume,
+  scoreApplicationManually,
+  overrideApplication,
 } from "../controllers/application.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -26,6 +27,12 @@ router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
+// Manual AI screening
+router.post("/:id/score", isAuthenticated, scoreApplicationManually);
+
+// Recruiter manually overrides AI screening decision
+router.post("/:id/override-score", isAuthenticated, overrideApplication);
+
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/download-resume/:applicationId").get(isAuthenticated, downloadResume);

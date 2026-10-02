@@ -7,5 +7,5 @@ const router = express.Router();
 router.post("/preview/:applicationId", isAuthenticated, previewInterview);
 router.post("/start/:applicationId", isAuthenticated, startInterview);
 router.post("/call-logs/:applicationId", isAuthenticated, fetchCallLogs);
-
+router.get("/call-logs/:applicationId", isAuthenticated, fetchCallLogs);
 export default router;
