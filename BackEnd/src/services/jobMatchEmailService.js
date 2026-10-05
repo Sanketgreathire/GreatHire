@@ -479,8 +479,6 @@ const generateEmailWithGemini = async (prompt) => {
       const isRetryable =
         errorMessage.includes("503") ||
         errorMessage.includes("UNAVAILABLE") ||
-        errorMessage.includes("429") ||
-        errorMessage.includes("RESOURCE_EXHAUSTED") ||
         errorMessage.includes("500") ||
         errorMessage.includes("INTERNAL");
 

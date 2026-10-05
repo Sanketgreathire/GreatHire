@@ -313,11 +313,16 @@ export class KafkaProducerService {
         }
       };
 
-      await admin.createTopics({ topics: [topicConfig] });
+      const created = await admin.createTopics({ topics: [topicConfig] });
       await admin.disconnect();
 
-      console.log(`Topic created: ${topic}`);
-      return topicConfig;
+      if (created) {
+        console.log(`Topic created: ${topic}`);
+        return topicConfig;
+      }
+
+      console.log(`Kafka topic already exists: ${topic}`);
+      return null;
 
     } catch (error) {
       if (error.type === 'TOPIC_ALREADY_EXISTS') {

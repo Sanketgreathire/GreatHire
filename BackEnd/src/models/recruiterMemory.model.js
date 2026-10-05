@@ -244,7 +244,6 @@ const recruiterMemorySchema = new mongoose.Schema({
   collection: "recruitermemories"
 });
 
-recruiterMemorySchema.index({ recruiterId: 1 });
 recruiterMemorySchema.index({ "searchHistory.timestamp": -1 });
 recruiterMemorySchema.index({ "interactionStats.lastActivity": -1 });
 recruiterMemorySchema.index({ "insights.topSkills.skill": 1 });

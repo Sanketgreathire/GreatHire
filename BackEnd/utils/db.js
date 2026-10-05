@@ -11,6 +11,7 @@ const connectDB = async () => {
       socketTimeoutMS: 45000
     });
     console.log(`MongoDB Connected 🔥`);
+    return conn;
   } catch (error) {
     console.error("MongoDB Connection Error:", error);
     process.exit(1);
@@ -25,7 +26,6 @@ process.on("SIGINT", async () => {
 });
 
 export default connectDB;
-
 
 
 
