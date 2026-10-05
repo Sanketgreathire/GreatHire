@@ -64,7 +64,17 @@ const JobsForYou = ({ jobs = [] }) => {
 
   const jobContainerRef = useRef(null);
   const shareCardRef = useRef(null);
+  const jobListRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 6;
+
+  // Reset page when jobs array changes (e.g. search / filter)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [jobs]);
 
   // =========================================================
   // CLICK OUTSIDE SHARE CARD
@@ -192,6 +202,58 @@ const appliedJobIds = useMemo(() => {
       )
     );
   }, []);
+
+  // =========================================================
+  // PAGINATION LOGIC
+  // =========================================================
+  const totalJobs = jobs?.length || 0;
+  const totalPages = Math.ceil(totalJobs / jobsPerPage) || 1;
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = useMemo(() => {
+    return jobs.slice(indexOfFirstJob, indexOfLastJob);
+  }, [jobs, indexOfFirstJob, indexOfLastJob]);
+
+  const handlePageChange = useCallback(
+    (newPage) => {
+      if (newPage < 1 || newPage > totalPages) return;
+      setCurrentPage(newPage);
+      const nextFirstJob = jobs[(newPage - 1) * jobsPerPage];
+      if (nextFirstJob) {
+        setSelectedJob(nextFirstJob);
+      }
+      if (jobListRef.current) {
+        jobListRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      const heading = document.getElementById("job-openings-heading");
+      if (heading) {
+        const y = heading.getBoundingClientRect().top + window.pageYOffset - 100;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
+    },
+    [jobs, totalPages, jobsPerPage, setSelectedJob]
+  );
+
+  const getPageNumbers = useCallback(() => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    let start = currentPage - 2;
+    let end = currentPage + 2;
+    if (start < 1) {
+      start = 1;
+      end = 5;
+    }
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, totalPages - 4);
+    }
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   // =========================================================
   // PROFILE COMPLETION CHECK
@@ -743,13 +805,14 @@ const appliedJobIds = useMemo(() => {
               LEFT: JOB CARDS
           ==================================================== */}
 
-            <div
-  className={`relative m-2 md:m-0 ${
-    selectedJob
-      ? "flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
-      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
-  }`}
->
+          <div
+            ref={jobListRef}
+            className={`relative m-2 md:m-0 ${
+              selectedJob
+                ? "flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
+                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
+            }`}
+          >
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
               <div className={`sticky z-10 col-span-full flex items-center justify-between bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg ${selectedJob ? "top-0" : "top-[80px]"}`}>
@@ -785,7 +848,7 @@ const appliedJobIds = useMemo(() => {
             )}
 
             {/* Jobs */}
-            {jobs?.map((job) => {
+            {currentJobs?.map((job) => {
               const isSelected =
                 selectedJobs.has(job._id);
 
@@ -1380,6 +1443,55 @@ const appliedJobIds = useMemo(() => {
         </div>
 
         {/* =====================================================
+            PAGINATION CONTROLS
+        ====================================================== */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 sm:gap-2.5 my-4 sm:my-5 w-full animate-pagination select-none">
+            {/* Previous Button (Hidden on Page 1) */}
+            {currentPage > 1 && (
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="group px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              >
+                <span className="inline-block transition-transform duration-200 group-hover:-translate-x-0.5">←</span>
+                <span>Previous</span>
+              </button>
+            )}
+
+            {/* Page Numbers (Showing 5 numbers when available) */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {getPageNumbers().map((pageNum) => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center cursor-pointer active:scale-90 ${
+                    currentPage === pageNum
+                      ? "bg-blue-700 dark:bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-400 hover:-translate-y-0.5 hover:shadow-sm"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+            </div>
+
+            {/* Next Button (Hidden on Last Page) */}
+            {currentPage < totalPages && (
+              <button
+                type="button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="group px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Next</span>
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* =====================================================
             MOBILE JOB DETAILS
         ====================================================== */}
 
@@ -1621,6 +1733,21 @@ const appliedJobIds = useMemo(() => {
               opacity: 1;
               transform: translateX(0);
             }
+          }
+
+          @keyframes paginationFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .animate-pagination {
+            animation: paginationFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
         `}</style>
       </div>
