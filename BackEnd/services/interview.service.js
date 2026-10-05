@@ -101,16 +101,68 @@ Return only the questions as a numbered list. Keep it conversational for a phone
 
 // Start Bland.ai call
 export const startInterviewCall = async (phone, task) => {
-  const response = await axios.post(
-    "https://api.bland.ai/v1/calls",
-    {
-      phone_number: phone,
-      task,
-      voice: "maya",
-      max_duration: 10,
-      record: true,
-    },
-    { headers: { Authorization: `Bearer ${process.env.BLAND_API_KEY}` } }
-  );
-  return response.data;
+  try {
+    // Normalize Indian phone number
+    let normalizedPhone = String(phone || "")
+      .trim()
+      .replace(/[\s()-]/g, "");
+
+    // Remove leading 0
+    if (normalizedPhone.startsWith("0")) {
+      normalizedPhone = normalizedPhone.substring(1);
+    }
+
+    // Add India country code if missing
+    if (/^[6-9]\d{9}$/.test(normalizedPhone)) {
+      normalizedPhone = `+91${normalizedPhone}`;
+    }
+
+    // Convert 91XXXXXXXXXX to +91XXXXXXXXXX
+    if (/^91[6-9]\d{9}$/.test(normalizedPhone)) {
+      normalizedPhone = `+${normalizedPhone}`;
+    }
+
+    console.log("========== BLAND PHONE ==========");
+    console.log("Original phone:", phone);
+    console.log("Normalized phone:", normalizedPhone);
+    console.log("=================================");
+
+    // Final validation
+    if (!/^\+91[6-9]\d{9}$/.test(normalizedPhone)) {
+      throw new Error(
+        `Invalid Indian phone number: ${normalizedPhone}`
+      );
+    }
+
+    const response = await axios.post(
+      "https://api.bland.ai/v1/calls",
+      {
+        phone_number: normalizedPhone,
+        task,
+        voice: "maya",
+        max_duration: 10,
+        record: true,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.BLAND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("========== BLAND RESPONSE ==========");
+    console.log(response.data);
+    console.log("====================================");
+
+    return response.data;
+  } catch (error) {
+    console.log("========== BLAND ERROR ==========");
+    console.log("Status:", error?.response?.status);
+    console.log("Response:", error?.response?.data);
+    console.log("Message:", error?.message);
+    console.log("=================================");
+
+    throw error;
+  }
 };

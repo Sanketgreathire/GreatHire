@@ -66,12 +66,16 @@ const applicationSchema = new mongoose.Schema(
       blandCallId: { type: String, default: "" },
       transcript: { type: String, default: "" },
       recordingUrl: { type: String, default: "" },
+       // Newly Added 
+       logsSaved: {type: Boolean,default: false,},
       questions: { type: String, default: "" },
       score: { type: Number, default: 0 },
       matchScore: { type: Number, default: 0 },
       skillsMatched: { type: [String], default: [] },
       missingSkills: { type: [String], default: [] },
-    },
+     
+    
+  },
   },
    
   { timestamps: true }

@@ -151,26 +151,48 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
     });
 
     await newApplication.save();
+  //edited try block to calculate match score and save it in the application
+ try {
+  const experiences =
+    user.profile?.experiences
+      ?.map((exp) => exp.experienceDetails || "")
+      .filter(Boolean)
+      .join("\n") || "";
 
-    try {
-      const resumeText = user.profile?.experience?.experienceDetails || "";
-      const matchData = await calculateMatchScore(
-        resumeText,
-        job.jobDetails.title,
-        job.jobDetails.details,
-        job.jobDetails.skills || []
-      );
-      newApplication.aiInterview = {
-        ...newApplication.aiInterview,
-        matchScore: matchData.matchScore,
-        skillsMatched: matchData.skillsMatched,
-        missingSkills: matchData.missingSkills,
-      };
-      await newApplication.save();
-    } catch (error) {
-      console.log("Match Score Error:", error.message);
-    }
+  const resumeText = [
+    user.profile?.resume || "",
+    user.profile?.bio || "",
+    user.profile?.coverLetter || "",
+    experiences,
+    ...(user.profile?.skills || []),
+  ]
+    .filter(Boolean)
+    .join("\n");
 
+  const matchData = await calculateMatchScore(
+    resumeText,
+    job.jobDetails.title,
+    job.jobDetails.details,
+    job.jobDetails.skills || []
+  );
+
+  // Save match score at Application root level
+  newApplication.matchScore = matchData.matchScore;
+  newApplication.matchPercentage = matchData.matchScore;
+
+  // Save matched/missing skills inside aiInterview
+  newApplication.aiInterview = {
+    ...newApplication.aiInterview,
+    skillsMatched: matchData.skillsMatched || [],
+    missingSkills: matchData.missingSkills || [],
+  };
+
+  await newApplication.save();
+
+  console.log("✅ Match Score Saved:", matchData.matchScore);
+} catch (error) {
+  console.log("❌ Match Score Error:", error.message);
+}
     // Push application into job (use $push to avoid re-validating required fields on old jobs)
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
@@ -249,7 +271,7 @@ if (job.created_by.toString() !== req.id.toString()) {
         path: "applicant",
         select: "fullname emailId phoneNumber profile address isProfileBoosted",
       })
-      .select("applicant status answers createdAt")
+      .select( "applicant status answers createdAt screeningStatus matchScore matchPercentage aiInterview")
       .sort({ createdAt: -1 })
       .limit(isFreePlan ? 30 : 0); // 0 = no limit for paid plans
 
@@ -321,6 +343,111 @@ if (job.created_by.toString() !== req.id.toString()) {
   } catch (error) {
     console.error("Error fetching application details:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+export const scoreApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    if (!applicationId) {
+      return res.status(400).json({
+        success: false,
+        message: "Application ID is required",
+      });
+    }
+
+    const application = await Application.findById(applicationId)
+      .populate("applicant")
+      .populate("job");
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    // Check recruiter ownership
+    const jobOwnerId = application.job?.created_by;
+
+    if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to screen this application",
+      });
+    }
+
+    // Get resume/profile experience
+    // Get candidate resume/profile/experience
+const experiences =
+  application.applicant?.profile?.experiences
+    ?.map((exp) => exp.experienceDetails || "")
+    .filter(Boolean)
+    .join("\n") || "";
+
+const resumeText = [
+  application.applicant?.profile?.resume || "",
+  application.applicant?.profile?.bio || "",
+  application.applicant?.profile?.coverLetter || "",
+  experiences,
+  ...(application.applicant?.profile?.skills || []),
+]
+  .filter(Boolean)
+  .join("\n");
+
+console.log("📄 Candidate screening text length:", resumeText.length);
+
+if (!resumeText.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Candidate resume/profile/experience is empty",
+  });
+}
+
+    // Calculate AI match score
+    const matchData = await calculateMatchScore(
+      resumeText,
+      application.job.jobDetails.title,
+      application.job.jobDetails.details,
+      application.job.jobDetails.skills || []
+    );
+
+    const score = Number(matchData.matchScore || 0);
+
+    // Save score
+    application.matchScore = score;
+    application.matchPercentage = score;
+
+    // Screening decision
+   application.screeningStatus =
+  score >= 75 ? "Passed" : "Pending";
+  
+    // Save matched/missing skills
+    application.aiInterview = {
+      ...application.aiInterview,
+      skillsMatched: matchData.skillsMatched || [],
+      missingSkills: matchData.missingSkills || [],
+    };
+
+    await application.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Resume screening completed successfully",
+      score,
+      screeningStatus: application.screeningStatus,
+      application,
+    });
+  } catch (error) {
+    console.error("Error screening application:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to screen application",
+      error: error.message,
+    });
   }
 };
 

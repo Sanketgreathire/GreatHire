@@ -1,19 +1,20 @@
 import express from "express";
 
-
 import {
   applyJob,
   getApplicants,
   getAppliedJobs,
   updateStatus,
+  scoreApplication,
   getApplicationDetails,
   deleteApplication,
   getAllApplications,
   triggerAutoReject,
   bulkApplyJobs,
-transitionApplication,  // add for shortlist and reject
+  transitionApplication,
   downloadResume,
 } from "../controllers/application.controller.js";
+
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import isAdmin from "../middlewares/isAdmin.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -26,6 +27,7 @@ router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplicati
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
+router.route("/:id/score").post(isAuthenticated, scoreApplication);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
@@ -34,6 +36,8 @@ router.route("/:id/override-score").post(
   isAuthenticated,
   transitionApplication
 );
+
+
 
 // Download applicant resume
 router.route("/download-resume/:applicationId").get(
