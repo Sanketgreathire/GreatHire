@@ -225,6 +225,7 @@ export const getRecruitersList = async (req, res) => {
               customCreditsForJobs: "$companyDetails.customCreditsForJobs",
               customCreditsForCandidates: "$companyDetails.customCreditsForCandidates",
               customMaxJobPosts: "$companyDetails.customMaxJobPosts",
+              aiSourcingCredits: "$companyDetails.aiSourcingCredits",
               plan: "$companyDetails.plan",
               freeJobsPosted: "$companyDetails.freeJobsPosted",
               planJobsPostedThisMonth: "$companyDetails.planJobsPostedThisMonth",

@@ -1,4 +1,3 @@
-
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../../models/user.model.js";
@@ -251,80 +250,336 @@ export const removeAccount = async (req, res) => {
 };
 
 // Update custom credits for a recruiter
+// Update custom credits for a recruiter
+// Update custom credits for a recruiter
 export const updateRecruiterCredits = async (req, res) => {
   try {
-    const { companyId, customCreditsForJobs, customCreditsForCandidates, customMaxJobPosts } = req.body;
+    const {
+      companyId,
+      customCreditsForJobs,
+      customCreditsForCandidates,
+      customMaxJobPosts,
+      limitCredits,
+    } = req.body;
 
+    // =========================================
+    // 1. VALIDATE COMPANY ID
+    // =========================================
     if (!companyId) {
-      return res.status(400).json({ success: false, message: "Company ID is required" });
+      return res.status(400).json({
+        success: false,
+        message: "Company ID is required",
+      });
     }
 
     const { Company } = await import("../../models/company.model.js");
 
-    // Fetch existing to avoid $inc on null fields
+    // =========================================
+    // 2. FIND COMPANY
+    // =========================================
     const existing = await Company.findById(companyId).lean();
+
     if (!existing) {
-      return res.status(404).json({ success: false, message: "Company not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
     }
 
     const setData = {};
 
-    if (customCreditsForJobs !== null && customCreditsForJobs !== undefined) {
+    // =========================================
+    // 3. CUSTOM JOB CREDITS
+    // =========================================
+    if (
+      customCreditsForJobs !== null &&
+      customCreditsForJobs !== undefined
+    ) {
       const val = Number(customCreditsForJobs);
-      setData.creditedForJobs = (Number(existing.creditedForJobs) || 0) + val;
-      setData.customCreditsForJobs = (Number(existing.customCreditsForJobs) || 0) + val;
-    }
-    if (customCreditsForCandidates !== null && customCreditsForCandidates !== undefined) {
-      const val = Number(customCreditsForCandidates);
-      setData.creditedForCandidates = (Number(existing.creditedForCandidates) || 0) + val;
-      setData.customCreditsForCandidates = (Number(existing.customCreditsForCandidates) || 0) + val;
-    }
-    if (customMaxJobPosts !== null && customMaxJobPosts !== undefined) {
-      const val = Number(customMaxJobPosts);
-      const plan = existing.plan || "FREE";
-      const planLimits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: 999999 };
-      const used = plan === "FREE"
-        ? (Number(existing.freeJobsPosted) || 0)
-        : (Number(existing.planJobsPostedThisMonth) || 0);
-      const currentLimit = existing.maxJobPosts !== null && existing.maxJobPosts !== undefined
-        ? (Number(existing.maxJobPosts) || 0)
-        : (planLimits[plan] ?? 2);
-      const currentRemaining = Math.max(0, currentLimit - used);
-      // new maxJobPosts = used + currentRemaining + adminAdded
-      setData.maxJobPosts = used + currentRemaining + val;
-      setData.customMaxJobPosts = (Number(existing.customMaxJobPosts) || 0) + val;
+
+      if (!Number.isInteger(val)) {
+        return res.status(400).json({
+          success: false,
+          message: "Custom Job Credits must be a whole number",
+        });
+      }
+
+      const currentJobCredits =
+        Number(existing.creditedForJobs) || 0;
+
+      const newJobCredits = currentJobCredits + val;
+
+      if (newJobCredits < 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Job Credits cannot be negative",
+        });
+      }
+
+      setData.creditedForJobs = newJobCredits;
+
+      setData.customCreditsForJobs =
+        (Number(existing.customCreditsForJobs) || 0) + val;
     }
 
+    // =========================================
+    // 4. CUSTOM CANDIDATE CREDITS
+    // =========================================
+    if (
+      customCreditsForCandidates !== null &&
+      customCreditsForCandidates !== undefined
+    ) {
+      const val = Number(customCreditsForCandidates);
+
+      if (!Number.isInteger(val)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Custom Candidate Credits must be a whole number",
+        });
+      }
+
+      const currentCandidateCredits =
+        Number(existing.creditedForCandidates) || 0;
+
+      const newCandidateCredits =
+        currentCandidateCredits + val;
+
+      if (newCandidateCredits < 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Candidate Credits cannot be negative",
+        });
+      }
+
+      setData.creditedForCandidates =
+        newCandidateCredits;
+
+      setData.customCreditsForCandidates =
+        (Number(existing.customCreditsForCandidates) || 0) + val;
+    }
+
+    // =========================================
+    // 5. CUSTOM MAX JOB POSTS
+    // =========================================
+    if (
+      customMaxJobPosts !== null &&
+      customMaxJobPosts !== undefined
+    ) {
+      const val = Number(customMaxJobPosts);
+
+      if (!Number.isInteger(val) || val < 0) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Job Posts must be a valid whole number",
+        });
+      }
+
+      const plan = existing.plan || "FREE";
+
+      const planLimits = {
+        FREE: 2,
+        STANDARD: 5,
+        PREMIUM: 15,
+        PRO: 15,
+        ENTERPRISE: 999999,
+      };
+
+      const used =
+        plan === "FREE"
+          ? Number(existing.freeJobsPosted) || 0
+          : Number(existing.planJobsPostedThisMonth) || 0;
+
+      const currentLimit =
+        existing.maxJobPosts !== null &&
+        existing.maxJobPosts !== undefined
+          ? Number(existing.maxJobPosts) || 0
+          : planLimits[plan] ?? 2;
+
+      const currentRemaining = Math.max(
+        0,
+        currentLimit - used
+      );
+
+      setData.maxJobPosts =
+        used + currentRemaining + val;
+
+      setData.customMaxJobPosts =
+        (Number(existing.customMaxJobPosts) || 0) + val;
+    }
+
+    // =========================================
+    // 6. AI CREDITS
+    // =========================================
+    if (
+      limitCredits !== null &&
+      limitCredits !== undefined
+    ) {
+      // Empty value
+      if (limitCredits === "") {
+        return res.status(400).json({
+          success: false,
+          message: "AI Credits cannot be empty",
+        });
+      }
+
+      // Only numbers
+      const aiCredits = Number(limitCredits);
+
+      // Integer validation
+      if (!Number.isInteger(aiCredits)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "AI Credits must be a whole number",
+        });
+      }
+
+      // Range validation
+      if (aiCredits < 0 || aiCredits > 5) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "AI Credits must be between 0 and 5",
+        });
+      }
+
+      // IMPORTANT:
+      // Company schema uses aiSourcingCredits
+      setData.aiSourcingCredits = aiCredits;
+    }
+
+    // =========================================
+    // 7. NOTHING TO UPDATE
+    // =========================================
+    if (Object.keys(setData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "No credits data provided for update",
+      });
+    }
+
+    // =========================================
+    // 8. UPDATE COMPANY
+    // =========================================
     const company = await Company.findByIdAndUpdate(
       companyId,
-      { $set: setData },
-      { new: true }
+      {
+        $set: setData,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
-    // Notify the recruiter side in real-time so the updated Job Credits
-    // (and related fields) show up instantly without a page refresh.
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    // =========================================
+    // 9. SOCKET UPDATE
+    // =========================================
     try {
-      const { getIO } = await import("../../utils/socket.js");
+      const { getIO } = await import(
+        "../../utils/socket.js"
+      );
+
       const io = getIO();
-      if (io && company) {
+
+      if (io) {
         io.emit("companyCreditsUpdated", {
           companyId: company._id.toString(),
-          creditedForJobs: company.creditedForJobs,
-          creditedForCandidates: company.creditedForCandidates,
-          maxJobPosts: company.maxJobPosts,
+
+          creditedForJobs:
+            company.creditedForJobs,
+
+          customCreditsForJobs:
+            company.customCreditsForJobs,
+
+          creditedForCandidates:
+            company.creditedForCandidates,
+
+          customCreditsForCandidates:
+            company.customCreditsForCandidates,
+
+          maxJobPosts:
+            company.maxJobPosts,
+
+          customMaxJobPosts:
+            company.customMaxJobPosts,
+
+          aiSourcingCredits:
+            company.aiSourcingCredits,
         });
       }
     } catch (emitErr) {
-      console.error("Error emitting companyCreditsUpdated:", emitErr);
+      console.error(
+        "Error emitting companyCreditsUpdated:",
+        emitErr
+      );
     }
 
+    // =========================================
+    // 10. RESPONSE
+    // =========================================
     return res.status(200).json({
       success: true,
       message: "Credits updated successfully",
-      company
+
+      company: {
+        _id: company._id,
+
+        creditedForJobs:
+          company.creditedForJobs,
+
+        customCreditsForJobs:
+          company.customCreditsForJobs,
+
+        creditedForCandidates:
+          company.creditedForCandidates,
+
+        customCreditsForCandidates:
+          company.customCreditsForCandidates,
+
+        maxJobPosts:
+          company.maxJobPosts,
+
+        customMaxJobPosts:
+          company.customMaxJobPosts,
+
+        // Correct field
+        aiSourcingCredits:
+          company.aiSourcingCredits,
+
+        plan:
+          company.plan,
+
+        freeJobsPosted:
+          company.freeJobsPosted,
+
+        planJobsPostedThisMonth:
+          company.planJobsPostedThisMonth,
+      },
     });
   } catch (error) {
-    console.error("Error updating recruiter credits:", error);
-    return res.status(500).json({ success: false, message: "Server Error" });
+    console.error(
+      "Error updating recruiter credits:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : undefined,
+    });
   }
 };
