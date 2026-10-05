@@ -27,6 +27,18 @@ import {
 import { slugify } from "@/utils/slugify";
 import { Helmet } from "react-helmet-async";
 
+        const formatPostedDate = (createdAt) => {
+  if (!createdAt) return null;
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }); // e.g. 3 Oct 2026
+};
+
+
 const JobsForYou = ({ jobs = [] }) => {
   const {
     selectedJob,
@@ -357,6 +369,12 @@ const appliedJobIds = useMemo(() => {
     },
     [setSelectedJob]
   );
+
+  const handleCloseJobDetails = useCallback(() => {
+  setSelectedJob(null);
+  setShareJobId(null);
+}, [setSelectedJob]);
+
 
   const handleNavigateToProfile = useCallback(
     () => navigate("/profile"),
@@ -725,11 +743,16 @@ const appliedJobIds = useMemo(() => {
               LEFT: JOB CARDS
           ==================================================== */}
 
-          <div className="flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 m-2 md:m-0 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px] relative">
-
+            <div
+  className={`relative m-2 md:m-0 ${
+    selectedJob
+      ? "flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
+      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
+  }`}
+>
             {/* Bulk Apply Sticky Bar */}
             {user && selectedJobs.size > 0 && (
-              <div className="sticky top-0 z-10 flex items-center justify-between bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+              <div className={`sticky z-10 col-span-full flex items-center justify-between bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg ${selectedJob ? "top-0" : "top-[80px]"}`}>
                 <span className="text-sm font-semibold">
                   {selectedJobs.size} job(s) selected
                 </span>
@@ -778,7 +801,7 @@ const appliedJobIds = useMemo(() => {
                   onClick={() =>
                     handleJobClick(job)
                   }
-                  className={`relative rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${
+                  className={`relative flex flex-col rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${
                     isActive
                       ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/40"
                       : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
@@ -964,7 +987,7 @@ const appliedJobIds = useMemo(() => {
                   )}
 
                   {/* Bottom Row */}
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                  <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
                         {typeof salary === "string" &&
@@ -1026,9 +1049,20 @@ const appliedJobIds = useMemo(() => {
               {/* Header */}
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">
 
+
+  {/* Close Button */}
+  <button
+    type="button"
+    onClick={handleCloseJobDetails}
+    aria-label="Close job details"
+    title="Close"
+    className="absolute top-3 right-4 p-1.5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200 transition-colors"
+  >
+    <IoMdClose size={20} />
+  </button>
                 {/* Bookmark */}
                 {!isApplied && user && (
-                  <div className="absolute top-5 right-6">
+                  <div className="absolute top-5 right-14">
                     {isJobBookmarked(
                       user?._id
                     ) ? (
@@ -1056,7 +1090,7 @@ const appliedJobIds = useMemo(() => {
                 )}
 
                 {/* Job Title */}
-                <h3 className="text-2xl font-bold text-sky-900 truncate pr-12 tracking-wide dark:text-white">
+                <h3 className="text-2xl font-bold text-sky-900 truncate pr-24 tracking-wide dark:text-white">
                   {selectedJob?.jobDetails?.title}
                 </h3>
 
@@ -1082,6 +1116,16 @@ const appliedJobIds = useMemo(() => {
                     </span>
                   </p>
                 </div>
+
+                  {selectedJob?.createdAt && (
+                  <p className="text-sm font-medium text-sky-800 dark:text-gray-300">
+                  🗓️ Posted on {formatPostedDate(selectedJob.createdAt)}
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {" "}({calculateActiveDays(selectedJob.createdAt)}d ago)
+                  </span>
+                  </p>
+                  )}
+
 
                 {/* Salary / Response */}
                 <div className="flex justify-between items-center gap-3 pt-1">
