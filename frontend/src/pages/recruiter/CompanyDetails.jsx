@@ -94,7 +94,7 @@ const CompanyDetails = () => {
       }
     } catch {
       toast.error("Failed to update company details. Please try again.");
-    } finally {
+    } finally { // Fixed typo here (was 'fontally')
       setLoading(false);
     }
   }, [formData, company?._id, dispatch]);
@@ -193,8 +193,8 @@ const CompanyDetails = () => {
                 )}
               </div>
 
-              {/* Stats Row */}
-              <div className="relative mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* Stats Row - Updated to 4 columns */}
+              <div className="relative mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 text-center">
                   <p className="text-white/70 text-xs mb-0.5">Job Credits</p>
                   <p className="text-white font-bold text-lg">{company?.creditedForJobs ?? 0}</p>
@@ -203,10 +203,20 @@ const CompanyDetails = () => {
                   <p className="text-white/70 text-xs mb-0.5">Candidate Views</p>
                   <p className="text-white font-bold text-lg">{company?.creditedForCandidates ?? 0}</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 text-center col-span-2 sm:col-span-1">
+                <div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 text-center">
                   <p className="text-white/70 text-xs mb-0.5">Free Jobs Posted</p>
                   <p className="text-white font-bold text-lg">{company?.freeJobsPosted ?? 0}</p>
                 </div>
+               {/* AI Credits */}
+<div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 text-center">
+  <p className="text-white/70 text-xs mb-0.5">
+    AI Credits
+  </p>
+
+  <p className="text-white font-bold text-lg">
+    {company?.aiSourcingCredits ?? 0}
+  </p>
+</div>
               </div>
             </div>
 

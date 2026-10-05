@@ -1,123 +1,283 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-const UpdateCreditsModal = ({ isOpen, onClose, recruiter, onUpdate }) => {
-  const [customCreditsForJobs, setCustomCreditsForJobs] = useState("");
-  const [customCreditsForCandidates, setCustomCreditsForCandidates] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const UpdateCreditsModal = ({
+  isOpen,
+  onClose,
+  onUpdate,
+  currentData,
+}) => {
+  const [jobPosts, setJobPosts] = useState("");
+  const [customCredits, setCustomCredits] = useState("");
+  const [limitCredits, setLimitCredits] = useState("");
 
+  // Load existing values whenever modal opens
   useEffect(() => {
-    if (recruiter) {
-      setCustomCreditsForJobs("");
-      setCustomCreditsForCandidates("");
+    if (!isOpen) return;
+
+    setJobPosts("");
+    setCustomCredits("");
+
+    // Correct DB field
+    const existingCredits =
+      currentData?.aiSourcingCredits ?? 0;
+
+    setLimitCredits(String(existingCredits));
+  }, [isOpen, currentData]);
+
+  // AI Credits validation
+  const handleLimitCreditChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setLimitCredits("");
+      return;
     }
-  }, [recruiter]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    const data = {
-      companyId: recruiter.companyId,
-      customCreditsForJobs: customCreditsForJobs ? Number(customCreditsForJobs) * 500 : null,
-      customCreditsForCandidates: customCreditsForCandidates ? Number(customCreditsForCandidates) : null,
-      customMaxJobPosts: customCreditsForJobs ? Number(customCreditsForJobs) : null,
-    };
+    // Only whole numbers
+    if (!/^\d+$/.test(value)) {
+      return;
+    }
 
-    await onUpdate(data);
-    setIsSubmitting(false);
+    const numberValue = Number(value);
+
+    // Only allow 0 to 5
+    if (numberValue >= 0 && numberValue <= 5) {
+      setLimitCredits(value);
+    }
   };
 
-  if (!isOpen) return null;
+  // Job posts validation
+  const handleJobPostsChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setJobPosts("");
+      return;
+    }
+
+    if (!/^\d+$/.test(value)) {
+      return;
+    }
+
+    setJobPosts(value);
+  };
+
+  // Custom candidate credits validation
+  const handleCustomCreditsChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setCustomCredits("");
+      return;
+    }
+
+    if (!/^\d+$/.test(value)) {
+      return;
+    }
+
+    setCustomCredits(value);
+  };
+
+  // Update button
+  const handleUpdate = () => {
+    // AI Credits required
+    if (limitCredits === "") {
+      toast.error("Please enter AI Credits");
+      return;
+    }
+
+    const credits = Number(limitCredits);
+
+    if (!Number.isInteger(credits)) {
+      toast.error("AI Credits must be a whole number");
+      return;
+    }
+
+    if (credits < 0 || credits > 5) {
+      toast.error("AI Credits must be between 0 and 5");
+      return;
+    }
+
+    // Company ID required
+    if (!currentData?.companyId) {
+      console.error(
+        "Company ID missing from recruiter:",
+        currentData
+      );
+
+      toast.error("Company ID is missing");
+      return;
+    }
+
+    // Send data to parent component
+    onUpdate({
+      companyId: currentData.companyId,
+
+      jobPosts:
+        jobPosts === ""
+          ? undefined
+          : Number(jobPosts),
+
+      customCredits:
+        customCredits === ""
+          ? undefined
+          : Number(customCredits),
+
+      // Backend expects limitCredits
+      limitCredits: credits,
+    });
+  };
+
+  if (!isOpen) {
+    return null;
+  }
+
+  const recruiterName =
+    currentData?.fullname ||
+    currentData?.name ||
+    "Recruiter";
+
+  // Correct DB field
+  const currentAICredits =
+    currentData?.aiSourcingCredits ?? 0;
+
+  const currentJobCredits =
+    currentData?.creditedForJobs ??
+    currentData?.maxJobPosts ??
+    0;
+
+  const currentCandidateCredits =
+    currentData?.creditedForCandidates ??
+    currentData?.customCreditsForCandidates ??
+    0;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md shadow-xl border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Update Credits for {recruiter?.fullname}
-          </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="w-full max-w-lg rounded-xl bg-[#1e2530] p-6 text-white shadow-xl border border-gray-800">
+
+        {/* Header */}
+        <div className="flex items-center justify-between pb-4">
+          <div>
+            <h2 className="text-xl font-bold text-slate-100">
+              Update Credits
+            </h2>
+
+            <p className="text-sm text-slate-400 mt-1">
+              {recruiterName}
+            </p>
+          </div>
+
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="text-gray-400 hover:text-white transition-colors text-xl"
           >
-            <X size={20} className="text-gray-500 dark:text-gray-400" />
+            ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <div className="space-y-5 mt-2">
+
+          {/* Job Posts */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-semibold text-slate-200 mb-2">
               Add Job Posts
             </label>
-            <Input
+
+            <input
               type="number"
-              min="1"
+              min="0"
+              step="1"
               placeholder="Enter number of job posts to add"
-              value={customCreditsForJobs}
-              onChange={(e) => setCustomCreditsForJobs(e.target.value)}
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+              value={jobPosts}
+              onChange={handleJobPostsChange}
+              className="w-full rounded-lg bg-[#283141] border border-slate-700 p-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {(() => {
-                const plan = recruiter?.plan || "FREE";
-                const maxJobPosts = recruiter?.maxJobPosts ?? null;
-                const planLimits = { FREE: 2, STANDARD: 5, PREMIUM: 15, ENTERPRISE: Infinity };
-                const used = plan === "FREE"
-                  ? (recruiter?.freeJobsPosted || 0)
-                  : (recruiter?.planJobsPostedThisMonth || 0);
-                const limit = maxJobPosts !== null ? maxJobPosts : (planLimits[plan] ?? 2);
-                const remaining = limit === Infinity ? "∞" : Math.max(0, limit - used);
-                return (
-                  <>
-                    Current remaining: <span className="font-semibold text-gray-700 dark:text-gray-200">{remaining}</span> / {limit === Infinity ? "∞" : limit} job posts
-                    {customCreditsForJobs && Number(customCreditsForJobs) > 0 && limit !== Infinity && (
-                      <span className="ml-2 text-green-600 dark:text-green-400 font-semibold">
-                        → After update: {Math.max(0, limit - used) + Number(customCreditsForJobs)} / {limit + Number(customCreditsForJobs)}
-                      </span>
-                    )}
-                  </>
-                );
-              })()}
+
+            <p className="mt-2 text-xs text-slate-400">
+              Current remaining:{" "}
+              <span className="font-bold text-slate-200">
+                {currentJobCredits}
+              </span>
             </p>
           </div>
 
+          {/* Candidate Credits */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-semibold text-slate-200 mb-2">
               Custom Candidate Credits
             </label>
-            <Input
+
+            <input
               type="number"
+              min="0"
+              step="1"
               placeholder="Leave empty for default"
-              value={customCreditsForCandidates}
-              onChange={(e) => setCustomCreditsForCandidates(e.target.value)}
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+              value={customCredits}
+              onChange={handleCustomCreditsChange}
+              className="w-full rounded-lg bg-[#283141] border border-slate-700 p-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Current: {recruiter?.creditedForCandidates || 0}
+
+            <p className="mt-2 text-xs text-slate-400">
+              Current:{" "}
+              <span className="font-bold text-slate-200">
+                {currentCandidateCredits}
+              </span>
             </p>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-              className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50"
-            >
-              {isSubmitting ? "Updating..." : "Update"}
-            </Button>
+          {/* AI Credits */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-200 mb-2">
+              AI Credits (0 to 5)
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              max="5"
+              step="1"
+              inputMode="numeric"
+              placeholder="Enter credits between 0 and 5"
+              value={limitCredits}
+              onChange={handleLimitCreditChange}
+              className="w-full rounded-lg bg-[#283141] border border-slate-700 p-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            />
+
+            <p className="mt-2 text-xs text-slate-400">
+              Current AI Credits:{" "}
+              <span className="font-bold text-slate-200">
+                {currentAICredits}
+              </span>
+            </p>
+
+            <p className="mt-1 text-xs text-blue-400">
+              Allowed range: 0 - 5 credits
+            </p>
           </div>
-        </form>
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-6 flex justify-end space-x-3">
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg bg-[#2d3748] px-5 py-2.5 text-sm font-medium text-slate-200 hover:bg-slate-700 transition-colors"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={handleUpdate}
+            className="rounded-lg bg-[#3b82f6] px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+          >
+            Update
+          </button>
+
+        </div>
       </div>
     </div>
   );

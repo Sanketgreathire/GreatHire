@@ -1,9 +1,7 @@
 // Import necessary modules and dependencies
 import React, { useEffect, useState } from "react";
-
 // Redux hooks for state management
 import { useSelector, useDispatch } from "react-redux";
-
 // Axios for making API requests
 import axios from "axios";
 import {
@@ -11,14 +9,11 @@ import {
   RECRUITER_API_END_POINT,
   ADMIN_API_END_POINT,
 } from "@/utils/ApiEndPoint"; // API endpoints
-
 // Toast notifications for user feedback
 import { toast } from "react-hot-toast";
-
 // React Router hooks for navigation and parameters
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/admin/Navbar"; // Navbar component
-
 // Importing actions to fetch updated statistics
 import {
   fetchCompanyStats,
@@ -26,28 +21,22 @@ import {
   fetchJobStats,
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
-
 // Delete confirmation modal component
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 // CompanyDetails Component - Displays and manages a company's details
 const CompanyDetails = () => {
-
   // Get authenticated user details from Redux store
   const { user } = useSelector((state) => state.auth);
-
   // Get company ID from the route parameters
   const { companyId } = useParams();
-
   // Hook for programmatic navigation
   const navigate = useNavigate();
-
   // Hook to dispatch Redux actions
   const dispatch = useDispatch();
 
   // Loading state for deletion process
   const [dloading, dSetLoading] = useState(false);
-
   // State to store company details
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -98,12 +87,11 @@ const CompanyDetails = () => {
   // Fetch company details when the component mounts
   useEffect(() => {
     fetchCompanyDetails();
-  }, []);
+  }, [companyId]);
 
   const handleUpdateEmails = async () => {
     try {
       setEmailLoading(true);
-
       const response = await axios.put(
         `/api/v1/admin/company/data/update-emails`,
         {
@@ -134,8 +122,6 @@ const CompanyDetails = () => {
   };
 
   // --- Job Credits handlers ---
-
-  // Start editing: reset the input to the current saved value
   const startEditingCredits = () => {
     setJobCreditsInput(Number(company?.creditedForJobs) || 0);
     setIsEditingCredits(true);
@@ -146,7 +132,6 @@ const CompanyDetails = () => {
     setIsEditingCredits(false);
   };
 
-  // +/- buttons just adjust the local (unsaved) input value
   const incrementJobCredits = (step = 1) => {
     setJobCreditsInput((prev) => Math.max(0, Number(prev || 0) + step));
   };
@@ -163,14 +148,10 @@ const CompanyDetails = () => {
     }
   };
 
-  // Save: compute the delta between the new value and the current saved value,
-  // then send it to the existing admin credits endpoint (which supports both
-  // positive deltas to increase and negative deltas to reduce credits).
   const handleUpdateJobCredits = async () => {
     const currentValue = Number(company?.creditedForJobs) || 0;
     const newValue = Number(jobCreditsInput) || 0;
     const delta = newValue - currentValue;
-
     if (delta === 0) {
       toast("No changes to save", { icon: "ℹ️" });
       setIsEditingCredits(false);
@@ -212,76 +193,50 @@ const CompanyDetails = () => {
   // Function to handle company deletion
   const handleDeleteCompany = async () => {
     try {
-      // Set loading state to true while processing deletion
       dSetLoading(true);
-
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
         data: {
-          userEmail: user?.emailId?.email, // User email for authentication
-          companyId, // Company ID to be deleted
+          userEmail: user?.emailId?.email,
+          companyId,
         },
         withCredentials: true,
       });
 
       if (response.data.success) {
-        // Update company, recruiter, job, and application stats in Redux store
         dispatch(fetchCompanyStats());
         dispatch(fetchRecruiterStats());
         dispatch(fetchJobStats());
         dispatch(fetchApplicationStats());
 
-        toast.success(response.data.message); // Show success message
-        navigate("/admin/companies"); // Redirect to company listing page after deletion
+        toast.success(response.data.message);
+        navigate("/admin/companies");
       } else {
-        toast.error(response.data.message); // Show error message if deletion fails
+        toast.error(response.data.message);
       }
     } catch (err) {
       console.error("Error deleting company:", err);
-      toast.error(
-        "There was an error deleting the company. Please try again later."
-      );
+      toast.error("There was an error deleting the company. Please try again later.");
     } finally {
-      dSetLoading(false); // Reset loading state after process completion
+      dSetLoading(false);
     }
   };
 
-  // Function to confirm deletion after modal confirmation
   const onConfirmDelete = () => {
-    setShowDeleteModal(false); // Close delete confirmation modal
-    handleDeleteCompany(); // Proceed with deletion
+    setShowDeleteModal(false);
+    handleDeleteCompany();
   };
 
-  // Function to cancel deletion and close the modal
   const onCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
-  // Function to validate and sanitize URL
-  const getSafeUrl = (url) => {
-    if (!url) return "#"; // Default to prevent invalid URLs
-
-    try {
-      const safeUrl = new URL(url, window.location.origin);
-      if (["http:", "https:"].includes(safeUrl.protocol)) {
-        return encodeURI(safeUrl.href); // Encoding to prevent XSS
-      }
-    } catch (error) {
-      return "#"; // Return safe default if URL parsing fails
-    }
-  };
-
-  // Add loading and error checks here, before the main return
   if (loading) {
     return (
       <>
         <Navbar linkName={"Company Details"} />
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-          <div className="max-w-6xl mx-auto p-8 m-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <div className="text-center p-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading company details...</p>
-            </div>
-          </div>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mr-3"></div>
+          Loading company details...
         </div>
       </>
     );
@@ -291,18 +246,14 @@ const CompanyDetails = () => {
     return (
       <>
         <Navbar linkName={"Company Details"} />
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-          <div className="max-w-6xl mx-auto p-8 m-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <div className="text-center p-8">
-              <p className="text-xl text-gray-600 dark:text-gray-400">Company not found</p>
-              <button
-                onClick={() => navigate("/admin/companies")}
-                className="mt-4 px-6 py-2 text-white bg-blue-700 dark:bg-blue-600 rounded-md hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors"
-              >
-                Back to Companies
-              </button>
-            </div>
-          </div>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
+          <p className="text-xl font-semibold">Company not found</p>
+          <button
+            onClick={() => navigate("/admin/companies")}
+            className="mt-4 px-6 py-2 text-white bg-blue-700 dark:bg-blue-600 rounded-md hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors"
+          >
+            Back to Companies
+          </button>
         </div>
       </>
     );
@@ -311,7 +262,6 @@ const CompanyDetails = () => {
   return (
     <>
       <Navbar linkName={"Company Details"} />
-
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors pt-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pb-10">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8 lg:p-10 transition-colors">
@@ -421,43 +371,31 @@ const CompanyDetails = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                        Street Address
-                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Street Address</p>
                       <p className="text-gray-900 dark:text-gray-100 font-semibold break-words">
                         {company?.address?.streetAddress}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">City</p>
-                      <p className="text-gray-900 dark:text-gray-100 font-semibold">
-                        {company?.address?.city}
-                      </p>
+                      <p className="text-gray-900 dark:text-gray-100 font-semibold">{company?.address?.city}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">State</p>
-                      <p className="text-gray-900 dark:text-gray-100 font-semibold">
-                        {company?.address?.state}
-                      </p>
+                      <p className="text-gray-900 dark:text-gray-100 font-semibold">{company?.address?.state}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                        Postal Code
-                      </p>
-                      <p className="text-gray-900 dark:text-gray-100 font-semibold">
-                        {company?.address?.postalCode}
-                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Postal Code</p>
+                      <p className="text-gray-900 dark:text-gray-100 font-semibold">{company?.address?.postalCode}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Country</p>
-                      <p className="text-gray-900 dark:text-gray-100 font-semibold">
-                        {company?.address?.country}
-                      </p>
+                      <p className="text-gray-900 dark:text-gray-100 font-semibold">{company?.address?.country}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Other Info */}
+                {/* Phone */}
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
                   <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Phone</p>
                   <p className="text-lg text-gray-900 dark:text-white font-semibold break-words">
@@ -467,17 +405,12 @@ const CompanyDetails = () => {
 
                 {/* Business Email */}
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
-                    Business Email
-                  </p>
-
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Business Email</p>
                   {isEditingEmails ? (
                     <input
                       type="email"
                       value={emailData.email}
-                      onChange={(e) =>
-                        setEmailData({ ...emailData, email: e.target.value })
-                      }
+                      onChange={(e) => setEmailData({ ...emailData, email: e.target.value })}
                       className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
                     />
                   ) : (
@@ -489,17 +422,12 @@ const CompanyDetails = () => {
 
                 {/* Admin Email */}
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
-                    Admin Email
-                  </p>
-
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Admin Email</p>
                   {isEditingEmails ? (
                     <input
                       type="email"
                       value={emailData.adminEmail}
-                      onChange={(e) =>
-                        setEmailData({ ...emailData, adminEmail: e.target.value })
-                      }
+                      onChange={(e) => setEmailData({ ...emailData, adminEmail: e.target.value })}
                       className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
                     />
                   ) : (
@@ -522,18 +450,14 @@ const CompanyDetails = () => {
                 </div>
 
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
-                    CIN Number
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">CIN Number</p>
                   <p className="text-md text-gray-900 dark:text-gray-100 font-semibold break-words">
                     {company?.CIN || "Not Provided"}
                   </p>
                 </div>
 
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
-                    Business File
-                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Business File</p>
                   <a
                     href={company?.businessFile}
                     target="_blank"
@@ -544,59 +468,58 @@ const CompanyDetails = () => {
                   </a>
                 </div>
 
-                {/* Buttons */}
+                {/* Actions & Buttons */}
                 <div className="col-span-full">
-                  <div className="flex flex-col sm:flex-row justify-end gap-4 sm:gap-6 mt-8">
-                    {/* NEW: Add Job button */}
-  <button
-    onClick={() => navigate(`/admin/for-admin/add-job/${companyId}`)}
-    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-  >
-    + Add Job
-  </button>
-
-
-                    <div className="col-span-full flex justify-end gap-4">
-                      {isEditingEmails ? (
-                        <>
-                          <button
-                            onClick={() => setIsEditingEmails(false)}
-                            className="px-4 py-2 bg-gray-500 text-white rounded-md"
-                          >
-                            Cancel
-                          </button>
-
-                          <button
-                            onClick={handleUpdateEmails}
-                            disabled={emailLoading}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md"
-                          >
-                            {emailLoading ? "Saving..." : "Save Emails"}
-                          </button>
-                        </>
-                      ) : (
+                  <div className="flex flex-col sm:flex-row flex-wrap justify-end gap-4 mt-6">
+                    {/* Edit Email Controls */}
+                    {isEditingEmails ? (
+                      <>
                         <button
-                          onClick={() => setIsEditingEmails(true)}
-                          className="px-4 py-2 bg-yellow-600 text-white rounded-md"
+                          onClick={() => setIsEditingEmails(false)}
+                          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
                         >
-                          Edit Emails
+                          Cancel
                         </button>
-                      )}
-                    </div>
+                        <button
+                          onClick={handleUpdateEmails}
+                          disabled={emailLoading}
+                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
+                        >
+                          {emailLoading ? "Saving..." : "Save Emails"}
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setIsEditingEmails(true)}
+                        className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
+                      >
+                        Edit Emails
+                      </button>
+                    )}
+
+                    {/* Add Job Button */}
                     <button
-                      onClick={() =>
-                        navigate(`/admin/recruiters/${companyId}`)
-                      }
-                      className="w-full sm:w-auto px-6 py-3 text-white bg-blue-700 dark:bg-blue-600 border-2 border-transparent rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-400 hover:border-blue-700 dark:hover:border-blue-600 hover:font-bold transition-all duration-200"
+                      onClick={() => navigate(`/admin/for-admin/add-job/${companyId}`)}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                    >
+                      + Add Job
+                    </button>
+
+                    {/* Recruiters List Button */}
+                    <button
+                      onClick={() => navigate(`/admin/recruiters/${companyId}`)}
+                      className="px-6 py-2 text-white bg-blue-700 dark:bg-blue-600 rounded-md hover:bg-blue-800 dark:hover:bg-blue-700 transition-colors"
                     >
                       Recruiters List
                     </button>
 
+                    {/* Delete Company Button */}
                     <button
-                      onClick={onConfirmDelete}
-                      className={`w-full sm:w-auto px-6 py-3 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors duration-200 ${dloading && "cursor-not-allowed opacity-50"
-                        }`}
+                      onClick={() => setShowDeleteModal(true)}
                       disabled={dloading}
+                      className={`px-6 py-2 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors ${
+                        dloading ? "cursor-not-allowed opacity-50" : ""
+                      }`}
                     >
                       {dloading ? "Deleting..." : "Delete Company"}
                     </button>

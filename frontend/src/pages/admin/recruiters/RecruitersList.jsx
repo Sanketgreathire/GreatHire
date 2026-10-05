@@ -340,8 +340,9 @@ const RecruitersList = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        setRecruiterList(response.data.recruiters || []);
-      } else {
+  console.log("RECRUITERS API RESPONSE:", response.data.recruiters);
+  setRecruiterList(response.data.recruiters || []);
+} else {
         toast.error(response.data.message || "Failed to fetch recruiters");
       }
     } catch (err) {
@@ -460,56 +461,169 @@ const RecruitersList = () => {
     }
   };
 
-  // Update recruiter credits
-  const updateRecruiterCredits = async (data) => {
-    try {
-      const response = await axios.put(
-        `${ADMIN_API_END_POINT}/update-recruiter-credits`,
-        data,
-        { withCredentials: true }
+  
+
+const updateRecruiterCredits = async (data) => {
+  try {
+    // -----------------------------
+    // Validate AI Credits
+    // -----------------------------
+    if (
+      data?.limitCredits === "" ||
+      data?.limitCredits === null ||
+      data?.limitCredits === undefined
+    ) {
+      toast.error("Please enter AI Credits");
+      return;
+    }
+
+    const aiCredits = Number(data.limitCredits);
+
+    if (!Number.isInteger(aiCredits)) {
+      toast.error("AI Credits must be a whole number");
+      return;
+    }
+
+    if (aiCredits < 0 || aiCredits > 5) {
+      toast.error("AI Credits must be between 0 and 5");
+      return;
+    }
+
+    // -----------------------------
+    // Validate Company ID
+    // -----------------------------
+    if (!data?.companyId) {
+      console.error(
+        "Company ID missing from update data:",
+        data
       );
-      if (response.data.success) {
-        toast.success("Credits updated successfully");
-        const updatedCompany = response.data.company;
-        // Immediately update the recruiter list with fresh values from the response
+
+      toast.error("Company ID is missing");
+      return;
+    }
+
+    // -----------------------------
+    // Create API payload
+    // -----------------------------
+    const payload = {
+      companyId: data.companyId,
+      limitCredits: aiCredits,
+    };
+
+    if (data.jobPosts !== undefined) {
+      payload.customMaxJobPosts = Number(data.jobPosts);
+    }
+
+    if (data.customCredits !== undefined) {
+      payload.customCreditsForCandidates = Number(
+        data.customCredits
+      );
+    }
+
+    console.log("UPDATE CREDITS PAYLOAD:", payload);
+
+    // -----------------------------
+    // API Request
+    // -----------------------------
+    const response = await axios.put(
+      `${ADMIN_API_END_POINT}/update-recruiter-credits`,
+      payload,
+      {
+        withCredentials: true,
+      }
+    );
+
+    console.log(
+      "UPDATE CREDITS RESPONSE:",
+      response.data
+    );
+
+    console.log("UPDATED AI CREDITS:", {
+      aiSourcingCredits:
+        response.data?.company?.aiSourcingCredits,
+    });
+
+    // -----------------------------
+    // Success
+    // -----------------------------
+    if (response.data?.success) {
+      toast.success(
+        response.data?.message ||
+          "Credits updated successfully"
+      );
+
+      const updatedCompany =
+        response.data?.company;
+
+      // Update recruiter list immediately
+      if (updatedCompany) {
         setRecruiterList((prev) =>
           prev.map((r) =>
             r.companyId === updatedCompany._id
               ? {
                   ...r,
-                  maxJobPosts: updatedCompany.maxJobPosts,
-                  customMaxJobPosts: updatedCompany.customMaxJobPosts,
-                  creditedForJobs: updatedCompany.creditedForJobs,
-                  creditedForCandidates: updatedCompany.creditedForCandidates,
-                  customCreditsForCandidates: updatedCompany.customCreditsForCandidates,
-                  plan: updatedCompany.plan,
-                  freeJobsPosted: updatedCompany.freeJobsPosted,
-                  planJobsPostedThisMonth: updatedCompany.planJobsPostedThisMonth,
+
+                  maxJobPosts:
+                    updatedCompany.maxJobPosts,
+
+                  customMaxJobPosts:
+                    updatedCompany.customMaxJobPosts,
+
+                  creditedForJobs:
+                    updatedCompany.creditedForJobs,
+
+                  creditedForCandidates:
+                    updatedCompany.creditedForCandidates,
+
+                  customCreditsForCandidates:
+                    updatedCompany.customCreditsForCandidates,
+
+                  // Correct AI Credits field
+                  aiSourcingCredits:
+                    updatedCompany.aiSourcingCredits,
+
+                  plan:
+                    updatedCompany.plan,
+
+                  freeJobsPosted:
+                    updatedCompany.freeJobsPosted,
+
+                  planJobsPostedThisMonth:
+                    updatedCompany.planJobsPostedThisMonth,
                 }
               : r
           )
         );
-        // Also update selectedCreditsRecruiter so modal shows correct value if reopened
-        setSelectedCreditsRecruiter((prev) =>
-          prev ? {
-            ...prev,
-            maxJobPosts: updatedCompany.maxJobPosts,
-            customMaxJobPosts: updatedCompany.customMaxJobPosts,
-            creditedForCandidates: updatedCompany.creditedForCandidates,
-            plan: updatedCompany.plan,
-            freeJobsPosted: updatedCompany.freeJobsPosted,
-            planJobsPostedThisMonth: updatedCompany.planJobsPostedThisMonth,
-          } : prev
-        );
-        setShowCreditsModal(false);
-      } else {
-        toast.error(response.data.message || "Failed to update credits");
       }
-    } catch (err) {
-      console.error("updateCredits error", err);
-      toast.error("Error updating credits");
+
+      // Close modal
+      setShowCreditsModal(false);
+
+      // Refresh recruiter list
+      await fetchRecruiterList();
+    } else {
+      toast.error(
+        response.data?.message ||
+          "Failed to update credits"
+      );
     }
-  };
+  } catch (err) {
+    console.error(
+      "updateRecruiterCredits error:",
+      err
+    );
+
+    console.error(
+      "Backend error:",
+      err?.response?.data
+    );
+
+    toast.error(
+      err?.response?.data?.message ||
+        "Error updating credits"
+    );
+  }
+};
 
   // Delete recruiter
   const deleteRecruiter = async (recruiterId, userEmail, companyId, isAdmin) => {
@@ -1034,9 +1148,10 @@ const RecruitersList = () => {
                             <button
                               title="Update credits"
                               onClick={() => {
-                                setSelectedCreditsRecruiter(r);
-                                setShowCreditsModal(true);
-                              }}
+  console.log("FULL RECRUITER OBJECT:", r);
+  setSelectedCreditsRecruiter(r);
+  setShowCreditsModal(true);
+}}
                               className="p-1.5 rounded bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
                             >
                               <CreditCard
@@ -1174,16 +1289,16 @@ const RecruitersList = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </div> 
       )}
 
       {/* Update Credits Modal */}
       <UpdateCreditsModal
-        isOpen={showCreditsModal}
-        onClose={() => setShowCreditsModal(false)}
-        recruiter={selectedCreditsRecruiter}
-        onUpdate={updateRecruiterCredits}
-      />
+  isOpen={showCreditsModal}
+  onClose={() => setShowCreditsModal(false)}
+  currentData={selectedCreditsRecruiter}
+  onUpdate={updateRecruiterCredits}
+/>
     </>
   );
 };
