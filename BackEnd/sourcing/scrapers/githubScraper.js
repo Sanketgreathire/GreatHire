@@ -18,6 +18,11 @@ export class GitHubScraper {
    */
   async searchDevelopers(criteria = {}, limit = 30, page = 1) {
     try {
+      if (!this.token) {
+        console.warn('GitHub auto-sourcing skipped: GITHUB_TOKEN is not configured. Add a valid GitHub token to .env to enable GitHub developer search.');
+        return [];
+      }
+
       const { language, location, minRepos = 1, minFollowers = 0 } = criteria;
       
       // Build search query
@@ -83,6 +88,11 @@ export class GitHubScraper {
 
       return candidates;
     } catch (error) {
+      const status = error.response?.status;
+      if (status === 403) {
+        console.warn('GitHub API rate limit reached. Add a valid GITHUB_TOKEN or try again later.');
+        return [];
+      }
       console.error('GitHub search error:', error.message);
       throw new Error(`GitHub scraping failed: ${error.message}`);
     }

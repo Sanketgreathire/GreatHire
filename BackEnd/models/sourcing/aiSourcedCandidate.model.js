@@ -25,7 +25,6 @@ const aiSourcedCandidateSchema = new mongoose.Schema(
 
 // Compound indexes
 aiSourcedCandidateSchema.index({ recruiterId: 1, createdAt: -1 });
-aiSourcedCandidateSchema.index({ aiSourceType: 1 });
 
 export const AISourcedCandidate =
   mongoose.models.AISourcedCandidate ||

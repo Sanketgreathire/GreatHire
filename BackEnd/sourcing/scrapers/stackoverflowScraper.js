@@ -17,22 +17,28 @@ export class StackOverflowScraper {
   async searchDevelopers(criteria = {}, limit = 30) {
     try {
       const { location = 'India' } = criteria;
+      const normalizedLocation = (location || '').trim();
       
-      console.log(`🔍 Searching Stack Overflow for developers in ${location}...`);
+      console.log(`🔍 Searching Stack Overflow for developers in ${normalizedLocation || 'all locations'}...`);
 
-      // Search users by location
       const response = await axios.get(`${this.baseUrl}/users`, {
         params: {
           order: 'desc',
           sort: 'reputation',
-          inname: location,
           site: 'stackoverflow',
           pagesize: Math.min(limit, 100),
           filter: 'default'
         }
       });
 
-      const users = response.data.items || [];
+      const allUsers = response.data.items || [];
+      const users = normalizedLocation
+        ? allUsers.filter(user => {
+            const userLocation = (user.location || '').toLowerCase();
+            const targetLocation = normalizedLocation.toLowerCase();
+            return !userLocation || userLocation.includes(targetLocation) || targetLocation.includes(userLocation);
+          })
+        : allUsers;
       const candidates = [];
 
       for (const user of users) {
