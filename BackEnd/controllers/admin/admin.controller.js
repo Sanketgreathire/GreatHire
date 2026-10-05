@@ -159,8 +159,10 @@ export const login = async (req, res) => {
 
     // creating token data by user id
     const tokenData = {
-      userId: user._id,
-    };
+  userId: user._id,
+  role: user.role,
+  userType: "admin",
+};
     // create token by token data
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",

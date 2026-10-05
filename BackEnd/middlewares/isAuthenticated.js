@@ -28,20 +28,38 @@ const isAuthenticated = async (req, res, next) => {
         success: false,
       });
     }
+    // Extract user ID from the decoded token
+const userId = decode.id || decode.userId;
+req.id = userId;
 
-    const userId = decode.id || decode.userId;
-    req.id = userId;
+let user;
 
-    // Find user and set req.user for notification controller
-    let user = await User.findById(userId) || 
-               await Recruiter.findById(userId) || 
-               await Admin.findById(userId);
-    
-    if (user) {
-      req.user = user;
-    }
+if (
+  decode.userType === "admin" ||
+  decode.role === "admin" ||
+  decode.role === "Owner"
+) {
+  user = await Admin.findById(userId);
+} else if (
+  decode.userType === "recruiter" ||
+  decode.role === "recruiter"
+) {
+  user = await Recruiter.findById(userId);
+} else {
+  user = await User.findById(userId);
+}
 
-    next();
+if (!user) {
+  return res.status(401).json({
+    message: "User not found",
+    success: false,
+  });
+}
+
+req.user = user;
+
+next();
+
   } catch (error) {
     console.error("Auth error:", error);
     return res.status(500).json({

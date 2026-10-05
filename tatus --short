@@ -1,0 +1,310 @@
+[1mdiff --git a/frontend/src/pages/recruiter/ApplicantDetails.jsx b/frontend/src/pages/recruiter/ApplicantDetails.jsx[m
+[1mindex da19df5e..4063e8a3 100644[m
+[1m--- a/frontend/src/pages/recruiter/ApplicantDetails.jsx[m
+[1m+++ b/frontend/src/pages/recruiter/ApplicantDetails.jsx[m
+[36m@@ -11,7 +11,6 @@[m [mimport {[m
+   APPLICATION_API_END_POINT,[m
+   VERIFICATION_API_END_POINT,[m
+   COMPANY_API_END_POINT,[m
+[31m-  INTERVIEW_API_END_POINT,[m
+ } from "@/utils/ApiEndPoint";[m
+ [m
+ function Tag({ children, primary }) {[m
+[36m@@ -48,11 +47,16 @@[m [mconst ApplicantDetails = ({[m
+   setApplicants,[m
+   shouldDeductCredit = false,[m
+ }) => {[m
+[32m+[m[32m//first three state newly added[m
+[32m+[m[32m  const [isPreviewLoading, setIsPreviewLoading] = useState(false);[m
+[32m+[m[32m  const [isStartLoading, setIsStartLoading] = useState(false);[m
+[32m+[m[32m  const [interviewStatus, setInterviewStatus] = useState(app?.aiInterview?.status || "");[m
+[32m+[m
+   const [loading, setLoading] = useState(0);[m
+[31m-  const [selectedDecision, setSelectedDecision] = useState(app?.status ?? null);[m
+   const [creditDeducted, setCreditDeducted] = useState(false);[m
+   const [freshApplicant, setFreshApplicant] = useState(null);[m
+[31m-  const [interviewLoading, setInterviewLoading] = useState(false);[m
+[32m+[m[32m  // for interview questions and call logs comments, added new states[m
+[32m+[m[32m  // const [interviewLoading, setInterviewLoading] = useState(false);[m
+   const [showPreviewModal, setShowPreviewModal] = useState(false);[m
+   const [interviewQuestions, setInterviewQuestions] = useState("");[m
+   const [matchScore, setMatchScore] = useState(app?.matchScore ?? null);[m
+[36m@@ -64,9 +68,11 @@[m [mconst ApplicantDetails = ({[m
+   const { company } = useSelector((state) => state.company);[m
+   const dispatch = useDispatch();[m
+ [m
+[31m-  useEffect(() => {[m
+[31m-    setSelectedDecision(app?.status ?? null);[m
+[31m-  }, [app?._id, app?.status]);[m
+[32m+[m[32m//newly added useEffect to set interviewStatus when app changes[m
+[32m+[m[32museEffect(() => {[m
+[32m+[m[32m  setInterviewStatus(app?.aiInterview?.status || "");[m
+[32m+[m[32m}, [app?._id, app?.aiInterview?.status]);[m
+[32m+[m
+ [m
+   // Always fetch fresh applicant data on open[m
+   useEffect(() => {[m
+[36m@@ -179,8 +185,6 @@[m [mconst ApplicantDetails = ({[m
+ [m
+   const handleOverrideDecision = async (decision) => {[m
+     if (!applicantId) return;[m
+[31m-    const previousDecision = selectedDecision;[m
+[31m-    setSelectedDecision(decision);[m
+     try {[m
+       setLoading(decision === "Shortlisted" ? 1 : 2);[m
+       const res = await axios.post([m
+[36m@@ -201,45 +205,71 @@[m [mconst ApplicantDetails = ({[m
+           )[m
+         );[m
+         toast.success(`Application overridden to ${decision}`);[m
+[31m-      } else {[m
+[31m-        setSelectedDecision(previousDecision);[m
+       }[m
+     } catch (err) {[m
+[31m-      setSelectedDecision(previousDecision);[m
+       toast.error(err?.response?.data?.message || "Override failed");[m
+     } finally {[m
+       setLoading(0);[m
+     }[m
+   };[m
+ [m
+[31m-  const startAIInterview = async () => {[m
+[31m-    if (!applicantId) {[m
+[31m-      toast.error("Invalid applicant ID");[m
+[31m-      return;[m
+[31m-    }[m
+[31m-    try {[m
+[31m-      setInterviewLoading(true);[m
+[31m-      const res = await axios.post([m
+[31m-        `${INTERVIEW_API_END_POINT}/start/${applicantId}`,[m
+[31m-        {},[m
+[31m-        { withCredentials: true }[m
+[32m+[m
+[32m+[m[32m  // edited function to start AI interview[m
+[32m+[m[32m const startAIInterview = async () => {[m
+[32m+[m[32m  if (!applicantId) {[m
+[32m+[m[32m    toast.error("Invalid applicant ID");[m
+[32m+[m[32m    return;[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  try {[m
+[32m+[m[32m    setIsStartLoading(true);[m
+[32m+[m
+[32m+[m[32m    const res = await axios.post([m
+[32m+[m[32m      `/api/v1/interview/start/${applicantId}`,[m
+[32m+[m[32m      {},[m
+[32m+[m[32m      { withCredentials: true }[m
+[32m+[m[32m    );[m
+[32m+[m
+[32m+[m[32m    if (res.data.success) {[m
+[32m+[m[32m      const newInterviewStatus =[m
+[32m+[m[32m        res.data.aiInterview?.status ||[m
+[32m+[m[32m        res.data.status ||[m
+[32m+[m[32m        "Scheduled";[m
+[32m+[m
+[32m+[m[32m      // Immediately update this modal's status[m
+[32m+[m[32m      setInterviewStatus(newInterviewStatus);[m
+[32m+[m
+[32m+[m[32m      // Update parent applicants list too[m
+[32m+[m[32m      setApplicants((prev) =>[m
+[32m+[m[32m        prev.map((a) =>[m
+[32m+[m[32m          a._id === app._id[m
+[32m+[m[32m            ? {[m
+[32m+[m[32m                ...a,[m
+[32m+[m[32m                status: "Interview Schedule",[m
+[32m+[m[32m                aiInterview: {[m
+[32m+[m[32m                  ...(a.aiInterview || {}),[m
+[32m+[m[32m                  ...(res.data.aiInterview || {}),[m
+[32m+[m[32m                  status: newInterviewStatus,[m
+[32m+[m[32m                },[m
+[32m+[m[32m              }[m
+[32m+[m[32m            : a[m
+[32m+[m[32m        )[m
+       );[m
+[31m-      if (res.data.success) {[m
+[31m-        setMatchScore(res.data.matchScore);[m
+[31m-        setApplicants((prev) =>[m
+[31m-          prev.map((a) => a._id === app._id ? { ...a, status: "Interview Schedule" } : a)[m
+[31m-        );[m
+[31m-        toast.success(`AI Interview Call Started! Call ID: ${res.data.call.call_id}`);[m
+[31m-      } else {[m
+[31m-        toast.error(res.data.message || "Failed to start interview");[m
+[31m-      }[m
+[31m-    } catch (error) {[m
+[31m-      toast.error(error?.response?.data?.message || "Error starting interview");[m
+[31m-    } finally {[m
+[31m-      setInterviewLoading(false);[m
+[31m-    }[m
+[31m-  };[m
+ [m
+[32m+[m[32m      toast.success([m
+[32m+[m[32m        `AI Interview Call Started! Call ID: ${res.data.call?.call_id || "Created"}`[m
+[32m+[m[32m      );[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      toast.error(res.data.message || "Failed to start interview");[m
+[32m+[m[32m    }[m
+[32m+[m[32m  } catch (error) {[m
+[32m+[m[32m    toast.error([m
+[32m+[m[32m      error?.response?.data?.message || "Error starting interview"[m
+[32m+[m[32m    );[m
+[32m+[m[32m  } finally {[m
+[32m+[m[32m    setIsStartLoading(false);[m
+[32m+[m[32m  }[m
+[32m+[m[32m};[m
+   const fetchCallLogs = async () => {[m
+     if (!applicantId) {[m
+       toast.error("Invalid applicant ID");[m
+[36m@@ -248,7 +278,7 @@[m [mconst ApplicantDetails = ({[m
+     try {[m
+       setCallLogsLoading(true);[m
+       const res = await axios.post([m
+[31m-        `${INTERVIEW_API_END_POINT}/call-logs/${applicantId}`,[m
+[32m+[m[32m        `/api/v1/interview/call-logs/${applicantId}`,[m
+         {},[m
+         { withCredentials: true }[m
+       );[m
+[36m@@ -278,9 +308,10 @@[m [mconst ApplicantDetails = ({[m
+       return;[m
+     }[m
+     try {[m
+[31m-      setInterviewLoading(true);[m
+[32m+[m[32m      //edit setIsPreviewLoading to true[m
+[32m+[m[32m      setIsPreviewLoading(true);[m
+       const res = await axios.post([m
+[31m-        `${INTERVIEW_API_END_POINT}/preview/${applicantId}`,[m
+[32m+[m[32m        `/api/v1/interview/preview/${applicantId}`,[m
+         {},[m
+         { withCredentials: true }[m
+       );[m
+[36m@@ -293,7 +324,8 @@[m [mconst ApplicantDetails = ({[m
+     } catch (error) {[m
+       toast.error(error?.response?.data?.message || "Error loading questions");[m
+     } finally {[m
+[31m-      setInterviewLoading(false);[m
+[32m+[m[32m      //edit setIsPreviewLoading to false[m
+[32m+[m[32m      setIsPreviewLoading(false);[m
+     }[m
+   };[m
+ [m
+[36m@@ -570,19 +602,25 @@[m [mconst ApplicantDetails = ({[m
+                 </>[m
+               )}[m
+ [m
+[31m-              {/* Interview Status */}[m
+[31m-              {mergedApp?.aiInterview?.status && ([m
+[31m-                <>[m
+[31m-                  <Divider />[m
+[31m-                  <SectionTitle>AI Interview</SectionTitle>[m
+[31m-                  <div className="space-y-2">[m
+[31m-                    <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">[m
+[31m-                      <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Status:</span>[m
+[31m-                      <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">{mergedApp.aiInterview.status}</span>[m
+[31m-                    </div>[m
+[31m-                  </div>[m
+[31m-                </>[m
+[31m-              )}[m
+[32m+[m[32m             {/* Interview Status */}[m
+[32m+[m[32m             {/* updated to show interview status only if it exists */}[m
+[32m+[m[32m{interviewStatus && ([m
+[32m+[m[32m  <>[m
+[32m+[m[32m    <Divider />[m
+[32m+[m[32m    <SectionTitle>AI Interview</SectionTitle>[m
+[32m+[m[32m    <div className="space-y-2">[m
+[32m+[m[32m      <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg">[m
+[32m+[m[32m        <span className="text-sm font-medium text-purple-700 dark:text-purple-300">[m
+[32m+[m[32m          Status:[m
+[32m+[m[32m        </span>[m
+[32m+[m
+[32m+[m[32m        <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">[m
+[32m+[m[32m          {interviewStatus}[m
+[32m+[m[32m        </span>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  </>[m
+[32m+[m[32m)}[m
+ [m
+               {/* Actions */}[m
+               <Divider />[m
+[36m@@ -599,22 +637,28 @@[m [mconst ApplicantDetails = ({[m
+                         {screeningLoading ? "Screening..." : "⚡ Screen AI"}[m
+                       </button>[m
+                       <button[m
+[31m-                        onClick={previewInterviewQuestions}[m
+[31m-                        disabled={interviewLoading}[m
+[31m-                        className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"[m
+[31m-                      >[m
+[31m-                        {interviewLoading ? "Loading..." : "👁️ Preview"}[m
+[31m-                      </button>[m
+[31m-                      <button[m
+[31m-                        onClick={startAIInterview}[m
+[31m-                        disabled={interviewLoading || mergedApp?.aiInterview?.status === "Scheduled"}[m
+[31m-                        className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"[m
+[31m-                      >[m
+[31m-                        {interviewLoading ? "Calling..." : mergedApp?.aiInterview?.status === "Scheduled" ? "📞 Called" : "📞 AI Call"}[m
+[31m-                      </button>[m
+[32m+[m[32m  onClick={previewInterviewQuestions}[m
+[32m+[m[32m  disabled={isPreviewLoading}[m
+[32m+[m[32m  className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"[m
+[32m+[m[32m>[m
+[32m+[m[32m  {isPreviewLoading ? "Loading..." : "👁️ Preview"}[m
+[32m+[m[32m</button>[m
+[32m+[m[32m{/* updated to disable button if interviewStatus is "Scheduled" */}[m
+[32m+[m[32m<button[m
+[32m+[m[32m  onClick={startAIInterview}[m
+[32m+[m[32m  disabled={isStartLoading || interviewStatus === "Scheduled"}[m
+[32m+[m[32m  className="flex-1 py-2.5 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"[m
+[32m+[m[32m>[m
+[32m+[m[32m  {isStartLoading[m
+[32m+[m[32m    ? "Scheduling..."[m
+[32m+[m[32m    : interviewStatus === "Scheduled"[m
+[32m+[m[32m      ? "📞 Call Scheduled"[m
+[32m+[m[32m      : "📞 AI Call"}[m
+[32m+[m[32m</button>[m
+                       <button[m
+                         onClick={fetchCallLogs}[m
+[31m-                        disabled={callLogsLoading || !mergedApp?.aiInterview?.status}[m
+[32m+[m[32m                        /* updated to disable button if callLogsLoading or interviewStatus is not available */[m
+[32m+[m[32m                        disabled={callLogsLoading || !interviewStatus}[m
+                         className="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"[m
+                       >[m
+                         {callLogsLoading ? "Loading..." : "📋 Logs"}[m
+[36m@@ -627,24 +671,22 @@[m [mconst ApplicantDetails = ({[m
+                 {user?.role === "recruiter" && ([m
+                   <div className="flex gap-3">[m
+                     <button[m
+[31m-                      aria-pressed={selectedDecision === "Shortlisted"}[m
+[31m-                      className={`flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${[m
+[31m-                        selectedDecision === "Shortlisted" ? "ring-4 ring-green-300 ring-offset-2" : "ring-0"[m
+[32m+[m[32m                      className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${[m
+[32m+[m[32m                        mergedApp?.status === "Shortlisted" ? "bg-green-600 ring-2 ring-green-300" : "bg-green-500 hover:bg-green-600"[m
+                       }`}[m
+                       disabled={loading !== 0}[m
+                       onClick={() => handleOverrideDecision("Shortlisted")}[m
+                     >[m
+[31m-                      {loading === 1 ? "Updating..." : selectedDecision === "Shortlisted" ? "✓ Shortlisted" : "✅ Shortlist"}[m
+[32m+[m[32m                      {loading === 1 ? "Updating..." : mergedApp?.status === "Shortlisted" ? "✓ Shortlisted" : "✅ Shortlist"}[m
+                     </button>[m
+                     <button[m
+[31m-                      aria-pressed={selectedDecision === "Rejected"}[m
+[31m-                      className={`flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${[m
+[31m-                        selectedDecision === "Rejected" ? "ring-4 ring-red-300 ring-offset-2" : "ring-0"[m
+[32m+[m[32m                      className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${[m
+[32m+[m[32m                        mergedApp?.status === "Rejected" ? "bg-red-600 ring-2 ring-red-300" : "bg-red-500 hover:bg-red-600"[m
+                       }`}[m
+                       disabled={loading !== 0}[m
+                       onClick={() => handleOverrideDecision("Rejected")}[m
+                     >[m
+[31m-                      {loading === 2 ? "Updating..." : selectedDecision === "Rejected" ? "✕ Rejected" : "❌ Reject"}[m
+[32m+[m[32m                      {loading === 2 ? "Updating..." : mergedApp?.status === "Rejected" ? "✕ Rejected" : "❌ Reject"}[m
+                     </button>[m
+                   </div>[m
+                 )}[m
+[36m@@ -675,7 +717,7 @@[m [mconst ApplicantDetails = ({[m
+                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">[m
+                   <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col p-6">[m
+                     <div className="flex justify-between items-center mb-4">[m
+[31m-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Communication Logs</h3>[m
+[32m+[m[32m                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">📞 Call Logs</h3>[m
+                       <div className="flex gap-2">[m
+                         <button[m
+                           onClick={fetchCallLogs}[m
