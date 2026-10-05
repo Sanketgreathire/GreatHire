@@ -594,7 +594,7 @@ function RecruiterPlans() {
                       </div>
 
                       {/* Jobs & Candidates summary */}
-                      <div className="flex gap-2 mb-4 flex-wrap">
+                      {/* <div className="flex gap-2 mb-4 flex-wrap">
                         <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
                           📋 {plan.jobs}
                         </span>
@@ -603,7 +603,7 @@ function RecruiterPlans() {
                             👥 {plan.resumes}
                           </span>
                         )}
-                      </div>
+                      </div> */}
 
                       {/* Features */}
                       <ul className="space-y-2 text-sm flex-1 mb-4">
