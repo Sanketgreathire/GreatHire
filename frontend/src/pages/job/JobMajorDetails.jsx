@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import React from "react";
+
 import { BsPersonWorkspace } from "react-icons/bs";
 import { HiLightBulb } from "react-icons/hi";
 import { PiMoneyWavyFill } from "react-icons/pi";
@@ -13,6 +13,11 @@ import { Helmet } from "react-helmet-async";
 
 // import dompurify to display the formatted description
 import DOMPurify from "dompurify";
+import PropTypes from "prop-types";
+
+// At the top of JobMajorDetails.jsx, above the component
+
+
 
 const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
@@ -29,12 +34,15 @@ const JobMajorDetails = ({ selectedJob }) => {
       </Helmet>
 
 
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 px-4 sm:px-6">
+        {/* Job details */}
+
         {/* Job details */}
         <div className="space-y-2 flex flex-col gap-6 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-300">
             Job details
           </h1>
+
 
           {/* Experience Section */}
           <div className="space-y-2">
@@ -45,8 +53,62 @@ const JobMajorDetails = ({ selectedJob }) => {
               </span>
             </h3>
 
-            <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
-              {selectedJob?.jobDetails?.experience}
+            <div className="inline-flex px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800 dark:bg-slate-200
+             dark:text-gray-700"> 
+              {(() => {
+                const raw = selectedJob?.jobDetails?.experience;
+                if (!raw) return "Experience not specified";
+
+                const s = String(raw).trim();
+
+                // Rule 1: Fresher flag wins over any contradictory range
+                // Rule 1: If it starts with "Fresher", keep the label but append the range
+                if (/^fresher/i.test(s)) {
+                  // Look for "From X To Y" range
+                  const fFromTo = s.match(/from\s*(\d+)\s*to\s*(\d+)/i);
+                  if (fFromTo) {
+                    const lo = Number(fFromTo[1]);
+                    const hi = Number(fFromTo[2]);
+                    if (lo === 0 && hi === 0) return "Fresher";
+                    if (lo === hi) return `Fresher, ${lo} year${lo === 1 ? "" : "s"} experience`;
+                    return `Fresher, ${lo} - ${hi} years experience`;
+                  }
+                  // Look for "X - Y" range
+                  const fRange = s.match(/(\d+)\s*[-–]\s*(\d+)/);
+                  if (fRange) {
+                    const lo = Number(fRange[1]);
+                    const hi = Number(fRange[2]);
+                    if (lo === 0 && hi === 0) return "Fresher";
+                    if (lo === hi) return `Fresher, ${lo} year${lo === 1 ? "" : "s"} experience`;
+                    return `Fresher, ${lo} - ${hi} years experience`;
+                  }
+                  // Just "Fresher" with no range
+                  return "Fresher";
+                }
+
+                // Rule 2: Try "From X To Y" pattern
+                const fromTo = s.match(/from\s*(\d+)\s*to\s*(\d+)/i);
+                if (fromTo) {
+                  const lo = Number(fromTo[1]);
+                  const hi = Number(fromTo[2]);
+                  if (lo === 0 && hi === 0) return "Fresher";
+                  if (lo === hi) return `${lo} year${lo === 1 ? "" : "s"} experience`;
+                  return `${lo} - ${hi} years experience`;
+                }
+
+                // Rule 3: Try "X - Y years" pattern
+                const range = s.match(/(\d+)\s*[-–]\s*(\d+)/);
+                if (range) {
+                  const lo = Number(range[1]);
+                  const hi = Number(range[2]);
+                  if (lo === 0 && hi === 0) return "Fresher";
+                  if (lo === hi) return `${lo} year${lo === 1 ? "" : "s"} experience`;
+                  return `${lo} - ${hi} years experience`;
+                }
+
+                // Rule 4: Fallback — show raw value
+                return s;
+              })()}
             </div>
           </div>
 
@@ -68,29 +130,39 @@ const JobMajorDetails = ({ selectedJob }) => {
                   {selectedJob?.jobDetails?.shift}
                 </div>
               )}
+
             </div>
           </div>
 
           {/* Pay Section */}
+
           <div className="space-y-2">
             <h3 className="text-lg flex items-center gap-2 text-gray-500 dark:text-gray-100">
               <PiMoneyWavyFill />
               <span className="font-bold text-black dark:text-gray-100">Pay</span>
             </h3>
 
-            <div className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-200 text-sm text-gray-800">
-              {selectedJob?.jobDetails?.salary
-                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                .split("-")
-                .map((part, index) => (
-                  <span key={index}>
-                    ₹{part.trim()}
-                    {index === 0 ? " - " : ""}
-                  </span>
-                ))}
+            <div className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-200 text-sm
+             text-gray-800 dark:bg-slate-200 dark:text-gray-700">
+              {(() => {
+                const salary = selectedJob?.jobDetails?.salary;
+                if (typeof salary !== "string" || !salary.trim()) {
+                  return "Salary not specified";
+                }
+                const parts = salary
+                  .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                  .split("-")
+                  .map((p) => p.trim())
+                  .filter(Boolean);
+                if (parts.length === 1) return `₹${parts[0]}`;
+                if (parts.length === 2) return `₹${parts[0]} - ₹${parts[1]}`;
+                return `₹${parts.join(" - ₹")}`;
+              })()}
             </div>
           </div>
         </div>
+
+
 
         {/* Profile Insight */}
         <div className="space-y-2 flex flex-col gap-6 border-b border-gray-200">
@@ -197,14 +269,14 @@ const JobMajorDetails = ({ selectedJob }) => {
                   <span
                     key={index}
                     className="
-            px-3 py-1 text-sm rounded-full
-            bg-gradient-to-r from-slate-200 to-slate-300
-            border border-slate-300 text-gray-800
-            shadow-sm transition-all duration-200
-            hover:-translate-y-0.5 hover:shadow-md
-            dark:from-slate-700 dark:to-slate-600
-            dark:text-gray-100 dark:border-slate-600
-          "
+      px-3 py-1 text-sm rounded-full
+      bg-gradient-to-r from-slate-200 to-slate-300
+      border border-slate-300 text-gray-800
+      shadow-sm transition-all duration-200
+      hover:-translate-y-0.5 hover:shadow-md
+      dark:from-slate-700 dark:to-slate-600
+      dark:text-gray-100 dark:border-slate-600
+    "
                   >
                     {skill}
                   </span>
@@ -215,64 +287,72 @@ const JobMajorDetails = ({ selectedJob }) => {
 
         </div>
 
-        {/* Full Job Description (✅ FIXED) */}
+        {/* Full Job Description */}
+
         <div className="space-y-2 flex flex-col gap-4 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-100">
             Full Job Description
           </h1>
 
+
           <div
             className="
-    prose prose-sm max-w-none
-    dark:prose-invert
-    text-gray-800
-    dark:text-gray-200
-    prose-headings:text-gray-900
-    dark:prose-headings:text-gray-100
-    prose-p:text-gray-700
-    dark:prose-p:text-gray-200
-    [&_ul]:list-disc [&_ul]:ml-6
-    [&_ol]:list-decimal [&_ol]:ml-6
-    [&_li]:ml-1 [&_li]:mb-1
-    prose-li:text-gray-700
-    dark:prose-li:text-gray-200
-    [&_*]:dark:!text-gray-200
-    [&_strong]:dark:!text-gray-100
-    [&_h1]:dark:!text-gray-100
-    [&_h2]:dark:!text-gray-100
-    [&_h3]:dark:!text-gray-100
-    [&_h4]:dark:!text-gray-100
-    [&_a]:dark:!text-blue-400
-    [&_ul_ul]:list-[circle]
-    [&_ul_ul_ul]:list-[square]
-    [&_ol_ol]:list-[lower-alpha]
-    [&_ol_ol_ol]:list-[lower-roman]
-    [&_ol[type='a']]:list-[lower-alpha]
-    [&_ol[type='A']]:list-[upper-alpha]
-    [&_ol[type='i']]:list-[lower-roman]
-    [&_ol[type='I']]:list-[upper-roman]
-  "
+          prose prose-sm max-w-none
+         
+          dark:prose-invert
+          text-gray-800
+          dark:text-gray-200
+          prose-headings:text-gray-900
+          dark:prose-headings:text-gray-100
+          prose-p:text-gray-700
+          dark:prose-p:text-gray-200
+          [&_ul]:list-disc [&_ul]:ml-6 
+          [&_ol]:list-decimal [&_ol]:ml-6
+          [&_li]:ml-1 [&_li]:mb-1
+          prose-li:text-gray-700
+          dark:prose-li:text-gray-200
+          [&_*]:dark:!text-gray-200
+          [&_strong]:dark:!text-gray-100
+          [&_h1]:dark:!text-gray-100
+          [&_h2]:dark:!text-gray-100
+          [&_h3]:dark:!text-gray-100
+          [&_h4]:dark:!text-gray-100
+          [&_a]:dark:!text-blue-400
+          [&_ul_ul]:list-[circle]
+          [&_ul_ul_ul]:list-[square]
+          [&_ol_ol]:list-[lower-alpha]
+          [&_ol_ol_ol]:list-[lower-roman]
+          [&_ol[type='a']]:list-[lower-alpha]
+          [&_ol[type='A']]:list-[upper-alpha]
+          [&_ol[type='i']]:list-[lower-roman]
+          [&_ol[type='I']]:list-[upper-roman]
+        "
+
             dangerouslySetInnerHTML={{
               __html: selectedJob?.jobDetails?.details
                 ? DOMPurify.sanitize(selectedJob.jobDetails.details)
                 : "<p>No description provided.</p>",
             }}
           />
+
         </div>
 
 
         {/* Benefits */}
+
         <div className="space-y-2 flex flex-col gap-3 border-b border-gray-200">
           <h1 className="text-xl font-bold dark:text-gray-100">
             Benifits
           </h1>
 
-          <ul className="ml-6 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
+          <ul className="ml-6 mr-4 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
             {selectedJob?.jobDetails?.benefits?.map((benifit, index) => (
               <li key={index}>{benifit}</li>
             ))}
           </ul>
         </div>
+
+
 
         {/* Qualifications */}
         <div className="space-y-2 flex flex-col gap-3 border-b border-gray-200">
@@ -280,12 +360,14 @@ const JobMajorDetails = ({ selectedJob }) => {
             Qualifications
           </h1>
 
-          <ul className="ml-6 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
+          <ul className="ml-6 mr-4 list-disc text-sm text-gray-600 dark:text-gray-100 space-y-1">
             {selectedJob?.jobDetails?.qualifications?.map((qualification, index) => (
               <li key={index}>{qualification}</li>
             ))}
           </ul>
         </div>
+
+        {/* Report Button */}
 
         {/* Report Button */}
         <div className="space-y-2 flex justify-end">
@@ -318,6 +400,10 @@ const JobMajorDetails = ({ selectedJob }) => {
       </div> */}
     </>
   );
+};
+
+JobMajorDetails.propTypes = {
+  selectedJob: PropTypes.object,
 };
 
 export default JobMajorDetails;

@@ -13,7 +13,7 @@ import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
 
-const flatLocations = Object.values(allLocations).flat();
+const flatLocations = [...new Set(Object.values(allLocations).flat())];
 
 
 

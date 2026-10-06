@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Share2 } from "lucide-react";
@@ -73,11 +73,10 @@ const ReferAndBoost = () => {
 
           {/* Reward Cards */}
           <div className="grid grid-cols-2 gap-3">
-            <div className={`rounded-xl border p-4 text-center space-y-1 transition-colors ${
-              isProfileBoosted
+            <div className={`rounded-xl border p-4 text-center space-y-1 transition-colors ${isProfileBoosted
                 ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
                 : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-            }`}>
+              }`}>
               <div className="text-2xl">{isProfileBoosted ? "✅" : "🔒"}</div>
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Profile Boost</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Top Priority in recruitment</p>
@@ -86,11 +85,10 @@ const ReferAndBoost = () => {
               )}
             </div>
 
-            <div className={`rounded-xl border p-4 text-center space-y-1 transition-colors ${
-              recruiterRewardEligible
+            <div className={`rounded-xl border p-4 text-center space-y-1 transition-colors ${recruiterRewardEligible
                 ? "bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-700"
                 : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-            }`}>
+              }`}>
               <div className="text-2xl">{recruiterRewardEligible ? "✅" : "🔒"}</div>
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Recruiter Contacts</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Get 15 recruiter details</p>
@@ -113,29 +111,40 @@ const ReferAndBoost = () => {
           </div>
 
           {/* Referral Link + Copy */}
+          {/* Referral Link + Copy */}
           <div className="space-y-1">
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Your Referral Link
             </p>
-            <div className="flex items-center gap-2">
+
+            {/* Mobile: stacked column; Desktop (sm+): single row */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              {/* Input — full width on both */}
               <input
                 readOnly
                 value={referralLink}
-                className="flex-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-700 dark:text-gray-300 truncate focus:outline-none"
+                title={referralLink}
+                onFocus={(e) => e.target.select()}
+                onClick={(e) => e.target.select()}
+                className="w-full sm:flex-1 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-700 dark:text-gray-300 truncate focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
-                onClick={handleCopy}
-                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
-              >
-                {copied ? "Copied ✓" : "Copy Link"}
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-1.5 px-4 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
-              >
-                <Share2 size={15} />
-                Share
-              </button>
+
+              {/* Buttons wrapper — row on mobile (side-by-side), inline on desktop */}
+              <div className="flex gap-2 sm:contents">
+                <button
+                  onClick={handleCopy}
+                  className="flex-1 sm:flex-none px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+                >
+                  {copied ? "Copied ✓" : "Copy Link"}
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <Share2 size={15} />
+                  Share
+                </button>
+              </div>
             </div>
           </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import  { useEffect, useState, useMemo, useCallback } from "react";
 import Job from "./Job";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { useSelector } from "react-redux";
@@ -9,33 +9,55 @@ import { Helmet } from "react-helmet-async";
 const JOBS_PER_PAGE = 9;
 
 const SavedJobs = () => {
-  const { getSaveJobs, saveJobsList, error, jobs } = useJobDetails();
+  const { getSaveJobs, saveJobsList, error } = useJobDetails();
   const { user } = useSelector((state) => state.auth);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [removedIds, setRemovedIds] = useState(() => new Set());
+
+
   useEffect(() => {
-    if (user?._id && jobs) getSaveJobs(user._id);
-  }, [user?._id, jobs]);
+    if (user?._id) getSaveJobs(user._id);
+  }, [user?._id, getSaveJobs]);
+
+  const visibleJobs = useMemo(
+    () => saveJobsList.filter((j) => !removedIds.has(String(j._id))),
+    [saveJobsList, removedIds]
+  );
 
   const { currentJobs, totalPages, indexOfLastJob } = useMemo(() => {
     const last = currentPage * JOBS_PER_PAGE;
     const first = last - JOBS_PER_PAGE;
     return {
-      currentJobs: saveJobsList.slice(first, last),
-      totalPages: Math.ceil(saveJobsList.length / JOBS_PER_PAGE),
+      currentJobs: visibleJobs.slice(first, last),
+      totalPages: Math.max(1, Math.ceil(visibleJobs.length / JOBS_PER_PAGE)),
       indexOfLastJob: last,
     };
-  }, [saveJobsList, currentPage]);
+  }, [visibleJobs, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages >= 1) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const handlePrev = useCallback(() => setCurrentPage((p) => p - 1), []);
   const handleNext = useCallback(() => setCurrentPage((p) => p + 1), []);
+
+  const handleUnsave = useCallback((jobId) => {
+    setRemovedIds((prev) => {
+      const next = new Set(prev);
+      next.add(String(jobId));
+      return next;
+    });
+  }, []);
 
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
     <>
       <Helmet>
-        <title>Jobs You've Saved | Monitor & Apply to Jobs You've Bookmarked - GreatHire</title>
+        <title>Jobs You ve Saved | Monitor & Apply to Jobs You ve Bookmarked - GreatHire</title>
         <meta
           name="description"
           content="Now, all your bookmarked jobs are available on one page. The Saved Jobs page on GreatHire makes it convenient to go back to the jobs that are marked as favorites and apply for them later. This page is useful in helping a job seeker organize his/her future and not miss an opportunity. Started in the region of Hyderabad, India, GreatHire is a reputable hiring platform developed to help professionals connect with authentic employers."
@@ -44,11 +66,11 @@ const SavedJobs = () => {
 
       <Navbar />
       <div
-  className="w-full mx-auto min-h-screen
+        className="w-full mx-auto min-h-screen
              pt-12 sm:pt-0
              bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100
              dark:bg-gradient-to-br dark:from-gray-950 dark:via-slate-900 dark:to-blue-950"
->
+      >
 
 
         <div className="px-4 py-8 sm:py-20">
@@ -78,7 +100,7 @@ const SavedJobs = () => {
                  shadow-lg hover:shadow-xl
                  transition-shadow duration-300"
               >
-                {saveJobsList.length}
+                {visibleJobs.length}
               </span>
             </h1>
 
@@ -87,12 +109,12 @@ const SavedJobs = () => {
             </p>
           </div>
 
-          {saveJobsList.length > 0 ? (
+          {visibleJobs.length > 0 ? (
             <div>
               {/* Job Listings with improved container */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {currentJobs.map((job) => (
-                  <Job key={job._id} job={job} />
+                  <Job key={job._id} job={job} onUnsave={handleUnsave} />
                 ))}
               </div>
 
@@ -123,7 +145,7 @@ const SavedJobs = () => {
 
                 <button
                   onClick={handleNext}
-                  disabled={indexOfLastJob >= saveJobsList.length}
+                  disabled={indexOfLastJob >= visibleJobs.length}
                   className={`px-3 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${indexOfLastJob >= saveJobsList.length
                     ? "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600"
                     : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600"
