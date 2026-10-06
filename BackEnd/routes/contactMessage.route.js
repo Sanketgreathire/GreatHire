@@ -5,7 +5,7 @@ import isAuthenticated from "../middlewares/isAuthenticated.js";
 const router = express.Router();
 
 router.post("/sendMessage", sendContactMessage);
-router.get("/v1/admin/support-queries", isAuthenticated, getContactQueries);
-router.patch("/v1/admin/support-queries/:id/status", isAuthenticated, updateQueryStatus);
+router.get("/admin/support-queries", isAuthenticated, getContactQueries);
+router.patch("/admin/support-queries/:id/status", isAuthenticated, updateQueryStatus);
 
 export default router;
