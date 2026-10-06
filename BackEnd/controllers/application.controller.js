@@ -20,7 +20,10 @@ import {
   getCandidateAging,
   LEGACY_STATUS_TO_STAGE,
 } from "../services/workflow.service.js";
-import { applyApplicationTransition } from "../services/screeningEngine.js";
+import {
+  applyApplicationTransition,
+  scoreApplication as scoreExistingApplication,
+} from "../services/screeningEngine.js";
 
 // Only these 4 statuses are valid
 export const VALID_STATUSES = [
@@ -574,6 +577,40 @@ export const transitionApplication = async (req, res) => {
       success: false,
       message: "Failed to transition application",
       error: error.message,
+    });
+  }
+};
+
+export const scoreApplicant = async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id).populate("job");
+
+    if (!application || !application.job) {
+      return res.status(404).json({
+        success: false,
+        message: "Application not found",
+      });
+    }
+
+    if (application.job.created_by?.toString() !== req.id?.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to score this application",
+      });
+    }
+
+    const result = await scoreExistingApplication(application._id, req.id);
+
+    return res.status(200).json({
+      success: true,
+      result: { score: result.score, breakdown: result.breakdown },
+      application: result.application,
+    });
+  } catch (error) {
+    console.error("Error scoring application:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to score application",
     });
   }
 };

@@ -30,6 +30,7 @@ import notificationService from "../utils/notificationService.js";
 import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.js";
 import { autoApply } from "../src/services/autoApply.service.js";
 import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
+import { clearAuthTokenCookie, setAuthTokenCookie } from "../utils/authCookie.js";
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -176,14 +177,7 @@ export const register = async (req, res) => {
     });
 
     // Send cookie + response
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         message: "Account created successfully.",
         success: true,
         user: userWithoutPassword,
@@ -279,14 +273,7 @@ const cleanEmail = normalizeAccountEmail(email);
     };
 
     // sending cookies from server to client with response
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
@@ -384,14 +371,7 @@ const cleanEmail = normalizeAccountEmail(email);
       isProfileBoosted: user.isProfileBoosted || false,
     };
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
@@ -490,14 +470,7 @@ const cleanEmail = normalizeAccountEmail(email);
       referralCode: user.referralCode || null,
     };
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
@@ -581,14 +554,7 @@ export const googleLogin = async (req, res) => {
       });
 
       // return cookies with response
-      return res
-        .status(200)
-        .cookie("token", token, {
-          maxAge: 1 * 24 * 60 * 60 * 1000,
-          httpOnly: true,
-          sameSite: "strict",
-        })
-        .json({
+      return setAuthTokenCookie(res.status(200), token).json({
           message: `Welcome back ${user.fullname}`,
           user,
           success: true,
@@ -638,14 +604,7 @@ export const googleLogin = async (req, res) => {
       expiresIn: "1d",
     });
     // return cookies with response
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
@@ -687,28 +646,14 @@ export const logout = async (req, res) => {
     }
 
     // Clear cookie and return success immediately
-    return res
-      .status(200)
-      .cookie("token", "", {
-        maxAge: 0,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return clearAuthTokenCookie(res.status(200)).json({
         message: "Logged out successfully.",
         success: true,
       });
   } catch (error) {
     console.error("Logout Error:", error);
     // Even if there's an error, clear the cookie and return success
-    return res
-      .status(200)
-      .cookie("token", "", {
-        maxAge: 0,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return clearAuthTokenCookie(res.status(200)).json({
         message: "Logged out successfully.",
         success: true,
       });
@@ -1506,14 +1451,7 @@ export const deleteAccount = async (req, res) => {
 
     // If the user is deleting their own account, remove their token
     if (isSelf) {
-      return res
-        .status(200)
-        .cookie("token", "", {
-          maxAge: 0,
-          httpOnly: true,
-          sameSite: "strict",
-        })
-        .json({
+      return clearAuthTokenCookie(res.status(200)).json({
           message: "Your account has been deleted successfully.",
           success: true,
         });
@@ -1664,14 +1602,7 @@ export const verifyOtp = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         success: true,
         message: `Welcome ${user.fullname}`,
         user: {
@@ -1724,14 +1655,7 @@ export const verifyJobseekerOtp = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         success: true,
         message: `Welcome ${user.fullname}`,
         user: {
@@ -1784,14 +1708,7 @@ export const verifyRecruiterOtp = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
 
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token).json({
         success: true,
         message: `Welcome ${user.fullname}`,
         user: {
