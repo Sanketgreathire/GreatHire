@@ -7,6 +7,18 @@ import LatestJobs from "./LatestJobs";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { FiFilter } from "react-icons/fi";
 
+const isFresherJob = (job) => {
+  const experience = (job?.jobDetails?.experience || "").toLowerCase();
+  return (
+    experience.includes("fresher") ||
+    experience.includes("0 to 0") ||
+    experience.includes("from 0") ||
+    experience.includes("0-0") ||
+    experience.includes("0 year") ||
+    experience.includes("0 - 1")
+  );
+};
+
 export default function Jobs() {
   const {
     jobs = [],
@@ -24,6 +36,7 @@ export default function Jobs() {
     company: "",
     datePosted: [],
     fresher: false,
+    experienced: false,
   });
 
   const [searchInfo, setSearchInfo] = useState({
@@ -43,8 +56,7 @@ export default function Jobs() {
           searchInfo.titleKeyword,
         newFilters.location,
         newFilters.jobType,
-        newFilters.workPlace,
-        newFilters.fresher ? "Fresher" : undefined
+        newFilters.workPlace
       );
     },
     [filterJobs, searchInfo.titleKeyword]
@@ -60,6 +72,7 @@ export default function Jobs() {
       company: "",
       datePosted: [],
       fresher: false,
+      experienced: false,
     });
 
     setSearchInfo({
@@ -80,21 +93,14 @@ export default function Jobs() {
     []
   );
 
-  // Memoized displayed jobs (applies client-side fresher filtering as well)
+  // Experience categories are filtered locally because job experience values
+  // are free-form text entered by recruiters.
   const displayedJobs = useMemo(() => {
-    if (!filters.fresher) return jobs;
-    return jobs.filter((job) => {
-      const exp = (job?.jobDetails?.experience || "").toLowerCase();
-      return (
-        exp.includes("fresher") ||
-        exp.includes("0 to 0") ||
-        exp.includes("from 0") ||
-        exp.includes("0-0") ||
-        exp.includes("0 year") ||
-        exp.includes("0 - 1")
-      );
-    });
-  }, [jobs, filters.fresher]);
+    if (!filters.fresher && !filters.experienced) return jobs;
+    return jobs.filter((job) =>
+      filters.fresher ? isFresherJob(job) : !isFresherJob(job)
+    );
+  }, [jobs, filters.fresher, filters.experienced]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
@@ -132,7 +138,7 @@ export default function Jobs() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isLoading
                 ? "Loading..."
-                : `${filters.fresher ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
+                : `${filters.fresher || filters.experienced ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
             </p>
 
             <button
@@ -188,4 +194,3 @@ export default function Jobs() {
     </div>
   );
 }
-

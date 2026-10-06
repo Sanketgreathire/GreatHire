@@ -297,6 +297,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
       company: "",
       datePosted: [],
       fresher: false,
+      experienced: false,
     };
     setLocationSearch("");
     setActiveSearchLocation("");
@@ -507,8 +508,12 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
           ))}
 
           {/* Checkbox Filters */}
-          {["datePosted"].map((category) => (
-            <div key={category} className="mb-4">
+          {/* Added a blue divider */}
+          {["datePosted"].map((category) => (   
+            <div
+              key={category}
+              className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6"
+            >
               <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
                 {formatLabel(category)}
               </h3>
@@ -533,8 +538,8 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
             </div>
           ))}
 
-          {/* Fresher Filter */}
-          <div className="mb-6 pb-6">
+          {/* Fresher Filters */}
+          <div className="mb-6">
             <label className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
               <input
                 type="checkbox"
@@ -544,12 +549,33 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
                   onFilterChange?.({
                     ...filters,
                     fresher: e.target.checked,
+                    experienced: false,
                   })
                 }
                 className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
               />
               <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium transition-colors">
                 Fresher
+              </span>
+            </label>
+
+            {/* Experience Filters */}
+            <label className="mt-4 flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
+              <input
+                type="checkbox"
+                id="experienced"
+                checked={Boolean(filters?.experienced)}
+                onChange={(e) =>
+                  onFilterChange?.({
+                    ...filters,
+                    fresher: false,
+                    experienced: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
+              />
+              <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium transition-colors">
+                Experience
               </span>
             </label>
           </div>
