@@ -47,6 +47,8 @@ if (
   user = await Recruiter.findById(userId);
 } else {
   user = await User.findById(userId);
+  if (!user) user = await Recruiter.findById(userId);
+  if (!user) user = await Admin.findById(userId);
 }
 
 if (!user) {
