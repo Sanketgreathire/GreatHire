@@ -6,6 +6,9 @@ import { useMessages } from "../../context/MessageContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { BriefcaseBusiness, House, Menu, MessageCircle, UserRound, X } from "lucide-react";
+import DashboardNavigations from "../../pages/recruiter/DashboardNavigations";
 
 const MessagingContent = () => {
   const { activeConversation, setActiveConversation } = useMessages();
@@ -15,6 +18,22 @@ const MessagingContent = () => {
   const [searching, setSearching] = useState(false);
 
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const isRecruiter = user?.role?.includes("recruiter");
+  const navigationLinks = [
+    { label: "Home", to: "/", icon: House },
+    ...(isRecruiter
+      ? [
+          { label: "Dashboard", to: "/recruiter/dashboard/home", icon: BriefcaseBusiness },
+          { label: "Profile", to: "/recruiter/profile", icon: UserRound },
+        ]
+      : [
+          { label: "Find Jobs", to: "/jobs", icon: BriefcaseBusiness },
+          { label: "Profile", to: "/profile", icon: UserRound },
+        ]),
+    { label: "Messages", to: "/messages", icon: MessageCircle },
+  ];
 
   // Hide chatbot and WhatsApp widgets only on Messages page
   useEffect(() => {
@@ -111,17 +130,28 @@ const MessagingContent = () => {
 
         {/* GreatHire Logo */}
         <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shrink-0">
-          <div
-            onClick={() => navigate("/profile")}
-            className="cursor-pointer flex items-center gap-1 select-none"
-          >
-            <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Great
-            </span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsNavigationOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={isNavigationOpen}
+              className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <Menu size={24} />
+            </button>
+            <div
+              onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
+              className="cursor-pointer flex items-center gap-1 select-none"
+            >
+              <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                Great
+              </span>
 
-            <span className="text-2xl font-black text-blue-600 tracking-tight">
-              Hire
-            </span>
+              <span className="text-2xl font-black text-blue-600 tracking-tight">
+                Hire
+              </span>
+            </div>
           </div>
 
           <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
@@ -183,6 +213,57 @@ const MessagingContent = () => {
           />
         </div>
       </div>
+{/* Navigation for Recruiters sidebar */}
+      {isRecruiter && (
+        <DashboardNavigations
+          isOpen={isNavigationOpen}
+          onOpenChange={setIsNavigationOpen}
+          showMenuButton={false}
+        />
+      )}
+
+      {!isRecruiter && isNavigationOpen && (
+        <>
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={() => setIsNavigationOpen(false)}
+            className="fixed inset-0 z-[60] bg-black/50"
+          />
+          <aside
+            aria-label="App navigation"
+            className="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-white dark:bg-gray-800 shadow-xl"
+          >
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
+              <span className="text-lg font-bold text-gray-900 dark:text-white">Navigation</span>
+              <button
+                type="button"
+                onClick={() => setIsNavigationOpen(false)}
+                aria-label="Close navigation menu"
+                className="rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <nav className="p-3">
+              {navigationLinks.map(({ label, to, icon: Icon }) => (
+                <button
+                  key={to}
+                  type="button"
+                  onClick={() => {
+                    setIsNavigationOpen(false);
+                    navigate(to);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"
+                >
+                  <Icon size={20} className="text-blue-600 dark:text-blue-400" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+          </aside>
+        </>
+      )}
 
       {/* Main Chat Area */}
       <div

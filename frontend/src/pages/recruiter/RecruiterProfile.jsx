@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Contact, Mail, Pen } from "lucide-react";
+import { Contact, Mail, Menu, Pen } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import RecruiterUpdateProfile from "./RecruiterUpdateProfile";
 import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
+import DashboardNavigations from "./DashboardNavigations";
 
 // Import verified icon for indicating verified users or data
 import { MdOutlineVerified } from "react-icons/md";
@@ -20,6 +21,7 @@ import VerifyEmail from "@/components/VerifyEmail";
 const RecruiterProfile = () => {
   // State to manage the profile update modal visibility
   const [open, setOpen] = useState(false);
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
   const { user } = useSelector((store) => store.auth);
   const { company } = useSelector((state) => state.company);
@@ -41,12 +43,31 @@ const RecruiterProfile = () => {
         />
       </Helmet>
 
-      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300 pt-24 lg:pt-4 md:pt-0">
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300 pt-16 md:pt-0 lg:pt-4">
         
-        <Navbar />
+        <Navbar
+          leadingContent={
+            <button
+              type="button"
+              onClick={() => setIsNavigationOpen(true)}
+              aria-label="Open recruiter dashboard navigation"
+              aria-expanded={isNavigationOpen}
+              className="rounded-md p-1 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          }
+        />
+        {/* Navigation for Recruiters sidebar */}
+        <DashboardNavigations
+          isOpen={isNavigationOpen}
+          onOpenChange={setIsNavigationOpen}
+          showMenuButton={false}
+          overlay
+        />
 
         {/* Main Section */}
-        <div className="flex-grow flex justify-center items-start md:items-center px-4 sm:px-6 py-8 md:py-12">
+        <div className="flex-grow flex justify-center items-start md:items-center px-4 sm:px-6 py-4 md:py-12">
           
           {/* Card */}
           <div className="w-full max-w-2xl bg-white dark:bg-gray-800 shadow-md md:shadow-xl rounded-2xl p-5 sm:p-8 md:p-10 transition-colors duration-300">

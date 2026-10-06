@@ -8,14 +8,27 @@ import {
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 
-const DashboardNavigations = () => {
+const DashboardNavigations = ({
+  isOpen: controlledIsOpen,
+  onOpenChange,
+  showMenuButton = true,
+  overlay = false,
+}) => {
   const location = useLocation();
 
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
   // State for sidebar toggle
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [internalIsSidebarOpen, setInternalSidebarOpen] = useState(false);
+  const isSidebarOpen = controlledIsOpen ?? internalIsSidebarOpen;
+  const usesOverlay = overlay || controlledIsOpen !== undefined;
+  const setSidebarOpen = (open) => {
+    if (controlledIsOpen === undefined) {
+      setInternalSidebarOpen(open);
+    }
+    onOpenChange?.(open);
+  };
   const [isCreateNewOpen, setCreateNewOpen] = useState(false);
 
   // hasCompany: dual source of truth — user flag (login-time) OR live fetched company object
@@ -58,25 +71,37 @@ const DashboardNavigations = () => {
       </Helmet>
 
       {/* Hamburger Button (Small Screens) */}
-      <button
-        className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm text-gray-700 dark:text-gray-200"
-        onClick={() => setSidebarOpen(true)}
-      >
-        <Menu size={24} />
-      </button>
+      {showMenuButton && (
+        <button
+          className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm text-gray-700 dark:text-gray-200"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open recruiter dashboard navigation"
+        >
+          <Menu size={24} />
+        </button>
+      )}
+
+      {usesOverlay && isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close recruiter dashboard navigation"
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50"
+        />
+      )}
 
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 z-50 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200
                   shadow-lg dark:shadow-gray-800 transition-transform duration-300 ease-in-out
-                  w-64 h-screen transform
+                  w-64 h-screen transform overflow-y-auto
                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                  lg:fixed lg:top-[64px] lg:left-0 lg:h-[calc(100vh-64px)] lg:w-52 lg:translate-x-0 lg:z-30 lg:overflow-y-auto
+                  ${usesOverlay ? "" : "lg:fixed lg:top-[64px] lg:left-0 lg:h-[calc(100vh-64px)] lg:w-52 lg:translate-x-0 lg:z-30"}
                 `}
       >
         {/* Close Button (Mobile Only) */}
         <button
-          className="lg:hidden absolute top-4 right-4 text-gray-600 dark:text-gray-300"
+          className={`${usesOverlay ? "" : "lg:hidden"} absolute top-4 right-4 text-gray-600 dark:text-gray-300`}
           onClick={() => setSidebarOpen(false)}
         >
           <X size={24} />

@@ -212,7 +212,7 @@ const FALLBACK_PAGE_TITLES = {
 // ─────────────────────────────────────────────────────────────
 // Main Navbar
 // ─────────────────────────────────────────────────────────────
-const Navbar = () => {
+const Navbar = ({ leadingContent }) => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const isRecruiter = user?.role?.includes("recruiter");
@@ -399,17 +399,20 @@ const Navbar = () => {
     <>
       <nav className="pl-8 fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300 px-4 py-3">
         <div className="flex items-center justify-between w-full">
-          {/* Logo */}
-          <Link
-            to={logoRedirectPath}
-            className="cursor-pointer pl-2"
-            aria-label="GreatHire home"
-          >
-            <h2 className="text-3xl sm:text-6xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out">
-              <span className="text-black dark:text-white">Great</span>
-              <span className="text-blue-600">Hire</span>
-            </h2>
-          </Link>
+          {/* Optional page action and logo */}
+          <div className="flex items-center gap-2">
+            {leadingContent}
+            <Link
+              to={logoRedirectPath}
+              className="cursor-pointer pl-2"
+              aria-label="GreatHire home"
+            >
+              <h2 className="text-3xl sm:text-6xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out">
+                <span className="text-black dark:text-white">Great</span>
+                <span className="text-blue-600">Hire</span>
+              </h2>
+            </Link>
+          </div>
 
           <div>
             {/* ── DESKTOP NAVIGATION ── */}

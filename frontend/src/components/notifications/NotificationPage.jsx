@@ -10,12 +10,16 @@ import {
   Star,
   Trash2,
   X,
-  RefreshCw
+  RefreshCw,
+  Menu
 } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
+import DashboardNavigations from '../../pages/recruiter/DashboardNavigations';
 
 const NotificationPage = () => {
   const { user } = useSelector((state) => state.auth);
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const isRecruiter = user?.role?.includes('recruiter');
 
   const {
     notifications,
@@ -177,6 +181,15 @@ const NotificationPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+     {/* Navigation for Recruiters sidebar */}
+      {isRecruiter && (
+        <DashboardNavigations
+          isOpen={isNavigationOpen}
+          onOpenChange={setIsNavigationOpen}
+          showMenuButton={false}
+          overlay
+        />
+      )}
       <div className="max-w-4xl mx-auto py-8 px-4">
 
         {/* Header */}
@@ -184,6 +197,19 @@ const NotificationPage = () => {
 
           {/* Page title and unread count */}
           <div>
+            {isRecruiter && (
+              <div className="mb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsNavigationOpen(true)}
+                  aria-label="Open recruiter dashboard navigation"
+                  aria-expanded={isNavigationOpen}
+                  className="rounded-md p-1 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
+              </div>
+            )}
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gray-900 dark:text-white">
               <Bell className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
               Notifications
