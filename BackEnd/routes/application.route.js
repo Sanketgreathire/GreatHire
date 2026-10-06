@@ -11,6 +11,7 @@ import {
   getAllApplications,
   triggerAutoReject,
   bulkApplyJobs,
+  scoreApplicant,
   transitionApplication,
   downloadResume,
 } from "../controllers/application.controller.js";
@@ -31,6 +32,7 @@ router.route("/:id/score").post(isAuthenticated, scoreApplication);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);
+router.route("/:id/score").post(isAuthenticated, scoreApplicant);
 // Shortlist and reject — override AI screening decision
 router.route("/:id/override-score").post(
   isAuthenticated,

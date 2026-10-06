@@ -25,6 +25,7 @@ import notificationService from "../utils/notificationService.js";
 import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { validateRecruiterPhone } from "../utils/recruiterValidatePhone.js";
 import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
+import { clearAuthTokenCookie, setAuthTokenCookie } from "../utils/authCookie.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -125,14 +126,7 @@ export const register = async (req, res) => {
     });
 
     // cookies strict used...
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
-        httpOnly: true,
-        sameSite: "lax",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: "Account created successfully.",
         success: true,
         user: userWithoutPassword,
@@ -193,14 +187,7 @@ export const googleLogin = async (req, res) => {
       });
 
       // cookies strict used...
-      return res
-        .status(200)
-        .cookie("token", token, {
-          maxAge: 1 * 24 * 60 * 60 * 1000,
-          httpOnly: true,
-          sameSite: "lax",
-        })
-        .json({
+      return setAuthTokenCookie(res.status(200), token, "lax").json({
           message: `Welcome back ${user.fullname}`,
           user,
           success: true,
@@ -248,14 +235,7 @@ export const googleLogin = async (req, res) => {
       expiresIn: "1d",
     });
     // cookies strict used...
-    return res
-      .status(200)
-      .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: "lax",
-      })
-      .json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
@@ -788,7 +768,7 @@ export const deleteAccount = async (req, res) => {
       ]);
 
       if (!admin) {
-        return res.status(200).cookie("token", "", { maxAge: 0, httpOnly: true, sameSite: "lax" })
+        return clearAuthTokenCookie(res.status(200))
           .json({ success: true, message: "Company deleted successfully" });
       } else {
         return res.status(200).json({ success: true, message: "Company deleted successfully" });

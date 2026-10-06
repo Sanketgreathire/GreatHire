@@ -21,6 +21,10 @@ const isAuthenticated = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    if (!process.env.SECRET_KEY) {
+      throw new Error("SECRET_KEY is not configured");
+    }
+
     const decode = jwt.verify(token, process.env.SECRET_KEY);
     if (!decode) {
       return res.status(401).json({
@@ -63,6 +67,13 @@ req.user = user;
 next();
 
   } catch (error) {
+    if (["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"].includes(error.name)) {
+      return res.status(401).json({
+        message: error.name === "TokenExpiredError" ? "Session expired" : "Invalid token",
+        success: false,
+      });
+    }
+
     console.error("Auth error:", error);
     return res.status(500).json({
       message: "Internal auth error",
