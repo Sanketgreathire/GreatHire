@@ -71,7 +71,10 @@ const JobDetailsProvider = ({ children }) => {
 
       setJobsList(jobs);
       setOriginalJobsList(jobs);
-      setSelectedJob(jobs[0] || null);
+
+      // ✅ FIX: Pehle job ko auto-select na karke initial view null rakha gaya hai
+      setSelectedJob(null);
+
       setSearchMeta({ total, query });
     } catch (err) {
       console.error("[JobDetailsContext] fetch error:", err);
@@ -155,34 +158,34 @@ const JobDetailsProvider = ({ children }) => {
   }, [originalJobsList]);
 
   const addApplicationToJob = useCallback((jobId, newApplication) => {
-  const add = (jobs) =>
-    jobs.map((job) =>
-      String(job._id) === String(jobId)
+    const add = (jobs) =>
+      jobs.map((job) =>
+        String(job._id) === String(jobId)
+          ? {
+              ...job,
+              application: [
+                ...(job.application || []),
+                newApplication,
+              ],
+            }
+          : job
+      );
+
+    setJobsList(add);
+    setOriginalJobsList(add);
+
+    setSelectedJob((prev) =>
+      prev && String(prev._id) === String(jobId)
         ? {
-            ...job,
+            ...prev,
             application: [
-              ...(job.application || []),
+              ...(prev.application || []),
               newApplication,
             ],
           }
-        : job
+        : prev
     );
-
-  setJobsList(add);
-  setOriginalJobsList(add);
-
-  setSelectedJob((prev) =>
-    prev && String(prev._id) === String(jobId)
-      ? {
-          ...prev,
-          application: [
-            ...(prev.application || []),
-            newApplication,
-          ],
-        }
-      : prev
-  );
-}, []);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
