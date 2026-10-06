@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, {
   useState,
   useRef,
@@ -5,6 +6,9 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+=======
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 import { useNavigate } from "react-router-dom";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { CiBookmark } from "react-icons/ci";
@@ -32,7 +36,11 @@ import {
 } from "lucide-react";
 import { slugify } from "@/utils/slugify";
 import { Helmet } from "react-helmet-async";
+<<<<<<< HEAD
 
+=======
+import PropTypes from "prop-types";
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 const formatPostedDate = (createdAt) => {
   if (!createdAt) return null;
 
@@ -73,7 +81,7 @@ const JobsForYou = ({ jobs = [] }) => {
   const jobContainerRef = useRef(null);
   const shareCardRef = useRef(null);
   const jobListRef = useRef(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [, setScrollPosition] = useState(0);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -179,19 +187,30 @@ const JobsForYou = ({ jobs = [] }) => {
       ) || false,
     [selectedJob?.application, user?._id]
   );
+<<<<<<< HEAD
 
   const appliedJobIds = useMemo(() => {
     if (!user?._id) return new Set();
 
+=======
+  const appliedJobIds = useMemo(() => {
+    if (!user?._id) return new Set();
+
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
     return new Set(
       jobs
         .filter((job) =>
           job?.application?.some(
             (app) =>
+<<<<<<< HEAD
               String(app.applicant) ===
                 String(user._id) ||
               String(app.applicant?._id) ===
                 String(user._id)
+=======
+              String(app.applicant) === String(user._id) ||
+              String(app.applicant?._id) === String(user._id)
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
           )
         )
         .map((job) => String(job._id))
@@ -332,9 +351,14 @@ const JobsForYou = ({ jobs = [] }) => {
   // PROFILE COMPLETION CHECK
   // =========================================================
 
+<<<<<<< HEAD
   const getMissingProfileFields = (
     userData = user
   ) => {
+=======
+
+  const getMissingProfileFields = (userData) => {
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
     if (!userData) {
       return [
         {
@@ -430,6 +454,7 @@ const JobsForYou = ({ jobs = [] }) => {
     }
 
     const skillsArr =
+<<<<<<< HEAD
       Array.isArray(
         userData?.profile?.skills
       ) &&
@@ -440,10 +465,18 @@ const JobsForYou = ({ jobs = [] }) => {
           userData.profile.skills
             .trim().length > 0
         ? userData.profile.skills
+=======
+      Array.isArray(userData?.profile?.skills) &&
+        userData.profile.skills.length > 0
+        ? userData.profile.skills
+        : typeof userData?.profile?.skills === "string" &&
+          userData.profile.skills.trim().length > 0
+          ? userData.profile.skills
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean)
-        : [];
+          : [];
 
     if (
       !skillsArr ||
@@ -521,9 +554,14 @@ const JobsForYou = ({ jobs = [] }) => {
         );
 
         toast.error(
+<<<<<<< HEAD
           error?.response?.data
             ?.message ||
             "Unable to update bookmark"
+=======
+          error?.response?.data?.message ||
+          "Unable to update bookmark"
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
         );
       }
     },
@@ -546,9 +584,16 @@ const JobsForYou = ({ jobs = [] }) => {
     [setSelectedJob]
   );
 
+<<<<<<< HEAD
   // =========================================================
   // CLOSE JOB DETAILS
   // =========================================================
+=======
+  const handleCloseJobDetails = useCallback(() => {
+    setSelectedJob(null);
+    setShareJobId(null);
+  }, [setSelectedJob]);
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 
   const handleCloseJobDetails =
     useCallback(() => {
@@ -607,17 +652,26 @@ const JobsForYou = ({ jobs = [] }) => {
           `${APPLICATION_API_END_POINT}/${jobId}/apply`,
           {
             applicant: user._id,
+<<<<<<< HEAD
             fullname:
               user.fullname || user.name,
             email:
               user.emailId?.email ||
               user.email,
+=======
+            fullname: user.fullname || user.name,
+            email: user.emailId?.email || user.email,
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
             number:
               user.phoneNumber?.number ||
               user.phoneNumber,
             jobId: jobId,
+<<<<<<< HEAD
             applicantProfile:
               user.profile,
+=======
+            applicantProfile: user.profile,
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
             answers,
           },
           {
@@ -654,7 +708,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
         toast.error(
           error?.response?.data?.message ||
-            "Something went wrong!"
+          "Something went wrong!"
         );
       }
     },
@@ -786,7 +840,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
         toast.error(
           error?.response?.data?.message ||
-            "Bulk apply failed. Try again."
+          "Bulk apply failed. Try again."
         );
       } finally {
         setIsBulkApplying(false);
@@ -945,11 +999,18 @@ const JobsForYou = ({ jobs = [] }) => {
 
           <div
             ref={jobListRef}
+<<<<<<< HEAD
             className={`relative m-2 md:m-0 flex flex-col gap-4 ${
               selectedJob
                 ? "w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
                 : "w-full"
             }`}
+=======
+            className={`relative m-2 md:m-0 ${selectedJob
+              ? "flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
+              : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
+              }`}
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
           >
 
             {/* Bulk Apply Sticky Bar */}
@@ -1005,6 +1066,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 const salary =
                   job?.jobDetails?.salary;
 
+<<<<<<< HEAD
                 return (
                   <div
                     key={job._id}
@@ -1113,6 +1175,24 @@ const JobsForYou = ({ jobs = [] }) => {
 
                     {shareJobId ===
                       job._id && (
+=======
+              return (
+                <div
+                  key={job._id}
+                  onClick={() =>
+                    handleJobClick(job)
+                  }
+                  className={`relative flex flex-col rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${isActive
+                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/40"
+                    : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+                    }`}
+                >
+                  {/* Checkbox */}
+                  {user &&
+                    !hasAppliedToJob(
+                      job._id
+                    ) && (
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                       <div
                         ref={
                           shareCardRef
@@ -1122,6 +1202,7 @@ const JobsForYou = ({ jobs = [] }) => {
                         }
                         className="relative mb-2"
                       >
+<<<<<<< HEAD
                         <ShareCard
                           urlToShare={`${window.location.origin}/jobs/${slugify(
                             job.jobDetails
@@ -1153,6 +1234,16 @@ const JobsForYou = ({ jobs = [] }) => {
                               null
                             )
                           }
+=======
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => { }}
+                          aria-label={`Select ${job?.jobDetails?.title ||
+                            "job"
+                            }`}
+                          className="w-4 h-4 accent-blue-600 cursor-pointer"
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                         />
                       </div>
                     )}
@@ -1161,6 +1252,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
                     <div className="flex flex-wrap gap-1.5 mb-3">
 
+<<<<<<< HEAD
                       {job.jobDetails
                         ?.location && (
                         <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[140px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
@@ -1223,8 +1315,166 @@ const JobsForYou = ({ jobs = [] }) => {
                                 .benefits[0]
                             }
                           </p>
+=======
+                    <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                      {job?.jobDetails
+                        ?.urgentHiring === "Yes" && (
+                          <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full whitespace-nowrap dark:text-orange-300 dark:bg-orange-900/30 dark:border-orange-700">
+                            ⚡ Urgent
+                          </span>
                         )}
 
+                      {hasAppliedToJob(
+                        job._id
+                      ) && (
+                          <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
+                            ✓ Applied
+                          </span>
+                        )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          setShareJobId(
+                            shareJobId === job._id
+                              ? null
+                              : job._id
+                          );
+                        }}
+                        className="p-1.5 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
+                        title="Share Job"
+                        aria-label="Share Job"
+                      >
+                        <FaShareAlt
+                          size={13}
+                          className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
+                        />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Share Card */}
+                  {shareJobId === job._id && (
+                    <div
+                      ref={shareCardRef}
+                      onClick={(e) =>
+                        e.stopPropagation()
+                      }
+                      className="relative mb-2"
+                    >
+                      <ShareCard
+                        urlToShare={`${window.location.origin}/jobs/${slugify(
+                          job.jobDetails?.title ||
+                          "job"
+                        )}-${job._id}`}
+                        jobTitle={
+                          job.jobDetails?.title
+                        }
+                        jobLocation={
+                          job.jobDetails?.location
+                        }
+                        jobSalary={
+                          job.jobDetails?.salary
+                        }
+                        jobDuration={
+                          job.jobDetails?.duration
+                        }
+                        jobType={
+                          job.jobDetails?.jobType
+                        }
+                        onClose={() =>
+                          setShareJobId(null)
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {job.jobDetails?.location && (
+                      <span title={job.jobDetails.location} className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[140px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                        📍{" "}
+                        {job.jobDetails.location}
+                      </span>
+                    )}
+
+                    {job.jobDetails
+                      ?.workPlaceFlexibility && (
+                        <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                          🏢 {
+                            job.jobDetails
+                              .workPlaceFlexibility
+                          }
+                        </span>
+                      )}
+
+                    {job.jobDetails?.jobType && (
+                      <span className="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
+                        💼  {job.jobDetails.jobType}
+                      </span>
+                    )}
+
+                    {job.jobDetails?.shift && (
+                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[110px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                        🕐 {job.jobDetails.shift}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Highlights */}
+                  {(job.jobDetails?.benefits?.[0] ||
+                    job.jobDetails
+                      ?.qualifications?.[0]) && (
+                      <div className="text-[11px] text-gray-500 dark:text-gray-400 space-y-0.5 mb-3">
+                        {job.jobDetails
+                          ?.benefits?.[0] && (
+                            <p className="flex items-center gap-1.5 truncate">
+                              <span className="text-green-500">
+                                ✓
+                              </span>
+                              {
+                                job.jobDetails
+                                  .benefits[0]
+                              }
+                            </p>
+                          )}
+
+                        {job.jobDetails
+                          ?.qualifications?.[0] && (
+                            <p title={job.jobDetails.qualifications[0]}
+                              className="flex items-start gap-1.5 line-clamp-2">
+                              <span className="text-blue-400 shrink-0 mt-0.5">
+                                🎓
+                              </span>
+                              <span className="flex-1">{job.jobDetails.qualifications[0]}</span>
+                            </p>
+                          )}
+                      </div>
+                    )}
+
+                  {/* Bottom Row */}
+                  <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                        {typeof salary === "string" && salary.trim() ? (
+                          (() => {
+                            const parts = salary
+                              .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                              .split("-")
+                              .map((p) => p.trim())
+                              .filter(Boolean);
+                            if (parts.length === 1) return `₹${parts[0]}`;
+                            if (parts.length === 2) return `₹${parts[0]} – ₹${parts[1]}`;
+                            return `₹${parts.join(" – ₹")}`;
+                          })()
+                        ) : (
+                          "Salary not specified"
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
+                        )}
+
+<<<<<<< HEAD
                         {job.jobDetails
                           ?.qualifications?.[0] && (
                           <p className="flex items-center gap-1.5 truncate">
@@ -1301,6 +1551,31 @@ const JobsForYou = ({ jobs = [] }) => {
                         d ago
                       </span>
                     </div>
+=======
+                      {job.jobDetails
+                        ?.duration && (
+                          <span className="text-[11px] text-gray-400 dark:text-gray-500 truncate">
+                            ·{" "}
+                            {
+                              job.jobDetails
+                                .duration
+                            }
+                          </span>
+                        )}
+                    </div>
+
+                    <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap flex-shrink-0">
+                      {(() => {
+                        const d = calculateActiveDays(job?.createdAt);
+                        if (d === 0) return "Today";
+                        if (d === 1) return "Yesterday";
+                        if (d < 7) return `${d}d ago`;
+                        if (d < 30) return `${Math.floor(d / 7)}w ago`;
+                        if (d < 365) return `${Math.floor(d / 30)}mo ago`;
+                        return `${Math.floor(d / 365)}y ago`;
+                      })()}
+                    </span>
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                   </div>
                 );
               })}
@@ -1332,6 +1607,7 @@ const JobsForYou = ({ jobs = [] }) => {
                   <IoMdClose size={20} />
                 </button>
 
+<<<<<<< HEAD
                 {/* Bookmark */}
 
                 {!isApplied &&
@@ -1362,6 +1638,44 @@ const JobsForYou = ({ jobs = [] }) => {
                       )}
                     </div>
                   )}
+=======
+                {/* Top-right actions: Bookmark + Close (aligned) */}
+                <div className="absolute top-3 right-4 flex items-center gap-1.5">
+                  {/* Bookmark */}
+                  {!isApplied && user && (
+                    <button
+                      type="button"
+                      onClick={() => handleBookmark(selectedJob._id)}
+                      aria-label={isJobBookmarked(user?._id) ? "Remove bookmark" : "Save job"}
+                      title={isJobBookmarked(user?._id) ? "Remove bookmark" : "Save job"}
+                      className="p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
+                    >
+                      {isJobBookmarked(user?._id) ? (
+                        <FaBookmark
+                          size={18}
+                          className="text-cyan-600 dark:text-cyan-400"
+                        />
+                      ) : (
+                        <CiBookmark
+                          size={25}
+                          className="text-sky-500 dark:text-sky-400"
+                        />
+                      )}
+                    </button>
+                  )}
+
+                  {/* Close */}
+                  <button
+                    type="button"
+                    onClick={handleCloseJobDetails}
+                    aria-label="Close job details"
+                    title="Close"
+                    className="p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors flex items-center justify-center"
+                  >
+                    <IoMdClose size={25} />
+                  </button>
+                </div>
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 
                 {/* Job Title */}
 
@@ -1399,7 +1713,28 @@ const JobsForYou = ({ jobs = [] }) => {
                   </p>
                 </div>
 
+<<<<<<< HEAD
                 {/* Posted */}
+=======
+                {selectedJob?.createdAt && (
+                  <p className="text-sm font-medium text-sky-800 dark:text-gray-300">
+                    🗓️ Posted on {formatPostedDate(selectedJob.createdAt)}
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {" "}({(() => {
+                        const d = calculateActiveDays(selectedJob.createdAt);
+                        if (d === 0) return "Today";
+                        if (d === 1) return `${d}d ago`;
+                        if (d < 7) return `${d}d ago`;
+                        if (d < 30) return `${Math.floor(d / 7)}w ago`;
+                        if (d < 365) return `${Math.floor(d / 30)}mo ago`;
+                        return `${Math.floor(d / 365)}y ago`;
+                      })()})
+                    </span>
+                  </p>
+                )}
+
+
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 
                 {selectedJob?.createdAt && (
                   <p className="text-sm font-medium text-sky-800 dark:text-gray-300">
@@ -1422,6 +1757,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 )}
 
                 {/* Salary / Response */}
+<<<<<<< HEAD
 
                 <div className="flex justify-between items-center gap-3 pt-1">
 
@@ -1466,11 +1802,37 @@ const JobsForYou = ({ jobs = [] }) => {
 
                   <div className="px-3 py-1.5 flex items-center gap-2 text-sm font-semibold text-cyan-900 bg-gradient-to-r from-cyan-90 to-blue-10 border-2 border-cyan-500 rounded-xl shadow-sm dark:from-cyan-900/30 dark:to-blue-900/30 dark:border-cyan-700 dark:text-cyan-200">
 
+=======
+                <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-2 xl:gap-3 pt-1">
+
+                  {/* Salary */}
+                  <div className="xl:flex-1 px-3 py-1.5 font-bold text-sky-900 rounded-xl bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-300 flex items-center justify-center shadow-sm dark:from-sky-900/30 dark:to-cyan-900/30 dark:border-sky-700 dark:text-white">
+                    {typeof selectedJob?.jobDetails?.salary === "string" &&
+                      selectedJob.jobDetails.salary.trim() ? (
+                      (() => {
+                        const parts = selectedJob.jobDetails.salary
+                          .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                          .split("-")
+                          .map((p) => p.trim())
+                          .filter(Boolean);
+                        if (parts.length === 1) return `₹${parts[0]}`;
+                        if (parts.length === 2) return `₹${parts[0]} - ₹${parts[1]}`;
+                        return `₹${parts.join(" - ₹")}`;
+                      })()
+                    ) : (
+                      <span>Salary not specified</span>
+                    )}
+                  </div>
+
+                  {/* Response Time */}
+                  <div className="px-2 py-1.5 flex items-center justify-center gap-2 text-sm font-semibold text-cyan-900 bg-gradient-to-r from-cyan-50 to-blue-50 border-2 border-cyan-500 rounded-xl shadow-sm dark:from-cyan-900/30 dark:to-blue-900/30 dark:border-cyan-700 dark:text-cyan-200">
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                     <AiOutlineThunderbolt
                       className="flex-shrink-0 text-cyan-600 dark:text-cyan-400"
                       size={18}
                     />
 
+<<<<<<< HEAD
                     <span className="truncate">
                       Typically Responds in{" "}
                       {
@@ -1479,6 +1841,10 @@ const JobsForYou = ({ jobs = [] }) => {
                           ?.respondTime
                       }{" "}
                       day(s)
+=======
+                    <span className="whitespace-nowrap">
+                      Typically Responds in {selectedJob?.jobDetails?.respondTime ?? "—"} day(s)
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                     </span>
                   </div>
                 </div>
@@ -1487,11 +1853,10 @@ const JobsForYou = ({ jobs = [] }) => {
 
                 <div className="pt-2">
                   <div
-                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${
-                      isApplied
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
-                        : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
-                    }`}
+                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${isApplied
+                      ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
+                      }`}
                   >
                     {isApplied ? (
                       <div className="flex items-center justify-center gap-2">
@@ -1529,11 +1894,10 @@ const JobsForYou = ({ jobs = [] }) => {
                       >
                         <button
                           type="button"
-                          className={`w-full flex items-center justify-center gap-2 ${
-                            !profileComplete
-                              ? "cursor-not-allowed"
-                              : ""
-                          }`}
+                          className={`w-full flex items-center justify-center gap-2 ${!profileComplete
+                            ? "cursor-not-allowed"
+                            : ""
+                            }`}
                           onClick={() =>
                             handleApply(
                               selectedJob._id
@@ -1548,11 +1912,10 @@ const JobsForYou = ({ jobs = [] }) => {
 
                         {!profileComplete && (
                           <div
-                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${
-                              isHovered
-                                ? "opacity-100 visible translate-y-0"
-                                : "opacity-0 invisible translate-y-2"
-                            }`}
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${isHovered
+                              ? "opacity-100 visible translate-y-0"
+                              : "opacity-0 invisible translate-y-2"
+                              }`}
                           >
                             <div className="relative w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-purple-500/20 backdrop-blur-xl dark:from-slate-900 dark:to-slate-950">
 
@@ -1714,6 +2077,7 @@ const JobsForYou = ({ jobs = [] }) => {
             )}
 
             <div className="flex items-center gap-1.5 sm:gap-2">
+<<<<<<< HEAD
               {getPageNumbers().map(
                 (pageNum) => (
                   <button
@@ -1735,6 +2099,21 @@ const JobsForYou = ({ jobs = [] }) => {
                   </button>
                 )
               )}
+=======
+              {getPageNumbers().map((pageNum) => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center cursor-pointer active:scale-90 ${currentPage === pageNum
+                    ? "bg-blue-700 dark:bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-400 hover:-translate-y-0.5 hover:shadow-sm"
+                    }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
             </div>
 
             {currentPage <
@@ -1781,7 +2160,36 @@ const JobsForYou = ({ jobs = [] }) => {
 
               <div className="p-6 pt-20 pb-24">
 
+<<<<<<< HEAD
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white pr-12">
+=======
+              {/* Salary */}
+
+              <p className="mt-2 px-3 py-1 font-semibold text-gray-700 dark:text-gray-300 rounded-md w-fit bg-gray-200 dark:bg-gray-700 max-w-full break-words">
+                {typeof selectedJob?.jobDetails?.salary === "string" &&
+                  selectedJob.jobDetails.salary.trim() ? (
+                  (() => {
+                    const parts = selectedJob.jobDetails.salary
+                      .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                      .split("-")
+                      .map((p) => p.trim())
+                      .filter(Boolean);
+
+                    if (parts.length === 1) return `₹${parts[0]}`;
+                    if (parts.length === 2) return `₹${parts[0]} - ₹${parts[1]}`;
+                    return `₹${parts.join(" - ₹")}`;
+                  })()
+                ) : (
+                  "Salary not specified"
+                )}
+              </p>
+              {/* Response */}
+              <div className="mt-2 flex items-center text-sm text-blue-800 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-md w-fit max-w-full">
+                <AiOutlineThunderbolt className="mr-1 flex-shrink-0" />
+
+                <span className="truncate">
+                  Typically Responds in{" "}
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                   {
                     selectedJob
                       ?.jobDetails?.title
@@ -1796,6 +2204,7 @@ const JobsForYou = ({ jobs = [] }) => {
                   }
                 </p>
 
+<<<<<<< HEAD
                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                   {
                     selectedJob
@@ -1891,6 +2300,20 @@ const JobsForYou = ({ jobs = [] }) => {
                       }
                     </span>
                   </p>
+=======
+                {selectedJob?.jobDetails
+                  ?.shift && (
+                    <p className="font-semibold text-gray-700 dark:text-gray-300">
+                      Shift:{" "}
+                      <span className="text-sm text-gray-500 dark:text-gray-400 break-words">
+                        {
+                          selectedJob?.jobDetails
+                            ?.shift
+                        }
+                      </span>
+                    </p>
+                  )}
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
 
                   {selectedJob
                     ?.jobDetails
@@ -1935,6 +2358,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 {isApplied ? (
                   <button
                     type="button"
+<<<<<<< HEAD
                     className="bg-green-600 text-white px-6 py-3 rounded-lg w-full max-w-md"
                   >
                     Applied
@@ -1943,6 +2367,12 @@ const JobsForYou = ({ jobs = [] }) => {
                   <button
                     type="button"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full max-w-md font-semibold"
+=======
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${!profileComplete
+                      ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
+                      : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
+                      }`}
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)
                     onClick={() =>
                       navigate(
                         "/jobseeker-login",
@@ -2137,4 +2567,13 @@ const JobsForYou = ({ jobs = [] }) => {
   );
 };
 
+<<<<<<< HEAD
 export default JobsForYou;
+=======
+JobsForYou.propTypes = {
+  jobs: PropTypes.array,
+};
+
+export default JobsForYou;
+
+>>>>>>> ac37f21c (Fix salary dangling dash, Replace '0d ago' with smart time labels, fix(saved-jobs): pagination, unsaved action, and card display, Show 'Fresher, 2 - 5 years’ experience' when both values present, mobile drawer close button, icons, and float hiding, responsive referral link and mobile layout)

@@ -12,7 +12,7 @@ import { useJobDetails } from "@/context/JobDetailsContext";
 import ShareCard from "./ShareJob";
 import { FiShare2 } from "react-icons/fi";
 
-const Job = ({ job }) => {
+const Job = ({ job, onUnsave }) => {
   const navigate = useNavigate();
   const [showShareCard, setShowShareCard] = useState(false);
   const { toggleBookmarkStatus } = useJobDetails();
@@ -82,6 +82,10 @@ const Job = ({ job }) => {
         if (response.data.success) {
           toggleBookmarkStatus(jobId, user._id);
           toast.success(response.data.message);
+
+          if (isBookmarked && typeof onUnsave === "function") {
+            onUnsave(jobId);
+          }
         }
       } catch {
         toast.error("Failed to bookmark the job. Please try again.");
@@ -94,9 +98,15 @@ const Job = ({ job }) => {
     user ? navigate(`/jobs/${job?._id}`) : navigate("/signup");
   }, [user, navigate, job?._id]);
 
-  const formattedSalary = String(job?.jobDetails?.salary || "")
-    .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-    .split("-");
+  const salaryParts = useMemo(() => {
+    const raw = String(job?.jobDetails?.salary || "").trim();
+    if (!raw) return [];
+    return raw
+      .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+      .split("-")
+      .map((p) => p.trim())
+      .filter(Boolean);
+  }, [job?.jobDetails?.salary]);
 
   return (
     <div className="flex flex-col space-y-2 rounded-md border border-gray-100 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
@@ -183,12 +193,11 @@ const Job = ({ job }) => {
         <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-nowrap">
           <div className="flex min-w-0 w-full sm:w-1/2">
             <p className="w-full rounded-md border border-gray-300 bg-gray-200 p-1 text-center font-semibold text-gray-700 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
-              {formattedSalary.map((part, index) => (
-                <span key={index}>
-                  ₹{part.trim()}
-                  {index === 0 ? " - " : ""}
-                </span>
-              ))}
+              {salaryParts.length === 0
+                ? "Salary not specified"
+                : salaryParts.length === 1
+                  ? `₹${salaryParts[0]}`
+                  : `₹${salaryParts[0]} - ₹${salaryParts[1]}`}
             </p>
           </div>
 
@@ -208,7 +217,22 @@ const Job = ({ job }) => {
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Active {Number.isFinite(activeDays) ? activeDays : 0} days ago
+          {(() => {
+            const d = Number.isFinite(activeDays) ? activeDays : 0;
+            if (d === 0) return "Active today";
+            if (d === 1) return "Active 1 day ago";
+            if (d < 7) return `Active ${d} days ago`;
+            if (d < 30) {
+              const w = Math.floor(d / 7);
+              return `Active ${w} week${w === 1 ? "" : "s"} ago`;
+            }
+            if (d < 365) {
+              const m = Math.floor(d / 30);
+              return `Active ${m} month${m === 1 ? "" : "s"} ago`;
+            }
+            const y = Math.floor(d / 365);
+            return `Active ${y} year${y === 1 ? "" : "s"} ago`;
+          })()}
         </p>
 
         {isApplied && (
@@ -217,7 +241,6 @@ const Job = ({ job }) => {
           </span>
         )}
       </div>
-
       <div className="flex w-full items-center justify-between gap-4">
         <Button
           onClick={handleView}

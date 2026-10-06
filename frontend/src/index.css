@@ -60,6 +60,14 @@
 
   * { border-color: hsl(var(--border)); }
 
+  /* Hide floating widgets when mobile drawer is open */
+body.mobile-menu-open .fixed.bottom-\[84px\],
+body.mobile-menu-open .fixed.bottom-\[92px\],
+body.mobile-menu-open .fixed.bottom-\[96px\],
+body.mobile-menu-open a[href^="https://wa.me/"] {
+  display: none !important;
+}
+
   html {
     overflow-x: hidden;
     max-width: 100vw;

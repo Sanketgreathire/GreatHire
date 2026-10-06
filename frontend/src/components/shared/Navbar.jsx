@@ -73,21 +73,19 @@ const ExploreDropdownPanel = memo(
                     key={to}
                     to={to}
                     onClick={onLinkClick}
-                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl group transition-all duration-150 ${
-                      isActive
-                        ? "bg-blue-50 dark:bg-blue-900/40"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-700/60"
-                    }`}
+                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl group transition-all duration-150 ${isActive
+                      ? "bg-blue-50 dark:bg-blue-900/40"
+                      : "hover:bg-gray-50 dark:hover:bg-gray-700/60"
+                      }`}
                   >
                     <span className="text-base leading-none w-6 text-center shrink-0">
                       {linkIcons[label] || "🔗"}
                     </span>
                     <span
-                      className={`text-sm font-medium leading-tight transition-colors ${
-                        isActive
-                          ? "text-blue-600 dark:text-blue-400"
-                          : "text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
-                      }`}
+                      className={`text-sm font-medium leading-tight transition-colors ${isActive
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        }`}
                     >
                       {label}
                     </span>
@@ -241,8 +239,8 @@ const Navbar = () => {
   const logoRedirectPath = !user
     ? "/"
     : user?.role === "recruiter"
-    ? "/recruiter/dashboard/home"
-    : "/jobs";
+      ? "/recruiter/dashboard/home"
+      : "/jobs";
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -258,11 +256,14 @@ const Navbar = () => {
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
+      document.body.classList.add("mobile-menu-open");
     } else {
       document.body.style.overflow = "unset";
+      document.body.classList.remove("mobile-menu-open");
     }
     return () => {
       document.body.style.overflow = "unset";
+      document.body.classList.remove("mobile-menu-open");
     };
   }, [isMenuOpen]);
 
@@ -326,20 +327,20 @@ const Navbar = () => {
 
   const rightNavLinks = user
     ? [
-        ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
-        ...(user && !isRecruiter
-          ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }]
-          : []),
-        ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
-        ...(isRecruiter && hasCompany
-          ? [{ to: "/packages", label: "Recruiter Plans" }]
-          : []),
-      ]
+      ...(!isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+      ...(user && !isRecruiter
+        ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }]
+        : []),
+      ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
+      ...(isRecruiter && hasCompany
+        ? [{ to: "/packages", label: "Recruiter Plans" }]
+        : []),
+    ]
     : [
-        { to: "/", label: "Home" },
-        { to: "/great-hire/services", label: "Our Services" },
-        { to: "/packages", label: "Recruiter Plans" },
-      ];
+      { to: "/", label: "Home" },
+      { to: "/great-hire/services", label: "Our Services" },
+      { to: "/packages", label: "Recruiter Plans" },
+    ];
 
   const moreDropdownLinks = [
     { to: "/Main_blog_page", label: "Blogs" },
@@ -350,19 +351,19 @@ const Navbar = () => {
   ];
 
   const mobileNavLinks = [
-    ...primaryNavLinks,
-    ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs" }] : []),
+    ...primaryNavLinks.map((l) => ({ ...l, icon: "📊" })),
+    ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs", icon: "💼" }] : []),
     ...(user && !isRecruiter
-      ? [{ to: "/resume-analyzer", label: "Resume Analyzer" }]
+      ? [{ to: "/resume-analyzer", label: "Resume Analyzer", icon: "📄" }]
       : []),
     ...(!user || (isRecruiter && hasCompany)
-      ? [{ to: "/packages", label: "Recruiter Plans" }]
+      ? [{ to: "/packages", label: "Recruiter Plans", icon: "💳" }]
       : []),
-    { to: "/great-hire/services", label: "Our Services" },
-    { to: "/Main_blog_page", label: "Blogs" },
-    { to: "/courses", label: "Courses" },
-    { to: "/about", label: "About Us" },
-    { to: "/contact", label: "Contact Us" },
+    { to: "/great-hire/services", label: "Our Services", icon: "⚡" },
+    { to: "/Main_blog_page", label: "Blogs", icon: "✍️" },
+    { to: "/courses", label: "Courses", icon: "🎓" },
+    { to: "/about", label: "About Us", icon: "🏢" },
+    { to: "/contact", label: "Contact Us", icon: "📬" },
   ];
 
   const handleCampusClick = useCallback(
@@ -405,7 +406,7 @@ const Navbar = () => {
             className="cursor-pointer pl-2"
             aria-label="GreatHire home"
           >
-            <h2 className="text-3xl sm:text-6xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out leading-none">
               <span className="text-black dark:text-white">Great</span>
               <span className="text-blue-600">Hire</span>
             </h2>
@@ -420,9 +421,8 @@ const Navbar = () => {
                     <li key={to}>
                       <Link
                         to={to}
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                          location.pathname === to ? activeClass : inactiveClass
-                        }`}
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === to ? activeClass : inactiveClass
+                          }`}
                       >
                         {label}
                       </Link>
@@ -438,9 +438,8 @@ const Navbar = () => {
                       <li key={to}>
                         <Link
                           to={to}
-                          className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                            location.pathname === to ? activeClass : inactiveClass
-                          }`}
+                          className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === to ? activeClass : inactiveClass
+                            }`}
                         >
                           {label}
                         </Link>
@@ -452,19 +451,17 @@ const Navbar = () => {
                       <li ref={exploreMenuRef} className="relative">
                         <button
                           onClick={() => setIsExploreMenuOpen(!isExploreMenuOpen)}
-                          className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                            isExploreMenuOpen
-                              ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
-                              : inactiveClass
-                          }`}
+                          className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isExploreMenuOpen
+                            ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
+                            : inactiveClass
+                            }`}
                           aria-expanded={isExploreMenuOpen}
                           aria-haspopup="true"
                         >
                           Explore
                           <svg
-                            className={`w-4 h-4 transition-transform duration-200 ${
-                              isExploreMenuOpen ? "rotate-180" : ""
-                            }`}
+                            className={`w-4 h-4 transition-transform duration-200 ${isExploreMenuOpen ? "rotate-180" : ""
+                              }`}
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -497,19 +494,17 @@ const Navbar = () => {
                       <li ref={moreMenuRef} className="relative">
                         <button
                           onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                          className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                            isMoreMenuOpen
-                              ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
-                              : inactiveClass
-                          }`}
+                          className={`flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isMoreMenuOpen
+                            ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
+                            : inactiveClass
+                            }`}
                           aria-expanded={isMoreMenuOpen}
                           aria-haspopup="true"
                         >
                           Explore
                           <svg
-                            className={`w-4 h-4 transition-transform duration-200 ${
-                              isMoreMenuOpen ? "rotate-180" : ""
-                            }`}
+                            className={`w-4 h-4 transition-transform duration-200 ${isMoreMenuOpen ? "rotate-180" : ""
+                              }`}
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -600,7 +595,7 @@ const Navbar = () => {
                       <img
                         src={
                           user?.profile?.profilePhoto &&
-                          !user.profile.profilePhoto.includes("github.com")
+                            !user.profile.profilePhoto.includes("github.com")
                             ? user.profile.profilePhoto
                             : "/noprofile.webp"
                         }
@@ -648,7 +643,7 @@ const Navbar = () => {
                           {isRecruiter ? "Recruiter" : "User"} Profile
                         </Link>
 
-                        
+
 
                         {!isRecruiter && (
                           <>
@@ -717,7 +712,7 @@ const Navbar = () => {
                   <img
                     src={
                       user?.profile?.profilePhoto &&
-                      !user.profile.profilePhoto.includes("github.com")
+                        !user.profile.profilePhoto.includes("github.com")
                         ? user.profile.profilePhoto
                         : "/noprofile.webp"
                     }
@@ -759,26 +754,39 @@ const Navbar = () => {
 
           {/* ── MOBILE NAVIGATION OVERLAY ── */}
           <div
-            className={`fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity ${
-              isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+            className={`fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
             onClick={() => setIsMenuOpen(false)}
           >
             <div
               ref={mobileMenuRef}
-              className={`fixed top-0 right-0 h-full w-72 z-20 bg-white dark:bg-gray-800 shadow-lg transform transition-transform ${
-                isMenuOpen ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`fixed top-0 right-0 h-full w-72 z-20 bg-white dark:bg-gray-800 shadow-lg transform transition-transform ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+                }`}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Mobile user header */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+              <div className="relative p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                {/* ✅ Close button */}
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-600 dark:text-gray-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
                 {user ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 pr-8">
                     <img
                       src={
                         user?.profile?.profilePhoto &&
-                        !user.profile.profilePhoto.includes("github.com")
+                          !user.profile.profilePhoto.includes("github.com")
                           ? user.profile.profilePhoto
                           : "/noprofile.webp"
                       }
@@ -795,7 +803,7 @@ const Navbar = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center">
+                  <div className="text-center pr-8">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
                       Welcome to GreatHire
                     </h3>
@@ -810,21 +818,21 @@ const Navbar = () => {
               <div className="overflow-y-auto h-full pb-32">
                 <div className="px-4 py-2" />
 
-                {mobileNavLinks.map(({ to, label }) => (
+                {mobileNavLinks.map(({ to, label, icon }) => (
                   <Link
                     key={to}
                     to={to}
-                    className={`block px-4 py-2.5 transition-colors font-medium ${
-                      location.pathname === to
+                    className={`flex items-center gap-3 px-4 py-2.5 transition-colors font-medium ${location.pathname === to
                         ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
                         : "text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {label}
+                    <span className="text-base w-5 text-center shrink-0">{icon || "🔗"}</span>
+                    <span>{label}</span>
                   </Link>
                 ))}
-
+                
                 {/* Mobile policy */}
                 <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="px-4 py-2">
