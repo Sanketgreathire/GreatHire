@@ -173,7 +173,7 @@ export const googleLogin = async (req, res) => {
 
     if (user) {
       if (role && role !== user.role) {
-        res.status(200).json({
+        return res.status(200).json({
           message: "An account already exists. Please use another account!",
           success: false,
         });
