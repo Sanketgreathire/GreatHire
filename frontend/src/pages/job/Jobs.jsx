@@ -163,18 +163,27 @@ export default function Jobs() {
                 onReset={handleReset}
               />
             </aside>
+{/* Mobile Filter Overlay */}
+{showMobileFilter && (
+  <div className="fixed inset-0 z-[100] sm:hidden">
+    {/* Backdrop */}
+    <div
+      className="absolute inset-0 bg-black/50"
+      onClick={() => setShowMobileFilter(false)}
+      aria-hidden="true"
+    />
 
-            {/* Mobile Filter Overlay */}
-            {showMobileFilter && (
-              <FilterCard
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                onReset={handleReset}
-                onClose={() =>
-                  setShowMobileFilter(false)
-                }
-              />
-            )}
+    {/* Mobile Filter Panel */}
+    <div className="absolute inset-x-0 top-16 bottom-0 z-[101] overflow-hidden">
+      <FilterCard
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onReset={handleReset}
+        onClose={() => setShowMobileFilter(false)}
+      />
+    </div>
+  </div>
+)}
 
             {/* Jobs List */}
             <div className="flex-1 min-w-0">

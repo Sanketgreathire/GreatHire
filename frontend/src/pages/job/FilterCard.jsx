@@ -318,32 +318,27 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
         />
       </Helmet>
 
-      {/* Mobile Overlay - Shows on small screens */}
-      {onClose && (
-        <div className="sm:hidden fixed inset-0 bg-black/50 z-30" onClick={onClose} />
-      )}
+      
 
-      {/* Filter Card — CHANGE: reduced sm:w-[210px] md:w-[224px] to match lg:w-56 sidebar in Jobs.jsx */}
-      <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto w-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg top-4 sm:max-h-none sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col z-40 sm:z-auto">
-        {onClose && (
-          <button
-            onClick={onClose}
-            title="Close filters"
-            className="absolute top-4 right-4 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 sm:hidden z-20 text-gray-600 dark:text-gray-400 transition-colors"
-          >
-            <IoMdClose size={28} />
-          </button>
-        )}
+    {/* Filter Card */}
+<div className="w-full h-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col overflow-hidden">  {onClose && (
+    <button
+      onClick={onClose}
+      title="Close filters"
+      className="absolute top-4 right-4 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 sm:hidden z-20 text-gray-600 dark:text-gray-400 transition-colors"
+    >
+      <IoMdClose size={28} />
+    </button>
+  )}
 
-        {/* Header */}
+  {/* Header */}
         <div className="flex items-center justify-start gap-2 pt-4 sm:pt-8 px-4 sm:px-8 border-b border-gray-200 dark:border-gray-700 pb-3 bg-white dark:bg-gray-800 dark:text-gray-100 flex-shrink-0 rounded-t-2xl sm:rounded-t-lg">
           <FiFilter className="text-xl sm:text-2xl text-blue-500 dark:text-blue-400 flex-shrink-0" />
           <h2 className="text-base sm:text-xl font-semibold text-blue-600 dark:text-blue-400 truncate">Filters</h2>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-0 pb-20 sm:pb-4 pt-6 space-y-6">
-          {/* Job Title dropdown (location removed from this generic loop) */}
+<div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-0 pb-4 pt-6 space-y-6">          {/* Job Title dropdown (location removed from this generic loop) */}
           {["jobTitle"].map((category) => (
             <div key={category} className="mb-6">
               <label
@@ -582,8 +577,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
         </div>
 
         {/* Reset Button - Fixed at bottom on mobile */}
-        <div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto flex justify-center gap-2 pt-3 pb-3 sm:pt-3 sm:pb-3 px-4 sm:px-8 bg-white dark:bg-gray-800 flex-shrink-0 border-t border-gray-200 dark:border-gray-700 shadow-lg sm:shadow-none rounded-t-2xl sm:rounded-none">
-          <button
+<div className="flex-shrink-0 flex justify-center gap-2 pt-3 pb-3 px-4 sm:px-8 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg sm:shadow-none">          <button
             onClick={handleReset}
             className="w-full sm:w-auto px-6 py-2 rounded-full border border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 text-sm sm:text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white transition"
           >
