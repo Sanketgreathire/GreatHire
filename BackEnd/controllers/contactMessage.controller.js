@@ -129,7 +129,7 @@ export const sendContactMessage = async (req, res) => {
                 <strong>Submitted:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} (IST)
               </p>
               <p style="margin: 5px 0;">
-                <strong>IP Address:</strong> ${getClientIp() || 'N/A'}
+                <strong>IP Address:</strong> ${escapeHtml(getClientIp(req) || "N/A")}
               </p>
             </div>
           </div>
@@ -281,7 +281,6 @@ function escapeHtml(text) {
 }
 
 // Helper function to get client IP
-function getClientIp() {
-  // This would need to be passed from middleware
-  return null;
+function getClientIp(req) {
+  return req.ip || req.socket?.remoteAddress || null;
 }

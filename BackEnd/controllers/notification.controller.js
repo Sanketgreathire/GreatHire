@@ -3,13 +3,39 @@ import mongoose from "mongoose";
 import { Contact } from "../models/contact.model.js";
 import nodemailer from "nodemailer";
 
-// Helper function to get user role model
-const getUserRoleModel = (role) => {
-  switch (role) {
-    case "recruiter": return "Recruiter";
-    case "admin": return "Admin";
-    default: return "User";
+// Prefer the authenticated Mongoose document's model over its role value.
+const getNotificationRecipientModel = (user) => {
+  const modelName = user?.constructor?.modelName;
+  const recipientModelPath = Notification.schema.path("recipientModel");
+  if (modelName) {
+    return recipientModelPath.enumValues.includes(modelName) ? modelName : null;
   }
+
+  switch (user?.role) {
+    case "student":
+    case "jobseeker":
+    case "user":
+      return "User";
+    case "recruiter":
+      return "Recruiter";
+    case "admin":
+    case "Owner":
+      return "Admin";
+    default:
+      return null;
+  }
+};
+
+const requireNotificationRecipientModel = (user, res) => {
+  const model = getNotificationRecipientModel(user);
+  if (!model) {
+    res.status(403).json({
+      success: false,
+      message: "Notifications are not supported for this account type",
+    });
+    return null;
+  }
+  return model;
 };
 
 // Helper function to validate ObjectId
@@ -22,8 +48,6 @@ export const getNotifications = async (req, res) => {
   try {
     // Check both req.user and req.id
     const userId = req.user?._id || req.id;
-    const userRole = req.user?.role || "student";
-
     if (!userId) {
       return res.status(401).json({ 
         success: false, 
@@ -31,7 +55,11 @@ export const getNotifications = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(userRole);
+    const role = requireNotificationRecipientModel(
+      req.user || { role: "student" },
+      res
+    );
+    if (!role) return;
     const page = parseInt(req.query.page) || 1;
     const limit = Math.min(parseInt(req.query.limit) || 20, 50);
     const skip = (page - 1) * limit;
@@ -90,7 +118,8 @@ export const markAsRead = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = requireNotificationRecipientModel(req.user, res);
+    if (!role) return;
 
     const notification = await Notification.findOneAndUpdate(
       { 
@@ -139,7 +168,8 @@ export const markAllAsRead = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = requireNotificationRecipientModel(req.user, res);
+    if (!role) return;
 
     const result = await Notification.updateMany(
       {
@@ -195,8 +225,8 @@ export const getAdminNotifications = async (req, res) => {
       return res.status(401).json({ success: false, message: "Authentication required" });
     }
 
-    // Security: Only admins can access admin notifications
-    if (req.user.role !== "admin") {
+    const role = getNotificationRecipientModel(req.user);
+    if (role !== "Admin") {
       return res.status(403).json({ 
         success: false, 
         message: "Access denied. Admin privileges required." 
@@ -204,7 +234,7 @@ export const getAdminNotifications = async (req, res) => {
     }
 
     const notifications = await Notification.find({
-      recipientModel: "Admin",
+      recipientModel: role,
     })
       .sort({ createdAt: -1 })
       .limit(50);
@@ -225,8 +255,8 @@ export const markAdminNotificationAsRead = async (req, res) => {
       return res.status(401).json({ success: false, message: "Authentication required" });
     }
 
-    // Security: Only admins can mark admin notifications as read
-    if (req.user.role !== "admin") {
+    const role = getNotificationRecipientModel(req.user);
+    if (role !== "Admin") {
       return res.status(403).json({ 
         success: false, 
         message: "Access denied. Admin privileges required." 
@@ -237,7 +267,7 @@ export const markAdminNotificationAsRead = async (req, res) => {
     const notification = await Notification.findOneAndUpdate(
       { 
         _id: id,
-        recipientModel: "Admin"
+        recipientModel: role
       },
       { isRead: true, readAt: new Date() },
       { new: true }
@@ -269,7 +299,8 @@ export const getUnreadCount = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = requireNotificationRecipientModel(req.user, res);
+    if (!role) return;
 
     const count = await Notification.countDocuments({
       recipient: req.user._id,
@@ -304,7 +335,8 @@ export const deleteNotification = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = requireNotificationRecipientModel(req.user, res);
+    if (!role) return;
 
     const notification = await Notification.findOneAndDelete({
       _id: id,
@@ -347,7 +379,8 @@ export const testNotification = async (req, res) => {
       });
     }
 
-    const role = getUserRoleModel(req.user.role);
+    const role = requireNotificationRecipientModel(req.user, res);
+    if (!role) return;
     
     const testNotification = new Notification({
       recipient: req.user._id,
