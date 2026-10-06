@@ -238,8 +238,8 @@ function processBoldAndCode(text) {
 export default function JobseekerChatbot() {
   const { user } = useSelector((state) => state.auth || {});
 
-  // Render chatbot for candidates and guest visitors (non-recruiters)
-  const isJobseekerOrGuest = !user || (user && user.role !== "recruiter" && user.role !== "admin");
+  // Render chatbot only for logged-in candidates/students (not guests, not recruiters, not admins)
+  const isJobseekerOrGuest = user && user.role !== "recruiter" && user.role !== "admin";
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
