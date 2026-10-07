@@ -730,6 +730,7 @@ export const updateProfile = async (req, res) => {
       skills,
       documents,
       autoApply,
+      removeProfilePhoto,
     } = req.body;
     // console.log(req.body);
     const { profilePhoto, resume } = req.files || {}; // Access files from req.files
@@ -795,14 +796,22 @@ export const updateProfile = async (req, res) => {
     }
 
     // Upload profile photo if provided
-    if (profilePhoto && profilePhoto.length > 0) {
-      // fetching data uri of file
-      const fileUri = getDataUri(profilePhoto[0]);
-      // upload file to cloudnary
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      // set cloudResponse.secure_url to user profile photo
-      user.profile.profilePhoto = cloudResponse.secure_url;
-    }
+    // if (profilePhoto && profilePhoto.length > 0) {
+    //   // fetching data uri of file
+    //   const fileUri = getDataUri(profilePhoto[0]);
+    //   // upload file to cloudnary
+    //   const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    //   // set cloudResponse.secure_url to user profile photo
+    //   user.profile.profilePhoto = cloudResponse.secure_url;
+    // }
+
+    if (removeProfilePhoto === "true" || removeProfilePhoto === true) {
+  user.profile.profilePhoto = "";
+} else if (profilePhoto && profilePhoto.length > 0) {
+  const fileUri = getDataUri(profilePhoto[0]);
+  const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+  user.profile.profilePhoto = cloudResponse.secure_url;
+}
 
     // Upload resume if provided
     if (resume && resume.length > 0) {

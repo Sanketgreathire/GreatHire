@@ -611,7 +611,12 @@ export const addRecruiterToCompany = async (req, res) => {
 // update profile of recruiter
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, phoneNumber, position } = req.body;
+   const {
+  fullname,
+  phoneNumber,
+  position,
+  removeProfilePhoto,
+} = req.body;
     const userId = req.id;
 
     if (!userId) {
@@ -650,21 +655,46 @@ export const updateProfile = async (req, res) => {
     }
 
     // Profile photo
-    const profilePhoto = req.files?.profilePhoto;
+    // const profilePhoto = req.files?.profilePhoto;
 
-    if (profilePhoto && profilePhoto.length > 0) {
-      const fileUri = getDataUri(profilePhoto[0]);
+    // if (profilePhoto && profilePhoto.length > 0) {
+    //   const fileUri = getDataUri(profilePhoto[0]);
 
-      const cloudResponse = await cloudinary.uploader.upload(
-        fileUri.content
-      );
+    //   const cloudResponse = await cloudinary.uploader.upload(
+    //     fileUri.content
+    //   );
 
-      if (!user.profile) {
-        user.profile = {};
-      }
+    //   if (!user.profile) {
+    //     user.profile = {};
+    //   }
 
-      user.profile.profilePhoto = cloudResponse.secure_url;
+    //   user.profile.profilePhoto = cloudResponse.secure_url;
+    // }
+
+    // Profile photo
+if (removeProfilePhoto === "true" || removeProfilePhoto === true) {
+  if (!user.profile) {
+    user.profile = {};
+  }
+
+  user.profile.profilePhoto = "";
+} else {
+  const profilePhoto = req.files?.profilePhoto;
+
+  if (profilePhoto && profilePhoto.length > 0) {
+    const fileUri = getDataUri(profilePhoto[0]);
+
+    const cloudResponse = await cloudinary.uploader.upload(
+      fileUri.content
+    );
+
+    if (!user.profile) {
+      user.profile = {};
     }
+
+    user.profile.profilePhoto = cloudResponse.secure_url;
+  }
+}
 
     // Fullname
     if (fullname && user.fullname !== fullname.trim()) {

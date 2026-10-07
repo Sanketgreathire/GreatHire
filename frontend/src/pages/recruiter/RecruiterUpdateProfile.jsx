@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Pencil } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -16,96 +16,166 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
-  //Initialize state with user details
+  // Track if image was explicitly removed by the user
+  const [isImageRemoved, setIsImageRemoved] = useState(false);
+
+  // Initialize state with user details
   const [input, setInput] = useState({
-    fullname: user?.fullname || "",
-    email: user?.emailId.email || "",
-    phoneNumber: user?.phoneNumber.number || "",
+    fullname: "",
+    email: "",
+    phoneNumber: "",
     dialCode: "+91",
     countryIso: "IN",
-    position: user?.position || "",
-    profilePhoto: user?.profile?.profilePhoto || "",
+    position: "",
+    profilePhoto: null,
   });
 
-  // Phone-specific error state (mirrors Contact Us pattern)
   const [phoneError, setPhoneError] = useState("");
-
-  // Profile image preview state
-  const [previewImage, setPreviewImage] = useState(
-    user?.profile?.profilePhoto || ""
-  );
+  const [previewImage, setPreviewImage] = useState("");
 
   const dispatch = useDispatch();
+
+  // Reset/sync local state whenever user prop updates or modal opens
+  useEffect(() => {
+    if (open && user) {
+      setInput({
+        fullname: user?.fullname || "",
+        email: user?.emailId?.email || "",
+        phoneNumber: user?.phoneNumber?.number || "",
+        dialCode: "+91",
+        countryIso: "IN",
+        position: user?.position || "",
+        profilePhoto: null,
+      });
+      setPreviewImage(user?.profile?.profilePhoto || "");
+      setIsImageRemoved(false);
+      setPhoneError("");
+    }
+  }, [open, user]);
 
   const changeEventHandler = useCallback((e) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }, []);
 
-  const handleImageChange = useCallback((e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("Image size should be less than 10 MB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => setPreviewImage(reader.result);
-      reader.readAsDataURL(file);
-      setInput((prev) => ({ ...prev, profilePhoto: file }));
+    if (!file) return;
+
+    const MAX_FILE_SIZE = 100 * 1024;
+    const allowedExtensions = ["jpg", "jpeg", "png", "webp"];
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      toast.error("Only JPG, JPEG, PNG, and WEBP images are allowed.");
+      e.target.value = "";
+      return;
     }
-  }, []);
 
-  const submitHandler = useCallback(async (e) => {
-    e.preventDefault();
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedMimeTypes.includes(file.type)) {
+      toast.error("Only JPG, JPEG, PNG, and WEBP images are allowed.");
+      e.target.value = "";
+      return;
+    }
 
-    // Validate phone number — same logic as Contact Us module
-    let phoneValid = true;
-    if (!input.phoneNumber) {
-      setPhoneError("Phone number is required");
-      phoneValid = false;
-    } else {
-      try {
-        const phone = input.phoneNumber.replace(/[\s-]/g, "");
-        const parsed = parsePhoneNumberFromString(phone);
-        if (!parsed || !parsed.isValid()) {
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("Image size should not be more than 100 KB.");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    setInput((prev) => ({
+      ...prev,
+      profilePhoto: file,
+    }));
+    setIsImageRemoved(false);
+  };
+
+  // Image remove handler function
+  const handleRemoveImage = () => {
+    setPreviewImage("");
+    setInput((prev) => ({
+      ...prev,
+      profilePhoto: null,
+    }));
+    setIsImageRemoved(true);
+  };
+
+  const submitHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+
+      let phoneValid = true;
+      if (!input.phoneNumber) {
+        setPhoneError("Phone number is required");
+        phoneValid = false;
+      } else {
+        try {
+          const phone = input.phoneNumber.replace(/[\s-]/g, "");
+          const parsed = parsePhoneNumberFromString(phone);
+          if (!parsed || !parsed.isValid()) {
+            setPhoneError("Enter a valid phone number");
+            phoneValid = false;
+          } else {
+            setPhoneError("");
+          }
+        } catch {
           setPhoneError("Enter a valid phone number");
           phoneValid = false;
-        } else {
-          setPhoneError("");
         }
-      } catch {
-        setPhoneError("Enter a valid phone number");
-        phoneValid = false;
       }
-    }
-    if (!phoneValid) return;
+      if (!phoneValid) return;
 
-    const formData = new FormData();
-    formData.append("fullname", input.fullname);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("position", input.position);
-    if (input.profilePhoto) formData.append("profilePhoto", input.profilePhoto);
+      const formData = new FormData();
+      formData.append("fullname", input.fullname);
+      formData.append("phoneNumber", input.phoneNumber);
+      formData.append("position", input.position);
 
-    try {
-      setLoading(true);
-      const res = await axios.put(
-        `${RECRUITER_API_END_POINT}/profile/update`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" }, withCredentials: true }
-      );
-      if (res.data.success) {
-        dispatch(setUser(res.data.user));
-        setOpen(false);
+      // Explicit removal logic for backend sync
+      if (isImageRemoved) {
+        formData.append("removeProfilePhoto", "true");
+        formData.append("profilePhoto", "");
+      } else if (input.profilePhoto) {
+        formData.append("profilePhoto", input.profilePhoto);
       }
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
-  }, [input, dispatch, setOpen]);
 
-  // Return null if modal is not open
+      try {
+        setLoading(true);
+        const res = await axios.put(
+          `${RECRUITER_API_END_POINT}/profile/update`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+
+        if (res.data.success) {
+          // If profilePhoto was removed, ensure Redux state updates properly
+          const updatedUser = res.data.user;
+          if (isImageRemoved && updatedUser?.profile) {
+            updatedUser.profile.profilePhoto = "";
+          }
+
+          dispatch(setUser(updatedUser));
+          setOpen(false);
+          toast.success(res.data.message || "Profile updated successfully!");
+        }
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Something went wrong!");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [input, isImageRemoved, dispatch, setOpen]
+  );
+
   if (!open) return null;
 
   return (
@@ -114,10 +184,9 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
         <title>
           Update Your Profile | Manage Your Personal and Professional Information at GreatHire
         </title>
-
         <meta
           name="description"
-          content="The Recruiter Update Profile Page on GreatHire enables professionals to safely and easily update personal and professional information as well as the images displayed on the profile page. Designed to meet the requirements of the current hiring and recruitment process, our system runs from the state of Hyderabad, India, providing trusted recruitment solutions to businesses and start-ups expanding rapidly. Thus, maintain your recruiters’ presence on the platform as a trusted and professional entity and enhance trust between your recruiters and job candidates."
+          content="The Recruiter Update Profile Page on GreatHire enables professionals to safely and easily update personal and professional information."
         />
       </Helmet>
       <div
@@ -142,26 +211,40 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
             Update Profile
           </h2>
 
-          {/* Profile Image */}
+          {/* Profile Image View */}
           <div className="relative flex flex-col items-center mt-4">
-            <div className="relative w-24 h-24">
+            <div className="relative w-28 h-28">
               {previewImage ? (
                 <img
                   src={previewImage}
                   alt="Profile Preview"
-                  className="w-full h-full rounded-full object-cover border border-gray-300 dark:border-gray-600"
+                  className="w-full h-full rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 shadow-sm"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm">
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-full border-2 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs font-medium">
                   No Image
                 </div>
               )}
 
+              {/* Delete Icon (Bottom Left) */}
+              {previewImage && (
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  title="Remove Photo"
+                  className="absolute bottom-1 left-1 bg-red-500 hover:bg-red-600 p-2 rounded-full shadow-lg cursor-pointer text-white border-2 border-white dark:border-gray-900 transition-transform active:scale-95"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* Edit Icon (Bottom Right) */}
               <label
                 htmlFor="profilePhoto"
-                className="absolute bottom-1 right-1 bg-white dark:bg-gray-800 p-1.5 rounded-full shadow-md cursor-pointer border border-gray-200 dark:border-gray-600"
+                title="Upload Photo"
+                className="absolute bottom-1 right-1 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg cursor-pointer border-2 border-white dark:border-gray-900 text-gray-800 dark:text-gray-100 transition-transform active:scale-95"
               >
-                <Pencil className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                <Pencil className="w-4 h-4" />
               </label>
             </div>
 
@@ -169,14 +252,13 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
               type="file"
               id="profilePhoto"
               className="hidden"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png,.webp"
               onChange={handleImageChange}
             />
           </div>
 
           <form onSubmit={submitHandler} className="space-y-4 mt-6">
             <div className="space-y-4">
-
               {/* Name */}
               <div className="flex flex-col gap-1">
                 <Label htmlFor="fullname" className="text-gray-700 dark:text-gray-300">
@@ -205,7 +287,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
                 />
               </div>
 
-              {/* Phone — country code dropdown, identical to Contact Us module */}
+              {/* Phone */}
               <div className="flex flex-col gap-1">
                 <Label htmlFor="phoneNumber" className="text-gray-700 dark:text-gray-300">
                   Phone
@@ -243,7 +325,6 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
                   className="dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                 />
               </div>
-
             </div>
 
             {/* Submit */}
