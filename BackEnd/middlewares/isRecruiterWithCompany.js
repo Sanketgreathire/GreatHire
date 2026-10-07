@@ -4,6 +4,10 @@ const isRecruiterWithCompany = (req, res, next) => {
       return res.status(401).json({ message: "User not authenticated", success: false });
     }
 
+     if (req.user.role === "admin" || req.user.role === "Owner") {
+      return next();
+    }
+
     if (req.user.role !== "recruiter") {
       return res.status(403).json({ message: "Access denied. Recruiters only.", success: false });
     }

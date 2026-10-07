@@ -1,5 +1,5 @@
 // Reports.jsx — Modern Elite Corporate with Dark Mode Support
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/admin/Navbar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,11 @@ import {
   Legend,
 } from "recharts";
 import { DollarSign, Users, Briefcase, CheckCircle } from "lucide-react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { ADMIN_STAT_API_END_POINT, COURSE_API_END_POINT } from "@/utils/ApiEndPoint";
-import { Dialog } from "@mui/material";
+//import { Dialog } from "@mui/material";
 
 const exportToCSV = (data, filename = "report.csv") => {
   const headers = Object.keys(data[0]).join(",") + "\n";
@@ -38,13 +39,13 @@ const exportToCSV = (data, filename = "report.csv") => {
   URL.revokeObjectURL(url);
 };
 
-const createCSVBlobURL = (data) => {
-  const headers = Object.keys(data[0]).join(",") + "\n";
-  const rows = data.map(row => Object.values(row).join(",")).join("\n");
-  const csvContent = headers + rows;
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  return URL.createObjectURL(blob);
-};
+// const createCSVBlobURL = (data) => {
+//   const headers = Object.keys(data[0]).join(",") + "\n";
+//   const rows = data.map(row => Object.values(row).join(",")).join("\n");
+//   const csvContent = headers + rows;
+//   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+//   return URL.createObjectURL(blob);
+// };
 
 const Accent = {
   primary: "#1E40AF",
@@ -64,6 +65,10 @@ const COURSE_COLORS = {
 const Skeleton = ({ className = "h-6 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" }) => (
   <div className={className} aria-hidden />
 );
+
+Skeleton.propTypes = {
+  className: PropTypes.string,
+};
 
 const KPI = ({ label, value, icon, delta }) => (
   <Card className="p-5 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors">
@@ -85,6 +90,13 @@ const KPI = ({ label, value, icon, delta }) => (
     </div>
   </Card>
 );
+
+KPI.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  icon: PropTypes.node,
+  delta: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
 
 const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading, isDarkMode }) => (
   <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex flex-wrap gap-4 items-center justify-between transition-colors">
@@ -174,6 +186,16 @@ const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading,
   </div>
 );
 
+FilterBar.propTypes = {
+  year: PropTypes.number.isRequired,
+  range: PropTypes.number.isRequired,
+  onYearChange: PropTypes.func.isRequired,
+  onRangeChange: PropTypes.func.isRequired,
+  onApply: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
+  isDarkMode: PropTypes.bool,
+};
+
 const Reports = () => {
   useEffect(() => {
     if (!document.getElementById("poppins-font")) {
@@ -198,57 +220,57 @@ const Reports = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleShare = async () => {
-    if (!csvData.length) {
-      alert("No data available to share!");
-      return;
-    }
-    try {
-      const { data } = await axios.get(`${ADMIN_STAT_API_END_POINT}/export-corporate-csv`, {
-        params: { year: selectedYear, range: selectedRange },
-        withCredentials: true,
-      });
-      if (!data?.success) throw new Error("CSV export failed");
-      const csvUrl = data.url;
-      const reportTitle = "📊 Corporate Analytics Performance Report";
-      const message = `
-${reportTitle}
+//   const handleShare = async () => {
+//     if (!csvData.length) {
+//       alert("No data available to share!");
+//       return;
+//     }
+//     try {
+//       const { data } = await axios.get(`${ADMIN_STAT_API_END_POINT}/export-corporate-csv`, {
+//         params: { year: selectedYear, range: selectedRange },
+//         withCredentials: true,
+//       });
+//       if (!data?.success) throw new Error("CSV export failed");
+//       const csvUrl = data.url;
+//       const reportTitle = "📊 Corporate Analytics Performance Report";
+//       const message = `
+// ${reportTitle}
 
-Here's the latest performance insight from our analytics dashboard:
+// Here's the latest performance insight from our analytics dashboard:
 
-📈 Revenue Growth: ${statsData?.totalRevenue || "N/A"}
-👥 New Users: ${statsData?.newUsers || 0}
-🗂️ Total Applications: ${statsData?.totalApplications || 0}
-🏆 Success Rate: ${applicationSuccessRate}%
-💼 Active Jobs: ${statsData?.totalJobs || 0}
+// 📈 Revenue Growth: ${statsData?.totalRevenue || "N/A"}
+// 👥 New Users: ${statsData?.newUsers || 0}
+// 🗂️ Total Applications: ${statsData?.totalApplications || 0}
+// 🏆 Success Rate: ${applicationSuccessRate}%
+// 💼 Active Jobs: ${statsData?.totalJobs || 0}
 
-🔗 Download full report (CSV):
-${csvUrl}
+// 🔗 Download full report (CSV):
+// ${csvUrl}
 
-© ${new Date().getFullYear()} Corporate Insights Team
-      `.trim();
-      const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
-      const subject = "Corporate Analytics Report";
-      const body = encodeURIComponent(message);
-      const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
-      const choice = window.confirm("Click OK to share via WhatsApp, or Cancel to share via Email.");
-      window.open(choice ? whatsappURL : mailtoLink, "_blank");
-    } catch (error) {
-      console.error("Error sharing corporate CSV:", error);
-      alert("Could not share report. Please try again later.");
-    }
-  };
+// © ${new Date().getFullYear()} Corporate Insights Team
+//       `.trim();
+//       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
+//       const subject = "Corporate Analytics Report";
+//       const body = encodeURIComponent(message);
+//       const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+//       const choice = window.confirm("Click OK to share via WhatsApp, or Cancel to share via Email.");
+//       window.open(choice ? whatsappURL : mailtoLink, "_blank");
+//     } catch (error) {
+//       console.error("Error sharing corporate CSV:", error);
+//       alert("Could not share report. Please try again later.");
+//     }
+//   };
 
   const { user } = useSelector((state) => state.auth);
   const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
+  //const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
   const [selectedYear, setSelectedYear]       = useState(currentYear);
   const [selectedRange, setSelectedRange]     = useState(7);
   const [loading, setLoading]                 = useState(false);
   const [statsData, setStatsData]             = useState(null);
   const [recentPurchases, setRecentPurchases] = useState([]);
-  const [purchasePage, setPurchasePage]       = useState(1);
+  const [, setPurchasePage]       = useState(1);
   const [showAllPurchases, setShowAllPurchases] = useState(false);
   const [searchQuery, setSearchQuery]         = useState("");
   const [courseEnquiries, setCourseEnquiries] = useState([]);
@@ -256,7 +278,7 @@ ${csvUrl}
   const [showAllCourses, setShowAllCourses]   = useState(false);
   const [courseTypeFilter, setCourseTypeFilter] = useState("");
   const [courseLoading, setCourseLoading]     = useState(false);
-  const PURCHASES_PER_PAGE = 20;
+  //const PURCHASES_PER_PAGE = 20;
 
   const csvData = statsData
     ? [{
@@ -361,7 +383,7 @@ ${csvUrl}
       const response = await axios.get(`${ADMIN_STAT_API_END_POINT}/recent-purchases`, {
         params: { _t: timestamp },
         withCredentials: true,
-        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+        //: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
       });
       if (response?.data?.success) {
         setRecentPurchases(response.data.purchases);
@@ -383,6 +405,7 @@ ${csvUrl}
       fetchRecentPurchases();
       fetchCourseEnquiries();
     }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const deltas = useMemo(() => ({
