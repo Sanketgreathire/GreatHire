@@ -244,7 +244,14 @@ export const MessageProvider = ({ children }) => {
       }, { withCredentials: true });
 
       // ✅ Mark conversation as pending delivery if recipient is offline
-      const { delivered, conversationId: convId } = response.data;
+      const { delivered, conversationId: convId, message: sentMessage } = response.data;
+
+      // ✅ Append sent message to chat UI — sender never receives the socket "newMessage" echo
+      if (sentMessage && convId && activeConversation?._id?.toString() === convId.toString()) {
+        setMessages(prev =>
+          prev.some(m => m._id === sentMessage._id) ? prev : [...prev, sentMessage]
+        );
+      }
 
       if (!delivered && convId) {
         setConversations(prev =>

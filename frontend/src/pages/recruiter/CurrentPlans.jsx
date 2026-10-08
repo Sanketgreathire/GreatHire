@@ -266,9 +266,9 @@ const CurrentPlans = () => {
                   </div>
 
                   {/* Expiry Date */}
-                  <div className="flex justify-between items-center gap-3 p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                      <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <div className="flex justify-between items-center gap-2 p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                         <LuCalendarCheck className="text-lg" />
                       </div>
                       <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">Expiry Date:</span>

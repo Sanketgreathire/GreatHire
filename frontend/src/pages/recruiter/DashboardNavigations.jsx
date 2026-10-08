@@ -107,7 +107,7 @@ const DashboardNavigations = ({
           <X size={24} />
         </button>
 
-        <div className="flex flex-col h-full p-3 justify-between">
+        <div className="flex flex-col h-full p-3 gap-3">
           {/* Main Navigation */}
           <section>
             <h2 className="flex gap-2 items-center px-3 text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
@@ -297,7 +297,9 @@ const DashboardNavigations = ({
           {/* Footer: AI Copilot */}
           <NavLink
             to="/recruiter/dashboard/copilot"
-            className={navLinkClass}
+            className={(state) =>
+              `border-2 border-blue-600 dark:border-blue-500 ring-1 ring-blue-500/40 hover:ring-2 hover:ring-blue-500/60 ${navLinkClass(state)}`
+            }
             onClick={() => setSidebarOpen(false)}
           >
             {({ isActive }) => (
