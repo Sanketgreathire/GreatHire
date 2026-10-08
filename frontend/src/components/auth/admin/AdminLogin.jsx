@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import img from "../../../assets/webp/img10.webp";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,6 +7,7 @@ import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
 import Loading from "../../Loading";
 import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const AdminLogin = () => {
   const { user } = useSelector((state) => state.auth);
@@ -17,6 +18,7 @@ const AdminLogin = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false);  // Add loading state
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     document.title = "Admin Login | GreatHire";
@@ -77,7 +79,7 @@ const AdminLogin = () => {
             <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
               Great<span className="text-blue-700 dark:text-blue-400">Hire</span>
             </h1>
-            
+
             {/* Title */}
             <h1 className="text-2xl md:text-4xl font-bold text-center text-gray-900 dark:text-white">
               Login
@@ -100,21 +102,35 @@ const AdminLogin = () => {
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                 required
               />
-              
+
+              {/* Password with Show/Hide */}
               <label className="font-bold text-gray-900 dark:text-white">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                required
-              />
-              
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                >
+                  {showPassword ? (
+                    <FiEyeOff className="w-5 h-5" />
+                  ) : (
+                    <FiEye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+
               <div className="flex flex-row-reverse">
                 <p
-                  className="text-blue-600 dark:text-blue-400 text-sm cursor-pointer hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  className="text-blue-600 dark:text-blue-400 text-sm cursor-pointer hover:text-blue-700"
                   onClick={() => navigate("/forgot-password")}
                 >
                   Forgot Password
@@ -122,12 +138,12 @@ const AdminLogin = () => {
               </div>
             </div>
 
+
             {/* Submit Button */}
             <button
               type="submit"
-              className={`w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 transition-colors ${
-                loading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-blue-600 dark:bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 transition-colors ${loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               disabled={loading} // Disable button when loading
             >
               {loading ? (
