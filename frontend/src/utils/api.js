@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-=======
-
 /*import axios from "axios";
 
 const API = axios.create({
@@ -28,7 +25,6 @@ export default API;*/
 
 // export default API;
 
->>>>>>> Stashed changes
 import axios from "axios";
 
 // Origin only (no "/api", no trailing slash). Falls back to "" so the
@@ -36,11 +32,7 @@ import axios from "axios";
 const BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
 const API = axios.create({
-<<<<<<< Updated upstream
-  baseURL: (import.meta.env.VITE_API_URL || "") + "/api",
-=======
   baseURL: `${BASE}/api`,
->>>>>>> Stashed changes
   withCredentials: true,
 });
 
