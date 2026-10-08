@@ -541,11 +541,10 @@ const CandidateList = () => {
     const maxOptions = ["", ...Array.from({length: 31 - currentMin}, (_, i) => (i + currentMin).toString())];
 
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters(prev => ({ ...prev, skills: e.target.value }))} />
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters(prev => ({ ...prev, location: e.target.value }))} />
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters(prev => ({ ...prev, designation: e.target.value }))} />
-        /*
         <select className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" value={sourcingFilters.minExp} onChange={(e) => {
           const val = e.target.value;
           let newMax = sourcingFilters.maxExp;

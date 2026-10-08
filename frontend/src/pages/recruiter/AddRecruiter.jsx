@@ -40,6 +40,16 @@ const AddRecruiter = () => {
       return;
     }
 
+    const rawPhone = formData.phoneNumber.replace(/[\s().-]/g, "");
+    const phoneLooksValid =
+      /^\+[1-9]\d{5,14}$/.test(rawPhone) ||
+      /^0?[6-9]\d{9}$/.test(rawPhone) ||
+      /^00\d{7,14}$/.test(rawPhone);
+    if (!phoneLooksValid) {
+      toast.error("Enter a valid phone number (e.g. +91 9876543210 or 9876543210)");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await axios.post(

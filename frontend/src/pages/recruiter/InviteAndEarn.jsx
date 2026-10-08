@@ -114,11 +114,11 @@ const InviteAndEarn = () => {
             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide pt-1">
               Your Referral Link
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <input
                 readOnly
                 value={referralLink}
-                className="flex-1 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2.5 text-gray-700 dark:text-gray-300 truncate focus:outline-none"
+                className="flex-1 min-w-0 basis-full sm:basis-auto text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2.5 text-gray-700 dark:text-gray-300 truncate focus:outline-none"
               />
               <button
                 onClick={handleCopy}

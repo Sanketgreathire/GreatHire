@@ -501,16 +501,12 @@ const PostedJobList = () => {
                   {/* Filter */}
 
                   <div className="flex w-full items-center gap-3 lg:w-auto">
-                    <span className="hidden text-sm font-medium text-gray-500 sm:block dark:text-gray-400">
-                      Filter:
-                    </span>
-
                     <select
                       value={statusFilter}
                       onChange={(e) =>
                         setStatusFilter(e.target.value)
                       }
-                      className="w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-700 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 sm:w-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      className="text-sm border border-gray-400 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none min-w-0 max-w-full"
                     >
                       {statusOptions.map((status) => (
                         <option

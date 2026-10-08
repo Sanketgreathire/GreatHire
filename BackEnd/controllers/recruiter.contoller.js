@@ -91,7 +91,7 @@ export const register = async (req, res) => {
         isVerified: false,
       },
       phoneNumber: {
-        number: phoneNumber,
+        number: phoneCheck.phone,
         isVerified: false,
       },
       password: hashedPassword,
@@ -264,7 +264,14 @@ export const getAllRecruiters = async (req, res) => {
       .select("-password")
       .lean();
 
-    return res.status(200).json({ recruiters, success: true });
+    const flaggedRecruiters = recruiters.map((r) => ({
+      ...r,
+      phoneInvalid:
+        Boolean(r.phoneNumber?.number) &&
+        !validateRecruiterPhone(r.phoneNumber.number).valid,
+    }));
+
+    return res.status(200).json({ recruiters: flaggedRecruiters, success: true });
   } catch (error) {
     console.error("Error in fetching recruiters:", error);
     return res.status(500).json({ success: false, message: "Internal server error." });
@@ -635,13 +642,16 @@ export const updateProfile = async (req, res) => {
     }
 
     // Phone number validation
-    const intlPhoneRegex = /^\+\d{6,15}$/;
-
-    if (phoneNumber && !intlPhoneRegex.test(phoneNumber)) {
-      return res.status(400).json({
-        message: "Invalid international phone number.",
-        success: false,
-      });
+    let normalizedPhone = null;
+    if (phoneNumber) {
+      const phoneCheck = validateRecruiterPhone(phoneNumber);
+      if (!phoneCheck.valid) {
+        return res.status(400).json({
+          message: phoneCheck.message,
+          success: false,
+        });
+      }
+      normalizedPhone = phoneCheck.phone;
     }
 
     // Find recruiter
@@ -703,10 +713,10 @@ if (removeProfilePhoto === "true" || removeProfilePhoto === true) {
 
     // Phone number
     if (
-      phoneNumber &&
-      user.phoneNumber?.number !== phoneNumber
+      normalizedPhone &&
+      user.phoneNumber?.number !== normalizedPhone
     ) {
-      user.phoneNumber.number = phoneNumber;
+      user.phoneNumber.number = normalizedPhone;
 
       // Phone changed → verification reset
       user.phoneNumber.isVerified = false;

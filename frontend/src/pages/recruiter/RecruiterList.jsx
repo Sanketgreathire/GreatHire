@@ -175,18 +175,18 @@ const RecruiterList = () => {
             </div>
           )}
 
-          <div className="mb-4 flex flex-col sm:flex-row justify-between gap-3 px-2">
+          <div className="mb-4 flex flex-wrap items-center gap-2 sm:gap-3 sm:justify-between">
             <input
               type="text"
               placeholder="Search by name, email, or phone"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="p-2 w-full sm:w-64 rounded-sm border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400"
+              className="min-w-0 w-full sm:w-64 px-4 py-2 text-sm rounded-full border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400"
             />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 w-full sm:w-auto rounded border border-gray-400 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+              className="text-sm border border-gray-400 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none min-w-0 max-w-full"
             >
               <option value="all">All</option>
               <option value="active">Active</option>
@@ -245,7 +245,14 @@ const RecruiterList = () => {
                     </td>
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter?.fullname || " "}</td>
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.emailId.email}</td>
-                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.phoneNumber?.number || "N/A"}</td>
+                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">
+                      {recruiter.phoneNumber?.number || "N/A"}
+                      {recruiter.phoneInvalid && (
+                        <span className="ml-2 inline-flex items-center rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-red-700 dark:bg-red-900/40 dark:text-red-300">
+                          Invalid
+                        </span>
+                      )}
+                    </td>
                     <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.position}</td>
                     {isAdmin && (
                       <>
