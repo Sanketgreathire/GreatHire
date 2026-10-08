@@ -312,7 +312,7 @@ const AllApplicantsList = () => {
                     <select
                       value={selectedJob}
                       onChange={(e) => setSelectedJob(e.target.value)}
-                      className="text-sm border border-gray-200 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none"
+                      className="text-sm border border-gray-200 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 focus:outline-none min-w-0 max-w-full"
                     >
                       <option value="All">All Jobs</option>
                       {jobsList.map((job) => (
