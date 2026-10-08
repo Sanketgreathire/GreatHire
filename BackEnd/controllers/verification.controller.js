@@ -8,11 +8,18 @@ import { Job } from "../models/job.model.js";
 import randomstring from "randomstring";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
+import Revenue from "../models/revenue.model.js";
+import Razorpay from "razorpay";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 import { validationResult } from "express-validator";
 import { isUserAssociatedForPlan } from "./company.controller.js";
 import { autoApply } from "../src/services/autoApply.service.js";
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 // otpService.js
 import twilio from "twilio";
 // Setup nodemailer
@@ -400,133 +407,174 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       return res.status(403).json({ success: false, message: "You are not authorized" });
     }
 
-    if (
-      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
-    ) {
-      // Update the order status in the database
-      const currentPlan = await JobSubscription.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        {
-          paymentStatus: "paid",
-          paymentDetails: {
-            paymentId: razorpay_payment_id,
-            signature: razorpay_signature,
-          },
-          status: "Active", // Activate the plan after paymentStatus is paid
-        },
-        { new: true } // Return the updated document
-      ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits teamUserLimit");
-
-      // Expire the previous active plan (if any) before activating the new one
-      await JobSubscription.updateOne(
-        { company: companyId, status: "Active", razorpayOrderId: { $ne: razorpay_order_id } },
-        { $set: { status: "Expired" } }
-      );
-
-      // Remove all expired plans for this company
-      await JobSubscription.deleteMany({
-        company: companyId,
-        status: "Expired",
-      });
-
-      // Find the company and update maxPostJobs
-      const company = await Company.findById(companyId);
-      if (!company) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Company not found" });
-      }
-
-      // Carry forward leftover job slots from the previous paid plan
-      const PLAN_LIMITS = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
-      // const PAID_PLAN_FREE_JOBS = 2;
-      const prevPlan = company.plan || "FREE";
-
-      let carryoverJobs = 0;
-      if (prevPlan === "FREE") {
-        // Carry forward unused free jobs when upgrading from FREE plan
-        const freeLimit = PLAN_LIMITS["FREE"] ?? 2;
-        const freeUsed = company.freeJobsPosted || 0;
-        carryoverJobs = Math.max(0, freeLimit - freeUsed);
-      } else if (company.hasSubscription) {
-        // Carry forward unused paid slots when upgrading between paid plans
-        const prevLimit = PLAN_LIMITS[prevPlan] ?? 0;
-        if (prevLimit !== Infinity) {
-          const paidUsed = company.planJobsPostedThisMonth || 0;
-          carryoverJobs = Math.max(0, prevLimit - paidUsed);
-        }
-      }
-
-      // Carry forward admin-added bonus slots (customMaxJobPosts) — always preserved across plan upgrades
-      const adminBonus = Number(company.customMaxJobPosts) || 0;
-      carryoverJobs += adminBonus;
-
-      // Carry forward leftover candidate credits
-      const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
-
-      company.creditedForJobs = creditsForJobs;
-      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
-      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
-      company.maxJobPosts = null;
-      company.customMaxJobPosts = 0; // reset after carrying forward into planJobsPostedThisMonth offset
-      company.hasSubscription = true;
-      company.freePlanExpiry = null;
-
-      // Apply carryover: start new plan with negative usage offset so leftover slots are available
-      // company.paidPlanFreeJobsPosted = 0;
-      // company.paidPlanFreeJobsRenewal = new Date();
-      // Offset planJobsPostedThisMonth so carryover slots are effectively added to the new plan
-      company.planJobsPostedThisMonth = -carryoverJobs;
-
-      await company.save();
-
-      // Determine plan type based on job count
-      let planType = "ENTERPRISE"; // all paid plans are now ENTERPRISE
-      if (creditsForJobs < 999999) {
-        if (creditsForJobs >= 25) planType = "PRO";
-        else if (creditsForJobs >= 10) planType = "PREMIUM";
-        else planType = "STANDARD";
-      }
-
-      company.creditedForJobs = creditsForJobs;
-      company.creditedForCandidates = creditsForCandidates + leftoverCandidates;
-      company.aiSourcingCredits = (company.aiSourcingCredits || 0) + Number(aiSourcingCredits || currentPlan?.aiSourcingCredits || 0);
-      company.maxJobPosts = "9999999";
-      company.hasSubscription = true;
-      company.freePlanExpiry = null;
-      company.planJobsPostedThisMonth = -carryoverJobs;
-      company.plan = planType;
-      company.planMonthStart = new Date();
-      // Team-user cap purchased with this Enterprise plan (3/6/12 for 3mo/6mo/1yr);
-      // non-Enterprise plans fall back to the flat USER_LIMITS table.
-      company.teamUserLimit = planType === "ENTERPRISE" ? (currentPlan?.teamUserLimit ?? null) : null;
-
-      await company.save();
-
-      // Update all recruiters associated with this company
-      const recruiterIds = company.userId.map((u) => u.user);
-      await Recruiter.updateMany(
-        { _id: { $in: recruiterIds } },
-        {
-          plan: planType,
-          subscriptionStatus: "ACTIVE",
-        }
-      );
-
-      res.status(200).json({
-        success: true,
-        plan: currentPlan,
-        userPlan: planType,
-        message: "Payment verified successfully",
-      });
-    } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Payment verification failed" });
+    // 1. 🔐 Cryptographic Signature Verification
+    if (!matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+      return res.status(400).json({ success: false, message: "Payment verification failed: Invalid signature" });
     }
+
+    // 2. 🔍 Retrieve Pending Subscription Order from Database
+    const existingSubscription = await JobSubscription.findOne({
+      razorpayOrderId: razorpay_order_id,
+      company: companyId,
+    });
+
+    if (!existingSubscription) {
+      return res.status(404).json({ success: false, message: "Subscription order not found" });
+    }
+
+    // 3. 🔒 CRITICAL: Verify with Razorpay API that the actual amount was paid
+    let razorpayPayment;
+    try {
+      razorpayPayment = await razorpayInstance.payments.fetch(razorpay_payment_id);
+    } catch (rzpErr) {
+      console.error("Error fetching payment from Razorpay:", rzpErr);
+      return res.status(500).json({ success: false, message: "Unable to verify payment with payment gateway" });
+    }
+
+    const expectedAmountInPaise = Math.round(Number(existingSubscription.price) * 100);
+
+    if (
+      !razorpayPayment ||
+      (razorpayPayment.status !== "captured" && razorpayPayment.status !== "authorized") ||
+      razorpayPayment.order_id !== razorpay_order_id ||
+      razorpayPayment.amount < expectedAmountInPaise
+    ) {
+      console.error(`🚨 PAYMENT AMOUNT TAMPERING DETECTED! Expected: ₹${existingSubscription.price} (${expectedAmountInPaise} paise), Received: ₹${(razorpayPayment?.amount || 0) / 100} (${razorpayPayment?.amount || 0} paise). Status: ${razorpayPayment?.status}`);
+      return res.status(400).json({
+        success: false,
+        message: `Payment validation failed: Amount paid (₹${(razorpayPayment?.amount || 0) / 100}) does not match required plan price (₹${existingSubscription.price}).`,
+      });
+    }
+
+    // 4. Update the order status in the database
+    const currentPlan = await JobSubscription.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id },
+      {
+        paymentStatus: "paid",
+        paymentDetails: {
+          paymentId: razorpay_payment_id,
+          signature: razorpay_signature,
+        },
+        status: "Active", // Activate the plan after payment is validated
+      },
+      { new: true }
+    ).select("credits expiryDate planName price status purchaseDate creditedForJobs creditedForCandidates aiSourcingCredits teamUserLimit");
+
+    // Expire the previous active plan (if any) before activating the new one
+    await JobSubscription.updateOne(
+      { company: companyId, status: "Active", razorpayOrderId: { $ne: razorpay_order_id } },
+      { $set: { status: "Expired" } }
+    );
+
+    // Remove all expired plans for this company
+    await JobSubscription.deleteMany({
+      company: companyId,
+      status: "Expired",
+    });
+
+    // Find the company and update limits
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+
+    // Carry forward leftover job slots from the previous paid plan
+    const PLAN_LIMITS = { FREE: 1, STANDARD: 5, PREMIUM: 10, PRO: 25, ENTERPRISE: Infinity };
+    const prevPlan = company.plan || "FREE";
+
+    let carryoverJobs = 0;
+    if (prevPlan === "FREE") {
+      const freeLimit = PLAN_LIMITS["FREE"] ?? 2;
+      const freeUsed = company.freeJobsPosted || 0;
+      carryoverJobs = Math.max(0, freeLimit - freeUsed);
+    } else if (company.hasSubscription) {
+      const prevLimit = PLAN_LIMITS[prevPlan] ?? 0;
+      if (prevLimit !== Infinity) {
+        const paidUsed = company.planJobsPostedThisMonth || 0;
+        carryoverJobs = Math.max(0, prevLimit - paidUsed);
+      }
+    }
+
+    // Carry forward admin-added bonus slots
+    const adminBonus = Number(company.customMaxJobPosts) || 0;
+    carryoverJobs += adminBonus;
+
+    // Carry forward leftover candidate credits
+    const leftoverCandidates = Math.max(0, company.creditedForCandidates || 0);
+
+    // Use server-stored subscription credits (prevents client credit override)
+    const secureCreditsForJobs = currentPlan?.creditedForJobs ?? creditsForJobs;
+    const secureCreditsForCandidates = currentPlan?.creditedForCandidates ?? creditsForCandidates;
+    const secureAiCredits = currentPlan?.aiSourcingCredits ?? Number(aiSourcingCredits || 0);
+
+    // Determine plan type based on job count
+    let planType = "ENTERPRISE";
+    if (secureCreditsForJobs < 999999) {
+      if (secureCreditsForJobs >= 25) planType = "PRO";
+      else if (secureCreditsForJobs >= 10) planType = "PREMIUM";
+      else planType = "STANDARD";
+    }
+
+    company.creditedForJobs = secureCreditsForJobs;
+    company.creditedForCandidates = secureCreditsForCandidates + leftoverCandidates;
+    company.aiSourcingCredits = (company.aiSourcingCredits || 0) + secureAiCredits;
+    company.maxJobPosts = "9999999";
+    company.customMaxJobPosts = 0;
+    company.hasSubscription = true;
+    company.freePlanExpiry = null;
+    company.planJobsPostedThisMonth = -carryoverJobs;
+    company.plan = planType;
+    company.planMonthStart = new Date();
+    company.teamUserLimit = planType === "ENTERPRISE" ? (currentPlan?.teamUserLimit ?? null) : null;
+
+    await company.save();
+
+    // Update all recruiters associated with this company
+    const recruiterIds = company.userId.map((u) => u.user);
+    await Recruiter.updateMany(
+      { _id: { $in: recruiterIds } },
+      {
+        plan: planType,
+        subscriptionStatus: "ACTIVE",
+      }
+    );
+
+    // 🔒 5. Record Revenue internally on the server (guarantees tracking even if browser closes)
+    try {
+      const recruiterUser = await Recruiter.findById(userId);
+      const existingRevenue = await Revenue.findOne({
+        "itemDetails.paymentId": razorpay_payment_id,
+      });
+
+      if (!existingRevenue) {
+        await Revenue.create({
+          itemDetails: {
+            itemType: "Job Plan",
+            itemName: currentPlan.planName,
+            price: currentPlan.price,
+            paymentId: razorpay_payment_id,
+          },
+          companyName: company?.companyName || "",
+          userDetails: {
+            userName: recruiterUser?.fullname || "Recruiter",
+            email: recruiterUser?.emailId?.email || "",
+            phoneNumber: recruiterUser?.phoneNumber?.number || "",
+          },
+        });
+      }
+    } catch (revErr) {
+      console.error("Revenue recording notice in verification:", revErr);
+    }
+
+    return res.status(200).json({
+      success: true,
+      plan: currentPlan,
+      userPlan: planType,
+      message: "Payment verified successfully",
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Error verifying job plan payment:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -540,55 +588,106 @@ export const verifyPaymentForCandidatePlans = async (req, res) => {
       companyId,
     } = req.body;
 
-    if (
-      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
-    ) {
-      // Update the order status in the database
-      const currentPlan = await CandidateSubscription.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        {
-          paymentStatus: "paid",
-          paymentDetails: {
-            paymentId: razorpay_payment_id,
-            signature: razorpay_signature,
-          },
-          status: "Active", // Activate the plan after paymentStatus is paid
-        },
-        { new: true } // Return the updated document
-      ).select("creditBoost expiryDate planName price status purchaseDate");
-
-      // here remove expired plan of company
-      await CandidateSubscription.deleteOne({
-        company: companyId,
-        status: "Expired",
-      });
-
-      // Find the company and update maxPostJobs
-      const company = await Company.findById(companyId);
-      if (!company) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Company not found" });
-      }
-
-      company.creditedForCandidates =
-        company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
-
-      await company.save();
-
-      res.status(200).json({
-        success: true,
-        plan: currentPlan,
-        message: "Payment verified successfully",
-      });
-    } else {
-      res
-        .status(400)
-        .json({ success: false, message: "Payment verification failed" });
+    if (!matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+      return res.status(400).json({ success: false, message: "Payment verification failed: Invalid signature" });
     }
+
+    const existingSubscription = await CandidateSubscription.findOne({
+      razorpayOrderId: razorpay_order_id,
+      company: companyId,
+    });
+
+    if (!existingSubscription) {
+      return res.status(404).json({ success: false, message: "Candidate subscription order not found" });
+    }
+
+    // 🔒 Verify payment amount with Razorpay API
+    let razorpayPayment;
+    try {
+      razorpayPayment = await razorpayInstance.payments.fetch(razorpay_payment_id);
+    } catch (rzpErr) {
+      console.error("Error fetching payment from Razorpay:", rzpErr);
+      return res.status(500).json({ success: false, message: "Unable to verify payment with payment gateway" });
+    }
+
+    const expectedAmountInPaise = Math.round(Number(existingSubscription.price) * 100);
+
+    if (
+      !razorpayPayment ||
+      (razorpayPayment.status !== "captured" && razorpayPayment.status !== "authorized") ||
+      razorpayPayment.order_id !== razorpay_order_id ||
+      razorpayPayment.amount < expectedAmountInPaise
+    ) {
+      console.error(`🚨 PAYMENT AMOUNT TAMPERING DETECTED! Expected: ₹${existingSubscription.price}, Received: ₹${(razorpayPayment?.amount || 0) / 100}`);
+      return res.status(400).json({
+        success: false,
+        message: `Payment validation failed: Amount paid does not match candidate plan price.`,
+      });
+    }
+
+    // Update order status in database
+    const currentPlan = await CandidateSubscription.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id },
+      {
+        paymentStatus: "paid",
+        paymentDetails: {
+          paymentId: razorpay_payment_id,
+          signature: razorpay_signature,
+        },
+        status: "Active",
+      },
+      { new: true }
+    ).select("creditBoost expiryDate planName price status purchaseDate");
+
+    await CandidateSubscription.deleteOne({
+      company: companyId,
+      status: "Expired",
+    });
+
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ success: false, message: "Company not found" });
+    }
+
+    const secureCreditBoost = existingSubscription.creditedForCandidates || creditBoost || 0;
+    company.creditedForCandidates = (company.creditedForCandidates || 0) + secureCreditBoost;
+    await company.save();
+
+    // Record Revenue
+    try {
+      const recruiterUser = await Recruiter.findById(req.id);
+      const existingRevenue = await Revenue.findOne({
+        "itemDetails.paymentId": razorpay_payment_id,
+      });
+
+      if (!existingRevenue) {
+        await Revenue.create({
+          itemDetails: {
+            itemType: "Candidate Data Plan",
+            itemName: currentPlan.planName,
+            price: currentPlan.price,
+            paymentId: razorpay_payment_id,
+          },
+          companyName: company?.companyName || "",
+          userDetails: {
+            userName: recruiterUser?.fullname || "Recruiter",
+            email: recruiterUser?.emailId?.email || "",
+            phoneNumber: recruiterUser?.phoneNumber?.number || "",
+          },
+        });
+      }
+    } catch (revErr) {
+      console.error("Revenue recording error in candidate verification:", revErr);
+    }
+
+    return res.status(200).json({
+      success: true,
+      plan: currentPlan,
+      message: "Payment verified successfully",
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Error verifying candidate plan payment:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

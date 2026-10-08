@@ -131,38 +131,43 @@ function CandidatePlans() {
 
         order_id: orderId,
         handler: async (response) => {
-          const verificationResponse = await axios.post(
-            `${VERIFICATION_API_END_POINT}/verify-payment-for-candidateplan`,
-            {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              creditBoost: plan.creditBoost,
-              companyId: company?._id,
-            },
-            { withCredentials: true }
-          );
+          try {
+            const verificationResponse = await axios.post(
+              `${VERIFICATION_API_END_POINT}/verify-payment-for-candidateplan`,
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                creditBoost: plan.creditBoost,
+                companyId: company?._id,
+              },
+              { withCredentials: true }
+            );
 
-          if (verificationResponse.data.success) {
-            toast.success("Payment Successful!");
-            dispatch(updateCandidateCredits(plan.creditBoost));
-            // Call revenue API to store details
-            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
-              itemDetails: {
-                itemType: "Candidate Data Plan",
-                itemName: plan.name,
-                price: plan.price,
-              },
-              companyName: company?.companyName,
-              userDetails: {
-                userName: user?.fullname,
-                email: user.emailId.email,
-                phoneNumber: user.phoneNumber.number,
-              },
-            });
-            navigate("/recruiter/dashboard/candidate-list"); // Redirect to the candidate list
-          } else {
-            toast.error("Payment Verification Failed!");
+            if (verificationResponse.data.success) {
+              toast.success("Payment Successful!");
+              dispatch(updateCandidateCredits(plan.creditBoost));
+              // Store revenue fallback (backend verification already records it)
+              axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+                itemDetails: {
+                  itemType: "Candidate Data Plan",
+                  itemName: plan.name,
+                  price: plan.price,
+                },
+                companyName: company?.companyName,
+                userDetails: {
+                  userName: user?.fullname,
+                  email: user.emailId.email,
+                  phoneNumber: user.phoneNumber.number,
+                },
+              }).catch(() => {});
+              navigate("/recruiter/dashboard/candidate-list");
+            } else {
+              toast.error(verificationResponse.data.message || "Payment Verification Failed!");
+            }
+          } catch (verErr) {
+            console.error("Candidate payment verification error:", verErr);
+            toast.error(verErr.response?.data?.message || "Payment Verification Failed!");
           }
         },
         prefill: {

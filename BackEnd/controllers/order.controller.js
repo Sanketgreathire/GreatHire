@@ -2,6 +2,7 @@ import Razorpay from "razorpay";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { isUserAssociated, isUserAssociatedForPlan } from "./company.controller.js";
+import { findJobPlan, findCandidatePlan } from "../config/plans.config.js";
 
 // ✅ Razorpay instance
 if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -23,6 +24,7 @@ console.log("✅ Razorpay initialized with key:", process.env.RAZORPAY_KEY_ID);
 export const createOrderForJobPlan = async (req, res) => {
   try {
     const {
+      planId,
       planName,
       companyId,
       amount,
@@ -51,11 +53,41 @@ export const createOrderForJobPlan = async (req, res) => {
     }
 
     // ✅ Validate input
-    if (!planName || !companyId || !amount) {
+    if ((!planId && !planName) || !companyId) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields",
       });
+    }
+
+    // 🔒 Server-Authoritative Plan Lookup (Prevents Price Tampering)
+    const serverPlan = findJobPlan(planId || planName);
+
+    let finalPrice = Number(amount);
+    let finalCreditsForJobs = Number(creditsForJobs);
+    let finalCreditsForCandidates = Number(creditsForCandidates);
+    let finalAiSourcingCredits = Number(aiSourcingCredits) || 0;
+    let finalTeamUserLimit = teamUserLimit != null ? Number(teamUserLimit) : null;
+    let finalDurationMonths = Number(durationMonths) || 1;
+    let finalPlanName = planName || planId;
+
+    if (serverPlan) {
+      // Enforce strict server-side values
+      finalPrice = serverPlan.price;
+      finalCreditsForJobs = serverPlan.creditsForJobs;
+      finalCreditsForCandidates = serverPlan.creditsForCandidates;
+      finalAiSourcingCredits = serverPlan.aiSourcingCredits;
+      finalTeamUserLimit = serverPlan.teamUserLimit;
+      finalDurationMonths = serverPlan.durationMonths;
+      finalPlanName = serverPlan.title;
+    } else {
+      // If plan not found in catalog, do not allow arbitrary small amounts (min ₹100 safety check)
+      if (!finalPrice || finalPrice < 100) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid plan or amount specified",
+        });
+      }
     }
 
     // 🧹 Remove old Hold/Expired subscriptions (keep Active — it will be expired on payment success)
@@ -64,28 +96,27 @@ export const createOrderForJobPlan = async (req, res) => {
       status: { $in: ["Hold", "Expired"] },
     });
 
-    // 💳 Create Razorpay order
+    // 💳 Create Razorpay order with server-enforced price
     const order = await razorpayInstance.orders.create({
-      amount: amount * 100, // convert to paise
+      amount: Math.round(finalPrice * 100), // convert to paise
       currency: "INR",
       receipt: `jobplan_${Date.now()}`,
     });
 
-    // 🧾 Save subscription (✅ schema-safe)
-    const expiryMonths = Number(durationMonths) || (planName.includes("Enterprise") ? 12 : 1);
+    // 🧾 Save subscription (✅ schema-safe & server-verified)
     await JobSubscription.create({
-      planName,
-      creditedForJobs: creditsForJobs,               // ✅ FIXED
-      creditedForCandidates: creditsForCandidates,   // ✅ FIXED
-      aiSourcingCredits: Number(aiSourcingCredits) || 0,
-      teamUserLimit: teamUserLimit != null ? Number(teamUserLimit) : null,
-      price: amount,                                 // ✅ REQUIRED
-      razorpayOrderId: order.id,                     // ✅ REQUIRED
+      planName: finalPlanName,
+      creditedForJobs: finalCreditsForJobs,
+      creditedForCandidates: finalCreditsForCandidates,
+      aiSourcingCredits: finalAiSourcingCredits,
+      teamUserLimit: finalTeamUserLimit,
+      price: finalPrice,                                 // ✅ Server-verified price
+      razorpayOrderId: order.id,                         // ✅ REQUIRED
       company: companyId,
       status: "Hold",
       paymentStatus: "created",
-      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + expiryMonths)),
-      purchaseDate: new Date(), // ✅ Set purchase date when order is created
+      expiryDate: new Date(new Date().setMonth(new Date().getMonth() + finalDurationMonths)),
+      purchaseDate: new Date(),
     });
 
     // ✅ Send response to frontend
@@ -106,7 +137,6 @@ export const createOrderForJobPlan = async (req, res) => {
 
 // ===============================
 // CREATE ORDER FOR CANDIDATE PLAN
-// (UNCHANGED – kept safe)
 // ===============================
 export const createOrderForCandidatePlan = async (req, res) => {
   try {
@@ -126,16 +156,36 @@ export const createOrderForCandidatePlan = async (req, res) => {
         .json({ success: false, message: "Not authorized" });
     }
 
+    // 🔒 Server-Authoritative Candidate Plan Lookup
+    const serverPlan = findCandidatePlan(planName);
+
+    let finalPrice = Number(amount);
+    let finalCredits = Number(credits);
+    let finalPlanName = planName;
+
+    if (serverPlan) {
+      finalPrice = serverPlan.price;
+      finalCredits = serverPlan.creditBoost;
+      finalPlanName = serverPlan.title;
+    } else {
+      if (!finalPrice || finalPrice < 100) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid candidate plan or amount specified",
+        });
+      }
+    }
+
     const order = await razorpayInstance.orders.create({
-      amount: amount * 100,
+      amount: Math.round(finalPrice * 100),
       currency: "INR",
       receipt: `candidateplan_${Date.now()}`,
     });
 
     await CandidateSubscription.create({
-      planName,
-      creditedForCandidates: credits,
-      price: amount,
+      planName: finalPlanName,
+      creditedForCandidates: finalCredits,
+      price: finalPrice,
       razorpayOrderId: order.id,
       company: companyId,
       status: "Hold",

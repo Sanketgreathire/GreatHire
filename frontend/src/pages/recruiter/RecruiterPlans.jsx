@@ -58,6 +58,7 @@ export const subscriptionPlans = [
     price: 0,
     billing: "Forever Free",
     jobs: "Unlimited",
+
     isFree: true,
     bestFor: "Best for trying the platform",
     features: [
@@ -172,7 +173,6 @@ export const subscriptionPlans = [
     durationMonths: 1,
     aiSourcingCredits: 250,
     teamUserLimit: 2,
-    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Small teams with consistent hiring needs",
     features: [
@@ -200,7 +200,6 @@ export const subscriptionPlans = [
     durationMonths: 3,
     aiSourcingCredits: 750,
     teamUserLimit: 3,
-    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: Short-term high-volume hiring",
     features: [
@@ -228,7 +227,6 @@ export const subscriptionPlans = [
     durationMonths: 6,
     aiSourcingCredits: 1500,
     teamUserLimit: 6,
-    jobs: "Unlimited",
     enterprise: true,
     popular: true,
     bestFor: "Best for: Growing hiring teams",
@@ -257,7 +255,6 @@ export const subscriptionPlans = [
     durationMonths: 12,
     aiSourcingCredits: 3000,
     teamUserLimit: 12,
-    jobs: "Unlimited",
     enterprise: true,
     bestFor: "Best for: High-volume hiring companies",
     features: [
@@ -345,7 +342,17 @@ function RecruiterPlans() {
 
       const res = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
-        { planName: plan.title, companyId: company._id, amount: plan.price, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0, durationMonths: plan.durationMonths ?? 1, teamUserLimit: plan.teamUserLimit ?? null },
+        {
+          planId: plan.id,
+          planName: plan.title,
+          companyId: company._id,
+          amount: plan.price,
+          creditsForJobs: plan.creditsForJobs,
+          creditsForCandidates: plan.creditsForCandidates,
+          aiSourcingCredits: plan.aiSourcingCredits || 0,
+          durationMonths: plan.durationMonths ?? 1,
+          teamUserLimit: plan.teamUserLimit ?? null,
+        },
         { withCredentials: true }
       );
 
@@ -356,34 +363,48 @@ function RecruiterPlans() {
         name: "GreatHire",
         order_id: res.data.orderId,
         handler: async (response) => {
-          const verify = await axios.post(
-            `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
-            { ...response, companyId: company._id, creditsForJobs: plan.creditsForJobs, creditsForCandidates: plan.creditsForCandidates, aiSourcingCredits: plan.aiSourcingCredits || 0 },
-            { withCredentials: true }
-          );
-          if (verify.data.success) {
-            dispatch(addJobPlan(verify.data.plan));
-            if (verify.data.userPlan) dispatch(updateUserPlan({ plan: verify.data.userPlan, subscriptionStatus: "ACTIVE" }));
-
-            const companyRes = await axios.post(
-              `${COMPANY_API_END_POINT}/company-by-userid`,
-              { userId: user._id },
+          try {
+            const verify = await axios.post(
+              `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
+              {
+                ...response,
+                companyId: company._id,
+                creditsForJobs: plan.creditsForJobs,
+                creditsForCandidates: plan.creditsForCandidates,
+                aiSourcingCredits: plan.aiSourcingCredits || 0,
+              },
               { withCredentials: true }
             );
-            if (companyRes?.data.success) dispatch(addCompany(companyRes.data.company));
+            if (verify.data.success) {
+              dispatch(addJobPlan(verify.data.plan));
+              if (verify.data.userPlan) dispatch(updateUserPlan({ plan: verify.data.userPlan, subscriptionStatus: "ACTIVE" }));
 
-            await axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
-              itemDetails: { itemType: "Job Plan", itemName: plan.title, price: plan.price },
-              companyName: company?.companyName,
-              userDetails: { userName: user?.fullname, email: user.emailId.email, phoneNumber: user.phoneNumber.number },
-            });
+              const companyRes = await axios.post(
+                `${COMPANY_API_END_POINT}/company-by-userid`,
+                { userId: user._id },
+                { withCredentials: true }
+              );
+              if (companyRes?.data?.success) dispatch(addCompany(companyRes.data.company));
 
-            toast.success("Payment Successful");
-            if (!user.isActive || !companyRes?.data?.company?.isActive) {
-              setShowVerificationBanner(true);
+              // Store revenue fallback (backend verification already recorded it securely)
+              axios.post(`${REVENUE_API_END_POINT}/store-revenue`, {
+                itemDetails: { itemType: "Job Plan", itemName: plan.title, price: plan.price },
+                companyName: company?.companyName,
+                userDetails: { userName: user?.fullname, email: user.emailId.email, phoneNumber: user.phoneNumber.number },
+              }).catch(() => {});
+
+              toast.success("Payment Successful");
+              if (!user.isActive || !companyRes?.data?.company?.isActive) {
+                setShowVerificationBanner(true);
+              } else {
+                navigate("/recruiter/dashboard/home");
+              }
             } else {
-              navigate("/recruiter/dashboard/home");
+              toast.error(verify.data.message || "Payment verification failed");
             }
+          } catch (verifyErr) {
+            console.error("Payment verification failed:", verifyErr);
+            toast.error(verifyErr.response?.data?.message || "Payment verification failed");
           }
         },
       };
@@ -421,6 +442,7 @@ function RecruiterPlans() {
     if (plan.enterprise) {
       const candidateMap = { "enterprise-monthly": 2500, "enterprise-3m": 7500, "enterprise-6m": 15000, "enterprise-1y": 30000 };
       initiateCreditPayment({
+        id: plan.id,
         title: plan.title,
         price: plan.price,
         creditsForJobs: 999999,
@@ -433,7 +455,7 @@ function RecruiterPlans() {
     }
 
     const credits = PLAN_CREDITS[plan.id] || { creditsForJobs: 5, creditsForCandidates: 500 };
-    initiateCreditPayment({ title: plan.title, price: plan.price, ...credits, aiSourcingCredits: plan.aiSourcingCredits || 0 });
+    initiateCreditPayment({ id: plan.id, title: plan.title, price: plan.price, ...credits, aiSourcingCredits: plan.aiSourcingCredits || 0 });
   }, [company, user, dispatch, navigate, initiateCreditPayment]);
 
   return (
@@ -592,18 +614,6 @@ function RecruiterPlans() {
                           </div>
                         )}
                       </div>
-
-                      {/* Jobs & Candidates summary */}
-                      {/* <div className="flex gap-2 mb-4 flex-wrap">
-                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
-                          📋 {plan.jobs}
-                        </span>
-                        {plan.resumes && (
-                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full font-medium">
-                            👥 {plan.resumes}
-                          </span>
-                        )}
-                      </div> */}
 
                       {/* Features */}
                       <ul className="space-y-2 text-sm flex-1 mb-4">
