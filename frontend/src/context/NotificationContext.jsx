@@ -15,12 +15,23 @@ export const NotificationProvider = ({ children }) => {
   // Initialize Socket.IO connection — deferred so it doesn't block initial paint
   useEffect(() => {
     if (!user?._id || !user?.role) return;
-    if (!document.cookie.includes('token')) return;
+    // Check if authenticated via cookie or user state
+    const hasToken = document.cookie.includes('token') || localStorage.getItem('token') || Boolean(user?._id);
+    if (!hasToken) return;
 
     let socketInstance;
     const t = setTimeout(async () => {
       const { io } = await import('socket.io-client');
-      socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
+      const socketUrl =
+        import.meta.env.VITE_SOCKET_URL ||
+        import.meta.env.VITE_API_URL ||
+        (typeof window !== "undefined" &&
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+          ? window.location.origin
+          : "http://localhost:8000");
+
+      socketInstance = io(socketUrl, {
         withCredentials: true,
         transports: ['polling', 'websocket'],
         reconnectionDelay: 1000,

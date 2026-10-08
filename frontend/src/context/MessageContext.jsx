@@ -27,15 +27,21 @@ export const MessageProvider = ({ children }) => {
 
     (async () => {
       const { io } = await import('socket.io-client');
-      socketInstance = io(
-        import.meta.env.VITE_API_URL || 'http://localhost:8000',
-        {
-          withCredentials: true,
-          transports: ['websocket', 'polling'],
-          reconnectionDelay: 1000,
-          reconnectionAttempts: 5,
-        }
-      );
+      const socketUrl =
+        import.meta.env.VITE_SOCKET_URL ||
+        import.meta.env.VITE_API_URL ||
+        (typeof window !== "undefined" &&
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+          ? window.location.origin
+          : "http://localhost:8000");
+
+      socketInstance = io(socketUrl, {
+        withCredentials: true,
+        transports: ['websocket', 'polling'],
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+      });
 
       socketInstance.on('connect', () => {
         socketInstance.emit('joinUserRoom', user._id);

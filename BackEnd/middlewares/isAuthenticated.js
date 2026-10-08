@@ -6,8 +6,9 @@ import { Admin } from "../models/admin/admin.model.js";
 
 const isAuthenticated = async (req, res, next) => {
   try {
-    const token =
-      req.header("Authorization")?.split(" ")[1] || req.cookies.token;
+    const authHeader = req.header("Authorization") || req.header("authorization");
+    const headerToken = authHeader?.replace(/^Bearer\s+/i, "")?.trim();
+    const token = headerToken || req.cookies?.token;
 
     if (!token) {
       return res.status(401).json({

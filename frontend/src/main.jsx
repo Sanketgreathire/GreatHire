@@ -6,7 +6,19 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./context/ThemeContext";
 import store, { persistor } from "./redux/store";
+import axios from "axios";
 import "./index.css";
+
+// Global axios interceptor for mixed auth strategy (cookies + localStorage)
+axios.interceptors.request.use((config) => {
+  config.withCredentials = true;
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 const root = document.getElementById("root");
 
