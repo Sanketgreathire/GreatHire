@@ -27,7 +27,10 @@ export const NOTIFICATION_API_END_POINT =
   "http://localhost:8000/api/v1/notifications";
 export const BACKEND_URL = "http://localhost:8000";*/
 
-const BASE_API = (import.meta.env.VITE_API_URL || "") + "/api/v1";
+// const BASE_API = (import.meta.env.VITE_API_URL || "") + "/api/v1";
+
+const ORIGIN = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+const BASE_API = `${ORIGIN}/api/v1`;
 
 export const USER_API_END_POINT = `${BASE_API}/user`;
 export const RECRUITER_API_END_POINT = `${BASE_API}/recruiter`;
@@ -49,17 +52,25 @@ export const NOTIFICATION_API_END_POINT = `${BASE_API}/notifications`;
 
 export const EMAIL_API_END_POINT = `${BASE_API}/email`;
 export const COLLEGE_API_END_POINT = `${BASE_API}/college`;
-export const BACKEND_URL = import.meta.env.VITE_API_URL || "";
+// export const BACKEND_URL = import.meta.env.VITE_API_URL || "";
+export const BACKEND_URL = ORIGIN;
 export const COURSE_API_END_POINT = `${BASE_API}/courses`;
 export const OTP_API_END_POINT = `${BASE_API}/otp`;
 
 export const SOURCING_API_END_POINT   = `${BASE_API}/sourcing`;
 export const INGESTION_API_END_POINT  = `${BASE_API}/ingestion`;
 export const REFERRING_CANDIDATES_API = `${BASE_API}/admin/referring-candidates`;
+<<<<<<< Updated upstream
 //export const CONTACT_MESSAGE_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/sendMessage`;
 //export const SUPPORT_QUERIES_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/v1/admin/support-queries`;
 export const CONTACT_MESSAGE_API_END_POINT = `${BASE_API}/contact/sendMessage`;
 export const SUPPORT_QUERIES_API_END_POINT = `${BASE_API}/contact/admin/support-queries`;
+=======
+// export const CONTACT_MESSAGE_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/sendMessage`;
+export const CONTACT_MESSAGE_API_END_POINT = `${ORIGIN}/api/sendMessage`;
+// export const SUPPORT_QUERIES_API_END_POINT = `${import.meta.env.VITE_API_URL || ""}/api/v1/admin/support-queries`;
+export const SUPPORT_QUERIES_API_END_POINT = `${ORIGIN}/api/v1/admin/support-queries`;
+>>>>>>> Stashed changes
 
 export const RECRUITER_DASHBOARD_API = `${BASE_API}/recruiter/dashboard`;
 export const ANALYTICS_DASHBOARD_API = `${BASE_API}/analytics/dashboard`;

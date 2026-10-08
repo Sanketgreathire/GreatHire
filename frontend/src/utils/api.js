@@ -1,7 +1,46 @@
-import axios from "axios";
+<<<<<<< Updated upstream
+=======
+
+/*import axios from "axios";
 
 const API = axios.create({
+  baseURL: "http://localhost:8000/api", // your backend base URL
+  withCredentials: true, // if you’re using cookies for auth
+});
+
+// Attach token if you’re using JWT
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default API;*/
+
+// import axios from "axios";
+
+// const API = axios.create({
+//   baseURL: import.meta.env.VITE_API_URL + "/api",
+//   withCredentials: true,
+// });
+
+// export default API;
+
+>>>>>>> Stashed changes
+import axios from "axios";
+
+// Origin only (no "/api", no trailing slash). Falls back to "" so the
+// Vite dev proxy still works if the variable is missing.
+const BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
+const API = axios.create({
+<<<<<<< Updated upstream
   baseURL: (import.meta.env.VITE_API_URL || "") + "/api",
+=======
+  baseURL: `${BASE}/api`,
+>>>>>>> Stashed changes
   withCredentials: true,
 });
 

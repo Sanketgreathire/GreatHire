@@ -1,39 +1,41 @@
-// Import necessary modules and dependencies
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import PropTypes from "prop-types"; 
+import PropTypes from "prop-types";
 
 const ProtectedUserRoute = ({ children }) => {
-  // Access the user from your Redux store (adjust the state path as needed)
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(true);
 
+  const isAllowed =
+    !!user && (user.role === "student" || user.role === "candidate");
+
   useEffect(() => {
     // Delay to allow Redux persist to rehydrate
     const timer = setTimeout(() => {
       if (!user) {
-        // navigate("/login", { state: { from: location.pathname }, replace: true });
-        navigate("/jobseeker-login", { state: { from: location.pathname }, replace: true });
-      } else if (user?.role !== "student" && user?.role !== "candidate") {
-        navigate("/page/not/found");
+        navigate("/jobseeker-login", {
+          state: { from: location.pathname },
+          replace: true,
+        });
+      } else if (!isAllowed) {
+        navigate("/", { replace: true });
       }
       setIsChecking(false);
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [user, navigate, location]);
+  }, [user, isAllowed, navigate, location]);
 
-  // Show nothing while checking
-  if (isChecking) return null;
+  if (isChecking || !isAllowed) return null;
 
-  // If the user is authorized, render the children components (the protected route)
   return <>{children}</>;
 };
 
 ProtectedUserRoute.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
 export default ProtectedUserRoute;
