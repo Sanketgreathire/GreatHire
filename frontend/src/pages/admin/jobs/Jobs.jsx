@@ -116,14 +116,41 @@ const Jobs = () => {
   const copyJobLink = (e, jobId) => {
     if (e) e.stopPropagation();
     const url = `${window.location.origin}/jobs/${jobId}`;
-    navigator.clipboard
-      .writeText(url)
-      .then(() => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          toast.success("Job link copied!");
+        })
+        .catch(() => {
+          fallbackCopyText(url);
+        });
+    } else {
+      fallbackCopyText(url);
+    }
+  };
+
+  const fallbackCopyText = (text) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      if (successful) {
         toast.success("Job link copied!");
-      })
-      .catch(() => {
+      } else {
         toast.error("Failed to copy link.");
-      });
+      }
+    } catch {
+      toast.error("Failed to copy link.");
+    }
   };
 
   const fetchJobList = async () => {
