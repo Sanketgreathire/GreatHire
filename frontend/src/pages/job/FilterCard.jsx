@@ -271,10 +271,10 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
   };
 
   const handlePickSearchResult = (loc) => {
-    handleLocationToggle(loc);
-    setActiveSearchLocation(loc);
-    setLocationSearch("");
-  };
+  if (!filters.location?.includes(loc)) handleLocationToggle(loc);
+  setActiveSearchLocation(loc);
+  setLocationSearch("");
+};
 
   const handleCheckboxChange = (category, value) => {
     const current = Array.isArray(filters[category]) ? filters[category] : [];
@@ -287,6 +287,11 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
   const handleDropdownChange = (category, value) => {
     onFilterChange?.({ ...filters, [category]: value });
   };
+
+  const handleDatePostedChange = (opt) => {
+  const alreadySelected = filters.datePosted?.[0] === opt;
+  onFilterChange?.({ ...filters, datePosted: alreadySelected ? [] : [opt] });
+};
 
   const handleReset = () => {
     const resetFilters = {
@@ -521,7 +526,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
                         Array.isArray(filters[category]) &&
                         filters[category].includes(opt)
                       }
-                      onChange={() => handleCheckboxChange(category, opt)}
+                      onChange={() => handleDatePostedChange(opt)}
                       className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
                     />
                     <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">

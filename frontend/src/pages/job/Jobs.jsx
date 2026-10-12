@@ -7,17 +7,51 @@ import LatestJobs from "./LatestJobs";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { FiFilter } from "react-icons/fi";
 
-const isFresherJob = (job) => {
-  const experience = (job?.jobDetails?.experience || "").toLowerCase();
+const DATE_POSTED_DAYS = {
+  "Last 24 hours": 1,
+  "Last 7 days": 7,
+  "Last 15 days": 15,
+  "Past Month": 30,
+};
+
+// Parses "Fresher, From 0 To 2" / "From 1 To 3" into { min, max }
+const getExperienceRange = (job) => {
+  const exp = (job?.jobDetails?.experience || "").toLowerCase();
+  const m = exp.match(/(\d+)\s*(?:to|-)\s*(\d+)/);
+  if (m) return { min: Number(m[1]), max: Number(m[2]) };
+  if (exp.includes("fresher")) return { min: 0, max: 0 };
+  return null;
+};
+
+// Open to freshers: experience starts at 0
+const isFresherJob = (job) => getExperienceRange(job)?.min === 0;
+
+// Open to experienced candidates: range goes above 0
+const isExperiencedJob = (job) => (getExperienceRange(job)?.max ?? 0) >= 1;
+
+const normalize = (s) =>
+  (s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+const matchesCompany = (job, wanted) => {
+  const name = normalize(
+    job?.jobDetails?.companyName || job?.company?.companyName
+  );
+  const target = normalize(wanted);
+  if (!name || !target) return false;
+  // "HCL" matches "HCL Technologies", "Godrej Interio |" matches "Godrej"
   return (
-    experience.includes("fresher") ||
-    experience.includes("0 to 0") ||
-    experience.includes("from 0") ||
-    experience.includes("0-0") ||
-    experience.includes("0 year") ||
-    experience.includes("0 - 1")
+    name === target ||
+    name.startsWith(target + " ") ||
+    target.startsWith(name + " ")
   );
 };
+
+const isWithinDays = (job, days) => {
+  const posted = new Date(job?.createdAt);
+  if (isNaN(posted)) return false;
+  return Date.now() - posted.getTime() <= days * 24 * 60 * 60 * 1000;
+};
+
 
 export default function Jobs() {
   const {
@@ -95,12 +129,28 @@ export default function Jobs() {
 
   // Experience categories are filtered locally because job experience values
   // are free-form text entered by recruiters.
-  const displayedJobs = useMemo(() => {
-    if (!filters.fresher && !filters.experienced) return jobs;
-    return jobs.filter((job) =>
-      filters.fresher ? isFresherJob(job) : !isFresherJob(job)
-    );
-  }, [jobs, filters.fresher, filters.experienced]);
+const hasLocalFilter = Boolean(
+  filters.company ||
+    filters.datePosted?.length ||
+    filters.fresher ||
+    filters.experienced
+);
+
+const displayedJobs = useMemo(() => {
+  let list = jobs;
+
+  if (filters.company) {
+    list = list.filter((job) => matchesCompany(job, filters.company));
+  }
+
+  const days = DATE_POSTED_DAYS[filters.datePosted?.[0]];
+  if (days) list = list.filter((job) => isWithinDays(job, days));
+
+  if (filters.fresher) list = list.filter(isFresherJob);
+  else if (filters.experienced) list = list.filter(isExperiencedJob);
+
+  return list;
+}, [jobs, filters.company, filters.datePosted, filters.fresher, filters.experienced]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
@@ -138,7 +188,7 @@ export default function Jobs() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isLoading
                 ? "Loading..."
-                : `${filters.fresher || filters.experienced ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
+                : `${hasLocalFilter ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
             </p>
 
             <button
