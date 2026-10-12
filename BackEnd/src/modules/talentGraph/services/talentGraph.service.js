@@ -1,5 +1,6 @@
 import { enqueueGraphJob } from "./graphQueue.service.js";
 import { checkAiHealth } from "../../../../sourcing/ai/aiServiceClient.js";
+import escapeRegex from "../../../../utils/escapeRegex.js";
 
 // export async function getCandidateGraph(candidateId, options = {}) {
 //   try {
@@ -629,7 +630,7 @@ async function searchCandidates(query, maxResults, includeMetadata) {
   try {
     const SourcingCandidate = await import("../../../models/sourcing/sourcingCandidate.model.js");
     
-    const searchRegex = new RegExp(query, 'i');
+    const searchRegex = new RegExp(escapeRegex(query), 'i');
     
     const candidates = await SourcingCandidate.default.find({
       $or: [

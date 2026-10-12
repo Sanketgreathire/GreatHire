@@ -2,6 +2,7 @@ import { semanticSearch, isAiServiceAvailable } from "../../../../sourcing/ai/ai
 import { SourcingCandidate } from "../../../../models/sourcing/sourcingCandidate.model.js";
 import JobMatch from "../../../models/jobMatch.model.js";
 import mongoose from "mongoose";
+import escapeRegex from "../../../../utils/escapeRegex.js";
 
 const SEMANTIC_WEIGHT = 0.6;
 const SKILL_WEIGHT = 0.3;
@@ -43,7 +44,7 @@ export async function matchCandidatesForJob(jobData, options = {}) {
   const mongoQuery = {};
 
   if (skills && skills.length > 0) {
-    mongoQuery.skills = { $in: skills.map(skill => new RegExp(skill, 'i')) };
+    mongoQuery.skills = { $in: skills.map(skill => new RegExp(escapeRegex(skill), 'i')) };
   }
 
   if (experience) {
@@ -60,15 +61,15 @@ export async function matchCandidatesForJob(jobData, options = {}) {
     if (isRemote) {
       mongoQuery.$or = [
         { location: { $regex: /remote|wfh|work from home/i } },
-        { location: { $regex: location, $options: 'i' } }
+        { location: { $regex: escapeRegex(location), $options: 'i' } }
       ];
     } else {
-      mongoQuery.location = { $regex: location, $options: 'i' };
+      mongoQuery.location = { $regex: escapeRegex(location), $options: 'i' };
     }
   }
 
   if (designation) {
-    mongoQuery.designation = { $regex: designation, $options: 'i' };
+    mongoQuery.designation = { $regex: escapeRegex(designation), $options: 'i' };
   }
 
   const keywordDocs = await SourcingCandidate.find(mongoQuery)

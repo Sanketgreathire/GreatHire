@@ -1,3 +1,5 @@
+import escapeRegex from '../../../../../utils/escapeRegex.js';
+
 export class ResumeNormalizationService {
   constructor() {
     this.skillSynonyms = {
@@ -172,7 +174,7 @@ export class ResumeNormalizationService {
     // Replace common location variations
     Object.entries(this.locationVariations).forEach(([standard, variations]) => {
       variations.forEach(variation => {
-        normalized = normalized.replace(new RegExp(variation, 'gi'), standard);
+        normalized = normalized.replace(new RegExp(escapeRegex(variation), 'gi'), standard);
       });
     });
 
@@ -194,7 +196,7 @@ export class ResumeNormalizationService {
     // Replace designation variations
     Object.entries(this.designationVariations).forEach(([standard, variations]) => {
       variations.forEach(variation => {
-        normalized = normalized.replace(new RegExp(variation, 'gi'), standard);
+        normalized = normalized.replace(new RegExp(escapeRegex(variation), 'gi'), standard);
       });
     });
 
@@ -230,7 +232,7 @@ export class ResumeNormalizationService {
     // Remove company variations
     Object.entries(this.companyVariations).forEach(([standard, variations]) => {
       variations.forEach(variation => {
-        normalized = normalized.replace(new RegExp(`\\b${variation}\\b`, 'gi'), standard);
+        normalized = normalized.replace(new RegExp(`\\b${escapeRegex(variation)}\\b`, 'gi'), standard);
       });
     });
 
@@ -367,7 +369,7 @@ export class ResumeNormalizationService {
     // Replace education variations
     Object.entries(this.educationVariations).forEach(([standard, variations]) => {
       variations.forEach(variation => {
-        normalized = normalized.replace(new RegExp(variation, 'gi'), standard);
+        normalized = normalized.replace(new RegExp(escapeRegex(variation), 'gi'), standard);
       });
     });
 
@@ -433,7 +435,7 @@ export class ResumeNormalizationService {
 
     Object.entries(fieldVariations).forEach(([standard, variations]) => {
       variations.forEach(variation => {
-        normalized = normalized.replace(new RegExp(variation, 'gi'), standard);
+        normalized = normalized.replace(new RegExp(escapeRegex(variation), 'gi'), standard);
       });
     });
 

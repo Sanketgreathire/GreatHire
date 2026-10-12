@@ -12,6 +12,7 @@ import { scoreCandidate }        from "./candidateMatchingService.js";
 import { searchCandidatesForJd, isAiServiceAvailable } from "./aiJdClient.js";
 import { computeHybridRankScore, sortByHybridRank, diversifyTopCandidates } from "./hybridRankingEngine.js";
 import logger                   from "../../utils/logger.js";
+import escapeRegex              from "../../utils/escapeRegex.js";
 
 const BATCH_SIZE = 50; // candidates to score per batch
 
@@ -84,7 +85,7 @@ export async function runMatchingPipeline(jobId, recruiterId) {
   // ── 5. Get keyword candidates (MongoDB) ───────────────────────────────────
     const keywordQuery = { createdBy: recruiterId };
     if (parsedData.requiredSkills.length) {
-      keywordQuery.skills = { $in: parsedData.requiredSkills.map((s) => new RegExp(s, "i")) };
+      keywordQuery.skills = { $in: parsedData.requiredSkills.map((s) => new RegExp(escapeRegex(s), "i")) };
     }
 
     const keywordCandidates = await SourcingCandidate.find(keywordQuery)

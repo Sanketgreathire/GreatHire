@@ -5,6 +5,7 @@ import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model
 import { AISourcedCandidate } from "../../models/sourcing/aiSourcedCandidate.model.js";
 import { AutoSourcingConfig } from "../../models/sourcing/autoSourcingConfig.model.js";
 import { triggerAutoSourcing } from "../../sourcing/cron/autoSourcingCron.js";
+import escapeRegex from "../../utils/escapeRegex.js";
 
 const router = express.Router();
 router.use(isAuthenticated, isAdmin);
@@ -104,7 +105,7 @@ router.get("/candidates", async (req, res) => {
     const aiQuery = {};
 
     if (q?.trim()) {
-      const re = { $regex: q.trim(), $options: "i" };
+      const re = { $regex: escapeRegex(q.trim()), $options: "i" };
       const orClause = [
         { fullName: re }, { designation: re }, { currentCompany: re }, { location: re }, { skills: re },
       ];
@@ -112,14 +113,14 @@ router.get("/candidates", async (req, res) => {
       aiQuery.$or = orClause;
     }
     if (location?.trim()) {
-      rkQuery.location = { $regex: location.trim(), $options: "i" };
-      aiQuery.location = { $regex: location.trim(), $options: "i" };
+      rkQuery.location = { $regex: escapeRegex(location.trim()), $options: "i" };
+      aiQuery.location = { $regex: escapeRegex(location.trim()), $options: "i" };
     }
     if (skills?.trim()) {
       const arr = skills.split(",").map((s) => s.trim()).filter(Boolean);
       if (arr.length) {
-        rkQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
-        aiQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+        rkQuery.skills = { $all: arr.map((s) => new RegExp(escapeRegex(s), "i")) };
+        aiQuery.skills = { $all: arr.map((s) => new RegExp(escapeRegex(s), "i")) };
       }
     }
 

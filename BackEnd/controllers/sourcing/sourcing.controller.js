@@ -5,6 +5,7 @@ import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model
 import { AISourcedCandidate } from "../../models/sourcing/aiSourcedCandidate.model.js";
 import { extractResumeText, parseResumeFields } from "./resumeParser.service.js";
 import { JdSourcingService } from "../../sourcing/services/jdSourcingService.js";
+import escapeRegex from "../../utils/escapeRegex.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -86,12 +87,12 @@ export const searchCandidates = async (req, res) => {
     const query = { createdBy: recruiterId };
 
     if (q?.trim())           query.$text      = { $search: q.trim() };
-    if (location?.trim())    query.location   = { $regex: location.trim(),   $options: "i" };
-    if (designation?.trim()) query.designation = { $regex: designation.trim(), $options: "i" };
+    if (location?.trim())    query.location   = { $regex: escapeRegex(location.trim()),   $options: "i" };
+    if (designation?.trim()) query.designation = { $regex: escapeRegex(designation.trim()), $options: "i" };
 
     if (skills?.trim()) {
       const arr = skills.split(",").map((s) => s.trim()).filter(Boolean);
-      if (arr.length) query.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+      if (arr.length) query.skills = { $all: arr.map((s) => new RegExp(escapeRegex(s), "i")) };
     }
 
     if (minExp !== undefined || maxExp !== undefined) {
@@ -161,18 +162,18 @@ export const getSavedSourcedCandidates = async (req, res) => {
 
     if (q?.trim()) rkQuery.$text = { $search: q.trim() };
     if (location?.trim()) {
-      rkQuery.location = { $regex: location.trim(), $options: "i" };
-      ghQuery.location = { $regex: location.trim(), $options: "i" };
+      rkQuery.location = { $regex: escapeRegex(location.trim()), $options: "i" };
+      ghQuery.location = { $regex: escapeRegex(location.trim()), $options: "i" };
     }
     if (designation?.trim()) {
-      rkQuery.designation = { $regex: designation.trim(), $options: "i" };
-      ghQuery.designation = { $regex: designation.trim(), $options: "i" };
+      rkQuery.designation = { $regex: escapeRegex(designation.trim()), $options: "i" };
+      ghQuery.designation = { $regex: escapeRegex(designation.trim()), $options: "i" };
     }
     if (skills?.trim()) {
       const arr = skills.split(",").map((s) => s.trim()).filter(Boolean);
       if (arr.length) {
-        rkQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
-        ghQuery.skills = { $all: arr.map((s) => new RegExp(s, "i")) };
+        rkQuery.skills = { $all: arr.map((s) => new RegExp(escapeRegex(s), "i")) };
+        ghQuery.skills = { $all: arr.map((s) => new RegExp(escapeRegex(s), "i")) };
       }
     }
     if (minExp !== undefined || maxExp !== undefined) {

@@ -5,6 +5,7 @@
  */
 import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
 import { semanticSearch, isAiServiceAvailable } from "./aiServiceClient.js";
+import escapeRegex from "../../utils/escapeRegex.js";
 
 // Helper function to get adaptive ranking score
 async function getAdaptiveRankingScore(candidateId, recruiterId, query, filters) {
@@ -95,14 +96,14 @@ export async function hybridSearch(query, recruiterId, opts = {}) {
   const mongoQuery = { createdBy: recruiterId };
 
   if (query.trim())        mongoQuery.$text        = { $search: query };
-  if (filters.location)    mongoQuery.location     = { $regex: filters.location,    $options: "i" };
-  if (filters.designation) mongoQuery.designation  = { $regex: filters.designation, $options: "i" };
+  if (filters.location)    mongoQuery.location     = { $regex: escapeRegex(filters.location),    $options: "i" };
+  if (filters.designation) mongoQuery.designation  = { $regex: escapeRegex(filters.designation), $options: "i" };
   if (filters.minExp !== undefined) mongoQuery.totalExperience = { $gte: parseFloat(filters.minExp) };
   if (filters.maxExp !== undefined) {
     mongoQuery.totalExperience = { ...(mongoQuery.totalExperience || {}), $lte: parseFloat(filters.maxExp) };
   }
   if (filters.skills?.length) {
-    mongoQuery.skills = { $all: filters.skills.map((s) => new RegExp(s, "i")) };
+    mongoQuery.skills = { $all: filters.skills.map((s) => new RegExp(escapeRegex(s), "i")) };
   }
 
   const projection = query.trim() ? { score: { $meta: "textScore" } } : {};

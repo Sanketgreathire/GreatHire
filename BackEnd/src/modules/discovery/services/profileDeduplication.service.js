@@ -1,6 +1,7 @@
 import { SourcingCandidate } from "../../../../models/sourcing/sourcingCandidate.model.js";
 // import { SourceMetadata } from "../../models/sourceMetadata.model.js";
 import levenshtein from 'levenshtein-distance';
+import escapeRegex from '../../../../utils/escapeRegex.js';
 class ProfileDeduplicationService {
   constructor() {
     this.emailCache = new Map();
@@ -130,8 +131,8 @@ class ProfileDeduplicationService {
 
     try {
       const candidates = await SourcingCandidate.find({
-        name: { $regex: new RegExp(normalizedName, 'i') },
-        location: { $regex: new RegExp(normalizedLocation, 'i') }
+        name: { $regex: new RegExp(escapeRegex(normalizedName), 'i') },
+        location: { $regex: new RegExp(escapeRegex(normalizedLocation), 'i') }
       });
 
       this.nameCache.set(cacheKey, candidates);

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { College } from "../models/college.model.js";
 import { User } from "../models/user.model.js";
 import { Application } from "../models/application.model.js";
+import escapeRegex from "../utils/escapeRegex.js";
 
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 export const registerCollege = async (req, res) => {
@@ -21,7 +22,7 @@ export const registerCollege = async (req, res) => {
       return res.status(400).json({ success: false, message: "This email is already registered." });
     }
 
-    const existingName = await College.findOne({ collegeName: { $regex: new RegExp(`^${collegeName}$`, "i") } });
+    const existingName = await College.findOne({ collegeName: { $regex: new RegExp(`^${escapeRegex(collegeName)}$`, "i") } });
     if (existingName) {
       return res.status(400).json({ success: false, message: "A college with this name is already registered." });
     }
@@ -111,8 +112,8 @@ export const debugCollegeStudents = async (req, res) => {
     const decodedName = decodeURIComponent(req.params.collegeName).trim();
     const students = await User.find({
       $or: [
-        { collegeName: { $regex: new RegExp(decodedName, "i") } },
-        { collegeName: { $regex: new RegExp(decodedName.replace(/\s+/g, "\\s*"), "i") } },
+        { collegeName: { $regex: new RegExp(escapeRegex(decodedName), "i") } },
+        { collegeName: { $regex: new RegExp(escapeRegex(decodedName).replace(/\s+/g, "\\s*"), "i") } },
       ],
     }).select("fullname emailId collegeName rollNo stream _id");
 
@@ -168,8 +169,8 @@ export const getStudentsByCollege = async (req, res) => {
     // Also handles students whose collegeName was set with different casing/spacing
     const students = await User.find({
       $or: [
-        { collegeName: { $regex: new RegExp(decodedName, "i") } },
-        { collegeName: { $regex: new RegExp(decodedName.replace(/\s+/g, "\\s*"), "i") } },
+        { collegeName: { $regex: new RegExp(escapeRegex(decodedName), "i") } },
+        { collegeName: { $regex: new RegExp(escapeRegex(decodedName).replace(/\s+/g, "\\s*"), "i") } },
       ],
     }).select("-password");
 

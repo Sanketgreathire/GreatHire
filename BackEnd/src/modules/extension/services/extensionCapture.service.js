@@ -3,6 +3,7 @@ import { SourcingCandidate } from "../../../../models/sourcing/sourcingCandidate
 import { enqueueEmbedding } from "../../../../sourcing/ai/embeddingQueue.js";
 import { isAiServiceAvailable, indexCandidate } from "../../../../sourcing/ai/aiServiceClient.js";
 import { getRecruiterMemory } from "../../../models/recruiterMemory.model.js";
+import escapeRegex from "../../../../utils/escapeRegex.js";
 
 const EXTENSION_CANDIDATE_SCHEMA = {
   fullName: { type: String, required: true, trim: true },
@@ -208,7 +209,7 @@ function generateSummary(candidate) {
 async function checkForDuplicates(candidateData, recruiterId) {
   try {
     const nameMatch = await SourcingCandidate.findOne({
-      fullName: { $regex: new RegExp(`^${candidateData.fullName}$`, 'i') },
+      fullName: { $regex: new RegExp(`^${escapeRegex(candidateData.fullName)}$`, 'i') },
       savedByRecruiter: recruiterId
     });
 
@@ -290,7 +291,7 @@ async function findFuzzyMatches(candidateData, recruiterId) {
     
     const candidates = await SourcingCandidate.find({
       savedByRecruiter: recruiterId,
-      fullName: { $regex: new RegExp(nameParts[0], 'i') }
+      fullName: { $regex: new RegExp(escapeRegex(nameParts[0]), 'i') }
     }).limit(10);
 
     const matches = candidates.map(candidate => {

@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import pdf from 'pdf-parse';
 import mammoth from 'mammoth';
+import escapeRegex from '../../../../../utils/escapeRegex.js';
 
 export class DocumentExtractionService {
   constructor() {
@@ -575,7 +576,7 @@ export class DocumentExtractionService {
     const allSkills = [...programmingLanguages, ...frameworks, ...databases, ...cloudTech];
     
     allSkills.forEach(skill => {
-      const regex = new RegExp(`\\b${skill}\\b`, 'gi');
+      const regex = new RegExp(`\\b${escapeRegex(skill)}\\b`, 'gi');
       if (regex.test(text)) {
         skills.push(skill);
       }

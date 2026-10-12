@@ -5,6 +5,7 @@
  */
 import crypto from "crypto";
 import { SourcingCandidate } from "../../models/sourcing/sourcingCandidate.model.js";
+import escapeRegex from "../../utils/escapeRegex.js";
 
 /**
  * Build a stable dedup hash from the candidate's primary identifiers.
@@ -51,7 +52,7 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.githubUrl) {
     const normalizedGithub = candidate.githubUrl.toLowerCase().replace(/\/$/, '');
     orConditions.push({ 
-      githubUrl: { $regex: new RegExp(normalizedGithub.replace('https://github.com/', ''), 'i') }
+      githubUrl: { $regex: new RegExp(escapeRegex(normalizedGithub.replace('https://github.com/', '')), 'i') }
     });
   }
 
@@ -59,7 +60,7 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.linkedinUrl) {
     const normalizedLinkedin = candidate.linkedinUrl.toLowerCase().replace(/\/$/, '');
     orConditions.push({ 
-      linkedinUrl: { $regex: new RegExp(normalizedLinkedin.replace('https://www.linkedin.com/in/', ''), 'i') }
+      linkedinUrl: { $regex: new RegExp(escapeRegex(normalizedLinkedin.replace('https://www.linkedin.com/in/', '')), 'i') }
     });
   }
 
@@ -67,7 +68,7 @@ export async function findDuplicate(candidate, recruiterId) {
   if (candidate.fullName && candidate.fullName.length > 3) {
     const normalizedName = candidate.fullName.toLowerCase().trim().replace(/\s+/g, ' ');
     orConditions.push({ 
-      fullName: { $regex: new RegExp(`^${normalizedName}$`, 'i') }
+      fullName: { $regex: new RegExp(`^${escapeRegex(normalizedName)}$`, 'i') }
     });
   }
 

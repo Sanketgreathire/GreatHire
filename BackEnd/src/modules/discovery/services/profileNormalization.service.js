@@ -1,3 +1,5 @@
+import escapeRegex from '../../../../utils/escapeRegex.js';
+
 class ProfileNormalizationService {
   constructor() {
     this.skillNormalizationMap = new Map();
@@ -102,7 +104,7 @@ class ProfileNormalizationService {
     let normalized = title.toLowerCase().trim();
     
     this.titleNormalizationMap.forEach((value, key) => {
-      const regex = new RegExp(`\\b${key}\\b`, 'gi');
+      const regex = new RegExp(`\\b${escapeRegex(key)}\\b`, 'gi');
       normalized = normalized.replace(regex, value);
     });
     

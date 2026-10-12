@@ -2,6 +2,7 @@ import { GitHubScraper } from '../scrapers/githubScraper.js';
 import axios from 'axios';
 import { GeminiJdMatcher } from './geminiJdMatcher.js';
 import { AISourcedCandidate } from '../../models/sourcing/aiSourcedCandidate.model.js';
+import escapeRegex from '../../utils/escapeRegex.js';
 
 const AI_BASE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8001';
 const AI_API_KEY = process.env.AI_SERVICE_API_KEY || 'greathire-ai-secret-key-change-in-prod';
@@ -199,11 +200,11 @@ export class JdSourcingService {
           { phone: { $exists: true, $ne: null } },
         ],
       };
-      if (location?.trim()) query.location = { $regex: location.trim(), $options: 'i' };
-      if (designation?.trim()) query.designation = { $regex: designation.trim(), $options: 'i' };
+      if (location?.trim()) query.location = { $regex: escapeRegex(location.trim()), $options: 'i' };
+      if (designation?.trim()) query.designation = { $regex: escapeRegex(designation.trim()), $options: 'i' };
       if (skills?.trim()) {
         const arr = skills.split(',').map(s => s.trim()).filter(Boolean);
-        if (arr.length) query.skills = { $all: arr.map(s => new RegExp(s, 'i')) };
+        if (arr.length) query.skills = { $all: arr.map(s => new RegExp(escapeRegex(s), 'i')) };
       }
       if (minExp !== undefined || maxExp !== undefined) {
         query.totalExperience = {};
