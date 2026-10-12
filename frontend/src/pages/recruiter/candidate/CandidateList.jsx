@@ -164,6 +164,17 @@ const CandidateList = () => {
 
   // ---------- Candidate Database logic ----------
   const fetchCandidates = async () => {
+
+    const hasFilter = Object.entries(filters).some(([key, value]) => {
+    if (key === "jobDescription") return false;
+    return String(value ?? "").trim() !== "";
+  });
+
+  if (!hasFilter) {
+    toast.error("Please select at least one filter.");
+    return;
+  }
+  
     try {
       setIsLoading(true);
 

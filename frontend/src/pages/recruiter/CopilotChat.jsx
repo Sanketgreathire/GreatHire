@@ -25,16 +25,39 @@ const STARTER_PROMPTS = [
 ];
 
 const CandidateCard = ({ candidate, onTrack }) => {
-  const name = candidate.profile?.fullName || candidate.fullName || "Unnamed candidate";
-  const designation = candidate.profile?.designation || candidate.designation || "";
-  const company = candidate.profile?.currentCompany || candidate.currentCompany || "";
-  const location = candidate.profile?.location || candidate.location || "";
-  const experience = candidate.profile?.totalExperience ?? candidate.totalExperience;
-  const skills = candidate.profile?.skills || candidate.skills || [];
-  const githubUrl = candidate.profile?.githubUrl || candidate.githubUrl;
-  const linkedinUrl = candidate.profile?.linkedinUrl || candidate.linkedinUrl;
-  const resumeUrl = candidate.profile?.resumeUrl || candidate.resumeUrl;
-  const score = candidate._scores?.total;
+  // Support both flat schema and nested profile schema safely
+  const profile = candidate.profile || candidate;
+
+
+const name =
+  profile.fullname ||
+  profile.fullName ||
+  candidate.fullname ||
+  candidate.fullName ||
+  candidate.name ||
+  "Unnamed candidate";
+
+
+  const designation = profile.designation || candidate.designation || "";
+  const company = profile.currentCompany || candidate.currentCompany || "";
+  const location = profile.location || candidate.location || "";
+  const experience = profile.totalExperience ?? candidate.totalExperience;
+
+  // Safely extract and format skills array
+  const rawSkills = profile.skills || candidate.skills || [];
+  const skills = Array.isArray(rawSkills)
+    ? rawSkills
+    : typeof rawSkills === "string"
+    ? rawSkills.split(",").map((s) => s.trim())
+    : [];
+
+  const githubUrl = profile.githubUrl || candidate.githubUrl;
+  const linkedinUrl = profile.linkedinUrl || candidate.linkedinUrl;
+  const resumeUrl = profile.resumeUrl || candidate.resumeUrl;
+
+  // Compute or extract match score safely
+  const rawScore = candidate._scores?.total ?? candidate._scores?.semantic ?? candidate.matchScore;
+  const score = typeof rawScore === "number" ? (rawScore > 1 ? rawScore : rawScore * 100) : null;
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition">
@@ -42,24 +65,24 @@ const CandidateCard = ({ candidate, onTrack }) => {
         <div>
           <h4 className="font-semibold text-gray-900 dark:text-gray-100">{name}</h4>
           {(designation || company) && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1 mt-0.5">
               <Briefcase size={14} />
               {designation}
               {designation && company ? " · " : ""}
               {company}
             </p>
           )}
-          {location && (
+          {(location || experience != null) && (
             <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-0.5">
               <MapPin size={14} />
-              {location}
+              {location || "Location not specified"}
               {experience != null && ` · ${experience} yrs exp`}
             </p>
           )}
         </div>
-        {typeof score === "number" && (
+        {score !== null && (
           <span className="shrink-0 text-xs font-medium px-2 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-            {Math.round(score * 100)}% match
+            {Math.round(score)}% match
           </span>
         )}
       </div>
@@ -71,7 +94,7 @@ const CandidateCard = ({ candidate, onTrack }) => {
               key={i}
               className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
             >
-              {skill}
+              {typeof skill === "string" ? skill : String(skill)}
             </span>
           ))}
         </div>
@@ -235,6 +258,20 @@ const CopilotChat = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
+
+                     {/* YAHAN greeting code paste karo */}
+  {msg.result.type === "greeting" && (
+    <div className="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4">
+      <div className="flex items-center gap-2 font-semibold text-gray-900 dark:text-gray-100">
+        <Bot size={18} className="text-blue-500" />
+        GreatHire AI Copilot
+      </div>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        {msg.result.reply}
+      </p>
+    </div>
+  )}
+
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Bot size={16} />
                       Found {msg.result.candidates?.length || 0} candidates ·{" "}
@@ -243,8 +280,12 @@ const CopilotChat = () => {
                     </div>
 
                     <div className="grid grid-cols-1 gap-3">
-                      {(msg.result.candidates || []).map((candidate) => (
-                        <CandidateCard key={candidate._id} candidate={candidate} onTrack={handleTrack} />
+                      {(msg.result.candidates || []).map((candidate, index) => (
+                        <CandidateCard
+                          key={candidate._id || index}
+                          candidate={candidate}
+                          onTrack={handleTrack}
+                        />
                       ))}
                     </div>
 
