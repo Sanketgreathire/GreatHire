@@ -6,6 +6,11 @@ import { useSelector } from 'react-redux';
 
 const MessageContext = createContext();
 
+const sortConversations = (list) =>
+  [...list].sort(
+    (a, b) => new Date(b.lastMessageTime || 0) - new Date(a.lastMessageTime || 0)
+  );
+
 export const MessageProvider = ({ children }) => {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
@@ -76,10 +81,12 @@ export const MessageProvider = ({ children }) => {
 
       // Update conversation list
       setConversations(prev =>
-        prev.map(conv =>
-          conv._id === conversationId
-            ? { ...conv, lastMessage: message, lastMessageTime: message.createdAt }
-            : conv
+        sortConversations(
+          prev.map(conv =>
+            conv._id === conversationId
+              ? { ...conv, lastMessage: message, lastMessageTime: message.createdAt }
+              : conv
+          )
         )
       );
     });
@@ -96,17 +103,19 @@ export const MessageProvider = ({ children }) => {
       setConversations(prev => {
         const exists = prev.find(c => c._id === conversation._id);
         if (exists) {
-          return prev.map(c =>
-            c._id === conversation._id
-              ? {
-                  ...conversation,
-                  // ✅ Preserve local flag — socket payload doesn't carry it
-                  pendingDelivery: c.pendingDelivery || false,
-                }
-              : c
+          return sortConversations(
+            prev.map(c =>
+              c._id === conversation._id
+                ? {
+                    ...conversation,
+                    // ✅ Preserve local flag — socket payload doesn't carry it
+                    pendingDelivery: c.pendingDelivery || false,
+                  }
+                : c
+            )
           );
         }
-        return [conversation, ...prev];
+        return sortConversations([conversation, ...prev]);
       });
     });
 
@@ -259,14 +268,24 @@ export const MessageProvider = ({ children }) => {
         );
       }
 
-      if (!delivered && convId) {
-        setConversations(prev =>
-          prev.map(c =>
-            c._id?.toString() === convId?.toString()
-              ? { ...c, pendingDelivery: true }
-              : c
-          )
-        );
+      if (sentMessage && convId) {
+        setConversations(prev => {
+          const exists = prev.some(c => c._id?.toString() === convId.toString());
+          if (!exists) return prev;
+          return sortConversations(
+            prev.map(c =>
+              c._id?.toString() === convId.toString()
+                ? {
+                    ...c,
+                    lastMessage: sentMessage,
+                    lastMessageTime:
+                      sentMessage.createdAt || new Date().toISOString(),
+                    pendingDelivery: delivered ? c.pendingDelivery : true,
+                  }
+                : c
+            )
+          );
+        });
       }
 
       return response.data;

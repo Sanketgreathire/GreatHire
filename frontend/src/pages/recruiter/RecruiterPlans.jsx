@@ -507,7 +507,7 @@ function RecruiterPlans() {
               {user && (
                 <button
                   onClick={() => navigate(-1)}
-                  className="md:hidden flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors mb-8 backdrop-blur-sm"
+                  className="md:hidden inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-colors mt-6 mb-8 backdrop-blur-sm"
                 >
                   <ArrowLeft size={20} />
                   <span className="font-medium">Back</span>

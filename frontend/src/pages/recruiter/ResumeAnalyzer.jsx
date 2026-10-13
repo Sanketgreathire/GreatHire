@@ -324,17 +324,20 @@ const RecruiterResumeAnalyzer = () => {
           </div>
         ) : (
           <select
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-2.5 bg-gray-50 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="text-sm border border-gray-400 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none min-w-0 max-w-full"
             value={selectedJob?._id || ""}
             onChange={(e) => handleJobSelect(e.target.value)}
           >
-            <option value="">-- Select a job from your posted jobs --</option>
-            {jobs.map((job) => (
-              <option key={job._id} value={job._id}>
-                {job.jobDetails?.title}
-                {job.jobDetails?.isActive ? " (Active)" : " (Expired)"}
-              </option>
-            ))}
+            <option value="">-- Select Job --</option>
+            {jobs.map((job) => {
+              const title = job.jobDetails?.title || "Untitled";
+              return (
+                <option key={job._id} value={job._id}>
+                  {title.length > 24 ? `${title.slice(0, 24)}…` : title}
+                  {job.jobDetails?.isActive ? " (Active)" : " (Expired)"}
+                </option>
+              );
+            })}
           </select>
         )}
 
