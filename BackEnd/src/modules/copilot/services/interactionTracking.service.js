@@ -98,7 +98,7 @@ recruiterInteractionSchema.pre("save", function(next) {
   if (this.isNew && !this.metadata) {
     this.metadata = {};
   }
-  next();
+  
 });
 
 recruiterInteractionSchema.methods.updateFeedback = function(feedback) {
@@ -310,7 +310,7 @@ export default RecruiterInteraction;
 
 export const trackRecruiterInteraction = async function(recruiterId, candidateId, interactionType, metadata = {}) {
   try {
-    const SourcingCandidate = (await import("../../../models/sourcing/sourcingCandidate.model.js")).SourcingCandidate;
+    const SourcingCandidate = (await import("../../../../models/sourcing/sourcingCandidate.model.js")).SourcingCandidate;
     
     const candidate = await SourcingCandidate.findById(candidateId)
       .select('skills experience location designation currentCompany summary totalExperience')
@@ -338,15 +338,24 @@ export const trackRecruiterInteraction = async function(recruiterId, candidateId
     
     await interaction.save();
     
-    const RecruiterMemory = (await import("../../models/recruiterMemory.model.js")).RecruiterMemory;
+    try {
+  const memoryModule = await import("../../../models/recruiterMemory.model.js");
+  const RecruiterMemory = memoryModule.default || memoryModule.RecruiterMemory;
+
+  if (RecruiterMemory?.updateRecruiterMemory) {
     await RecruiterMemory.updateRecruiterMemory(recruiterId, {
       lastInteraction: {
         candidateId,
         type: interactionType,
         timestamp: new Date(),
-        candidateData: candidate
-      }
+        candidateData: candidate,
+      },
     });
+  }
+} catch (memErr) {
+  // Don't crash interaction tracking if memory update fails
+  console.warn("[memory] failed to update recruiter memory:", memErr.message);
+}
     
     return interaction;
   } catch (error) {

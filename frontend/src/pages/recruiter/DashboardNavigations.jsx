@@ -1,44 +1,38 @@
-import { useState } from "react";
+import { useState,  } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, X, PenSquare, Briefcase, PlusSquare,
   Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
-  LayoutDashboard, Users, Gift, Menu, FileText, Bot, MessageCircle, Calendar
+    Users, Gift,   FileText, Bot, MessageCircle, Calendar
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
 
-const DashboardNavigations = ({
-  isOpen: controlledIsOpen,
-  onOpenChange,
-  showMenuButton = true,
-  overlay = false,
-}) => {
+/* eslint-disable react/prop-types */ 
+
+const DashboardNavigations = ({ isOpen, onOpenChange }) => {
   const location = useLocation();
 
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
   // State for sidebar toggle
-  const [internalIsSidebarOpen, setInternalSidebarOpen] = useState(false);
-  const isSidebarOpen = controlledIsOpen ?? internalIsSidebarOpen;
-  const usesOverlay = overlay || controlledIsOpen !== undefined;
-  const setSidebarOpen = (open) => {
-    if (controlledIsOpen === undefined) {
-      setInternalSidebarOpen(open);
-    }
-    onOpenChange?.(open);
-  };
   const [isCreateNewOpen, setCreateNewOpen] = useState(false);
+
+  // Sidebar open state — driven entirely by parent via isOpen/onOpenChange
+  const isSidebarOpen = !!isOpen;
+  const setSidebarOpen = (open) => onOpenChange?.(open);
+  //const closeSidebar = () => onOpenChange?.(false);
+
+
 
   // hasCompany: dual source of truth — user flag (login-time) OR live fetched company object
   const hasCompany = !!user?.isCompanyCreated || !!company;
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm font-medium transition ${
-      isActive
-        ? "bg-blue-600 text-white"
-        : "text-slate-300 hover:bg-white/10 hover:text-white"
+    `flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm font-medium transition ${isActive
+      ? "bg-blue-600 text-white"
+      : "text-slate-300 hover:bg-white/10 hover:text-white"
     }`;
 
   const disabledLinkClass =
@@ -59,6 +53,8 @@ const DashboardNavigations = ({
     window.location.href = "/recruiter/dashboard/applicants-list";
   };
 
+
+
   return (
     <>
       <Helmet>
@@ -71,23 +67,25 @@ const DashboardNavigations = ({
         />
       </Helmet>
 
-      {/* Hamburger Button (Small Screens) */}
-      <button
-        className="z-50 lg:hidden p-2 fixed top-3.5 left-2 rounded-md text-white"
-        onClick={() => setSidebarOpen(true)}
-      >
-        <Menu size={22} />
-      </button>
+      
 
+
+      {/* Mobile backdrop overlay — only when sidebar open on mobile */}
+      {isSidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-black/50"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       {/* Sidebar — full-height product rail */}
       <div
-        className={`fixed top-0 left-0 z-40 h-screen w-64 transform bg-[#0b1730] text-slate-200
-                  shadow-[4px_0_24px_rgba(2,6,23,.35)] transition-transform duration-300 ease-in-out
-                  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                  lg:translate-x-0 lg:w-52 lg:overflow-y-auto
-                `}
+        className={`fixed top-0 left-0 z-30 lg:z-40 h-screen w-64 transform bg-[#0b1730] text-slate-200
+            shadow-[4px_0_24px_rgba(2,6,23,.35)] transition-transform duration-300 ease-in-out overflow-y-auto
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            lg:translate-x-0 lg:w-52  `}
       >
-        <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3">
+        <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3  ">
           <NavLink
             to="/recruiter/dashboard/home"
             className="flex min-w-0 items-center gap-2.5"
@@ -100,7 +98,8 @@ const DashboardNavigations = ({
             </span>
           </NavLink>
           <button
-            className="lg:hidden rounded-md p-1 text-slate-300 hover:bg-white/10 hover:text-white"
+            type="button"
+            className="lg:hidden relative z-[60] rounded-md p-1 text-slate-300 hover:bg-white/10 hover:text-white"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close menu"
           >
@@ -109,13 +108,13 @@ const DashboardNavigations = ({
         </div>
 
 
-        <div className="flex flex-col h-[calc(100%-4rem)] p-3 justify-between">
+        <div className="flex flex-col h-[calc(100%-4rem)] p-1.5 justify-between">
           {/* Main Navigation */}
           <section>
-            <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <p className="mb-2 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
               Workspace
             </p>
-            <ul className="w-full flex flex-col gap-1">
+            <ul className="w-full flex flex-col gap-0.5 ">
               <NavLink
                 to="/recruiter/dashboard/home"
                 className={navLinkClass}

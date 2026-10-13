@@ -9,9 +9,9 @@ import { User } from "../../../../models/user.model.js";
 import { getRecruiterMemory } from "../../../models/recruiterMemory.model.js";
 
 const CANDIDATE_FIELDS =
-  "fullname profile.skills profile.experiences profile.qualification address.city address.state address.country profile.hasExperience updatedAt";
+  "fullname profile.fullname profile.fullName profile.designation profile.currentCompany profile.totalExperience profile.experience profile.experiences profile.summary profile.about profile.bio profile.skills profile.qualification profile.otherQualification profile.gender profile.category profile.language profile.documents profile.hasExperience profile.noticePeriod profile.expectedCtc profile.expectedCTC profile.currentCtc profile.currentCTC profile.workMode profile.availability profile.openToWork profile.githubUrl profile.linkedinUrl profile.resumeUrl profile.portfolioUrl profile.education profile.certifications address emailId phoneNumber role updatedAt";
 
-export async function processCopilotQuery(
+  export async function processCopilotQuery(
   message,
   recruiterId,
   context = {}

@@ -431,35 +431,87 @@ recruiterMemorySchema.statics.getRecruiterMemory = async function(recruiterId) {
   return memory;
 };
 
-recruiterMemorySchema.statics.updateRecruiterMemory = async function(recruiterId, updates) {
+recruiterMemorySchema.statics.updateRecruiterMemory = async function (recruiterId, updates) {
   const memory = await this.getRecruiterMemory(recruiterId);
-  
+
+  // ── preferences ──────────────────────────────────────────────────────────
   if (updates.preferences) {
-    Object.keys(updates.preferences).forEach(key => {
-      if (Array.isArray(updates.preferences[key])) {
-        memory.preferences[key] = [...new Set([...memory.preferences[key], ...updates.preferences[key]])];
+    Object.keys(updates.preferences).forEach((key) => {
+      if (
+        Array.isArray(updates.preferences[key]) &&
+        Array.isArray(memory.preferences[key])
+      ) {
+        memory.preferences[key] = [
+          ...new Set([...memory.preferences[key], ...updates.preferences[key]]),
+        ];
       } else {
         memory.preferences[key] = updates.preferences[key];
       }
     });
   }
 
+  // ── settings ─────────────────────────────────────────────────────────────
   if (updates.settings) {
     Object.assign(memory.settings, updates.settings);
   }
 
+  // ── lastSearch ───────────────────────────────────────────────────────────
   if (updates.lastSearch) {
-  await memory.addSearchToHistory(
-    updates.lastSearch.query,
-    updates.lastSearch.intent,
-    updates.lastSearch.filters,
-    updates.lastSearch.resultCount,
-    updates.lastSearch.duration || 0,
-    updates.lastSearch.session
-  );
-}
+    await memory.addSearchToHistory(
+      updates.lastSearch.query,
+      updates.lastSearch.intent,
+      updates.lastSearch.filters,
+      updates.lastSearch.resultCount,
+      updates.lastSearch.duration || 0,
+      updates.lastSearch.session
+    );
+  }
 
-return memory.save();
+  // ── lastInteraction (NEW — this fixes the 500 error) ────────────────────
+  if (updates.lastInteraction) {
+    const { type, candidateData } = updates.lastInteraction;
+
+    memory.interactionStats.lastActivity = new Date();
+
+    switch (type) {
+      case "viewed":      memory.interactionStats.totalViews += 1;      break;
+      case "shortlisted": memory.interactionStats.totalShortlists += 1; break;
+      case "contacted":   memory.interactionStats.totalContacts += 1;   break;
+      case "rejected":    memory.interactionStats.totalRejections += 1; break;
+      default: break;
+    }
+
+    // Skill weights
+    if (candidateData?.skills && Array.isArray(candidateData.skills)) {
+      candidateData.skills.forEach((skill) => {
+        if (typeof skill !== "string" || !skill.trim()) return;
+        const key = skill.toLowerCase().trim();
+        const delta = type === "rejected" ? -0.5 : 0.2;
+        const current = memory.skillWeights.get(key) || 0;
+        memory.skillWeights.set(key, Math.max(0, current + delta));
+      });
+    }
+
+    // Location weights
+    if (candidateData?.location && typeof candidateData.location === "string") {
+      const key = candidateData.location.toLowerCase().trim();
+      const delta = type === "rejected" ? -0.3 : 0.1;
+      const current = memory.locationWeights.get(key) || 0;
+      memory.locationWeights.set(key, Math.max(0, current + delta));
+    }
+
+    // Designation weights
+    if (candidateData?.designation && typeof candidateData.designation === "string") {
+      const key = candidateData.designation.toLowerCase().trim();
+      const delta = type === "rejected" ? -0.4 : 0.15;
+      const current = memory.designationWeights.get(key) || 0;
+      memory.designationWeights.set(key, Math.max(0, current + delta));
+    }
+  }
+
+  // Always mark for save so VersionError never triggers
+  memory.lastUpdated = new Date();
+  return memory.save();
 };
 
 const RecruiterMemory = mongoose.model("RecruiterMemory", recruiterMemorySchema);

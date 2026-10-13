@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom"; 
+import { Outlet } from "react-router-dom";
 import Navbar from "@/components/shared/Navbar";
-import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import { COMPANY_API_END_POINT, BACKEND_URL } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
 import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
 import { io } from "socket.io-client";
-import { BACKEND_URL } from "@/utils/ApiEndPoint";
 import { Helmet } from "react-helmet-async";
-import ErrorBoundary from "@/components/shared/ErrorBoundary"; 
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -22,18 +21,20 @@ const RecruiterDashboard = () => {
   const [loading, setLoading] = useState(false);
   const socketRef = React.useRef(null);
 
-  // Extract IDs to prevent exhaustive-deps warnings
+  // 🔑 THE ONE source of truth for sidebar open/close
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const userId = user?._id;
   const companyId = company?._id;
 
-  // Fetch company details by user ID when component mounts or when user changes
+  // Fetch company details
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
       setLoading(true);
       try {
         const response = await axios.post(
           `${COMPANY_API_END_POINT}/company-by-userid`,
-          { userId: userId },
+          { userId },
           { withCredentials: true }
         );
         if (response?.data.success) {
@@ -45,26 +46,27 @@ const RecruiterDashboard = () => {
         setLoading(false);
       }
     };
-
     if (userId) fetchCompanyByUserId();
   }, [userId, dispatch]);
 
-  // Fetch recruiters and job plan if company exists
+  // Fetch recruiters and job plan
   useEffect(() => {
     if (company) {
-      if (
-        user?.isActive &&
-        user?.isCompanyCreated &&
-        recruiters?.length === 0
-      ) {
+      if (user?.isActive && user?.isCompanyCreated && recruiters?.length === 0) {
         dispatch(fetchRecruiters(companyId));
       }
-      // Always fetch latest job plan
       dispatch(fetchCurrentPlan(companyId));
     }
-  }, [company, companyId, user?.isActive, user?.isCompanyCreated, recruiters?.length, dispatch]);
+  }, [
+    company,
+    companyId,
+    user?.isActive,
+    user?.isCompanyCreated,
+    recruiters?.length,
+    dispatch,
+  ]);
 
-  // Socket.IO for Real-time Plan Expiration Updates
+  // Socket.IO for plan expiry + credits
   useEffect(() => {
     if (!userId || !BACKEND_URL) return;
 
@@ -79,7 +81,7 @@ const RecruiterDashboard = () => {
         try {
           const response = await axios.post(
             `${COMPANY_API_END_POINT}/company-by-userid`,
-            { userId: userId },
+            { userId },
             { withCredentials: true }
           );
           if (response?.data.success) {
@@ -92,13 +94,12 @@ const RecruiterDashboard = () => {
       }
     });
 
-    // Real-time Job Credits updates (triggered when admin edits credits)
     socket.on("companyCreditsUpdated", async ({ companyId: incomingId }) => {
       if (incomingId === companyId) {
         try {
           const response = await axios.post(
             `${COMPANY_API_END_POINT}/company-by-userid`,
-            { userId: userId },
+            { userId },
             { withCredentials: true }
           );
           if (response?.data.success) {
@@ -120,11 +121,10 @@ const RecruiterDashboard = () => {
   const isCompanyCreated = !!user?.isCompanyCreated;
   const hasCompany = isCompanyCreated || !!company;
 
-  // Show loading spinner while fetching company data
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600" />
       </div>
     );
   }
@@ -142,19 +142,30 @@ const RecruiterDashboard = () => {
       </Helmet>
 
       <div className="flex flex-col min-h-screen">
-        {/* Navbar — always visible */}
-        <Navbar />
+        {/* Navbar — receives the toggle callback */}
+        <Navbar onMenuToggle={() => setIsSidebarOpen((v) => !v)} />
 
-        {/* Main Content */}
         <div className="flex flex-1">
-          {/* Sidebar — only after company is fetched/created */}
-          {hasCompany && <DashboardNavigations />}
+          {/* Sidebar — receives open state and a controlled setter */}
+          {hasCompany && (
+            <DashboardNavigations
+              isOpen={isSidebarOpen}
+              onOpenChange={setIsSidebarOpen}
+            />
+          )}
 
-          <div className={`flex-1 bg-gray-100 dark:bg-gray-900 overflow-y-auto ${
-            hasCompany ? "lg:ml-52" : ""
-          }`}>
-             
-            <ErrorBoundary fallback={<div className="p-6 text-red-500">Something went wrong loading this page. Please refresh.</div>}>
+          <div
+            className={`flex-1 bg-gray-100 dark:bg-gray-900 overflow-y-auto ${
+              hasCompany ? "lg:ml-52" : ""
+            }`}
+          >
+            <ErrorBoundary
+              fallback={
+                <div className="p-6 text-red-500">
+                  Something went wrong loading this page. Please refresh.
+                </div>
+              }
+            >
               <Outlet />
             </ErrorBoundary>
           </div>

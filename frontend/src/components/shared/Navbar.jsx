@@ -211,7 +211,8 @@ const FALLBACK_PAGE_TITLES = {
 // ─────────────────────────────────────────────────────────────
 // Main Navbar
 // ─────────────────────────────────────────────────────────────
-const Navbar = ({ leadingContent }) => {
+/* eslint-disable react/prop-types */ 
+const Navbar = ({ leadingContent, onMenuToggle }) => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const isRecruiter = user?.role?.includes("recruiter");
@@ -399,32 +400,56 @@ const Navbar = ({ leadingContent }) => {
 
   return (
     <>
-      <nav className="gh-navbar gh-shared-navbar fixed top-0 left-0 right-0 z-50">
-        <div className="gh-navbar__inner gh-shared-navbar__inner w-full">
-{/* Optional page action and logo */}
-<div className="flex items-center gap-2">
-  {leadingContent}
-  <Link
-    to={logoRedirectPath}
-    className="gh-navbar__brand gh-shared-navbar__brand cursor-pointer flex items-center gap-2.5 sm:gap-3 group"
-    aria-label="GreatHire home"
-  >
-    <img
-      src="/greathire-navbar-logo.png"
-      alt="GreatHire"
-      className="h-9 sm:h-11 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
-    />
-    <div className="flex flex-col justify-center">
-      <h2 className="text-xl sm:text-2xl lg:text-[1.65rem] font-bold hover:text-blue-600 transition duration-300 ease-in-out leading-none">
-        <span className="text-slate-900">Great</span>
-        <span className="text-blue-600">Hire</span>
-      </h2>
-      <p className="text-[8px] sm:text-[9px] font-bold text-blue-600 dark:text-blue-400 tracking-[0.16em] uppercase mt-1">
-        Careers · Hiring · Growth
-      </p>
-    </div>
-  </Link>
-</div>
+      <nav className="gh-navbar gh-shared-navbar fixed top-0 left-0 right-0 z-50  ">
+        <div className="gh-navbar__inner gh-shared-navbar__inner w-full ">
+          {/*   page action and logo */}
+          <div className="flex items-center gap-2  ">
+            {leadingContent}
+            {/* ☰ — mobile only, on dashboard routes */}
+            {location.pathname.startsWith("/recruiter/dashboard") && (
+              <button
+                type="button"
+                onClick={() => onMenuToggle?.()}
+                aria-label="Open navigation menu"
+                className="lg:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+            )}
+
+            <Link
+              to={logoRedirectPath}
+              className="gh-navbar__brand gh-shared-navbar__brand cursor-pointer flex items-center gap-2.5 sm:gap-3 group"
+              aria-label="GreatHire home"
+            >
+              <img
+                src="/greathire-navbar-logo.png"
+                alt="GreatHire"
+                className="h-8 sm:h-11 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+              />
+              <div className="flex flex-col justify-center">
+                <h2 className="text-xl sm:text-2xl lg:text-[1.65rem] font-bold hover:text-blue-600 transition duration-300 ease-in-out leading-none">
+                  <span className="text-slate-900">Great</span>
+                  <span className="text-blue-600">Hire</span>
+                </h2>
+                <p className="text-[8px] sm:text-[9px] font-bold text-blue-600 dark:text-blue-400 tracking-[0.16em] uppercase mt-1">
+                  Careers · Hiring · Growth
+                </p>
+              </div>
+            </Link>
+          </div>
 
           <div className="gh-shared-navbar__content">
             {/* ── DESKTOP NAVIGATION ── */}
@@ -712,7 +737,8 @@ const Navbar = ({ leadingContent }) => {
           </div>
 
           {/* ── MOBILE RIGHT ICONS ── */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className={`flex items-center gap-2 ${location.pathname.startsWith("/recruiter/dashboard") ? "hidden" : "lg:hidden"
+            }`}>
             <ThemeToggle />
             {user && <NotificationDropdown />}
             <button
@@ -837,8 +863,8 @@ const Navbar = ({ leadingContent }) => {
                     key={to}
                     to={to}
                     className={`flex items-center gap-3 px-4 py-2.5 transition-colors font-medium ${location.pathname === to
-                        ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
-                        : "text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      ? "text-blue-600 bg-blue-50 dark:bg-blue-900 dark:text-blue-300"
+                      : "text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                       }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -846,7 +872,7 @@ const Navbar = ({ leadingContent }) => {
                     <span>{label}</span>
                   </Link>
                 ))}
-                
+
                 {/* Mobile policy */}
                 <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="px-4 py-2">

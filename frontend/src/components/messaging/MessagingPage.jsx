@@ -8,7 +8,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { BriefcaseBusiness, House, Menu, MessageCircle, UserRound, X } from "lucide-react";
-import DashboardNavigations from "../../pages/recruiter/DashboardNavigations";
+
 
 const MessagingContent = () => {
   const { activeConversation, setActiveConversation } = useMessages();
@@ -25,13 +25,13 @@ const MessagingContent = () => {
     { label: "Home", to: "/", icon: House },
     ...(isRecruiter
       ? [
-          { label: "Dashboard", to: "/recruiter/dashboard/home", icon: BriefcaseBusiness },
-          { label: "Profile", to: "/recruiter/profile", icon: UserRound },
-        ]
+        { label: "Dashboard", to: "/recruiter/dashboard/home", icon: BriefcaseBusiness },
+        { label: "Profile", to: "/recruiter/profile", icon: UserRound },
+      ]
       : [
-          { label: "Find Jobs", to: "/jobs", icon: BriefcaseBusiness },
-          { label: "Profile", to: "/profile", icon: UserRound },
-        ]),
+        { label: "Find Jobs", to: "/jobs", icon: BriefcaseBusiness },
+        { label: "Profile", to: "/profile", icon: UserRound },
+      ]),
     { label: "Messages", to: "/messages", icon: MessageCircle },
   ];
 
@@ -114,9 +114,8 @@ const MessagingContent = () => {
     <div className="h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400">
       {/* Sidebar */}
       <div
-        className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${
-          activeConversation ? "hidden md:flex" : "flex"
-        }`}
+        className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${activeConversation ? "hidden md:flex" : "flex"
+          }`}
       >
         {/* Mobile Back Button */}
         {activeConversation && (
@@ -131,15 +130,17 @@ const MessagingContent = () => {
         {/* GreatHire Logo */}
         <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setIsNavigationOpen(true)}
-              aria-label="Open navigation menu"
-              aria-expanded={isNavigationOpen}
-              className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Menu size={24} />
-            </button>
+            {!isRecruiter && (
+              <button
+                type="button"
+                onClick={() => setIsNavigationOpen(true)}
+                aria-label="Open navigation menu"
+                aria-expanded={isNavigationOpen}
+                className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Menu size={24} />
+              </button>
+            )}
             <div
               onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
               className="cursor-pointer flex items-center gap-1 select-none"
@@ -213,14 +214,14 @@ const MessagingContent = () => {
           />
         </div>
       </div>
-{/* Navigation for Recruiters sidebar */}
-      {isRecruiter && (
+      {/* Navigation for Recruiters sidebar */}
+      {/* {isRecruiter && (
         <DashboardNavigations
           isOpen={isNavigationOpen}
           onOpenChange={setIsNavigationOpen}
           showMenuButton={false}
         />
-      )}
+      )} */}
 
       {!isRecruiter && isNavigationOpen && (
         <>
@@ -267,9 +268,8 @@ const MessagingContent = () => {
 
       {/* Main Chat Area */}
       <div
-        className={`${
-          !activeConversation ? "hidden md:flex" : "flex"
-        } flex-1 flex-col min-w-0 w-full bg-white dark:bg-gray-900 h-full relative overflow-hidden`}
+        className={`${!activeConversation ? "hidden md:flex" : "flex"
+          } flex-1 flex-col min-w-0 w-full bg-white dark:bg-gray-900 h-full relative overflow-hidden`}
       >
         <ChatInterface />
       </div>
