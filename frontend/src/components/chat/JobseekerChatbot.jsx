@@ -398,7 +398,7 @@ function JobseekerChatbotContent() {
       {/* ── FLOATING LAUNCHER BUTTON (Rectangle on Laptop, Pure Circle on Mobile) ── */}
       {!isOpen && (
         <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
-          {/* Hover Tooltip (Laptop/Desktop) */}
+{/* Hover Tooltip (Laptop/Desktop) */}
           <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md whitespace-nowrap transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
             <span>GreatHire AI Assistant</span>
             <Sparkles size={12} className="text-amber-300 fill-amber-300" />
@@ -461,16 +461,39 @@ function JobseekerChatbotContent() {
         </div>
       )}
 
+      {/* ── MINIMIZED BAR ── */}
+{isOpen && isMinimized && (
+  <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9999] flex items-center gap-1 p-1.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-2xl">
+    <button
+      onClick={() => setIsMinimized(false)}
+      title="Expand"
+      aria-label="Expand GreatHire AI Assistant"
+      className="flex items-center gap-2.5 pl-1 pr-3 py-0.5 rounded-full hover:bg-white/10 transition-colors"
+    >
+      <span className="w-9 h-9 rounded-full bg-white overflow-hidden border-2 border-white/60 shrink-0">
+        <img src="/ai-avatar.png" alt="" className="w-full h-full object-cover" />
+      </span>
+      <span className="text-sm font-bold whitespace-nowrap">GreatHire Career AI</span>
+      <Maximize2 size={15} />
+    </button>
+    <button
+      onClick={() => {
+        setIsOpen(false);
+        setIsMinimized(false);
+      }}
+      title="Close chat"
+      className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
+    >
+      <X size={16} />
+    </button>
+  </div>
+)}
+
       {/* ── CHAT WINDOW MODAL / WIDGET ── */}
-      {isOpen && (
+      {isOpen && !isMinimized && (
         <div
-          className={`fixed z-[9999] transition-all duration-300 ease-out flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl overflow-hidden
-          ${
-            isMinimized
-              ? "bottom-20 right-4 sm:bottom-[98px] sm:right-6 w-80 h-16"
-              : "fixed inset-x-2 bottom-2 top-14 sm:top-auto sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[450px] sm:h-[630px] sm:max-h-[85vh] max-h-[calc(100vh-4rem)]"
-          }`}
-        >
+  className="fixed inset-x-2 bottom-2 top-14 sm:top-auto sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[450px] sm:h-[630px] sm:max-h-[85vh] max-h-[calc(100vh-4rem)] z-[9999] flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl overflow-hidden"
+>
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between select-none shadow-md shrink-0">
             <div className="flex items-center gap-3">
