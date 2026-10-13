@@ -23,8 +23,23 @@ import { validateJobApplication } from "../middlewares/jobValidator.js";
 // import { applyJobController } from "../controllers/application.controller.js";
 
 const router = express.Router();
+router.post(
+  "/apply",
+  isAuthenticated,
+  singleUpload,
+  validateJobApplication,
+  applyJob
+);
 
-router.post("/:jobId/apply", isAuthenticated, singleUpload, validateJobApplication, applyJob);
+// Apply for a job (jobId in the URL)
+router.post(
+  "/:jobId/apply",
+  isAuthenticated,
+  singleUpload,
+  validateJobApplication,
+  applyJob
+);
+
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);

@@ -15,3 +15,8 @@ BackEnd/login.json
 BackEnd/trial_*.json
 BackEnd/cookies.txt
 BackEnd/trial_cookies.txt
+*service-account*.json
+*credentials*.json
+greathire-*.json
+great-hire*.json
+great-hire-*.json

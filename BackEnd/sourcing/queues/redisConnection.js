@@ -11,11 +11,19 @@ export function getRedisConnection() {
     maxRetriesPerRequest: null,   // required by BullMQ
     enableReadyCheck:     false,
     lazyConnect:          true,
+    retryStrategy: (times) => {
+      if (times > 1) return null;
+      return 1000;
+    },
   });
 
   redisClient.on("connect",  () => console.log("✅ Redis connected"));
-  redisClient.on("error",    (e) => console.error("❌ Redis error:", e.message));
-  redisClient.on("close",    () => console.warn("⚠️  Redis connection closed"));
+  redisClient.on("error", (e) => {
+    if (e.code !== "ECONNREFUSED") {
+      console.error("❌ Redis error:", e.message);
+    }
+  });
+  redisClient.on("close",    () => {});
 
   return redisClient;
 }
@@ -23,10 +31,16 @@ export function getRedisConnection() {
 export async function isRedisAvailable() {
   try {
     const client = getRedisConnection();
-    await client.connect().catch(() => {});
+    if (client.status === "ready") return true;
+    if (client.status === "wait" || client.status === "close") {
+      await client.connect().catch(() => {});
+    }
     await client.ping();
     return true;
   } catch {
+    try {
+      if (redisClient) redisClient.disconnect();
+    } catch {}
     return false;
   }
 }

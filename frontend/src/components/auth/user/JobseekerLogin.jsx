@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-hot-toast";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Briefcase } from "lucide-react";
+import "@/components/shared/Navbar.css";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -153,12 +154,16 @@ const JobseekerLogin = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <nav className="fixed top-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-700">
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <h1 className="text-4xl font-bold text-black dark:text-white">
-            Great<span className="text-blue-600 dark:text-blue-400">Hire</span>
-          </h1>
-          <button onClick={() => navigate("/")} className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium">
+      <nav className="gh-navbar fixed top-0 left-0 right-0 z-50">
+        <div className="gh-navbar__inner gh-jobseeker-login-navbar__inner w-full">
+          <Link to="/" className="gh-navbar__brand" aria-label="GreatHire home">
+            <img src="/greathire-navbar-logo.png" alt="GreatHire" className="gh-navbar__brand-logo" />
+            <div className="flex flex-col justify-center">
+              <h2>Great<strong>Hire</strong></h2>
+              <p>Careers · Hiring · Growth</p>
+            </div>
+          </Link>
+          <button onClick={() => navigate("/")} className="gh-jobseeker-login-navbar__home px-4 py-2 font-medium transition-colors">
             ← Back to Home
           </button>
         </div>

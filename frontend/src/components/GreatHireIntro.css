@@ -1,0 +1,299 @@
+.gh-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 42%, #d7e4fb 0%, #bdcff0 48%, #a9bee5 100%);
+  color: #12151c;
+  animation: gh-intro-exit 0.72s cubic-bezier(0.4, 0, 0.2, 1) 4.1s forwards;
+}
+
+.gh-intro__stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gh-intro__stage::before,
+.gh-intro__stage::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(76vw, 760px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(29, 78, 216, 0.08);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: gh-intro-ring 12s ease-in-out infinite alternate;
+}
+
+.gh-intro__stage::after {
+  width: min(60vw, 600px);
+  border-color: rgba(194, 65, 12, 0.07);
+  animation-duration: 16s;
+  animation-delay: -4s;
+  animation-direction: alternate-reverse;
+}
+
+.gh-intro__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(52px);
+}
+
+.gh-intro__orb--a {
+  width: 460px;
+  height: 460px;
+  top: 6%;
+  left: 14%;
+  background: #c5d4ff;
+  animation: gh-intro-orb 1.2s ease both, gh-intro-drift-a 9s ease-in-out 1.2s infinite alternate;
+}
+
+.gh-intro__orb--b {
+  width: 380px;
+  height: 380px;
+  right: 10%;
+  bottom: 4%;
+  background: #f0d2ad;
+  animation: gh-intro-orb 1.2s ease 0.12s both, gh-intro-drift-b 11s ease-in-out 1.32s infinite alternate;
+}
+
+.gh-intro__bubble {
+  position: absolute;
+  display: block;
+  border: 2px solid rgba(29, 78, 216, 0.55);
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.12);
+  box-shadow: inset 0 0 12px rgba(29, 78, 216, 0.12), 0 3px 16px rgba(29, 78, 216, 0.14);
+  animation: gh-intro-bubble-float var(--float-duration, 12s) ease-in-out var(--float-delay, 0s) infinite alternate;
+}
+
+.gh-intro__bubble--one { width: 34px; height: 34px; top: 17%; left: 13%; --float-duration: 11s; --float-delay: -2s; }
+.gh-intro__bubble--two { width: 20px; height: 20px; top: 22%; right: 18%; border-color: rgba(194, 65, 12, 0.6); background: rgba(194, 65, 12, 0.1); --float-duration: 14s; --float-delay: -7s; }
+.gh-intro__bubble--three { width: 44px; height: 44px; right: 12%; bottom: 19%; border-color: rgba(194, 65, 12, 0.58); background: rgba(194, 65, 12, 0.1); --float-duration: 13s; --float-delay: -4s; }
+.gh-intro__bubble--four { width: 24px; height: 24px; bottom: 23%; left: 17%; --float-duration: 10s; --float-delay: -6s; }
+.gh-intro__bubble--five { width: 14px; height: 14px; top: 67%; left: 31%; border-color: rgba(194, 65, 12, 0.62); background: rgba(194, 65, 12, 0.1); --float-duration: 15s; --float-delay: -9s; }
+
+.gh-intro__axis {
+  position: absolute;
+  top: 18%;
+  bottom: 38%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, #1d4ed8 30%, #1d4ed8 70%, transparent);
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: center;
+  animation: gh-intro-axis 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.gh-intro__core {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  width: min(92vw, 560px);
+}
+
+.gh-intro__mark {
+  position: relative;
+  width: min(72vw, 268px);
+  height: min(72vw, 268px);
+  overflow: hidden;
+}
+
+.gh-intro__slice {
+  position: absolute;
+  inset: 0;
+  background: url("/greathire-mark.png") center / contain no-repeat;
+}
+
+.gh-intro__slice--g {
+  clip-path: inset(0 47.9% 0 0);
+  animation: gh-intro-g 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+}
+
+.gh-intro__slice--h {
+  clip-path: inset(0 0 0 47.9%);
+  animation: gh-intro-h 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+}
+
+.gh-intro__sheen {
+  position: absolute;
+  inset: -8%;
+  background: linear-gradient(
+    105deg,
+    transparent 36%,
+    rgba(255, 255, 255, 0.55) 48%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  animation: gh-intro-sheen 0.85s ease 1.18s both;
+  pointer-events: none;
+}
+
+.gh-intro__name {
+  margin: -6px 0 0;
+  font: 800 36px/1 Georgia, "Times New Roman", serif;
+  letter-spacing: 0.42em;
+  color: #15244a;
+  animation: gh-intro-name 0.95s cubic-bezier(0.16, 1, 0.3, 1) 1.12s both;
+}
+
+.gh-intro__name span {
+  color: #1d4ed8;
+}
+
+.gh-intro__rule {
+  display: block;
+  width: 0;
+  height: 1px;
+  margin-top: 16px;
+  background: linear-gradient(90deg, transparent, #1d4ed8 20%, #c2410c 50%, #1d4ed8 80%, transparent);
+  animation: gh-intro-rule 0.65s cubic-bezier(0.16, 1, 0.3, 1) 1.48s forwards;
+}
+
+.gh-intro__tag {
+  margin: 18px 0 0;
+  color: #334155;
+  font: 600 14px/1.4 "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  animation: gh-intro-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.78s both;
+}
+
+.gh-intro__pillars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gh-intro__pillars li {
+  position: relative;
+  padding: 0 18px;
+  color: #0f172a;
+  font: 800 12px/1 "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.gh-intro__pillars li + li::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  transform: translate(-50%, -50%);
+}
+
+.gh-intro__pillars li:nth-child(1) { animation: gh-intro-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) 2.12s both; }
+.gh-intro__pillars li:nth-child(2) { animation: gh-intro-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) 2.32s both; color: #1d4ed8; }
+.gh-intro__pillars li:nth-child(3) { animation: gh-intro-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) 2.52s both; color: #c2410c; }
+
+@keyframes gh-intro-orb {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 0.88; transform: scale(1); }
+}
+
+@keyframes gh-intro-drift-a {
+  from { transform: translate3d(-10px, 4px, 0) scale(1); }
+  to { transform: translate3d(22px, -16px, 0) scale(1.06); }
+}
+
+@keyframes gh-intro-drift-b {
+  from { transform: translate3d(12px, -8px, 0) scale(1.03); }
+  to { transform: translate3d(-20px, 14px, 0) scale(0.97); }
+}
+
+@keyframes gh-intro-bubble-float {
+  0% { transform: translate3d(0, 0, 0) scale(0.92); }
+  35% { transform: translate3d(28px, -34px, 0) scale(1.04); }
+  70% { transform: translate3d(-18px, -58px, 0) scale(0.98); }
+  100% { transform: translate3d(22px, -24px, 0) scale(1.08); }
+}
+
+@keyframes gh-intro-ring {
+  from { opacity: 0.2; transform: translate(-50%, -50%) scale(0.94) rotate(-6deg); }
+  to { opacity: 0.75; transform: translate(-50%, -50%) scale(1.04) rotate(6deg); }
+}
+
+
+@keyframes gh-intro-axis {
+  from { opacity: 0; transform: translateX(-50%) scaleY(0); }
+  55% { opacity: 0.7; transform: translateX(-50%) scaleY(1); }
+  to { opacity: 0; transform: translateX(-50%) scaleY(1); }
+}
+
+@keyframes gh-intro-g {
+  from { opacity: 0; transform: translateX(-64px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes gh-intro-h {
+  from { opacity: 0; transform: translateX(64px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes gh-intro-sheen {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(120%); }
+}
+
+@keyframes gh-intro-name {
+  from { opacity: 0; letter-spacing: 0.42em; transform: translateY(10px); }
+  to { opacity: 1; letter-spacing: -0.03em; transform: translateY(0); }
+}
+
+@keyframes gh-intro-rule {
+  from { width: 0; }
+  to { width: 210px; }
+}
+
+@keyframes gh-intro-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gh-intro-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: scale(1.04);
+    filter: blur(8px);
+  }
+}
+
+@media (max-width: 640px) {
+  .gh-intro__name { font-size: 28px; }
+  .gh-intro__tag { font-size: 11px; letter-spacing: 0.1em; }
+  .gh-intro__pillars li { font-size: 10px; padding: 0 12px; letter-spacing: 0.14em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-intro,
+  .gh-intro__orb,
+  .gh-intro__bubble,
+  .gh-intro__stage::before,
+  .gh-intro__stage::after,
+  .gh-intro__axis,
+  .gh-intro__slice,
+  .gh-intro__sheen,
+  .gh-intro__name,
+  .gh-intro__rule,
+  .gh-intro__tag,
+  .gh-intro__pillars li {
+    animation: none;
+  }
+  .gh-intro { display: none; }
+}

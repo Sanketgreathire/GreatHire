@@ -51,15 +51,12 @@ const isTerminalStage = (stage) => TERMINAL_STAGES.includes(stage);
  */
 export const isValidTransition = (currentStage, newStage) => {
   if (!ALL_STAGES.includes(newStage)) return false;
-  if (currentStage === newStage) return false;
-  if (isTerminalStage(currentStage)) return false;
+  if (currentStage === newStage) return true;
   if (isTerminalStage(newStage)) return true;
+  if (isTerminalStage(currentStage) && !isTerminalStage(newStage)) return true;
 
-  const currentIndex = STAGE_ORDER.indexOf(currentStage);
-  const newIndex = STAGE_ORDER.indexOf(newStage);
-  if (currentIndex === -1 || newIndex === -1) return false;
-
-  return newIndex === currentIndex + 1;
+  // Allow recruiters to move candidates between any valid recruitment stages (e.g. Application directly to Shortlisted)
+  return true;
 };
 
 /**

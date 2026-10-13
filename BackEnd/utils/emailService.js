@@ -1,11 +1,30 @@
 import nodemailer from "nodemailer";
 import axios from "axios";
 
+const decodeSecret = (val) => {
+  if (!val) return "";
+  const trimmed = val.replace(/^["']|["']$/g, "").trim();
+  if (trimmed.startsWith("base64:")) {
+    try {
+      return Buffer.from(trimmed.slice(7), "base64").toString("utf8");
+    } catch (_) {
+      return trimmed;
+    }
+  }
+  if (/^[A-Za-z0-9+/]+={1,2}$/.test(trimmed)) {
+    try {
+      const decoded = Buffer.from(trimmed, "base64").toString("utf8");
+      if (/^[\x20-\x7E]+$/.test(decoded)) return decoded;
+    } catch (_) {}
+  }
+  return trimmed;
+};
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: (process.env.EMAIL_USER || "").replace(/^["']|["']$/g, "").trim(),
+    pass: decodeSecret(process.env.EMAIL_PASS),
   },
 });
 

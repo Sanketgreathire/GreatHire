@@ -9,15 +9,15 @@ const ICON_COLOR = ['text-blue-600 dark:text-blue-400', 'text-purple-600 dark:te
 
 const DEMO_JOBS = [
   { id: 1, title: 'Software Developer', company: 'Solutions Private Limited', location: 'Bangalore', salary: '5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Briefcase, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { id: 2, title: 'HR Manager', company: '', location: 'Mumbai', salary: '4-6 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
-  { id: 3, title: 'Marketing Lead', company: 'Flipkart', location: 'Delhi', salary: '5-8 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Megaphone, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
-  { id: 4, title: 'Data Analyst', company: 'Wipro', location: 'Hyderabad', salary: '6-9 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 2, title: 'HR Manager', company: '', location: 'Mumbai', salary: '4-6 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
+  { id: 3, title: 'Marketing Lead', company: 'Flipkart', location: 'Delhi', salary: '5-8 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Megaphone, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
+  { id: 4, title: 'Data Analyst', company: 'Wipro', location: 'Hyderabad', salary: '6-9 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
   { id: 5, title: 'Frontend Developer', company: 'Amazon', location: 'Pune', salary: '4.5-8 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Briefcase, iconBg: 'bg-green-100 dark:bg-green-900/50', iconColor: 'text-green-600 dark:text-green-400' },
-  { id: 6, title: 'Product Manager', company: 'Google', location: 'Bangalore', salary: '5-10 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-indigo-100 dark:bg-indigo-900/50', iconColor: 'text-indigo-600 dark:text-indigo-400' },
-  { id: 7, title: 'Backend Developer', company: 'Microsoft', location: 'Hyderabad', salary: '8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Briefcase, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
+  { id: 6, title: 'Product Manager', company: 'Google', location: 'Bangalore', salary: '5-10 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Users, iconBg: 'bg-indigo-100 dark:bg-indigo-900/50', iconColor: 'text-indigo-600 dark:text-indigo-400' },
+  { id: 7, title: 'Backend Developer', company: 'Microsoft', location: 'Hyderabad', salary: '8-12 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Briefcase, iconBg: 'bg-purple-100 dark:bg-purple-900/50', iconColor: 'text-purple-600 dark:text-purple-400' },
   { id: 8, title: 'UI/UX Designer', company: 'Adobe', location: 'Bangalore', salary: '3.8-9 LPA', badge: 'New', badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300', icon: Megaphone, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
-  { id: 9, title: 'DevOps Engineer', company: 'IBM', location: 'Chennai', salary: '10-15 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
-  { id: 10, title: 'React Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '8-12 LPA', badge: 'Hot', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Briefcase, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
+  { id: 9, title: 'DevOps Engineer', company: 'IBM', location: 'Chennai', salary: '10-15 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: BarChart3, iconBg: 'bg-blue-100 dark:bg-blue-900/50', iconColor: 'text-blue-600 dark:text-blue-400' },
+  { id: 10, title: 'React Developer', company: 'GreatHire (On behalf of a Client)', location: 'Hyderabad', salary: '8-12 LPA', badge: 'Trending', badgeColor: 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400', icon: Briefcase, iconBg: 'bg-pink-100 dark:bg-pink-900/50', iconColor: 'text-pink-600 dark:text-pink-400' },
 ];
 
 export default function JobsHiringSection() {
@@ -42,7 +42,7 @@ export default function JobsHiringSection() {
             company: job.jobDetails.companyName,
             location: job.jobDetails.location,
             salary: job.jobDetails.salary,
-            badge: i % 2 === 0 ? 'New' : 'Hot',
+            badge: i % 2 === 0 ? 'New' : 'Trending',
             badgeColor: i % 2 === 0
               ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
               : 'bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400',

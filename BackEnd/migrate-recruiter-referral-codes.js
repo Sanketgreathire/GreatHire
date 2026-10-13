@@ -20,7 +20,7 @@ function generateCode() {
 
 const migrate = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     console.log('Connected to DB');
 
     // Collect all existing codes from both collections

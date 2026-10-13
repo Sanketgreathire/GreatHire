@@ -48,7 +48,7 @@ export default function HiringInsights() {
   };
 
   const getBadgeText = (insight) => {
-    if (insight.trendingScore > 90) return "🔥 Hot";
+    if (insight.trendingScore > 90) return "🔥 Trending";
     if (insight.trendingScore > 80) return "📈 Rising";
     if (new Date(insight.publishedDate) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {
       return "✨ New";

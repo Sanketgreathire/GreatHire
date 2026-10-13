@@ -900,7 +900,23 @@ export const getJobByRecruiterId = async (req, res) => {
       });
     }
 
-    if (recruiterId !== req.id.toString()) {
+    const isOwnRecruiter = recruiterId === req.id.toString();
+    const isPlatformAdmin = Boolean(
+      req.user &&
+      (req.user.role === "admin" || req.user.role === "Owner") &&
+      (await Admin.exists({ _id: req.id }))
+    );
+    const companyAdminEmail = req.user?.role === "recruiter"
+      ? req.user?.emailId?.email
+      : null;
+    const companyAdminAccess = !isOwnRecruiter && !isPlatformAdmin && companyAdminEmail
+      ? await Company.exists({
+          adminEmail: companyAdminEmail,
+          userId: { $elemMatch: { user: recruiterId } },
+        })
+      : false;
+
+    if (!isOwnRecruiter && !isPlatformAdmin && !companyAdminAccess) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to view these jobs",

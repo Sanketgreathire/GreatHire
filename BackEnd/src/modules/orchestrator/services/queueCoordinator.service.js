@@ -516,9 +516,11 @@ export class QueueCoordinatorService {
     // Monitor queue health every 30 seconds
     setInterval(async () => {
       try {
+        const { isRedisAvailable } = await import("../../../config/redis.js");
+        if (!(await isRedisAvailable())) return;
         await this.performHealthCheck();
       } catch (error) {
-        console.error('Error in health monitoring:', error);
+        // Suppress errors when Redis is not active
       }
     }, 30000);
   }

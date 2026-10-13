@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  Home, X, PenSquare, Settings, Briefcase, PlusSquare,
+  Home, X, PenSquare, Briefcase, PlusSquare,
   Building2, GraduationCap, TrendingUp, Trash2, UserPlus,
-  LayoutDashboard, Users, Gift, Menu, FileText, Bot, MessageCircle
+  LayoutDashboard, Users, Gift, Menu, FileText, Bot, MessageCircle, Calendar
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
@@ -35,16 +35,17 @@ const DashboardNavigations = ({
   const hasCompany = !!user?.isCompanyCreated || !!company;
 
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 rounded-lg w-full transition ${isActive
-      ? "bg-blue-600 text-white dark:bg-blue-700"
-      : "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800"
+    `flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm font-medium transition ${
+      isActive
+        ? "bg-blue-600 text-white"
+        : "text-slate-300 hover:bg-white/10 hover:text-white"
     }`;
 
   const disabledLinkClass =
-    "flex items-center gap-2 px-3 py-2 rounded-lg w-full opacity-40 cursor-not-allowed pointer-events-none text-gray-500 dark:text-gray-500";
+    "flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm opacity-40 cursor-not-allowed pointer-events-none text-slate-500";
 
   const iconClass = (isActive) =>
-    isActive ? "text-white" : "text-blue-600 dark:text-blue-400";
+    isActive ? "text-white" : "text-slate-400";
 
   // Check if active status belongs to applicants main page or any detail sub-path
   const isApplicantsActive = location.pathname.startsWith(
@@ -71,49 +72,49 @@ const DashboardNavigations = ({
       </Helmet>
 
       {/* Hamburger Button (Small Screens) */}
-      {showMenuButton && (
-        <button
-          className="z-50 lg:hidden p-2 fixed top-4 left-0 rounded-sm text-gray-700 dark:text-gray-200"
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open recruiter dashboard navigation"
-        >
-          <Menu size={24} />
-        </button>
-      )}
+      <button
+        className="z-50 lg:hidden p-2 fixed top-3.5 left-2 rounded-md text-white"
+        onClick={() => setSidebarOpen(true)}
+      >
+        <Menu size={22} />
+      </button>
 
-      {usesOverlay && isSidebarOpen && (
-        <button
-          type="button"
-          aria-label="Close recruiter dashboard navigation"
-          onClick={() => setSidebarOpen(false)}
-          className="fixed inset-0 z-40 bg-black/50"
-        />
-      )}
-
-      {/* Sidebar */}
+      {/* Sidebar — full-height product rail */}
       <div
-        className={`fixed top-0 left-0 z-50 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200
-                  shadow-lg dark:shadow-gray-800 transition-transform duration-300 ease-in-out
-                  w-64 h-screen transform overflow-y-auto
+        className={`fixed top-0 left-0 z-40 h-screen w-64 transform bg-[#0b1730] text-slate-200
+                  shadow-[4px_0_24px_rgba(2,6,23,.35)] transition-transform duration-300 ease-in-out
                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                  ${usesOverlay ? "" : "lg:fixed lg:top-[64px] lg:left-0 lg:h-[calc(100vh-64px)] lg:w-52 lg:translate-x-0 lg:z-30"}
+                  lg:translate-x-0 lg:w-52 lg:overflow-y-auto
                 `}
       >
-        {/* Close Button (Mobile Only) */}
-        <button
-          className={`${usesOverlay ? "" : "lg:hidden"} absolute top-4 right-4 text-gray-600 dark:text-gray-300`}
-          onClick={() => setSidebarOpen(false)}
-        >
-          <X size={24} />
-        </button>
+        <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3">
+          <NavLink
+            to="/recruiter/dashboard/home"
+            className="flex min-w-0 items-center gap-2.5"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="GreatHire dashboard home"
+          >
+            <img src="/greathire-navbar-logo.png" alt="GreatHire" className="h-9 w-[58px] shrink-0 object-contain rounded-md bg-white p-0.5" />
+            <span className="truncate text-[1.05rem] font-extrabold tracking-tight text-white">
+              Great<span style={{ color: "#2B53B4" }}>Hire</span>
+            </span>
+          </NavLink>
+          <button
+            className="lg:hidden rounded-md p-1 text-slate-300 hover:bg-white/10 hover:text-white"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-        <div className="flex flex-col h-full p-3 gap-3">
+
+        <div className="flex flex-col h-[calc(100%-4rem)] p-3 justify-between">
           {/* Main Navigation */}
           <section>
-            <h2 className="flex gap-2 items-center px-3 text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              <LayoutDashboard size={25} className="text-blue-700 dark:text-blue-400" />
-              <span>Dashboard</span>
-            </h2>
+            <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              Workspace
+            </p>
             <ul className="w-full flex flex-col gap-1">
               <NavLink
                 to="/recruiter/dashboard/home"
@@ -132,10 +133,10 @@ const DashboardNavigations = ({
                 <button
                   type="button"
                   onClick={() => setCreateNewOpen((prev) => !prev)}
-                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-slate-300 hover:bg-white/10 hover:text-white transition"
                 >
                   <div className="flex items-center gap-2">
-                    <PenSquare size={25} className="text-blue-600 dark:text-blue-400" />
+                    <PenSquare size={25} className="text-slate-400" />
                     <span>Create New</span>
                   </div>
                   <span className={`text-xs transition-transform duration-200 ${isCreateNewOpen ? "rotate-180" : ""}`}>
@@ -144,7 +145,7 @@ const DashboardNavigations = ({
                 </button>
 
                 {isCreateNewOpen && (
-                  <div className="mt-1 ml-4 pl-2 border-l-2 border-blue-200 dark:border-gray-700 flex flex-col gap-1 sm:absolute sm:left-0 sm:top-full sm:w-44 sm:z-50 sm:bg-white sm:dark:bg-gray-800 sm:border sm:border-gray-100 sm:shadow-xl sm:rounded-xl sm:py-2">
+                  <div className="mt-1 ml-4 pl-2 border-l-2 border-white/10 flex flex-col gap-1 sm:absolute sm:left-0 sm:top-full sm:w-44 sm:z-50 sm:bg-[#15233f] sm:border sm:border-white/10 sm:shadow-xl sm:rounded-xl sm:py-2">
                     {!hasCompany && (
                       <NavLink
                         to="/recruiter/dashboard/create-company"
@@ -277,8 +278,7 @@ const DashboardNavigations = ({
                   </>
                 )}
               </NavLink>
-
-              {/* ✅ Messages — NO red badge now */}
+              {/* ✅ Messages */}
               <NavLink
                 to="/messages"
                 className={navLinkClass}
@@ -291,8 +291,22 @@ const DashboardNavigations = ({
                   </>
                 )}
               </NavLink>
+
+              <NavLink
+                to="/recruiter/dashboard/calendar"
+                className={hasCompany ? navLinkClass : () => disabledLinkClass}
+                onClick={() => hasCompany && setSidebarOpen(false)}
+              >
+                {({ isActive }) => (
+                  <>
+                    <Calendar size={25} className={hasCompany ? iconClass(isActive) : "text-gray-400"} />
+                    <span>Calendar</span>
+                  </>
+                )}
+              </NavLink>
             </ul>
           </section>
+
 
           {/* Footer: AI Copilot */}
           <NavLink
@@ -312,10 +326,9 @@ const DashboardNavigations = ({
 
           {/* Settings Section */}
           <section>
-            <h2 className="flex items-center gap-2 px-3 text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              <Settings size={25} className="text-blue-700 dark:text-blue-500" />
-              <span>Settings</span>
-            </h2>
+            <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              Settings
+            </p>
             <ul className="flex flex-col gap-1">
               <NavLink
                 to="/recruiter/dashboard/invite-and-earn"

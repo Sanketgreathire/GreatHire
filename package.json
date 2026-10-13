@@ -7,7 +7,9 @@
     "install:all": "npm install && npm --prefix BackEnd install && npm --prefix frontend install",
     "dev:backend": "npm --prefix BackEnd run dev",
     "dev:frontend": "npm --prefix frontend run dev",
-    "test:sheet": "npm --prefix BackEnd run test:sheet"
+    "test:sheet": "npm --prefix BackEnd run test:sheet",
+    "test:calendar": "npm --prefix BackEnd run test:calendar"
+
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.4.2",

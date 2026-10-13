@@ -1255,29 +1255,46 @@ if (!email || typeof email !== "string") {
       { expiresIn: tokenExpiry }
     );
 
-    const frontendBase = (
-      process.env.FRONTEND_URL || "https://greathire.in"
-    )
-      .replace(/^["']|["']$/g, "")
-      .trim()
-      .replace(/\/+$/, "") || "https://greathire.in";
+    // Determine frontend base URL dynamically from request (body, origin header, referer header, or env)
+    let resolvedFrontend = "";
 
+    // 1. Explicitly provided by client in request body
+    if (req.body?.frontendUrl && typeof req.body.frontendUrl === "string") {
+      resolvedFrontend = req.body.frontendUrl.trim();
+    } else if (req.body?.origin && typeof req.body.origin === "string") {
+      resolvedFrontend = req.body.origin.trim();
+    }
+
+    // 2. HTTP Origin header from browser
+    if (!resolvedFrontend && req.headers?.origin) {
+      resolvedFrontend = req.headers.origin.trim();
+    }
+
+    // 3. HTTP Referer header from browser
+    if (!resolvedFrontend && req.headers?.referer) {
+      try {
+        const parsedReferer = new URL(req.headers.referer);
+        resolvedFrontend = parsedReferer.origin;
+      } catch (_) {}
+    }
+
+    // 4. Fallback to process.env.FRONTEND_URL
+    if (!resolvedFrontend && process.env.FRONTEND_URL) {
+      resolvedFrontend = process.env.FRONTEND_URL.replace(/^["']|["']$/g, "").trim();
+    }
+
+    const frontendBase = (resolvedFrontend || "https://greathire.in").replace(/\/+$/, "");
     const resetURL = `${frontendBase}/reset-password/${resetToken}`;
 
-    try {
-      await sendForgotPasswordEmail({
-        toEmail: cleanEmail,
-        userName,
-        resetToken,
-        resetURL,
-      });
-    } catch (emailError) {
-      console.error("Forgot password email send failed:", emailError);
-      return res.status(200).json({
-        message: "Password reset link generated successfully. Please contact support if the email does not arrive.",
-        success: false,
-      });
-    }
+    // Send reset email via dedicated Forgot Password email service
+    await sendForgotPasswordEmail({
+      toEmail: cleanEmail,
+      userName,
+      resetToken,
+      resetURL,
+      req,
+    });
+
 
     return res.status(200).json({
       message: "Password reset link sent successfully.",
@@ -1303,30 +1320,28 @@ if (!email || typeof email !== "string") {
 // this controller reset the password of user
 export const resetPassword = async (req, res) => {
   try {
-const { decoded, token, newPassword } = req.body;
+    const { decoded, token, newPassword, password } = req.body;
+    const finalPassword = newPassword || password;
 
     // Validate password type and length immediately
-    if (
-      !newPassword ||
-      typeof newPassword !== "string" ||
-      newPassword.length < 8
-    ) {
+    if (!finalPassword || typeof finalPassword !== "string" || finalPassword.length < 8) {
+
       return res.status(400).json({
         message: "Password must be at least 8 characters long.",
         success: false,
       });
     }
 
-    // Resolve userId and email either from decoded object or from raw token
-    let userId = decoded?.userId;
-    let userEmail = decoded?.email;
+    // Resolve userId and email either from decoded object, request body, or raw token
+    let userId = decoded?.userId || decoded?.id || req.body?.userId || req.body?.id;
+    let userEmail = decoded?.email || req.body?.email;
 
     if (token) {
       try {
         const verified = jwt.verify(token, process.env.SECRET_KEY);
 
         if (verified) {
-          userId = userId || verified.userId;
+          userId = userId || verified.userId || verified.id;
           userEmail = userEmail || verified.email;
         }
       } catch (err) {

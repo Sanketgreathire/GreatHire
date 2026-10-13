@@ -1,0 +1,19 @@
+.career-roadmap { position: relative; padding: 30px 20px 20px; overflow: hidden; border: 1px solid #e6eaf0; border-radius: 18px; background: linear-gradient(145deg, #f9fbfd, #fff); }
+.career-roadmap__grid { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.career-roadmap__grid::before { position: absolute; top: 18px; right: 11%; left: 11%; height: 2px; content: ""; background: linear-gradient(90deg, #f97316, #f3b33b 36%, #14b8a6 70%, #3b82f6); }
+.career-roadmap__card { position: relative; padding-top: 34px; }
+.career-roadmap__marker { position: absolute; top: 0; left: 50%; z-index: 1; display: grid; width: 38px; height: 38px; place-items: center; border: 4px solid #f9fbfd; border-radius: 50%; color: #fff; box-shadow: 0 3px 10px rgba(15, 23, 42, .16); font: 800 13px/1 "Plus Jakarta Sans", "Segoe UI", sans-serif; transform: translateX(-50%); }
+.career-roadmap__content { height: 100%; padding: 16px; border: 1px solid #e4eaf0; border-radius: 12px; background: #fff; box-shadow: 0 3px 12px rgba(15, 23, 42, .04); }
+.career-roadmap__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.career-roadmap__heading h3 { margin: 0; color: #172033; font: 800 14px/1.35 "Plus Jakarta Sans", "Segoe UI", sans-serif; }
+.career-roadmap__heading span { padding: 4px 7px; border-radius: 999px; color: #fff; font: 800 9px/1 "Plus Jakarta Sans", "Segoe UI", sans-serif; white-space: nowrap; }
+.career-roadmap__content p { margin: 0; color: #667085; font-size: 12px; line-height: 1.6; }
+.career-roadmap--questions .career-roadmap__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.career-roadmap--questions .career-roadmap__grid::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6 48%, #ec4899); }
+.dark .career-roadmap { border-color: #283548; background: linear-gradient(145deg, #121d2d, #0f1725); }
+.dark .career-roadmap__marker { border-color: #121d2d; }
+.dark .career-roadmap__content { border-color: #2b3a50; background: #172234; box-shadow: none; }
+.dark .career-roadmap__heading h3 { color: #f6f8fb; }
+.dark .career-roadmap__content p { color: #b5c0d0; }
+@media (max-width: 900px) { .career-roadmap__grid, .career-roadmap--questions .career-roadmap__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 22px; } .career-roadmap__grid::before { display: none; } }
+@media (max-width: 560px) { .career-roadmap { padding: 18px 14px; } .career-roadmap__grid, .career-roadmap--questions .career-roadmap__grid { grid-template-columns: 1fr; gap: 14px; } .career-roadmap__card { display: grid; grid-template-columns: 38px 1fr; gap: 10px; padding-top: 0; } .career-roadmap__marker { position: static; transform: none; border-width: 3px; } }

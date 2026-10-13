@@ -6,6 +6,7 @@ import { setUser } from "@/redux/authSlice";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Building2 } from "lucide-react";
+import Navbar from "@/components/shared/Navbar";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -142,16 +143,7 @@ const RecruiterLogin = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
-      <nav className="fixed top-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-800">
-        <div className="w-full px-6 py-3 flex items-center justify-between">
-          <h1 className="text-4xl font-bold text-black dark:text-white">
-            Great<span className="text-blue-600 dark:text-blue-500">Hire</span>
-          </h1>
-          <button onClick={() => navigate("/")} className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium transition-colors">
-            ← Back to Home
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex-1 flex items-center justify-center py-24 px-4">
         <div className="flex w-full max-w-5xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden">

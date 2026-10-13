@@ -342,7 +342,11 @@ function App() {
             startTransition(() => dispatch(setUser(res.data.user)));
           }
         })
-        .catch(() => { });
+        .catch((error) => {
+          if (error?.response?.status === 401) {
+            startTransition(() => dispatch(setUser(null)));
+          }
+        });
     }, 800);
     return () => clearTimeout(t);
   }, [dispatch]);

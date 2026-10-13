@@ -291,15 +291,29 @@ export const buildForgotPasswordEmailHtml = ({ userName, resetURL, expiryMinutes
  * @param {string} [options.resetURL] - Explicit reset URL, or auto-generated from FRONTEND_URL
  * @returns {Promise<{ success: boolean, messageId?: string, error?: string }>}
  */
-export const sendForgotPasswordEmail = async ({ toEmail, userName, resetToken, resetURL }) => {
+export const sendForgotPasswordEmail = async ({ toEmail, userName, resetToken, resetURL, req }) => {
   try {
     const transporter = getForgotPasswordTransporter();
 
-    const frontendBase = (process.env.FRONTEND_URL || "https://greathire.in")
-      .replace(/^["']|["']$/g, "")
-      .trim()
-      .replace(/\/+$/, "") || "https://greathire.in";
-    const url = resetURL || `${frontendBase}/reset-password/${resetToken}`;
+    let url = resetURL;
+    if (!url) {
+      let resolvedFrontend = "";
+      if (req?.body?.frontendUrl && typeof req.body.frontendUrl === "string") {
+        resolvedFrontend = req.body.frontendUrl.trim();
+      } else if (req?.body?.origin && typeof req.body.origin === "string") {
+        resolvedFrontend = req.body.origin.trim();
+      } else if (req?.headers?.origin) {
+        resolvedFrontend = req.headers.origin.trim();
+      } else if (req?.headers?.referer) {
+        try {
+          resolvedFrontend = new URL(req.headers.referer).origin;
+        } catch (_) {}
+      } else if (process.env.FRONTEND_URL) {
+        resolvedFrontend = process.env.FRONTEND_URL.replace(/^["']|["']$/g, "").trim();
+      }
+      const frontendBase = (resolvedFrontend || "https://greathire.in").replace(/\/+$/, "");
+      url = `${frontendBase}/reset-password/${resetToken}`;
+    }
 
     const fromName = process.env.FORGOT_PASSWORD_FROM_NAME || "GreatHire Support";
     const activeSender = (process.env.FORGOT_PASSWORD_EMAIL_USER || process.env.EMAIL_USER || "").trim();

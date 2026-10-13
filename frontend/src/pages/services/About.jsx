@@ -20,13 +20,15 @@ import aiedgeImg from "../../assets/clientLogos/aiedge.jpeg";
 import alkalineImg from "../../assets/clientLogos/alkaline.png";
 import baklavaImg from "../../assets/clientLogos/baklava.avif";
 import bandharyglassImg from "../../assets/clientLogos/bandharyglass.png";
-// import clevernestImg from "../../assets/clientLogos/clevernest.jpg";
 import dadusImg from "../../assets/clientLogos/dadus.avif";
 import dwlabsImg from "../../assets/clientLogos/dwlabs.jpeg";
 import genericsolImg from "../../assets/clientLogos/genericsol.jpeg";
 import hrhImg from "../../assets/clientLogos/hrh.jpeg";
-//import kotaklifeImg from "../../assets/clientLogos/kotaklife.jpg";
+import ominnovationImg from "../../assets/clientLogos/ominnovation.png";
+import sevanImg from "../../assets/clientLogos/sevan.avif";
+import sindbakeryImg from "../../assets/clientLogos/sindbakery.png";
 import smfibersImg from "../../assets/clientLogos/smfibers.svg";
+import sricomfortImg from "../../assets/clientLogos/sricomfort.png";
 import sriramfinanceImg from "../../assets/clientLogos/sriramfinance.jpg";
 import techmahindraImg from "../../assets/clientLogos/techmahindra.png";
 import googleImg from "../../assets/clientLogos/Google.png";
@@ -86,7 +88,7 @@ function App() {
     { name: "Wipro", logo: wiproImg },
     { name: "Teleperformance", logo: teleperformanceImg },
     { name: "Google", logo: googleImg },
-   // { name: "Kotak Life", logo: kotaklifeImg },
+    { name: "Sevan Technologies", logo: sevanImg },
     { name: "DWLabs", logo: dwlabsImg },
     { name: "Voralsoft", logo: vortalsoftImg },
     { name: "Sriram Finance", logo: sriramfinanceImg },
@@ -99,7 +101,9 @@ function App() {
     { name: "Bandhary Glass", logo: bandharyglassImg },
     { name: "Alkaline", logo: alkalineImg },
     { name: "AI Edge", logo: aiedgeImg },
-    // { name: "Clever Nest", logo: clevernestImg },
+    { name: "Sri Comfort", logo: sricomfortImg },
+    { name: "Sind Bakery", logo: sindbakeryImg },
+    { name: "OM Innovations", logo: ominnovationImg },
     { name: "Baklava", logo: baklavaImg },
     { name: "HRH", logo: hrhImg },
     { name: "Dadus", logo: dadusImg },

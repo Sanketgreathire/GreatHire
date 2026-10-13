@@ -19,7 +19,7 @@ const migrateCompanies = async () => {
     console.log('🚀 Starting migration: Add freeJobsPosted field...');
     
     // Connect to database
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     console.log('✅ Connected to database');
 
     // Get all companies

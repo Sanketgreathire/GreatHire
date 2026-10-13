@@ -461,9 +461,11 @@ export class StreamingCoordinatorService {
   startHealthMonitoring() {
     setInterval(async () => {
       try {
+        const { isRedisAvailable } = await import("../../../config/redis.js");
+        if (!(await isRedisAvailable())) return;
         await this.performHealthCheck();
       } catch (error) {
-        console.error('Error during health check:', error);
+        // Suppress error during offline development
       }
     }, 60000); // Every minute
   }

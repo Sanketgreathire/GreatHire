@@ -131,6 +131,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         {
           decoded, // Send decoded user data
           newPassword: password, // Send new password
+          password, // Send password alias for backend compatibility
+          userId: decoded?.userId || decoded?.id,
+          email: decoded?.email,
         }
       );
 

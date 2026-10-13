@@ -605,10 +605,13 @@ import Footer from "@/components/shared/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import "../../shared/Navbar.css";
+import { useTheme } from "@/context/ThemeContext";
 
 const JobsHiringSlider = lazy(() => import("./JobSlider"));
 const Lottie = lazy(() => import("lottie-react"));
 const CompactTestimonials = lazy(() => import("@/components/ui/CompactTestimonials"));
+import GreatHireIntro from "@/components/GreatHireIntro";
 
 // Lazy load heavy animation JSONs only when needed
 const tabAnimations = {
@@ -629,27 +632,8 @@ const GreatHireLanding = () => {
   const moreRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return (
-        localStorage.getItem("theme") === "dark" ||
-        (!localStorage.getItem("theme") &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      );
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
+  const { theme, toggleTheme } = useTheme();
+  const darkMode = theme === "dark";
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -741,33 +725,33 @@ const GreatHireLanding = () => {
         <link rel="canonical" href="https://greathire.in/" />
       </Helmet>
 
+      <GreatHireIntro />
+
       <div className="[&_.hide-section]:hidden">
         <div className="w-full min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
 
           {/* ══════════════════════════════════════
               FIXED NAVBAR
           ══════════════════════════════════════ */}
-          <nav className="fixed top-0 w-full z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
-            <div className="w-full px-6 py-3">
-              <div className="flex items-center justify-between w-full">
+          <nav className="gh-navbar fixed top-0 left-0 right-0 z-50">
+            <div className="gh-navbar__inner w-full">
+              <div className="gh-navbar__row flex items-stretch justify-between w-full h-full">
 
                 {/* Logo */}
-                <Link to="/" className="cursor-pointer flex-shrink-0" aria-label="GreatHire home">
-                  <span className="text-4xl font-bold text-black dark:text-white whitespace-nowrap">
-                    Great<span className="text-blue-600">Hire</span>
-                  </span>
+                <Link to="/" className="gh-navbar__brand" aria-label="GreatHire home">
+                  <img src="/greathire-navbar-logo.png" alt="GreatHire" className="gh-navbar__brand-logo" />
+                  <span><h2>Great<strong>Hire</strong></h2><p>CAREERS · HIRING · GROWTH</p></span>
                 </Link>
 
                 {/* ── DESKTOP RIGHT SIDE ── */}
-                <div className="hidden lg:flex items-center gap-2 xl:gap-3">
-
-                  {/* Nav Links + More dropdown */}
-                  <div className="flex items-center gap-0.5 xl:gap-1">
+                <div className="gh-navbar__desktop hidden lg:flex items-center">
+                  {/* Left Cluster: Navigation Links */}
+                  <div className="gh-navbar__nav-links flex items-center gap-1 xl:gap-2">
                     {directNavLinks.map((link) => (
                       <button
                         key={link.id}
                         onClick={() => { navigate(link.path); window.scrollTo(0, 0); }}
-                        className="text-xs xl:text-sm font-medium transition-all duration-300 px-2 xl:px-3 py-2 rounded-lg text-black dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 whitespace-nowrap"
+                        className="gh-navbar__link text-xs xl:text-sm transition-all duration-300 px-2 xl:px-3 py-2 whitespace-nowrap"
                       >
                         {link.label}
                       </button>
@@ -778,8 +762,8 @@ const GreatHireLanding = () => {
                       <button
                         onClick={() => setIsMoreOpen(!isMoreOpen)}
                         className={`flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-lg transition-all duration-300 ${isMoreOpen
-                            ? "text-blue-600 bg-blue-50 dark:bg-blue-900/40 dark:text-blue-400"
-                            : "text-black dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                            ? "gh-navbar__link gh-navbar__link--active"
+                            : "gh-navbar__link"
                           }`}
                         aria-expanded={isMoreOpen}
                         aria-haspopup="true"
@@ -796,7 +780,7 @@ const GreatHireLanding = () => {
                       {isMoreOpen && (
                         <div
                           className="absolute right-0 mt-2 z-50 rounded-2xl shadow-2xl border overflow-hidden bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700"
-                          style={{ width: "min(560px, calc(100vw - 2rem))", boxShadow: "..." }}
+                          style={{ width: "min(560px, calc(100vw - 2rem))" }}
                         >
                           {/* Header strip */}
                           <div className="px-5 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
@@ -859,46 +843,45 @@ const GreatHireLanding = () => {
                     </div>
                   </div>
 
-                  {/* Dark Mode Toggle */}
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 bg-transparent text-gray-700 dark:text-white hover:scale-110 transition-all flex-shrink-0"
-                    aria-label="Toggle dark mode"
-                  >
-                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                  </button>
+                  {/* Right Cluster: Tools & Auth Actions */}
+                  <div className="gh-navbar__nav-actions flex items-center gap-3 ml-auto">
+                    {/* Dark Mode Toggle */}
+                    <button
+                      onClick={toggleTheme}
+                      className="p-2 bg-transparent text-white hover:scale-110 transition-all flex-shrink-0"
+                      aria-label="Toggle dark mode"
+                    >
+                      {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
 
-                  {/* ── ALL ACTION BUTTONS ── */}
-                  <div className="flex items-center gap-1.5 xl:gap-2">
                     <button
                       onClick={() => navigate("/recruiter-login")}
-                      className="px-2.5 xl:px-4 py-2 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
+                      className="gh-navbar__recruiter-login px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
                     >
                       Recruiter Login
                     </button>
                     <button
                       onClick={() => navigate("/jobseeker-login")}
-                      className="px-2.5 xl:px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg hover:-translate-y-0.5 transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
+                      className="gh-navbar__jobseeker-login px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
                     >
                       Jobseeker Login
                     </button>
-
                   </div>
                 </div>
 
                 {/* ── MOBILE RIGHT ICONS ── */}
-                <div className="lg:hidden flex items-center gap-2">
+                <div className="lg:hidden flex items-center gap-2 pr-3">
                   <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 bg-transparent text-gray-700 dark:text-white hover:scale-110 transition-all"
+                    onClick={toggleTheme}
+                    className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                     aria-label="Toggle dark mode"
                   >
-                    {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                    {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                   </button>
 
                   <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="p-2 rounded-md text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    className="p-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                     aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                     aria-expanded={mobileMenuOpen}
                   >
@@ -941,7 +924,7 @@ const GreatHireLanding = () => {
               </span>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setDarkMode(!darkMode)}
+                  onClick={toggleTheme}
                   className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   aria-label="Toggle dark mode"
                 >
@@ -1025,7 +1008,7 @@ const GreatHireLanding = () => {
           ══════════════════════════════════════ */}
           <section
             id="home"
-            className="min-h-screen pt-[52px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300"
+            className="min-h-screen pt-[72px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-900 dark:text-white relative overflow-hidden transition-colors duration-300"
           >
             {/* Animated bg blobs — GPU composited */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none" aria-hidden="true">
@@ -1106,7 +1089,7 @@ const GreatHireLanding = () => {
                         <div className="space-y-4">
                           {[
                             { Icon: Briefcase, title: "Software Developer", company: "TCS • Bangalore", salary: "₹12-18 LPA", badge: "New", badgeBg: "bg-green-100 dark:bg-green-900", badgeText: "text-green-700 dark:text-green-300", cardBg: "from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900", border: "border-blue-200 dark:border-blue-700", iconBg: "from-blue-500 to-blue-600", salaryColor: "text-blue-600 dark:text-blue-400", anim: "animate-float" },
-                            { Icon: Users, title: "HR Manager", company: "Infosys • Mumbai", salary: "₹8-15 LPA", badge: "Hot", badgeBg: "bg-yellow-100 dark:bg-yellow-900", badgeText: "text-yellow-700 dark:text-yellow-300", cardBg: "from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900", border: "border-purple-200 dark:border-purple-700", iconBg: "from-purple-500 to-purple-600", salaryColor: "text-purple-600 dark:text-purple-400", anim: "animate-float-delay" },
+                            { Icon: Users, title: "HR Manager", company: "Infosys • Mumbai", salary: "₹8-15 LPA", badge: "Trending", badgeBg: "bg-yellow-100 dark:bg-yellow-900", badgeText: "text-yellow-700 dark:text-yellow-300", cardBg: "from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900", border: "border-purple-200 dark:border-purple-700", iconBg: "from-purple-500 to-purple-600", salaryColor: "text-purple-600 dark:text-purple-400", anim: "animate-float-delay" },
                             { Icon: Target, title: "Marketing Lead", company: "Flipkart • Delhi", salary: "₹15-25 LPA", badge: "Apply", badgeBg: "bg-blue-100 dark:bg-blue-900", badgeText: "text-blue-700 dark:text-blue-300", cardBg: "from-pink-50 to-pink-100 dark:from-pink-950 dark:to-pink-900", border: "border-pink-200 dark:border-pink-700", iconBg: "from-pink-500 to-pink-600", salaryColor: "text-pink-600 dark:text-pink-400", anim: "animate-float-slow" },
                           ].map((job) => (
                             <div key={job.title} className={`bg-gradient-to-r ${job.cardBg} rounded-2xl p-4 flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all ${job.anim} border-2 ${job.border}`}>

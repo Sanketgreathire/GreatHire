@@ -6,19 +6,34 @@ export const connection = new IORedis(redisUrl, {
   maxRetriesPerRequest: null, // required by BullMQ
   enableReadyCheck: false,
   lazyConnect: true,
+  retryStrategy: (times) => {
+    if (times > 1) return null; // Don't spam retries if Redis is not running
+    return 1000;
+  },
 });
 
 connection.on("connect", () => console.log("✅ Redis (src/config) connected"));
-connection.on("error",   (e) => console.error("❌ Redis (src/config) error:", e.message));
+connection.on("error", (e) => {
+  // Suppress repetitive logs when redis is down
+  if (e.code !== "ECONNREFUSED") {
+    console.error("❌ Redis (src/config) error:", e.message);
+  }
+});
 
 export const getRedisConnection = () => connection;
 
 export const isRedisAvailable = async () => {
   try {
-    await connection.connect().catch(() => {});
+    if (connection.status === "ready") return true;
+    if (connection.status === "wait" || connection.status === "close") {
+      await connection.connect().catch(() => {});
+    }
     await connection.ping();
     return true;
   } catch {
+    try {
+      connection.disconnect();
+    } catch {}
     return false;
   }
 };

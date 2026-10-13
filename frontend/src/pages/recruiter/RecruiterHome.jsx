@@ -17,6 +17,13 @@ const RecruiterHome = () => {
   const { user } = useSelector((state) => state.auth);
   const { recruiters } = useSelector((state) => state.recruiters);
   const [jobsStatistics, setJobsStatistics] = useState(null);
+  const isActiveCompanyRecruiter =
+    user?.role === "recruiter" &&
+    user?.isActive === true &&
+    company?.userId?.some((member) => {
+      const memberId = member?.user?._id || member?.user;
+      return memberId?.toString() === user?._id?.toString();
+    });
 
   // ── 3-day free trial (Starter plan only) ──────────────────────────────
   const isTrialLive = !!(
@@ -25,7 +32,10 @@ const RecruiterHome = () => {
     new Date(company.trialExpiresAt) > new Date()
   );
   const fetchJobsStatistics = useCallback(async () => {
-    if (!company?._id) return;
+    if (!company?._id || !isActiveCompanyRecruiter) {
+      setJobsStatistics(null);
+      return;
+    }
     try {
       const response = await axios.get(
         `${JOB_API_END_POINT}/job-statistics/${company._id}`,
@@ -35,7 +45,7 @@ const RecruiterHome = () => {
     } catch (err) {
       console.error("Failed to fetch job statistics:", err);
     }
-  }, [company?._id]);
+  }, [company?._id, isActiveCompanyRecruiter]);
 
   useEffect(() => {
     fetchJobsStatistics();

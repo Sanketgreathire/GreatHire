@@ -21,9 +21,13 @@ build/
 .idea/
 *.swp
 
-# Ignore pem files
+# Ignore pem and credential files
+
 *.pem
 .cert
-
 config/credentials/
 config/*-service-account.json
+*service-account*.json
+*credentials*.json
+great-hire*.json
+config/*service-account*.json

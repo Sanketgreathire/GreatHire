@@ -85,12 +85,12 @@ function renderInlineStyles(text) {
 }
 
 // Formatted Message Component
-function FormattedMessage({ content }) {
+function FormattedMessage({ content, isUser = false }) {
   if (!content) return null;
   const lines = content.split("\n");
 
   return (
-    <div className="space-y-2 text-sm leading-relaxed">
+    <div className={`space-y-2 text-sm leading-relaxed ${isUser ? "text-white [&_*]:!text-white" : ""}`}>
       {lines.map((line, idx) => {
         const trimmed = line.trim();
 
@@ -162,8 +162,25 @@ function FormattedMessage({ content }) {
   );
 }
 
-export default function RecruiterChatbot() {
-  const { user } = useSelector((store) => store.auth);
+class ChatErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("RecruiterChatbot Boundary Error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
+function RecruiterChatbotContent() {
+  const { user } = useSelector((state) => state?.auth || {});
 
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -459,11 +476,11 @@ export default function RecruiterChatbot() {
                 <div
                   className={`max-w-[88%] rounded-2xl p-4 shadow-sm border ${
                     msg.sender === "user"
-                      ? "bg-gradient-to-r from-indigo-600 to-slate-900 text-white rounded-br-none border-indigo-700"
+                      ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-br-none border-indigo-500"
                       : "bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-bl-none border-slate-200 dark:border-slate-800"
                   }`}
                 >
-                  <FormattedMessage content={msg.text} />
+                  <FormattedMessage content={msg.text} isUser={msg.sender === "user"} />
 
                   {/* Copy Button for Bot Answers */}
                   {msg.sender === "bot" && (
@@ -552,5 +569,13 @@ export default function RecruiterChatbot() {
         </div>
       )}
     </>
+  );
+}
+
+export default function RecruiterChatbot() {
+  return (
+    <ChatErrorBoundary>
+      <RecruiterChatbotContent />
+    </ChatErrorBoundary>
   );
 }

@@ -21,6 +21,8 @@ import StageHistory from "../models/stageHistory.model.js";
 import notificationService from "../utils/notificationService.js";
 import mongoose from "mongoose";
 import { syncApplicationToSheet } from "./googleSheetsSyncService.js";
+import { createInterviewEvent, cancelInterviewEvent } from "./googleCalendarService.js";
+
 import { retryWithBackoff } from "./retryWithBackoff.js";
 
 /**
@@ -359,6 +361,7 @@ export const applyApplicationTransition = async ({
   ).catch((err) => {
     console.error("Retry wrapper itself failed unexpectedly:", err.message);
   });
+
 
   // Record transition in StageHistory if stage changed
   try {

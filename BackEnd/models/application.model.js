@@ -73,9 +73,55 @@ const applicationSchema = new mongoose.Schema(
       matchScore: { type: Number, default: 0 },
       skillsMatched: { type: [String], default: [] },
       missingSkills: { type: [String], default: [] },
-     
-    
-  },
+    },
+
+    screeningStatus: {
+      type: String,
+      enum: ["Passed", "Rejected", "Pending"],
+      default: "Pending",
+    },
+
+    recruitmentStatus: {
+      type: String,
+      enum: ["Application", "Screening", "Shortlisted", "Interview", "Selected", "Joined", "Rejected", "Closed"],
+      default: "Application",
+    },
+
+    cvSource: {
+      type: String,
+      enum: ["LinkedIn", "Indeed", "Referral", "Website", "Other"],
+      default: "Website",
+    },
+
+    interviewDate: {
+      type: Date,
+      default: null,
+    },
+
+    calendarEventId: {
+      type: String,
+      default: "",
+    },
+
+    interviewLink: {
+      type: String,
+      default: "",
+    },
+
+    feedback: {
+      type: String,
+      default: "",
+    },
+
+    joiningDate: {
+      type: Date,
+      default: null,
+    },
+
+    nextAction: {
+      type: String,
+      default: "",
+    },
   },
    
   { timestamps: true }
@@ -85,4 +131,5 @@ const applicationSchema = new mongoose.Schema(
 // export default Application;
 
 export const Application = mongoose.model("Application", applicationSchema);
+export default Application;
 

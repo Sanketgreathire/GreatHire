@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
+import "./CareerAdvice.css";
 
 /* ─────────────────────────────────────────────
    BLOG DATA
@@ -725,36 +726,29 @@ function HeroBanner({ blog }) {
   );
 }
 
-function StepCard({ step }) {
+function RoadmapCard({ item, index, question = false }) {
   return (
-    <div className="flex gap-4 p-5 rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
-      <div
-        className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-base"
-        style={{ backgroundColor: step.color }}
-      >
-        {step.number}
+    <article className="career-roadmap__card">
+      <span className="career-roadmap__marker" style={{ backgroundColor: item.color || item.tagColor }}>
+        {item.number || index + 1}
+      </span>
+      <div className="career-roadmap__content">
+        <div className="career-roadmap__heading">
+          <h3>{question ? item.q : item.title}</h3>
+          {question && <span style={{ backgroundColor: item.tagColor }}>{item.tag}</span>}
+        </div>
+        <p>{item.content}</p>
       </div>
-      <div>
-        <h3 className="font-bold text-gray-900 dark:text-white text-base mb-1">{step.title}</h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{step.content}</p>
-      </div>
-    </div>
+    </article>
   );
 }
 
-function QuestionCard({ item }) {
+function Roadmap({ items, question = false }) {
   return (
-    <div className="rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <p className="font-bold text-gray-900 dark:text-white text-sm leading-snug">{item.q}</p>
-        <span
-          className="flex-shrink-0 px-2 py-0.5 rounded-full text-white text-xs font-semibold whitespace-nowrap"
-          style={{ backgroundColor: item.tagColor }}
-        >
-          {item.tag}
-        </span>
+    <div className={`career-roadmap ${question ? "career-roadmap--questions" : ""}`}>
+      <div className="career-roadmap__grid">
+        {items.map((item, index) => <RoadmapCard key={item.number || item.q} item={item} index={index} question={question} />)}
       </div>
-      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{item.content}</p>
     </div>
   );
 }
@@ -871,11 +865,7 @@ function RichBlogDetail({ blog, navigate }) {
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-1">Step-by-Step Guidance</h2>
             <div className="w-12 h-1 bg-orange-500 rounded mb-2" />
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">4 skills that separate offer-getters from also-rans.</p>
-            <div className="flex flex-col gap-4">
-              {blog.steps.map((step) => (
-                <StepCard key={step.number} step={step} />
-              ))}
-            </div>
+            <Roadmap items={blog.steps} />
           </section>
         )}
 
@@ -885,11 +875,7 @@ function RichBlogDetail({ blog, navigate }) {
             <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-1">{blog.questionsSection.heading}</h2>
             <div className="w-12 h-1 bg-orange-500 rounded mb-2" />
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">{blog.questionsSection.subheading}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {blog.questionsSection.questions.map((item, i) => (
-                <QuestionCard key={i} item={item} />
-              ))}
-            </div>
+            <Roadmap items={blog.questionsSection.questions} question />
           </section>
         )}
 

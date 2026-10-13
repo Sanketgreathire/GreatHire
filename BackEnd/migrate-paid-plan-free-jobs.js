@@ -10,7 +10,7 @@ const migratePaidPlanFreeJobs = async () => {
     console.log("🔄 Starting migration for paid plan free jobs...");
     
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     console.log("✅ Connected to MongoDB");
 
     // Find all companies that don't have the new fields

@@ -51,9 +51,13 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
+      const frontendUrl = window.location.origin;
       const response = await axios.post(
         `${USER_API_END_POINT}/forgot-password`,
-        { email: email.trim() }
+        {
+          email: email.trim(),
+          frontendUrl,
+        }
       );
 
       if (response.data.success) {

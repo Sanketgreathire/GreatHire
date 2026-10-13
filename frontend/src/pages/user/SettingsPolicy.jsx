@@ -54,6 +54,7 @@ const SecurityCard = ({ user }) => {
       // Reuse forgot-password flow: send reset link to email
       await axios.post(`${USER_API_END_POINT}/forgot-password`, {
         email: user?.emailId?.email,
+        frontendUrl: window.location.origin,
       }, { withCredentials: true });
       toast.success("Password reset link sent to your email");
       setPwForm({ current: "", next: "", confirm: "" });

@@ -12,6 +12,7 @@ import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 import NotificationDropdown from "../notifications/NotificationDropdown.jsx";
 import ThemeToggle from "../ThemeToggle";
 import { useMessages } from "@/context/MessageContext";
+import "./Navbar.css";
 
 // ─────────────────────────────────────────────────────────────
 // Reusable Message Icon
@@ -398,26 +399,36 @@ const Navbar = ({ leadingContent }) => {
 
   return (
     <>
-      <nav className="pl-8 fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 dark:border-gray-400 z-30 dark:bg-gray-800 dark:text-white transition-colors duration-300 px-4 py-3">
-        <div className="flex items-center justify-between w-full">
+      <nav className="gh-navbar gh-shared-navbar fixed top-0 left-0 right-0 z-50">
+        <div className="gh-navbar__inner gh-shared-navbar__inner w-full">
 {/* Optional page action and logo */}
 <div className="flex items-center gap-2">
   {leadingContent}
   <Link
     to={logoRedirectPath}
-    className="cursor-pointer pl-2"
+    className="gh-navbar__brand gh-shared-navbar__brand cursor-pointer flex items-center gap-2.5 sm:gap-3 group"
     aria-label="GreatHire home"
   >
-    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold hover:text-blue-600 transition duration-300 ease-in-out leading-none">
-      <span className="text-black dark:text-white">Great</span>
-      <span className="text-blue-600">Hire</span>
-    </h2>
+    <img
+      src="/greathire-navbar-logo.png"
+      alt="GreatHire"
+      className="h-9 sm:h-11 w-auto object-contain shrink-0 transition-transform duration-200 group-hover:scale-105"
+    />
+    <div className="flex flex-col justify-center">
+      <h2 className="text-xl sm:text-2xl lg:text-[1.65rem] font-bold hover:text-blue-600 transition duration-300 ease-in-out leading-none">
+        <span className="text-slate-900">Great</span>
+        <span className="text-blue-600">Hire</span>
+      </h2>
+      <p className="text-[8px] sm:text-[9px] font-bold text-blue-600 dark:text-blue-400 tracking-[0.16em] uppercase mt-1">
+        Careers · Hiring · Growth
+      </p>
+    </div>
   </Link>
 </div>
 
-          <div>
+          <div className="gh-shared-navbar__content">
             {/* ── DESKTOP NAVIGATION ── */}
-            <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
+            <div className="gh-shared-navbar__desktop hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-8">
               <div className="flex items-center gap-6">
                 <ul className="flex items-center gap-6">
                   {primaryNavLinks.map(({ to, label }) => (
@@ -434,7 +445,7 @@ const Navbar = ({ leadingContent }) => {
                 </ul>
               </div>
 
-              <div className="flex items-center gap-4 justify-end">
+              <div className="gh-shared-navbar__actions flex items-center gap-4 justify-end">
                 <div className="flex items-center gap-4">
                   <ul className="flex items-center gap-4">
                     {rightNavLinks.map(({ to, label }) => (
@@ -574,14 +585,14 @@ const Navbar = ({ leadingContent }) => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => navigate("/recruiter-login")}
-                      className="px-4 py-2 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all text-sm font-semibold whitespace-nowrap"
+                      className="gh-navbar__recruiter-login px-4 py-2 rounded-lg transition-all text-sm font-semibold whitespace-nowrap"
                     >
                       Recruiter Login
                     </button>
 
                     <button
                       onClick={() => navigate("/jobseeker-login")}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-sm font-semibold whitespace-nowrap"
+                      className="gh-navbar__jobseeker-login px-4 py-2 rounded-lg transition-all text-sm font-semibold whitespace-nowrap"
                     >
                       Jobseeker Login
                     </button>
@@ -863,7 +874,7 @@ const Navbar = ({ leadingContent }) => {
                         navigate("/recruiter-login");
                         setIsMenuOpen(false);
                       }}
-                      className="w-full text-blue-600 border-2 border-blue-600 px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:bg-blue-50 text-sm"
+                      className="gh-navbar__recruiter-login w-full px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block text-sm"
                     >
                       Recruiter Login
                     </button>
@@ -872,7 +883,7 @@ const Navbar = ({ leadingContent }) => {
                         navigate("/jobseeker-login");
                         setIsMenuOpen(false);
                       }}
-                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block hover:shadow-xl text-sm"
+                      className="gh-navbar__jobseeker-login w-full px-4 py-2.5 rounded-xl text-center font-semibold transition-colors block text-sm"
                     >
                       Jobseeker Login
                     </button>
@@ -972,7 +983,7 @@ const Navbar = ({ leadingContent }) => {
       </nav>
 
       {/* Spacer — keeps content below fixed navbar */}
-      <div className="h-[61px]" />
+      <div className="h-16 lg:h-[72px]" />
     </>
   );
 };

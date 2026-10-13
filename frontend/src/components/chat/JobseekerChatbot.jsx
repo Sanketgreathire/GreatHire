@@ -235,8 +235,25 @@ function processBoldAndCode(text) {
   });
 }
 
-export default function JobseekerChatbot() {
-  const { user } = useSelector((state) => state.auth || {});
+class JobseekerChatErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("JobseekerChatbot Boundary Error:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
+function JobseekerChatbotContent() {
+  const { user } = useSelector((state) => state?.auth || {});
 
   // Render chatbot only for logged-in candidates/students (not guests, not recruiters, not admins)
   const isJobseekerOrGuest = user && user.role !== "recruiter" && user.role !== "admin";
@@ -773,5 +790,13 @@ export default function JobseekerChatbot() {
         </div>
       )}
     </>
+  );
+}
+
+export default function JobseekerChatbot() {
+  return (
+    <JobseekerChatErrorBoundary>
+      <JobseekerChatbotContent />
+    </JobseekerChatErrorBoundary>
   );
 }
