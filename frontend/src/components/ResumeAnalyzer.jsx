@@ -226,15 +226,38 @@ async function extractTextFromFile(file) {
 
   if (ext === "docx") {
     try {
-      // FIX: use `mod.default ?? mod` to handle both CJS and ESM mammoth exports
       const mod = await import("mammoth");
       const mammoth = mod.default ?? mod;
       const arrayBuffer = await file.arrayBuffer();
       const { value } = await mammoth.extractRawText({ arrayBuffer });
-      return value.trim();
-    } catch {
-      throw new Error("Could not parse DOCX. Make sure mammoth is installed.");
+      if (value && value.trim()) return value.trim();
+    } catch (err) {
+      console.warn("Mammoth extraction failed, trying fallback parser:", err);
     }
+
+    // Fallback parser: DOCX is a ZIP archive containing word/document.xml
+    try {
+      const jszipMod = await import("jszip");
+      const JSZip = jszipMod.default ?? jszipMod;
+      const zip = await JSZip.loadAsync(file);
+      const docXml = await zip.file("word/document.xml")?.async("string");
+      if (docXml) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(docXml, "application/xml");
+        const paragraphs = xmlDoc.getElementsByTagName("w:p");
+        const textParts = [];
+        for (let i = 0; i < paragraphs.length; i++) {
+          const pText = paragraphs[i].textContent?.trim();
+          if (pText) textParts.push(pText);
+        }
+        const fullText = textParts.join("\n").trim();
+        if (fullText.length > 20) return fullText;
+      }
+    } catch (fallbackErr) {
+      console.error("DOCX fallback extraction error:", fallbackErr);
+    }
+
+    throw new Error("Could not parse DOCX. Make sure the file is not corrupted or try saving it as a PDF.");
   }
 
   throw new Error(`Unsupported file type: .${ext}`);

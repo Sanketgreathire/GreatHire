@@ -276,15 +276,14 @@ html:not(.dark) .gh-navbar__recruiter-login:hover {
 }
 
 .gh-shared-navbar__actions {
-  flex: 1;
+  margin-left: auto;
   min-width: 0;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: flex-end;
+  gap: 24px;
 }
 
 .gh-shared-navbar__actions > div:first-child {
-  flex: 1;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 20px;
 }
 

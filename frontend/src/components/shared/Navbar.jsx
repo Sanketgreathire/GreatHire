@@ -470,7 +470,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
                 </ul>
               </div>
 
-              <div className="gh-shared-navbar__actions flex items-center gap-4 justify-end">
+              <div className="gh-shared-navbar__actions flex items-center gap-6 justify-end ml-auto">
                 <div className="flex items-center gap-4">
                   <ul className="flex items-center gap-4">
                     {rightNavLinks.map(({ to, label }) => (

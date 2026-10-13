@@ -525,17 +525,16 @@ const JobsForYou = ({ jobs = [] }) => {
         <div className="flex justify-center gap-4 dark:bg-gray-900 w-full">
           {/* LEFT: JOB CARDS */}
           <div
-            ref={jobListRef}
-            className={`relative m-2 md:m-0 ${
+            className={`relative m-2 md:m-0 flex flex-col ${
               selectedJob
-                ? "flex flex-col gap-4 w-full md:w-[45%] lg:w-2/5 flex-shrink-0 overflow-y-auto scrollbar-hide h-[1080px]"
-                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
+                ? "w-full md:w-[45%] lg:w-2/5 flex-shrink-0"
+                : "w-full"
             }`}
           >
             {user && selectedJobs.size > 0 && (
               <div
-                className={`sticky z-10 col-span-full flex items-center justify-between bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-md border border-blue-400/30 ${
-                  selectedJob ? "top-0" : "top-[20px]"
+                className={`sticky z-20 mb-3 flex items-center justify-between bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-md border border-blue-400/30 ${
+                  selectedJob ? "top-0" : "top-[80px]"
                 }`}
               >
                 <span className="text-sm font-medium tracking-wide">
@@ -545,7 +544,7 @@ const JobsForYou = ({ jobs = [] }) => {
                   <button
                     type="button"
                     onClick={() => setSelectedJobs(new Set())}
-                    className="text-xs px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors"
+                    className="text-xs px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white font-medium rounded-lg transition-colors cursor-pointer"
                   >
                     Clear
                   </button>
@@ -553,13 +552,22 @@ const JobsForYou = ({ jobs = [] }) => {
                     type="button"
                     onClick={() => handleBulkApply()}
                     disabled={isBulkApplying}
-                    className="text-xs px-4 py-1.5 bg-white text-blue-700 font-bold hover:bg-blue-50 rounded-lg shadow-sm transition-colors disabled:opacity-60"
+                    className="text-xs px-4 py-1.5 bg-white text-blue-700 font-bold hover:bg-blue-50 rounded-lg shadow-sm transition-colors disabled:opacity-60 cursor-pointer"
                   >
                     {isBulkApplying ? "Applying..." : "Apply Selected Jobs"}
                   </button>
                 </div>
               </div>
             )}
+
+            <div
+              ref={jobListRef}
+              className={
+                selectedJob
+                  ? "flex flex-col gap-4 overflow-y-auto scrollbar-hide h-[1080px]"
+                  : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
+              }
+            >
 
             {currentJobs?.map((job) => {
               const isSelected = selectedJobs.has(job._id);
@@ -747,6 +755,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 </div>
               );
             })}
+            </div>
           </div>
 
           {/* RIGHT: DESKTOP JOB DETAILS */}

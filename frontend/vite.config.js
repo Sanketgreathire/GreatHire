@@ -18,6 +18,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "Campus": path.resolve(__dirname, "./src/components/Campus"),
       "lodash": "lodash-es",
+      "mammoth": path.resolve(__dirname, "./node_modules/mammoth/mammoth.browser.js"),
     },
   },
   optimizeDeps: {
