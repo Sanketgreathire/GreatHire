@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Search, Brain, Zap, X, Database, Github, Lock } from "lucide-react";
+import PillSelect from "@/components/shared/PillSelect";
 
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
@@ -556,24 +557,25 @@ const CandidateList = () => {
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Skills (e.g. React, Node.js)" value={sourcingFilters.skills} onChange={(e) => setSourcingFilters(prev => ({ ...prev, skills: e.target.value }))} />
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Location" value={sourcingFilters.location} onChange={(e) => setSourcingFilters(prev => ({ ...prev, location: e.target.value }))} />
         <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Designation" value={sourcingFilters.designation} onChange={(e) => setSourcingFilters(prev => ({ ...prev, designation: e.target.value }))} />
-        <select className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" value={sourcingFilters.minExp} onChange={(e) => {
-          const val = e.target.value;
-          let newMax = sourcingFilters.maxExp;
-          if (val !== "" && newMax !== "" && Number(val) > Number(newMax)) {
-            newMax = val;
-          }
-          setSourcingFilters(prev => ({ ...prev, minExp: val, maxExp: newMax }));
-        }}>
-          {minOptions.map((opt) => (
-            <option key={opt} value={opt}>{opt === "" ? "Min Experience (yrs)" : opt}</option>
-          ))}
-        </select>
+        <PillSelect
+          value={sourcingFilters.minExp}
+          onChange={(val) => {
+            let newMax = sourcingFilters.maxExp;
+            if (val !== "" && newMax !== "" && Number(val) > Number(newMax)) {
+              newMax = val;
+            }
+            setSourcingFilters(prev => ({ ...prev, minExp: val, maxExp: newMax }));
+          }}
+          placeholder="Min Experience (yrs)"
+          options={minOptions.map((o) => ({ value: o, label: o === "" ? "Min Experience (yrs)" : o }))}
+        />
         
-        <select className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" value={sourcingFilters.maxExp} onChange={(e) => setSourcingFilters(prev => ({ ...prev, maxExp: e.target.value }))}>
-          {maxOptions.map((opt) => (
-            <option key={opt} value={opt}>{opt === "" ? "Max Experience (yrs)" : opt}</option>
-          ))}
-        </select>
+        <PillSelect
+          value={sourcingFilters.maxExp}
+          onChange={(val) => setSourcingFilters(prev => ({ ...prev, maxExp: val }))}
+          placeholder="Max Experience (yrs)"
+          options={maxOptions.map((o) => ({ value: o, label: o === "" ? "Max Experience (yrs)" : o }))}
+        />
 
         {activeSection === SECTIONS.PAID && (
           <input className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Candidate Search Count" type="number" min="1" max="100" value={sourcingFilters.searchCount} onChange={(e) => setSourcingFilters(prev => ({ ...prev, searchCount: e.target.value }))} />
@@ -684,10 +686,9 @@ const CandidateList = () => {
                     <div key={idx}>
                       <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">{field.label}</label>
                       {field.type === "select" ? (
-                        <select
+                        <PillSelect
                           value={filters[field.name]}
-                          onChange={(e) => {
-                            const val = e.target.value;
+                          onChange={(val) => {
                             if (field.name === "minExp") {
                               let newMax = filters.maxExp;
                               if (val !== "" && newMax !== "" && Number(val) > Number(newMax)) {
@@ -698,13 +699,9 @@ const CandidateList = () => {
                               setFilters({ ...filters, [field.name]: val });
                             }
                           }}
-                          className="w-full h-10 px-3 rounded-md border bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                          {field.options.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt || `Select ${field.label}`}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder={field.label}
+                          options={field.options.map((o) => ({ value: o, label: o || field.label }))}
+                        />
                       ) : (
                         <input
                           type={field.type === "number" ? "number" : "text"}
