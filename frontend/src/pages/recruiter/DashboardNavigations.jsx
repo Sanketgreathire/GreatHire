@@ -32,14 +32,14 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm font-medium transition ${isActive
       ? "bg-blue-600 text-white"
-      : "text-slate-300 hover:bg-white/10 hover:text-white"
+      : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
     }`;
 
   const disabledLinkClass =
-    "flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm opacity-40 cursor-not-allowed pointer-events-none text-slate-500";
+    "flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm opacity-40 cursor-not-allowed pointer-events-none text-slate-500 dark:text-slate-500";
 
   const iconClass = (isActive) =>
-    isActive ? "text-white" : "text-slate-400";
+    isActive ? "text-white" : "text-blue-500 dark:text-blue-400";
 
   // Check if active status belongs to applicants main page or any detail sub-path
   const isApplicantsActive = location.pathname.startsWith(
@@ -80,12 +80,12 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
       )}
       {/* Sidebar — full-height product rail */}
       <div
-        className={`fixed top-0 left-0 z-30 lg:z-40 h-screen w-64 transform bg-[#0b1730] text-slate-200
-            shadow-[4px_0_24px_rgba(2,6,23,.35)] transition-transform duration-300 ease-in-out overflow-y-auto
+        className={`fixed top-0 left-0 z-30 lg:z-40 h-screen w-64 transform bg-white dark:bg-[#0b1730] text-slate-700 dark:text-slate-200
+            shadow-[4px_0_24px_rgba(2,6,23,.12)] dark:shadow-[4px_0_24px_rgba(2,6,23,.35)] border-r border-gray-200 dark:border-white/10 transition-transform duration-300 ease-in-out overflow-y-auto
             ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
             lg:translate-x-0 lg:w-52  `}
       >
-        <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3  ">
+        <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-gray-200 dark:border-white/10 px-3  ">
           <NavLink
             to="/recruiter/dashboard/home"
             className="flex min-w-0 items-center gap-2.5"
@@ -93,13 +93,13 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
             aria-label="GreatHire dashboard home"
           >
             <img src="/greathire-navbar-logo.png" alt="GreatHire" className="h-9 w-[58px] shrink-0 object-contain rounded-md bg-white p-0.5" />
-            <span className="truncate text-[1.05rem] font-extrabold tracking-tight text-white">
+            <span className="truncate text-[1.05rem] font-extrabold tracking-tight text-gray-800 dark:text-white">
               Great<span style={{ color: "#2B53B4" }}>Hire</span>
             </span>
           </NavLink>
           <button
             type="button"
-            className="lg:hidden relative z-[60] rounded-md p-1 text-slate-300 hover:bg-white/10 hover:text-white"
+            className="lg:hidden relative z-[60] rounded-md p-1 text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close menu"
           >
@@ -111,7 +111,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
         <div className="flex flex-col h-[calc(100%-4rem)] p-1.5 justify-between">
           {/* Main Navigation */}
           <section>
-            <p className="mb-2 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <p className="mb-2 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
               Workspace
             </p>
             <ul className="w-full flex flex-col gap-0.5 ">
@@ -132,10 +132,10 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
                 <button
                   type="button"
                   onClick={() => setCreateNewOpen((prev) => !prev)}
-                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-slate-300 hover:bg-white/10 hover:text-white transition"
+                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition"
                 >
                   <div className="flex items-center gap-2">
-                    <PenSquare size={25} className="text-slate-400" />
+                    <PenSquare size={25} className="text-blue-500 dark:text-blue-400" />
                     <span>Create New</span>
                   </div>
                   <span className={`text-xs transition-transform duration-200 ${isCreateNewOpen ? "rotate-180" : ""}`}>
@@ -144,7 +144,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
                 </button>
 
                 {isCreateNewOpen && (
-                  <div className="mt-1 ml-4 pl-2 border-l-2 border-white/10 flex flex-col gap-1 sm:absolute sm:left-0 sm:top-full sm:w-44 sm:z-50 sm:bg-[#15233f] sm:border sm:border-white/10 sm:shadow-xl sm:rounded-xl sm:py-2">
+                  <div className="mt-1 ml-4 pl-2 border-l-2 border-gray-200 dark:border-white/10 flex flex-col gap-1 sm:absolute sm:left-0 sm:top-full sm:w-44 sm:z-50 sm:bg-white dark:sm:bg-[#15233f] sm:border sm:border-gray-200 dark:sm:border-white/10 sm:shadow-xl sm:rounded-xl sm:py-2">
                     {!hasCompany && (
                       <NavLink
                         to="/recruiter/dashboard/create-company"
@@ -325,7 +325,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
 
           {/* Settings Section */}
           <section>
-            <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
               Settings
             </p>
             <ul className="flex flex-col gap-1">

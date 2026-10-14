@@ -321,11 +321,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
     }
   }, [dispatch, navigate, user]);
 
-  const primaryNavLinks = [
-    ...(isRecruiter && hasCompany
-      ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
-      : []),
-  ];
+  const primaryNavLinks = [];
 
   const rightNavLinks = user
     ? [
@@ -334,6 +330,9 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
         ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer" }]
         : []),
       ...(!isRecruiter ? [{ to: "/refer-and-boost", label: "Refer & Boost" }] : []),
+      ...(isRecruiter && hasCompany
+        ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
+        : []),
       ...(isRecruiter && hasCompany
         ? [{ to: "/packages", label: "Recruiter Plans" }]
         : []),
