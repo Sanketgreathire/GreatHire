@@ -793,7 +793,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
 
           {/* ── MOBILE NAVIGATION OVERLAY ── */}
           <div
-            className={`fixed inset-0 bg-black bg-opacity-50 lg:hidden transition-opacity ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+            className={`fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden transition-opacity ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
             onClick={() => setIsMenuOpen(false)}
           >

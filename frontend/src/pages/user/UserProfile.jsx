@@ -209,9 +209,16 @@ const UserProfile = () => {
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <span className="text-xl font-bold">
-              <span className="text-gray-900 dark:text-white">Great</span><span className="text-blue-600">Hire</span>
-            </span>
+            <div className="flex items-center gap-2 bg-white rounded-lg px-2 py-1">
+              <img
+                src="/greathire-navbar-logo.png"
+                alt="GreatHire"
+                className="h-6 sm:h-7 w-auto object-contain shrink-0"
+              />
+              <span className="text-lg sm:text-xl font-bold leading-none">
+                <span className="text-gray-900">Great</span><span className="text-blue-600">Hire</span>
+              </span>
+            </div>
           </div>
           
           <button

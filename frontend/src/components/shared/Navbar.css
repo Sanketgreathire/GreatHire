@@ -411,3 +411,19 @@ html.dark .gh-shared-navbar__content button.rounded-full {
     left: 13rem;
   }
 }
+
+@media (max-width: 1023px) {
+  .gh-navbar__brand {
+    padding: 0 8px 0 10px;
+    gap: 8px;
+  }
+  .gh-navbar__brand::after {
+    display: none;
+  }
+  .gh-navbar__brand h2 {
+    font-size: 1.15rem;
+  }
+  .gh-navbar__brand p {
+    display: none;
+  }
+}

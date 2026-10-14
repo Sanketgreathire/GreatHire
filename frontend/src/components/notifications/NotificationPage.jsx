@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   Search,
@@ -11,7 +12,11 @@ import {
   Trash2,
   X,
   RefreshCw,
-  Menu
+  Menu,
+  House,
+  BriefcaseBusiness,
+  UserRound,
+  MessageCircle
 } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import DashboardNavigations from '../../pages/recruiter/DashboardNavigations';
@@ -20,6 +25,14 @@ const NotificationPage = () => {
   const { user } = useSelector((state) => state.auth);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const isRecruiter = user?.role?.includes('recruiter');
+  const navigate = useNavigate();
+
+  const jobseekerNavigationLinks = [
+    { label: 'Home', to: '/', icon: House },
+    { label: 'Find Jobs', to: '/jobs', icon: BriefcaseBusiness },
+    { label: 'Profile', to: '/profile', icon: UserRound },
+    { label: 'Messages', to: '/messages', icon: MessageCircle }
+  ];
 
   const {
     notifications,
@@ -190,6 +203,84 @@ const NotificationPage = () => {
           overlay
         />
       )}
+
+      {/* Jobseeker header: menu, back, and logo */}
+      {!isRecruiter && (
+        <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-3 p-4 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsNavigationOpen(true)}
+            aria-label="Open navigation menu"
+            aria-expanded={isNavigationOpen}
+            className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <Menu size={24} />
+          </button>
+
+          <div
+            onClick={() => navigate('/jobs')}
+            className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
+          >
+            <img
+              src="/greathire-navbar-logo.png"
+              alt="GreatHire"
+              className="h-6 sm:h-7 w-auto object-contain shrink-0"
+            />
+
+            <span className="text-lg sm:text-xl font-bold leading-none">
+              <span className="text-gray-900">Great</span><span className="text-blue-600">Hire</span>
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Jobseeker navigation drawer */}
+      {!isRecruiter && isNavigationOpen && (
+        <>
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={() => setIsNavigationOpen(false)}
+            className="fixed inset-0 z-[60] bg-black/50"
+          />
+
+          <aside
+            aria-label="App navigation"
+            className="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-white dark:bg-gray-800 shadow-xl"
+          >
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
+              <span className="text-lg font-bold text-gray-900 dark:text-white">Navigation</span>
+
+              <button
+                type="button"
+                onClick={() => setIsNavigationOpen(false)}
+                aria-label="Close navigation menu"
+                className="rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <nav className="p-3">
+              {jobseekerNavigationLinks.map(({ label, to, icon: Icon }) => (
+                <button
+                  key={to}
+                  type="button"
+                  onClick={() => {
+                    setIsNavigationOpen(false);
+                    navigate(to);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"
+                >
+                  <Icon size={20} className="text-blue-600 dark:text-blue-400" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+          </aside>
+        </>
+      )}
+
       <div className="max-w-4xl mx-auto py-8 px-4">
 
         {/* Header */}

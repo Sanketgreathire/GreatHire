@@ -143,13 +143,18 @@ const MessagingContent = () => {
             )}
             <div
               onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
-              className="cursor-pointer flex items-center gap-1 select-none"
+              className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
             >
-              <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+              <img
+                src="/greathire-navbar-logo.png"
+                alt="GreatHire"
+                className="h-6 sm:h-7 w-auto object-contain shrink-0"
+              />
+              <span className="text-lg sm:text-2xl font-black text-gray-900 tracking-tight">
                 Great
               </span>
 
-              <span className="text-2xl font-black text-blue-600 tracking-tight">
+              <span className="text-lg sm:text-2xl font-black text-blue-600 tracking-tight">
                 Hire
               </span>
             </div>
