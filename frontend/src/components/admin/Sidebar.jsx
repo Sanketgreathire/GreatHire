@@ -124,8 +124,8 @@ const Sidebar = memo(() => {
         className={`
           fixed top-16 left-0 bottom-0 z-50
           w-72
-          bg-white dark:bg-gray-800
-           
+          bg-white dark:bg-gray-900
+           border-r-2 border-gray-200 dark:border-gray-700
           flex flex-col justify-end
           transition-transform duration-300 ease-in-out
           will-change-transform
@@ -163,7 +163,9 @@ const Sidebar = memo(() => {
         <div className="shrink-0   border-gray-200 dark:border-gray-700 p-3">
   <NavLink
     to={user ? "/admin/profile" : "/admin/login"}
-    className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 dark:bg-gray-700/50 hover:bg-blue-100 dark:hover:bg-gray-700 border border-blue-100 dark:border-gray-600 transition-colors duration-150"
+    className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 dark:bg-gray-700/50
+     hover:bg-blue-100 dark:hover:bg-gray-700 border border-blue-100 dark:border-gray-600 
+     transition-colors duration-150 "
   >
     {user ? (
       <>
