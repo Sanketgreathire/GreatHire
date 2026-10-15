@@ -8,7 +8,7 @@ import nodemailer from "nodemailer";
 import { setAuthTokenCookie } from "../../utils/authCookie.js";
 
 // Use the SAME imports that are already working in your Recruiter controller
-import getDataUri from "../../utils/datauri.js";
+import getDataUri from "../../utils/dataUri.js";
 import cloudinary from "../../utils/cloudinary.js";
 
 
@@ -903,4 +903,3 @@ export const updateRecruiterCredits = async (
     });
   }
 };
-
