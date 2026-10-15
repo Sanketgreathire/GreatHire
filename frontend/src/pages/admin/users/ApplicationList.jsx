@@ -110,14 +110,14 @@ const ApplicationList = ({ applications }) => {
               {currentApplications.length ? (
                 currentApplications.map((app) => (
                   <tr
-                    key={app.id}
+                    key={app._id}
                     className="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                      {app.job.jobDetails.title}
+                      {app?.job?.jobDetails?.title}
                     </td>
                     <td className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                      {app.job.jobDetails.companyName}
+                      {app?.job?.jobDetails?.companyName}
                     </td>
                     <td
                       className={`px-4 py-2 border border-gray-300 dark:border-gray-600 font-medium ${
@@ -134,7 +134,7 @@ const ApplicationList = ({ applications }) => {
                       <button
                         className="bg-blue-700 dark:bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-800 dark:hover:bg-blue-700 whitespace-nowrap transition-colors"
                         onClick={() =>
-                          navigate(`/admin/job/details/${app.job._id}`)
+                          navigate(`/admin/job/details/${app?.job?._id}`)
                         }
                       >
                         Job Details

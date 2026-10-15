@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +28,7 @@ import {
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import CountUp from "react-countup";
-import { useLocation } from "react-router-dom";
+//import { useLocation } from "react-router-dom";
 
 // ✅ Safe Date Formatter
 const formatDate = (dateString) => {
@@ -63,10 +63,37 @@ const formatDate = (dateString) => {
   return dateString;
 };
 
+
+// ✅ Safe Phone Formatter — only show valid 10-digit numbers
+const formatPhone = (phone) => {
+  if (!phone) return "N/A";
+
+  // Convert to string, strip non-digits
+  const digits = String(phone).replace(/\D/g, "");
+
+  // Remove country code prefix (91 for India, 1 for US, etc.)
+  let cleaned = digits;
+  if (cleaned.length === 12 && cleaned.startsWith("91")) {
+    cleaned = cleaned.slice(2); // "919876543210" → "9876543210"
+  } else if (cleaned.length === 11 && cleaned.startsWith("0")) {
+    cleaned = cleaned.slice(1); // "09876543210" → "9876543210"
+  } else if (cleaned.length === 11 && cleaned.startsWith("1")) {
+    cleaned = cleaned.slice(1); // US format
+  }
+
+  // Only accept exactly 10 digits
+  if (cleaned.length === 10) {
+    return cleaned;
+  }
+
+  // Invalid — return N/A
+  return "N/A";
+};
+
 const Users = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 15;
   const [usersList, setUsersList] = useState([]);
   const [sourcedCount, setSourcedCount] = useState(0);
   const navigate = useNavigate();
@@ -94,7 +121,7 @@ const Users = () => {
       console.log(`Error in fetching user list: ${err}`);
     }
   };
-  
+
   //Bulk delete users
   const handleBulkDelete = async () => {
     if (selectedUsers.length === 0) return;
@@ -114,7 +141,7 @@ const Users = () => {
         dispatch(fetchUserStats());
         dispatch(fetchApplicationStats());
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete selected users");
     }
   };
@@ -149,13 +176,13 @@ const Users = () => {
 
   const onCancelDelete = () => setShowDeleteModal(false);
 
-  const location = useLocation();
+  // const location = useLocation();
   useEffect(() => {
     if (user) {
       fetchUserList();
       axios.get(`${import.meta.env.VITE_API_URL}/api/v1/admin/sourcing/stats`, { withCredentials: true })
         .then(({ data }) => { if (data.success) setSourcedCount(data.stats.total); })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [user]);
 
@@ -290,8 +317,10 @@ const Users = () => {
         <div className="w-full overflow-x-auto px-6 mt-6 pb-24">
           <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl p-6 transition-colors">
             {/* Search */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="relative w-full md:w-1/2">
+            {/* Search + Actions Row */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              {/* Search input */}
+              <div className="relative w-full sm:w-1/2 md:w-1/3">
                 <Search className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" size={18} />
                 <Input
                   placeholder="Search users..."
@@ -299,6 +328,26 @@ const Users = () => {
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-10 rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
                 />
+              </div>
+
+              {/* CSV + Delete buttons */}
+              <div className="flex items-center gap-2 sm:justify-end">
+                <Button
+                  onClick={downloadCSV}
+                  className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-full shadow-sm px-4 py-2 flex items-center gap-2 transition-colors"
+                >
+                  <FileDown size={18} />
+                  CSV
+                </Button>
+
+                <Button
+                  disabled={selectedUsers.length === 0}
+                  onClick={handleBulkDelete}
+                  className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-full shadow-sm px-4 py-2 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Trash size={18} />
+                  Delete {selectedUsers.length > 0 && `(${selectedUsers.length})`}
+                </Button>
               </div>
             </div>
 
@@ -322,7 +371,7 @@ const Users = () => {
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Job Role</TableHead>
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Experience</TableHead>
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
-                      Actions 
+                      Actions
                       {selectedUsers.length > 0 && (
                         <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
                           ({selectedUsers.length} selected)
@@ -357,7 +406,14 @@ const Users = () => {
                             <p className="text-xs text-gray-500 dark:text-gray-400">{u.email}</p>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center text-gray-700 dark:text-gray-300">{u.phoneNumber}</TableCell>
+                        <TableCell className="text-center text-gray-700 dark:text-gray-300">
+                          {(() => {
+                            const phone = formatPhone(u.phoneNumber);
+                            if (phone === "N/A") return "N/A";
+                            // Format: +91 98765 43210
+                            return `+91-${phone.slice(0, 5)} ${phone.slice(5)}`;
+                          })()}
+                        </TableCell>
                         <TableCell className="text-center">
                           <span className="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium whitespace-nowrap">
                             {formatDate(u.joined)}
@@ -365,11 +421,10 @@ const Users = () => {
                         </TableCell>
                         <TableCell className="text-center">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              u.applicationCount > 0
-                                ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                                : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                            }`}
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${u.applicationCount > 0
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                              }`}
                           >
                             {u.applicationCount}
                           </span>
@@ -419,78 +474,103 @@ const Users = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination   */}
+            <div className="relative flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+              {(() => {
+                const totalPages = Math.max(
+                  1,
+                  Math.ceil(filteredUsers.length / itemsPerPage)
+                );
+
+                // Build page list with ellipsis
+                const pages = new Set();
+                pages.add(1);
+                if (totalPages > 1) pages.add(totalPages);
+                for (
+                  let i = Math.max(2, page - 1);
+                  i <= Math.min(totalPages - 1, page + 1);
+                  i++
+                ) {
+                  pages.add(i);
+                }
+
+                const sorted = [...pages].sort((a, b) => a - b);
+                const finalPages = [];
+                for (let i = 0; i < sorted.length; i++) {
+                  if (i > 0 && sorted[i] - sorted[i - 1] > 1) finalPages.push("...");
+                  finalPages.push(sorted[i]);
+                }
+
+                return (
+                  <>
+                    {/* LEFT — info text */}
+                    <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap sm:absolute sm:left-0">
+                      Page{" "}
+                      <span className="font-medium text-gray-700 dark:text-gray-200">
+                        {page}
+                      </span>
+                      {" of "}
+                      <span className="font-medium text-gray-700 dark:text-gray-200">
+                        {Math.max(1, Math.ceil(filteredUsers.length / itemsPerPage))}
+                      </span>
+                      {" · "}
+                      <span className="font-medium text-gray-700 dark:text-gray-200">
+                        {filteredUsers.length}
+                      </span>{" "}
+                      users total
+                    </p>
+                    {/* RIGHT — buttons */}
+                    <div className="flex items-center gap-2 flex-wrap justify-center">
+                      {/* Prev */}
+                      <Button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Prev
+                      </Button>
+
+                      {/* Page numbers */}
+                      {finalPages.map((p, idx) =>
+                        p === "..." ? (
+                          <span
+                            key={`dots-${idx}`}
+                            className="px-2 text-gray-400 select-none"
+                          >
+                            …
+                          </span>
+                        ) : (
+                          <Button
+                            key={p}
+                            onClick={() => setPage(p)}
+                            className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${page === p
+                              ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                              }`}
+                          >
+                            {p}
+                          </Button>
+                        )
+                      )}
+
+                      {/* Next */}
+                      <Button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
           </div>
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-center items-center gap-2 mt-6 px-4 pb-6">
-          {(() => {
-            const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-            if (totalPages <= 1) return null;
 
-            const pages = new Set();
-            pages.add(1);
-            pages.add(totalPages);
-
-            for (
-              let i = Math.max(2, page - 2);
-              i <= Math.min(totalPages - 1, page + 2);
-              i++
-            ) {
-              pages.add(i);
-            }
-
-            const sorted = [...pages].sort((a, b) => a - b);
-            const finalPages = [];
-            for (let i = 0; i < sorted.length; i++) {
-              if (i > 0 && sorted[i] - sorted[i - 1] > 1) {
-                finalPages.push("...");
-              }
-              finalPages.push(sorted[i]);
-            }
-
-            return finalPages.map((p, idx) =>
-              p === "..." ? (
-                <span
-                  key={`dots-${idx}`}
-                  className="px-3 py-1 text-gray-500 dark:text-gray-400 select-none"
-                >
-                  ...
-                </span>
-              ) : (
-                <Button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`px-3 py-1 rounded-md transition-colors ${
-                    page === p
-                      ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  {p}
-                </Button>
-              )
-            );
-          })()}
-        </div>
-
-        {/* Floating Actions */}
-        <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-30">
-          <Button
-            onClick={downloadCSV}
-            className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white rounded-full shadow-lg px-5 py-3 flex items-center gap-2 transition-colors"
-          >
-            <FileDown size={18} /> CSV
-          </Button>
-
-          <Button
-            disabled={selectedUsers.length === 0}
-            onClick={handleBulkDelete}
-            className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-full shadow-lg px-5 py-3 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Trash size={18} /> Delete ({selectedUsers.length})
-          </Button>
-        </div>
 
         {/* Delete Confirmation */}
         {showDeleteModal && (

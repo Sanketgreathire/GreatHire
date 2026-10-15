@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import  { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +36,7 @@ import { toast } from "react-hot-toast";
 import { fetchRecruiterStats, fetchJobStats } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import UpdateCreditsModal from "@/components/admin/UpdateCreditsModal";
-
+import PropTypes from "prop-types";
 /**
  * Rewritten RecruitersList.jsx
  * - Removes MUI
@@ -48,6 +48,32 @@ import UpdateCreditsModal from "@/components/admin/UpdateCreditsModal";
 
 const ITEMS_PER_PAGE = 20;
 
+
+// ✅ Format phone — keep only 10 digits, else "N/A"
+const formatPhone = (phone) => {
+  if (!phone) return "N/A";
+  const digits = String(phone).replace(/\D/g, "");
+
+  // Strip country code if present
+  let cleaned = digits;
+  if (cleaned.length === 12 && cleaned.startsWith("91")) {
+    cleaned = cleaned.slice(2); // 919876543210 → 9876543210
+  } else if (cleaned.length === 11 && cleaned.startsWith("0")) {
+    cleaned = cleaned.slice(1); // 09876543210 → 9876543210
+  } else if (cleaned.length === 11 && cleaned.startsWith("1")) {
+    cleaned = cleaned.slice(1); // US numbers
+  }
+
+  return cleaned.length === 10 ? cleaned : "N/A";
+};
+
+// ✅ Fallback text for empty fields
+const orNA = (val) => {
+  if (val === null || val === undefined) return "N/A";
+  const s = String(val).trim();
+  return s === "" ? "N/A" : s;
+};
+
 const StatCard = ({ title, count, icon, bg, color }) => (
   <Card className="p-4 flex items-center justify-between bg-white dark:bg-gray-800 shadow rounded-xl border border-gray-200 dark:border-gray-700 transition-colors">
     <div>
@@ -57,6 +83,15 @@ const StatCard = ({ title, count, icon, bg, color }) => (
     <div className={`p-2 rounded-full ${bg} ${color}`}>{icon}</div>
   </Card>
 );
+
+StatCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  icon: PropTypes.node.isRequired,
+  bg: PropTypes.string,
+  color: PropTypes.string,
+};
+
 
 const SkeletonRow = () => (
   <TableRow>
@@ -116,8 +151,8 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
 
       {pageNumbers[0] > 1 && (
         <>
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             onClick={() => setPage(1)}
             className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           >
@@ -132,8 +167,8 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
           key={p}
           size="sm"
           onClick={() => setPage(p)}
-          className={page === p 
-            ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700" 
+          className={page === p
+            ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700"
             : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           }
         >
@@ -146,8 +181,8 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
           {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
             <span className="px-2 text-gray-500 dark:text-gray-400">…</span>
           )}
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             onClick={() => setPage(totalPages)}
             className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
           >
@@ -167,6 +202,12 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
       </Button>
     </div>
   );
+};
+
+CompactPagination.propTypes = {
+  page: PropTypes.number.isRequired,
+  setPage: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
 };
 
 const RecruitersList = () => {
@@ -271,9 +312,9 @@ const RecruitersList = () => {
     const emails = emailTarget
       ? [emailTarget]
       : filteredRecruiters
-          .filter((r) => selectedIds.has(r._id))
-          .map((r) => r.email)
-          .filter(Boolean);
+        .filter((r) => selectedIds.has(r._id))
+        .map((r) => r.email)
+        .filter(Boolean);
 
     if (emails.length === 0) return toast.error("No valid email addresses found.");
 
@@ -329,7 +370,7 @@ const RecruitersList = () => {
     },
   ];
 
-  
+
 
   // Fetch all recruiters (admin)
   const fetchRecruiterList = async () => {
@@ -340,9 +381,9 @@ const RecruitersList = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-  console.log("RECRUITERS API RESPONSE:", response.data.recruiters);
-  setRecruiterList(response.data.recruiters || []);
-} else {
+        console.log("RECRUITERS API RESPONSE:", response.data.recruiters);
+        setRecruiterList(response.data.recruiters || []);
+      } else {
         toast.error(response.data.message || "Failed to fetch recruiters");
       }
     } catch (err) {
@@ -355,14 +396,14 @@ const RecruitersList = () => {
 
   useEffect(() => {
     if (user) fetchRecruiterList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user]);
 
   // Toggle active
   const toggleActive = async (companyId, recruiterId, newIsActive, isAdmin) => {
     // Prevent multiple clicks
     if (loadingMap[recruiterId]) return;
-    
+
     setLoadingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const response = await axios.put(
@@ -402,7 +443,7 @@ const RecruitersList = () => {
   const toggleBlock = async (recruiterId, companyId, currentBlocked) => {
     // Prevent multiple clicks
     if (blockingMap[recruiterId]) return;
-    
+
     setBlockingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const updatedBlockStatus = !currentBlocked;
@@ -461,106 +502,106 @@ const RecruitersList = () => {
     }
   };
 
-  
 
-const updateRecruiterCredits = async (data) => {
-  try {
-    // -----------------------------
-    // Validate AI Credits
-    // -----------------------------
-    if (
-      data?.limitCredits === "" ||
-      data?.limitCredits === null ||
-      data?.limitCredits === undefined
-    ) {
-      toast.error("Please enter AI Credits");
-      return;
-    }
 
-    const aiCredits = Number(data.limitCredits);
-
-    if (!Number.isInteger(aiCredits)) {
-      toast.error("AI Credits must be a whole number");
-      return;
-    }
-
-    if (aiCredits < 0 || aiCredits > 5) {
-      toast.error("AI Credits must be between 0 and 5");
-      return;
-    }
-
-    // -----------------------------
-    // Validate Company ID
-    // -----------------------------
-    if (!data?.companyId) {
-      console.error(
-        "Company ID missing from update data:",
-        data
-      );
-
-      toast.error("Company ID is missing");
-      return;
-    }
-
-    // -----------------------------
-    // Create API payload
-    // -----------------------------
-    const payload = {
-      companyId: data.companyId,
-      limitCredits: aiCredits,
-    };
-
-    if (data.jobPosts !== undefined) {
-      payload.customMaxJobPosts = Number(data.jobPosts);
-    }
-
-    if (data.customCredits !== undefined) {
-      payload.customCreditsForCandidates = Number(
-        data.customCredits
-      );
-    }
-
-    console.log("UPDATE CREDITS PAYLOAD:", payload);
-
-    // -----------------------------
-    // API Request
-    // -----------------------------
-    const response = await axios.put(
-      `${ADMIN_API_END_POINT}/update-recruiter-credits`,
-      payload,
-      {
-        withCredentials: true,
+  const updateRecruiterCredits = async (data) => {
+    try {
+      // -----------------------------
+      // Validate AI Credits
+      // -----------------------------
+      if (
+        data?.limitCredits === "" ||
+        data?.limitCredits === null ||
+        data?.limitCredits === undefined
+      ) {
+        toast.error("Please enter AI Credits");
+        return;
       }
-    );
 
-    console.log(
-      "UPDATE CREDITS RESPONSE:",
-      response.data
-    );
+      const aiCredits = Number(data.limitCredits);
 
-    console.log("UPDATED AI CREDITS:", {
-      aiSourcingCredits:
-        response.data?.company?.aiSourcingCredits,
-    });
+      if (!Number.isInteger(aiCredits)) {
+        toast.error("AI Credits must be a whole number");
+        return;
+      }
 
-    // -----------------------------
-    // Success
-    // -----------------------------
-    if (response.data?.success) {
-      toast.success(
-        response.data?.message ||
-          "Credits updated successfully"
+      if (aiCredits < 0 || aiCredits > 5) {
+        toast.error("AI Credits must be between 0 and 5");
+        return;
+      }
+
+      // -----------------------------
+      // Validate Company ID
+      // -----------------------------
+      if (!data?.companyId) {
+        console.error(
+          "Company ID missing from update data:",
+          data
+        );
+
+        toast.error("Company ID is missing");
+        return;
+      }
+
+      // -----------------------------
+      // Create API payload
+      // -----------------------------
+      const payload = {
+        companyId: data.companyId,
+        limitCredits: aiCredits,
+      };
+
+      if (data.jobPosts !== undefined) {
+        payload.customMaxJobPosts = Number(data.jobPosts);
+      }
+
+      if (data.customCredits !== undefined) {
+        payload.customCreditsForCandidates = Number(
+          data.customCredits
+        );
+      }
+
+      console.log("UPDATE CREDITS PAYLOAD:", payload);
+
+      // -----------------------------
+      // API Request
+      // -----------------------------
+      const response = await axios.put(
+        `${ADMIN_API_END_POINT}/update-recruiter-credits`,
+        payload,
+        {
+          withCredentials: true,
+        }
       );
 
-      const updatedCompany =
-        response.data?.company;
+      console.log(
+        "UPDATE CREDITS RESPONSE:",
+        response.data
+      );
 
-      // Update recruiter list immediately
-      if (updatedCompany) {
-        setRecruiterList((prev) =>
-          prev.map((r) =>
-            r.companyId === updatedCompany._id
-              ? {
+      console.log("UPDATED AI CREDITS:", {
+        aiSourcingCredits:
+          response.data?.company?.aiSourcingCredits,
+      });
+
+      // -----------------------------
+      // Success
+      // -----------------------------
+      if (response.data?.success) {
+        toast.success(
+          response.data?.message ||
+          "Credits updated successfully"
+        );
+
+        const updatedCompany =
+          response.data?.company;
+
+        // Update recruiter list immediately
+        if (updatedCompany) {
+          setRecruiterList((prev) =>
+            prev.map((r) =>
+              r.companyId === updatedCompany._id
+                ? {
                   ...r,
 
                   maxJobPosts:
@@ -591,45 +632,45 @@ const updateRecruiterCredits = async (data) => {
                   planJobsPostedThisMonth:
                     updatedCompany.planJobsPostedThisMonth,
                 }
-              : r
-          )
+                : r
+            )
+          );
+        }
+
+        // Close modal
+        setShowCreditsModal(false);
+
+        // Refresh recruiter list
+        await fetchRecruiterList();
+      } else {
+        toast.error(
+          response.data?.message ||
+          "Failed to update credits"
         );
       }
+    } catch (err) {
+      console.error(
+        "updateRecruiterCredits error:",
+        err
+      );
 
-      // Close modal
-      setShowCreditsModal(false);
+      console.error(
+        "Backend error:",
+        err?.response?.data
+      );
 
-      // Refresh recruiter list
-      await fetchRecruiterList();
-    } else {
       toast.error(
-        response.data?.message ||
-          "Failed to update credits"
+        err?.response?.data?.message ||
+        "Error updating credits"
       );
     }
-  } catch (err) {
-    console.error(
-      "updateRecruiterCredits error:",
-      err
-    );
-
-    console.error(
-      "Backend error:",
-      err?.response?.data
-    );
-
-    toast.error(
-      err?.response?.data?.message ||
-        "Error updating credits"
-    );
-  }
-};
+  };
 
   // Delete recruiter
   const deleteRecruiter = async (recruiterId, userEmail, companyId, isAdmin) => {
     // Prevent multiple clicks
     if (dloadingMap[recruiterId]) return;
-    
+
     setDLoadingMap((s) => ({ ...s, [recruiterId]: true }));
     try {
       const response = await axios.delete(`${RECRUITER_API_END_POINT}/delete`, {
@@ -692,7 +733,7 @@ const updateRecruiterCredits = async (data) => {
   // Get inactive recruiters for bulk selection
   const inactiveRecruiters = filteredRecruiters.filter(r => !r.isActive);
   const showCheckboxColumn = status === false;
-  
+
   // Bulk selection handlers
   const handleSelectAll = (checked) => {
     if (checked) {
@@ -748,7 +789,7 @@ const updateRecruiterCredits = async (data) => {
       console.error("Bulk email error:", error);
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
-      
+
       if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.response?.status === 403) {
@@ -790,72 +831,72 @@ const updateRecruiterCredits = async (data) => {
         <div className="mx-4 sm:mx-6 mb-10 p-4 sm:p-6 bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 transition-colors">
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-4">
-           
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
-              <Input
-                placeholder="Search by name, email, contact, company"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-              />
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => {
-                  setSearch("");
-                  setStatus("All");
-                  setPage(1);
-                }}
-                title="Reset filters"
-                className="self-start sm:self-auto text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                Reset
-              </Button>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                Status
-              </label>
-              <select
-                value={status}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setStatus(val === "All" ? "All" : val === "true");
-                  setPage(1);
-                  setSelectedRecruiters([]); // Clear selections when status changes
-                }}
-                className="h-10 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full sm:w-auto transition-colors"
-                aria-label="Filter by status"
-              >
-                <option value="All">All Status</option>
-                <option value="true">Active</option>
-                <option value="false">Deactive</option>
-              </select>
-              
-              {/* Select All checkbox - only show for deactive status */}
-              {showCheckboxColumn && (
-                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded border border-blue-200 dark:border-blue-700">
-                  <input
-                    type="checkbox"
-                    id="selectAll"
-                    checked={isAllSelected}
-                    ref={(el) => {
-                      if (el) el.indeterminate = isPartiallySelected;
-                    }}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <label htmlFor="selectAll" className="text-sm text-blue-700 dark:text-blue-300 whitespace-nowrap font-medium">
-                    Select All ({inactiveRecruiters.length})
-                  </label>
-                </div>
-              )}
-            </div>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-1/2">
+                <Input
+                  placeholder="Search by name, email, contact, company"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setSearch("");
+                    setStatus("All");
+                    setPage(1);
+                  }}
+                  title="Reset filters"
+                  className="self-start sm:self-auto text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Reset
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                  Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setStatus(val === "All" ? "All" : val === "true");
+                    setPage(1);
+                    setSelectedRecruiters([]); // Clear selections when status changes
+                  }}
+                  className="h-10 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full sm:w-auto transition-colors"
+                  aria-label="Filter by status"
+                >
+                  <option value="All">All Status</option>
+                  <option value="true">Active</option>
+                  <option value="false">Deactive</option>
+                </select>
+
+                {/* Select All checkbox - only show for deactive status */}
+                {showCheckboxColumn && (
+                  <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded border border-blue-200 dark:border-blue-700">
+                    <input
+                      type="checkbox"
+                      id="selectAll"
+                      checked={isAllSelected}
+                      ref={(el) => {
+                        if (el) el.indeterminate = isPartiallySelected;
+                      }}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <label htmlFor="selectAll" className="text-sm text-blue-700 dark:text-blue-300 whitespace-nowrap font-medium">
+                      Select All ({inactiveRecruiters.length})
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>  {/* end inner filter row */}
           </div>  {/* end outer filter wrapper */}
 
@@ -926,10 +967,10 @@ const updateRecruiterCredits = async (data) => {
               <TableBody>
                 {isFetching
                   ? Array.from({ length: 6 }).map((_, i) => (
-                      <SkeletonRow key={i} />
-                    ))
+                    <SkeletonRow key={i} />
+                  ))
                   : paginatedRecruiters.length > 0
-                  ? paginatedRecruiters.map((r) => (
+                    ? paginatedRecruiters.map((r) => (
                       <TableRow
                         key={r._id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
@@ -986,15 +1027,15 @@ const updateRecruiterCredits = async (data) => {
                         </TableCell>
 
                         <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
-                          {r.companyName}
+                          {orNA(r.companyName)}
                         </TableCell>
 
                         <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
-                          {r.phone}
+                          {formatPhone(r.phone)}
                         </TableCell>
 
                         <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
-                          {r.position}
+                          {orNA(r.position)}
                         </TableCell>
 
                         <TableCell className="text-center text-gray-900 dark:text-gray-100 text-sm">
@@ -1003,11 +1044,10 @@ const updateRecruiterCredits = async (data) => {
 
                         <TableCell>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
-                              r.isActive
-                                ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
-                                : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
-                            }`}
+                            className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${r.isActive
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
+                              : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400"
+                              }`}
                           >
                             {r.isActive ? "Active" : "Deactive"}
                           </span>
@@ -1018,7 +1058,7 @@ const updateRecruiterCredits = async (data) => {
                         </TableCell>
 
                         <TableCell>
-                          <div className="flex flex-wrap items-center gap-1.5">
+                          <div className="grid grid-cols-2 gap-1.5 md:flex md:flex-wrap md:items-center md:gap-1.5">
                             {/* View */}
                             <button
                               title="View recruiter details"
@@ -1050,11 +1090,10 @@ const updateRecruiterCredits = async (data) => {
                                     r.isAdmin
                                   )
                                 }
-                                className={`p-1.5 rounded transition-colors ${
-                                  r.isActive
-                                    ? "bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50"
-                                    : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                }`}
+                                className={`p-1.5 rounded transition-colors ${r.isActive
+                                  ? "bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50"
+                                  : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                  }`}
                               >
                                 <UserCheck
                                   size={14}
@@ -1082,11 +1121,10 @@ const updateRecruiterCredits = async (data) => {
                                 onClick={() =>
                                   toggleBlock(r._id, r.companyId, r.isBlocked)
                                 }
-                                className={`p-1.5 rounded transition-colors ${
-                                  r.isBlocked
-                                    ? "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                                    : "bg-orange-50 dark:bg-orange-900/30 hover:bg-orange-100 dark:hover:bg-orange-900/50"
-                                }`}
+                                className={`p-1.5 rounded transition-colors ${r.isBlocked
+                                  ? "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                  : "bg-orange-50 dark:bg-orange-900/30 hover:bg-orange-100 dark:hover:bg-orange-900/50"
+                                  }`}
                               >
                                 <Ban
                                   size={14}
@@ -1148,10 +1186,10 @@ const updateRecruiterCredits = async (data) => {
                             <button
                               title="Update credits"
                               onClick={() => {
-  console.log("FULL RECRUITER OBJECT:", r);
-  setSelectedCreditsRecruiter(r);
-  setShowCreditsModal(true);
-}}
+                                console.log("FULL RECRUITER OBJECT:", r);
+                                setSelectedCreditsRecruiter(r);
+                                setShowCreditsModal(true);
+                              }}
                               className="p-1.5 rounded bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
                             >
                               <CreditCard
@@ -1163,7 +1201,7 @@ const updateRecruiterCredits = async (data) => {
                         </TableCell>
                       </TableRow>
                     ))
-                  : (
+                    : (
                       <TableRow>
                         <TableCell colSpan={showCheckboxColumn ? 10 : 9} className="text-center py-8">
                           <div className="text-gray-500 dark:text-gray-400">
@@ -1177,19 +1215,7 @@ const updateRecruiterCredits = async (data) => {
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3 mt-4">
-            <div className="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
-              Showing{" "}
-              {filteredRecruiters.length === 0
-                ? 0
-                : Math.min(
-                    (page - 1) * ITEMS_PER_PAGE + 1,
-                    filteredRecruiters.length
-                  )}{" "}
-              to {Math.min(page * ITEMS_PER_PAGE, filteredRecruiters.length)} of{" "}
-              {filteredRecruiters.length} results
-            </div>
-
+          <div className="flex justify-center items-center mt-4">
             <CompactPagination
               page={page}
               setPage={setPage}
@@ -1280,8 +1306,8 @@ const updateRecruiterCredits = async (data) => {
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={sendMessageToRecruiter} 
+              <Button
+                onClick={sendMessageToRecruiter}
                 disabled={sendingMessage}
                 className="bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50"
               >
@@ -1289,16 +1315,16 @@ const updateRecruiterCredits = async (data) => {
               </Button>
             </div>
           </div>
-        </div> 
+        </div>
       )}
 
       {/* Update Credits Modal */}
       <UpdateCreditsModal
-  isOpen={showCreditsModal}
-  onClose={() => setShowCreditsModal(false)}
-  currentData={selectedCreditsRecruiter}
-  onUpdate={updateRecruiterCredits}
-/>
+        isOpen={showCreditsModal}
+        onClose={() => setShowCreditsModal(false)}
+        currentData={selectedCreditsRecruiter}
+        onUpdate={updateRecruiterCredits}
+      />
     </>
   );
 };

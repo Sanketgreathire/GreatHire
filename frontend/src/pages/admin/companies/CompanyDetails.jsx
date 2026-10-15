@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 // Redux hooks for state management
 import { useSelector, useDispatch } from "react-redux";
 // Axios for making API requests
@@ -56,8 +56,10 @@ const CompanyDetails = () => {
   // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const [phoneError, setPhoneError] = useState("");
+
   // Function to fetch company details from the backend
-  const fetchCompanyDetails = async () => {
+  const fetchCompanyDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.post(
@@ -82,12 +84,13 @@ const CompanyDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [companyId]); // ← list every variable from outside the function that you use inside
 
-  // Fetch company details when the component mounts
+  // ✅ Now useEffect can safely depend on fetchCompanyDetails
   useEffect(() => {
     fetchCompanyDetails();
-  }, [companyId]);
+  }, [fetchCompanyDetails]);
+
 
   const handleUpdateEmails = async () => {
     try {
@@ -395,13 +398,43 @@ const CompanyDetails = () => {
                   </div>
                 </div>
 
+
                 {/* Phone */}
-                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600 hover:border-gray-200 dark:hover:border-gray-500 transition-colors">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">Phone</p>
-                  <p className="text-lg text-gray-900 dark:text-white font-semibold break-words">
-                    {company?.phone}
+                <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
+                    Phone
                   </p>
+
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={company?.phone || ""}
+                    onChange={(e) => {
+                      const phone = e.target.value.replace(/\D/g, "").slice(0, 10);
+
+                      setCompany((prev) => ({
+                        ...prev,
+                        phone,
+                      }));
+
+                      setPhoneError(
+                        phone.length !== 10
+                          ? "Phone number must contain exactly 10 digits."
+                          : ""
+                      );
+                    }}
+                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:bg-gray-800 dark:text-white"
+                    placeholder="Enter 10-digit phone number"
+                  />
+
+                  {phoneError && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {phoneError}
+                    </p>
+                  )}
                 </div>
+
 
                 {/* Business Email */}
                 <div className="w-full bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-600">
@@ -517,9 +550,8 @@ const CompanyDetails = () => {
                     <button
                       onClick={() => setShowDeleteModal(true)}
                       disabled={dloading}
-                      className={`px-6 py-2 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors ${
-                        dloading ? "cursor-not-allowed opacity-50" : ""
-                      }`}
+                      className={`px-6 py-2 text-white bg-red-600 dark:bg-red-500 rounded-md hover:bg-red-700 dark:hover:bg-red-600 transition-colors ${dloading ? "cursor-not-allowed opacity-50" : ""
+                        }`}
                     >
                       {dloading ? "Deleting..." : "Delete Company"}
                     </button>

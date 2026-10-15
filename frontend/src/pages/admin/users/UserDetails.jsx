@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import   { useEffect, useState,useCallback } from "react";
 import ApplicationList from "./ApplicationList";
 import Navbar from "@/components/admin/Navbar";
 import { Badge } from "../../../components/ui/badge";
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ADMIN_USER_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { IoIosArrowRoundBack } from "react-icons/io";
@@ -14,56 +14,50 @@ const UserDetails = () => {
   const [loading, setLoading] = useState(false);
   const [applications, setApplications] = useState([]);
   const navigate = useNavigate();
-  const fetchUser = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`,
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        setUser(response.data.data);
-      }
-    } catch (err) {
-      console.log(`Error in fetching user data: ${err}`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const fetchApplications = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`,
-        { withCredentials: true }
-      );
-      if (response.data.success) {
-        setApplications(response.data.data);
-      }
-    } catch (err) {
-      console.log(`Error in fetching user applications: ${err}`);
-    } finally {
-      setLoading(false);
+  const fetchUser = useCallback(async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get(
+      `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`,
+      { withCredentials: true }
+    );
+    if (response.data.success) {
+      setUser(response.data.data);
     }
-  };
+  } catch (err) {
+    console.log(`Error in fetching user data: ${err}`);
+  } finally {
+    setLoading(false);
+  }
+}, [userId]); // ← userId is used inside → must be in deps
 
-  useEffect(() => {
-    fetchUser();
-    fetchApplications();
-  }, []);
-
-  const isValidImageURL = (url) => {
-    try {
-      const parsed = new URL(url);
-      return (
-        ["https:", "http:"].includes(parsed.protocol) &&
-        /\.(jpeg|jpg|png|gif|webp|svg)$/i.test(parsed.pathname)
-      );
-    } catch {
-      return false;
+  const fetchApplications = useCallback(async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get(
+      `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`,
+      { withCredentials: true }
+    );
+    if (response.data.success) {
+      setApplications(response.data.data);
     }
-  };
+  } catch (err) {
+    console.log(`Error in fetching user applications: ${err}`);
+  } finally {
+    setLoading(false);
+  }
+}, [userId]); // ← userId is used inside → must be in deps
+
+ 
+
+// ✅ Now the effect can list both
+useEffect(() => {
+  fetchUser();
+  fetchApplications();
+}, [fetchUser, fetchApplications]);
+
+  
 
   return (
     <>
@@ -71,30 +65,37 @@ const UserDetails = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         <div className="ps-8 pt-2">
-                  <IoIosArrowRoundBack
-                    size={35}
-                    className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
-                    onClick={() => navigate(-1)}
-                  />
-                </div>
+          <IoIosArrowRoundBack
+            size={35}
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+            onClick={() => navigate(-1)}
+          />
+        </div>
         <div className="m-3 sm:m-4 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors">
-          
+
           <div className="flex flex-col lg:flex-row gap-6">
             {/* LEFT : USER DETAILS */}
             {loading ? (
               <p className="text-xl text-blue-700 dark:text-blue-400">Loading...</p>
             ) : (
               <div className="lg:w-1/3 border-b lg:border-b-0 lg:border-r border-gray-300 dark:border-gray-700 lg:pr-6 pb-6 lg:pb-0">
-                
+
                 <div className="flex flex-col items-center text-center">
                   <img
                     src={
-                      isValidImageURL(user?.profile?.profilePhoto)
-                        ? encodeURI(user.profile.profilePhoto)
-                        : "/default-profile.png"
+                      user?.profile?.profilePhoto ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        user?.fullname || "User"
+                      )}&background=3b82f6&color=fff&size=200`
                     }
-                    alt="Profile"
-                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600 shadow-lg"
+                    alt={user?.fullname || "Profile"}
+                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600 shadow-lg bg-gray-100 dark:bg-gray-700"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null; // prevent infinite loop
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                        user?.fullname || "User"
+                      )}&background=3b82f6&color=fff&size=200`;
+                    }}
                   />
                   <h2 className="mt-4 text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                     {user?.fullname}

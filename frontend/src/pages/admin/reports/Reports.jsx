@@ -99,89 +99,94 @@ KPI.propTypes = {
 };
 
 const FilterBar = ({ year, range, onYearChange, onRangeChange, onApply, loading, isDarkMode }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex flex-wrap gap-4 items-center justify-between transition-colors">
-    <div className="flex gap-3 items-center">
-      <FormControl size="small">
-        <Select
-          value={year}
-          onChange={onYearChange}
-          size="small"
-          className="min-w-[140px]"
-          sx={{
-            '& .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#4b5563' : '#d1d5db' },
-            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#6b7280' : '#9ca3af' },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#3b82f6' : '#2563eb' },
-            '& .MuiSelect-select': { color: isDarkMode ? '#f3f4f6' : '#111827', backgroundColor: isDarkMode ? '#374151' : '#ffffff' },
-            '& .MuiSvgIcon-root': { color: isDarkMode ? '#9ca3af' : '#6b7280' },
-            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-          }}
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                bgcolor: isDarkMode ? '#374151' : '#ffffff',
-                color: isDarkMode ? '#f3f4f6' : '#111827',
-                '& .MuiMenuItem-root': {
-                  '&:hover': { bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6' },
-                  '&.Mui-selected': { bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb', '&:hover': { bgcolor: isDarkMode ? '#6b7280' : '#d1d5db' } },
+  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-5 transition-colors">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+      {/* Left — Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center w-full sm:w-auto">
+        <FormControl size="small" className="w-full sm:w-auto">
+          <Select
+            value={year}
+            onChange={onYearChange}
+            size="small"
+            className="w-full sm:min-w-[140px]"
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#4b5563' : '#d1d5db' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#6b7280' : '#9ca3af' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#3b82f6' : '#2563eb' },
+              '& .MuiSelect-select': { color: isDarkMode ? '#f3f4f6' : '#111827', backgroundColor: isDarkMode ? '#374151' : '#ffffff' },
+              '& .MuiSvgIcon-root': { color: isDarkMode ? '#9ca3af' : '#6b7280' },
+              backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  bgcolor: isDarkMode ? '#374151' : '#ffffff',
+                  color: isDarkMode ? '#f3f4f6' : '#111827',
+                  '& .MuiMenuItem-root': {
+                    '&:hover': { bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6' },
+                    '&.Mui-selected': { bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb', '&:hover': { bgcolor: isDarkMode ? '#6b7280' : '#d1d5db' } },
+                  },
                 },
               },
-            },
-          }}
-        >
-          {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-            <MenuItem key={y} value={y}>{y}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            }}
+          >
+            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+              <MenuItem key={y} value={y}>{y}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <FormControl size="small">
-        <Select
-          value={range}
-          onChange={onRangeChange}
-          size="small"
-          className="min-w-[160px]"
-          sx={{
-            '& .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#4b5563' : '#d1d5db' },
-            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#6b7280' : '#9ca3af' },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#3b82f6' : '#2563eb' },
-            '& .MuiSelect-select': { color: isDarkMode ? '#f3f4f6' : '#111827', backgroundColor: isDarkMode ? '#374151' : '#ffffff' },
-            '& .MuiSvgIcon-root': { color: isDarkMode ? '#9ca3af' : '#6b7280' },
-            backgroundColor: isDarkMode ? '#374151' : '#ffffff',
-          }}
-          MenuProps={{
-            PaperProps: {
-              sx: {
-                bgcolor: isDarkMode ? '#374151' : '#ffffff',
-                color: isDarkMode ? '#f3f4f6' : '#111827',
-                '& .MuiMenuItem-root': {
-                  '&:hover': { bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6' },
-                  '&.Mui-selected': { bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb', '&:hover': { bgcolor: isDarkMode ? '#6b7280' : '#d1d5db' } },
+        <FormControl size="small" className="w-full sm:w-auto">
+          <Select
+            value={range}
+            onChange={onRangeChange}
+            size="small"
+            className="w-full sm:min-w-[160px]"
+            sx={{
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#4b5563' : '#d1d5db' },
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#6b7280' : '#9ca3af' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isDarkMode ? '#3b82f6' : '#2563eb' },
+              '& .MuiSelect-select': { color: isDarkMode ? '#f3f4f6' : '#111827', backgroundColor: isDarkMode ? '#374151' : '#ffffff' },
+              '& .MuiSvgIcon-root': { color: isDarkMode ? '#9ca3af' : '#6b7280' },
+              backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  bgcolor: isDarkMode ? '#374151' : '#ffffff',
+                  color: isDarkMode ? '#f3f4f6' : '#111827',
+                  '& .MuiMenuItem-root': {
+                    '&:hover': { bgcolor: isDarkMode ? '#4b5563' : '#f3f4f6' },
+                    '&.Mui-selected': { bgcolor: isDarkMode ? '#4b5563' : '#e5e7eb', '&:hover': { bgcolor: isDarkMode ? '#6b7280' : '#d1d5db' } },
+                  },
                 },
               },
-            },
-          }}
-        >
-          <MenuItem value={7}>Last 7 Days</MenuItem>
-          <MenuItem value={30}>Last 30 Days</MenuItem>
-          <MenuItem value={1}>Last Month</MenuItem>
-          <MenuItem value={3}>Last 3 Months</MenuItem>
-          <MenuItem value={6}>Last 6 Months</MenuItem>
-          <MenuItem value={12}>Last 12 Months</MenuItem>
-        </Select>
-      </FormControl>
+            }}
+          >
+            <MenuItem value={7}>Last 7 Days</MenuItem>
+            <MenuItem value={30}>Last 30 Days</MenuItem>
+            <MenuItem value={1}>Last Month</MenuItem>
+            <MenuItem value={3}>Last 3 Months</MenuItem>
+            <MenuItem value={6}>Last 6 Months</MenuItem>
+            <MenuItem value={12}>Last 12 Months</MenuItem>
+          </Select>
+        </FormControl>
+      </div>
 
-      <div className="hidden sm:block text-sm text-gray-500 dark:text-gray-400">Showing recent data for analysis</div>
-    </div>
-
-    <div className="flex gap-3">
+      {/* Right — Apply */}
       <Button
-        className="h-10 rounded-xl px-5 bg-gradient-to-r from-[#1E40AF] to-[#4F46E5] hover:opacity-95 text-white shadow"
+        className="h-10 w-full sm:w-auto rounded-xl px-5 bg-gradient-to-r from-[#1E40AF] to-[#4F46E5] hover:opacity-95 text-white shadow"
         onClick={onApply}
         disabled={loading}
         aria-label="Apply filters"
       >
         {loading ? "Refreshing..." : "Apply Filters"}
       </Button>
+    </div>
+
+    <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 mt-3">
+      Showing recent data for analysis
     </div>
   </div>
 );
@@ -418,8 +423,8 @@ const Reports = () => {
     <>
       <Navbar linkName="Reports" />
 
-      <main className="px-4 sm:px-6 lg:px-8 pt-6 pb-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
-        <div className="max-w-[1400px] mx-auto">
+      <main className="px-4 sm:px-6 lg:px-8 pt-6 pb-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors overflow-x-hidden w-full">
+  <div className="max-w-[1400px] mx-auto w-full">
 
           {/* Header */}
           <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -483,7 +488,7 @@ const Reports = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Trend</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Revenue over selected range</p>
               </div>
-              <div className="mt-4 h-[260px] sm:h-[280px]">
+             <div className="mt-4 h-[260px] sm:h-[280px] w-full min-w-0">
                 {loading ? <Skeleton className="h-full" /> : statsData?.revenueTrend?.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={statsData.revenueTrend} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
@@ -507,7 +512,7 @@ const Reports = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">User Growth</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">New user acquisition trend</p>
               </div>
-              <div className="mt-4 h-[260px] sm:h-[280px]">
+              <div className="mt-4 h-[260px] sm:h-[280px] w-full min-w-0">
                 {loading ? <Skeleton className="h-full" /> : statsData?.newUsersTrend?.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={statsData.newUsersTrend} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
@@ -534,7 +539,7 @@ const Reports = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Shortlisted vs Pending vs Rejected</p>
               </div>
               <div className="flex flex-col lg:flex-row items-center gap-6">
-                <div className="w-full lg:w-1/2 h-64">
+               <div className="w-full lg:w-1/2 h-64 min-w-0">
                   {loading ? <Skeleton className="h-full" /> : (
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -611,7 +616,7 @@ const Reports = () => {
                       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                         Requests by Type
                       </p>
-                      <div className="h-64">
+                      <div className="h-64 w-full min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart
                             data={courseChartData}
@@ -651,7 +656,7 @@ const Reports = () => {
                       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                         Status Breakdown
                       </p>
-                      <div className="h-64">
+                     <div className="h-64 w-full min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -721,7 +726,7 @@ const Reports = () => {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="min-w-full">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
                       <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">Recruiter</th>
@@ -844,7 +849,7 @@ const Reports = () => {
                   const displayed = showAllCourses ? filtered : filtered.slice(0, 10);
                   return (
                     <>
-                      <table className="w-full">
+                      <table className="min-w-full">
                         <thead>
                           <tr className="border-b border-gray-200 dark:border-gray-700">
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">SR No.</th>

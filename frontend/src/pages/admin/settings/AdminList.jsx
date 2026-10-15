@@ -1,5 +1,5 @@
 // Import necessary modules and dependencies
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { FiArrowLeft } from "react-icons/fi";
 import Navbar from "@/components/admin/Navbar";
@@ -146,9 +146,9 @@ const AdminList = () => {
           >
             <FiArrowLeft size={30} className="mr-2" />
           </button>
-          <Typography 
-            variant="h4" 
-            align="center" 
+          <Typography
+            variant="h4"
+            align="center"
             gutterBottom
             className="text-gray-900 dark:text-gray-100"
           >
@@ -156,8 +156,10 @@ const AdminList = () => {
           </Typography>
           <Box
             display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
-            alignItems="center"
+            alignItems={{ xs: "stretch", sm: "center" }}
+            gap={2}
             mb={2}
           >
             <TextField
@@ -167,52 +169,39 @@ const AdminList = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name, email, or phone"
-              className="w-72"
+              className="w-full sm:w-72"
               sx={{
+                width: { xs: "100%", sm: "18rem" },
                 '& .MuiOutlinedInput-root': {
                   backgroundColor: 'transparent',
-                  '& fieldset': {
-                    borderColor: 'rgb(209, 213, 219)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgb(156, 163, 175)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: 'rgb(59, 130, 246)',
-                  },
+                  '& fieldset': { borderColor: 'rgb(209, 213, 219)' },
+                  '&:hover fieldset': { borderColor: 'rgb(156, 163, 175)' },
+                  '&.Mui-focused fieldset': { borderColor: 'rgb(59, 130, 246)' },
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'rgb(107, 114, 128)',
-                },
-                '& .MuiOutlinedInput-input': {
-                  color: 'rgb(17, 24, 39)',
-                },
+                '& .MuiInputLabel-root': { color: 'rgb(107, 114, 128)' },
+                '& .MuiOutlinedInput-input': { color: 'rgb(17, 24, 39)' },
                 '.dark &': {
                   '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: 'rgb(75, 85, 99)',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: 'rgb(107, 114, 128)',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: 'rgb(96, 165, 250)',
-                    },
+                    '& fieldset': { borderColor: 'rgb(75, 85, 99)' },
+                    '&:hover fieldset': { borderColor: 'rgb(107, 114, 128)' },
+                    '&.Mui-focused fieldset': { borderColor: 'rgb(96, 165, 250)' },
                   },
-                  '& .MuiInputLabel-root': {
-                    color: 'rgb(156, 163, 175)',
-                  },
-                  '& .MuiOutlinedInput-input': {
-                    color: 'rgb(229, 231, 235)',
-                  },
+                  '& .MuiInputLabel-root': { color: 'rgb(156, 163, 175)' },
+                  '& .MuiOutlinedInput-input': { color: 'rgb(229, 231, 235)' },
                 },
               }}
             />
-            <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Total Admins: <span className="text-gray-500 dark:text-gray-400">{totalAdmins}</span>
-            </p>
+
+            <div className="flex items-center sm:justify-start p-2 w-full sm:w-auto">
+              <span className="text-xl font-medium text-blue-700 dark:text-blue-300">
+                Total Admins:{" "}
+              </span>
+              <span className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                {totalAdmins}
+              </span>
+            </div>
           </Box>
-          <TableContainer 
+          <TableContainer
             component={Paper}
             elevation={0}
             sx={{
@@ -227,15 +216,15 @@ const AdminList = () => {
           >
             <Table>
               <TableHead>
-                <TableRow 
-                  sx={{ 
+                <TableRow
+                  sx={{
                     backgroundColor: "#f5f5f5",
                     '.dark &': {
                       backgroundColor: 'rgb(31, 41, 55)',
                     },
                   }}
                 >
-                  <TableCell 
+                  <TableCell
                     sx={{
                       color: 'rgb(17, 24, 39)',
                       '.dark &': {
@@ -246,7 +235,7 @@ const AdminList = () => {
                   >
                     Name
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     sx={{
                       color: 'rgb(17, 24, 39)',
                       '.dark &': {
@@ -257,7 +246,7 @@ const AdminList = () => {
                   >
                     Email
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     sx={{
                       color: 'rgb(17, 24, 39)',
                       '.dark &': {
@@ -268,7 +257,7 @@ const AdminList = () => {
                   >
                     Phone No.
                   </TableCell>
-                  <TableCell 
+                  <TableCell
                     sx={{
                       color: 'rgb(17, 24, 39)',
                       '.dark &': {
@@ -283,8 +272,8 @@ const AdminList = () => {
               </TableHead>
               <TableBody>
                 {currentAdmins.map((admin) => (
-                  <TableRow 
-                    key={admin._id} 
+                  <TableRow
+                    key={admin._id}
                     hover
                     sx={{
                       '&:hover': {
@@ -295,7 +284,7 @@ const AdminList = () => {
                       },
                     }}
                   >
-                    <TableCell 
+                    <TableCell
                       sx={{
                         color: 'rgb(17, 24, 39)',
                         '.dark &': {
@@ -306,7 +295,7 @@ const AdminList = () => {
                     >
                       {admin.fullname}
                     </TableCell>
-                    <TableCell 
+                    <TableCell
                       sx={{
                         color: 'rgb(17, 24, 39)',
                         '.dark &': {
@@ -317,7 +306,7 @@ const AdminList = () => {
                     >
                       {admin.emailId?.email}
                     </TableCell>
-                    <TableCell 
+                    <TableCell
                       sx={{
                         color: 'rgb(17, 24, 39)',
                         '.dark &': {
@@ -388,7 +377,7 @@ const AdminList = () => {
             >
               Previous
             </Button>
-            <Typography 
+            <Typography
               variant="body1"
               className="text-gray-900 dark:text-gray-100"
             >

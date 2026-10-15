@@ -1,5 +1,5 @@
 // Jobs.jsx — Admin page for managing job listings, including viewing stats, searching, filtering, toggling active status, and deleting jobs.
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -443,11 +443,10 @@ const Jobs = () => {
                       {/* Status Badge */}
                       <TableCell>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            job.isActive
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${job.isActive
                               ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
                               : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400"
-                          }`}
+                            }`}
                         >
                           {job.isActive ? "Active" : "Deactive"}
                         </span>
@@ -456,7 +455,7 @@ const Jobs = () => {
                       {/* Actions */}
                       <TableCell>
                         <div
-                          className="flex flex-wrap justify-center items-center gap-3 min-w-[160px]"
+                          className="flex flex-nowrap justify-center items-center gap-2 md:gap-3 min-w-[200px]"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Eye
@@ -525,18 +524,19 @@ const Jobs = () => {
             </Table>
           </div>
 
+       
           {/* Pagination */}
-          <div className="flex flex-col sm:flex-row justify-between sm:justify-end items-center gap-3 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex flex-row items-center justify-center gap-3 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
             <Button
               variant="outline"
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
+              className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 px-3 sm:px-4 text-sm"
             >
               Previous
             </Button>
 
-            <span className="text-gray-600 dark:text-gray-400 font-medium">
+            <span className="text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap text-sm">
               Page {page} of {totalPages}
             </span>
 
@@ -544,7 +544,7 @@ const Jobs = () => {
               variant="outline"
               disabled={page === totalPages}
               onClick={() => setPage(page + 1)}
-              className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50"
+              className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 px-3 sm:px-4 text-sm"
             >
               Next
             </Button>

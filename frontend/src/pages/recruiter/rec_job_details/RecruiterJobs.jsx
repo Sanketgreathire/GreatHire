@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import   { useEffect, useState, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Eye, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -181,11 +181,10 @@ const RecruiterJobs = ({ recruiterId }) => {
 
                     <td className="py-3 px-5 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
-                          job.jobDetails.isActive
+                        className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${job.jobDetails.isActive
                             ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
                             : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
-                        }`}
+                          }`}
                         onClick={() =>
                           toggleActive(job._id, !job.jobDetails.isActive)
                         }
@@ -220,22 +219,26 @@ const RecruiterJobs = ({ recruiterId }) => {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-6 text-sm">
+     
+        {/* Pagination — centered */}
+        <div className="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Previous
           </button>
-          <span className="text-gray-700 dark:text-gray-300">
-            Page {currentPage} of {totalPages}
+
+          <span className="text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            Page <span className="font-medium">{currentPage}</span> of{" "}
+            <span className="font-medium">{totalPages}</span>
           </span>
+
           <button
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Next
           </button>

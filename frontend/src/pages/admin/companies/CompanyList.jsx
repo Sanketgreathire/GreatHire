@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
   Trash,
   Eye,
   Building2,
-  TrendingUp,
+ 
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
@@ -44,9 +44,9 @@ const CompanyList = () => {
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
   const [companyList, setCompanyList] = useState([]);
-  const [deletedcompanyList, setDeletedCompanyList] = useState([]);
+  const [, setDeletedCompanyList] = useState([]);
   const [activePage, setActivePage] = useState(1);
-  const [deletedPage, setDeletedPage] = useState(1);
+  //const [deletedPage, setDeletedPage] = useState(1);
   const itemsPerPage = 20;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [companyId, setCompanyId] = useState(null);
@@ -62,15 +62,15 @@ const CompanyList = () => {
     const checkDarkMode = () => {
       setIsDarkMode(document.documentElement.classList.contains('dark'));
     };
-    
+
     checkDarkMode();
-    
+
     const observer = new MutationObserver(checkDarkMode);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
     });
-    
+
     return () => observer.disconnect();
   }, []);
 
@@ -126,7 +126,7 @@ const CompanyList = () => {
         dispatch(fetchJobStats());
         toast.success(response.data.message);
       } else toast.error(response.data.message);
-    } catch (error) {
+    } catch {
       toast.error("Error toggling recruiter status");
     } finally {
       setLoading((prev) => ({ ...prev, [companyId]: false }));
@@ -326,24 +326,23 @@ const CompanyList = () => {
                       </TableCell>
 
                       <TableCell className="break-all text-gray-700 dark:text-gray-300">
-                        {company.email}
+                        {company.email?.trim() || "N/A"}
                       </TableCell>
 
                       <TableCell className="text-gray-700 dark:text-gray-300">
-                        {company.phone}
+                        {company.phone?.toString().trim() || "N/A"}
                       </TableCell>
 
                       <TableCell className="break-all text-gray-700 dark:text-gray-300">
-                        {company.adminEmail}
+                        {company.adminEmail?.trim() || "N/A"}
                       </TableCell>
 
                       <TableCell>
                         <span
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            company.isActive
-                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                              : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-                          }`}
+                          className={`px-3 py-1 text-xs font-semibold rounded-full ${company.isActive
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                            : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                            }`}
                         >
                           {company.isActive ? "Active" : "Deactive"}
                         </span>
@@ -405,59 +404,59 @@ const CompanyList = () => {
             </Table>
           </div>
 
-          {/* Pagination */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 text-sm text-gray-600 dark:text-gray-400">
-            <span className="text-center sm:text-left">
-              Showing{" "}
-              {Math.min(
-                (activePage - 1) * itemsPerPage + 1,
-                filteredCompanies.length
-              )}{" "}
-              to{" "}
-              {Math.min(
-                activePage * itemsPerPage,
-                filteredCompanies.length
-              )}{" "}
-              of {filteredCompanies.length} entries
-            </span>
 
-            <div className="flex flex-wrap gap-2 justify-center">
+          {/* Pagination */}
+          <div className="flex justify-center items-center mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {/* Previous */}
               <Button
                 disabled={activePage === 1}
-                onClick={() => setActivePage(activePage - 1)}
-                className="px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                onClick={() => setActivePage((p) => Math.max(1, p - 1))}
+                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Previous
               </Button>
 
-              {[...Array(Math.ceil(filteredCompanies.length / itemsPerPage))].map(
-                (_, i) => (
-                  <Button
-                    key={i}
-                    onClick={() => setActivePage(i + 1)}
-                    className={`px-4 transition-colors ${
-                      activePage === i + 1
-                        ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+              {/* Page Numbers */}
+              {Array.from(
+                { length: Math.ceil(filteredCompanies.length / itemsPerPage) },
+                (_, i) => i + 1
+              ).map((pageNumber) => (
+                <Button
+                  key={pageNumber}
+                  onClick={() => setActivePage(pageNumber)}
+                  className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${activePage === pageNumber
+                    ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                     }`}
-                  >
-                    {i + 1}
-                  </Button>
-                )
-              )}
+                >
+                  {pageNumber}
+                </Button>
+              ))}
 
+              {/* Next */}
               <Button
                 disabled={
-                  activePage ===
+                  activePage >=
                   Math.ceil(filteredCompanies.length / itemsPerPage)
                 }
-                onClick={() => setActivePage(activePage + 1)}
-                className="px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                onClick={() =>
+                  setActivePage((p) =>
+                    Math.min(
+                      Math.ceil(filteredCompanies.length / itemsPerPage),
+                      p + 1
+                    )
+                  )
+                }
+                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </Button>
             </div>
+
           </div>
+
         </div>
       </div>
 

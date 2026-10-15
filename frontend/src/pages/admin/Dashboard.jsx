@@ -1,9 +1,9 @@
- 
+
 import PropTypes from "prop-types";
 import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/admin/Navbar";
 
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCompanyStats,
   fetchRecruiterStats,
@@ -23,12 +23,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Briefcase, UserCheck, ChevronLeft, ChevronRight, Bot,Users,
+import {
+  Briefcase, UserCheck, ChevronLeft, ChevronRight, Bot, Users,
   FileText,
   Calendar,
   CheckCircle,
   UserPlus,
-  TrendingDown, } from "lucide-react";
+  TrendingDown,
+} from "lucide-react";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { FaRegUser } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
@@ -44,7 +46,7 @@ import {
   Filler,
 } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
- 
+
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { ADMIN_STAT_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -67,7 +69,7 @@ import {
   FunnelChart,
   LabelList,
 } from "recharts";
- 
+
 import {
   DASHBOARD_KPI_ENDPOINT,
   DASHBOARD_FUNNEL_ENDPOINT,
@@ -402,7 +404,7 @@ const Dashboard = () => {
   const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  
+
 
   const [applicationsData, setApplicationsData] = useState({
     labels: MONTH_LABELS,
@@ -1036,7 +1038,7 @@ const Dashboard = () => {
           </div>
 
           {jobPostings.length > 0 && (
-            <div className="flex flex-col items-center gap-3 mt-6 sm:flex-row sm:justify-between sm:items-center">
+            <div className="flex items-center justify-center gap-4 mt-6">
               <Button
                 variant="outline"
                 disabled={currentPage === 1}

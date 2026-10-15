@@ -1,4 +1,4 @@
-import  { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
 import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes, FaUserFriends } from "react-icons/fa";
@@ -14,18 +14,18 @@ import {
 } from "@/redux/admin/statsSlice";
 import PropTypes from "prop-types";
 const navItems = [
-  { name: "Dashboard",   path: "/admin/dashboard",       icon: AiOutlineDashboard      },
-  { name: "Job Seekers", path: "/admin/users",            icon: FaUsers                 },
-  { name: "Companies",   path: "/admin/companies",        icon: PiBuildingOfficeDuotone },
-  { name: "Recruiters",  path: "/admin/recruiters-list",  icon: FaUserTie               },
-  { name: "Jobs",        path: "/admin/jobs",             icon: FaBriefcase             },
-  { name: "AI Sourcing", path: "/admin/ai-sourcing",           icon: FaRobot                 },
-  { name: "Referring Candidates", path: "/admin/referring-candidates", icon: FaUserFriends    },
-  { name: "Support Queries",      path: "/admin/support-queries",      icon: FaHeadset        },
-  { name: "Campus",      path: "/admin/campus-dashboard", icon: FaGraduationCap         },
-  { name: "Courses",     path: "/admin/courses",          icon: FaBookOpen              },
-  { name: "Reports",     path: "/admin/reports",          icon: FaChartBar              },
-  { name: "Settings",    path: "/admin/settings",         icon: AiOutlineSetting        },
+  { name: "Dashboard", path: "/admin/dashboard", icon: AiOutlineDashboard },
+  { name: "Job Seekers", path: "/admin/users", icon: FaUsers },
+  { name: "Companies", path: "/admin/companies", icon: PiBuildingOfficeDuotone },
+  { name: "Recruiters", path: "/admin/recruiters-list", icon: FaUserTie },
+  { name: "Jobs", path: "/admin/jobs", icon: FaBriefcase },
+  { name: "AI Sourcing", path: "/admin/ai-sourcing", icon: FaRobot },
+  { name: "Referring Candidates", path: "/admin/referring-candidates", icon: FaUserFriends },
+  { name: "Support Queries", path: "/admin/support-queries", icon: FaHeadset },
+  { name: "Campus", path: "/admin/campus-dashboard", icon: FaGraduationCap },
+  { name: "Courses", path: "/admin/courses", icon: FaBookOpen },
+  { name: "Reports", path: "/admin/reports", icon: FaChartBar },
+  { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
 ];
 
 const NavItem = memo(({ item, onClick }) => (
@@ -34,10 +34,9 @@ const NavItem = memo(({ item, onClick }) => (
       to={item.path}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-150 ${
-          isActive
-            ? "bg-blue-700 dark:bg-blue-600 text-white"
-            : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
+        `flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-150 ${isActive
+          ? "bg-blue-700 dark:bg-blue-600 text-white"
+          : "text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700"
         }`
       }
     >
@@ -90,8 +89,8 @@ const Sidebar = memo(() => {
   }, [location.pathname, navClicked, dispatch]);
 
   const handleNavClick = useCallback(() => setNavClicked(true), []);
-  const openSidebar    = useCallback(() => setIsOpen(true),  []);
-  const closeSidebar   = useCallback(() => setIsOpen(false), []);
+  const openSidebar = useCallback(() => setIsOpen(true), []);
+  const closeSidebar = useCallback(() => setIsOpen(false), []);
 
   const profilePhoto =
     user?.profile?.profilePhoto && !user.profile.profilePhoto.includes("github.com")
@@ -118,15 +117,16 @@ const Sidebar = memo(() => {
         />
       )}
 
+       
       {/* Sidebar */}
       <aside
         aria-label="Admin navigation"
         className={`
           fixed top-16 left-0 bottom-0 z-50
-          w-52
+          w-72
           bg-white dark:bg-gray-800
-          border-r border-gray-200 dark:border-gray-700
-          flex flex-col justify-between
+           
+          flex flex-col justify-end
           transition-transform duration-300 ease-in-out
           will-change-transform
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -150,10 +150,7 @@ const Sidebar = memo(() => {
           {/* Nav items — `static h-auto bg-transparent border-0` overrides
               critical.css's global `nav` rule (position:fixed, height:61px,
               background, border) that hijacked this element */}
-          <nav
-            className="static h-auto bg-transparent border-0 flex-1 min-h-0 overflow-y-auto py-3 px-3"
-            aria-label="Main navigation"
-          >
+          <nav className="static h-auto bg-transparent border-0 flex-1 min-h-0 overflow-y-auto py-3 px-3">
             <ul className="space-y-3">
               {navItems.map((item) => (
                 <NavItem key={item.path} item={item} onClick={handleNavClick} />
@@ -163,37 +160,35 @@ const Sidebar = memo(() => {
         </div>
 
         {/* BOTTOM: profile — always at the very bottom */}
-        <div className="shrink-0 border-t border-gray-200 dark:border-gray-700 p-3">
-          <NavLink
-            to={user ? "/admin/profile" : "/admin/login"}
-            className="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150"
-          >
-            {user ? (
-              <>
-                <img
-                  src={profilePhoto}
-                  alt={user.fullname || "Admin"}
-                  className="h-9 w-9 rounded-full border border-gray-300 dark:border-gray-600 object-cover shrink-0"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate leading-tight">
-                    {user.fullname}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 truncate capitalize">
-                    {user.role}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                <FaUser size={20} aria-hidden="true" className="text-blue-700 dark:text-blue-400 shrink-0" />
-                <span className="text-sm text-gray-900 dark:text-gray-100">Login</span>
-              </>
-            )}
-          </NavLink>
+        <div className="shrink-0   border-gray-200 dark:border-gray-700 p-3">
+  <NavLink
+    to={user ? "/admin/profile" : "/admin/login"}
+    className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 dark:bg-gray-700/50 hover:bg-blue-100 dark:hover:bg-gray-700 border border-blue-100 dark:border-gray-600 transition-colors duration-150"
+  >
+    {user ? (
+      <>
+        <img
+          src={profilePhoto}
+          alt={user.fullname || "Admin"}
+          className="h-10 w-10 rounded-full object-cover shrink-0 ring-2 ring-white dark:ring-gray-600"
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate leading-tight">
+            {user.fullname}
+          </p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 truncate capitalize font-medium">
+            {user.role}
+          </p>
         </div>
+      </>
+    ) : (
+      <>
+        <FaUser size={20} aria-hidden="true" className="text-blue-700 dark:text-blue-400 shrink-0" />
+        <span className="text-sm text-gray-900 dark:text-gray-100">Login</span>
+      </>
+    )}
+  </NavLink>
+</div>
       </aside>
     </>
   );

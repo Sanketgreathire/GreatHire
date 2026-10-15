@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import  { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import AdminProtectWrapper from "./AdminProtectWrapper";
@@ -37,11 +37,10 @@ const Loader = () => (
 const AdminLayout = () => {
   return (
     <AdminProtectWrapper>
-      <div className="flex w-full overflow-hidden">
+    <div className="flex w-full overflow-hidden min-w-0">
 
         <Sidebar />
-
-        <div className="flex-1 mt-16 md:ml-64 bg-gray-100 dark:bg-gray-900 min-h-screen w-full overflow-x-hidden px-3 sm:px-4 md:px-6 transition-all duration-300">
+<div className="flex-1 min-w-0 max-w-full mt-16 md:ml-72 bg-gray-100 dark:bg-gray-900 min-h-screen overflow-x-clip px-3 sm:px-4 md:px-6 transition-all duration-300">
           <Suspense fallback={<Loader />}>
             <Routes>
               <Route path="/"                                    element={<Navigate to="dashboard" replace />} />

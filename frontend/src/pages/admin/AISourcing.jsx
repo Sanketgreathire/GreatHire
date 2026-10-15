@@ -92,13 +92,17 @@ function PlatformModal({ onClose }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"><Settings size={18} className="text-blue-600" /> Sourcing Platforms</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"><X size={18} /></button>
+   <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 px-4 py-6">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden">
+         <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <Settings size={18} className="text-blue-600" /> Sourcing Platforms
+          </h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+            <X size={18} />
+          </button>
         </div>
-        <div className="p-5 space-y-3">
+        <div className="p-5 space-y-3 overflow-y-auto flex-1">
           {platforms.map(p => (
             <div key={p.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
               <div className="flex items-center gap-3">
@@ -115,7 +119,8 @@ function PlatformModal({ onClose }) {
           ))}
           <p className="text-xs text-gray-400 dark:text-gray-500 pt-1">Currently only GitHub is active. Other platforms require API credentials in .env</p>
         </div>
-        <div className="p-5 pt-0">
+
+        <div className="p-5 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
           <Button className="w-full" variant="outline" onClick={onClose}>Close</Button>
         </div>
       </div>
