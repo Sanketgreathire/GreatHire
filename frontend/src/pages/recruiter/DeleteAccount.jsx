@@ -80,7 +80,7 @@ const DeleteAccount = () => {
         dispatch(removeCompany()); // Ensure this action is defined
         dispatch(logOut()); // Logs out the user
         toast.success(response.data.message);
-        navigate("/");
+        navigate("/recruiter-login");
       } else {
         toast.error(response.data.message);
       }

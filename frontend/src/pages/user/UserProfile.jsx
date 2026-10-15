@@ -157,7 +157,7 @@ const UserProfile = () => {
     try {
       await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
       dispatch(logOut());
-      navigate("/");
+      navigate("/jobseeker-login");
     } catch {
       toast.error("Error logging out");
     }

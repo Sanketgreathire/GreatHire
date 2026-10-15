@@ -63,7 +63,7 @@ const AllApplicantsList = () => {
   const handle401 = () => {
     dispatch(logOut());
     dispatch(removeCompany());
-    navigate("/recruiter/login");
+    navigate("/recruiter-login");
   };
 
   const [applicants, setApplicants] = useState(_cachedApplicants);

@@ -302,7 +302,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
         toast.success(response.data.message);
-        navigate("/");
+        navigate(user?.role === "recruiter" ? "/recruiter-login" : "/jobseeker-login");
       } else {
         toast.error("Error logging out. Please try again.");
       }
@@ -317,7 +317,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
       setIsProfileMenuOpen(false);
       setIsMenuOpen(false);
       toast.success("Logged out successfully");
-      navigate("/");
+      navigate(user?.role === "recruiter" ? "/recruiter-login" : "/jobseeker-login");
     }
   }, [dispatch, navigate, user]);
 
