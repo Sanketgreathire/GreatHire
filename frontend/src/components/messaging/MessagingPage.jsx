@@ -2,6 +2,7 @@ import { MessageProvider } from "../../context/MessageContext";
 import ConversationList from "./ConversationList";
 import ChatInterface from "./ChatInterface";
 import { useMessages } from "../../context/MessageContext";
+import DashboardNavigations from "../../pages/recruiter/DashboardNavigations";
 
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -111,7 +112,16 @@ const MessagingContent = () => {
   };
 
   return (
-    <div className="h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400">
+    <>
+      {/* Same dashboard sidebar as other recruiter tabs */}
+      {isRecruiter && (
+        <DashboardNavigations
+          isOpen={isNavigationOpen}
+          onOpenChange={setIsNavigationOpen}
+        />
+      )}
+
+      <div className={`h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400 ${isRecruiter ? "lg:ml-52" : ""}`}>
       {/* Sidebar */}
       <div
         className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${activeConversation ? "hidden md:flex" : "flex"
@@ -130,17 +140,15 @@ const MessagingContent = () => {
         {/* GreatHire Logo */}
         <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            {!isRecruiter && (
-              <button
-                type="button"
-                onClick={() => setIsNavigationOpen(true)}
-                aria-label="Open navigation menu"
-                aria-expanded={isNavigationOpen}
-                className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Menu size={24} />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setIsNavigationOpen(true)}
+              aria-label="Open navigation menu"
+              aria-expanded={isNavigationOpen}
+              className={`p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isRecruiter ? "lg:hidden" : ""}`}
+            >
+              <Menu size={24} />
+            </button>
             <div
               onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
               className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
@@ -219,15 +227,8 @@ const MessagingContent = () => {
           />
         </div>
       </div>
-      {/* Navigation for Recruiters sidebar */}
-      {/* {isRecruiter && (
-        <DashboardNavigations
-          isOpen={isNavigationOpen}
-          onOpenChange={setIsNavigationOpen}
-          showMenuButton={false}
-        />
-      )} */}
 
+      {/* Simple drawer for jobseekers — recruiters use DashboardNavigations above */}
       {!isRecruiter && isNavigationOpen && (
         <>
           <button
@@ -278,7 +279,8 @@ const MessagingContent = () => {
       >
         <ChatInterface />
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

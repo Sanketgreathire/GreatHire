@@ -32,7 +32,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 rounded-lg w-full text-sm font-medium transition ${isActive
       ? "bg-blue-600 text-white"
-      : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
+      : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white active:bg-gray-100 dark:active:bg-white/10 active:text-gray-900 dark:active:text-white"
     }`;
 
   const disabledLinkClass =
@@ -108,7 +108,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
         </div>
 
 
-        <div className="flex flex-col h-[calc(100%-4rem)] p-1.5 justify-between">
+        <div className="flex flex-col gap-3 p-1.5">
           {/* Main Navigation */}
           <section>
             <p className="mb-2 px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
@@ -132,7 +132,7 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
                 <button
                   type="button"
                   onClick={() => setCreateNewOpen((prev) => !prev)}
-                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition"
+                  className="flex items-center justify-between px-2 py-2 rounded-lg w-full text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white active:bg-gray-100 dark:active:bg-white/10 active:text-gray-900 dark:active:text-white transition"
                 >
                   <div className="flex items-center gap-2">
                     <PenSquare size={25} className="text-blue-500 dark:text-blue-400" />

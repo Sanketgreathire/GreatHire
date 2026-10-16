@@ -154,7 +154,9 @@ const RecruiterProfile = () => {
         {/* Recruiter Update Profile */}
         <RecruiterUpdateProfile open={open} setOpen={setOpen} />
 
-        <Footer />
+        <div className="lg:ml-52">
+          <Footer />
+        </div>
 
         {/* OTP Modals */}
         {openEmailOTPModal && (

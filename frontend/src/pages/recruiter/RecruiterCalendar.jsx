@@ -513,9 +513,9 @@ const RecruiterCalendar = () => {
         {/* Calendar View (Left 8 Cols) */}
         <div className="lg:col-span-8 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/60 p-4 md:p-6 shadow-sm">
           {/* Calendar Header Controls */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
+              <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white whitespace-nowrap">
                 {monthName} {year}
               </h2>
               <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">

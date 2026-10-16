@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations, jobTitles } from "@/utils/constant";
+import PillSelect from "@/components/shared/PillSelect";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
@@ -895,34 +896,18 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                             <span className="text-red-500 dark:text-red-400 ml-1">*</span>
                           </Label>
 
-                          <select
-                            name="urgentHiring"
-                            className={`${inputCls} bg-white text-gray-900 hover:bg-green-700 hover:text-white dark:bg-gray-800 dark:text-white dark:hover:bg-green-700`}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
+                          <PillSelect
                             value={formik.values.urgentHiring}
-                          >
-                            <option
-                              value=""
-                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                            >
-                              Select
-                            </option>
-
-                            <option
-                              value="Yes"
-                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                            >
-                              Yes
-                            </option>
-
-                            <option
-                              value="No"
-                              className="bg-white text-gray-900 dark:bg-gray-800 dark:text-white"
-                            >
-                              No
-                            </option>
-                          </select>
+                            onChange={(val) => {
+                              formik.setFieldValue("urgentHiring", val);
+                              formik.setFieldTouched("urgentHiring", true, true);
+                            }}
+                            placeholder="Select"
+                            options={[
+                              { value: "Yes", label: "Yes" },
+                              { value: "No", label: "No" },
+                            ]}
+                          />
 
                           {formik.touched.urgentHiring && formik.errors.urgentHiring && (
                             <div className={errorCls}>{formik.errors.urgentHiring}</div>
@@ -949,14 +934,14 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                               }}
                               autoComplete="off"
                             />
-                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
+                            <div className="relative z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
                               {jobTitles
                                 .filter(t => t.toLowerCase().includes((formik.values.title || "").toLowerCase()))
                                 .map(title => (
                                   <div
                                     key={title}
                                     className="px-3.5 py-2 hover:bg-gray-500 hover:text-white cursor-pointer text-slate-900 dark:text-slate-100 text-sm transition-colors duration-150"
-                                    onMouseDown={() => {
+                                    onPointerDown={() => {
                                       formik.setFieldValue("title", title);
                                       formik.setFieldTouched("title", true, true);
                                     }}
@@ -1029,7 +1014,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                               onBlur={(e) => setTimeout(() => e.target.nextSibling.classList.add("hidden"), 200)}
                               autoComplete="off"
                             />
-                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
+                            <div className="relative z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-48 overflow-y-auto hidden">
                               {[
                                 "English", "Hindi", "Telugu", "Tamil", "Kannada",
                                 "Malayalam", "Marathi", "Bengali", "Gujarati", "Punjabi",
@@ -1040,7 +1025,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                                   <div
                                     key={lang}
                                     className="px-3.5 py-2 hover:bg-indigo-50 dark:hover:bg-white/5 cursor-pointer text-slate-900 dark:text-slate-100 text-sm"
-                                    onMouseDown={() => {
+                                    onPointerDown={() => {
                                       formik.setFieldValue("languages", [...formik.values.languages, lang]);
                                       setLangSearch("");
                                     }}
@@ -1424,12 +1409,12 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                             autoComplete="off"
                           />
                           {showLocationDropdown && filteredLocations.length > 0 && (
-                            <div className="absolute z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto">
+                            <div className="relative z-10 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto">
                               {filteredLocations.map((loc) => (
                                 <div
                                   key={loc}
                                   className="px-3.5 py-2 hover:bg-gray-500 hover:text-white cursor-pointer text-slate-900 dark:text-slate-100 text-sm transition-colors duration-150"
-                                  onMouseDown={() => {
+                                  onPointerDown={() => {
                                     formik.setFieldValue("location", loc);
                                     setLocationSearch(loc);
                                     setShowLocationDropdown(false);

@@ -736,8 +736,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
           </div>
 
           {/* ── MOBILE RIGHT ICONS ── */}
-          <div className={`flex items-center gap-2 ${location.pathname.startsWith("/recruiter/dashboard") ? "hidden" : "lg:hidden"
-            }`}>
+          <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
             {user && <NotificationDropdown />}
             <button
