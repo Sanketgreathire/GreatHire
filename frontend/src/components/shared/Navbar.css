@@ -327,6 +327,7 @@ html.dark .gh-shared-navbar__content button.rounded-full {
     min-height: 64px;
   }
   .gh-navbar__inner { padding: 0 12px 0 0 !important; }
+  .gh-navbar__desktop:not(.gh-shared-navbar__desktop) { display: none !important; }
   .gh-shared-navbar__content { padding-right: 12px; }
   .gh-shared-navbar__desktop { display: none !important; }
   .gh-navbar__brand {

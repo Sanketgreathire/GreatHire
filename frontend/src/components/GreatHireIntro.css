@@ -5,15 +5,16 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 42%, #d7e4fb 0%, #bdcff0 48%, #a9bee5 100%);
+  background: #e8eefc url("/greathire-intro-background.png") center / cover no-repeat;
   color: #12151c;
-  animation: gh-intro-exit 0.72s cubic-bezier(0.4, 0, 0.2, 1) 4.1s forwards;
+  animation: gh-intro-exit 0.72s cubic-bezier(0.4, 0, 0.2, 1) 5.1s forwards;
 }
 
 .gh-intro__stage {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  display: none;
 }
 
 .gh-intro__stage::before,

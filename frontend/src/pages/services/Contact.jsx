@@ -573,7 +573,7 @@ const ContactSection = () => {
                       <FaCheckCircle className="text-green-600 dark:text-green-500 text-2xl flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="text-sm text-green-900 dark:text-green-200 leading-relaxed">
-                          <strong className="text-base">Your privacy matters.</strong> All information is encrypted and will only be used to respond to your inquiry. We typically respond within 24 hours during business days.
+                          <strong className="text-base">Your privacy matters.</strong> All information is encrypted and will only be used to respond to your enquiry. We typically respond within 24 hours during business days.
                         </p>
                       </div>
                     </div>

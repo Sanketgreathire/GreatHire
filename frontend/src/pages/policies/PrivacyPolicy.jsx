@@ -42,7 +42,7 @@ const sections = [
       "Your data is collected to enhance user experience, optimize job matching, and support recruiters in hiring efficiently.",
       "We employ robust technical safeguards and strict access controls to ensure the security of your personal information.",
       "GreatHire does not sell or rent user data to third parties. Your trust remains our top priority.",
-      "For inquiries or concerns, please contact us at hr@babde.tech.",
+      "For enquiries or concerns, please contact us at support@greathire.in.",
     ],
   },
   {
@@ -59,7 +59,7 @@ const sections = [
       "Data is used only for outlined purposes or with user consent, ensuring accountability and clarity.",
       "We provide clear contact points for privacy concerns and comply with legal requirements to mitigate data misuse risks.",
       "GreatHire is committed to being a leader in ethical hiring technologies, respecting every user's privacy, dignity, and security.",
-      "For inquiries, contact us at privacy@greathire.com.",
+      "For enquiries, contact us at support@greathire.in.",
     ],
   },
   {
@@ -248,8 +248,8 @@ const sections = [
     icon: MessageSquare,
     intro: "For privacy and policy questions, contact our support team.",
     points: [
-      "General support: hr@babde.tech",
-      "Privacy inquiries: privacy@greathire.com",
+      "General support: support@greathire.in",
+      "Privacy enquiries: support@greathire.in",
       "Website: https://greathire.in",
       "Response times vary based on request type and verification needs.",
     ],
@@ -264,7 +264,7 @@ const quickFacts = [
   },
   {
     title: "Support Email",
-    value: "privacy@greathire.com",
+    value: "support@greathire.in",
     icon: Mail,
   },
   {
@@ -477,10 +477,10 @@ function PrivacyPolicy() {
               <p className="mt-1 text-sm text-sky-700 dark:text-slate-200">
                 Email us at{" "}
                 <a
-                  href="mailto:privacy@greathire.com"
+                  href="mailto:support@greathire.in"
                   className="font-semibold underline underline-offset-2"
                 >
-                  privacy@greathire.com
+                  support@greathire.in
                 </a>{" "}
                 and include your account email plus request details.
               </p>

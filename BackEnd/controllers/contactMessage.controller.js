@@ -188,7 +188,7 @@ export const sendContactMessage = async (req, res) => {
               <tr>
                 <td style="padding: 8px 0; color: #666;">📧 <strong>Email:</strong></td>
                 <td style="padding: 8px 0;">
-                  <a href="mailto:hr@babde.tech" style="color: #667eea; text-decoration: none;">hr@babde.tech</a>
+                  <a href="mailto:support@greathire.in" style="color: #667eea; text-decoration: none;">support@greathire.in</a>
                 </td>
               </tr>
             </table>

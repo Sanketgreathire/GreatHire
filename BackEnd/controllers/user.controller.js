@@ -1564,7 +1564,7 @@ export const sendOtp = async (req, res) => {
       </p>
       
       <p style="font-size: 16px; color: #555;">
-       If you did not request this OTP, please contact our support team at <a href="mailto:hr@babde.tech?subject=">hr@babde.tech</a> immediately.
+       If you did not request this OTP, please contact our support team at <a href="mailto:support@greathire.in?subject=">support@greathire.in</a> immediately.
       </p>
       
       <br>

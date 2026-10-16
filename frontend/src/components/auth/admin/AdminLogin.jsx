@@ -73,7 +73,15 @@ const AdminLogin = () => {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="flex flex-col-reverse md:flex-row h-screen">
         {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 dark:from-gray-900 dark:to-gray-800 h-screen p-6">
+        <div className="relative w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 dark:from-gray-900 dark:to-gray-800 h-screen p-6">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white/90 px-3 py-2 text-sm font-semibold text-blue-700 shadow-sm transition-colors hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800/90 dark:text-blue-300 dark:hover:bg-gray-700"
+          >
+            <span aria-hidden="true">←</span>
+            Back to Home
+          </button>
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
             {/* Logo/Brand */}
             <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
