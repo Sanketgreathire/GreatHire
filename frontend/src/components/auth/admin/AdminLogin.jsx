@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import img from "../../../assets/webp/img10.webp";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "@/utils/api";   
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
 import Loading from "../../Loading";
-import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
+//import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const AdminLogin = () => {
@@ -43,16 +43,16 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true); // Set loading to true
     try {
-      const response = await axios.post(
-        `${ADMIN_API_END_POINT}/login`,
-        {
-          ...formData,
-        },
-        { withCredentials: true }
-      );
+      const response = await API.post("/v1/admin/login", {   // ✅ CHANGED
+        ...formData,
+      });
+
       if (response.data.success) {
         dispatch(setUser(response.data.user));
         toast.success(response.data.message);
+         if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
         setFormData({
           email: "",
           password: "",

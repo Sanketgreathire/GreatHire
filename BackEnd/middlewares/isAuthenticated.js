@@ -10,7 +10,10 @@ const isAuthenticated = async (req, res, next) => {
     const headerToken = authHeader?.replace(/^Bearer\s+/i, "")?.trim();
     const token = headerToken || req.cookies?.token;
 
+
+
     if (!token) {
+
       return res.status(401).json({
         message: "User not authenticated",
         success: false,
@@ -18,7 +21,11 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     const isBlacklisted = await BlacklistToken.findOne({ token });
+
+
+
     if (isBlacklisted) {
+
       return res.status(401).json({
         message: "Unauthorized",
         success: false,
@@ -30,11 +37,18 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     // Throws JsonWebTokenError / TokenExpiredError / NotBeforeError on failure
-    const decode = jwt.verify(token, process.env.SECRET_KEY);
+    let decode;
+    try {
+      decode = jwt.verify(token, process.env.SECRET_KEY);
 
-    // Extract user ID from the decoded token
+    } catch (jwtErr) {
+
+      throw jwtErr;
+    }
+
     const userId = decode.id || decode.userId;
     req.id = userId;
+
 
     let user;
 
@@ -56,6 +70,7 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     if (!user) {
+
       return res.status(401).json({
         message: "User not found",
         success: false,
@@ -63,8 +78,10 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     req.user = user;
+
     next();
   } catch (error) {
+
     if (
       ["JsonWebTokenError", "TokenExpiredError", "NotBeforeError"].includes(
         error.name
@@ -77,7 +94,6 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
 
-    // Log details server-side only; never send internal error text to the client
     console.error("Auth error:", error);
     return res.status(500).json({
       message: "Internal auth error",

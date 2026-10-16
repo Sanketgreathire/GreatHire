@@ -5,10 +5,22 @@ import { User } from "../models/user.model.js";
 import { Application } from "../models/application.model.js";
 import escapeRegex from "../utils/escapeRegex.js";
 
+// Shared cookie options — MUST match the other login flows for cross-subdomain auth
+const COLLEGE_COOKIE_OPTIONS = {
+  maxAge: 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  domain: ".greathire.in",
+};
+
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 export const registerCollege = async (req, res) => {
   try {
-    const { collegeName, fullName, email, phoneNumber, password, address, website, tpo, tpoEmail, tpoPhone, naac, established, type } = req.body;
+    const {
+      collegeName, fullName, email, phoneNumber, password,
+      address, website, tpo, tpoEmail, tpoPhone, naac, established, type,
+    } = req.body;
 
     if (!collegeName || !email || !password) {
       return res.status(400).json({ success: false, message: "College name, email and password are required." });
@@ -22,7 +34,9 @@ export const registerCollege = async (req, res) => {
       return res.status(400).json({ success: false, message: "This email is already registered." });
     }
 
-    const existingName = await College.findOne({ collegeName: { $regex: new RegExp(`^${escapeRegex(collegeName)}$`, "i") } });
+    const existingName = await College.findOne({
+      collegeName: { $regex: new RegExp(`^${escapeRegex(collegeName)}$`, "i") },
+    });
     if (existingName) {
       return res.status(400).json({ success: false, message: "A college with this name is already registered." });
     }
@@ -40,14 +54,23 @@ export const registerCollege = async (req, res) => {
       type,
     });
 
-    const token = jwt.sign({ collegeId: college._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+    const token = jwt.sign(
+      { userId: college._id, collegeId: college._id, userType: "college" },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
 
     const collegeData = await College.findById(college._id).select("-password");
 
     return res
       .status(200)
-      .cookie("college_token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "strict" })
-      .json({ success: true, message: "College registered successfully.", college: collegeData });
+      .cookie("token", token, COLLEGE_COOKIE_OPTIONS)
+      .json({
+        success: true,
+        message: "College registered successfully.",
+        college: collegeData,
+        token,
+      });
   } catch (error) {
     console.error("registerCollege error:", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -73,14 +96,23 @@ export const loginCollege = async (req, res) => {
       return res.status(200).json({ success: false, message: "Incorrect email or password." });
     }
 
-    const token = jwt.sign({ collegeId: college._id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+    const token = jwt.sign(
+      { userId: college._id, collegeId: college._id, userType: "college" },
+      process.env.SECRET_KEY,
+      { expiresIn: "1d" }
+    );
 
     const collegeData = await College.findById(college._id).select("-password");
 
     return res
       .status(200)
-      .cookie("college_token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "strict" })
-      .json({ success: true, message: `Welcome ${college.collegeName}`, college: collegeData });
+      .cookie("token", token, COLLEGE_COOKIE_OPTIONS)
+      .json({
+        success: true,
+        message: `Welcome ${college.collegeName}`,
+        college: collegeData,
+        token,
+      });
   } catch (error) {
     console.error("loginCollege error:", error);
     return res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -91,14 +123,18 @@ export const loginCollege = async (req, res) => {
 export const logoutCollege = async (req, res) => {
   return res
     .status(200)
-    .cookie("college_token", "", { maxAge: 0, httpOnly: true, sameSite: "strict" })
+    .clearCookie("token", {
+      domain: ".greathire.in",
+      path: "/",
+    })
     .json({ success: true, message: "Logged out successfully." });
 };
 
 // ── GET ME ────────────────────────────────────────────────────────────────────
 export const getCollegeMe = async (req, res) => {
   try {
-    const college = await College.findById(req.collegeId).select("-password");
+    const collegeId = req.collegeId || req.id;
+    const college = await College.findById(collegeId).select("-password");
     if (!college) return res.status(404).json({ success: false, message: "College not found." });
     return res.status(200).json({ success: true, college });
   } catch (error) {
@@ -117,19 +153,21 @@ export const debugCollegeStudents = async (req, res) => {
       ],
     }).select("fullname emailId collegeName rollNo stream _id");
 
-    const result = await Promise.all(students.map(async (s) => {
-      const email = s.emailId?.email || "";
-      const byId = await Application.countDocuments({ applicant: s._id });
-      const byEmail = email ? await Application.countDocuments({ applicantEmail: email }) : 0;
-      return {
-        name: s.fullname,
-        userId: s._id,
-        collegeName: s.collegeName,
-        email,
-        appsByObjectId: byId,
-        appsByEmail: byEmail,
-      };
-    }));
+    const result = await Promise.all(
+      students.map(async (s) => {
+        const email = s.emailId?.email || "";
+        const byId = await Application.countDocuments({ applicant: s._id });
+        const byEmail = email ? await Application.countDocuments({ applicantEmail: email }) : 0;
+        return {
+          name: s.fullname,
+          userId: s._id,
+          collegeName: s.collegeName,
+          email,
+          appsByObjectId: byId,
+          appsByEmail: byEmail,
+        };
+      })
+    );
 
     return res.status(200).json({ searchedFor: decodedName, students: result });
   } catch (error) {
@@ -139,13 +177,10 @@ export const debugCollegeStudents = async (req, res) => {
 
 // ── HELPER: fetch applications for a student, with email fallback ─────────────
 async function fetchApplicationsForStudent(studentId, studentEmail) {
-  // Primary: match by applicant ObjectId (correct path)
   let applications = await Application.find({ applicant: studentId })
     .populate("job", "jobDetails")
     .lean();
 
-  // Fallback (Cause 2): if 0 results, the application may have been saved under
-  // a different account but same email — match by applicantEmail
   if (applications.length === 0 && studentEmail) {
     applications = await Application.find({ applicantEmail: studentEmail })
       .populate("job", "jobDetails")
@@ -165,8 +200,6 @@ export const getStudentsByCollege = async (req, res) => {
 
     const decodedName = decodeURIComponent(collegeName).trim();
 
-    // Cause 1 & 3: search by collegeName with case-insensitive regex
-    // Also handles students whose collegeName was set with different casing/spacing
     const students = await User.find({
       $or: [
         { collegeName: { $regex: new RegExp(escapeRegex(decodedName), "i") } },
@@ -179,11 +212,7 @@ export const getStudentsByCollege = async (req, res) => {
     const studentsWithApps = await Promise.all(
       students.map(async (s) => {
         const studentEmail = s.emailId?.email || "";
-
-        // Cause 2 & 4: use helper that falls back to email match + fixed populate
         const applications = await fetchApplicationsForStudent(s._id, studentEmail);
-
-        console.log(`[College] Student ${s.fullname} (${s._id}) → ${applications.length} applications`);
 
         const mappedApps = applications.map((app) => ({
           id: app._id,

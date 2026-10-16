@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import  { useState, useEffect, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -116,6 +116,13 @@ const RecruiterLogin = () => {
       if (response?.data?.success) {
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
+
+        // ✅ SAVE TOKEN FOR HEADER-BASED AUTH
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        } else {
+          console.warn("⚠️ No token in login response — check backend");
+        }
 
         if (rememberMe) {
           localStorage.setItem("rememberedRecruiterEmail", formData.email);

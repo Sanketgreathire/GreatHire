@@ -181,6 +181,7 @@ export const register = async (req, res) => {
         message: "Account created successfully.",
         success: true,
         user: userWithoutPassword,
+        token,
       });
   } catch (error) {
     console.error("Error during registration:", error);
@@ -277,6 +278,7 @@ const cleanEmail = normalizeAccountEmail(email);
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Login error:", error);
@@ -375,6 +377,7 @@ const cleanEmail = normalizeAccountEmail(email);
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Job seeker login error:", error);
@@ -474,6 +477,7 @@ const cleanEmail = normalizeAccountEmail(email);
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Recruiter login error:", error);
@@ -558,6 +562,7 @@ export const googleLogin = async (req, res) => {
           message: `Welcome back ${user.fullname}`,
           user,
           success: true,
+          token,
         });
     }
 
@@ -608,6 +613,7 @@ export const googleLogin = async (req, res) => {
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
+        token,
       });
   } catch (err) {
     console.error("Error during Google Login:", err.message);
@@ -625,7 +631,8 @@ export const logout = async (req, res) => {
     const authHeader = req.headers?.authorization;
     const token =
       req.cookies?.token || authHeader?.replace(/^Bearer\s+/i, "")?.trim();
-
+    
+     
     if (token) {
       try {
         // Decode the token to get user ID

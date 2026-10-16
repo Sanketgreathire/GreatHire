@@ -2,22 +2,14 @@ import API from "../utils/api";
 
 // Fetch all notifications
 export const fetchNotifications = async () => {
-  try {
-    const res = await API.get("/v1/notifications");
-    return res.data.notifications || [];
-  } catch (error) {
-    throw error;
-  }
+  const res = await API.get("/v1/notifications");
+  return res.data.notifications || [];
 };
 
 // Get unread notification count
 export const getUnreadCount = async () => {
-  try {
-    const res = await API.get("/v1/notifications/unread-count");
-    return res.data.count || 0;
-  } catch (error) {
-    throw error;
-  }
+  const res = await API.get("/v1/notifications/unread-count");
+  return res.data.count || 0;
 };
 
 // Mark one as read

@@ -126,11 +126,13 @@ export const register = async (req, res) => {
     });
 
     // cookies strict used...
-    return setAuthTokenCookie(res.status(200), token, "lax").json({
-        message: "Account created successfully.",
-        success: true,
-        user: userWithoutPassword,
-      });
+    return setAuthTokenCookie(res.status(200), token).json({
+      message: "Account created successfully.",
+      success: true,
+      user: userWithoutPassword,
+      token,
+    });
+
   } catch (error) {
     console.error("[REGISTER] Error during registration:", error);
     return res.status(500).json({
@@ -187,11 +189,12 @@ export const googleLogin = async (req, res) => {
       });
 
       // cookies strict used...
-      return setAuthTokenCookie(res.status(200), token, "lax").json({
-          message: `Welcome back ${user.fullname}`,
-          user,
-          success: true,
-        });
+      return setAuthTokenCookie(res.status(200), token).json({
+      message: `Welcome back ${user.fullname}`,
+      user,
+      success: true,
+      token,
+    });
     }
 
     // If user doesn't exist, create a new one
@@ -235,11 +238,12 @@ export const googleLogin = async (req, res) => {
       expiresIn: "1d",
     });
     // cookies strict used...
-    return setAuthTokenCookie(res.status(200), token, "lax").json({
-        message: `Welcome ${user.fullname}`,
-        user,
-        success: true,
-      });
+    return setAuthTokenCookie(res.status(200), token).json({
+      message: `Welcome ${user.fullname}`,
+      user,
+      success: true,
+      token,
+    });
   } catch (err) {
     console.error("Error during Google Login:", err.message);
     return res.status(500).json({
@@ -302,19 +306,19 @@ export const getRecruiterById = async (req, res) => {
 export const getProfile = async (req, res) => {
   try {
     const recruiterId = req.id;
-    
+
     if (!recruiterId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "User not authenticated" 
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated"
       });
     }
 
     const recruiter = await Recruiter.findById(recruiterId).select("-password").lean();
     if (!recruiter) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Recruiter profile not found" 
+      return res.status(404).json({
+        success: false,
+        message: "Recruiter profile not found"
       });
     }
 
@@ -325,27 +329,27 @@ export const getProfile = async (req, res) => {
 
     if (company) recruiter.companyName = company.companyName;
 
-    res.status(200).json({ 
-      success: true, 
-      message: "Profile fetched successfully", 
-      recruiter 
+    res.status(200).json({
+      success: true,
+      message: "Profile fetched successfully",
+      recruiter
     });
   } catch (error) {
     console.error("Get profile error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Server error", 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message
     });
   }
 };
 
 // Plan-based user limits
 const USER_LIMITS = {
-  FREE:       1,
-  STANDARD:   1,
-  PREMIUM:    3,
-  PRO:        5,
+  FREE: 1,
+  STANDARD: 1,
+  PREMIUM: 3,
+  PRO: 5,
   ENTERPRISE: Infinity,
 };
 
@@ -424,7 +428,7 @@ export const addRecruiterToCompany = async (req, res) => {
       });
     }
 
-  // Hash the password
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate unique referral code
@@ -445,7 +449,7 @@ export const addRecruiterToCompany = async (req, res) => {
       position,
       isVerify: 1,
       isCompanyCreated: true,
-      isActive: true,   
+      isActive: true,
       referralCode,
     });
     // Update company with recruiter's ID
@@ -618,12 +622,12 @@ export const addRecruiterToCompany = async (req, res) => {
 // update profile of recruiter
 export const updateProfile = async (req, res) => {
   try {
-   const {
-  fullname,
-  phoneNumber,
-  position,
-  removeProfilePhoto,
-} = req.body;
+    const {
+      fullname,
+      phoneNumber,
+      position,
+      removeProfilePhoto,
+    } = req.body;
     const userId = req.id;
 
     if (!userId) {
@@ -682,29 +686,29 @@ export const updateProfile = async (req, res) => {
     // }
 
     // Profile photo
-if (removeProfilePhoto === "true" || removeProfilePhoto === true) {
-  if (!user.profile) {
-    user.profile = {};
-  }
+    if (removeProfilePhoto === "true" || removeProfilePhoto === true) {
+      if (!user.profile) {
+        user.profile = {};
+      }
 
-  user.profile.profilePhoto = "";
-} else {
-  const profilePhoto = req.files?.profilePhoto;
+      user.profile.profilePhoto = "";
+    } else {
+      const profilePhoto = req.files?.profilePhoto;
 
-  if (profilePhoto && profilePhoto.length > 0) {
-    const fileUri = getDataUri(profilePhoto[0]);
+      if (profilePhoto && profilePhoto.length > 0) {
+        const fileUri = getDataUri(profilePhoto[0]);
 
-    const cloudResponse = await cloudinary.uploader.upload(
-      fileUri.content
-    );
+        const cloudResponse = await cloudinary.uploader.upload(
+          fileUri.content
+        );
 
-    if (!user.profile) {
-      user.profile = {};
+        if (!user.profile) {
+          user.profile = {};
+        }
+
+        user.profile.profilePhoto = cloudResponse.secure_url;
+      }
     }
-
-    user.profile.profilePhoto = cloudResponse.secure_url;
-  }
-}
 
     // Fullname
     if (fullname && user.fullname !== fullname.trim()) {

@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import  { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
-import axios from "axios";
+//import axios from "axios";
+import API from "@/utils/api"; 
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+//import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -103,7 +104,7 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.post(`${USER_API_END_POINT}/send-otp`, { email: formData.email });
+      const res = await API.post("/v1/user/send-otp", { email: formData.email });
       if (res.data.success) {
         toast.success("OTP sent to email");
         setOtpSent(true);
@@ -129,12 +130,19 @@ const Login = () => {
     setLoading(true);
     try {
       const response = showOtpInput
-        ? await axios.post(`${USER_API_END_POINT}/verify-otp`, { email: formData.email, otp }, { withCredentials: true })
-        : await axios.post(`${USER_API_END_POINT}/login`, formData, { withCredentials: true });
+        ? await API.post("/v1/user/verify-otp", { email: formData.email, otp })
+        : await API.post("/v1/user/login", formData);
+
 
       if (response?.data?.success) {
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
+
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        } else {
+          console.warn("⚠️ No token in login response — check backend");
+        }
 
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", formData.email);

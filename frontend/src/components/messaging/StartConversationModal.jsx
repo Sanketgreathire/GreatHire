@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { X, Search, User, Briefcase } from 'lucide-react';
 import { useMessages } from '../../context/MessageContext';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+//import axios from 'axios';
+import API from "@/utils/api";
 
+/* eslint-disable react/prop-types */
 const StartConversationModal = ({ isOpen, onClose }) => {
   const { startConversation } = useMessages();
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,9 +37,7 @@ const StartConversationModal = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       // Fetch users based on current user's role
-      const response = await axios.get('/api/v1/user/all-users', {
-        withCredentials: true,
-      });
+      const response = await API.get('/v1/user/all-users') 
       
       // Filter users based on role compatibility
       let filteredUsers = response.data.users || [];
