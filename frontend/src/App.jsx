@@ -348,6 +348,8 @@ function App() {
         })
         .catch((error) => {
           if (error?.response?.status === 401) {
+            localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
             startTransition(() => dispatch(setUser(null)));
           }
         });
