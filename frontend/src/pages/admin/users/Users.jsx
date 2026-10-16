@@ -93,7 +93,7 @@ const formatPhone = (phone) => {
 const Users = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 15;
+  const [itemsPerPage, setItemsPerPage] = useState("15");
   const [usersList, setUsersList] = useState([]);
   const [sourcedCount, setSourcedCount] = useState(0);
   const navigate = useNavigate();
@@ -233,10 +233,23 @@ const Users = () => {
     );
   });
 
-  const paginatedUsers = (filteredUsers || []).slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+  const effectiveItemsPerPage =
+    itemsPerPage === "all"
+      ? Math.max(filteredUsers.length, 1)
+      : Number(itemsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / effectiveItemsPerPage)
   );
+
+  const paginatedUsers = (filteredUsers || []).slice(
+    (page - 1) * effectiveItemsPerPage,
+    page * effectiveItemsPerPage
+  );
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const toggleSelectAll = () => {
     if (selectedUsers.length === paginatedUsers.length) {
@@ -325,10 +338,31 @@ const Users = () => {
                 <Input
                   placeholder="Search users..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
                   className="pl-10 rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
                 />
               </div>
+
+              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                Rows per page
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(e.target.value);
+                    setPage(1);
+                  }}
+                  className="rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-white"
+                >
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="all">All</option>
+                </select>
+              </label>
 
               {/* CSV + Delete buttons */}
               <div className="flex items-center gap-2 sm:justify-end">
@@ -478,11 +512,6 @@ const Users = () => {
             {/* Pagination   */}
             <div className="relative flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
               {(() => {
-                const totalPages = Math.max(
-                  1,
-                  Math.ceil(filteredUsers.length / itemsPerPage)
-                );
-
                 // Build page list with ellipsis
                 const pages = new Set();
                 pages.add(1);
@@ -506,19 +535,19 @@ const Users = () => {
                   <>
                     {/* LEFT — info text */}
                     <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap sm:absolute sm:left-0">
-                      Page{" "}
+                      Showing{" "}
                       <span className="font-medium text-gray-700 dark:text-gray-200">
-                        {page}
+                        {filteredUsers.length === 0
+                          ? 0
+                          : (page - 1) * effectiveItemsPerPage + 1}
+                        {"–"}
+                        {Math.min(page * effectiveItemsPerPage, filteredUsers.length)}
                       </span>
                       {" of "}
                       <span className="font-medium text-gray-700 dark:text-gray-200">
-                        {Math.max(1, Math.ceil(filteredUsers.length / itemsPerPage))}
-                      </span>
-                      {" · "}
-                      <span className="font-medium text-gray-700 dark:text-gray-200">
                         {filteredUsers.length}
                       </span>{" "}
-                      users total
+                      jobseekers
                     </p>
                     {/* RIGHT — buttons */}
                     <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -557,7 +586,7 @@ const Users = () => {
                       {/* Next */}
                       <Button
                         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages}
+                        disabled={page === totalPages || itemsPerPage === "all"}
                         className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         Next
