@@ -202,8 +202,8 @@ function RecruiterChatbotContent() {
     }
   }, [isOpen, messages, scrollToBottom]);
 
-  // STRICT ACCESS CHECK: Only render for Recruiter role (or admin during testing)
-  if (!user || (user.role !== "recruiter" && user.role !== "admin")) {
+  // Strictly limited to recruiters. Admin pages must not display this widget.
+  if (!user || user.role !== "recruiter") {
     return null;
   }
 
