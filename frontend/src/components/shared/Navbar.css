@@ -251,6 +251,10 @@ html:not(.dark) .gh-navbar__recruiter-login:hover {
   border-color: #93c5fd;
   background: #eff6ff;
 }
+.gh-navbar__recruiter-login--blue-border,
+html:not(.dark) .gh-navbar__recruiter-login--blue-border {
+  border-color: #3b82f6;
+}
 
 /* Keep the shared header aligned with the public landing header on every route. */
 .gh-shared-navbar__content {

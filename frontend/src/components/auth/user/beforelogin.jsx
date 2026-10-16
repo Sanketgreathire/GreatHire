@@ -856,7 +856,7 @@ const GreatHireLanding = () => {
 
                     <button
                       onClick={() => navigate("/recruiter-login")}
-                      className="gh-navbar__recruiter-login px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
+                       className="gh-navbar__recruiter-login gh-navbar__recruiter-login--blue-border px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
                     >
                       Recruiter Login
                     </button>
