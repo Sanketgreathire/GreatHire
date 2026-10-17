@@ -95,6 +95,8 @@ const Users = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState("15");
   const [usersList, setUsersList] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [usersError, setUsersError] = useState("");
   const [sourcedCount, setSourcedCount] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -111,14 +113,22 @@ const Users = () => {
 
   // Fetch user list
   const fetchUserList = async () => {
+    setIsLoadingUsers(true);
+    setUsersError("");
     try {
       const response = await axios.get(
         `${ADMIN_USER_DATA_API_END_POINT}/user-stats`,
         { withCredentials: true }
       );
-      if (response.data.success) setUsersList(response.data.data);
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to load job seekers");
+      }
+      setUsersList(response.data.data);
     } catch (err) {
-      console.log(`Error in fetching user list: ${err}`);
+      console.error("Error fetching job seekers:", err);
+      setUsersError("Unable to load job seekers. Please try again.");
+    } finally {
+      setIsLoadingUsers(false);
     }
   };
 
@@ -501,7 +511,18 @@ const Users = () => {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={8} className="text-center py-8 text-gray-500 dark:text-gray-400">
-                        No Job Seekers found
+                        {isLoadingUsers ? (
+                          "Loading job seekers..."
+                        ) : usersError ? (
+                          <div>
+                            <p>{usersError}</p>
+                            <Button variant="link" onClick={fetchUserList}>
+                              Try again
+                            </Button>
+                          </div>
+                        ) : (
+                          "No Job Seekers found"
+                        )}
                       </TableCell>
                     </TableRow>
                   )}
