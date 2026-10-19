@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import  { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +37,94 @@ import {
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import PropTypes from "prop-types";
+
+const CompactPagination = ({ page, setPage, totalPages }) => {
+  const pageNumbers = useMemo(() => {
+    const maxButtons = 5;
+    let start = Math.max(1, page - Math.floor(maxButtons / 2));
+    let end = start + maxButtons - 1;
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, end - maxButtons + 1);
+    }
+    const arr = [];
+    for (let i = start; i <= end; i++) arr.push(i);
+    return arr;
+  }, [page, totalPages]);
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={page === 1}
+        onClick={() => setPage((p) => Math.max(1, p - 1))}
+        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+      >
+        Previous
+      </Button>
+
+      {pageNumbers[0] > 1 && (
+        <>
+          <Button
+            size="sm"
+            onClick={() => setPage(1)}
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            1
+          </Button>
+          {pageNumbers[0] > 2 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
+        </>
+      )}
+
+      {pageNumbers.map((p) => (
+        <Button
+          key={p}
+          size="sm"
+          onClick={() => setPage(p)}
+          className={page === p
+            ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700"
+            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          }
+        >
+          {p}
+        </Button>
+      ))}
+
+      {pageNumbers[pageNumbers.length - 1] < totalPages && (
+        <>
+          {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+            <span className="px-2 text-gray-500 dark:text-gray-400">…</span>
+          )}
+          <Button
+            size="sm"
+            onClick={() => setPage(totalPages)}
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            {totalPages}
+          </Button>
+        </>
+      )}
+
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={page === totalPages || totalPages === 0}
+        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+      >
+        Next
+      </Button>
+    </div>
+  );
+};
+
+CompactPagination.propTypes = {
+  page: PropTypes.number.isRequired,
+  setPage: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+};
 
 const CompanyList = () => {
   const [search, setSearch] = useState("");
@@ -174,6 +262,8 @@ const CompanyList = () => {
       status === "All" || company.isActive === status;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredCompanies.length / itemsPerPage));
 
   const paginatedCompanies = filteredCompanies.slice(
     (activePage - 1) * itemsPerPage,
@@ -406,55 +496,12 @@ const CompanyList = () => {
 
 
           {/* Pagination */}
-          <div className="flex justify-center items-center mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
-
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {/* Previous */}
-              <Button
-                disabled={activePage === 1}
-                onClick={() => setActivePage((p) => Math.max(1, p - 1))}
-                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Previous
-              </Button>
-
-              {/* Page Numbers */}
-              {Array.from(
-                { length: Math.ceil(filteredCompanies.length / itemsPerPage) },
-                (_, i) => i + 1
-              ).map((pageNumber) => (
-                <Button
-                  key={pageNumber}
-                  onClick={() => setActivePage(pageNumber)}
-                  className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${activePage === pageNumber
-                    ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                    }`}
-                >
-                  {pageNumber}
-                </Button>
-              ))}
-
-              {/* Next */}
-              <Button
-                disabled={
-                  activePage >=
-                  Math.ceil(filteredCompanies.length / itemsPerPage)
-                }
-                onClick={() =>
-                  setActivePage((p) =>
-                    Math.min(
-                      Math.ceil(filteredCompanies.length / itemsPerPage),
-                      p + 1
-                    )
-                  )
-                }
-                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </Button>
-            </div>
-
+          <div className="flex justify-center items-center mt-4">
+            <CompactPagination
+              page={activePage}
+              setPage={setActivePage}
+              totalPages={totalPages}
+            />
           </div>
 
         </div>

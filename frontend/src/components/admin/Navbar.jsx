@@ -7,8 +7,8 @@ import React, {
   memo,
 } from "react";
 import {
-  Bell,
-  MessageSquareText,
+  // Bell,
+  // MessageSquareText,
   LogOut,
   User,
 } from "lucide-react";
@@ -18,10 +18,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { resetStats } from "@/redux/admin/statsSlice";
 import { logOut } from "@/redux/authSlice";
-import useNotification from "@/hooks/useNotification";
+// import useNotification from "@/hooks/useNotification";
 import {
   USER_API_END_POINT,
-  NOTIFICATION_API_END_POINT,
+  // NOTIFICATION_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -35,7 +35,7 @@ const Navbar = memo(({ linkName }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { notifications, setNotifications } = useNotification();
+  // const { notifications, setNotifications } = useNotification();
 
   useEffect(() => {
     if (linkName) {
@@ -43,24 +43,24 @@ const Navbar = memo(({ linkName }) => {
     }
   }, [linkName]);
 
-  const handleShowNotification = useCallback(async () => {
-    try {
-      const { data } = await axios.put(
-        `${NOTIFICATION_API_END_POINT}/mark-seen`,
-        null,
-        {
-          withCredentials: true,
-        }
-      );
+  // const handleShowNotification = useCallback(async () => {
+  //   try {
+  //     const { data } = await axios.put(
+  //       `${NOTIFICATION_API_END_POINT}/mark-seen`,
+  //       null,
+  //       {
+  //         withCredentials: true,
+  //       }
+  //     );
 
-      if (data.success) {
-        setNotifications(0);
-        navigate("/admin/messages");
-      }
-    } catch (err) {
-      console.error("Error in mark seen notifications:", err);
-    }
-  }, [navigate, setNotifications]);
+  //     if (data.success) {
+  //       setNotifications(0);
+  //       navigate("/admin/messages");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error in mark seen notifications:", err);
+  //   }
+  // }, [navigate, setNotifications]);
 
   const handleLogout = useCallback(async () => {
     try {
@@ -151,8 +151,8 @@ const Navbar = memo(({ linkName }) => {
         {/* Dark / Light Mode Toggle */}
         <ThemeToggle />
 
-        {/* Notification / Message */}
-        <button
+        {/* Notification / Message — temporarily hidden (not needed in navbar) */}
+        {/* <button
           className="
             relative
             p-2
@@ -192,7 +192,7 @@ const Navbar = memo(({ linkName }) => {
           ) : (
             <MessageSquareText className="w-5 h-5 text-blue-700 dark:text-blue-400" />
           )}
-        </button>
+        </button> */}
 
         {/* Profile */}
         <div
