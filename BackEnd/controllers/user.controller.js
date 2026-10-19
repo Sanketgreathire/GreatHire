@@ -31,6 +31,9 @@ import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.
 import { autoApply } from "../src/services/autoApply.service.js";
 import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
 import { clearAuthTokenCookie, setAuthTokenCookie } from "../utils/authCookie.js";
+//This import is used in whatsapp notification
+import { sendWhatsAppWelcome } from "../utils/whatsapp.js";
+
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -44,7 +47,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const { fullname, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const { fullname, phoneNumber, password, inputReferralCode, whatsappOptIn, collegeName, rollNo, cgpa, stream, hometown } = req.body;
     const email = normalizeAccountEmail(req.body.email);
 
     // Validate fullname
@@ -143,6 +146,7 @@ export const register = async (req, res) => {
       fullname,
       emailId: { email },
       phoneNumber: { number: phoneNumber },
+      whatsappOptIn: whatsappOptIn === true,
       password: hashedPassword,
       lastActiveAt: new Date(),
       referralCode,
@@ -165,6 +169,11 @@ export const register = async (req, res) => {
       console.error("Error sending welcome notification:", notificationError);
     }
 
+        // WhatsApp welcome message (only if the user opted in). Not awaited, so signup is never slowed down or broken.
+    if (user.whatsappOptIn) {
+      sendWhatsAppWelcome(user);
+    }
+    
     // Fetch user without password
     const userWithoutPassword = await User.findById(user._id).select(
       "-password"

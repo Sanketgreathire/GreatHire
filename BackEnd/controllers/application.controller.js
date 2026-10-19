@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";                     
 import axios from "axios";                  
 
-
+import { notifyApplicationWhatsApp, sendWhatsAppStatusUpdate } from "../utils/whatsapp.js";
 import { User } from "../models/user.model.js";
 import { calculateMatchScore } from "../services/resumeMatch.service.js";
 import { Job } from "../models/job.model.js";
@@ -12,7 +12,6 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
-import { notifyApplicationWhatsApp, sendWhatsAppStatusUpdate } from "../utils/whatsapp.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
 import { screenApplicationAfterCreate } from "./job.controller.js";
 import {
@@ -199,6 +198,8 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
 }
     // Push application into job (use $push to avoid re-validating required fields on old jobs)
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
+
+    notifyApplicationWhatsApp({ applicant: user, job });
 
     // ✅ Create notifications using the notification service
     await notificationService.notifyApplicationSubmitted({
@@ -510,15 +511,19 @@ if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
       recruiterId: req.id,
     });
 
-    // WhatsApp: status update to the jobseeker (only if opted in). Not awaited.
-    if (application.applicant?.whatsappOptIn) {
+
+
+    // WhatsApp: notify the jobseeker only when the status actually changes and they have opted in. Not awaited.
+    if (previousStatus !== status && application.applicant?.whatsappOptIn) {
       sendWhatsAppStatusUpdate({
         phone: application.applicant.phoneNumber?.number,
         name: application.applicant.fullname,
         jobTitle: application.job?.jobDetails?.title,
+        companyName: application.job?.jobDetails?.companyName,
         status,
       });
     }
+
 
     return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {

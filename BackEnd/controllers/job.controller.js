@@ -718,6 +718,8 @@ export const applyJob = async (req, res) => {
 
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
+    notifyApplicationWhatsApp({ applicant: user, job });
+
     // Send notifications
     try {
       console.log(

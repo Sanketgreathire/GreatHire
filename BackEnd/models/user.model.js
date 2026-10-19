@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    whatsappOptIn: {
+       type: Boolean,
+       default: false
+       },
+
     alternatePhone: {
       number: {
         type: String,

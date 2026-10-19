@@ -59,7 +59,7 @@ const Signup = () => {
 
   // Step 1 — Account
   const [formData, setFormData] = useState({
-    fullname: "", email: "", phoneNumber: "", password: "", inputReferralCode: "",
+    fullname: "", email: "", phoneNumber: "", password: "", inputReferralCode: "", whatsappOptIn: false,
   });
   const [errors, setErrors] = useState({});
   const [profileErrors, setProfileErrors] = useState({});
@@ -150,7 +150,7 @@ const Signup = () => {
     const validationErrors = validateSignupForm(formData) || {};
 
     // Strict full name check: letters and single spaces between words only
-    const nameRegex = /^[a-zA-z]+(?:\s[a-zA-z]+)*$/;
+    const nameRegex = /^[A-Za-z]+(?:[ '.-][A-Za-z]+)*\.?$/;
 
     if(formData.fullname && !nameRegex.test(formData.fullname.trim())){
       validationErrors.fullname = "Name is not valid. Please input valid name.";
@@ -193,8 +193,8 @@ const Signup = () => {
 
     if(!profileData.gender) newErrors.gender = "Please select a gender";
     if(!profileData.qualification) newErrors.qualification = "Please choose your qualification";
-    if(!profileData.qualification === "Other" || !profileData.qualification === "Others" && !profileData.otherQualification?.trim()){
-      newErrors.otherQualification = "Please specify your qualification";
+    if(profileData.qualification === "Others" && !profileData.otherQualification?.trim()){
+    newErrors.otherQualification = "Please specify your qualification";
     }
     if(!profileData.city?.trim()) newErrors.city = "City is required";
     if(!profileData.state?.trim()) newErrors.state = "State is required";
@@ -434,6 +434,16 @@ const Signup = () => {
                           placeholder="Enter referral code if you have one" className={inputClass} />
                       </div>
 
+                      <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+  <input
+    type="checkbox"
+    checked={formData.whatsappOptIn}
+    onChange={(e) => setFormData((prev) => ({ ...prev, whatsappOptIn: e.target.checked }))}
+    className="mt-0.5 w-4 h-4"
+  />
+  Send me job updates and notifications on WhatsApp
+</label>
+
                       <button type="submit" disabled={loading}
                         className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-lg text-sm transition-all duration-300 ${
                           loading ? "opacity-70 cursor-not-allowed" : "hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transform hover:-translate-y-0.5"
@@ -445,8 +455,7 @@ const Signup = () => {
 
                   {/* ── STEP 2: Profile ── */}
                   {step === 2 && (
-                    <form className="space-y-5" onSubmit={handleProfileSubmit}>
-
+                    <form className="space-y-5" onSubmit={handleStep2Next}>
                       {/* Personal Info */}
                       <div>
                         <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Personal Information</h3>
@@ -563,12 +572,7 @@ const Signup = () => {
                           type="file"
                           id="resumeInput"
                           accept=".pdf, .doc, .docx"
-                          onChange = { (e) => {
-                            const file = e.target.files[0];
-                            if(file){
-                              setResumeData({resume: file, resumeOriginalName: file.name});
-                            }
-                          }}
+                          onChange={handleFileChange}
                           className="hidden"
                         />
 
