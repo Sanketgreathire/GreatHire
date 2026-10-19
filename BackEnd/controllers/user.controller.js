@@ -271,12 +271,14 @@ const cleanEmail = normalizeAccountEmail(email);
       referralCode: user.referralCode || null,
       referralCount: user.referralCount || 0,
       isProfileBoosted: user.isProfileBoosted || false,
+      token,
     };
 
     // sending cookies from server to client with response
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
         token,
       });
@@ -371,11 +373,13 @@ const cleanEmail = normalizeAccountEmail(email);
       referralCode: user.referralCode || null,
       referralCount: user.referralCount || 0,
       isProfileBoosted: user.isProfileBoosted || false,
+      token,
     };
 
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
         token,
       });
@@ -471,11 +475,13 @@ const cleanEmail = normalizeAccountEmail(email);
       subscriptionStatus: user.subscriptionStatus || "INACTIVE",
       remainingJobPosts: user.remainingJobPosts || 0,
       referralCode: user.referralCode || null,
+      token,
     };
 
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
         token,
       });

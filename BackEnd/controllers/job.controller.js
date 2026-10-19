@@ -9,6 +9,7 @@ import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
 import notificationService from "../utils/notificationService.js";
+import { sendWhatsAppJobPosted, notifyApplicationWhatsApp } from "../utils/whatsapp.js";
 import Notification from "../models/notification.model.js";
 import axios from "axios";
 import { isTrialLive } from "../utils/trial.js";
@@ -170,8 +171,11 @@ check("companyId")
       } = req.body;
 
       const userId = req.id;
-const company = await Company.findById(companyId);
-      const recruiter = await Recruiter.findById(userId);
+      const company = await Company.findById(companyId);
+      let recruiter = await Recruiter.findById(userId);
+      if (!recruiter) {
+        recruiter = (await User.findById(userId)) || (await Admin.findById(userId));
+      }
 
       if (!company) {
         return res.status(404).json({ success: false, message: "Company not found. Please create a company first." });
@@ -436,6 +440,17 @@ if (jobIsActive) {
         await notificationService.notifyNewJobPosted({ recruiterId: userId, jobId: newJob._id, jobTitle: title, companyName });
       } catch (e) {
         console.error('❌ Job posting notification error:', e);
+      }
+
+      // WhatsApp: job submitted (only if the recruiter opted in). Not awaited.
+      if (recruiter?.whatsappOptIn) {
+        sendWhatsAppJobPosted({
+          phone: recruiter.phoneNumber?.number || recruiter.phoneNumber,
+          recruiterName: recruiter.fullname,
+          jobTitle: title,
+          companyName: companyName,
+          jobLocation: location,
+        });
       }
 
       // Notify matching candidates only for active jobs
@@ -735,6 +750,8 @@ export const applyJob = async (req, res) => {
       );
     }
 
+    // WhatsApp: "application sent" to the jobseeker + "new applicant" to the recruiter. Not awaited.
+    notifyApplicationWhatsApp({ applicant: user, job, applicationDate: newApplication?.createdAt || new Date() });
     await screenApplicationAfterCreate(newApplication, user, job);
 
     return res.status(201).json({

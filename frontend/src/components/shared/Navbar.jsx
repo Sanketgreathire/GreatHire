@@ -293,6 +293,8 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
       });
 
       if (response.data.success) {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         dispatch(logOut());
         if (user?.role === "recruiter") {
           dispatch(removeCompany());

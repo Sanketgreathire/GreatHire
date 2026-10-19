@@ -12,6 +12,7 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
 import { validationResult } from "express-validator";
 import notificationService from "../utils/notificationService.js";
+import { notifyApplicationWhatsApp, sendWhatsAppStatusUpdate } from "../utils/whatsapp.js";
 import { autoRejectOldApplications } from "../utils/autoRejectApplications.js";
 import { screenApplicationAfterCreate } from "./job.controller.js";
 import {
@@ -209,6 +210,8 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       applicationId: newApplication._id,
     });
 
+    // WhatsApp: "application sent" to the jobseeker + "new applicant" to the recruiter. Not awaited.
+    notifyApplicationWhatsApp({ applicant: user, job, applicationDate: newApplication?.createdAt || new Date() });
     await screenApplicationAfterCreate(newApplication, user, job);
 
     res.status(201).json({
@@ -507,7 +510,15 @@ if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
       recruiterId: req.id,
     });
 
-
+    // WhatsApp: status update to the jobseeker (only if opted in). Not awaited.
+    if (application.applicant?.whatsappOptIn) {
+      sendWhatsAppStatusUpdate({
+        phone: application.applicant.phoneNumber?.number,
+        name: application.applicant.fullname,
+        jobTitle: application.job?.jobDetails?.title,
+        status,
+      });
+    }
 
     return res.status(200).json({ message: "Status updated successfully.", success: true });
   } catch (error) {

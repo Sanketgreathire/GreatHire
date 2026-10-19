@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const recruiterSchema = new mongoose.Schema(
@@ -37,6 +36,11 @@ const recruiterSchema = new mongoose.Schema(
         type: Boolean,
       },
     },
+    whatsappOptIn: {
+      type: Boolean,
+      default: false,
+    },
+    
     password: {
       type: String,
     },

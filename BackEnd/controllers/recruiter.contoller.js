@@ -26,6 +26,7 @@ import { createUniqueReferralCode } from "../utils/referralCode.js";
 import { validateRecruiterPhone } from "../utils/recruiterValidatePhone.js";
 import { findModelByEmail, normalizeAccountEmail } from "../utils/accountEmail.js";
 import { clearAuthTokenCookie, setAuthTokenCookie } from "../utils/authCookie.js";
+import { sendWhatsAppRecruiterWelcome } from "../utils/whatsapp.js";
 
 // recruiter registration controller
 export const register = async (req, res) => {
@@ -36,7 +37,8 @@ export const register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { fullname, phoneNumber, password } = req.body;
+    //const { fullname, phoneNumber, password } = req.body;
+    const { fullname, phoneNumber, password, whatsappOptIn } = req.body;
     const email = normalizeAccountEmail(req.body.email);
     console.log("[REGISTER] Received:", { fullname, email, phoneNumber, password: "***" });
     // Fullname validation
@@ -94,6 +96,7 @@ export const register = async (req, res) => {
         number: phoneCheck.phone,
         isVerified: false,
       },
+      whatsappOptIn: whatsappOptIn === true || whatsappOptIn === "true",
       password: hashedPassword,
       plan: "FREE",
       subscriptionStatus: "INACTIVE",
@@ -101,6 +104,11 @@ export const register = async (req, res) => {
     });
 
     // ✅ Send welcome notification for new recruiter registration
+
+     if (newUser.whatsappOptIn) {
+      sendWhatsAppRecruiterWelcome(newUser);
+    }
+
     try {
       await notificationService.notifyWelcome({
         userId: newUser._id,
@@ -129,10 +137,9 @@ export const register = async (req, res) => {
     return setAuthTokenCookie(res.status(200), token).json({
       message: "Account created successfully.",
       success: true,
-      user: userWithoutPassword,
+      user: { ...userWithoutPassword.toObject(), token },
       token,
     });
-
   } catch (error) {
     console.error("[REGISTER] Error during registration:", error);
     return res.status(500).json({
@@ -1084,5 +1091,4 @@ export const hasCreatedCompany = async (req, res) => {
     });
   }
 };
-
 

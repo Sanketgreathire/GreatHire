@@ -136,6 +136,10 @@ const Login = () => {
 
       if (response?.data?.success) {
         toast.success(response.data.message);
+        const authToken = response.data.token || response.data.user?.token;
+        if (authToken) {
+          localStorage.setItem("token", authToken);
+        }
         dispatch(setUser(response.data.user));
 
         if (response.data.token) {

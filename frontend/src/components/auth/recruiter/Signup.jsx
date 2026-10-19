@@ -111,7 +111,8 @@ const RecruiterSignup = () => {
   const [loading, setLoading] = useState(false);
 
   // Step 1 — Account
-  const [accountData, setAccountData] = useState({ fullname: "", email: "", phoneNumber: "", password: "", confirmPassword: "", dialCode: "+91" });
+  //const [accountData, setAccountData] = useState({ fullname: "", email: "", phoneNumber: "", password: "", confirmPassword: "", dialCode: "+91" });
+  const [accountData, setAccountData] = useState({ fullname: "", email: "", phoneNumber: "", password: "", confirmPassword: "", dialCode: "+91", whatsappOptIn: true });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -175,6 +176,10 @@ const RecruiterSignup = () => {
       const res = await axios.post(`${RECRUITER_API_END_POINT}/register`, { ...accountData }, { withCredentials: true });
       if (res.data.success) {
         toast.success("Account created ✅");
+        const authToken = res.data.token || res.data.user?.token;
+        if (authToken) {
+          localStorage.setItem("token", authToken);
+        }
         dispatch(setUser(res.data.user));
         setRegisteredUser(res.data.user);
         setCompanyData((prev) => ({ ...prev, recruiterPosition: res.data.user?.position || "" }));
@@ -357,6 +362,18 @@ const RecruiterSignup = () => {
                         <p className="text-green-500 text-xs mt-1">✔ Passwords match</p>
                       )}
                     </div>
+                    
+                    <label className="flex items-center gap-2.5 text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none bg-green-50/60 dark:bg-green-950/20 px-3 py-2.5 rounded-lg border border-green-200/80 dark:border-green-800/40 hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={accountData.whatsappOptIn}
+                        onChange={(e) => setAccountData((prev) => ({ ...prev, whatsappOptIn: e.target.checked }))}
+                        className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                      />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Send me updates on WhatsApp (job postings & new applicants)
+                      </span>
+                    </label>
 
                     <button
                       type="submit" disabled={loading}
