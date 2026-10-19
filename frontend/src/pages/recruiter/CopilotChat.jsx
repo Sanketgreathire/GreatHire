@@ -853,6 +853,13 @@ const CopilotChat = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Mark page while mounted so global floating widgets (WhatsApp + chatbot
+  // launcher) can be lifted above the chat input/send button via CSS
+  useEffect(() => {
+    document.body.setAttribute("data-gh-page", "copilot");
+    return () => document.body.removeAttribute("data-gh-page");
+  }, []);
+
   const sendMessage = async (text) => {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
