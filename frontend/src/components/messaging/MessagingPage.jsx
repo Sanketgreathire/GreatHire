@@ -122,163 +122,180 @@ const MessagingContent = () => {
       )}
 
       <div className={`h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400 ${isRecruiter ? "lg:ml-52" : ""}`}>
-      {/* Sidebar */}
-      <div
-        className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${activeConversation ? "hidden md:flex" : "flex"
-          }`}
-      >
-        {/* Mobile Back Button */}
-        {activeConversation && (
-          <button
-            onClick={() => setActiveConversation(null)}
-            className="md:hidden absolute top-3 left-3 z-50 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-1 rounded-md text-xs font-semibold"
-          >
-            ← Back
-          </button>
-        )}
-
-        {/* GreatHire Logo */}
-        <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
+        {/* Sidebar */}
+        <div
+          className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${activeConversation ? "hidden md:flex" : "flex"
+            }`}
+        >
+          {/* Mobile Back Button */}
+          {activeConversation && (
             <button
-              type="button"
-              onClick={() => setIsNavigationOpen(true)}
-              aria-label="Open navigation menu"
-              aria-expanded={isNavigationOpen}
-              className={`p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isRecruiter ? "lg:hidden" : ""}`}
+              onClick={() => setActiveConversation(null)}
+              className="md:hidden absolute top-3 left-3 z-50 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-1 rounded-md text-xs font-semibold"
             >
-              <Menu size={24} />
+              ← Back
             </button>
-            <div
-              onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
-              className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
-            >
-              <img
-                src="/greathire-navbar-logo.png"
-                alt="GreatHire"
-                className="h-6 sm:h-7 w-auto object-contain shrink-0"
-              />
-              <span className="text-lg sm:text-2xl font-black text-gray-900 tracking-tight">
-                Great
-              </span>
-
-              <span className="text-lg sm:text-2xl font-black text-blue-600 tracking-tight">
-                Hire
-              </span>
-            </div>
-          </div>
-
-          <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
-            Messages
-          </span>
-        </div>
-
-        {/* Global Search Bar */}
-        <div className="p-3 border-b bg-white dark:bg-gray-800">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder="Search messages..."
-            className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
-          />
-
-          {searching && (
-            <p className="text-xs text-gray-400 mt-1">
-              Searching...
-            </p>
           )}
-        </div>
 
-        {/* Search Results */}
-        {query && results.length > 0 && (
-          <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 border-b">
-            <p className="p-2 text-xs text-gray-500 bg-gray-50 dark:bg-gray-700">
-              {results.length} result
-              {results.length !== 1 ? "s" : ""}
-            </p>
-
-            {results.map((r) => (
-              <div
-                key={r._id}
-                onClick={() => handleSelectResult(r)}
-                className="p-3 border-b cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700"
-              >
-                <p className="text-sm font-medium">
-                  {r.conversationWith?.fullname}
-                </p>
-
-                <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
-                  {r.content}
-                </p>
-
-                <p className="text-xs text-gray-400 mt-1">
-                  {new Date(r.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Conversation List */}
-        <div className="flex-1 overflow-y-auto">
-          <ConversationList
-            onSelectConversation={handleSelectConversation}
-          />
-        </div>
-      </div>
-
-      {/* Simple drawer for jobseekers — recruiters use DashboardNavigations above */}
-      {!isRecruiter && isNavigationOpen && (
-        <>
-          <button
-            type="button"
-            aria-label="Close navigation menu"
-            onClick={() => setIsNavigationOpen(false)}
-            className="fixed inset-0 z-[60] bg-black/50"
-          />
-          <aside
-            aria-label="App navigation"
-            className="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-white dark:bg-gray-800 shadow-xl"
-          >
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">Navigation</span>
+          {/* GreatHire Logo */}
+          <div className="p-4 border-b bg-white dark:bg-gray-800 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setIsNavigationOpen(false)}
-                aria-label="Close navigation menu"
-                className="rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => setIsNavigationOpen(true)}
+                aria-label="Open navigation menu"
+                aria-expanded={isNavigationOpen}
+                className={`p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${isRecruiter ? "lg:hidden" : ""}`}
               >
-                <X size={20} />
+                <Menu size={24} />
               </button>
-            </div>
-            <nav className="p-3">
-              {navigationLinks.map(({ label, to, icon: Icon }) => (
-                <button
-                  key={to}
-                  type="button"
-                  onClick={() => {
-                    setIsNavigationOpen(false);
-                    navigate(to);
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"
-                >
-                  <Icon size={20} className="text-blue-600 dark:text-blue-400" />
-                  <span>{label}</span>
-                </button>
-              ))}
-            </nav>
-          </aside>
-        </>
-      )}
+              <div
+                onClick={() => navigate(isRecruiter ? "/recruiter/dashboard/home" : "/jobs")}
+                className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
+              >
+                <img
+                  src="/greathire-navbar-logo.png"
+                  alt="GreatHire"
+                  className="h-6 sm:h-7 w-auto object-contain shrink-0"
+                />
+                <span className="text-lg sm:text-2xl font-black text-gray-900 tracking-tight">
+                  Great
+                </span>
 
-      {/* Main Chat Area */}
-      <div
-        className={`${!activeConversation ? "hidden md:flex" : "flex"
-          } flex-1 flex-col min-w-0 w-full bg-white dark:bg-gray-900 h-full relative overflow-hidden`}
-      >
-        <ChatInterface />
-      </div>
+                <span className="text-lg sm:text-2xl font-black text-blue-600 tracking-tight">
+                  Hire
+                </span>
+              </div>
+            </div>
+
+            <span className="text-xs font-semibold px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+              Messages
+            </span>
+          </div>
+
+          {/* Global Search Bar */}
+          <div className="p-3 border-b bg-white dark:bg-gray-800">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search messages..."
+              className="w-full px-3 py-2 border rounded-lg text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 placeholder-gray-500 dark:placeholder-gray-400"
+            />
+
+            {searching && (
+              <p className="text-xs text-gray-400 mt-1">
+                Searching...
+              </p>
+            )}
+          </div>
+
+          {/* Search Results */}
+          {query && results.length > 0 && (
+            <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 border-b">
+              <p className="p-2 text-xs text-gray-500 bg-gray-50 dark:bg-gray-700">
+                {results.length} result
+                {results.length !== 1 ? "s" : ""}
+              </p>
+
+              {results.map((r) => (
+                <div
+                  key={r._id}
+                  onClick={() => handleSelectResult(r)}
+                  className="p-3 border-b cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700"
+                >
+                  <p className="text-sm font-medium">
+                    {r.conversationWith?.fullname}
+                  </p>
+
+                  <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">
+                    {r.content}
+                  </p>
+
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Conversation List */}
+          <div className="flex-1 overflow-y-auto">
+            <ConversationList
+              onSelectConversation={handleSelectConversation}
+            />
+          </div>
+        </div>
+
+        {/* Simple drawer for jobseekers — recruiters use DashboardNavigations above */}
+         
+        {!isRecruiter && isNavigationOpen && (
+          <>
+            {/* Backdrop  */}
+            <div
+              className="fixed inset-0 z-[100] bg-black/50 transition-opacity"
+              onClick={() => setIsNavigationOpen(false)}
+            />
+
+            {/* Sliding Drawer */}
+            <aside className="fixed inset-y-0 left-0 z-[101] w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col h-[100dvh]">
+
+              
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-4 shrink-0 bg-white dark:bg-gray-900">
+                <div className="flex items-center ">
+                  <img
+                    src="/greathire-navbar-logo.png"
+                    alt="GreatHire"
+                    className="h-6 w-auto object-contain px-2 "
+                  />
+                  <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                    Great
+                  </span>
+                  <span className="text-2xl font-black text-blue-600 tracking-tight">
+                    Hire
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsNavigationOpen(false)}
+                  className="rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              {/* Links - Using block display instead of flex to prevent stretching */}
+              <div className="flex-1 overflow-y-auto p-3 space-y-1">
+                {navigationLinks.map(({ label, to, icon: Icon }) => (
+                  <button
+                    key={to}
+                    type="button"
+                    onClick={() => {
+                      setIsNavigationOpen(false);
+                      navigate(to);
+                    }}
+                    className="flex items-center w-full gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <Icon size={20} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                    <span className="font-medium">{label}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+          </>
+        )}
+
+        {/* Main Chat Area */}
+        <div
+          className={`${!activeConversation ? "hidden md:flex" : "flex"
+            } flex-1 flex-col min-w-0 w-full bg-white dark:bg-gray-900 h-full relative overflow-hidden`}
+        >
+          <ChatInterface />
+        </div>
       </div>
     </>
   );
