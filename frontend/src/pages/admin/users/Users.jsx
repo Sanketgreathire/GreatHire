@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,11 +29,11 @@ import {
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import CountUp from "react-countup";
-//import { useLocation } from "react-router-dom";
 
-// ✅ Safe Date Formatter
+// Safe Date Formatter
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
+
   if (!isNaN(dateString)) {
     return new Date(Number(dateString)).toLocaleDateString("en-US", {
       year: "numeric",
@@ -40,10 +41,13 @@ const formatDate = (dateString) => {
       day: "numeric",
     });
   }
+
   const parts = dateString.split("-");
+
   if (parts.length === 3 && parts[0].length <= 2) {
     const [day, month, year] = parts;
     const parsed = new Date(`${year}-${month}-${day}`);
+
     if (!isNaN(parsed)) {
       return parsed.toLocaleDateString("en-US", {
         year: "numeric",
@@ -52,7 +56,9 @@ const formatDate = (dateString) => {
       });
     }
   }
+
   const parsed = new Date(dateString);
+
   if (!isNaN(parsed)) {
     return parsed.toLocaleDateString("en-US", {
       year: "numeric",
@@ -60,35 +66,73 @@ const formatDate = (dateString) => {
       day: "numeric",
     });
   }
+
   return dateString;
 };
 
-
-// ✅ Safe Phone Formatter — only show valid 10-digit numbers
+// Safe Phone Formatter
 const formatPhone = (phone) => {
   if (!phone) return "N/A";
 
-  // Convert to string, strip non-digits
   const digits = String(phone).replace(/\D/g, "");
-
-  // Remove country code prefix (91 for India, 1 for US, etc.)
   let cleaned = digits;
+
   if (cleaned.length === 12 && cleaned.startsWith("91")) {
-    cleaned = cleaned.slice(2); // "919876543210" → "9876543210"
+    cleaned = cleaned.slice(2);
   } else if (cleaned.length === 11 && cleaned.startsWith("0")) {
-    cleaned = cleaned.slice(1); // "09876543210" → "9876543210"
+    cleaned = cleaned.slice(1);
   } else if (cleaned.length === 11 && cleaned.startsWith("1")) {
-    cleaned = cleaned.slice(1); // US format
+    cleaned = cleaned.slice(1);
   }
 
-  // Only accept exactly 10 digits
-  if (cleaned.length === 10) {
-    return cleaned;
-  }
-
-  // Invalid — return N/A
-  return "N/A";
+  return cleaned.length === 10 ? cleaned : "N/A";
 };
+
+// Loading Skeleton Row
+const SkeletonRow = () => (
+  <TableRow>
+    <TableCell>
+      <div className="h-4 w-4 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse shrink-0" />
+        <div className="space-y-2">
+          <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          <div className="h-3 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        </div>
+      </div>
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-5 w-24 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-5 w-10 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-28 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-16 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
+      <div className="flex justify-center gap-3">
+        <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </div>
+    </TableCell>
+  </TableRow>
+);
 
 const Users = () => {
   const [search, setSearch] = useState("");
@@ -98,15 +142,18 @@ const Users = () => {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [usersError, setUsersError] = useState("");
   const [sourcedCount, setSourcedCount] = useState(0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dloading, dsetLoading] = useState({});
   const { user } = useSelector((state) => state.auth);
+
   const jobStats = useSelector((state) => state.stats.jobStatsData);
   const applicationStats = useSelector(
     (state) => state.stats.applicationStatsData
   );
   const userStats = useSelector((state) => state.stats.userStatsData);
+
   const [userEmail, setUserEmail] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -115,15 +162,33 @@ const Users = () => {
   const fetchUserList = async () => {
     setIsLoadingUsers(true);
     setUsersError("");
+
     try {
       const response = await axios.get(
         `${ADMIN_USER_DATA_API_END_POINT}/user-stats`,
         { withCredentials: true }
       );
+
       if (!response.data.success) {
-        throw new Error(response.data.message || "Failed to load job seekers");
+        throw new Error(
+          response.data.message || "Failed to load job seekers"
+        );
       }
-      setUsersList(response.data.data);
+
+      const users = Array.isArray(response.data.data)
+        ? response.data.data
+        : Array.isArray(response.data.users)
+          ? response.data.users
+          : Array.isArray(response.data.jobSeekers)
+            ? response.data.jobSeekers
+            : Array.isArray(response.data)
+              ? response.data
+              : [];
+
+      console.log("Job Seekers API response:", response.data);
+      console.log("Job Seekers array:", users);
+
+      setUsersList(users);
     } catch (err) {
       console.error("Error fetching job seekers:", err);
       setUsersError("Unable to load job seekers. Please try again.");
@@ -132,20 +197,31 @@ const Users = () => {
     }
   };
 
-  //Bulk delete users
+  // Bulk delete users
   const handleBulkDelete = async () => {
     if (selectedUsers.length === 0) return;
 
-    if (!window.confirm(`Delete ${selectedUsers.length} selected user(s)?`)) return;
+    if (
+      !window.confirm(
+        `Delete ${selectedUsers.length} selected user(s)?`
+      )
+    ) {
+      return;
+    }
 
     try {
-      const response = await axios.delete(`${ADMIN_USER_DATA_API_END_POINT}/bulk-delete`, {
-        data: { userIds: selectedUsers },
-        withCredentials: true,
-      });
+      const response = await axios.delete(
+        `${ADMIN_USER_DATA_API_END_POINT}/bulk-delete`,
+        {
+          data: { userIds: selectedUsers },
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
-        setUsersList(prev => prev.filter(u => !selectedUsers.includes(u._id)));
+        setUsersList((prev) =>
+          prev.filter((u) => !selectedUsers.includes(u._id))
+        );
         setSelectedUsers([]);
         toast.success(response.data.message);
         dispatch(fetchUserStats());
@@ -160,13 +236,19 @@ const Users = () => {
   const handleDeleteAccount = async (email) => {
     try {
       dsetLoading((prev) => ({ ...prev, [email]: true }));
-      const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
-        data: { email },
-        withCredentials: true,
-      });
+
+      const response = await axios.delete(
+        `${USER_API_END_POINT}/delete`,
+        {
+          data: { email },
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
-        setUsersList((prev) => prev.filter((u) => u.email !== email));
+        setUsersList((prev) =>
+          prev.filter((u) => u.email !== email)
+        );
         dispatch(fetchUserStats());
         dispatch(fetchApplicationStats());
         toast.success(response.data.message);
@@ -186,13 +268,19 @@ const Users = () => {
 
   const onCancelDelete = () => setShowDeleteModal(false);
 
-  // const location = useLocation();
   useEffect(() => {
     if (user) {
       fetchUserList();
-      axios.get(`${import.meta.env.VITE_API_URL}/api/v1/admin/sourcing/stats`, { withCredentials: true })
-        .then(({ data }) => { if (data.success) setSourcedCount(data.stats.total); })
-        .catch(() => { });
+
+      axios
+        .get(
+          `${import.meta.env.VITE_API_URL}/api/v1/admin/sourcing/stats`,
+          { withCredentials: true }
+        )
+        .then(({ data }) => {
+          if (data.success) setSourcedCount(data.stats.total);
+        })
+        .catch(() => {});
     }
   }, [user]);
 
@@ -201,31 +289,56 @@ const Users = () => {
     {
       title: "Total Job Seekers",
       count: userStats?.totalUsers || 0,
-      icon: <FaRegUser size={36} className="text-blue-600 dark:text-blue-400" />,
+      icon: (
+        <FaRegUser
+          size={36}
+          className="text-blue-600 dark:text-blue-400"
+        />
+      ),
       color: "bg-blue-100 dark:bg-blue-900/30",
     },
     {
       title: "Total Jobs",
       count: jobStats?.totalJobs || 0,
-      icon: <Briefcase size={36} className="text-orange-600 dark:text-orange-400" />,
+      icon: (
+        <Briefcase
+          size={36}
+          className="text-orange-600 dark:text-orange-400"
+        />
+      ),
       color: "bg-orange-100 dark:bg-orange-900/30",
     },
     {
       title: "Active Jobs",
       count: jobStats?.totalActiveJobs || 0,
-      icon: <CheckCircle size={36} className="text-green-600 dark:text-green-400" />,
+      icon: (
+        <CheckCircle
+          size={36}
+          className="text-green-600 dark:text-green-400"
+        />
+      ),
       color: "bg-green-100 dark:bg-green-900/30",
     },
     {
       title: "Applications",
       count: applicationStats?.totalApplications || 0,
-      icon: <FileText size={36} className="text-purple-600 dark:text-purple-400" />,
+      icon: (
+        <FileText
+          size={36}
+          className="text-purple-600 dark:text-purple-400"
+        />
+      ),
       color: "bg-purple-100 dark:bg-purple-900/30",
     },
     {
       title: "AI Sourced",
       count: sourcedCount,
-      icon: <Bot size={36} className="text-indigo-600 dark:text-indigo-400" />,
+      icon: (
+        <Bot
+          size={36}
+          className="text-indigo-600 dark:text-indigo-400"
+        />
+      ),
       color: "bg-indigo-100 dark:bg-indigo-900/30",
     },
   ];
@@ -247,6 +360,7 @@ const Users = () => {
     itemsPerPage === "all"
       ? Math.max(filteredUsers.length, 1)
       : Number(itemsPerPage);
+
   const totalPages = Math.max(
     1,
     Math.ceil(filteredUsers.length / effectiveItemsPerPage)
@@ -271,7 +385,9 @@ const Users = () => {
 
   const toggleUserSelection = (id) => {
     setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id]
     );
   };
 
@@ -284,6 +400,7 @@ const Users = () => {
       "Applications",
       "Resume",
     ];
+
     const exportUsers =
       selectedUsers.length > 0
         ? usersList.filter((u) => selectedUsers.includes(u._id))
@@ -298,16 +415,22 @@ const Users = () => {
       u.resumeurl,
     ]);
 
-    let csvContent =
+    const csvContent =
       "data:text/csv;charset=utf-8," +
       [headers, ...rows]
-        .map((r) => r.map((f) => `"${String(f).replace(/"/g, '""')}"`).join(","))
+        .map((r) =>
+          r
+            .map((f) => `"${String(f).replace(/"/g, '""')}"`)
+            .join(",")
+        )
         .join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
+
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "users_data.csv");
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -326,12 +449,16 @@ const Users = () => {
               className="flex items-center justify-between p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl hover:shadow-md transition-all"
             >
               <div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{stat.title}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+                  {stat.title}
+                </p>
                 <p className="text-3xl font-semibold text-gray-900 dark:text-white mt-1">
                   <CountUp end={stat.count} duration={1.5} />
                 </p>
               </div>
-              <div className={`p-3 rounded-lg ${stat.color}`}>{stat.icon}</div>
+              <div className={`p-3 rounded-lg ${stat.color}`}>
+                {stat.icon}
+              </div>
             </Card>
           ))}
         </div>
@@ -339,12 +466,14 @@ const Users = () => {
         {/* User Table */}
         <div className="w-full overflow-x-auto px-6 mt-6 pb-24">
           <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl p-6 transition-colors">
-            {/* Search */}
             {/* Search + Actions Row */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
               {/* Search input */}
               <div className="relative w-full sm:w-1/2 md:w-1/3">
-                <Search className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" size={18} />
+                <Search
+                  className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
+                  size={18}
+                />
                 <Input
                   placeholder="Search users..."
                   value={search}
@@ -390,7 +519,9 @@ const Users = () => {
                   className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-full shadow-sm px-4 py-2 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Trash size={18} />
-                  Delete {selectedUsers.length > 0 && `(${selectedUsers.length})`}
+                  Delete{" "}
+                  {selectedUsers.length > 0 &&
+                    `(${selectedUsers.length})`}
                 </Button>
               </div>
             </div>
@@ -403,17 +534,39 @@ const Users = () => {
                     <TableHead className="w-[5%] text-center text-gray-700 dark:text-gray-300">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.length === paginatedUsers.length && paginatedUsers.length > 0}
+                        checked={
+                          selectedUsers.length === paginatedUsers.length &&
+                          paginatedUsers.length > 0
+                        }
                         onChange={toggleSelectAll}
                         className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer"
                       />
                     </TableHead>
-                    <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">Job Seeker</TableHead>
-                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Contact</TableHead>
-                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Join Date</TableHead>
-                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Applications</TableHead>
-                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Job Role</TableHead>
-                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">Experience</TableHead>
+
+                    <TableHead className="text-gray-700 dark:text-gray-300 font-semibold">
+                      Job Seeker
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Contact
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Join Date
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Applications
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Job Role
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Experience
+                    </TableHead>
+
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
                       Actions
                       {selectedUsers.length > 0 && (
@@ -424,8 +577,31 @@ const Users = () => {
                     </TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
-                  {paginatedUsers?.length > 0 ? (
+                  {/* Loading Skeleton */}
+                  {isLoadingUsers ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <SkeletonRow key={i} />
+                    ))
+                  ) : usersError ? (
+                    /* API Error */
+                    <TableRow>
+                      <TableCell
+                        colSpan={8}
+                        className="text-center py-8 text-gray-500 dark:text-gray-400"
+                      >
+                        <p>{usersError}</p>
+                        <Button
+                          variant="link"
+                          onClick={fetchUserList}
+                        >
+                          Try again
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ) : paginatedUsers?.length > 0 ? (
+                    /* Actual User Rows */
                     paginatedUsers.map((u) => (
                       <TableRow
                         key={u._id}
@@ -439,6 +615,7 @@ const Users = () => {
                             className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 cursor-pointer"
                           />
                         </TableCell>
+
                         <TableCell className="flex items-center gap-3 text-left">
                           <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold">
                             {u.fullname?.charAt(0)}
@@ -447,32 +624,38 @@ const Users = () => {
                             <p className="font-semibold text-gray-800 dark:text-gray-200">
                               {u.fullname}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{u.email}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {u.email}
+                            </p>
                           </div>
                         </TableCell>
+
                         <TableCell className="text-center text-gray-700 dark:text-gray-300">
                           {(() => {
                             const phone = formatPhone(u.phoneNumber);
                             if (phone === "N/A") return "N/A";
-                            // Format: +91 98765 43210
                             return `+91-${phone.slice(0, 5)} ${phone.slice(5)}`;
                           })()}
                         </TableCell>
+
                         <TableCell className="text-center">
                           <span className="inline-block px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium whitespace-nowrap">
                             {formatDate(u.joined)}
                           </span>
                         </TableCell>
+
                         <TableCell className="text-center">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${u.applicationCount > 0
-                              ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                              }`}
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              u.applicationCount > 0
+                                ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                            }`}
                           >
                             {u.applicationCount}
                           </span>
                         </TableCell>
+
                         <TableCell className="text-center">
                           <div
                             className="max-w-[160px] mx-auto text-sm leading-snug overflow-hidden text-ellipsis line-clamp-2 text-gray-700 dark:text-gray-300"
@@ -481,19 +664,25 @@ const Users = () => {
                             {u.jobRole || "N/A"}
                           </div>
                         </TableCell>
+
                         <TableCell className="text-center text-gray-700 dark:text-gray-300">
                           {u.duration || "N/A"}
                         </TableCell>
+
                         <TableCell className="flex gap-3 justify-center">
                           <button
-                            onClick={() => navigate(`/admin/user-details/${u._id}`)}
+                            onClick={() =>
+                              navigate(`/admin/user-details/${u._id}`)
+                            }
                             className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white transition-colors"
                           >
                             <Eye size={16} />
                           </button>
 
                           {dloading[u?.email] ? (
-                            <span className="text-gray-400 dark:text-gray-500 text-sm">Deleting...</span>
+                            <span className="text-gray-400 dark:text-gray-500 text-sm">
+                              Deleting...
+                            </span>
                           ) : (
                             <button
                               className="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white dark:hover:bg-red-600 dark:hover:text-white transition-colors"
@@ -509,20 +698,13 @@ const Users = () => {
                       </TableRow>
                     ))
                   ) : (
+                    /* No Users Found */
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8 text-gray-500 dark:text-gray-400">
-                        {isLoadingUsers ? (
-                          "Loading job seekers..."
-                        ) : usersError ? (
-                          <div>
-                            <p>{usersError}</p>
-                            <Button variant="link" onClick={fetchUserList}>
-                              Try again
-                            </Button>
-                          </div>
-                        ) : (
-                          "No Job Seekers found"
-                        )}
+                      <TableCell
+                        colSpan={8}
+                        className="text-center py-8 text-gray-500 dark:text-gray-400"
+                      >
+                        No Job Seekers found
                       </TableCell>
                     </TableRow>
                   )}
@@ -530,13 +712,14 @@ const Users = () => {
               </Table>
             </div>
 
-            {/* Pagination   */}
+            {/* Pagination */}
             <div className="relative flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
               {(() => {
-                // Build page list with ellipsis
                 const pages = new Set();
                 pages.add(1);
+
                 if (totalPages > 1) pages.add(totalPages);
+
                 for (
                   let i = Math.max(2, page - 1);
                   i <= Math.min(totalPages - 1, page + 1);
@@ -547,8 +730,14 @@ const Users = () => {
 
                 const sorted = [...pages].sort((a, b) => a - b);
                 const finalPages = [];
+
                 for (let i = 0; i < sorted.length; i++) {
-                  if (i > 0 && sorted[i] - sorted[i - 1] > 1) finalPages.push("...");
+                  if (
+                    i > 0 &&
+                    sorted[i] - sorted[i - 1] > 1
+                  ) {
+                    finalPages.push("...");
+                  }
                   finalPages.push(sorted[i]);
                 }
 
@@ -562,7 +751,10 @@ const Users = () => {
                           ? 0
                           : (page - 1) * effectiveItemsPerPage + 1}
                         {"–"}
-                        {Math.min(page * effectiveItemsPerPage, filteredUsers.length)}
+                        {Math.min(
+                          page * effectiveItemsPerPage,
+                          filteredUsers.length
+                        )}
                       </span>
                       {" of "}
                       <span className="font-medium text-gray-700 dark:text-gray-200">
@@ -570,11 +762,14 @@ const Users = () => {
                       </span>{" "}
                       jobseekers
                     </p>
+
                     {/* RIGHT — buttons */}
                     <div className="flex items-center gap-2 flex-wrap justify-center">
                       {/* Prev */}
                       <Button
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        onClick={() =>
+                          setPage((p) => Math.max(1, p - 1))
+                        }
                         disabled={page === 1}
                         className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
@@ -594,10 +789,11 @@ const Users = () => {
                           <Button
                             key={p}
                             onClick={() => setPage(p)}
-                            className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${page === p
-                              ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                              }`}
+                            className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${
+                              page === p
+                                ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+                                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                            }`}
                           >
                             {p}
                           </Button>
@@ -606,8 +802,12 @@ const Users = () => {
 
                       {/* Next */}
                       <Button
-                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages || itemsPerPage === "all"}
+                        onClick={() =>
+                          setPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={
+                          page === totalPages || itemsPerPage === "all"
+                        }
                         className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         Next
@@ -619,8 +819,6 @@ const Users = () => {
             </div>
           </div>
         </div>
-
-
 
         {/* Delete Confirmation */}
         {showDeleteModal && (

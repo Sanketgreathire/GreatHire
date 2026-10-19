@@ -39,6 +39,40 @@ import {
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import PropTypes from "prop-types";
 
+
+const SkeletonRow = () => (
+  <TableRow>
+    <TableCell>
+      <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="flex items-center gap-3">
+        <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-6 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </div>
+    </TableCell>
+  </TableRow>
+);
+
+
 const CompactPagination = ({ page, setPage, totalPages }) => {
   const pageNumbers = useMemo(() => {
     const maxButtons = 5;
@@ -132,6 +166,7 @@ const CompanyList = () => {
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
   const [companyList, setCompanyList] = useState([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
   const [, setDeletedCompanyList] = useState([]);
   const [activePage, setActivePage] = useState(1);
   //const [deletedPage, setDeletedPage] = useState(1);
@@ -163,17 +198,38 @@ const CompanyList = () => {
   }, []);
 
   // Fetch company data
-  const fetchCompanyList = async () => {
-    try {
-      const response = await axios.get(
-        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
-        { withCredentials: true }
-      );
-      if (response.data.success) setCompanyList(response.data.companies);
-    } catch (err) {
-      console.log(`error in recruiter fetching ${err}`);
+  // const fetchCompanyList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+  //       { withCredentials: true }
+  //     );
+  //     if (response.data.success) setCompanyList(response.data.companies);
+  //   } catch (err) {
+  //     console.log(`error in recruiter fetching ${err}`);
+  //   }
+  // };
+
+  
+const fetchCompanyList = async () => {
+  setIsLoadingCompanies(true);
+
+  try {
+    const response = await axios.get(
+      `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+      { withCredentials: true }
+    );
+
+    if (response.data.success) {
+      setCompanyList(response.data.companies);
     }
-  };
+  } catch (err) {
+    console.log(`error in company fetching ${err}`);
+  } finally {
+    setIsLoadingCompanies(false);
+  }
+};
+
 
   const fetchDeletedCompanyList = async () => {
     try {
@@ -404,7 +460,7 @@ const CompanyList = () => {
                 </TableRow>
               </TableHeader>
 
-              <TableBody>
+              {/* <TableBody>
                 {paginatedCompanies.length > 0 ? (
                   paginatedCompanies.map((company) => (
                     <TableRow
@@ -490,7 +546,109 @@ const CompanyList = () => {
                     </TableCell>
                   </TableRow>
                 )}
-              </TableBody>
+              </TableBody> */}
+
+              
+<TableBody>
+  {isLoadingCompanies ? (
+    Array.from({ length: 6 }).map((_, i) => (
+      <SkeletonRow key={i} />
+    ))
+  ) : paginatedCompanies.length > 0 ? (
+    paginatedCompanies.map((company) => (
+      <TableRow
+        key={company._id}
+        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
+      >
+        <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+          {company.companyName}
+        </TableCell>
+
+        <TableCell className="break-all text-gray-700 dark:text-gray-300">
+          {company.email?.trim() || "N/A"}
+        </TableCell>
+
+        <TableCell className="text-gray-700 dark:text-gray-300">
+          {company.phone?.toString().trim() || "N/A"}
+        </TableCell>
+
+        <TableCell className="break-all text-gray-700 dark:text-gray-300">
+          {company.adminEmail?.trim() || "N/A"}
+        </TableCell>
+
+        <TableCell>
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              company.isActive
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+            }`}
+          >
+            {company.isActive ? "Active" : "Deactive"}
+          </span>
+        </TableCell>
+
+        <TableCell>
+          <div className="flex items-center gap-3">
+            <Eye
+              className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
+              size={20}
+              onClick={() =>
+                navigate(
+                  `/admin/for-admin/company-details/${company._id}`
+                )
+              }
+            />
+
+            {loading[company._id] ? (
+              <span className="text-gray-400 dark:text-gray-500">
+                ...
+              </span>
+            ) : (
+              <Switch
+                checked={company.isActive}
+                onChange={() =>
+                  toggleActive(
+                    company.email,
+                    company.adminEmail,
+                    company._id,
+                    !company.isActive
+                  )
+                }
+                color="primary"
+              />
+            )}
+
+            {dloading[company._id] ? (
+              <span className="text-gray-400 dark:text-gray-500">
+                ...
+              </span>
+            ) : (
+              <Trash
+                className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition"
+                size={20}
+                onClick={() => {
+                  setCompanyId(company._id);
+                  setShowDeleteModal(true);
+                }}
+              />
+            )}
+          </div>
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell
+        colSpan={6}
+        className="text-center py-8 text-gray-500 dark:text-gray-400"
+      >
+        No companies found
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+ 
             </Table>
           </div>
 
