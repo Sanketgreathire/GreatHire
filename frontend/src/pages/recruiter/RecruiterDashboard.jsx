@@ -32,10 +32,14 @@ const RecruiterDashboard = () => {
     const fetchCompanyByUserId = async () => {
       setLoading(true);
       try {
+        const token = user?.token || localStorage.getItem("token");
         const response = await axios.post(
           `${COMPANY_API_END_POINT}/company-by-userid`,
           { userId },
-          { withCredentials: true }
+          {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
         );
         if (response?.data.success) {
           dispatch(addCompany(response?.data.company));

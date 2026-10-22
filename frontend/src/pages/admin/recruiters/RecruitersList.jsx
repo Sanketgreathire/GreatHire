@@ -381,7 +381,6 @@ const RecruitersList = () => {
         { withCredentials: true }
       );
       if (response.data.success) {
-        console.log("RECRUITERS API RESPONSE:", response.data.recruiters);
         setRecruiterList(response.data.recruiters || []);
       } else {
         toast.error(response.data.message || "Failed to fetch recruiters");
@@ -933,7 +932,7 @@ const RecruitersList = () => {
           )}
 
           {/* Table */}
-          <div className="rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
             <Table>
               <TableHeader className="bg-gray-50 dark:bg-gray-700/50">
                 <TableRow className="border-b border-gray-200 dark:border-gray-700">

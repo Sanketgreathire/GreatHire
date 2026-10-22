@@ -1,4 +1,4 @@
-import { useState,  } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Home, X, PenSquare, Briefcase, PlusSquare,
@@ -23,6 +23,14 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
   const isSidebarOpen = !!isOpen;
   const setSidebarOpen = (open) => onOpenChange?.(open);
   //const closeSidebar = () => onOpenChange?.(false);
+
+  // Lock body scroll while the mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
 
 
@@ -73,14 +81,14 @@ const DashboardNavigations = ({ isOpen, onOpenChange }) => {
       {/* Mobile backdrop overlay — only when sidebar open on mobile */}
       {isSidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-30 bg-black/50"
+          className="lg:hidden fixed inset-0 z-[55] bg-black/50"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
       )}
       {/* Sidebar — full-height product rail */}
       <div
-        className={`fixed top-0 left-0 z-30 lg:z-40 h-screen w-64 transform bg-white dark:bg-[#0b1730] text-slate-700 dark:text-slate-200
+        className={`fixed top-0 left-0 z-[60] lg:z-40 h-screen w-64 transform bg-white dark:bg-[#0b1730] text-slate-700 dark:text-slate-200
             shadow-[4px_0_24px_rgba(2,6,23,.12)] dark:shadow-[4px_0_24px_rgba(2,6,23,.35)] border-r border-gray-200 dark:border-white/10 transition-transform duration-300 ease-in-out overflow-y-auto
             ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
             lg:translate-x-0 lg:w-52  `}

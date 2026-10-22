@@ -4,7 +4,7 @@ import { fetchNotifications, markAsRead, markAllAsRead, getUnreadCount, deleteNo
 import { logOut } from '../redux/authSlice';
 
 const NotificationContext = createContext();
-
+/* eslint-disable react/prop-types */
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -53,7 +53,7 @@ export const NotificationProvider = ({ children }) => {
         socketInstance.disconnect();
       }
     };
-  }, [user?._id]);
+  }, [user?._id,]);
 
   // Fetch notifications from API with better error handling
 
@@ -117,7 +117,7 @@ const loadNotifications = useCallback(async () => {
       try {
         const audio = new Audio('/notification.mp3');
         audio.play().catch(e => console.log('Audio play failed:', e));
-      } catch (e) {
+      } catch {
         console.log('Audio not available');
       }
     });
@@ -143,7 +143,7 @@ const loadNotifications = useCallback(async () => {
     if (!user?._id || !user?.role) return;
     const t = setTimeout(loadNotifications, 300);
     return () => clearTimeout(t);
-  }, [user?._id, user?.role]);
+  }, [user?._id, user?.role, loadNotifications]);
 
   // Mark notification as read
   const handleMarkAsRead = useCallback(async (notificationId) => {

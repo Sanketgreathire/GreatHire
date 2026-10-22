@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars, no-undef */
 import { useState, useMemo, useEffect, useCallback } from "react";
-import axios from "axios";
+import API from "@/utils/api";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { COMPANY_API_END_POINT, SOURCING_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -14,14 +15,18 @@ import PillSelect from "@/components/shared/PillSelect";
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
   try { return new Set(JSON.parse(localStorage.getItem(UNLOCKED_CANDIDATES_KEY) || "[]")); }
-  catch { return new Set(); }
+  catch { 
+    // Return empty set on error
+    return new Set(); } 
 };
 const persistUnlockedCandidate = (id) => {
   try {
     const ids = getUnlockedCandidates();
     ids.add(id);
     localStorage.setItem(UNLOCKED_CANDIDATES_KEY, JSON.stringify([...ids]));
-  } catch {}
+  } catch {
+    console.error("Failed to persist unlocked candidate:", error);
+   }
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -135,9 +140,8 @@ const CandidateList = () => {
     if (!company?._id) return;
     setSavedSourcedLoading(true);
     try {
-      const { data } = await axios.get(`${SOURCING_API_END_POINT}/saved-sourced`, {
+      const { data } = await API.get(`/v1/sourcing/saved-sourced`, {
         params: { designation: designation || undefined },
-        withCredentials: true,
       });
       if (data.success) setSavedSourcedCandidates(data.candidates || []);
     } catch (err) {
@@ -167,15 +171,15 @@ const CandidateList = () => {
   const fetchCandidates = async () => {
 
     const hasFilter = Object.entries(filters).some(([key, value]) => {
-    if (key === "jobDescription") return false;
-    return String(value ?? "").trim() !== "";
-  });
+      if (key === "jobDescription") return false;
+      return String(value ?? "").trim() !== "";
+    });
 
-  if (!hasFilter) {
-    toast.error("Please select at least one filter.");
-    return;
-  }
-  
+    if (!hasFilter) {
+      toast.error("Please select at least one filter.");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -195,11 +199,7 @@ const CandidateList = () => {
         ...(filters.jobDescription && { jobDescription: filters.jobDescription }),
       };
 
-      const response = await axios.post(
-        `${COMPANY_API_END_POINT}/candidate-list`,
-        sanitizedFilters,
-        { withCredentials: true }
-      );
+      const response = await API.post(`/v1/company/candidate-list`, sanitizedFilters);
 
       if (response.data.success) {
         if (response.data.candidates.length === 0) setMessage("No Candidate found");
@@ -228,10 +228,9 @@ const CandidateList = () => {
     }
 
     try {
-      const res = await axios.post(
-        `${COMPANY_API_END_POINT}/deduct-candidate-credit`,
-        { companyId: company?._id },
-        { withCredentials: true }
+           const res = await API.post(
+        `/v1/company/deduct-candidate-credit`,
+        { companyId: company?._id }
       );
       if (res.data.success) {
         dispatch(decreaseCandidateCredits(1));
@@ -252,9 +251,9 @@ const CandidateList = () => {
   ), [candidates, currentPage]);
 
   const filterFields = useMemo(() => {
-    const minOptions = ["", ...Array.from({length: 31}, (_, i) => i.toString())];
+    const minOptions = ["", ...Array.from({ length: 31 }, (_, i) => i.toString())];
     const currentMin = filters.minExp ? Number(filters.minExp) : 0;
-    const maxOptions = ["", ...Array.from({length: 31 - currentMin}, (_, i) => (i + currentMin).toString())];
+    const maxOptions = ["", ...Array.from({ length: 31 - currentMin }, (_, i) => (i + currentMin).toString())];
 
     return [
       { label: "Job Title", name: "jobTitle", placeholder: "Frontend Developer" },
@@ -288,7 +287,7 @@ const CandidateList = () => {
         jobDescription: sourcingFilters.jobDescription || undefined,
       };
 
-      const { data } = await axios.post(`${SOURCING_API_END_POINT}/source-by-jd`, payload, { withCredentials: true });
+      const { data } = await API.post(`/v1/sourcing/source-by-jd`, payload);
       if (data.success) {
         setSourcingCandidates(data.candidates || []);
         setSourcingMode(data.mode || "github");
@@ -333,12 +332,11 @@ const CandidateList = () => {
         jobDescription: sourcingFilters.jobDescription || undefined,
       };
 
-      const { data } = await axios.post(`${SOURCING_API_END_POINT}/recruitkar-search`, payload, { withCredentials: true });
+      const { data } = await API.post(`/v1/sourcing/source-by-jd`, payload);
       if (data.success) {
-        const deductRes = await axios.post(
-          `${COMPANY_API_END_POINT}/deduct-ai-sourcing-credit`,
-          { companyId: company._id, amount: normalizedSearchCount },
-          { withCredentials: true }
+                const deductRes = await API.post(
+          `/v1/company/deduct-ai-sourcing-credit`,
+          { companyId: company._id, amount: normalizedSearchCount }
         );
         if (deductRes.data.success) {
           dispatch(decreaseAiSourcingCredits(normalizedSearchCount));
@@ -372,17 +370,15 @@ const CandidateList = () => {
 
     setSavedSourcedContactLoadingId(candidate._id);
     try {
-      const { data } = await axios.post(
-        `${SOURCING_API_END_POINT}/recruitkar-contact`,
-        { linkedin_url: candidate.linkedinUrl, profile: candidate },
-        { withCredentials: true }
+      const { data } = await API.post(
+        `/v1/sourcing/recruitkar-contact`,
+        { linkedin_url: candidate.linkedinUrl, profile: candidate }
       );
 
       if (data.success) {
-        const deductRes = await axios.post(
-          `${COMPANY_API_END_POINT}/deduct-ai-sourcing-credit`,
-          { companyId: company._id, amount: 3 },
-          { withCredentials: true }
+        const deductRes = await API.post(
+          `/v1/company/deduct-ai-sourcing-credit`,
+          { companyId: company._id, amount: 3 }
         );
 
         if (deductRes.data.success) {
@@ -548,9 +544,9 @@ const CandidateList = () => {
 
   // ---------- Shared sourcing filter inputs row ----------
   const renderSourcingInputsRow = () => {
-    const minOptions = ["", ...Array.from({length: 31}, (_, i) => i.toString())];
+    const minOptions = ["", ...Array.from({ length: 31 }, (_, i) => i.toString())];
     const currentMin = sourcingFilters.minExp ? Number(sourcingFilters.minExp) : 0;
-    const maxOptions = ["", ...Array.from({length: 31 - currentMin}, (_, i) => (i + currentMin).toString())];
+    const maxOptions = ["", ...Array.from({ length: 31 - currentMin }, (_, i) => (i + currentMin).toString())];
 
     return (
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-3">
@@ -569,7 +565,7 @@ const CandidateList = () => {
           placeholder="Min Experience (yrs)"
           options={minOptions.map((o) => ({ value: o, label: o === "" ? "Min Experience (yrs)" : o }))}
         />
-        
+
         <PillSelect
           value={sourcingFilters.maxExp}
           onChange={(val) => setSourcingFilters(prev => ({ ...prev, maxExp: val }))}
@@ -632,35 +628,32 @@ const CandidateList = () => {
           <div className="mt-6 flex flex-wrap gap-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-2">
             <button
               onClick={() => switchSection(SECTIONS.DATABASE)}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${
-                activeSection === SECTIONS.DATABASE
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.DATABASE
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
+                }`}
             >
               <Database size={16} /> Internal Candidate Database
             </button>
             <button
               onClick={() => switchSection(SECTIONS.FREE)}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${
-                activeSection === SECTIONS.FREE
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.FREE
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow"
                   : aiSourcingLocked
-                  ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
+                    ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
             >
               {aiSourcingLocked ? <Lock size={16} /> : <Github size={16} />} AI Sourcing (Unlimited)
             </button>
             <button
               onClick={() => switchSection(SECTIONS.PAID)}
-              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${
-                activeSection === SECTIONS.PAID
+              className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.PAID
                   ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow"
                   : aiSourcingLocked
-                  ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
+                    ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
             >
               {aiSourcingLocked ? <Lock size={16} /> : <Zap size={16} />} Advance AI Sourcing
             </button>
@@ -718,7 +711,7 @@ const CandidateList = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                  <label className="flex mb-1 text-sm font-medium text-gray-700 dark:text-gray-300  items-center gap-1.5">
                     <Brain size={13} className="text-blue-500" /> Job Description <span className="text-gray-400 font-normal">(optional — ranks results by match score)</span>
                   </label>
                   {hasAdvancedFilters ? (
@@ -809,7 +802,7 @@ const CandidateList = () => {
               {renderSourcingInputsRow()}
 
               <div className="mb-3">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block flex items-center gap-1.5">
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5  flex items-center gap-1.5">
                   <Brain size={13} className="text-emerald-500" /> Job Description <span className="text-gray-400">(optional — AI will source from GitHub &amp; rank by match)</span>
                 </label>
                 <textarea
@@ -855,7 +848,7 @@ const CandidateList = () => {
               {renderSourcingInputsRow()}
 
               <div className="mb-3">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block flex items-center gap-1.5">
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5  flex items-center gap-1.5">
                   <Brain size={13} className="text-purple-500" /> Job Description <span className="text-gray-400">(optional — AI will source &amp; rank by match)</span>
                 </label>
                 <textarea
@@ -920,20 +913,18 @@ const CandidateList = () => {
                       <div className="flex gap-2 mt-2 flex-wrap">
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 uppercase">Discovered</span>
                         {selectedSourcingCandidate.matchScore != null && (
-                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                            selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
-                            selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
-                          }`}>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
+                              selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+                            }`}>
                             {selectedSourcingCandidate.matchScore >= 70 ? "Strong" : selectedSourcingCandidate.matchScore >= 40 ? "Good" : "Fair"}
                           </span>
                         )}
                       </div>
                     </div>
                     {selectedSourcingCandidate.matchScore != null && (
-                      <div className={`h-14 w-14 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${
-                        selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
-                        selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
-                      }`}>{selectedSourcingCandidate.matchScore}</div>
+                      <div className={`h-14 w-14 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
+                          selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+                        }`}>{selectedSourcingCandidate.matchScore}</div>
                     )}
                   </div>
 

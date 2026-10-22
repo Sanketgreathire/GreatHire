@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import API from "@/utils/api"; 
 import { toast } from "react-hot-toast";
-import { COLLEGE_API_END_POINT } from "@/utils/ApiEndPoint";
+//import { COLLEGE_API_END_POINT } from "@/utils/ApiEndPoint";
 
 export default function CollegeLogin() {
   const navigate = useNavigate();
@@ -20,9 +20,12 @@ export default function CollegeLogin() {
     }
     setLoading(true);
     try {
-      const res = await axios.post(`${COLLEGE_API_END_POINT}/login`, formData, { withCredentials: true });
+      const res = await API.post("/v1/college/login", formData);
       if (res.data.success) {
         toast.success(res.data.message);
+         if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+        }
         sessionStorage.setItem("college", JSON.stringify(res.data.college));
         navigate("/college-details");
       } else {

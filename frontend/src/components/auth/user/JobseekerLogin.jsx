@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import  { useState, useEffect, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
-import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import API from "@/utils/api";
+//import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Briefcase } from "lucide-react";
 import "@/components/shared/Navbar.css";
 
@@ -87,7 +87,7 @@ const JobseekerLogin = () => {
     if (!formData.email) { toast.error("Please enter your email first"); return; }
     setLoading(true);
     try {
-      const res = await axios.post(`${USER_API_END_POINT}/send-otp`, { email: formData.email });
+      const res = await API.post("/v1/user/send-otp", { email: formData.email });
       if (res.data.success) {
         toast.success("OTP sent to email");
         setOtpSent(true);
@@ -113,13 +113,16 @@ const JobseekerLogin = () => {
     setLoading(true);
     try {
       const response = showOtpInput
-        ? await axios.post(`${USER_API_END_POINT}/verify-jobseeker-otp`, { email: formData.email, otp }, { withCredentials: true })
-        : await axios.post(`${USER_API_END_POINT}/jobseeker-login`, formData, { withCredentials: true });
+  ? await API.post("/v1/user/verify-jobseeker-otp", { email: formData.email, otp })
+  : await API.post("/v1/user/jobseeker-login", formData);
 
       if (response?.data?.success) {
-        toast.success(response.data.message);
-        dispatch(setUser(response.data.user));
+  toast.success(response.data.message);
+  dispatch(setUser(response.data.user));
 
+  if (response.data.token) {
+    localStorage.setItem("token", response.data.token);
+  }
         if (rememberMe) {
           localStorage.setItem("rememberedJobseekerEmail", formData.email);
           localStorage.setItem("rememberedJobseekerPassword", showOtpInput ? otp : formData.password);

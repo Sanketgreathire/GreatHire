@@ -12,8 +12,17 @@ import "./index.css";
 // Global axios interceptor for mixed auth strategy (cookies + localStorage)
 axios.interceptors.request.use((config) => {
   config.withCredentials = true;
-  const token =
+  let token =
     localStorage.getItem("token") || sessionStorage.getItem("token");
+  if (!token) {
+    try {
+      const state = store.getState();
+      token = state?.auth?.user?.token;
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+    } catch (e) {}
+  }
   if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }

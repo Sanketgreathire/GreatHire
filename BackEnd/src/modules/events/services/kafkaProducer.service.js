@@ -294,11 +294,19 @@ export class KafkaProducerService {
   }
 
   async createTopic(topic, options = {}) {
-    try {
-      if (!this.isConnected) return null;
+    if (!this.isConnected) return null;
 
-      const admin = this.kafka.admin();
+    const admin = this.kafka.admin();
+    let adminConnected = false;
+
+    try {
       await admin.connect();
+      adminConnected = true;
+
+      const existingTopics = await admin.listTopics();
+      if (existingTopics.includes(topic)) {
+        return null;
+      }
 
       const topicConfig = {
         topic,
@@ -314,21 +322,29 @@ export class KafkaProducerService {
       };
 
       const created = await admin.createTopics({ topics: [topicConfig] });
-      await admin.disconnect();
 
       if (created) {
         console.log(`Topic created: ${topic}`);
         return topicConfig;
       }
 
-      console.log(`Kafka topic already exists: ${topic}`);
       return null;
 
     } catch (error) {
-      if (error.type === 'TOPIC_ALREADY_EXISTS') {
+      const alreadyExists = error.type === 'TOPIC_ALREADY_EXISTS' ||
+        (Array.isArray(error.errors) && error.errors.length > 0 &&
+          error.errors.every((topicError) => topicError.type === 'TOPIC_ALREADY_EXISTS'));
+
+      if (alreadyExists) {
         return null;
       }
-      return null;
+
+      console.error(`Failed to create Kafka topic ${topic}:`, error);
+      throw error;
+    } finally {
+      if (adminConnected) {
+        await admin.disconnect();
+      }
     }
   }
 

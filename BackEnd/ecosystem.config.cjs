@@ -19,9 +19,9 @@ module.exports = {
 env: {
   NODE_ENV: "production",
 
-  // These will be read from .env on the VPS
-  RAZORPAY_KEY_ID: "rzp_live_S2t2qrM6F4UFD9",
-  RAZORPAY_KEY_SECRET: "22KLR0amLuLqee83wVtRS7jY"
+  // Secrets are supplied by the process environment or BackEnd/.env.
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
 },
 
       // Logs

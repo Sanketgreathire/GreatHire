@@ -276,6 +276,7 @@ export const login = async (req, res) => {
       message: `Welcome ${user.fullname}`,
       user: userWithoutPassword,
       success: true,
+      token,
     });
 
   } catch (error) {

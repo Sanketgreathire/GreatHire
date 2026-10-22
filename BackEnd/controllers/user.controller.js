@@ -31,6 +31,9 @@ import { autoApplyExistingJobsForUser } from "../src/services/autoApply.service.
 import { autoApply } from "../src/services/autoApply.service.js";
 import { sendForgotPasswordEmail } from "../services/forgotPassword.service.js";
 import { clearAuthTokenCookie, setAuthTokenCookie } from "../utils/authCookie.js";
+//This import is used in whatsapp notification
+import { sendWhatsAppWelcome } from "../utils/whatsapp.js";
+
 
 // this controller help in user registration
 export const register = async (req, res) => {
@@ -44,7 +47,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const { fullname, phoneNumber, password, inputReferralCode, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const { fullname, phoneNumber, password, inputReferralCode, whatsappOptIn, collegeName, rollNo, cgpa, stream, hometown } = req.body;
     const email = normalizeAccountEmail(req.body.email);
 
     // Validate fullname
@@ -143,6 +146,7 @@ export const register = async (req, res) => {
       fullname,
       emailId: { email },
       phoneNumber: { number: phoneNumber },
+      whatsappOptIn: whatsappOptIn === true,
       password: hashedPassword,
       lastActiveAt: new Date(),
       referralCode,
@@ -165,6 +169,11 @@ export const register = async (req, res) => {
       console.error("Error sending welcome notification:", notificationError);
     }
 
+        // WhatsApp welcome message (only if the user opted in). Not awaited, so signup is never slowed down or broken.
+    if (user.whatsappOptIn) {
+      sendWhatsAppWelcome(user);
+    }
+    
     // Fetch user without password
     const userWithoutPassword = await User.findById(user._id).select(
       "-password"
@@ -181,6 +190,7 @@ export const register = async (req, res) => {
         message: "Account created successfully.",
         success: true,
         user: userWithoutPassword,
+        token,
       });
   } catch (error) {
     console.error("Error during registration:", error);
@@ -270,13 +280,16 @@ const cleanEmail = normalizeAccountEmail(email);
       referralCode: user.referralCode || null,
       referralCount: user.referralCount || 0,
       isProfileBoosted: user.isProfileBoosted || false,
+      token,
     };
 
     // sending cookies from server to client with response
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Login error:", error);
@@ -369,12 +382,15 @@ const cleanEmail = normalizeAccountEmail(email);
       referralCode: user.referralCode || null,
       referralCount: user.referralCount || 0,
       isProfileBoosted: user.isProfileBoosted || false,
+      token,
     };
 
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Job seeker login error:", error);
@@ -468,12 +484,15 @@ const cleanEmail = normalizeAccountEmail(email);
       subscriptionStatus: user.subscriptionStatus || "INACTIVE",
       remainingJobPosts: user.remainingJobPosts || 0,
       referralCode: user.referralCode || null,
+      token,
     };
 
-    return setAuthTokenCookie(res.status(200), token).json({
+    return setAuthTokenCookie(res.status(200), token, "lax").json({
         message: `Welcome ${user.fullname}`,
         user,
+        token,
         success: true,
+        token,
       });
   } catch (error) {
     console.error("Recruiter login error:", error);
@@ -558,6 +577,7 @@ export const googleLogin = async (req, res) => {
           message: `Welcome back ${user.fullname}`,
           user,
           success: true,
+          token,
         });
     }
 
@@ -608,6 +628,7 @@ export const googleLogin = async (req, res) => {
         message: `Welcome ${user.fullname}`,
         user,
         success: true,
+        token,
       });
   } catch (err) {
     console.error("Error during Google Login:", err.message);
@@ -625,7 +646,8 @@ export const logout = async (req, res) => {
     const authHeader = req.headers?.authorization;
     const token =
       req.cookies?.token || authHeader?.replace(/^Bearer\s+/i, "")?.trim();
-
+    
+     
     if (token) {
       try {
         // Decode the token to get user ID

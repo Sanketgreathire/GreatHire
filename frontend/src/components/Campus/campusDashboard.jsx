@@ -294,11 +294,6 @@ Avatar.propTypes = {
   index: PropTypes.number,
 };
 
-Avatar.defaultProps = {
-  size: "md",
-  index: 0,
-};
-
 function StatCard({ label, value, sub, accent = "blue" }) {
   const accents = {
     blue: "from-blue-50 to-blue-100 border-blue-200 text-blue-700 dark:from-blue-950 dark:to-blue-900 dark:border-blue-800 dark:text-blue-300",
@@ -326,10 +321,6 @@ StatCard.propTypes = {
   accent: PropTypes.oneOf(["blue", "green", "yellow", "indigo", "purple", "pink"]),
 };
 
-StatCard.defaultProps = {
-  accent: "blue",
-};
-
 function Badge({ text, className = "" }) {
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${className}`}>{text}</span>
@@ -339,10 +330,6 @@ function Badge({ text, className = "" }) {
 Badge.propTypes = {
   text: PropTypes.string.isRequired,
   className: PropTypes.string,
-};
-
-Badge.defaultProps = {
-  className: "",
 };
 
 export default function App() {

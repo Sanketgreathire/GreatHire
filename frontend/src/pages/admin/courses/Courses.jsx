@@ -28,6 +28,76 @@ const STATUS_COLORS = {
   closed:    "bg-gray-100 text-gray-600",
 };
 
+
+const SkeletonRow = ({ activeTab }) => (
+  <TableRow className="border-b border-gray-200 dark:border-gray-700">
+    {/* # */}
+    <TableCell>
+      <div className="h-4 w-5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Name */}
+    <TableCell>
+      <div className="h-4 w-28 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Email */}
+    <TableCell>
+      <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Phone */}
+    <TableCell>
+      <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Course */}
+    <TableCell>
+      <div className="h-6 w-24 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Mode */}
+    <TableCell>
+      <div className="h-4 w-16 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Batch — demo only */}
+    {activeTab === "demo" && (
+      <TableCell>
+        <div className="h-4 w-20 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </TableCell>
+    )}
+
+    {/* Fee and Payment ID — enrollment only */}
+    {activeTab === "enrollment" && (
+      <>
+        <TableCell>
+          <div className="h-4 w-16 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        </TableCell>
+        <TableCell>
+          <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        </TableCell>
+      </>
+    )}
+
+    {/* Date */}
+    <TableCell>
+      <div className="h-4 w-20 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Status */}
+    <TableCell>
+      <div className="h-6 w-20 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    {/* Action */}
+    <TableCell>
+      <div className="h-5 w-5 mx-auto rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+  </TableRow>
+);
+
+
 const ITEMS_PER_PAGE = 15;
 
 const Courses = () => {
@@ -204,7 +274,7 @@ const Courses = () => {
                   </TableRow>
                 </TableHeader>
 
-                <TableBody>
+                {/* <TableBody>
                   {loading ? (
                     <TableRow>
                       <TableCell colSpan={10} className="text-center py-10 text-gray-400">
@@ -276,7 +346,7 @@ const Courses = () => {
                         </TableCell>
 
                         {/* ✅ Delete icon cell */}
-                        <TableCell className="text-center">
+                        {/* <TableCell className="text-center">
                           {deletingId === row._id ? (
                             <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
                           ) : (
@@ -299,7 +369,123 @@ const Courses = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                </TableBody>
+                </TableBody> */} 
+
+                
+<TableBody>
+  {loading ? (
+    Array.from({ length: 8 }).map((_, index) => (
+      <SkeletonRow key={index} activeTab={activeTab} />
+    ))
+  ) : filtered.length > 0 ? (
+    filtered.map((row, idx) => (
+      <TableRow
+        key={row._id}
+        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
+      >
+        <TableCell className="text-gray-500 text-sm">
+          {(page - 1) * ITEMS_PER_PAGE + idx + 1}
+        </TableCell>
+
+        <TableCell className="font-semibold text-gray-800 dark:text-gray-200">
+          {row.name}
+        </TableCell>
+
+        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+          {row.email}
+        </TableCell>
+
+        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+          {row.phone}
+        </TableCell>
+
+        <TableCell>
+          <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded-full font-medium">
+            {row.courseName}
+          </span>
+        </TableCell>
+
+        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+          {row.mode}
+        </TableCell>
+
+        {activeTab === "demo" && (
+          <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+            {row.batch || "—"}
+          </TableCell>
+        )}
+
+        {activeTab === "enrollment" && (
+          <>
+            <TableCell className="text-gray-600 dark:text-gray-400 text-sm font-semibold text-green-600">
+              {row.fee || "—"}
+            </TableCell>
+            <TableCell className="text-gray-500 text-xs font-mono">
+              {row.paymentId ? (
+                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                  {row.paymentId}
+                </span>
+              ) : (
+                <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full">
+                  Pending
+                </span>
+              )}
+            </TableCell>
+          </>
+        )}
+
+        <TableCell className="text-gray-500 text-xs whitespace-nowrap">
+          {new Date(row.createdAt).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })}
+        </TableCell>
+
+        <TableCell>
+          <select
+            value={row.status}
+            disabled={updatingId === row._id}
+            onChange={(e) => handleStatusChange(row._id, e.target.value)}
+            className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_COLORS[row.status]}`}
+          >
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="enrolled">Enrolled</option>
+            <option value="closed">Closed</option>
+          </select>
+        </TableCell>
+
+        <TableCell className="text-center">
+          {deletingId === row._id ? (
+            <span className="text-gray-400 dark:text-gray-500 text-sm">
+              ...
+            </span>
+          ) : (
+            <Trash2
+              size={18}
+              className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition mx-auto"
+              onClick={() => {
+                setSelectedRecord(row);
+                setShowDeleteModal(true);
+              }}
+            />
+          )}
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell
+        colSpan={activeTab === "enrollment" ? 11 : activeTab === "demo" ? 9 : 8}
+        className="text-center py-10 text-gray-500 dark:text-gray-400"
+      >
+        No {TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} found
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
               </Table>
             </div>
 

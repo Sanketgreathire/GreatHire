@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";                     
 import axios from "axios";                  
 
-
+import { notifyApplicationWhatsApp, sendWhatsAppStatusUpdate } from "../utils/whatsapp.js";
 import { User } from "../models/user.model.js";
 import { calculateMatchScore } from "../services/resumeMatch.service.js";
 import { Job } from "../models/job.model.js";
@@ -199,6 +199,8 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
     // Push application into job (use $push to avoid re-validating required fields on old jobs)
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
+    notifyApplicationWhatsApp({ applicant: user, job });
+
     // ✅ Create notifications using the notification service
     await notificationService.notifyApplicationSubmitted({
       applicantId: userId,
@@ -209,6 +211,8 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       applicationId: newApplication._id,
     });
 
+    // WhatsApp: "application sent" to the jobseeker + "new applicant" to the recruiter. Not awaited.
+    notifyApplicationWhatsApp({ applicant: user, job, applicationDate: newApplication?.createdAt || new Date() });
     await screenApplicationAfterCreate(newApplication, user, job);
 
     res.status(201).json({
@@ -507,6 +511,18 @@ if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
       recruiterId: req.id,
     });
 
+
+
+    // WhatsApp: notify the jobseeker only when the status actually changes and they have opted in. Not awaited.
+    if (previousStatus !== status && application.applicant?.whatsappOptIn) {
+      sendWhatsAppStatusUpdate({
+        phone: application.applicant.phoneNumber?.number,
+        name: application.applicant.fullname,
+        jobTitle: application.job?.jobDetails?.title,
+        companyName: application.job?.jobDetails?.companyName,
+        status,
+      });
+    }
 
 
     return res.status(200).json({ message: "Status updated successfully.", success: true });

@@ -211,4 +211,13 @@
     background: transparent;
     transform: none;
   }
+
+/* AI Copilot page: lift the global floating widgets above the chat
+   input / send button (send button top sits ~92px from viewport bottom).
+   Scoped via body[data-gh-page="copilot"] set by CopilotChat while mounted;
+   specificity (0,2,1) beats the base/mobile rules below without !important. */
+@media (max-width: 900px) {
+  body[data-gh-page="copilot"] .whatsapp-float { bottom: 104px; }
+  body[data-gh-page="copilot"] .gh-chatbot-launcher { bottom: 174px; }
+}
 }

@@ -421,17 +421,47 @@ const toMessage = (c) => ({
   createdAt: c.createdAt,
 });
 
+// const requireAdmin = (req, res) => {
+//   if (!req.user?._id) {
+//     res.status(401).json({ success: false, message: "Authentication required" });
+//     return false;
+//   }
+//   if (req.user.role !== "admin") {
+//     res.status(403).json({ success: false, message: "Access denied. Admin privileges required." });
+//     return false;
+//   }
+//   return true;
+// };
+
+
+
 const requireAdmin = (req, res) => {
   if (!req.user?._id) {
-    res.status(401).json({ success: false, message: "Authentication required" });
+    res.status(401).json({
+      success: false,
+      message: "Authentication required",
+    });
     return false;
   }
-  if (req.user.role !== "admin") {
-    res.status(403).json({ success: false, message: "Access denied. Admin privileges required." });
+
+  const role = String(req.user.role || "").trim().toLowerCase();
+
+  if (role !== "admin" && role !== "owner") {
+    console.log("Admin messages access denied:", {
+      role,
+      userId: String(req.user._id),
+    });
+
+    res.status(403).json({
+      success: false,
+      message: "Access denied. Admin privileges required.",
+    });
     return false;
   }
+
   return true;
 };
+
 
 export const getAllMessages = async (req, res) => {
   try {

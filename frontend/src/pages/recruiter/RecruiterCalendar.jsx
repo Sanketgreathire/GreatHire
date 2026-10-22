@@ -441,7 +441,7 @@ const RecruiterCalendar = () => {
       </div>
 
       {/* ── CALENDAR VIEW TABS ── */}
-      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3">
+      <div className="flex flex-wrap items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3">
         <button
           onClick={() => setActiveTab("workspace")}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
@@ -494,14 +494,13 @@ const RecruiterCalendar = () => {
               </a>
             </div>
           </div>
-          <div className="relative w-full h-[760px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner bg-slate-50 dark:bg-slate-900">
+          <div className="relative w-full h-[420px] sm:h-[600px] lg:h-[760px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner bg-slate-50 dark:bg-slate-900">
             <iframe
               src="https://calendar.google.com/calendar/embed?src=babdegreathire2025%40gmail.com&ctz=Asia%2FKolkata&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0"
               style={{ border: 0 }}
               width="100%"
               height="100%"
               frameBorder="0"
-              scrolling="no"
               title="Google Calendar"
               className="w-full h-full"
             />

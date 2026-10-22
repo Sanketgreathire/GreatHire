@@ -1,4 +1,4 @@
- import { lazy, Suspense, useEffect, startTransition } from 'react';
+import { lazy, Suspense, useEffect, startTransition } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // import axios from "axios";
@@ -31,73 +31,73 @@ const JobSeekerCalendar = lazy(() => import("./pages/user/JobSeekerCalendar"));
 const RecruiterCalendar = lazy(() => import("./pages/recruiter/RecruiterCalendar"));
 
 // ── Auth ──
-const Home                   = lazy(() => import("./pages/Home"));
-const AuthPage               = lazy(() => import('./components/auth/user/AuthPage'));
-const JobseekerLogin         = lazy(() => import('@/components/auth/user/JobseekerLogin'));
-const RecruiterLogin         = lazy(() => import('@/components/auth/recruiter/RecruiterLogin'));
-const SignupPage              = lazy(() => import("./components/shared/SignupPage"));
+const Home = lazy(() => import("./pages/Home"));
+const AuthPage = lazy(() => import('./components/auth/user/AuthPage'));
+const JobseekerLogin = lazy(() => import('@/components/auth/user/JobseekerLogin'));
+const RecruiterLogin = lazy(() => import('@/components/auth/recruiter/RecruiterLogin'));
+const SignupPage = lazy(() => import("./components/shared/SignupPage"));
 // const JobSeekerSignup         = lazy(() => import("./components/auth/user/Signup"));
-const RecruiterSignup         = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
-const LearnersTrackLogin      = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
-const LearnersTrackSignup     = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
-const VerifyEmail             = lazy(() => import("./components/VerifyEmail"));
-const VerifyNumber            = lazy(() => import("./components/VerifyNumber"));
-const ForgotPassword          = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword           = lazy(() => import("./pages/ResetPassword"));
-const PageNotFound            = lazy(() => import("./pages/PageNotFound"));
+const RecruiterSignup = lazy(() => import("./components/auth/recruiter/Signup.jsx"));
+const LearnersTrackLogin = lazy(() => import("./components/auth/user/LearnersTrackLogin"));
+const LearnersTrackSignup = lazy(() => import("./components/auth/user/LearnersTrackSignup"));
+const VerifyEmail = lazy(() => import("./components/VerifyEmail"));
+const VerifyNumber = lazy(() => import("./components/VerifyNumber"));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 
 // ── User pages ──
-const Jobs                   = lazy(() => import("./pages/job/Jobs"));
-const JobDescription         = lazy(() => import("./pages/job/JobDescription"));
-const SavedJobs              = lazy(() => import("./pages/job/SavedJob"));
-const MainApply              = lazy(() => import("./components/ApplyJobs/MainApply"));
-const ReportJob              = lazy(() => import("./pages/job/ReportJob"));
-const Success                = lazy(() => import("./pages/job/Success"));
-const UserProfile            = lazy(() => import("./pages/user/UserProfile"));
-const SettingsPolicy         = lazy(() => import("./pages/user/SettingsPolicy"));
-const ResumeAnalyzer         = lazy(() => import("./components/ResumeAnalyzer"));
-const ReferAndBoost          = lazy(() => import("./pages/ReferAndBoost"));
-const NotificationPage       = lazy(() => import("./components/notifications/NotificationPage"));
-const MessagingPage          = lazy(() => import("./components/messaging/MessagingPage"));
+const Jobs = lazy(() => import("./pages/job/Jobs"));
+const JobDescription = lazy(() => import("./pages/job/JobDescription"));
+const SavedJobs = lazy(() => import("./pages/job/SavedJob"));
+const MainApply = lazy(() => import("./components/ApplyJobs/MainApply"));
+const ReportJob = lazy(() => import("./pages/job/ReportJob"));
+const Success = lazy(() => import("./pages/job/Success"));
+const UserProfile = lazy(() => import("./pages/user/UserProfile"));
+const SettingsPolicy = lazy(() => import("./pages/user/SettingsPolicy"));
+const ResumeAnalyzer = lazy(() => import("./components/ResumeAnalyzer"));
+const ReferAndBoost = lazy(() => import("./pages/ReferAndBoost"));
+const NotificationPage = lazy(() => import("./components/notifications/NotificationPage"));
+const MessagingPage = lazy(() => import("./components/messaging/MessagingPage"));
 
 // ── Service / info pages ──
-const About                  = lazy(() => import("./pages/services/About"));
-const Contact                = lazy(() => import("./pages/services/Contact"));
-const OurService             = lazy(() => import("./pages/services/OurService"));
-const MainBlogPage           = lazy(() => import("./components/Main_blog_page"));
-const BlogsPage              = lazy(() => import("./pages/services/Blogs"));
-const BlogDetail             = lazy(() => import("./pages/services/BlogDetail"));
-const PrivacyPolicy          = lazy(() => import("./pages/policies/PrivacyPolicy"));
-const RefundAndReturnPolicy  = lazy(() => import("./pages/policies/RefundAndReturnPolicy"));
-const TermsAndConditions     = lazy(() => import("./pages/policies/TermsAndConditions"));
-const HowWeHire              = lazy(() => import("./components/HowWeHire"));
-const TheFutureTechnology    = lazy(() => import("./components/TheFutureTechnology"));
-const HiringInsights         = lazy(() => import("./pages/HiringInsights"));
-const InsightDetail          = lazy(() => import("./pages/InsightDetail"));
-const InsightsDashboard      = lazy(() => import("./pages/InsightsDashboard"));
-const InsightApproval        = lazy(() => import("./pages/InsightApproval"));
-const CareerAdvice           = lazy(() => import("./components/CareerAdvice"));
-const ITJobsBlog             = lazy(() => import("./components/Itjobsblog.jsx"));
-const FresherNExp            = lazy(() => import("./components/Fresher_N_Exp"));
-const ResumeFresherGuide     = lazy(() => import("./components/ResumeFresherGuide"));
-const SkillsFreshers         = lazy(() => import("./components/SkillsFreshers"));
-const HRInterviewBlog        = lazy(() => import("./components/HRInterviewblog"));
-const HyderabadJobsBlog      = lazy(() => import("./components/Hyderabadjobsblog"));
-const JobPortalsBlog         = lazy(() => import("./components/Jobportalsblog"));
-const RemoteJobsBlog         = lazy(() => import("./components/Remotejobspost"));
-const Apply50JobsBlog        = lazy(() => import("./components/Apply50jobsblog"));
-const CareerAfterGraduation  = lazy(() => import("./components/Careeroptionaftergraduationblog"));
-const ITvsNonITJobs          = lazy(() => import("./components/ITvsNonITJobs"));
+const About = lazy(() => import("./pages/services/About"));
+const Contact = lazy(() => import("./pages/services/Contact"));
+const OurService = lazy(() => import("./pages/services/OurService"));
+const MainBlogPage = lazy(() => import("./components/Main_blog_page"));
+const BlogsPage = lazy(() => import("./pages/services/Blogs"));
+const BlogDetail = lazy(() => import("./pages/services/BlogDetail"));
+const PrivacyPolicy = lazy(() => import("./pages/policies/PrivacyPolicy"));
+const RefundAndReturnPolicy = lazy(() => import("./pages/policies/RefundAndReturnPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/policies/TermsAndConditions"));
+const HowWeHire = lazy(() => import("./components/HowWeHire"));
+const TheFutureTechnology = lazy(() => import("./components/TheFutureTechnology"));
+const HiringInsights = lazy(() => import("./pages/HiringInsights"));
+const InsightDetail = lazy(() => import("./pages/InsightDetail"));
+const InsightsDashboard = lazy(() => import("./pages/InsightsDashboard"));
+const InsightApproval = lazy(() => import("./pages/InsightApproval"));
+const CareerAdvice = lazy(() => import("./components/CareerAdvice"));
+const ITJobsBlog = lazy(() => import("./components/Itjobsblog.jsx"));
+const FresherNExp = lazy(() => import("./components/Fresher_N_Exp"));
+const ResumeFresherGuide = lazy(() => import("./components/ResumeFresherGuide"));
+const SkillsFreshers = lazy(() => import("./components/SkillsFreshers"));
+const HRInterviewBlog = lazy(() => import("./components/HRInterviewblog"));
+const HyderabadJobsBlog = lazy(() => import("./components/Hyderabadjobsblog"));
+const JobPortalsBlog = lazy(() => import("./components/Jobportalsblog"));
+const RemoteJobsBlog = lazy(() => import("./components/Remotejobspost"));
+const Apply50JobsBlog = lazy(() => import("./components/Apply50jobsblog"));
+const CareerAfterGraduation = lazy(() => import("./components/Careeroptionaftergraduationblog"));
+const ITvsNonITJobs = lazy(() => import("./components/ITvsNonITJobs"));
 const HighPayingSkills3Months = lazy(() => import("./components/HighPayingSkills3Months"));
 const HireRightCandidateFaster = lazy(() => import("./components/HireRightCandidateFaster"));
 const HiringMistakeBlog = lazy(() => import("./components/HiringMistakesBlog"));
 const ResumeMistakeBlog = lazy(() => import("./components/ResumeMistakesBlog"));
 const ResumATSFriendlyBlog = lazy(() => import("./components/ResumATSFriendlyBlog"));
 const InterviewQuestionsBlog = lazy(() => import("./components/InterviewQuestionsBlog"));
-const SwitchToITNoCoding      = lazy(() => import("./components/SwitchToITNoCoding"));
+const SwitchToITNoCoding = lazy(() => import("./components/SwitchToITNoCoding"));
 
-const TheFuture              = lazy(() => import("./components/TheFuture"));
-const ProductDetailPage      = lazy(() => import("./components/ProductDetailPage"));
+const TheFuture = lazy(() => import("./components/TheFuture"));
+const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
 
 // ── Recruiter pages ──
 const RequireCompany = lazy(() => import("./components/recruiter/RequireCompany"));
@@ -124,8 +124,8 @@ const AllApplicantsList = lazy(() => import("./pages/recruiter/AllApplicantsList
 const DeleteAccount = lazy(() => import("./pages/recruiter/DeleteAccount"));
 const InviteAndEarn = lazy(() => import("./pages/recruiter/InviteAndEarn"));
 const RecruiterResumeAnalyzer = lazy(() => import("./pages/recruiter/ResumeAnalyzer"));
-const PremiumDashboard        = lazy(() => import("./pages/dashboard/PremiumDashboard"));
-const ProtectedChatRoute      = lazy(() => import("./components/shared/ProtectedChatRoute"));
+const PremiumDashboard = lazy(() => import("./pages/dashboard/PremiumDashboard"));
+const ProtectedChatRoute = lazy(() => import("./components/shared/ProtectedChatRoute"));
 // Plan-based dashboard router
 // PRO = "Pro Plan" (25 jobs), ENTERPRISE = "Enterprise Plan" (unlimited)
 // FREE, STANDARD (Growth), PREMIUM (Scale) → RecruiterHome
@@ -140,40 +140,40 @@ function DashboardRouter() {
 }
 
 // ── Admin / DigitalMarketer ──
-const AdminLogin             = lazy(() => import("./components/auth/admin/AdminLogin"));
-const AdminLayout            = lazy(() => import("./components/admin/AdminLayout"));
-const DigitalMarketerLogin   = lazy(() => import("./components/auth/digitalmarketer/DigitalMarketerLogin"));
+const AdminLogin = lazy(() => import("./components/auth/admin/AdminLogin"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const DigitalMarketerLogin = lazy(() => import("./components/auth/digitalmarketer/DigitalMarketerLogin"));
 
 // ── Campus ──
 const CampusPlacementDashboard = lazy(() => import('@/components/Campus/campusDashboard'));
-const CollegeDetails           = lazy(() => import('@/components/Campus/CollegeDetails'));
-const CollegeLogin             = lazy(() => import('@/components/Campus/CollegeLogin'));
-const CollegeSignup            = lazy(() => import('@/components/Campus/CollegeSignup'));
-const StudentSignup            = lazy(() => import('@/components/Campus/StudentSignup'));
+const CollegeDetails = lazy(() => import('@/components/Campus/CollegeDetails'));
+const CollegeLogin = lazy(() => import('@/components/Campus/CollegeLogin'));
+const CollegeSignup = lazy(() => import('@/components/Campus/CollegeSignup'));
+const StudentSignup = lazy(() => import('@/components/Campus/StudentSignup'));
 
 // ── Courses ──
-const TrainingCoursesPage      = lazy(() => import('./pages/course/CourseMain'));
-const PythonCoursePage         = lazy(() => import('./pages/course/python'));
-const JavaCoursePage           = lazy(() => import('./pages/course/java'));
-const DataSciencePage          = lazy(() => import('./pages/course/DataScience'));
-const DigitalMarketingPage     = lazy(() => import('./pages/course/DigitalMarketing'));
-const DataAnalyticsPage        = lazy(() => import('./pages/course/DataAnalytics'));
-const SalesforcePage           = lazy(() => import('./pages/course/saleforcePage'));
-const AWSDevOpsCoursePage      = lazy(() => import('./pages/course/AWSDevOpsCoursePage'));
-const BIMCoursePage            = lazy(() => import('./pages/course/BIMCoursePage'));
-const MedicalCodingCoursePage  = lazy(() => import('./pages/course/MedicalCodingCoursePage'));
-const SAPFICOCoursePage        = lazy(() => import('./pages/course/SAPFICOCoursePage'));
-const TestingToolsCoursePage   = lazy(() => import('./pages/course/TestingToolsCoursePage'));
-const VLSICoursePage           = lazy(() => import('./pages/course/VLSICoursePage'));
-const MultimediaCoursePage     = lazy(() => import('./pages/course/MultimediaCoursePage'));
-const AdvancedExcelCoursePage  = lazy(() => import('./pages/course/AdvancedExcelCoursePage'));
-const AutoCADCoursePage        = lazy(() => import('./pages/course/AutoCADCoursePage'));
-const RevitMEPCoursePage       = lazy(() => import('./pages/course/RevitMEPCoursePage'));
-const BusinessAnalystPage      = lazy(() => import('./pages/course/BusinessAnalystPage'));
-const GenerativeAIPage         = lazy(() => import('./pages/course/GenerativeAIPage'));
-const SAPMMPage                = lazy(() => import('./pages/course/SAPMMPage'));
-const CyberSecurityPage        = lazy(() => import('./pages/course/CyberSecurityPage'));
-const PMPPage                  = lazy(() => import('./pages/course/PMPPage'));
+const TrainingCoursesPage = lazy(() => import('./pages/course/CourseMain'));
+const PythonCoursePage = lazy(() => import('./pages/course/python'));
+const JavaCoursePage = lazy(() => import('./pages/course/java'));
+const DataSciencePage = lazy(() => import('./pages/course/DataScience'));
+const DigitalMarketingPage = lazy(() => import('./pages/course/DigitalMarketing'));
+const DataAnalyticsPage = lazy(() => import('./pages/course/DataAnalytics'));
+const SalesforcePage = lazy(() => import('./pages/course/saleforcePage'));
+const AWSDevOpsCoursePage = lazy(() => import('./pages/course/AWSDevOpsCoursePage'));
+const BIMCoursePage = lazy(() => import('./pages/course/BIMCoursePage'));
+const MedicalCodingCoursePage = lazy(() => import('./pages/course/MedicalCodingCoursePage'));
+const SAPFICOCoursePage = lazy(() => import('./pages/course/SAPFICOCoursePage'));
+const TestingToolsCoursePage = lazy(() => import('./pages/course/TestingToolsCoursePage'));
+const VLSICoursePage = lazy(() => import('./pages/course/VLSICoursePage'));
+const MultimediaCoursePage = lazy(() => import('./pages/course/MultimediaCoursePage'));
+const AdvancedExcelCoursePage = lazy(() => import('./pages/course/AdvancedExcelCoursePage'));
+const AutoCADCoursePage = lazy(() => import('./pages/course/AutoCADCoursePage'));
+const RevitMEPCoursePage = lazy(() => import('./pages/course/RevitMEPCoursePage'));
+const BusinessAnalystPage = lazy(() => import('./pages/course/BusinessAnalystPage'));
+const GenerativeAIPage = lazy(() => import('./pages/course/GenerativeAIPage'));
+const SAPMMPage = lazy(() => import('./pages/course/SAPMMPage'));
+const CyberSecurityPage = lazy(() => import('./pages/course/CyberSecurityPage'));
+const PMPPage = lazy(() => import('./pages/course/PMPPage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
@@ -334,10 +334,14 @@ function App() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      // axios
-      //   .get(`${USER_API_END_POINT}/me`, { withCredentials: true })
+      const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+      if (!token) {
+        startTransition(() => dispatch(setUser(null)));
+        return;
+      }
       API
-  .get("/v1/user/me")
+        .get("/v1/user/me")
         .then((res) => {
           if (res.data.success) {
             startTransition(() => dispatch(setUser(res.data.user)));
@@ -345,6 +349,8 @@ function App() {
         })
         .catch((error) => {
           if (error?.response?.status === 401) {
+            localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
             startTransition(() => dispatch(setUser(null)));
           }
         });

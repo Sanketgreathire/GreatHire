@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 import { useSelector } from 'react-redux';
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
-
+import API from "@/utils/api";
 const MessageContext = createContext();
 
 const sortConversations = (list) =>
@@ -207,9 +207,7 @@ export const MessageProvider = ({ children }) => {
   const fetchConversations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/v1/messages/conversations', {
-        withCredentials: true,
-      });
+      const response = await API.get('/v1/messages/conversations');
       setConversations(response.data.conversations);
     } catch (error) {
       console.error('Failed to fetch conversations:', error);
@@ -222,10 +220,9 @@ export const MessageProvider = ({ children }) => {
   const fetchMessages = async (conversationId, page = 1) => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `/api/v1/messages/conversations/${conversationId}/messages?page=${page}&limit=50`,
-        { withCredentials: true }
-      );
+      const response = await API.get(
+      `/v1/messages/conversations/${conversationId}/messages?page=${page}&limit=50`
+    ); 
 
       if (page === 1) {
         setMessages(response.data.messages);
@@ -254,9 +251,9 @@ export const MessageProvider = ({ children }) => {
         throw new Error('User must be authenticated to send messages');
       }
 
-      const response = await axios.post('/api/v1/messages/messages/send', {
-        recipientId, content, messageType, replyTo
-      }, { withCredentials: true });
+      const response = await API.post('/v1/messages/messages/send', {
+  recipientId, content, messageType, replyTo
+});
 
       // ✅ Mark conversation as pending delivery if recipient is offline
       const { delivered, conversationId: convId, message: sentMessage } = response.data;
@@ -302,9 +299,9 @@ export const MessageProvider = ({ children }) => {
         throw new Error('User must be authenticated to start conversations');
       }
 
-      const response = await axios.post('/api/v1/messages/conversations/start', {
-        recipientId
-      }, { withCredentials: true });
+      const response = await API.post('/v1/messages/conversations/start', {
+  recipientId
+}); 
 
       const conversation = response.data.conversation;
       setActiveConversation(conversation);
@@ -366,9 +363,7 @@ export const MessageProvider = ({ children }) => {
   // Delete message
   const deleteMessage = async (messageId) => {
     try {
-      await axios.delete(`/api/v1/messages/messages/${messageId}/delete`, {
-        withCredentials: true
-      });
+      await API.delete(`/v1/messages/messages/${messageId}/delete`);
     } catch (error) {
       console.error('Failed to delete message:', error);
       throw error;
@@ -378,9 +373,9 @@ export const MessageProvider = ({ children }) => {
   // Edit message
   const editMessage = async (messageId, content) => {
     try {
-      const response = await axios.put(`/api/v1/messages/messages/${messageId}/edit`, {
-        content
-      }, { withCredentials: true });
+      const response = await API.put(`/v1/messages/messages/${messageId}/edit`, {
+  content
+}); 
 
       return response.data.message;
     } catch (error) {

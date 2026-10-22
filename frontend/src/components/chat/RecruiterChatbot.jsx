@@ -294,9 +294,9 @@ function RecruiterChatbotContent() {
     <>
       {/* ── FLOATING LAUNCHER BUTTON ── */}
       {!isOpen && (
-        <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
-          {/* Hover Tooltip (Desktop) */}
-          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 pointer-events-none">
+        <div className="gh-chatbot-launcher fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
+          {/* Hover Tooltip (Laptop/Desktop) */}
+          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-slate-900/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md whitespace-nowrap transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
             <span>Recruiter AI Copilot</span>
             <Sparkles className="w-3 h-3 text-indigo-300" />
           </div>

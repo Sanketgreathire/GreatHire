@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import  { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +37,128 @@ import {
   fetchApplicationStats,
 } from "@/redux/admin/statsSlice";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import PropTypes from "prop-types";
+
+
+const SkeletonRow = () => (
+  <TableRow>
+    <TableCell>
+      <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="h-5 w-20 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    </TableCell>
+
+    <TableCell>
+      <div className="flex items-center gap-3">
+        <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-6 w-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="h-5 w-5 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+      </div>
+    </TableCell>
+  </TableRow>
+);
+
+
+const CompactPagination = ({ page, setPage, totalPages }) => {
+  const pageNumbers = useMemo(() => {
+    const maxButtons = 5;
+    let start = Math.max(1, page - Math.floor(maxButtons / 2));
+    let end = start + maxButtons - 1;
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, end - maxButtons + 1);
+    }
+    const arr = [];
+    for (let i = start; i <= end; i++) arr.push(i);
+    return arr;
+  }, [page, totalPages]);
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={page === 1}
+        onClick={() => setPage((p) => Math.max(1, p - 1))}
+        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+      >
+        Previous
+      </Button>
+
+      {pageNumbers[0] > 1 && (
+        <>
+          <Button
+            size="sm"
+            onClick={() => setPage(1)}
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            1
+          </Button>
+          {pageNumbers[0] > 2 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
+        </>
+      )}
+
+      {pageNumbers.map((p) => (
+        <Button
+          key={p}
+          size="sm"
+          onClick={() => setPage(p)}
+          className={page === p
+            ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700"
+            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          }
+        >
+          {p}
+        </Button>
+      ))}
+
+      {pageNumbers[pageNumbers.length - 1] < totalPages && (
+        <>
+          {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+            <span className="px-2 text-gray-500 dark:text-gray-400">…</span>
+          )}
+          <Button
+            size="sm"
+            onClick={() => setPage(totalPages)}
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            {totalPages}
+          </Button>
+        </>
+      )}
+
+      <Button
+        size="sm"
+        variant="ghost"
+        disabled={page === totalPages || totalPages === 0}
+        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+      >
+        Next
+      </Button>
+    </div>
+  );
+};
+
+CompactPagination.propTypes = {
+  page: PropTypes.number.isRequired,
+  setPage: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+};
 
 const CompanyList = () => {
   const [search, setSearch] = useState("");
@@ -44,6 +166,7 @@ const CompanyList = () => {
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
   const [companyList, setCompanyList] = useState([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
   const [, setDeletedCompanyList] = useState([]);
   const [activePage, setActivePage] = useState(1);
   //const [deletedPage, setDeletedPage] = useState(1);
@@ -75,17 +198,38 @@ const CompanyList = () => {
   }, []);
 
   // Fetch company data
-  const fetchCompanyList = async () => {
-    try {
-      const response = await axios.get(
-        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
-        { withCredentials: true }
-      );
-      if (response.data.success) setCompanyList(response.data.companies);
-    } catch (err) {
-      console.log(`error in recruiter fetching ${err}`);
+  // const fetchCompanyList = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+  //       { withCredentials: true }
+  //     );
+  //     if (response.data.success) setCompanyList(response.data.companies);
+  //   } catch (err) {
+  //     console.log(`error in recruiter fetching ${err}`);
+  //   }
+  // };
+
+  
+const fetchCompanyList = async () => {
+  setIsLoadingCompanies(true);
+
+  try {
+    const response = await axios.get(
+      `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+      { withCredentials: true }
+    );
+
+    if (response.data.success) {
+      setCompanyList(response.data.companies);
     }
-  };
+  } catch (err) {
+    console.log(`error in company fetching ${err}`);
+  } finally {
+    setIsLoadingCompanies(false);
+  }
+};
+
 
   const fetchDeletedCompanyList = async () => {
     try {
@@ -175,6 +319,8 @@ const CompanyList = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredCompanies.length / itemsPerPage));
+
   const paginatedCompanies = filteredCompanies.slice(
     (activePage - 1) * itemsPerPage,
     activePage * itemsPerPage
@@ -184,22 +330,22 @@ const CompanyList = () => {
     {
       title: "Total Companies",
       count: companyStats?.totalCompanies || 0,
-      icon: <Building2 className="text-indigo-600 dark:text-indigo-400" size={28} />,
+      icon: <Building2 className="text-indigo-600 dark:text-indigo-400" size={24} />,
     },
     {
       title: "Active Companies",
       count: companyStats?.totalActiveCompanies || 0,
-      icon: <CheckCircle className="text-green-600 dark:text-green-400" size={28} />,
+      icon: <CheckCircle className="text-green-600 dark:text-green-400" size={24} />,
     },
     {
       title: "Deactive Companies",
       count: companyStats?.totalDeactiveCompanies || 0,
-      icon: <XCircle className="text-red-600 dark:text-red-400" size={28} />,
+      icon: <XCircle className="text-red-600 dark:text-red-400" size={24} />,
     },
     {
       title: "Total Recruiters",
       count: recruiterStats?.totalRecruiters || 0,
-      icon: <UserCheck className="text-yellow-500 dark:text-yellow-400" size={28} />,
+      icon: <UserCheck className="text-yellow-500 dark:text-yellow-400" size={24} />,
     },
   ];
 
@@ -213,11 +359,11 @@ const CompanyList = () => {
           {stats.map((stat, index) => (
             <Card
               key={index}
-              className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all"
+              className="p-5 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-gray-600 dark:text-gray-400 font-semibold text-sm sm:text-base">
+                  <h3 className="text-gray-600 dark:text-gray-400 font-semibold text-sm">
                     {stat.title}
                   </h3>
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">
@@ -314,7 +460,7 @@ const CompanyList = () => {
                 </TableRow>
               </TableHeader>
 
-              <TableBody>
+              {/* <TableBody>
                 {paginatedCompanies.length > 0 ? (
                   paginatedCompanies.map((company) => (
                     <TableRow
@@ -400,61 +546,120 @@ const CompanyList = () => {
                     </TableCell>
                   </TableRow>
                 )}
-              </TableBody>
+              </TableBody> */}
+
+              
+<TableBody>
+  {isLoadingCompanies ? (
+    Array.from({ length: 6 }).map((_, i) => (
+      <SkeletonRow key={i} />
+    ))
+  ) : paginatedCompanies.length > 0 ? (
+    paginatedCompanies.map((company) => (
+      <TableRow
+        key={company._id}
+        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
+      >
+        <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+          {company.companyName}
+        </TableCell>
+
+        <TableCell className="break-all text-gray-700 dark:text-gray-300">
+          {company.email?.trim() || "N/A"}
+        </TableCell>
+
+        <TableCell className="text-gray-700 dark:text-gray-300">
+          {company.phone?.toString().trim() || "N/A"}
+        </TableCell>
+
+        <TableCell className="break-all text-gray-700 dark:text-gray-300">
+          {company.adminEmail?.trim() || "N/A"}
+        </TableCell>
+
+        <TableCell>
+          <span
+            className={`px-3 py-1 text-xs font-semibold rounded-full ${
+              company.isActive
+                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+            }`}
+          >
+            {company.isActive ? "Active" : "Deactive"}
+          </span>
+        </TableCell>
+
+        <TableCell>
+          <div className="flex items-center gap-3">
+            <Eye
+              className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
+              size={20}
+              onClick={() =>
+                navigate(
+                  `/admin/for-admin/company-details/${company._id}`
+                )
+              }
+            />
+
+            {loading[company._id] ? (
+              <span className="text-gray-400 dark:text-gray-500">
+                ...
+              </span>
+            ) : (
+              <Switch
+                checked={company.isActive}
+                onChange={() =>
+                  toggleActive(
+                    company.email,
+                    company.adminEmail,
+                    company._id,
+                    !company.isActive
+                  )
+                }
+                color="primary"
+              />
+            )}
+
+            {dloading[company._id] ? (
+              <span className="text-gray-400 dark:text-gray-500">
+                ...
+              </span>
+            ) : (
+              <Trash
+                className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition"
+                size={20}
+                onClick={() => {
+                  setCompanyId(company._id);
+                  setShowDeleteModal(true);
+                }}
+              />
+            )}
+          </div>
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell
+        colSpan={6}
+        className="text-center py-8 text-gray-500 dark:text-gray-400"
+      >
+        No companies found
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+ 
             </Table>
           </div>
 
 
           {/* Pagination */}
-          <div className="flex justify-center items-center mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
-
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {/* Previous */}
-              <Button
-                disabled={activePage === 1}
-                onClick={() => setActivePage((p) => Math.max(1, p - 1))}
-                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Previous
-              </Button>
-
-              {/* Page Numbers */}
-              {Array.from(
-                { length: Math.ceil(filteredCompanies.length / itemsPerPage) },
-                (_, i) => i + 1
-              ).map((pageNumber) => (
-                <Button
-                  key={pageNumber}
-                  onClick={() => setActivePage(pageNumber)}
-                  className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${activePage === pageNumber
-                    ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                    }`}
-                >
-                  {pageNumber}
-                </Button>
-              ))}
-
-              {/* Next */}
-              <Button
-                disabled={
-                  activePage >=
-                  Math.ceil(filteredCompanies.length / itemsPerPage)
-                }
-                onClick={() =>
-                  setActivePage((p) =>
-                    Math.min(
-                      Math.ceil(filteredCompanies.length / itemsPerPage),
-                      p + 1
-                    )
-                  )
-                }
-                className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </Button>
-            </div>
-
+          <div className="flex justify-center items-center mt-4">
+            <CompactPagination
+              page={activePage}
+              setPage={setActivePage}
+              totalPages={totalPages}
+            />
           </div>
 
         </div>

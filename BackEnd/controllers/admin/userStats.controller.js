@@ -124,7 +124,7 @@ const addExperienceSupport = {
 // is what the Users admin page actually renders.
 export const getUserStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments({ isAISourced: false });
+    const totalUsers = await User.countDocuments({ isAISourced: { $ne: true } });
 
     return res.status(200).json({
       success: true,
@@ -146,6 +146,7 @@ export const getUserStats = async (req, res) => {
 export const getUsersList = async (req, res) => {
   try {
     const users = await User.aggregate([
+      { $match: { isAISourced: { $ne: true } } },
       {
         $addFields: {
           createdAtSafe: {
@@ -163,11 +164,12 @@ export const getUsersList = async (req, res) => {
             ],
           },
           lastActiveAtSafe: {
-            $cond: [
-              { $eq: ["$lastActiveAt", null] },
-              null,
-              { $toDate: "$lastActiveAt" },
-            ],
+            $convert: {
+              input: "$lastActiveAt",
+              to: "date",
+              onError: null,
+              onNull: null,
+            },
           },
         },
       },
@@ -181,13 +183,16 @@ export const getUsersList = async (req, res) => {
           from: "applications",
           localField: "_id",
           foreignField: "applicant",
-          as: "applications",
+          pipeline: [{ $count: "count" }],
+          as: "applicationCounts",
         },
       },
 
       {
         $addFields: {
-          applicationCount: { $size: "$applications" },
+          applicationCount: {
+            $ifNull: [{ $arrayElemAt: ["$applicationCounts.count", 0] }, 0],
+          },
           email: "$emailId.email",
           phoneNumber: "$phoneNumber.number",
           ...addExperienceSupport,
