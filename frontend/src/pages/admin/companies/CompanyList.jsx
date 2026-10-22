@@ -330,22 +330,22 @@ const fetchCompanyList = async () => {
     {
       title: "Total Companies",
       count: companyStats?.totalCompanies || 0,
-      icon: <Building2 className="text-indigo-600 dark:text-indigo-400" size={28} />,
+      icon: <Building2 className="text-indigo-600 dark:text-indigo-400" size={24} />,
     },
     {
       title: "Active Companies",
       count: companyStats?.totalActiveCompanies || 0,
-      icon: <CheckCircle className="text-green-600 dark:text-green-400" size={28} />,
+      icon: <CheckCircle className="text-green-600 dark:text-green-400" size={24} />,
     },
     {
       title: "Deactive Companies",
       count: companyStats?.totalDeactiveCompanies || 0,
-      icon: <XCircle className="text-red-600 dark:text-red-400" size={28} />,
+      icon: <XCircle className="text-red-600 dark:text-red-400" size={24} />,
     },
     {
       title: "Total Recruiters",
       count: recruiterStats?.totalRecruiters || 0,
-      icon: <UserCheck className="text-yellow-500 dark:text-yellow-400" size={28} />,
+      icon: <UserCheck className="text-yellow-500 dark:text-yellow-400" size={24} />,
     },
   ];
 
@@ -359,11 +359,11 @@ const fetchCompanyList = async () => {
           {stats.map((stat, index) => (
             <Card
               key={index}
-              className="p-6 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all"
+              className="p-5 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all"
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-gray-600 dark:text-gray-400 font-semibold text-sm sm:text-base">
+                  <h3 className="text-gray-600 dark:text-gray-400 font-semibold text-sm">
                     {stat.title}
                   </h3>
                   <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mt-1">

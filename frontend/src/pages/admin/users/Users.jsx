@@ -291,7 +291,7 @@ const Users = () => {
       count: userStats?.totalUsers || 0,
       icon: (
         <FaRegUser
-          size={36}
+          size={24}
           className="text-blue-600 dark:text-blue-400"
         />
       ),
@@ -302,7 +302,7 @@ const Users = () => {
       count: jobStats?.totalJobs || 0,
       icon: (
         <Briefcase
-          size={36}
+          size={24}
           className="text-orange-600 dark:text-orange-400"
         />
       ),
@@ -313,7 +313,7 @@ const Users = () => {
       count: jobStats?.totalActiveJobs || 0,
       icon: (
         <CheckCircle
-          size={36}
+          size={24}
           className="text-green-600 dark:text-green-400"
         />
       ),
@@ -324,7 +324,7 @@ const Users = () => {
       count: applicationStats?.totalApplications || 0,
       icon: (
         <FileText
-          size={36}
+          size={24}
           className="text-purple-600 dark:text-purple-400"
         />
       ),
@@ -335,7 +335,7 @@ const Users = () => {
       count: sourcedCount,
       icon: (
         <Bot
-          size={36}
+          size={24}
           className="text-indigo-600 dark:text-indigo-400"
         />
       ),
@@ -442,11 +442,11 @@ const Users = () => {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
         {/* Stat Cards */}
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="px-4 sm:px-6 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {stats.map((stat, i) => (
             <Card
               key={i}
-              className="flex items-center justify-between p-6 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl hover:shadow-md transition-all"
+              className="flex items-center justify-between p-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl hover:shadow-md transition-all"
             >
               <div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
@@ -456,7 +456,7 @@ const Users = () => {
                   <CountUp end={stat.count} duration={1.5} />
                 </p>
               </div>
-              <div className={`p-3 rounded-lg ${stat.color}`}>
+              <div className={`p-3 rounded-full flex-shrink-0 ${stat.color}`}>
                 {stat.icon}
               </div>
             </Card>

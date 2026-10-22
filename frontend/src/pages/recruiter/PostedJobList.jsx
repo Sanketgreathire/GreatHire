@@ -848,7 +848,7 @@ const PostedJobList = () => {
               {/* PAGINATION */}
 
               {!loading && filteredJobs.length > 0 && (
-                <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
+                <div className="flex flex-col items-center gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-800">
 
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Showing{" "}

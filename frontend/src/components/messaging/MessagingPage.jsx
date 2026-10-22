@@ -121,7 +121,7 @@ const MessagingContent = () => {
         />
       )}
 
-      <div className={`h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400 ${isRecruiter ? "lg:ml-52" : ""}`}>
+      <div className={`h-[100dvh] min-h-0 w-full flex overflow-hidden bg-gray-100 dark:bg-gray-400 ${isRecruiter ? "lg:pl-52" : ""}`}>
         {/* Sidebar */}
         <div
           className={`w-full md:w-1/3 min-w-0 md:min-w-[300px] max-w-none md:max-w-[400px] dark:bg-gray-400 flex-col ${activeConversation ? "hidden md:flex" : "flex"

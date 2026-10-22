@@ -123,7 +123,7 @@ const RecruitmentKPICard = ({ title, value, icon: Icon, iconColor = "text-blue-6
           {title}
         </p>
         {Icon && (
-          <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 ${iconColor}`}>
+          <div className={`p-3 rounded-full flex-shrink-0 bg-gray-100 dark:bg-gray-700/50 ${iconColor}`}>
             <Icon className="w-6 h-6" />
           </div>
         )}
@@ -354,7 +354,7 @@ const Dashboard = () => {
       title: "Total Companies",
       count: companyStats?.totalCompanies || 0,
       change: "+10%",
-      icon: <HiOutlineBuildingOffice2 size={26} />,
+      icon: <HiOutlineBuildingOffice2 size={24} />,
       color: "text-indigo-600 dark:text-indigo-400",
       bg: "bg-indigo-200/40 dark:bg-indigo-900/30",
     },
@@ -362,7 +362,7 @@ const Dashboard = () => {
       title: "Total Recruiters",
       count: recruiterStats?.totalRecruiters || 0,
       change: "+8.1%",
-      icon: <UserCheck size={26} />,
+      icon: <UserCheck size={24} />,
       color: "text-purple-600 dark:text-purple-400",
       bg: "bg-purple-200/40 dark:bg-purple-900/30",
     },
@@ -370,7 +370,7 @@ const Dashboard = () => {
       title: "Total Job Seekers",
       count: userStats?.totalUsers || 0,
       change: "+12.5%",
-      icon: <FaRegUser size={26} />,
+      icon: <FaRegUser size={24} />,
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-200/40 dark:bg-blue-900/30",
     },
@@ -378,7 +378,7 @@ const Dashboard = () => {
       title: "AI Sourced",
       count: sourcedCount,
       change: "candidates",
-      icon: <Bot size={26} />,
+      icon: <Bot size={24} />,
       color: "text-orange-600 dark:text-orange-400",
       bg: "bg-orange-200/40 dark:bg-orange-900/30",
     },
@@ -386,7 +386,7 @@ const Dashboard = () => {
       title: "Candidate Database",
       count: userStats?.totalUsers || 0,
       change: "profiles",
-      icon: <FaRegUser size={26} />,
+      icon: <FaRegUser size={24} />,
       color: "text-cyan-600 dark:text-cyan-400",
       bg: "bg-cyan-200/40 dark:bg-cyan-900/30",
     },
@@ -394,7 +394,7 @@ const Dashboard = () => {
       title: "Total Jobs",
       count: jobStats?.totalJobs || 0,
       change: "+5.2%",
-      icon: <Briefcase size={26} />,
+      icon: <Briefcase size={24} />,
       color: "text-green-600 dark:text-green-400",
       bg: "bg-green-200/40 dark:bg-green-900/30",
     },
@@ -585,7 +585,7 @@ const Dashboard = () => {
           <h2 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             🎯 Recruitment Metrics
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             <RecruitmentKPICard title="Total Employees" value={kpis.totalEmployees} icon={Users} iconColor="text-blue-600" loading={loading} />
             <RecruitmentKPICard title="Applications" value={kpis.totalApplications} icon={FileText} iconColor="text-purple-600" loading={loading} />
             <RecruitmentKPICard title="Interviews" value={kpis.totalInterviews} icon={Calendar} iconColor="text-orange-600" loading={loading} />
@@ -597,7 +597,7 @@ const Dashboard = () => {
 
         {/* ═══════ SECTION 3: FILTERS ═══════ */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             <div>
               <label className="block text-[15px] font-medium text-gray-500 mb-0.5">From</label>
               <input
