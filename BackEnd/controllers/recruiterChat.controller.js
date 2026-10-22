@@ -239,7 +239,15 @@ FORBIDDEN TOPICS - MUST REFUSE:
 - You MUST NEVER answer off-topic queries (movies, sports, entertainment, food, casual chat).
 - DEFAULT COMPANY NAME: Always use "GreatHire" as the default company name in all email templates, offer letters, invitations, and communication responses unless the user explicitly provides a different company name.
 
-Format your responses with clean markdown headings (###), bold key terms, structured bullet points, and an executive, professional tone suitable for HR Directors and Hiring Managers.`;
+RESPONSE QUALITY STANDARD:
+- Answer the recruiter’s specific question first; do not use a generic response that ignores the requested role, level, city, or hiring stage.
+- Write in clear business English. Define HR or technical terms briefly when they may be unfamiliar.
+- Structure every substantial response as: **Recommendation**, **Why it matters**, **Practical steps / template**, and **One useful follow-up question**.
+- Treat salary figures as indicative ranges, state the assumptions behind them, and never present an estimate as a guaranteed market fact.
+- For interview questions, include the role level, what a strong answer demonstrates, and a clear scoring or evaluation signal.
+- For templates, keep placeholders explicit and give a usable subject line.
+- Never invent GreatHire features, candidate data, legal requirements, or company policy. Be transparent when details are not available.
+- Use concise markdown headings and bullets. Prefer actionable details over filler; normally provide 250 to 800 words.`;
 
         const userPrompt = `Recruiter Prompt: "${cleanMsg}"
 Detected Category: ${detectedCategory}`;
@@ -257,7 +265,7 @@ Detected Category: ${detectedCategory}`;
             { role: "user", content: userPrompt },
           ],
           temperature: 0.3,
-          max_tokens: 800,
+          max_tokens: 1100,
         });
 
         botReply = completion.choices[0]?.message?.content || "";
@@ -331,34 +339,23 @@ Detected Category: ${detectedCategory}`;
 
 // Fallback Recruiter Reply Generator
 function generateFallbackRecruiterReply(cleanMsg, category) {
+  const focus = cleanMsg.length > 90 ? "the target role" : cleanMsg.replace(/[?!.]/g, "").trim() || "the target role";
   if (category === "INTERVIEW_QUESTIONS") {
-    return `### 🎯 Technical & Behavioral Interview Questions & Evaluation Benchmarks
+    return `### Interview plan for ${focus}
 
----
+**Recommendation:** Use a structured interview with the same questions and scoring guide for every candidate. This makes comparisons fairer and reduces decisions based only on first impressions.
 
-#### 🟢 Basic / Screening Questions:
-1. **Core Architecture & Fundamentals**: Explain your experience with state management, modular component architecture, and component lifecycles in real-world production.
-   - 💡 **Expected Evaluation Benchmark**: Candidate should articulate clear separation of concerns, immutability, and state lifting without over-engineering.
+**Suggested 45-minute structure:**
+1. **Role context — 5 minutes:** Ask the candidate to explain their most relevant recent work and personal contribution.
+2. **Core skills — 20 minutes:** Ask two role-specific questions and one practical scenario. Request a clear example, trade-off, and result.
+3. **Problem solving — 10 minutes:** Present a realistic work situation and ask how they would approach it step by step.
+4. **Collaboration — 5 minutes:** Ask how they handle feedback, disagreement, and deadlines.
+5. **Candidate questions — 5 minutes:** Explain the next stage and expected timeline.
 
-2. **Error Handling & Resilience**: How do you implement global exception boundaries and gracefully handle API failures?
-   - 💡 **Expected Evaluation Benchmark**: Look for try/catch strategies, toast notifications, fallback UI elements, and HTTP status code awareness.
+**Simple scoring guide:** Score each area from 1 to 5 for technical depth, clarity of communication, ownership, and role fit. Record evidence from the answer—not only a score.
 
----
-
-#### 🟡 Intermediate / Scenario-Based Questions:
-3. **Performance Optimization**: What specific techniques do you apply to minimize bundle size, optimize re-renders, and improve load times?
-   - 💡 **Expected Evaluation Benchmark**: Mentions lazy loading, code splitting, memoization (\`useMemo\` / \`useCallback\`), asset compression, and virtualized lists.
-
-4. **API Integration & Security**: How do you handle authentication tokens (JWT), authorization headers, and CORS security in web applications?
-   - 💡 **Expected Evaluation Benchmark**: Candidate should emphasize HttpOnly cookies, bearer authorization headers, and payload validation.
-
----
-
-#### 🔴 Advanced / System Design Questions:
-5. **Scalability & Code Quality**: How do you structure a enterprise frontend repository for team collaboration and maintainability?
-   - 💡 **Expected Evaluation Benchmark**: Discusses feature folder architecture, ESLint/Prettier rules, unit testing (Jest/RTL), and CI/CD automated pipelines.`;
+What is the job title, seniority, and main skill you need to assess? I can create precise questions and evaluation criteria.`;
   }
-
   if (category === "EMAIL_TEMPLATES") {
     return `### 📧 Recruitment Email & Document Templates
 

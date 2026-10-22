@@ -612,6 +612,7 @@ const JobsHiringSlider = lazy(() => import("./JobSlider"));
 const Lottie = lazy(() => import("lottie-react"));
 const CompactTestimonials = lazy(() => import("@/components/ui/CompactTestimonials"));
 import GreatHireIntro from "@/components/GreatHireIntro";
+import HomeSupportChatbot from "@/components/chat/HomeSupportChatbot";
 
 // Lazy load heavy animation JSONs only when needed
 const tabAnimations = {
@@ -1287,6 +1288,7 @@ const GreatHireLanding = () => {
             `}</style>
           </section>
 
+          <HomeSupportChatbot />
           <Footer />
         </div>
       </div>

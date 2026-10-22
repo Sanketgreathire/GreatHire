@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import {
-  Briefcase,
   Sparkles,
   Send,
   X,
@@ -17,9 +16,7 @@ import {
   Copy,
   RotateCcw,
   ShieldCheck,
-  Lock,
   Building,
-  HelpCircle,
 } from "lucide-react";
 import { RECRUITER_CHAT_API_END_POINT } from "../../utils/ApiEndPoint";
 
@@ -295,55 +292,42 @@ function RecruiterChatbotContent() {
 
   return (
     <>
-      {/* ── FLOATING LAUNCHER BUTTON (Elevated above WhatsApp Float) ── */}
+      {/* ── FLOATING LAUNCHER BUTTON ── */}
       {!isOpen && (
         <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
-          {/* Hover Tooltip (Laptop/Desktop) */}
-          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-slate-900/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md whitespace-nowrap transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
+          {/* Hover Tooltip (Desktop) */}
+          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 pointer-events-none">
             <span>Recruiter AI Copilot</span>
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+            <Sparkles className="w-3 h-3 text-indigo-300" />
           </div>
 
           <button
             onClick={() => setIsOpen(true)}
             aria-label="Open Recruiter AI Assistant"
-            className="group relative flex items-center bg-slate-900 text-white border border-indigo-500/30 shadow-[0_12px_32px_rgba(11,26,45,0.25)] hover:shadow-[0_16px_36px_rgba(79,70,229,0.35)] hover:-translate-y-1 active:scale-95 transition-all duration-300 backdrop-blur-md p-1.5 rounded-full w-14 h-14 justify-center sm:w-auto sm:h-auto sm:p-2 sm:pl-2.5 sm:pr-4 sm:rounded-[22px] sm:gap-2.5"
+            className="group/btn relative flex items-center gap-2.5 bg-slate-900 dark:bg-slate-950 text-white border border-slate-700/50 dark:border-slate-700/40 rounded-full p-1.5 w-[52px] h-[52px] justify-center sm:w-auto sm:h-auto sm:py-2 sm:pl-2 sm:pr-4 sm:rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_12px_rgba(99,102,241,0.2),0_12px_32px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200"
           >
-            {/* Avatar Box with 3D Character & Briefcase Corner Badge */}
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full sm:rounded-[14px] bg-gradient-to-br from-indigo-900 to-slate-950 border border-indigo-500/40 flex items-center justify-center p-0.5 shrink-0 overflow-visible shadow-xs">
-              <img
-                src="/whatsapp-helper.png"
-                alt="Recruiter AI Avatar"
-                className="w-full h-full object-cover rounded-full sm:rounded-[12px] transform group-hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  const fallback = e.currentTarget.nextSibling;
-                  if (fallback) fallback.style.display = "flex";
-                }}
-              />
-              <div className="hidden w-full h-full items-center justify-center bg-indigo-600 text-white rounded-full font-black text-xs">
-                HR
+            {/* Avatar Container with professional AI character */}
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+              <div className="w-full h-full rounded-xl overflow-hidden bg-gradient-to-br from-indigo-600 to-indigo-800 p-0.5 shadow-sm border border-indigo-500/40">
+                <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-900">
+                  <img
+                    src="/ai-avatar.png"
+                    alt="Recruiter AI Copilot"
+                    className="w-full h-full object-cover group-hover/btn:scale-105 transition-transform duration-300 animate-[helper-wave_3.2s_ease-in-out_infinite]"
+                  />
+                </div>
               </div>
-
-              {/* Bottom-Right Corner Briefcase Badge */}
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md border-2 border-slate-900 z-10">
-                <Briefcase className="w-3 h-3 text-white" />
-              </div>
+              {/* Online dot */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900 dark:border-slate-950 z-10" />
             </div>
 
-            {/* Text Copy Section (Laptop / Desktop Only) */}
-            <div className="text-left hidden sm:flex flex-col justify-center min-w-0 pr-1">
-              <div className="flex items-center gap-1.5">
-                <strong className="text-xs font-extrabold text-white tracking-tight leading-none">
-                  Recruiter AI
-                </strong>
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                </span>
-              </div>
-              <span className="text-[11px] font-semibold text-indigo-300 leading-tight mt-0.5">
-                Hiring & Screening Bot
+            {/* Text Label (Desktop Only) */}
+            <div className="text-left hidden sm:flex flex-col justify-center min-w-0">
+              <strong className="text-[12px] font-bold text-white tracking-tight leading-none">
+                Recruiter AI
+              </strong>
+              <span className="text-[10.5px] font-medium text-slate-400 leading-tight mt-0.5">
+                Hiring Copilot
               </span>
             </div>
           </button>
@@ -365,8 +349,12 @@ function RecruiterChatbotContent() {
 
             <div className="flex items-center gap-3 z-10">
               <div className="relative">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-400/30 flex items-center justify-center shadow-inner">
-                  <Briefcase className="w-5 h-5 text-indigo-300" />
+                <div className="w-10 h-10 rounded-xl bg-slate-900 border border-indigo-400/30 p-0.5 flex items-center justify-center shadow-inner overflow-hidden">
+                  <img
+                    src="/ai-avatar.png"
+                    alt="Recruiter AI"
+                    className="w-full h-full object-cover rounded-[8px]"
+                  />
                 </div>
                 <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-900" />
               </div>

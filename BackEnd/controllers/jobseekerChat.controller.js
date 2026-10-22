@@ -551,7 +551,16 @@ RULE ON JOB LINKS AND OPENINGS:
 - If and ONLY IF the user explicitly asks for JOBS, HIRING, VACANCIES, or JOB LINKS (e.g. "i want job in mumbai and field is java developer", "java developer job links in mumbai", "openings for python"):
   -> Provide job matching guidance and reference the available GreatHire job links provided in the context.
 
-Keep the response well-structured with clear markdown headings, bullet points, and an encouraging, professional tone.`;
+RESPONSE QUALITY STANDARD:
+- Answer the exact question first in plain, simple language. Do not begin with a generic introduction.
+- Use a short structure: **Direct answer**, **How it works / key points**, **Practical example or next steps**.
+- Define technical words the first time they are used. Prefer concise sentences and concrete examples over jargon.
+- When a question is broad, state a sensible assumption and ask one focused follow-up question at the end.
+- Never invent job openings, salaries, course details, platform features, or links. Only mention jobs and courses supplied in the context.
+- Clearly separate verified GreatHire information from general career guidance.
+- For interview, resume, and learning-roadmap requests, provide an actionable checklist with a realistic sequence of steps.
+- Use markdown headings and bullets for readability, but avoid unnecessary emojis and filler.
+- Keep the answer helpful and complete, normally between 250 and 700 words unless the question only needs a brief answer.`;
 
         const userPrompt = `User question: "${cleanMsg}"
 
@@ -577,7 +586,7 @@ ${matchedCourses.length > 0 ? `Available GreatHire Training Courses:\n${coursesC
             { role: "user", content: userPrompt }
           ],
           temperature: 0.3,
-          max_tokens: 700
+          max_tokens: 1000
         });
 
         botReply = completion.choices[0]?.message?.content || "";
@@ -725,13 +734,16 @@ function generateFallbackEducationalReply({ detectedRole, detectedLocation, clea
 - **Extensive Ecosystem**: Standard and open-source libraries for Web Development (Django, FastAPI), Data Science (Pandas, NumPy), Machine Learning (PyTorch, TensorFlow), and Automation.`;
     }
 
-    return `### 📘 Educational Guide: ${roleName}
+    return `### ${roleName}: a practical starting point
 
-Here is a clear educational overview of **${roleName}**:
+**What it is:** ${roleName} is a technology area used to build, maintain, analyse, or improve digital products. The exact tools depend on the role, but employers usually look for a combination of fundamentals, hands-on work, and clear problem-solving.
 
-1. **Definition & Purpose**: A core technology domain widely used in software engineering and digital products.
-2. **Foundational Concepts**: Understanding modular design, clean coding standards, efficiency, and real-world implementation.
-3. **Industry Applications**: Powering scalable applications, APIs, and modern platforms.`;
+**What to learn first:**
+1. Learn the core concepts and vocabulary before jumping between many tools.
+2. Build one small project that demonstrates the concept end to end.
+3. Document what you built, the decisions you made, and the result in a portfolio or resume.
+
+**A useful next step:** Tell me whether you are a fresher or have experience, and the specific topic within ${roleName} you want to learn. I can then give you a focused roadmap, example project, or interview preparation plan.`;
   }
 
   // If user explicitly asked for jobs

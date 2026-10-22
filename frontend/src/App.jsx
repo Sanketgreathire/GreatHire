@@ -13,7 +13,8 @@ import { MessageProvider } from './context/MessageContext';
 
 import ProtectedUserRoute from "./components/user/ProtectedUserRoute";
 import NoIndex from "./components/SEO/NoIndex.jsx";
-import WhatsAppFloat from "./components/shared/WhatsAppFloat";
+// WhatsApp support widget is intentionally disabled.
+// import WhatsAppFloat from "./components/shared/WhatsAppFloat";
 import JobseekerChatbot from "./components/chat/JobseekerChatbot";
 import RecruiterChatbot from "./components/chat/RecruiterChatbot";
 import ProtectedRecruiterRoute from "./components/recruiter/ProtectedRecruiterRoute";
@@ -367,7 +368,8 @@ function App() {
             <Suspense fallback={null}>
               <RouterProvider router={appRouter} />
             </Suspense>
-            <WhatsAppFloat />
+            {/* WhatsApp support widget intentionally disabled. */}
+            {/* <WhatsAppFloat /> */}
             <JobseekerChatbot />
             <RecruiterChatbot />
           </MessageProvider>

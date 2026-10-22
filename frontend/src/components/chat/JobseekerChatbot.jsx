@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import {
-  Bot,
   Sparkles,
   Send,
   X,
@@ -18,9 +17,7 @@ import {
   Building,
   CheckCircle2,
   ArrowRight,
-  HelpCircle,
   ShieldCheck,
-  Lock,
 } from "lucide-react";
 import { JOBSEEKER_CHAT_API_END_POINT } from "../../utils/ApiEndPoint";
 
@@ -395,13 +392,13 @@ function JobseekerChatbotContent() {
 
   return (
     <>
-      {/* ── FLOATING LAUNCHER BUTTON (Rectangle on Laptop, Pure Circle on Mobile) ── */}
+      {/* ── FLOATING LAUNCHER BUTTON ── */}
       {!isOpen && (
         <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9990] flex items-center group">
-{/* Hover Tooltip (Laptop/Desktop) */}
-          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-lg backdrop-blur-md whitespace-nowrap transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
-            <span>GreatHire AI Assistant</span>
-            <Sparkles size={12} className="text-amber-300 fill-amber-300" />
+          {/* Hover Tooltip (Desktop) */}
+          <div className="absolute right-full mr-3 hidden sm:group-hover:flex items-center gap-1.5 bg-gray-900/90 text-white text-[11px] font-medium px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 pointer-events-none">
+            <span>AI Career Assistant</span>
+            <Sparkles size={11} className="text-blue-300" />
           </div>
 
           <button
@@ -411,49 +408,36 @@ function JobseekerChatbotContent() {
               setHasUnread(false);
             }}
             aria-label="Open GreatHire AI Assistant"
-            className="group relative flex items-center bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-blue-500/20 dark:border-gray-700/80 shadow-[0_12px_32px_rgba(11,26,45,0.18)] hover:shadow-[0_16px_36px_rgba(37,99,235,0.25)] hover:-translate-y-1 active:scale-95 transition-all duration-300 backdrop-blur-md p-1.5 rounded-full w-14 h-14 justify-center sm:w-auto sm:h-auto sm:p-2 sm:pl-2.5 sm:pr-4 sm:rounded-[22px] sm:gap-2.5"
+            className="group/btn relative flex items-center gap-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200/80 dark:border-gray-700/60 rounded-full p-1.5 w-[52px] h-[52px] justify-center sm:w-auto sm:h-auto sm:py-2 sm:pl-2 sm:pr-4 sm:rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(59,130,246,0.1),0_12px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2),0_8px_24px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_4px_12px_rgba(99,102,241,0.15),0_12px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200"
           >
-            {/* Avatar Box with 3D Character & Corner AI Badge */}
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full sm:rounded-[14px] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-800 border border-blue-100 dark:border-gray-700 flex items-center justify-center p-0.5 shrink-0 overflow-visible shadow-xs">
-              <img
-                src="/ai-avatar.png"
-                alt="GreatHire AI Avatar"
-                className="w-full h-full object-cover rounded-full sm:rounded-[12px] transform group-hover:scale-105 transition-transform duration-300"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  const fallback = e.currentTarget.nextSibling;
-                  if (fallback) fallback.style.display = "flex";
-                }}
-              />
-              <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full font-black text-xs">
-                GH
+            {/* Avatar Container with professional AI character */}
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+              <div className="w-full h-full rounded-xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-600 p-0.5 shadow-sm">
+                <div className="w-full h-full rounded-[10px] overflow-hidden bg-white">
+                  <img
+                    src="/ai-avatar.png"
+                    alt="GreatHire AI Assistant"
+                    className="w-full h-full object-cover group-hover/btn:scale-105 transition-transform duration-300 animate-[helper-wave_3.2s_ease-in-out_infinite]"
+                  />
+                </div>
               </div>
-
-              {/* Bottom-Right Corner AI Badge */}
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md border-2 border-white dark:border-gray-900 z-10">
-                <Sparkles size={11} className="text-amber-300 fill-amber-300" />
-              </div>
+              {/* Online dot */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white dark:border-gray-900 z-10" />
             </div>
 
-            {/* Text Copy Section (Laptop / Desktop Only) */}
-            <div className="text-left hidden sm:flex flex-col justify-center min-w-0 pr-1">
-              <div className="flex items-center gap-1.5">
-                <strong className="text-xs font-extrabold text-gray-900 dark:text-white tracking-tight leading-none">
-                  GreatHire AI
-                </strong>
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                </span>
-              </div>
-              <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 leading-tight mt-0.5">
-                Career & Education Bot
+            {/* Text Label (Desktop Only) */}
+            <div className="text-left hidden sm:flex flex-col justify-center min-w-0">
+              <strong className="text-[12px] font-bold text-gray-800 dark:text-gray-100 tracking-tight leading-none">
+                GreatHire AI
+              </strong>
+              <span className="text-[10.5px] font-medium text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
+                Career Assistant
               </span>
             </div>
 
             {/* Unread badge */}
             {hasUnread && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white shadow-sm z-20">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white dark:border-gray-900 shadow-sm z-20">
                 1
               </span>
             )}
@@ -462,32 +446,32 @@ function JobseekerChatbotContent() {
       )}
 
       {/* ── MINIMIZED BAR ── */}
-{isOpen && isMinimized && (
-  <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9999] flex items-center gap-1 p-1.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-2xl">
-    <button
-      onClick={() => setIsMinimized(false)}
-      title="Expand"
-      aria-label="Expand GreatHire AI Assistant"
-      className="flex items-center gap-2.5 pl-1 pr-3 py-0.5 rounded-full hover:bg-white/10 transition-colors"
-    >
-      <span className="w-9 h-9 rounded-full bg-white overflow-hidden border-2 border-white/60 shrink-0">
-        <img src="/ai-avatar.png" alt="" className="w-full h-full object-cover" />
-      </span>
-      <span className="text-sm font-bold whitespace-nowrap">GreatHire Career AI</span>
-      <Maximize2 size={15} />
-    </button>
-    <button
-      onClick={() => {
-        setIsOpen(false);
-        setIsMinimized(false);
-      }}
-      title="Close chat"
-      className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
-    >
-      <X size={16} />
-    </button>
-  </div>
-)}
+      {isOpen && isMinimized && (
+        <div className="fixed bottom-[84px] right-4 sm:bottom-[96px] sm:right-6 z-[9999] flex items-center gap-1 p-1.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg">
+          <button
+            onClick={() => setIsMinimized(false)}
+            title="Expand"
+            aria-label="Expand GreatHire AI Assistant"
+            className="flex items-center gap-2 pl-1.5 pr-3 py-0.5 rounded-full hover:bg-white/10 transition-colors"
+          >
+            <span className="w-8 h-8 rounded-full bg-white overflow-hidden flex items-center justify-center shrink-0 border border-white/40 shadow-xs">
+              <img src="/ai-avatar.png" alt="GreatHire AI" className="w-full h-full object-cover" />
+            </span>
+            <span className="text-sm font-semibold whitespace-nowrap">GreatHire AI</span>
+            <Maximize2 size={14} />
+          </button>
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              setIsMinimized(false);
+            }}
+            title="Close chat"
+            className="p-1.5 rounded-full hover:bg-white/20 transition-colors"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
 
       {/* ── CHAT WINDOW MODAL / WIDGET ── */}
       {isOpen && !isMinimized && (
@@ -495,35 +479,27 @@ function JobseekerChatbotContent() {
   className="fixed inset-x-2 bottom-2 top-14 sm:top-auto sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[450px] sm:h-[630px] sm:max-h-[85vh] max-h-[calc(100vh-4rem)] z-[9999] flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl rounded-2xl overflow-hidden"
 >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-3 flex items-center justify-between select-none shadow-md shrink-0">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 flex items-center justify-between select-none shadow-sm shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center shadow-inner overflow-hidden border-2 border-white/60">
+                <div className="w-10 h-10 rounded-xl bg-white p-0.5 flex items-center justify-center shadow-inner overflow-hidden border border-white/30">
                   <img
                     src="/ai-avatar.png"
-                    alt="GreatHire AI Avatar"
-                    className="w-full h-full object-cover rounded-full"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                      const fallback = e.currentTarget.nextSibling;
-                      if (fallback) fallback.style.display = "flex";
-                    }}
+                    alt="GreatHire AI"
+                    className="w-full h-full object-cover rounded-[10px]"
                   />
-                  <div className="hidden w-full h-full items-center justify-center bg-blue-600 text-white rounded-full font-bold text-xs">
-                    GH
-                  </div>
                 </div>
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-indigo-600" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-blue-600" />
               </div>
               <div>
                 <h3 className="font-bold text-sm tracking-wide flex items-center gap-1.5">
-                  GreatHire Career AI
-                  <span className="text-[10px] font-semibold bg-white/20 px-2 py-0.5 rounded-full uppercase tracking-wider text-blue-100">
-                    Edu Mode
+                  GreatHire AI
+                  <span className="text-[10px] font-semibold bg-white/15 px-2 py-0.5 rounded-full uppercase tracking-wider text-blue-100">
+                    Career
                   </span>
                 </h3>
-                <p className="text-[11px] text-blue-100/90 font-medium">
-                  {isLoading ? "Analyzing roadmap & matching jobs..." : "Educational & Job Assistant"}
+                <p className="text-[11px] text-blue-100/80 font-medium">
+                  {isLoading ? "Analyzing & matching jobs..." : "Career & Education Assistant"}
                 </p>
               </div>
             </div>
@@ -756,7 +732,7 @@ function JobseekerChatbotContent() {
                 {/* Loading indicator */}
                 {isLoading && (
                   <div className="flex items-start gap-2">
-                    <div className="w-7 h-7 rounded-full overflow-hidden bg-white border border-blue-200 shadow-xs shrink-0 mt-0.5">
+                    <div className="w-7 h-7 rounded-lg overflow-hidden bg-white border border-blue-200 dark:border-blue-800 shadow-xs shrink-0 mt-0.5">
                       <img src="/ai-avatar.png" alt="AI Avatar" className="w-full h-full object-cover" />
                     </div>
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
@@ -766,7 +742,7 @@ function JobseekerChatbotContent() {
                         <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" />
                       </div>
                       <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                        Analyzing career roadmap & matching jobs...
+                        Analyzing & matching jobs...
                       </span>
                     </div>
                   </div>
