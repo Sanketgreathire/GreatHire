@@ -407,12 +407,12 @@ const Users = () => {
         : filteredUsers;
 
     const rows = exportUsers.map((u) => [
-      u.fullname,
-      u.email,
-      u.phoneNumber,
-      u.joined,
-      u.applicationCount,
-      u.resumeurl,
+      u.fullname ?? "N/A",
+      u.email ?? "N/A",
+      u.phoneNumber ?? "N/A",
+      formatDate(u.joined),
+      u.applicationCount ?? "N/A",
+      u.resumeurl ?? "N/A",
     ]);
 
     const csvContent =

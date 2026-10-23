@@ -27,8 +27,9 @@ import { ADMIN_STAT_API_END_POINT, COURSE_API_END_POINT } from "@/utils/ApiEndPo
 //import { Dialog } from "@mui/material";
 
 const exportToCSV = (data, filename = "report.csv") => {
-  const headers = Object.keys(data[0]).join(",") + "\n";
-  const rows = data.map(row => Object.values(row).join(",")).join("\n");
+  const escapeCsv = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const headers = Object.keys(data[0]).map(escapeCsv).join(",") + "\n";
+  const rows = data.map(row => Object.values(row).map(escapeCsv).join(",")).join("\n");
   const csvContent = headers + rows;
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -287,7 +288,7 @@ const Reports = () => {
 
   const csvData = statsData
     ? [{
-        totalRevenue: statsData.totalRevenue,
+        totalRevenue: Number(String(statsData.totalRevenue ?? 0).replace(/[₹,\s]/g, "")) || 0,
         newUsers: statsData.newUsers,
         totalApplications: statsData.totalApplications,
         shortlisted: statsData.shortlistedApplications,
