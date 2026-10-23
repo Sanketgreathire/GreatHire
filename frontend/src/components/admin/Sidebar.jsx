@@ -125,7 +125,7 @@ const Sidebar = memo(() => {
           fixed top-16 left-0 bottom-0 z-50
           w-72
           bg-white dark:bg-gray-900
-           border-r-2 border-gray-200 dark:border-gray-700
+          border-r-2 border-gray-200 dark:border-gray-700
           flex flex-col justify-end
           transition-transform duration-300 ease-in-out
           will-change-transform

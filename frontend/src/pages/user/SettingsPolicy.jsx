@@ -45,26 +45,54 @@ const SecurityCard = ({ user }) => {
   const [showDelete, setShowDelete] = useState(false);
   const dispatch = useDispatch();
 
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-    if (pwForm.next !== pwForm.confirm) return toast.error("Passwords do not match");
-    if (pwForm.next.length < 8) return toast.error("Password must be at least 8 characters");
-    setPwLoading(true);
-    try {
-      // Reuse forgot-password flow: send reset link to email
-      await axios.post(`${USER_API_END_POINT}/forgot-password`, {
+  // const handlePasswordChange = async (e) => {
+  //   e.preventDefault();
+  //   if (pwForm.next !== pwForm.confirm) return toast.error("Passwords do not match");
+  //   if (pwForm.next.length < 8) return toast.error("Password must be at least 8 characters");
+  //   setPwLoading(true);
+  //   try {
+  //     // Reuse forgot-password flow: send reset link to email
+  //     await axios.post(`${USER_API_END_POINT}/forgot-password`, {
+  //       email: user?.emailId?.email,
+  //       frontendUrl: window.location.origin,
+  //     }, { withCredentials: true });
+  //     toast.success("Password reset link sent to your email");
+  //     setPwForm({ current: "", next: "", confirm: "" });
+  //     setShowPw(false);
+  //   } catch {
+  //     toast.error("Failed to send reset link");
+  //   } finally {
+  //     setPwLoading(false);
+  //   }
+  // };
+
+  
+const handlePasswordChange = async (e) => {
+  e.preventDefault();
+
+  setPwLoading(true);
+
+  try {
+    await axios.post(
+      `${USER_API_END_POINT}/forgot-password`,
+      {
         email: user?.emailId?.email,
         frontendUrl: window.location.origin,
-      }, { withCredentials: true });
-      toast.success("Password reset link sent to your email");
-      setPwForm({ current: "", next: "", confirm: "" });
-      setShowPw(false);
-    } catch {
-      toast.error("Failed to send reset link");
-    } finally {
-      setPwLoading(false);
-    }
-  };
+      },
+      { withCredentials: true }
+    );
+
+    toast.success("Password reset link sent to your email");
+    setShowPw(false);
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message || "Failed to send reset link"
+    );
+  } finally {
+    setPwLoading(false);
+  }
+};
+
 
   const handleDeleteAccount = async () => {
     if (!deleteEmail) return toast.error("Enter your email to confirm");

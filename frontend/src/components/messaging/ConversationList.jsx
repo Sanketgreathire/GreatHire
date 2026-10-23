@@ -59,7 +59,7 @@ const ConversationList = ({ onSelectConversation }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">  
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2 flex-wrap">
