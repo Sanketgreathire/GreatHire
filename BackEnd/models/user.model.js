@@ -207,6 +207,13 @@ userSchema.add({
 });
 
 /* ============================
+   ✅ REFERENCE (who referred the candidate, free text) – DO NOT REMOVE
+   ============================ */
+userSchema.add({
+  referenceName: { type: String, default: "" },
+});
+
+/* ============================
    ✅ REFERRAL FIELDS – DO NOT REMOVE
    ============================ */
 userSchema.add({

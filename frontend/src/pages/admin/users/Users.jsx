@@ -110,6 +110,10 @@ const SkeletonRow = () => (
     </TableCell>
 
     <TableCell>
+      <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
+    </TableCell>
+
+    <TableCell>
       <div className="h-5 w-24 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse mx-auto" />
     </TableCell>
 
@@ -399,6 +403,7 @@ const Users = () => {
       "Join Date",
       "Applications",
       "Resume",
+      "Reference Name",
     ];
 
     const exportUsers =
@@ -413,6 +418,7 @@ const Users = () => {
       formatDate(u.joined),
       u.applicationCount ?? "N/A",
       u.resumeurl ?? "N/A",
+      u.referenceName || "N/A",
     ]);
 
     const csvContent =
@@ -548,6 +554,10 @@ const Users = () => {
                     </TableHead>
 
                     <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
+                      Reference Name
+                    </TableHead>
+
+                    <TableHead className="text-center text-gray-700 dark:text-gray-300 font-semibold">
                       Contact
                     </TableHead>
 
@@ -588,7 +598,7 @@ const Users = () => {
                     /* API Error */
                     <TableRow>
                       <TableCell
-                        colSpan={8}
+                        colSpan={9}
                         className="text-center py-8 text-gray-500 dark:text-gray-400"
                       >
                         <p>{usersError}</p>
@@ -627,6 +637,15 @@ const Users = () => {
                             <p className="text-xs text-gray-500 dark:text-gray-400">
                               {u.email}
                             </p>
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          <div
+                            className="max-w-[140px] mx-auto text-sm leading-snug overflow-hidden text-ellipsis line-clamp-2 text-gray-700 dark:text-gray-300"
+                            title={u.referenceName}
+                          >
+                            {u.referenceName || "N/A"}
                           </div>
                         </TableCell>
 
@@ -701,7 +720,7 @@ const Users = () => {
                     /* No Users Found */
                     <TableRow>
                       <TableCell
-                        colSpan={8}
+                        colSpan={9}
                         className="text-center py-8 text-gray-500 dark:text-gray-400"
                       >
                         No Job Seekers found

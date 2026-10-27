@@ -47,7 +47,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const { fullname, phoneNumber, password, inputReferralCode, whatsappOptIn, collegeName, rollNo, cgpa, stream, hometown } = req.body;
+    const { fullname, phoneNumber, password, inputReferralCode, whatsappOptIn, collegeName, rollNo, cgpa, stream, hometown, referenceName } = req.body;
     const email = normalizeAccountEmail(req.body.email);
 
     // Validate fullname
@@ -156,6 +156,7 @@ export const register = async (req, res) => {
       cgpa: cgpa ? parseFloat(cgpa) : 0,
       stream: stream || "",
       hometown: hometown || "",
+      referenceName: typeof referenceName === "string" ? referenceName.trim().slice(0, 100) : "",
     });
 
     // Send welcome notification once, on account creation

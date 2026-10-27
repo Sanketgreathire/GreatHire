@@ -234,6 +234,7 @@ export const getUsersList = async (req, res) => {
           lastActiveAt: 1,
           applicationCount: 1,
           resumeurl: 1,
+          referenceName: 1,
         },
       },
     ]).allowDiskUse(true);

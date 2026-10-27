@@ -59,7 +59,7 @@ const Signup = () => {
 
   // Step 1 — Account
   const [formData, setFormData] = useState({
-    fullname: "", email: "", phoneNumber: "", password: "", inputReferralCode: "", whatsappOptIn: false,
+    fullname: "", email: "", phoneNumber: "", password: "", inputReferralCode: "", whatsappOptIn: false, referenceName: "",
   });
   const [errors, setErrors] = useState({});
   const [profileErrors, setProfileErrors] = useState({});
@@ -426,12 +426,24 @@ const Signup = () => {
                         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                       </div>
 
+                      {/* Option A (fix28): Referral Code input commented out — unused in jobseeker dashboard;
+                          backend field remains optional and untouched.
                       <div>
                         <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
                           Referral Code <span className="text-gray-400 font-normal">(Optional)</span>
                         </label>
                         <input type="text" name="inputReferralCode" value={formData.inputReferralCode} onChange={handleChange}
                           placeholder="Enter referral code if you have one" className={inputClass} />
+                      </div>
+                      */}
+
+                      <div>
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
+                          Reference Name <span className="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        <input type="text" name="referenceName" value={formData.referenceName} onChange={handleChange}
+                          maxLength={100}
+                          placeholder="Who referred you? (e.g. John - Google)" className={inputClass} />
                       </div>
 
                       <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
