@@ -193,7 +193,7 @@ const NotificationPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
      {/* Navigation for Recruiters sidebar */}
       {isRecruiter && (
         <DashboardNavigations
@@ -206,13 +206,13 @@ const NotificationPage = () => {
 
       {/* Jobseeker header: menu, back, and logo */}
       {!isRecruiter && (
-        <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-3 p-4 shrink-0">
+        <header className="md:hidden sticky top-0 z-30 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-3 p-4 shrink-0">
           <button
             type="button"
             onClick={() => setIsNavigationOpen(true)}
             aria-label="Open navigation menu"
             aria-expanded={isNavigationOpen}
-            className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden"
           >
             <Menu size={24} />
           </button>
@@ -231,37 +231,59 @@ const NotificationPage = () => {
               <span className="text-gray-900">Great</span><span className="text-blue-600">Hire</span>
             </span>
           </div>
-        </div>
+        </header>
       )}
 
-      {/* Jobseeker navigation drawer */}
+      {/* Mobile backdrop overlay - only for jobseekers on mobile */}
       {!isRecruiter && isNavigationOpen && (
-        <>
-          <button
-            type="button"
-            aria-label="Close navigation menu"
-            onClick={() => setIsNavigationOpen(false)}
-            className="fixed inset-0 z-[60] bg-black/50"
-          />
+        <button
+          type="button"
+          aria-label="Close navigation menu"
+          onClick={() => setIsNavigationOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+        />
+      )}
 
+      <div className={`flex flex-1 min-w-0 ${isRecruiter ? "lg:pl-52" : ""}`}>
+        {/* Jobseeker Left Sidebar — permanent on md+, slide-over drawer on mobile */}
+        {!isRecruiter && (
           <aside
             aria-label="App navigation"
-            className="fixed inset-y-0 left-0 z-[70] w-72 max-w-[85vw] bg-white dark:bg-gray-800 shadow-xl"
+            className={`fixed inset-y-0 left-0 z-50 md:z-20 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-xl md:shadow-none flex flex-col transition-transform duration-300 ease-in-out ${
+              isNavigationOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            }`}
           >
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">Navigation</span>
+            {/* Sidebar header: GreatHire logo and close button on mobile */}
+            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-4 shrink-0 bg-white dark:bg-gray-800">
+              <div
+                onClick={() => navigate('/jobs')}
+                className="flex items-center cursor-pointer select-none"
+              >
+                <img
+                  src="/greathire-navbar-logo.png"
+                  alt="GreatHire"
+                  className="h-6 w-auto object-contain pr-2"
+                />
+                <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                  Great
+                </span>
+                <span className="text-2xl font-black text-blue-600 tracking-tight">
+                  Hire
+                </span>
+              </div>
 
               <button
                 type="button"
                 onClick={() => setIsNavigationOpen(false)}
                 aria-label="Close navigation menu"
-                className="rounded-md p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="rounded-md p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden transition-colors"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
 
-            <nav className="p-3">
+            {/* Sidebar navigation tabs one by one without scrollbar */}
+            <nav className="p-3 space-y-1">
               {jobseekerNavigationLinks.map(({ label, to, icon: Icon }) => (
                 <button
                   key={to}
@@ -270,18 +292,19 @@ const NotificationPage = () => {
                     setIsNavigationOpen(false);
                     navigate(to);
                   }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"
+                  className="flex items-center w-full gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <Icon size={20} className="text-blue-600 dark:text-blue-400" />
-                  <span>{label}</span>
+                  <Icon size={20} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                  <span className="font-medium text-base">{label}</span>
                 </button>
               ))}
             </nav>
           </aside>
-        </>
-      )}
+        )}
 
-      <div className="max-w-4xl mx-auto py-8 px-4">
+        {/* Main Content Area */}
+        <main className={`flex-1 min-w-0 py-8 px-4 sm:px-6 lg:px-8 overflow-y-auto ${!isRecruiter ? "md:ml-64" : ""}`}>
+          <div className="max-w-4xl mx-auto">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
@@ -289,7 +312,7 @@ const NotificationPage = () => {
           {/* Page title and unread count */}
           <div>
             {isRecruiter && (
-              <div className="mb-2">
+              <div className="mb-2 lg:hidden">
                 <button
                   type="button"
                   onClick={() => setIsNavigationOpen(true)}
@@ -467,6 +490,8 @@ const NotificationPage = () => {
             ))
           )}
         </div>
+          </div>
+        </main>
       </div>
 
       {/* Notification Details Modal */}

@@ -94,13 +94,13 @@ const RefundAndReturnPolicy = () => {
               </span>
               .
             </p>
-            <p className="text-gray-600 mt-2 p-2 text-md">
+            <div className="text-gray-600 mt-2 p-2 text-md">
               <h2 className="text-gray-600 font-bold p-2 text-md">Sale items</h2>
               <span className="text-gray-600 p-2 text-md">
                 Only regular priced items may be refunded. Sale items cannot be
                 refunded.
               </span>
-            </p>
+            </div>
           </section>
 
           {/* Exchanges */}

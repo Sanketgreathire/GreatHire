@@ -357,7 +357,7 @@ const Navbar = ({ leadingContent, onMenuToggle }) => {
     ...primaryNavLinks.map((l) => ({ ...l, icon: "📊" })),
     ...(user && !isRecruiter ? [{ to: "/jobs", label: "Jobs", icon: "💼" }] : []),
     ...(user && !isRecruiter
-      ? [{ to: "/resume-analyzer", label: "Resume Analyzer", icon: "📄" }]
+      ? [{ to: "/ResumeAnalyzer", label: "Resume Analyzer", icon: "📄" }]
       : []),
     ...(!user || (isRecruiter && hasCompany)
       ? [{ to: "/packages", label: "Recruiter Plans", icon: "💳" }]

@@ -233,6 +233,7 @@ const appRouter = createBrowserRouter([
   { path: "/TheFuture", element: <TheFuture /> },
   { path: "/TheFuture/:id", element: <TheFuture /> },
   { path: "/ResumeAnalyzer", element: <ProtectedUserRoute><ResumeAnalyzer /></ProtectedUserRoute> },
+  { path: "/resume-analyzer", element: <Navigate to="/ResumeAnalyzer" replace /> },
   { path: "/recruiter/resume-analyzer", element: <ProtectedRecruiterRoute><Navigate to="/recruiter/dashboard/resume-analyzer" replace /></ProtectedRecruiterRoute> },
   { path: "/refer-and-boost", element: <ProtectedUserRoute><ReferAndBoost /></ProtectedUserRoute> },
   { path: "/jobseeker-login", element: <><NoIndex /><JobseekerLogin /></> },

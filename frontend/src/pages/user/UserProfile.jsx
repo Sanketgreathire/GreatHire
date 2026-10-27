@@ -205,7 +205,7 @@ const UserProfile = () => {
             </button>
             <button
               onClick={() => user?.profile?.resume ? navigate(-1) : toast.error("You must upload a resume before leaving!")}
-              className="p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="hidden md:flex p-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>

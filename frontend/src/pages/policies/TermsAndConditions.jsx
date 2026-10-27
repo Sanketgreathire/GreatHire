@@ -137,7 +137,7 @@ const TermsAndConditions = () => {
             <h2 className="font-semibold text-xl bg-blue-200 text-blue-700 p-2">
               Hyperlinking to our Content
             </h2>
-            <p className="text-gray-600 p-2 text-md">
+            <div className="text-gray-600 p-2 text-md">
               <ul className="list-decimal ml-10 text-gray-600">
                 <li>
                   The following organizations may link to our Web site without
@@ -193,7 +193,7 @@ const TermsAndConditions = () => {
                   </ul>
                 </li>
               </ul>
-            </p>
+            </div>
 
             <p className="text-gray-600 mt-2 p-2 text-md">
               We will approve link requests from these organizations if we
