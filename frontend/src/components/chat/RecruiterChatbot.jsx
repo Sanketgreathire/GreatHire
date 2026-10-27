@@ -17,6 +17,7 @@ import {
   RotateCcw,
   ShieldCheck,
   Building,
+  Lock,
 } from "lucide-react";
 import { RECRUITER_CHAT_API_END_POINT } from "../../utils/ApiEndPoint";
 
@@ -171,7 +172,19 @@ class ChatErrorBoundary extends React.Component {
     console.error("RecruiterChatbot Boundary Error:", error, errorInfo);
   }
   render() {
-    if (this.state.hasError) return null;
+    if (this.state.hasError) {
+      return (
+        <div className="fixed bottom-6 right-6 z-[9999] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
+          <span>Recruiter AI Copilot encountered an error.</span>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="px-2.5 py-1 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
     return this.props.children;
   }
 }
@@ -200,7 +213,7 @@ function RecruiterChatbotContent() {
   }, [isOpen, messages, scrollToBottom]);
 
   // Strictly limited to recruiters. Admin pages must not display this widget.
-  if (!user || user.role !== "recruiter") {
+  if (!user || String(user.role).toLowerCase() !== "recruiter") {
     return null;
   }
 
