@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import Navbar from "@/components/shared/Navbar";
@@ -64,6 +64,19 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [profileErrors, setProfileErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+
+  // Prefill referral code from ?ref= share link (Refer & Boost → /signup?ref=CODE)
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      const clean = ref.trim().toUpperCase().slice(0, 10);
+      if (clean) {
+        setFormData((prev) => ({ ...prev, inputReferralCode: clean }));
+        toast.success(`Referral code ${clean} applied 🎉`);
+      }
+    }
+  }, [searchParams]);
 
   // Step 2 — Profile
   const [profileData, setProfileData] = useState({
@@ -167,7 +180,7 @@ const Signup = () => {
     try{
       const response = await axios.post(
         `${USER_API_END_POINT}/register`,
-        { ...formData },
+        { ...formData, inputReferralCode: (formData.inputReferralCode || "").trim().toUpperCase() },
         { withCredentials: true}
       );
 
@@ -426,16 +439,14 @@ const Signup = () => {
                         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                       </div>
 
-                      {/* Option A (fix28): Referral Code input commented out — unused in jobseeker dashboard;
-                          backend field remains optional and untouched.
                       <div>
                         <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">
                           Referral Code <span className="text-gray-400 font-normal">(Optional)</span>
                         </label>
                         <input type="text" name="inputReferralCode" value={formData.inputReferralCode} onChange={handleChange}
+                          maxLength={10}
                           placeholder="Enter referral code if you have one" className={inputClass} />
                       </div>
-                      */}
 
                       <div>
                         <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1.5">

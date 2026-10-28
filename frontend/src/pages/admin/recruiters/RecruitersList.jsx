@@ -1,6 +1,7 @@
 import  { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import PillSelect from "@/components/shared/PillSelect";
 import {
   Table,
   TableBody,
@@ -857,25 +858,25 @@ const RecruitersList = () => {
                 </Button>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   Status
                 </label>
-                <select
-                  value={status}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setStatus(val === "All" ? "All" : val === "true");
-                    setPage(1);
-                    setSelectedRecruiters([]); // Clear selections when status changes
-                  }}
-                  className="h-10 px-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 w-full sm:w-auto transition-colors"
-                  aria-label="Filter by status"
-                >
-                  <option value="All">All Status</option>
-                  <option value="true">Active</option>
-                  <option value="false">Deactive</option>
-                </select>
+                <div className="w-40 sm:w-44 shrink-0">
+                  <PillSelect
+                    value={status === "All" ? "All" : String(status)}
+                    onChange={(val) => {
+                      setStatus(val === "All" ? "All" : val === "true" ? "true" : "false");
+                      setPage(1);
+                      setSelectedRecruiters([]); // Clear selections when status changes
+                    }}
+                    options={[
+                      { value: "All", label: "All Status" },
+                      { value: "true", label: "Active" },
+                      { value: "false", label: "Deactive" },
+                    ]}
+                  />
+                </div>
 
                 {/* Select All checkbox - only show for deactive status */}
                 {showCheckboxColumn && (

@@ -9,6 +9,7 @@ import {
   RECRUITER_API_END_POINT,
   ADMIN_API_END_POINT,
 } from "@/utils/ApiEndPoint"; // API endpoints
+import { ArrowLeft } from "lucide-react"; // Back button icon
 // Toast notifications for user feedback
 import { toast } from "react-hot-toast";
 // React Router hooks for navigation and parameters
@@ -55,8 +56,6 @@ const CompanyDetails = () => {
 
   // State to manage delete confirmation modal visibility
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const [phoneError, setPhoneError] = useState("");
 
   // Function to fetch company details from the backend
   const fetchCompanyDetails = useCallback(async () => {
@@ -268,7 +267,15 @@ const CompanyDetails = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors pt-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pb-10">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8 lg:p-10 transition-colors">
-            <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-white mb-8 text-center">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-white mb-8 flex items-center gap-3">
+              <button
+                onClick={() => navigate("/admin/companies")}
+                aria-label="Back to Companies"
+                className="flex items-center justify-center gap-2 px-3 py-2.5 min-h-[44px] text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Back</span>
+              </button>
               Company Details
             </h1>
 
@@ -405,34 +412,9 @@ const CompanyDetails = () => {
                     Phone
                   </p>
 
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={10}
-                    value={company?.phone || ""}
-                    onChange={(e) => {
-                      const phone = e.target.value.replace(/\D/g, "").slice(0, 10);
-
-                      setCompany((prev) => ({
-                        ...prev,
-                        phone,
-                      }));
-
-                      setPhoneError(
-                        phone.length !== 10
-                          ? "Phone number must contain exactly 10 digits."
-                          : ""
-                      );
-                    }}
-                    className="w-full px-3 py-2 rounded-md border border-gray-300 dark:bg-gray-800 dark:text-white"
-                    placeholder="Enter 10-digit phone number"
-                  />
-
-                  {phoneError && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {phoneError}
-                    </p>
-                  )}
+                  <p className="text-lg text-gray-900 dark:text-white font-semibold break-words">
+                    {company?.phone || "Not Provided"}
+                  </p>
                 </div>
 
 
@@ -503,7 +485,7 @@ const CompanyDetails = () => {
 
                 {/* Actions & Buttons */}
                 <div className="col-span-full">
-                  <div className="flex flex-col sm:flex-row flex-wrap justify-end gap-4 mt-6">
+                  <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-end gap-3 sm:gap-4 mt-6">
                     {/* Edit Email Controls */}
                     {isEditingEmails ? (
                       <>

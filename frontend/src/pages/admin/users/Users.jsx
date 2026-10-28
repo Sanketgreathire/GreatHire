@@ -732,7 +732,7 @@ const Users = () => {
             </div>
 
             {/* Pagination */}
-            <div className="relative flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div className="relative flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-between gap-3 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
               {(() => {
                 const pages = new Set();
                 pages.add(1);
@@ -763,7 +763,7 @@ const Users = () => {
                 return (
                   <>
                     {/* LEFT — info text */}
-                    <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap sm:absolute sm:left-0">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                       Showing{" "}
                       <span className="font-medium text-gray-700 dark:text-gray-200">
                         {filteredUsers.length === 0

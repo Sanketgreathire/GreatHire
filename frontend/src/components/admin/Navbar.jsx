@@ -135,6 +135,7 @@ const Navbar = memo(({ linkName }) => {
         className="
           hidden
           md:block
+          min-w-0
           text-lg
           font-medium
           text-gray-600
