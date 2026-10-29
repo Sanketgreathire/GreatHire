@@ -15,9 +15,10 @@ import PillSelect from "@/components/shared/PillSelect";
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
   try { return new Set(JSON.parse(localStorage.getItem(UNLOCKED_CANDIDATES_KEY) || "[]")); }
-  catch { 
+  catch {
     // Return empty set on error
-    return new Set(); } 
+    return new Set();
+  }
 };
 const persistUnlockedCandidate = (id) => {
   try {
@@ -26,7 +27,7 @@ const persistUnlockedCandidate = (id) => {
     localStorage.setItem(UNLOCKED_CANDIDATES_KEY, JSON.stringify([...ids]));
   } catch {
     console.error("Failed to persist unlocked candidate:", error);
-   }
+  }
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -228,7 +229,7 @@ const CandidateList = () => {
     }
 
     try {
-           const res = await API.post(
+      const res = await API.post(
         `/v1/company/deduct-candidate-credit`,
         { companyId: company?._id }
       );
@@ -334,7 +335,7 @@ const CandidateList = () => {
 
       const { data } = await API.post(`/v1/sourcing/source-by-jd`, payload);
       if (data.success) {
-                const deductRes = await API.post(
+        const deductRes = await API.post(
           `/v1/company/deduct-ai-sourcing-credit`,
           { companyId: company._id, amount: normalizedSearchCount }
         );
@@ -629,8 +630,8 @@ const CandidateList = () => {
             <button
               onClick={() => switchSection(SECTIONS.DATABASE)}
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.DATABASE
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
             >
               <Database size={16} /> Internal Candidate Database
@@ -638,10 +639,10 @@ const CandidateList = () => {
             <button
               onClick={() => switchSection(SECTIONS.FREE)}
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.FREE
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow"
-                  : aiSourcingLocked
-                    ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow"
+                : aiSourcingLocked
+                  ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
             >
               {aiSourcingLocked ? <Lock size={16} /> : <Github size={16} />} AI Sourcing (Unlimited)
@@ -649,10 +650,10 @@ const CandidateList = () => {
             <button
               onClick={() => switchSection(SECTIONS.PAID)}
               className={`flex-1 min-w-[160px] flex items-center justify-center gap-2 rounded-lg py-3 px-4 font-semibold text-sm transition-all ${activeSection === SECTIONS.PAID
-                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow"
-                  : aiSourcingLocked
-                    ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow"
+                : aiSourcingLocked
+                  ? "text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
             >
               {aiSourcingLocked ? <Lock size={16} /> : <Zap size={16} />} Advance AI Sourcing
@@ -711,8 +712,12 @@ const CandidateList = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="flex mb-1 text-sm font-medium text-gray-700 dark:text-gray-300  items-center gap-1.5">
-                    <Brain size={13} className="text-blue-500" /> Job Description <span className="text-gray-400 font-normal">(optional — ranks results by match score)</span>
+                  <label className="flex flex-wrap items-center gap-1.5 mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Brain size={13} className="text-blue-500 shrink-0" />
+                    <span>Job Description</span>
+                    <span className="text-gray-400 font-normal text-xs sm:text-sm">
+                      (optional — ranks results by match score)
+                    </span>
                   </label>
                   {hasAdvancedFilters ? (
                     <textarea
@@ -733,27 +738,47 @@ const CandidateList = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-3">
-                <div className="flex items-center rounded-xl overflow-hidden shadow-md w-full sm:w-auto">
-                  <Button
-                    onClick={fetchCandidates}
-                    disabled={isLoading}
-                    className="flex items-center justify-center gap-2 rounded-none bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-5 disabled:opacity-60 disabled:cursor-not-allowed">
-                    {isLoading && (
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    )}
-                    {isLoading ? "Finding Candidates..." : "Find Candidates"}
-                  </Button>
-                  {showCandidates && (
-                    <button
-                      onClick={() => setShowCandidates(false)}
-                      className="bg-indigo-700 hover:bg-red-600 text-white px-3 py-3 transition-colors"
-                      title="Close Results"
-                    >
-                      <X size={16} />
-                    </button>
+              <div className="mt-6 flex flex-row flex-wrap items-center justify-center md:justify-start gap-4 relative z-[50]">
+                {/* Find Candidates Button */}
+                <Button
+                  onClick={fetchCandidates}
+                  disabled={isLoading}
+                  className="flex-1 sm:flex-none sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-5 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isLoading && (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   )}
-                </div>
+                  {isLoading ? "Finding Candidates..." : "Find Candidates"}
+                </Button>
+
+                {/* Clear Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setFilters({
+                      jobTitle: "", experience: "", salaryBudget: "", gender: "",
+                      qualification: "", lastActive: "", location: "", skills: "",
+                      designation: "", minExp: "", maxExp: "", jobDescription: ""
+                    });
+                    setCandidates([]);
+                    setShowCandidates(false);
+                  }}
+                  className="flex-1 sm:flex-none sm:w-auto rounded-lg px-6 py-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium bg-white dark:bg-gray-800"
+                >
+                  Clear
+                </Button>
+
+                {/* Close (X) Button
+                {showCandidates && (
+                  <button
+                    onClick={() => setShowCandidates(false)}
+                    className="w-full sm:w-auto bg-indigo-700 hover:bg-red-600 text-white px-4 py-3 rounded-lg transition-colors flex items-center justify-center shrink-0"
+                    title="Close Results"
+                  >
+                    <X size={18} />
+                  </button>
+                )} */}
               </div>
 
               {showCandidates && (
@@ -914,7 +939,7 @@ const CandidateList = () => {
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 uppercase">Discovered</span>
                         {selectedSourcingCandidate.matchScore != null && (
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
-                              selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+                            selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
                             }`}>
                             {selectedSourcingCandidate.matchScore >= 70 ? "Strong" : selectedSourcingCandidate.matchScore >= 40 ? "Good" : "Fair"}
                           </span>
@@ -923,7 +948,7 @@ const CandidateList = () => {
                     </div>
                     {selectedSourcingCandidate.matchScore != null && (
                       <div className={`h-14 w-14 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${selectedSourcingCandidate.matchScore >= 70 ? "bg-green-100 text-green-700" :
-                          selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+                        selectedSourcingCandidate.matchScore >= 40 ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
                         }`}>{selectedSourcingCandidate.matchScore}</div>
                     )}
                   </div>

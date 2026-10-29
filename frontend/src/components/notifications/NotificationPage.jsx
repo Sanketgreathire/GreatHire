@@ -194,7 +194,7 @@ const NotificationPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-     {/* Navigation for Recruiters sidebar */}
+      {/* Navigation for Recruiters sidebar */}
       {isRecruiter && (
         <DashboardNavigations
           isOpen={isNavigationOpen}
@@ -204,86 +204,80 @@ const NotificationPage = () => {
         />
       )}
 
-      {/* Jobseeker header: menu, back, and logo */}
+
+
+      {/* Jobseeker header: hamburger + GreatHire logo and title */}
       {!isRecruiter && (
-        <header className="md:hidden sticky top-0 z-30 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center gap-3 p-4 shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsNavigationOpen(true)}
-            aria-label="Open navigation menu"
-            aria-expanded={isNavigationOpen}
-            className="p-1 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden"
-          >
-            <Menu size={24} />
-          </button>
+        <header className="sticky top-0 z-[60] w-full border-b border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+          <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
 
-          <div
-            onClick={() => navigate('/jobs')}
-            className="cursor-pointer flex items-center gap-1.5 select-none shrink-0 bg-white rounded-lg px-2 py-1"
-          >
-            <img
-              src="/greathire-navbar-logo.png"
-              alt="GreatHire"
-              className="h-6 sm:h-7 w-auto object-contain shrink-0"
-            />
+            {/* Hamburger button */}
+            <button
+              type="button"
+              onClick={() => setIsNavigationOpen((prev) => !prev)}
+              aria-label={isNavigationOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isNavigationOpen}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            >
+              <Menu size={25} />
+            </button>
 
-            <span className="text-lg sm:text-xl font-bold leading-none">
-              <span className="text-gray-900">Great</span><span className="text-blue-600">Hire</span>
-            </span>
+            {/* GreatHire logo and title */}
+            <button
+              type="button"
+              onClick={() => navigate("/jobs")}
+              className="flex min-w-0 items-center gap-2 rounded-lg focus:outline-none"
+              aria-label="GreatHire home"
+            >
+              <img
+                src="/greathire-navbar-logo.png"
+                alt="GreatHire logo"
+                className="h-8 w-auto max-w-10 shrink-0 object-contain"
+              />
+
+              <span className="whitespace-nowrap text-xl font-black tracking-tight">
+                <span className="text-gray-900 dark:text-white">Great</span>
+                <span className="text-blue-600">Hire</span>
+              </span>
+            </button>
+
           </div>
         </header>
       )}
 
+
       {/* Mobile backdrop overlay - only for jobseekers on mobile */}
+
+      {/* Backdrop: mobile only */}
       {!isRecruiter && isNavigationOpen && (
         <button
           type="button"
           aria-label="Close navigation menu"
           onClick={() => setIsNavigationOpen(false)}
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-x-0 bottom-0 top-16 z-40 bg-black/40 md:hidden"
         />
       )}
 
+
       <div className={`flex flex-1 min-w-0 ${isRecruiter ? "lg:pl-52" : ""}`}>
         {/* Jobseeker Left Sidebar — permanent on md+, slide-over drawer on mobile */}
+
+        {/* Jobseeker sidebar */}
         {!isRecruiter && (
           <aside
             aria-label="App navigation"
-            className={`fixed inset-y-0 left-0 z-50 md:z-20 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-xl md:shadow-none flex flex-col transition-transform duration-300 ease-in-out ${
-              isNavigationOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            }`}
+            className={`fixed left-0 top-16 bottom-0 z-50
+      w-64 overflow-y-auto
+      border-r border-gray-200 bg-white
+      dark:border-gray-700 dark:bg-gray-800
+      shadow-xl md:shadow-none
+      transition-transform duration-300 ease-in-out
+      ${isNavigationOpen
+                ? "translate-x-0"
+                : "-translate-x-full"
+              }`}
           >
-            {/* Sidebar header: GreatHire logo and close button on mobile */}
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-4 shrink-0 bg-white dark:bg-gray-800">
-              <div
-                onClick={() => navigate('/jobs')}
-                className="flex items-center cursor-pointer select-none"
-              >
-                <img
-                  src="/greathire-navbar-logo.png"
-                  alt="GreatHire"
-                  className="h-6 w-auto object-contain pr-2"
-                />
-                <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-                  Great
-                </span>
-                <span className="text-2xl font-black text-blue-600 tracking-tight">
-                  Hire
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsNavigationOpen(false)}
-                aria-label="Close navigation menu"
-                className="rounded-md p-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* Sidebar navigation tabs one by one without scrollbar */}
-            <nav className="p-3 space-y-1">
+            <nav className="space-y-1 p-3">
               {jobseekerNavigationLinks.map(({ label, to, icon: Icon }) => (
                 <button
                   key={to}
@@ -292,9 +286,16 @@ const NotificationPage = () => {
                     setIsNavigationOpen(false);
                     navigate(to);
                   }}
-                  className="flex items-center w-full gap-3 rounded-lg px-3 py-3 text-left text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+                  className={`flex w-full items-center gap-3 rounded-lg
+            px-3 py-3 text-left
+            text-gray-700 transition-colors
+            hover:bg-blue-50 hover:text-blue-700
+            dark:text-gray-200 dark:hover:bg-gray-700`}
                 >
-                  <Icon size={20} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                  <Icon
+                    size={20}
+                    className="shrink-0 text-blue-600 dark:text-blue-400"
+                  />
                   <span className="font-medium text-base">{label}</span>
                 </button>
               ))}
@@ -302,194 +303,199 @@ const NotificationPage = () => {
           </aside>
         )}
 
+
         {/* Main Content Area */}
-        <main className={`flex-1 min-w-0 py-8 px-4 sm:px-6 lg:px-8 overflow-y-auto ${!isRecruiter ? "md:ml-64" : ""}`}>
+
+        <main
+          className={`min-w-0 flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8 ${!isRecruiter && isNavigationOpen ? "md:ml-64" : ""
+            }`}
+        >
+
           <div className="max-w-4xl mx-auto">
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
 
-          {/* Page title and unread count */}
-          <div>
-            {isRecruiter && (
-              <div className="mb-2 lg:hidden">
-                <button
-                  type="button"
-                  onClick={() => setIsNavigationOpen(true)}
-                  aria-label="Open recruiter dashboard navigation"
-                  aria-expanded={isNavigationOpen}
-                  className="rounded-md p-1 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
-              </div>
-            )}
-            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gray-900 dark:text-white">
-              <Bell className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
-              Notifications
-            </h1>
-
-            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
-              {unreadCount > 0
-                ? `${unreadCount} unread notifications`
-                : 'All caught up!'}
-            </p>
-          </div>
-
-          {/* Header action buttons */}
-          <div className="flex flex-col sm:flex-row gap-2">
-
-            {/* Refresh button */}
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 w-full sm:w-auto"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
-              />
-
-              {loading ? 'Refreshing...' : 'Refresh'}
-            </button>
-
-            {/* Mark all as read button */}
-            {unreadCount > 0 && (
-              <button
-                onClick={markAllAsRead}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors w-full sm:w-auto"
-              >
-                <Check className="w-4 h-4" />
-                Mark all as read
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Search and Filter */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6 flex flex-wrap items-center gap-2 sm:gap-4">
-
-          {/* Search input */}
-          <div className="relative w-full sm:flex-1 min-w-0">
-            <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 dark:text-gray-500" />
-
-            <input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search notifications..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-            />
-          </div>
-
-          {/* Notification filter */}
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="text-sm border border-gray-300 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none min-w-0 max-w-full"
-          >
-            <option value="all">All</option>
-            <option value="unread">Unread</option>
-            <option value="read">Read</option>
-          </select>
-        </div>
-
-        {/* Notification List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-
-          {filteredNotifications.length === 0 ? (
-            <div className="p-12 text-center">
-              <Bell className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No notifications found
-              </h3>
-
-              <p className="text-gray-500 dark:text-gray-400">
-                {searchTerm || filterType !== 'all'
-                  ? 'Try adjusting your search or filter'
-                  : "You're all caught up!"}
-              </p>
-            </div>
-          ) : (
-            filteredNotifications.map((notification) => (
-              <div
-                key={notification._id}
-                onClick={() => {
-                  if (!notification.isRead) {
-                    markAsRead(notification._id);
-                  }
-
-                  setSelectedNotification(notification);
-                }}
-                className={`group p-4 sm:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
-                  !notification.isRead
-                    ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400'
-                    : ''
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row gap-4">
-
-                  {/* Notification icon */}
-                  <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0">
-                    {getNotificationTypeIcon(notification.type)}
+              {/* Page title and unread count */}
+              <div>
+                {isRecruiter && (
+                  <div className="mb-2 lg:hidden">
+                    <button
+                      type="button"
+                      onClick={() => setIsNavigationOpen(true)}
+                      aria-label="Open recruiter dashboard navigation"
+                      aria-expanded={isNavigationOpen}
+                      className="rounded-md p-1 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      <Menu className="w-6 h-6" />
+                    </button>
                   </div>
+                )}
+                <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Bell className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" />
+                  Notifications
+                </h1>
 
-                  {/* Notification details */}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {notification.title}
-                    </h3>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
+                  {unreadCount > 0
+                    ? `${unreadCount} unread notifications`
+                    : 'All caught up!'}
+                </p>
+              </div>
 
-                    <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
-                      {notification.message}
-                    </p>
+              {/* Header action buttons */}
+              <div className="flex flex-col sm:flex-row gap-2">
 
-                    <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-3">
-                      <span>{getTimeAgo(notification.createdAt)}</span>
+                {/* Refresh button */}
+                <button
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 w-full sm:w-auto"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
+                  />
 
-                      <span
-                        className={`px-2 py-0.5 rounded-full font-medium capitalize ${getPriorityClasses(
-                          notification.priority || 'medium'
-                        )}`}
-                      >
-                        {notification.priority || 'medium'}
-                      </span>
+                  {loading ? 'Refreshing...' : 'Refresh'}
+                </button>
+
+                {/* Mark all as read button */}
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors w-full sm:w-auto"
+                  >
+                    <Check className="w-4 h-4" />
+                    Mark all as read
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Search and Filter */}
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6 flex flex-wrap items-center gap-2 sm:gap-4">
+
+              {/* Search input */}
+              <div className="relative w-full sm:flex-1 min-w-0">
+                <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400 dark:text-gray-500" />
+
+                <input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search notifications..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                />
+              </div>
+
+              {/* Notification filter */}
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="text-sm border border-gray-300 dark:border-gray-600 rounded-full px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none min-w-0 max-w-full"
+              >
+                <option value="all">All</option>
+                <option value="unread">Unread</option>
+                <option value="read">Read</option>
+              </select>
+            </div>
+
+            {/* Notification List */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
+
+              {filteredNotifications.length === 0 ? (
+                <div className="p-12 text-center">
+                  <Bell className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    No notifications found
+                  </h3>
+
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {searchTerm || filterType !== 'all'
+                      ? 'Try adjusting your search or filter'
+                      : "You're all caught up!"}
+                  </p>
+                </div>
+              ) : (
+                filteredNotifications.map((notification) => (
+                  <div
+                    key={notification._id}
+                    onClick={() => {
+                      if (!notification.isRead) {
+                        markAsRead(notification._id);
+                      }
+
+                      setSelectedNotification(notification);
+                    }}
+                    className={`group p-4 sm:p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${!notification.isRead
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400'
+                        : ''
+                      }`}
+                  >
+                    <div className="flex flex-col sm:flex-row gap-4">
+
+                      {/* Notification icon */}
+                      <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0">
+                        {getNotificationTypeIcon(notification.type)}
+                      </div>
+
+                      {/* Notification details */}
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          {notification.title}
+                        </h3>
+
+                        <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
+                          {notification.message}
+                        </p>
+
+                        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-3">
+                          <span>{getTimeAgo(notification.createdAt)}</span>
+
+                          <span
+                            className={`px-2 py-0.5 rounded-full font-medium capitalize ${getPriorityClasses(
+                              notification.priority || 'medium'
+                            )}`}
+                          >
+                            {notification.priority || 'medium'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Notification actions */}
+                      <div className="flex sm:flex-col gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+
+                        {/* Delete notification */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNotification(notification._id);
+                          }}
+                          className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 dark:text-red-400 transition-colors"
+                          aria-label="Delete notification"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+
+                        {/* Mark single notification as read */}
+                        {!notification.isRead && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markAsRead(notification._id);
+                            }}
+                            className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 transition-colors"
+                            aria-label="Mark notification as read"
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-
-                  {/* Notification actions */}
-                  <div className="flex sm:flex-col gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-
-                    {/* Delete notification */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteNotification(notification._id);
-                      }}
-                      className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 dark:text-red-400 transition-colors"
-                      aria-label="Delete notification"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-
-                    {/* Mark single notification as read */}
-                    {!notification.isRead && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          markAsRead(notification._id);
-                        }}
-                        className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 transition-colors"
-                        aria-label="Mark notification as read"
-                      >
-                        <Check className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+                ))
+              )}
+            </div>
           </div>
         </main>
       </div>
