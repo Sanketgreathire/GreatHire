@@ -432,3 +432,15 @@ html.dark .gh-shared-navbar__content button.rounded-full {
     display: none;
   }
 }
+
+/* Remove default browser password visibility icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Chrome and Edge password reveal controls */
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+}
