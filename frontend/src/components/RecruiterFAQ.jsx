@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import   { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { recruiterFaqs } from "../data/recruiterFaqs";
 
@@ -11,7 +11,7 @@ function RecruiterFAQ() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-16">
-      <h2 className="text-3xl font-bold mb-10">
+      <h2 className="text-3xl font-bold mb-10 text-gray-900 dark:text-white">
         Frequently Asked Questions
       </h2>
 
@@ -19,10 +19,10 @@ function RecruiterFAQ() {
         {recruiterFaqs.map((faq, index) => (
           <div
             key={index}
-            className="border-b border-gray-300 pb-4"
+            className="border-b border-gray-300 dark:border-slate-700 pb-4"
           >
             <button
-              className="w-full flex justify-between items-center text-left font-medium text-lg"
+              className="w-full flex justify-between items-center text-left font-medium text-lg text-gray-900 dark:text-white"
               onClick={() => toggleFAQ(index)}
             >
               {faq.question}
@@ -34,7 +34,7 @@ function RecruiterFAQ() {
             </button>
 
             {openIndex === index && (
-              <p className="mt-3 text-gray-600 leading-relaxed">
+              <p className="mt-3 text-gray-600 dark:text-gray-300 leading-relaxed">
                 {faq.answer}
               </p>
             )}

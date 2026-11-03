@@ -1,8 +1,8 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-import { useState, useMemo, lazy, Suspense, memo, useCallback } from "react";
+import { useState, useMemo,  memo, useCallback } from "react";
 import { Link } from "react-router-dom";
-
+import PropTypes from "prop-types";
 const COURSE_PLACEHOLDER_IMAGE = "https://placehold.co/400x200?text=Course";
 
 const COURSE_IMAGE_MAP = {
@@ -616,7 +616,7 @@ const CourseCard = memo(function CourseCard({ course, onEnroll, priority }) {
           src={imageSrc}
           alt={course.title}
           loading={priority ? "eager" : "lazy"}
-          fetchpriority={priority ? "high" : "low"}
+          fetchPriority={priority ? "high" : "low"}
           onError={(e) => {
             e.currentTarget.src = COURSE_PLACEHOLDER_IMAGE;
           }}
@@ -711,13 +711,15 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
       });
       setLoading(false);
       setSubmitted(true);
-    } catch (_) {
+    } catch  {
       setLoading(false);
       setErrors({ name: "", email: "", phone: "Something went wrong. Please try again." });
     }
   };
 
   if (!course) return null;
+
+  
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -760,9 +762,8 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                     const filteredValue = e.target.value.replace(/[^A-Za-z\s]/g, "");
                     setForm({ ...form, name: filteredValue });
                   }}
-                 className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.name ? "border-red-500" : "border-gray-200"
-                  }`}
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? "border-red-500" : "border-gray-200"
+                    }`}
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
               </div>
@@ -774,32 +775,30 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
                   placeholder="Enter your email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.name ? "border-red-500" : "border-gray-200"
-                  }`}
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? "border-red-500" : "border-gray-200"
+                    }`}
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide block mb-1.5">Phone Number</label>
                 <input
-  required
-  type="tel"
-  inputMode="numeric"
-  maxLength={12}
-  placeholder="Enter 10 digits number"
-  value={form.phone}
-  onChange={(e) => {
-    const value = e.target.value.replace(/\D/g, "");
+                  required
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={12}
+                  placeholder="Enter 10 digits number"
+                  value={form.phone}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
 
-    if (value.length <= 12) {
-      setForm({ ...form, phone: value });
-    }
-  }}
-  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-    errors.phone ? "border-red-500" : "border-gray-200"
-  }`}
-/>
+                    if (value.length <= 12) {
+                      setForm({ ...form, phone: value });
+                    }
+                  }}
+                  className={`w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.phone ? "border-red-500" : "border-gray-200"
+                    }`}
+                />
                 {errors.phone && <p className="text-red-500 text-xs mt-1 font-medium">{errors.phone}</p>}
               </div>
               <div>
@@ -828,6 +827,34 @@ function EnrollModal({ course, onClose, type = "enquiry" }) {
     </div>
   );
 }
+
+StarRating.propTypes = {
+  count: PropTypes.number.isRequired,
+};
+
+CourseCard.propTypes = {
+  course: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    desc: PropTypes.string,
+    badge: PropTypes.string,
+    badgeColor: PropTypes.string,
+    link: PropTypes.string,
+    category: PropTypes.string,
+  }).isRequired,
+  onEnroll: PropTypes.func.isRequired,
+  priority: PropTypes.bool,
+};
+
+EnrollModal.propTypes = {
+  course: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    fee: PropTypes.string,
+    icon: PropTypes.string,
+    iconBg: PropTypes.string,
+  }),
+  onClose: PropTypes.func.isRequired,
+  type: PropTypes.string,
+};
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -880,7 +907,7 @@ export default function TrainingCoursesPage() {
             <span className="text-yellow-300">Courses in Hyderabad</span>
           </h1>
           <p className="text-blue-100 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Job-oriented IT training with industry experts, real projects, and 100% placement assistance. Get hired faster through Great Hire's network of 500+ companies.
+            Job-oriented IT training with industry experts, real projects, and 100% placement assistance. Get hired faster through Great Hire&apos;s network of 500+ companies.
           </p>
 
           {/* Search */}
@@ -919,21 +946,19 @@ export default function TrainingCoursesPage() {
           <div className="flex flex-wrap gap-3 justify-center mb-8">
             <button
               onClick={() => handleTabSwitch("employment")}
-              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
-                activeTab === "employment"
+              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${activeTab === "employment"
                   ? "bg-blue-600 text-white shadow-md"
                   : "bg-transparent text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-              }`}
+                }`}
             >
               Employment Program
             </button>
             <button
               onClick={() => handleTabSwitch("certification")}
-              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${
-                activeTab === "certification"
+              className={`px-7 py-2.5 rounded-full text-sm font-semibold border-2 border-blue-600 transition-all duration-200 ${activeTab === "certification"
                   ? "bg-blue-600 text-white shadow-md"
                   : "bg-transparent text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-              }`}
+                }`}
             >
               TIH-IIT Certification Program
             </button>
@@ -983,7 +1008,7 @@ export default function TrainingCoursesPage() {
               Why Train with Great Hire?
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-lg max-w-xl mx-auto">
-              We don't just train you — we connect you directly to hiring opportunities.
+              We don&apos;t just train you — we connect you directly to hiring opportunities.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1016,7 +1041,7 @@ export default function TrainingCoursesPage() {
             {TESTIMONIALS.map((t) => (
               <div key={t.name} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow duration-300">
                 <StarRating count={t.rating} />
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-4 mb-6 italic">"{t.text}"</p>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-4 mb-6 italic">&quot;{t.text}&quot;</p>
                 <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div className={`w-10 h-10 ${t.avatarColor} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
                     {t.avatar}
@@ -1049,9 +1074,12 @@ export default function TrainingCoursesPage() {
             >
               🚀 Enroll Now — Free Demo
             </button>
-            <button className="border-2 border-white/40 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-base transition-colors whitespace-nowrap">
+            <Link
+              to="/contact"
+              className="border-2 border-white/40 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-base transition-colors whitespace-nowrap text-center"
+            >
               📞 Talk to a Counsellor
-            </button>
+            </Link>
           </div>
           <p className="text-blue-200 text-sm mt-6">
             📍 Centres in Hyderabad · Visakhapatnam · Bangalore &nbsp;|&nbsp; 🌐 Online batches available

@@ -1,15 +1,16 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import PropTypes from "prop-types";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { JOB_API_END_POINT, COMPANY_API_END_POINT, ADMIN_JOB_DATA_API_END_POINT } from "@/utils/ApiEndPoint";
+import { JOB_API_END_POINT} from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { decreaseMaxPostJobs } from "@/redux/companySlice";
 import axios from "axios";
 import { allLocations, jobTitles } from "@/utils/constant";
-import PillSelect from "@/components/shared/PillSelect";
+//import PillSelect from "@/components/shared/PillSelect";
 import { Helmet } from "react-helmet-async";
 import DOMPurify from "dompurify";
 import { hasStarterUnlimitedJobs } from "@/utils/starterPlan";
@@ -62,9 +63,15 @@ const SectionHeader = ({ icon, title, subtitle }) => (
   </div>
 );
 
+SectionHeader.propTypes = {
+  icon: PropTypes.node,
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+};
+
 const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) => {
   const [step, setStep] = useState(0);
-  const [chatOpen, setChatOpen] = useState(false);
+  //const [chatOpen, setChatOpen] = useState(false);
   const { company: reduxCompany } = useSelector((state) => state.company);
   const company = adminMode ? adminCompany : reduxCompany;
   const { user } = useSelector((state) => state.auth);
@@ -109,16 +116,16 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
     return `${remainingPosts} Job${remainingPosts !== 1 ? "s" : ""}`;
   }, [remainingPosts]);
 
-  const handleChange = (e) => {
-    const lines = e.target.value.split("\n");
+  // const handleChange = (e) => {
+  //   const lines = e.target.value.split("\n");
 
-    // Ensure each new line starts with a single bullet point, avoiding duplicate bullets
-    //    formattedText = lines.map(line => {
-    //     return line.startsWith("• ") ? line : `• ${line.trim()}`;
-    //   }).join("\n");
-    // const
-    //   formik.setFieldValue("details", formattedText);
-  };
+  //   // Ensure each new line starts with a single bullet point, avoiding duplicate bullets
+  //   //    formattedText = lines.map(line => {
+  //   //     return line.startsWith("• ") ? line : `• ${line.trim()}`;
+  //   //   }).join("\n");
+  //   // const
+  //   //   formik.setFieldValue("details", formattedText);
+  // };
 
 
   const editorRef = useRef(null);
@@ -229,23 +236,23 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
   };
 
 
-  const alphaList = () => {
-    editorRef.current.focus();
-    document.execCommand("insertOrderedList");
+  // const alphaList = () => {
+  //   editorRef.current.focus();
+  //   document.execCommand("insertOrderedList");
 
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
+  //   const selection = window.getSelection();
+  //   if (!selection.rangeCount) return;
 
-    let node = selection.anchorNode;
-    while (node && node.nodeName !== "OL") {
-      node = node.parentElement;
-    }
+  //   let node = selection.anchorNode;
+  //   while (node && node.nodeName !== "OL") {
+  //     node = node.parentElement;
+  //   }
 
-    if (node) {
-      node.style.listStyleType = "lower-alpha";
-      node.style.paddingLeft = "1.5rem"; // 👈 alignment fix
-    }
-  };
+  //   if (node) {
+  //     node.style.listStyleType = "lower-alpha";
+  //     node.style.paddingLeft = "1.5rem"; // 👈 alignment fix
+  //   }
+  // };
 
 
 
@@ -432,18 +439,18 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
     }),
 
     onSubmit: async (values) => {
-      if(!adminMode){
-      // Block 2nd+ job for ALL plans until admin verifies
-      const jobsPostedSoFar = jobsPosted;
-      if (!company.isActive && jobsPostedSoFar >= 1 && remainingPosts <= 0) {
-        toast.error("Your first job is under admin review. You cannot post additional jobs until your account is verified.");
-        return;
+      if (!adminMode) {
+        // Block 2nd+ job for ALL plans until admin verifies
+        const jobsPostedSoFar = jobsPosted;
+        if (!company.isActive && jobsPostedSoFar >= 1 && remainingPosts <= 0) {
+          toast.error("Your first job is under admin review. You cannot post additional jobs until your account is verified.");
+          return;
+        }
+        if (company.isActive && remainingPosts <= 0) {
+          toast.error("You have no remaining job posts. Please upgrade your plan.");
+          return;
+        }
       }
-      if (company.isActive && remainingPosts <= 0) {
-        toast.error("You have no remaining job posts. Please upgrade your plan.");
-        return;
-      }
-    }
 
       setLoading(true);
       try {
@@ -472,8 +479,8 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
           toast.success(msg);
           setTimeout(() => {
             if (adminMode) onSuccess?.();
-            else navigate("/recruiter/dashboard/home"); 
-            }, 1000);
+            else navigate("/recruiter/dashboard/home");
+          }, 1000);
         } else {
           toast.error("Job post failed");
         }
@@ -492,6 +499,12 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
       }
     },
   });
+
+  PostJob.propTypes = {
+  adminMode: PropTypes.bool,
+  adminCompany: PropTypes.object,
+  onSuccess: PropTypes.func,
+};
 
   const handleNext = async () => {
     const currentStepFields = [
@@ -739,13 +752,12 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
         <React.Fragment key={s.title}>
           <div className="flex flex-col items-center gap-1.5">
             <div
-              className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold border-2 transition-all duration-300 ${
-                i < step
+              className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold border-2 transition-all duration-300 ${i < step
                   ? "bg-indigo-600 border-indigo-600 text-white"
                   : i === step
-                  ? "bg-gradient-to-br from-indigo-600 to-violet-600 border-transparent text-white shadow-md shadow-indigo-500/30"
-                  : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500"
-              }`}
+                    ? "bg-gradient-to-br from-indigo-600 to-violet-600 border-transparent text-white shadow-md shadow-indigo-500/30"
+                    : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500"
+                }`}
             >
               {i < step ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -811,7 +823,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                   <p className="text-sm text-red-700 dark:text-red-300">
-                    <span className="font-semibold">Pending verification.</span> Your first job is under admin review. You can't post additional jobs until your account is verified.
+                    <span className="font-semibold">Pending verification.</span> Your first job is under admin review. You can&apos;t post additional jobs until your account is verified.
                   </p>
                 </div>
               </div>
@@ -822,28 +834,28 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
               if (plan === "FREE") return company.freeJobsPosted === 1;
               return ((company?.planJobsPostedThisMonth || 0) + (company?.paidPlanFreeJobsPosted || 0)) === 1;
             })() && (
-              <div className={`${cardCls} mb-5 !p-4 border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/[0.06]`}>
-                <div className="flex items-start gap-3">
-                  <svg className="h-5 w-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                    <span className="font-semibold">Verified!</span> You can now post more jobs according to your plan.
-                  </p>
+                <div className={`${cardCls} mb-5 !p-4 border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/[0.06]`}>
+                  <div className="flex items-start gap-3">
+                    <svg className="h-5 w-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                      <span className="font-semibold">Verified!</span> You can now post more jobs according to your plan.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-           {!adminMode && (
-            <div className={`${cardCls} !p-5 md:!p-6 mb-5 bg-gradient-to-r from-indigo-600 to-violet-600 !border-0 text-white`}>
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                  <p className="text-xs font-medium text-indigo-100">Remaining Job Posts</p>
-                  <p className="text-2xl font-bold">{remainingPostsLabel}</p>
+            {!adminMode && (
+              <div className={`${cardCls} !p-5 md:!p-6 mb-5 bg-gradient-to-r from-indigo-600 to-violet-600 !border-0 text-white`}>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-indigo-100">Remaining Job Posts</p>
+                    <p className="text-2xl font-bold">{remainingPostsLabel}</p>
+                  </div>
+                  <span className="text-xs font-semibold bg-white/15 px-3 py-1 rounded-full">{company.plan || "FREE"} Plan</span>
                 </div>
-                <span className="text-xs font-semibold bg-white/15 px-3 py-1 rounded-full">{company.plan || "FREE"} Plan</span>
               </div>
-            </div>
             )}
 
             {/* Locked state */}
@@ -854,7 +866,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                 </svg>
                 <h3 className="mt-3 text-lg font-semibold text-slate-900 dark:text-white">Job Posting Locked</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                  Your first job is under admin review. You can't post additional jobs until your account is verified.
+                  Your first job is under admin review. You can&apos;t post additional jobs until your account is verified.
                 </p>
                 <div className="mt-6">
                   <Link to="/recruiter/dashboard/home" className={primaryBtnCls}>
@@ -896,18 +908,23 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                             <span className="text-red-500 dark:text-red-400 ml-1">*</span>
                           </Label>
 
-                          <PillSelect
+                          <select
+                            name="urgentHiring"
                             value={formik.values.urgentHiring}
-                            onChange={(val) => {
-                              formik.setFieldValue("urgentHiring", val);
+                            onChange={(e) => {
+                              formik.setFieldValue("urgentHiring", e.target.value);
                               formik.setFieldTouched("urgentHiring", true, true);
                             }}
-                            placeholder="Select"
-                            options={[
-                              { value: "Yes", label: "Yes" },
-                              { value: "No", label: "No" },
-                            ]}
-                          />
+                            onBlur={formik.handleBlur}
+                            className={`${inputCls} cursor-pointer
+                           [&>option]:bg-white [&>option]:text-slate-900
+                            hover:bg-green-700 hover:text-white hover:border-green-700
+                            focus:bg-green-700 focus:text-white focus:border-green-700 focus:ring-green-700/40`}
+                          >
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                          </select>
 
                           {formik.touched.urgentHiring && formik.errors.urgentHiring && (
                             <div className={errorCls}>{formik.errors.urgentHiring}</div>
@@ -1075,11 +1092,10 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                             return (
                               <label
                                 key={benefit}
-                                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border cursor-pointer text-sm transition-colors duration-200 ${
-                                  checked
+                                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border cursor-pointer text-sm transition-colors duration-200 ${checked
                                     ? "border-indigo-300 dark:border-indigo-500/40 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
                                     : "border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04]"
-                                }`}
+                                  }`}
                               >
                                 <input
                                   type="checkbox"
@@ -1368,11 +1384,10 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                                   formik.setFieldValue("workPlaceFlexibility", mode);
                                   formik.setFieldTouched("workPlaceFlexibility", true, true);
                                 }}
-                                className={`py-2.5 rounded-xl border text-sm font-medium transition-colors duration-200 ${
-                                  formik.values.workPlaceFlexibility === mode
+                                className={`py-2.5 rounded-xl border text-sm font-medium transition-colors duration-200 ${formik.values.workPlaceFlexibility === mode
                                     ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300"
                                     : "border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.04]"
-                                }`}
+                                  }`}
                               >
                                 {mode}
                               </button>
@@ -1764,7 +1779,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                           </Link>
                           ; 2) you consent to your jobs being transmitted to the
                           Students (Great Hire does not guarantee receipt), &
-                          processed & analyzed in accordance with its & Great Hire's
+                          processed & analyzed in accordance with its & Great Hire&apos;s
                           terms & privacy policies; & 3) you acknowledge that when
                           you post to jobs outside your country it may involve you
                           sending your personal data to countries with lower levels
