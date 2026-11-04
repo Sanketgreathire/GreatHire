@@ -153,7 +153,7 @@ export const TheFutureTechnology = () => {
                 <div className="wave-circle"></div>
 
                 {/* Central Glow Effect */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500 opacity-20 blur-3xl rounded-full"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-50 dark:bg-blue-950/300 opacity-20 blur-3xl rounded-full"></div>
               </div>
             </div>
 

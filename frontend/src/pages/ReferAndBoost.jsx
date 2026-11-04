@@ -22,12 +22,44 @@ const ReferAndBoost = () => {
     remaining: Math.max(REFERRAL_GOAL - referralCount, 0),
   }), [referralCode, referralCount]);
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(referralLink).then(() => {
+  const handleCopy = useCallback(async () => {
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(referralLink);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = referralLink;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
       setCopied(true);
       toast.success("Referral link copied!");
       setTimeout(() => setCopied(false), 2500);
-    });
+    } catch {
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = referralLink;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        setCopied(true);
+        toast.success("Referral link copied!");
+        setTimeout(() => setCopied(false), 2500);
+      } catch {
+        toast.error("Failed to copy link");
+      }
+    }
   }, [referralLink]);
 
   const handleShare = useCallback(async () => {

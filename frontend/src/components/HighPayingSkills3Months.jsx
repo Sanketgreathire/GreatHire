@@ -47,8 +47,8 @@ const skills = [
     title: "AWS Cloud Certification (Solutions Architect)",
     salary: "₹5–8 LPA",
     learning: "3 months (60–80 hours)",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     type: "Certification",
     desc: "AWS is the cloud king. Certification + hands-on projects make you immediately hireable. Employers pay premium for certified AWS professionals. Free tier available for practice. Exam costs ₹13,000 but ROI is massive — salary boost of ₹1.5–3 LPA typical.",
     roadmap: "Week 1-2: EC2, S3, VPC basics. Week 3-4: RDS, Lambda, IAM. Week 5-6: Projects. Week 7-8: Mock exams & certification.",
@@ -58,8 +58,8 @@ const skills = [
     title: "Data Analytics (SQL + Python + Power BI)",
     salary: "₹4.5–7 LPA",
     learning: "3 months (70–90 hours)",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     type: "Skill Stack",
     desc: "Fastest growing fresher role. SQL + Python + Power BI is the holy trinity. Build 2–3 analytics projects. Companies desperate for data analysts right now. Salary growth potential to ₹8–12 LPA within 2 years.",
     roadmap: "Month 1: SQL mastery (HackerRank, LeetCode). Month 2: Python + Pandas. Month 3: Power BI + 2 portfolio projects.",
@@ -69,8 +69,8 @@ const skills = [
     title: "Salesforce Administrator / Developer",
     salary: "₹4–7 LPA",
     learning: "3 months (80–100 hours)",
-    color: "bg-green-50 border-green-200",
-    badge: "bg-green-100 text-green-700",
+    color: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900/50",
+    badge: "bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300",
     type: "Certification",
     desc: "Salesforce skills are in permanent shortage. Free learning on Trailhead. Admin certification easier, Developer harder but pays more. Indian tech companies desperate for Salesforce talent. Salary jumps of ₹2–4 LPA common.",
     roadmap: "Month 1: Salesforce fundamentals on Trailhead. Month 2: Deep admin features. Month 3: Mock exams + certification.",
@@ -80,8 +80,8 @@ const skills = [
     title: "UI/UX Design (Figma + Design Systems)",
     salary: "₹3.5–6 LPA",
     learning: "3 months (60–80 hours)",
-    color: "bg-pink-50 border-pink-200",
-    badge: "bg-pink-100 text-pink-700",
+    color: "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900/50",
+    badge: "bg-pink-100 dark:bg-pink-900/60 text-pink-700 dark:text-pink-300",
     type: "Design Skill",
     desc: "Design skills command premium. Figma is industry standard. Build 3–5 portfolio projects. Work on real Dribbble/Behance projects. Freelance gigs pay ₹1–3 LPA while employed. High demand in startups and product companies.",
     roadmap: "Month 1: Figma basics + design fundamentals. Month 2: Design systems & UI components. Month 3: 3–4 portfolio projects.",
@@ -91,8 +91,8 @@ const skills = [
     title: "Azure Cloud Certification",
     salary: "₹4.5–7 LPA",
     learning: "3 months (60–80 hours)",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     type: "Certification",
     desc: "Microsoft's cloud platform gaining massive traction. Azure + Office 365 = high demand in enterprises. Easier than AWS for beginners. Exam costs ₹5,500. Free credits for practice. Enterprise companies pay well for Azure expertise.",
     roadmap: "Week 1-2: Azure basics. Week 3-4: Virtual machines, storage, databases. Week 5-6: App services & monitoring. Week 7-8: Certification prep.",
@@ -102,8 +102,8 @@ const skills = [
     title: "Advanced Excel (Finance / Data Analysis)",
     salary: "₹3–5.5 LPA",
     learning: "2–3 months (40–60 hours)",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     type: "Practical Skill",
     desc: "Underestimated but high-paying. VLOOKUP, pivot tables, macros, financial modeling. Finance and investment roles value this heavily. Build financial models. Create dashboards. Excel expertise + domain knowledge = ₹5–8 LPA entry.",
     roadmap: "Week 1-2: Formulas & functions deep dive. Week 3-4: Pivot tables & data analysis. Week 5-6: Macros & automation. Week 7-8: Financial modeling projects.",
@@ -113,8 +113,8 @@ const skills = [
     title: "Ethical Hacking / Cybersecurity Basics (CEH)",
     salary: "₹5–9 LPA",
     learning: "3 months (100–120 hours)",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     type: "Certification",
     desc: "Cybersecurity shortage is severe. CEH certification highly valued. Steep learning curve but highest ROI among 3-month skills. Government and finance sectors pay premium. Career growth to ₹12–25+ LPA realistic.",
     roadmap: "Month 1: Networking + security fundamentals. Month 2: Penetration testing basics. Month 3: Practical labs + CEH mock exams.",
@@ -124,8 +124,8 @@ const skills = [
     title: "Digital Marketing (Google Ads + SEO + Analytics)",
     salary: "₹2.5–5 LPA",
     learning: "3 months (50–70 hours)",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     type: "Skill Stack",
     desc: "Google Ads certification free. SEO expertise valuable for content companies and e-commerce. Build 2–3 real campaigns, not just theory. Freelance income potential ₹50K–2 LPA/month while learning. Fast track to startup roles.",
     roadmap: "Month 1: Google Ads + Analytics certification. Month 2: SEO fundamentals. Month 3: 2–3 live campaign projects.",
@@ -188,17 +188,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -209,7 +209,7 @@ export default function HighPayingSkills3Months() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-800 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
@@ -238,37 +238,37 @@ export default function HighPayingSkills3Months() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                What if you could learn a skill in just 3 months and command ₹1.5–3 LPA more salary immediately? In 2026, this isn't a dream — it's a documented pattern. <strong className="text-emerald-700">Specialized, high-demand skills have compressed learning curves and inflated salaries.</strong> Companies will pay premiums for professionals who know AWS, Salesforce, advanced analytics, or cybersecurity.
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                What if you could learn a skill in just 3 months and command ₹1.5–3 LPA more salary immediately? In 2026, this isn't a dream — it's a documented pattern. <strong className="text-emerald-700 dark:text-emerald-300">Specialized, high-demand skills have compressed learning curves and inflated salaries.</strong> Companies will pay premiums for professionals who know AWS, Salesforce, advanced analytics, or cybersecurity.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide identifies 8 proven high-paying skills you can genuinely master in 90 days, along with exact roadmaps, salary expectations, and real examples of freshers who learned these skills and landed premium roles.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">The 3-Month Skill Economy: Why It Works in 2026</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">The 3-Month Skill Economy: Why It Works in 2026</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The job market has bifurcated. Generalists compete heavily. Specialists command premium salaries. Why? <strong>Skill shortage is acute.</strong> Companies can't find AWS-certified professionals, data analysts, or Salesforce experts fast enough. They're willing to pay 30–50% more for someone who has the specific skill vs. someone without it.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The 3-month window works because these skills have been designed to be learnable quickly. AWS and Salesforce have certification programs built around 3-month timelines. Data Analytics has a clear learning path. The barrier isn't time — it's focused, disciplined execution. Most people quit at week 4. Those who finish are in high demand.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to learn high-paying skills in 3 months.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to learn high-paying skills in 3 months.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -277,37 +277,37 @@ export default function HighPayingSkills3Months() {
 
           {/* ── SKILLS BREAKDOWN ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 High-Paying Skills: Salary, Timeline & Roadmap</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">Learnable in 3 months, valued for ₹4–9 LPA entry salaries.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 High-Paying Skills: Salary, Timeline & Roadmap</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">Learnable in 3 months, valued for ₹4–9 LPA entry salaries.</p>
             <div className="space-y-5">
               {skills.map((skill) => (
                 <div key={skill.num} className={`border rounded-2xl overflow-hidden ${skill.color}`}>
-                  <div className="bg-gradient-to-r from-transparent to-white/10 px-5 sm:px-6 py-4 border-b border-gray-200/50">
+                  <div className="bg-gradient-to-r from-transparent to-white/10 px-5 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-800/50">
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-2xl font-black text-gray-200">{skill.num}</span>
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${skill.badge}`}>{skill.type}</span>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900">{skill.title}</h3>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{skill.title}</h3>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm mt-3">
                       <div>
-                        <p className="text-gray-500 text-xs uppercase font-semibold">Expected Salary</p>
-                        <p className="font-bold text-gray-900">{skill.salary}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase font-semibold">Expected Salary</p>
+                        <p className="font-bold text-gray-900 dark:text-white">{skill.salary}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 text-xs uppercase font-semibold">Learning Time</p>
-                        <p className="font-bold text-gray-900">{skill.learning}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs uppercase font-semibold">Learning Time</p>
+                        <p className="font-bold text-gray-900 dark:text-white">{skill.learning}</p>
                       </div>
                     </div>
                   </div>
                   <div className="px-5 sm:px-6 py-5">
-                    <p className="text-gray-700 text-sm leading-relaxed mb-4">{skill.desc}</p>
+                    <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed mb-4">{skill.desc}</p>
                     <div>
-                      <p className="text-xs font-bold text-gray-600 uppercase mb-2">📋 3-Month Roadmap:</p>
-                      <p className="text-sm text-gray-600 leading-relaxed">{skill.roadmap}</p>
+                      <p className="text-xs font-bold text-gray-600 dark:text-gray-300 uppercase mb-2">📋 3-Month Roadmap:</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{skill.roadmap}</p>
                     </div>
                   </div>
                 </div>
@@ -317,7 +317,7 @@ export default function HighPayingSkills3Months() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: ₹2 LPA → ₹5.5 LPA in 90 Days</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: ₹2 LPA → ₹5.5 LPA in 90 Days</h2>
             <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">V</div>
@@ -359,26 +359,26 @@ export default function HighPayingSkills3Months() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -389,7 +389,7 @@ export default function HighPayingSkills3Months() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -397,14 +397,14 @@ export default function HighPayingSkills3Months() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Learning a high-paying skill in 3 months isn't theoretical — it's a proven, repeatable pattern. AWS, Data Analytics, Salesforce, and others have well-designed learning paths and acute market demand. The barrier isn't knowledge availability — it's discipline.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Most people start courses with excitement and quit by week 4. Those who stick finish, get certified, build projects, and land premium roles. Your 3-month commitment today translates to ₹1–3 LPA salary increase, permanent career trajectory shift, and global job opportunities.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Pick one skill. Commit 3 months. Change your career. The math is simple — execution is the only variable.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Pick one skill. Commit 3 months. Change your career. The math is simple — execution is the only variable.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -415,7 +415,7 @@ export default function HighPayingSkills3Months() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-emerald-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-emerald-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-emerald-700 dark:text-emerald-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-emerald-50 dark:bg-emerald-950/30 transition-colors shadow-lg"
             >
               Explore High-Paying Roles on GreatHire →
             </a>

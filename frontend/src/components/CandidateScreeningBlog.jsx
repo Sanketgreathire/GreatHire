@@ -45,8 +45,8 @@ const methods = [
   {
     num: "01",
     title: "Structured Resume Screening with a Scorecard",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Foundation",
     desc: "Replace ad hoc resume review with a role-specific scorecard. Score each resume on 4–6 weighted criteria: relevant skills match, project or work quality, experience level alignment, and communication clarity. This takes the same time as gut-feel review — but produces consistent, defensible, and far more accurate decisions. Build the scorecard once per role family; update quarterly.",
     tip: "Tip: Give 'must-have' criteria 3x the weight of 'nice-to-have' criteria. A candidate who nails all must-haves but lacks nice-to-haves beats a candidate with the reverse — every time.",
@@ -54,8 +54,8 @@ const methods = [
   {
     num: "02",
     title: "Structured Phone Screen (15–20 Minutes)",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Speed Filter",
     desc: "A short, structured phone screen eliminates 40–60% of unqualified applicants before they enter the interview pipeline. Use 5 consistent questions per role: 1 on motivation and role awareness, 2 on relevant skills or experience, 1 situational or behavioral question, 1 on logistics (location, notice period, salary range). Score using your scorecard immediately after — before your impression fades.",
     tip: "Tip: Record the call (with consent) and review your scorecard decisions quarterly to check for drift or bias in your phone screening judgments.",
@@ -63,8 +63,8 @@ const methods = [
   {
     num: "03",
     title: "Skills-Based Assessments for Technical Roles",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Ability Proof",
     desc: "For developer, data, QA, and design roles, a 30–60 minute take-home assessment is the most reliable predictor of on-the-job performance. Platforms like HackerRank, Codility, and TestGorilla automate delivery and scoring. For non-technical roles, a short written exercise or case study works equally well. Keep assessments role-relevant and time-boxed. Anything over 90 minutes drives dropout among your strongest candidates — who have the most options.",
     tip: "Tip: Always give candidates a clear brief, a realistic deadline (48–72 hours), and feedback on their submission — even if they don't progress. It protects your employer brand.",
@@ -72,8 +72,8 @@ const methods = [
   {
     num: "04",
     title: "ATS Filtering and AI-Assisted First Pass",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "Volume Tool",
     desc: "For high-volume roles receiving 200+ applications, ATS filters and AI-assisted screening tools handle the first-pass triage — flagging candidates who match keyword and criteria thresholds and deprioritizing those who don't. Platforms like Keka, Darwinbox, Zoho Recruit, and Greenhouse offer this capability. Critical caveat: always have a human review the 'borderline' bucket — automated tools miss strong candidates who express qualifications in non-standard ways.",
     tip: "Tip: Never use ATS filters as a hard gate on their own. Use them to sort the queue — humans make the final call on every candidate who reaches the phone screen.",
@@ -81,8 +81,8 @@ const methods = [
   {
     num: "05",
     title: "One-Way Video Interviews for Async Screening",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Time Saver",
     desc: "One-way video interview tools (HireVue, Spark Hire, or even a simple Loom-based prompt) let candidates record answers to 3–5 structured questions on their own schedule — and let your team review asynchronously. This eliminates scheduling friction, compresses the time between application and qualified-candidate identification by 3–5 days, and gives your team richer signal than a resume alone. Works especially well for communication-heavy roles.",
     tip: "Tip: Keep video prompts under 5 questions with a 2-minute response limit each. Longer formats drive dropout and signal poor process design to candidates.",
@@ -90,8 +90,8 @@ const methods = [
   {
     num: "06",
     title: "Structured Reference Checks (Done Right)",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Validation",
     desc: "Most reference checks are performative — a polite call that confirms dates of employment. Done properly, structured reference checks are a high-signal screening tool. Ask references: 'In what area did [candidate] most need to improve?' and 'How would you describe their work quality under pressure?' and 'Would you rehire them unreservedly?' These questions produce real signal — especially the last one, where hesitation speaks louder than the answer.",
     tip: "Tip: Ask for references who were direct managers, not colleagues or friends. Peer references are easier to game. Manager references reveal performance reality.",
@@ -99,8 +99,8 @@ const methods = [
   {
     num: "07",
     title: "Blind Resume Screening to Reduce Bias",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Bias Reduction",
     desc: "Blind screening — removing candidate name, photo, college name, and graduation year before the first review — significantly reduces affinity bias and pedigree bias in the initial screening stage. Several ATS platforms support this natively. For companies without ATS, a simple process of having a recruiter anonymize resumes before passing to hiring managers achieves the same effect. The goal: your screening decisions are driven by skills and evidence, not by names or institutions.",
     tip: "Tip: Combine blind screening with a structured scorecard. The two together eliminate the most common sources of early-stage screening bias.",
@@ -108,8 +108,8 @@ const methods = [
   {
     num: "08",
     title: "Calibration Sessions Between Screeners",
-    color: "bg-rose-50 border-rose-200",
-    badge: "bg-rose-100 text-rose-700",
+    color: "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/50",
+    badge: "bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300",
     badgeLabel: "Consistency",
     desc: "When multiple recruiters or hiring managers screen candidates for the same role, their standards drift over time — without either party noticing. Monthly calibration sessions (30 minutes, reviewing 5–10 borderline decisions together) realign scoring standards, surface hidden bias patterns, and keep your screening consistent across the team. Calibration is the maintenance that keeps your screening engine running at the quality it was designed for.",
     tip: "Tip: In calibration sessions, focus on the 'borderline pass' and 'borderline reject' decisions — these are where individual judgment diverges most and where alignment has the highest impact.",
@@ -168,12 +168,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-indigo-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -183,8 +183,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -195,7 +195,7 @@ export default function CandidateScreeningBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white">
@@ -231,15 +231,15 @@ export default function CandidateScreeningBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 For most hiring teams, the{" "}
-                <strong className="text-indigo-700">candidate screening process</strong> is where good
+                <strong className="text-indigo-700 dark:text-indigo-300">candidate screening process</strong> is where good
                 intentions collapse into chaos. Hundreds of applications arrive, resumes pile up
                 unreviewed, strong candidates slip through the cracks, and by the time the team starts
                 interviewing, the best people have already accepted other offers.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide lays out the best methods to screen candidates efficiently in 2026 — the
                 tools, the workflows, the scorecards, and the metrics that transform a chaotic,
                 gut-driven funnel into a consistent, fast, and accurate screening engine that finds the
@@ -247,17 +247,17 @@ export default function CandidateScreeningBlog() {
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Candidate Screening Is Broken at Most Companies — and Why It Matters
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               India's job market in 2026 is high-volume and fast-moving. A single job posting on
               Naukri or LinkedIn can generate 300–800 applications within 72 hours. Without a
               structured screening process, recruiting teams spend 60–70% of their time reviewing
               applications that should have been filtered in the first pass — and still miss the
               candidates who would have been a great fit.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The companies that hire the best talent consistently aren't those with the biggest
               budgets — they're the ones with the sharpest screening processes. They define what
               qualified looks like before applications arrive, use structured tools at every stage, and
@@ -268,24 +268,24 @@ export default function CandidateScreeningBlog() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Step-by-Step Guidance to Build an Efficient Screening Process
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A 4-step framework to go from chaotic screening to a consistent, high-signal funnel.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -294,10 +294,10 @@ export default function CandidateScreeningBlog() {
 
           {/* ── METHODS CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 Best Methods to Screen Candidates Efficiently in 2026
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each method works best at a specific stage — use them in combination for maximum impact.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -307,15 +307,15 @@ export default function CandidateScreeningBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${method.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{method.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{method.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${method.badge}`}>
                       {method.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{method.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{method.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs text-gray-500 italic leading-relaxed">{method.tip}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{method.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{method.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed">{method.tip}</p>
                   </div>
                 </div>
               ))}
@@ -324,7 +324,7 @@ export default function CandidateScreeningBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How a 20-Person Team Reduced Time-to-Qualified-Candidate by 65%
             </h2>
             <div className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white rounded-2xl p-6 sm:p-8">
@@ -374,26 +374,26 @@ export default function CandidateScreeningBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {screeningMistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -404,7 +404,7 @@ export default function CandidateScreeningBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -416,8 +416,8 @@ export default function CandidateScreeningBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               An efficient candidate screening process is not a luxury — it's a competitive advantage.
               Companies that screen consistently, fast, and fairly identify strong candidates before
               their competitors do, protect their hiring team from burnout, and build institutional
@@ -426,7 +426,7 @@ export default function CandidateScreeningBlog() {
               to measuring outcomes. The return — faster hires, better retention, lower recruiting
               cost — compounds over every hiring cycle.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Build the screening system once. Calibrate it quarterly. Let it find your best people
               before anyone else does.
             </p>
@@ -444,7 +444,7 @@ export default function CandidateScreeningBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-indigo-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-indigo-700 dark:text-indigo-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 dark:bg-indigo-950/30 transition-colors shadow-lg"
             >
               Start Hiring on GreatHire →
             </a>

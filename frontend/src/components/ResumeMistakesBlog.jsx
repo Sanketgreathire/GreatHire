@@ -45,8 +45,8 @@ const mistakes = [
   {
     num: "01",
     title: "Making Your Resume About You Instead of the Job",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Most Common",
     desc: "Freshers often list everything they've done — all hobbies, all courses, all projects — regardless of relevance. Your resume isn't a biography. If you're applying to a data science role, your high school debate team trophy is irrelevant. Recruiters are looking for evidence you can do THIS job, not everything you've ever done. Every line on your resume should answer: 'Why is this relevant to the role I'm applying for?' A resume filled with irrelevant information is harder to skim, dilutes your actual strengths, and signals you don't understand the role.",
     fix: "Tailor your resume for each role. Move relevant projects and skills to the top. Remove anything that doesn't connect to the job description. Keep your resume to one page as a fresher.",
@@ -54,8 +54,8 @@ const mistakes = [
   {
     num: "02",
     title: "Listing Skills Without Proof or Context",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Credibility Killer",
     desc: "A resume that says 'Proficient in Python, JavaScript, SQL, AWS, Machine Learning, Data Analysis' without any project or achievement to back it up is a red flag. Recruiters see hundreds of resumes like this. How do they know you actually know Python? Did you build something with it? Can you explain what you built? Listing technologies without context is padding, and recruiters can spot it immediately. You'll get called to interview on false credentials, stumble when asked to explain, and damage your credibility.",
     fix: "For each skill, mention one project where you used it. Example: 'Python (built a web scraper for 10K+ product reviews)' instead of just 'Python.' Add GitHub link if you have code to show.",
@@ -63,8 +63,8 @@ const mistakes = [
   {
     num: "03",
     title: "Focusing on Responsibilities Instead of Results",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Impact Gap",
     desc: "Freshers often write: 'Responsible for developing a web application' or 'Worked on a data analysis project.' These are responsibilities, not results. They don't tell a recruiter what you actually accomplished. Did the web app work? How many users? What was the improvement? Did your analysis lead to a decision? Recruiters want to know the impact of your work. Result-focused descriptions stand out and prove you understand how to translate work into value.",
     fix: "Rewrite using metrics. 'Developed a web application that processed 1000+ user requests/day' or 'Built a data model that improved prediction accuracy by 15%.' Use numbers. They're memorable and quantifiable.",
@@ -72,8 +72,8 @@ const mistakes = [
   {
     num: "04",
     title: "Using Generic or Buzzword-Heavy Language",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Noise",
     desc: "Phrases like 'hardworking team player,' 'passionate about technology,' 'excellent communication skills,' and 'problem-solving mindset' are on thousands of resumes. They're meaningless without proof. Recruiters skip these. Buzzwords signal lazy writing and lack of specificity. Every word on your resume should either convey a skill, achievement, or relevant fact. Generic language wastes space and makes your resume harder to scan.",
     fix: "Replace buzzwords with specific examples. Instead of 'team player,' write: 'Collaborated with 4 team members to ship feature X in 2 weeks.' Specificity always beats generic praise.",
@@ -81,8 +81,8 @@ const mistakes = [
   {
     num: "05",
     title: "Poor Formatting or Grammar Mistakes",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Instant Rejection",
     desc: "Typos, inconsistent formatting, unclear sections, or poor spacing are automatic rejections. If you can't proofread your own resume, why should a company trust you with their code or data? Formatting issues also confuse ATS systems, causing your resume to be parsed incorrectly and filtered out before a human even sees it. A poorly formatted resume signals carelessness — and in hiring, carelessness is a major red flag.",
     fix: "Proofread 3+ times. Use Grammarly. Test your resume with an ATS checker. Use one consistent font, standard formatting, clear sections. Get a friend or mentor to review.",
@@ -90,8 +90,8 @@ const mistakes = [
   {
     num: "06",
     title: "No Quantifiable Metrics or Evidence of Learning",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Missed Proof",
     desc: "As a fresher, you don't have work experience — you have projects and learning. But many freshers list projects without proof. 'Built a recommendation system' means nothing without context. Did you evaluate it? What was the accuracy? How did you learn from failures? Recruiters hiring freshers are looking for learning potential and intellectual honesty. They want to see you've built something real, measured it, reflected on it, and improved. Metrics prove you're analytical. Evidence of learning proves you're adaptable.",
     fix: "For each project, include: what you built, what metrics you tracked, what you learned. Add GitHub link and deployment link if possible. Mention specific challenges and how you overcame them.",
@@ -99,8 +99,8 @@ const mistakes = [
   {
     num: "07",
     title: "Hiding Your Best Work or GitHub",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Visibility Loss",
     desc: "Many freshers have built projects but don't link to them on their resume. They mention projects in vague terms but don't provide a way for recruiters to actually see the work. For technical roles, your code is your proof. Recruiters often check GitHub before or after the interview. If you have good projects on GitHub, they should be linked and highlighted on your resume. Not showing your work is like being a chef without letting people taste your food.",
     fix: "Add GitHub link at the top of your resume. Link to your best 2–3 projects directly. Include deployment links (Heroku, Vercel, etc.) if available. Make sure your profile is clean and README files are good.",
@@ -108,8 +108,8 @@ const mistakes = [
   {
     num: "08",
     title: "Sending the Same Resume to Every Company",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Effort Gap",
     desc: "Generic resumes get generic results (no interviews). A company looking for a full-stack developer doesn't care about your machine learning projects. A fintech company doesn't want to see your portfolio project about recipe recommendations. When you send the same resume to 50 different roles, you're competing against candidates who tailored their resume for each role. Those candidates get the interviews. Tailoring takes 10 minutes per role, but it's the difference between a 2% and a 10% response rate.",
     fix: "For each application, read the job description. Add 2–3 keywords from the description to your resume. Move the most relevant project to the top. Reorder skills to match the role. Spend 10 minutes per application on tailoring.",
@@ -168,12 +168,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-slate-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -183,8 +183,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -195,7 +195,7 @@ export default function ResumeMistakesBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 text-white">
@@ -231,46 +231,46 @@ export default function ResumeMistakesBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Your resume is your first impression — and in most cases, your only impression before the interview. In 2026's competitive job market, fresher resumes are more scrutinized than ever. Recruiters are flooded with applications, so they're ruthless about filtering. <strong className="text-slate-700">Resume mistakes freshers make</strong> aren't just costing them interviews — they're costing them entry to their dream companies.
+            <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-200 dark:border-slate-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Your resume is your first impression — and in most cases, your only impression before the interview. In 2026's competitive job market, fresher resumes are more scrutinized than ever. Recruiters are flooded with applications, so they're ruthless about filtering. <strong className="text-slate-700 dark:text-slate-300">Resume mistakes freshers make</strong> aren't just costing them interviews — they're costing them entry to their dream companies.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide walks through the 8 most costly resume mistakes freshers make, why they matter, and exactly how to fix them — so your resume gets noticed and your resume actually gets you interviews.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Resume Mistakes Matter More for Freshers
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               As a fresher, you don't have years of work experience to fall back on. Your resume is often your only credibility signal. A vague resume, missing GitHub link, or spelling mistake might cost a mid-level professional one interview — but it could cost you your career entry point. Recruiters spend 6–8 seconds on a fresher resume. In that time, they're making a binary decision: interview or reject. There's no second chance to impress.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The difference between a 2% response rate and a 15% response rate is usually not luck — it's a resume that's been optimized, tailored, and proofread. Every fresh graduate applying to your dream company has similar skills. Your resume is what separates you from the noise. Fix it, and doors open. Ignore it, and you'll spend weeks wondering why you're not getting interviews.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               4-Step Framework to Build a Standout Resume
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A structured approach to understanding what matters, building proof, and continuously improving.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -279,10 +279,10 @@ export default function ResumeMistakesBlog() {
 
           {/* ── MISTAKES CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 Resume Mistakes That Get You Rejected Instantly (and How to Fix Them)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each mistake has consequences, but all are fixable.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -292,18 +292,18 @@ export default function ResumeMistakesBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${mistake.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{mistake.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{mistake.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${mistake.badge}`}>
                       {mistake.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{mistake.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{mistake.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{mistake.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{mistake.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       The Fix
                     </p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{mistake.fix}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{mistake.fix}</p>
                   </div>
                 </div>
               ))}
@@ -312,7 +312,7 @@ export default function ResumeMistakesBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How Aisha Went From 2% Response Rate to 25% in 3 Weeks
             </h2>
             <div className="bg-gradient-to-br from-slate-700 to-gray-900 text-white rounded-2xl p-6 sm:p-8">
@@ -362,26 +362,26 @@ export default function ResumeMistakesBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {resumeMistakesPractices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -392,7 +392,7 @@ export default function ResumeMistakesBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -404,11 +404,11 @@ export default function ResumeMistakesBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Your resume is not just a list of skills — it's your professional narrative. For freshers, it's often the only thing between you and rejection. The mistakes that get resumes binned instantly are all fixable: vague language, missing proof, poor formatting, lack of tailoring, and generic descriptions. The companies getting the most callbacks from freshers aren't luckier — they've just invested time in clarity, proof, and presentation.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Fix your resume today. Your next interview is waiting.
             </p>
           </section>
@@ -423,7 +423,7 @@ export default function ResumeMistakesBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-slate-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 transition-colors shadow-lg"
+              className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Get Started on GreatHire →
             </a>

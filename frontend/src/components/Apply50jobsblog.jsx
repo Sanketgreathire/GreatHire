@@ -45,64 +45,64 @@ const tactics = [
   {
     num: "01",
     title: "Build a Master Resume Once, Use Variants Forever",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Foundation",
     desc: "Create one perfectly optimized master resume. Then create 2–3 role-specific variants (e.g., software developer, technical support, data analyst). Each variant takes 10 minutes to create from the master. Every fast application pulls from an existing variant — you never start from scratch.",
   },
   {
     num: "02",
     title: "Use Job Alerts So Listings Come to You",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Automation",
     desc: "Set keyword-based job alerts on GreatHire, Naukri, LinkedIn, and Indeed. New matching listings land in your inbox daily. No time wasted scrolling. Apply to email alerts first — these are freshest and have the lowest competition. 15 minutes of alert-setting once saves hours of searching weekly.",
   },
   {
     num: "03",
     title: "Use LinkedIn Easy Apply for Speed",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Speed Tool",
     desc: "LinkedIn Easy Apply lets you apply to roles in under 60 seconds using your saved profile. Filter by 'Easy Apply' + your target role + 'Past 24 hours'. You can realistically apply to 25–30 LinkedIn roles in an hour. Make sure your LinkedIn profile is complete — that's what gets sent.",
   },
   {
     num: "04",
     title: "Apply Directly on Company Career Pages",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "High Quality",
     desc: "For 5–10 dream companies daily, skip the portals and apply directly on their careers page. These applications often bypass ATS queues and land directly with the hiring team. Bookmark 50–100 target company career pages and check them weekly. This is lower volume but significantly higher conversion.",
   },
   {
     num: "05",
     title: "Batch and Time-Block Your Application Sessions",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Productivity",
     desc: "Don't apply sporadically throughout the day. Block 3 dedicated sessions: morning (Naukri + GreatHire), midday (LinkedIn), afternoon (direct company sites). Batching reduces decision fatigue, keeps you in flow, and makes it easier to hit 50 applications without burning out by noon.",
   },
   {
     num: "06",
     title: "Keep a Live Tracker — Update It Daily",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Measurement",
     desc: "A Google Sheet with 8 columns (portal, company, role, date, JD link, resume version, response, stage) is your command center. Update it every evening. After 50–100 applications, patterns emerge: which portals respond, which role titles get traction, which companies never reply. This data makes every future application smarter.",
   },
   {
     num: "07",
     title: "Personalize Just Enough — Not Everything",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Balance",
     desc: "Full customization for 50 applications a day is impossible. Instead: 90% of applications use your best-fit resume variant. For 5–10 roles you genuinely want, spend 5 extra minutes personalizing the cover note and tweaking 2–3 resume bullet points. This 80/20 approach gives you volume and quality where it counts.",
   },
   {
     num: "08",
     title: "Follow Up Strategically After Applying",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Multiplier",
     desc: "5 days after applying to a company you care about, send a short LinkedIn message to the recruiter or hiring manager: 'Hi [Name], I applied for [Role] on [Date] and wanted to express genuine interest. Happy to share more about my background if useful.' A 3-line follow-up revives 10–15% of stalled applications.",
   },
@@ -160,17 +160,17 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-blue-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -181,7 +181,7 @@ export default function Apply50JobsBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
@@ -212,40 +212,40 @@ export default function Apply50JobsBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 Most freshers{" "}
-                <strong className="text-blue-700">apply jobs ineffectively</strong> — sending 5–10 applications a week, waiting passively, and wondering why nothing is moving. In a competitive market, that pace simply isn't enough. The job seekers who land offers fastest are the ones who treat job applications like a system: high volume, high focus, consistently executed.
+                <strong className="text-blue-700 dark:text-blue-300">apply jobs ineffectively</strong> — sending 5–10 applications a week, waiting passively, and wondering why nothing is moving. In a competitive market, that pace simply isn't enough. The job seekers who land offers fastest are the ones who treat job applications like a system: high volume, high focus, consistently executed.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide shows you exactly how to apply to 50 jobs a day without burning out — the tools, the workflows, the time blocks, and the tracking system that turns raw volume into real interviews.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why 50 Applications a Day — and Why Most People Never Get There
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The average fresher applies to 3–5 jobs per day. At that rate, it takes months to generate enough pipeline to get consistent interview practice. In 2026, with thousands of candidates competing for the same entry-level roles, low application volume means you're competing with one hand tied behind your back.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               50 targeted applications per day — within your specific role category — generates 10x the pipeline of the average job seeker. With a 3–5% response rate (industry standard for freshers), that's 75–125 callbacks from 1,500 applications in a month. The infrastructure to get there is simpler than most people think. This guide builds it for you.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance to Apply Jobs Effectively at Scale</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to go from 5 applications a day to 50 — without chaos.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance to Apply Jobs Effectively at Scale</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to go from 5 applications a day to 50 — without chaos.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -254,17 +254,17 @@ export default function Apply50JobsBlog() {
 
           {/* ── TACTICS CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Tactics to Apply Jobs Effectively at High Volume</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">The exact techniques that make 50 applications a day sustainable — not stressful.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Tactics to Apply Jobs Effectively at High Volume</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">The exact techniques that make 50 applications a day sustainable — not stressful.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {tactics.map((tactic) => (
                 <div key={tactic.num} className={`border rounded-2xl p-5 sm:p-6 ${tactic.color} hover:shadow-md transition-shadow`}>
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{tactic.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{tactic.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${tactic.badge}`}>{tactic.badgeLabel}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{tactic.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{tactic.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{tactic.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{tactic.desc}</p>
                 </div>
               ))}
             </div>
@@ -272,7 +272,7 @@ export default function Apply50JobsBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: From 5 to 50 Applications a Day — Hired in 3 Weeks</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: From 5 to 50 Applications a Day — Hired in 3 Weeks</h2>
             <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">K</div>
@@ -314,26 +314,26 @@ export default function Apply50JobsBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -344,7 +344,7 @@ export default function Apply50JobsBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -352,11 +352,11 @@ export default function Apply50JobsBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Applying to 50 jobs a day isn't about desperation — it's about building a system that generates enough pipeline to give you real options. Set up your resume variants, build your tracker, activate job alerts, block your daily sessions, and let the workflow do the heavy lifting. Measure your response rate every 3 days and improve what isn't working. The job seekers who get hired fastest aren't the luckiest — they're the most systematic.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Build the system once. Run it consistently. The offers will follow.
             </p>
           </section>
@@ -369,7 +369,7 @@ export default function Apply50JobsBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-blue-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-blue-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-blue-700 dark:text-blue-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-blue-50 dark:bg-blue-950/30 transition-colors shadow-lg"
             >
               Start Applying on GreatHire →
             </a>

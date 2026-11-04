@@ -23,7 +23,7 @@ const steps = [
     num: "01",
     icon: "🧭",
     title: "Understand the Basics & Industry Expectations",
-    color: "bg-blue-50 border-blue-200",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
     accentBg: "bg-blue-600",
     points: [
       "Research your target industry's entry-level expectations — read 10–15 real job descriptions.",
@@ -37,7 +37,7 @@ const steps = [
     num: "02",
     icon: "🛠",
     title: "Build Relevant Skills or Knowledge",
-    color: "bg-violet-50 border-violet-200",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
     accentBg: "bg-violet-600",
     points: [
       "Choose depth over breadth — be strong in 2–3 skills rather than average at 10.",
@@ -51,7 +51,7 @@ const steps = [
     num: "03",
     icon: "🎯",
     title: "Apply Strategies & Tools Effectively",
-    color: "bg-emerald-50 border-emerald-200",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
     accentBg: "bg-emerald-600",
     points: [
       "Target 20–30 companies with genuine interest — don't mass-apply to 200.",
@@ -65,7 +65,7 @@ const steps = [
     num: "04",
     icon: "📈",
     title: "Track Progress & Improve Continuously",
-    color: "bg-amber-50 border-amber-200",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
     accentBg: "bg-amber-600",
     points: [
       "Maintain a job tracker spreadsheet: company, role, date, stage, outcome.",
@@ -133,12 +133,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -148,8 +148,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -160,7 +160,7 @@ export default function FresherJobsBlog() {
   return (
     <>
     <Navbar />
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
       {/* ── HERO ── */}
       <header className="bg-gradient-to-br from-green-600 via-green-700 to-emerald-800 text-white">
@@ -196,10 +196,10 @@ export default function FresherJobsBlog() {
 
         {/* ── INTRO ── */}
         <section className="mb-14">
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 sm:p-8 mb-8">
-            <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+            <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
               Searching for{" "}
-              <strong className="text-green-700">
+              <strong className="text-green-700 dark:text-green-300">
                 jobs for freshers without experience
               </strong>{" "}
               can feel like a paradox — every job wants experience, but how do
@@ -207,7 +207,7 @@ export default function FresherJobsBlog() {
               freshers break into their first roles every month in India without
               traditional work history.
             </p>
-            <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
               This guide gives you a clear, honest, step-by-step plan — from
               understanding what employers actually want, to building proof of
               ability, to applying strategically and tracking your progress
@@ -215,10 +215,10 @@ export default function FresherJobsBlog() {
             </p>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Why "No Experience" Is Not the Real Problem
           </h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
             When companies say they want experience, they usually mean they want{" "}
             <strong>proof of ability</strong> — evidence that you can do the
             job. Work history is the most common form of that proof, but it's
@@ -226,7 +226,7 @@ export default function FresherJobsBlog() {
             work, and even well-documented personal learning all signal
             capability.
           </p>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
             India's job market in 2026 is competitive — but freshers who are
             strategic, focused, and prepared consistently outperform those who
             apply widely without direction. The difference is almost never
@@ -236,10 +236,10 @@ export default function FresherJobsBlog() {
 
         {/* ── STEP BY STEP ── */}
         <section className="mb-14">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Step-by-Step Guide to Landing Your First Job Without Experience
           </h2>
-          <p className="text-gray-500 mb-8 text-sm sm:text-base">
+          <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
             A practical 4-step framework that works across industries.
           </p>
           <div className="space-y-6">
@@ -254,18 +254,18 @@ export default function FresherJobsBlog() {
                   >
                     {step.num}
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 pt-2">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white pt-2">
                     {step.icon} {step.title}
                   </h3>
                 </div>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed mb-4">
                   {step.desc}
                 </p>
                 <ul className="space-y-2">
                   {step.points.map((pt, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-sm text-gray-600"
+                      className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300"
                     >
                       <span className="text-green-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                       <span>{pt}</span>
@@ -279,7 +279,7 @@ export default function FresherJobsBlog() {
 
         {/* ── REAL EXAMPLE ── */}
         <section className="mb-14">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
             Real Example: Zero Experience to Hired in 90 Days
           </h2>
           <div className="bg-gradient-to-br from-green-600 to-emerald-700 text-white rounded-2xl p-6 sm:p-8">
@@ -325,32 +325,32 @@ export default function FresherJobsBlog() {
 
         {/* ── BEST PRACTICES + MISTAKES ── */}
         <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-              <span className="text-emerald-600">✓</span> Best Practices
+          <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+              <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
             </h3>
             <ul className="space-y-4">
               {bestPractices.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                   <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                   <span>
-                    <strong className="text-gray-800 block mb-0.5">{item.title}</strong>
+                    <strong className="text-gray-800 dark:text-gray-100 block mb-0.5">{item.title}</strong>
                     {item.desc}
                   </span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-            <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
               <span className="text-red-500">✗</span> Common Mistakes
             </h3>
             <ul className="space-y-4">
               {mistakes.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                   <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                   <span>
-                    <strong className="text-gray-800 block mb-0.5">{item.title}</strong>
+                    <strong className="text-gray-800 dark:text-gray-100 block mb-0.5">{item.title}</strong>
                     {item.desc}
                   </span>
                 </li>
@@ -361,7 +361,7 @@ export default function FresherJobsBlog() {
 
         {/* ── FAQ ── */}
         <section className="mb-14">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
             Frequently Asked Questions
           </h2>
           <div className="space-y-3">
@@ -373,15 +373,15 @@ export default function FresherJobsBlog() {
 
         {/* ── CONCLUSION ── */}
         <section className="mb-14">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
             Getting a job as a fresher without experience in India in 2026 is
             genuinely possible — but it requires a smarter approach than most
             people take. Understand what employers want, build proof of ability
             through projects and skills, apply strategically to the right
             companies, and iterate relentlessly based on feedback.
           </p>
-          <p className="text-gray-800 font-semibold text-lg">
+          <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
             The gap between "no experience" and "hired" is smaller than you think — if you close it with focus and consistency.
           </p>
         </section>
@@ -397,7 +397,7 @@ export default function FresherJobsBlog() {
           </p>
           <a
             href="https://greathire.in"
-            className="inline-block bg-white text-green-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-green-50 transition-colors shadow-lg"
+            className="inline-block bg-white text-green-700 dark:text-green-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-green-50 dark:bg-green-950/30 transition-colors shadow-lg"
           >
             Explore Fresher Jobs on GreatHire →
           </a>

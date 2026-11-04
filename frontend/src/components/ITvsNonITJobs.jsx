@@ -164,17 +164,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -185,7 +185,7 @@ export default function ITvsNonITJobs() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-700 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
@@ -214,37 +214,37 @@ export default function ITvsNonITJobs() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Every fresher faces the same crossroads: Should I pursue IT or Non-IT jobs? The question feels urgent because the answer seems to determine your entire career. But the truth is more nuanced. <strong className="text-amber-700">Both paths offer real opportunities</strong> — the question is which aligns with your strengths, interests, and long-term goals.
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Every fresher faces the same crossroads: Should I pursue IT or Non-IT jobs? The question feels urgent because the answer seems to determine your entire career. But the truth is more nuanced. <strong className="text-amber-700 dark:text-amber-300">Both paths offer real opportunities</strong> — the question is which aligns with your strengths, interests, and long-term goals.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide compares IT and Non-IT career paths for freshers in 2026 — salary, growth, skill requirements, work-life balance, and real scenarios to help you make an informed decision that you won't regret two years in.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Why This Choice Matters (But Not As Much As You Think)</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Why This Choice Matters (But Not As Much As You Think)</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The IT vs Non-IT question has exploded in relevance post-2020. IT jobs offer higher starting salaries, remote work, and global opportunities. Non-IT roles offer stability, structured growth, and lower barriers to entry. But here's the reality: <strong>Most freshers who succeed aren't in the 'right' sector — they're in the right company with the right mentorship.</strong>
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               A brilliant IT fresher at a toxic startup might regret their choice. A dedicated non-IT fresher at a growth-focused company might outpace their IT peers. The sector matters, but company fit, manager quality, and your own effort matter more. That said, understanding the differences helps you make an informed choice and set realistic expectations.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to decide your career path.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to decide your career path.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-amber-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -253,25 +253,25 @@ export default function ITvsNonITJobs() {
 
           {/* ── COMPARISON ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8-Point Comparison: IT vs Non-IT</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">Head-to-head analysis of key factors.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8-Point Comparison: IT vs Non-IT</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">Head-to-head analysis of key factors.</p>
             <div className="space-y-4">
               {comparison.map((item) => (
-                <div key={item.num} className="border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-5 sm:px-6 py-4 border-b border-gray-100">
+                <div key={item.num} className="border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 px-5 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-3 mb-0">
-                      <span className="text-2xl font-black text-amber-200">{item.num}</span>
-                      <h3 className="text-lg font-bold text-gray-900">{item.category}</h3>
+                      <span className="text-2xl font-black text-amber-200 dark:text-amber-500/50">{item.num}</span>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{item.category}</h3>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 dark:divide-gray-800">
                     <div className="p-5 sm:p-6">
-                      <p className="text-sm font-bold text-blue-700 mb-2">🖥️ {item.itTitle}</p>
-                      <p className="text-gray-600 text-sm leading-relaxed">{item.itDesc}</p>
+                      <p className="text-sm font-bold text-blue-700 dark:text-blue-300 mb-2">🖥️ {item.itTitle}</p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{item.itDesc}</p>
                     </div>
                     <div className="p-5 sm:p-6">
-                      <p className="text-sm font-bold text-green-700 mb-2">💼 {item.nonItTitle}</p>
-                      <p className="text-gray-600 text-sm leading-relaxed">{item.nonItDesc}</p>
+                      <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-2">💼 {item.nonItTitle}</p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{item.nonItDesc}</p>
                     </div>
                   </div>
                 </div>
@@ -281,90 +281,90 @@ export default function ITvsNonITJobs() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Examples: Two Freshers, Two Paths</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Examples: Two Freshers, Two Paths</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">A</div>
                   <div>
-                    <p className="font-bold text-gray-900">Aditya - IT Path</p>
-                    <p className="text-blue-600 text-xs">CS Graduate</p>
+                    <p className="font-bold text-gray-900 dark:text-white">Aditya - IT Path</p>
+                    <p className="text-blue-600 dark:text-blue-400 text-xs">CS Graduate</p>
                   </div>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-semibold text-gray-800">Month 1–2:</p>
-                    <p className="text-gray-600">Learned Python, built 2 projects, portfolio on GitHub.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Month 1–2:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Learned Python, built 2 projects, portfolio on GitHub.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Month 3:</p>
-                    <p className="text-gray-600">Landed junior dev role at startup, ₹4.5 LPA.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Month 3:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Landed junior dev role at startup, ₹4.5 LPA.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Year 2:</p>
-                    <p className="text-gray-600">Promoted to mid-level dev, ₹7.5 LPA. Learning cloud platforms.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Year 2:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Promoted to mid-level dev, ₹7.5 LPA. Learning cloud platforms.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Challenge:</p>
-                    <p className="text-gray-600">Startup burned him out with 12-hour days. Considering job change.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Challenge:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Startup burned him out with 12-hour days. Considering job change.</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 rounded-2xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">P</div>
                   <div>
-                    <p className="font-bold text-gray-900">Priya - Non-IT Path</p>
-                    <p className="text-green-600 text-xs">Commerce Graduate</p>
+                    <p className="font-bold text-gray-900 dark:text-white">Priya - Non-IT Path</p>
+                    <p className="text-green-600 dark:text-green-400 text-xs">Commerce Graduate</p>
                   </div>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-semibold text-gray-800">Month 1–2:</p>
-                    <p className="text-gray-600">Learned Excel, SAP basics, case study analysis.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Month 1–2:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Learned Excel, SAP basics, case study analysis.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Month 3:</p>
-                    <p className="text-gray-600">Finance analyst role at corporate bank, ₹3.5 LPA.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Month 3:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Finance analyst role at corporate bank, ₹3.5 LPA.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Year 2:</p>
-                    <p className="text-gray-600">Senior analyst, ₹5.5 LPA. Taking CFA exam. Stable growth.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Year 2:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Senior analyst, ₹5.5 LPA. Taking CFA exam. Stable growth.</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Challenge:</p>
-                    <p className="text-gray-600">Growth slower than peers in IT. Needs MBA for director roles.</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">Challenge:</p>
+                    <p className="text-gray-600 dark:text-gray-300">Growth slower than peers in IT. Needs MBA for director roles.</p>
                   </div>
                 </div>
               </div>
             </div>
-            <p className="text-gray-600 text-sm mt-6 italic text-center">
+            <p className="text-gray-600 dark:text-gray-300 text-sm mt-6 italic text-center">
               Both are happy. Aditya makes more money but works longer hours. Priya has better work-life balance but slower salary growth. The "right" choice depends on your values, not on salary alone.
             </p>
           </section>
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -375,7 +375,7 @@ export default function ITvsNonITJobs() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -383,14 +383,14 @@ export default function ITvsNonITJobs() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               IT vs Non-IT isn't a binary choice — it's a trade-off. IT offers higher salary and remote work but steeper learning curve. Non-IT offers stability and accessibility but slower growth. Neither is universally "better." The right choice depends on your interests, strengths, and values.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Here's the honest truth: You don't need to nail this choice today. Most successful professionals have worked in multiple sectors. What matters is starting somewhere aligned with your strengths, committing to growth, and being willing to adapt as you learn what actually works for you.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Choose based on fit, not fear. The best career path is the one you actively build, not the one you defaulted into.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Choose based on fit, not fear. The best career path is the one you actively build, not the one you defaulted into.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -401,7 +401,7 @@ export default function ITvsNonITJobs() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-amber-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-amber-700 dark:text-amber-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 dark:bg-amber-950/30 transition-colors shadow-lg"
             >
               Explore Both IT & Non-IT Roles on GreatHire →
             </a>

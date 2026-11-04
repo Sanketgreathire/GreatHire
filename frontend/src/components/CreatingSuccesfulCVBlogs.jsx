@@ -47,8 +47,8 @@ const mistakes = [
   {
     num: "01",
     title: "Listing Duties Instead of Achievements",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Most Common",
     desc: "Writing 'Responsible for managing social media accounts' tells a recruiter what your job was, not how well you did it. Recruiters want evidence of impact — did engagement grow? Did you save time or money? Did a process improve because of you? Duty-based bullets are forgettable; achievement-based bullets, backed by numbers, are what get remembered and shortlisted.",
     fix: "Rewrite every bullet point to start with an action verb and end with a measurable result: 'Grew Instagram engagement by 65% in 6 months through a targeted content strategy.'",
@@ -56,8 +56,8 @@ const mistakes = [
   {
     num: "02",
     title: "Overloading the Resume With Irrelevant Information",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Clutter Risk",
     desc: "Including every job you've ever had, every skill you've ever touched, and unrelated hobbies dilutes your strongest qualifications. Recruiters have to work harder to find what matters, and often won't bother. A resume isn't a full autobiography — it's a curated pitch tailored to one specific role.",
     fix: "Remove anything older than 10–15 years unless directly relevant. Cut hobbies unless they demonstrate a real, job-relevant skill. Tailor content to the specific role you're applying for.",
@@ -65,8 +65,8 @@ const mistakes = [
   {
     num: "03",
     title: "Ignoring ATS Compatibility",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Silent Rejection",
     desc: "A visually striking resume with columns, graphics, icons, or text boxes might look great to a human — but many ATS systems can't read that formatting correctly, meaning your experience and skills may never even register in the system. Candidates are frequently rejected without a human ever seeing their resume, simply because of formatting.",
     fix: "Use a single-column, text-based layout. Use standard section headers like 'Work Experience' and 'Skills.' Avoid placing important information in headers, footers, or images.",
@@ -74,8 +74,8 @@ const mistakes = [
   {
     num: "04",
     title: "Using a Generic, One-Size-Fits-All Resume",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Low Match Rate",
     desc: "Sending the exact same resume to every job posting ignores the fact that each role has different priority skills and keywords. A generic resume might pass a basic scan, but it rarely ranks near the top, especially for competitive roles where dozens of tailored resumes are also being submitted.",
     fix: "Adjust your skills section and summary for each application to reflect the specific language and priorities in that job posting — this can take just 5–10 minutes per application.",
@@ -83,8 +83,8 @@ const mistakes = [
   {
     num: "05",
     title: "Weak or Missing Professional Summary",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Missed First Impression",
     desc: "Many candidates either skip the summary entirely or write something vague like 'Hardworking professional seeking growth opportunities.' This wastes the most valuable, highest-visibility space on your resume — the first thing a recruiter reads.",
     fix: "Write a 2–3 sentence summary that states your role, years of experience, and one measurable achievement or core strength, tailored to the job you want.",
@@ -92,8 +92,8 @@ const mistakes = [
   {
     num: "06",
     title: "Spelling, Grammar, and Formatting Errors",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Credibility Killer",
     desc: "Typos and inconsistent formatting (mismatched fonts, uneven spacing, inconsistent date formats) signal a lack of attention to detail — a red flag for almost any role, but especially damaging for roles requiring precision or communication skills.",
     fix: "Read your resume aloud before submitting. Run it through a grammar-checking tool. Ask at least one other person to review it with fresh eyes.",
@@ -101,8 +101,8 @@ const mistakes = [
   {
     num: "07",
     title: "Making the Resume Too Long (or Too Short)",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Length Mismatch",
     desc: "Entry-level candidates sometimes stretch a half-page of real content into two pages with excessive white space or repeated information, while experienced professionals sometimes cram 15 years of achievements into a cramped single page, losing readability.",
     fix: "Aim for 1 page if you have less than 5 years of experience, and up to 2 pages for more senior profiles. Prioritize your most relevant and recent achievements.",
@@ -110,8 +110,8 @@ const mistakes = [
   {
     num: "08",
     title: "No Clear Skills Section Aligned to the Role",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Missed Keywords",
     desc: "Burying your skills inside paragraphs of experience, or leaving out a dedicated skills section entirely, makes it harder for both ATS systems and human recruiters to quickly confirm you have what the role requires.",
     fix: "Add a clearly labeled 'Skills' section near the top, listing both technical/hard skills and relevant soft skills, using the same terms found in the job posting.",
@@ -195,12 +195,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-slate-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -210,8 +210,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -222,12 +222,12 @@ export default function CreatingSuccessfulCV() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
            {/* ── BACK BUTTON ── */}
   <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
     <Link
       to="/Main_blog_page"
-      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:text-gray-100 dark:hover:text-gray-200 transition-colors"
     >
       <ArrowLeft className="h-4 w-4" />
       Back to Blog
@@ -269,15 +269,15 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-200 dark:border-slate-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 A well-crafted resume is your first opportunity to make a lasting impression on a
                 potential employer. In 2026's competitive job market,{" "}
-                <strong className="text-slate-700">creating a successful CV</strong> means more than
+                <strong className="text-slate-700 dark:text-slate-300">creating a successful CV</strong> means more than
                 listing your history — it means clearly communicating your skills, accomplishments,
                 and professional experience using a clean, consistent structure and relevant keywords.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide breaks down exactly what makes a resume stand out to both recruiters and
                 Applicant Tracking Systems (ATS) — including the most common mistakes candidates make,
                 a real example of a resume rewrite that doubled callback rates, and answers to the
@@ -285,17 +285,17 @@ export default function CreatingSuccessfulCV() {
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Your Resume Matters More Than Ever in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Recruiters often spend just a few seconds scanning each resume before deciding whether
               to move forward. Before a human even sees your application, most companies now run it
               through an ATS that filters and ranks resumes by keyword match and formatting
               compatibility — meaning a strong candidate with a poorly structured resume can be
               rejected before anyone reads a single achievement.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               GreatHire.in supports candidates by offering ATS-friendly resume guidance, ensuring your
               profile gains maximum visibility and reaches the right recruiters faster. Getting your
               resume right isn't just about looking professional — it's the single highest-leverage
@@ -305,24 +305,24 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Step-by-Step Guidance to Build a Successful Resume
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A 4-step framework to write, structure, and continuously improve your CV.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -331,10 +331,10 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── MISTAKES CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 Most Common Resume Mistakes (and How to Fix Them)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each mistake has a root cause, a real impact, and a specific fix.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -344,18 +344,18 @@ export default function CreatingSuccessfulCV() {
                   className={`border rounded-2xl p-5 sm:p-6 ${mistake.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{mistake.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{mistake.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${mistake.badge}`}>
                       {mistake.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{mistake.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{mistake.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{mistake.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{mistake.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       The Fix
                     </p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{mistake.fix}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{mistake.fix}</p>
                   </div>
                 </div>
               ))}
@@ -364,7 +364,7 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How One Candidate Went From 0 Callbacks to a New Job in 6 Weeks
             </h2>
             <div className="bg-gradient-to-br from-slate-700 to-gray-900 text-white rounded-2xl p-6 sm:p-8">
@@ -398,26 +398,26 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {commonMistakesList.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -428,7 +428,7 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -440,14 +440,14 @@ export default function CreatingSuccessfulCV() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               A successful CV isn't about listing everything you've ever done — it's about clearly
               communicating the value you bring, in a format that's easy for both recruiters and ATS
               systems to evaluate. Clean structure, achievement-focused content, and keyword alignment
               consistently outperform flashy design or generic, one-size-fits-all resumes.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Fix the resume. The interviews will follow.
             </p>
           </section>
@@ -464,7 +464,7 @@ export default function CreatingSuccessfulCV() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-slate-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 transition-colors shadow-lg"
+              className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Build Your Resume with GreatHire →
             </a>

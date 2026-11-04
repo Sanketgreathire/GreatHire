@@ -46,64 +46,64 @@ const tips = [
     num: "01",
     title: "Use a Clean, ATS-Friendly Template",
     skills: "Standard fonts, no graphics, simple layout",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     desc: "Applicant Tracking Systems (ATS) scan resumes for keywords. Avoid columns, tables, creative fonts, and images. Stick to Arial, Calibri, or Times New Roman. Margins should be 0.5 to 1 inch. Your resume is a data document, not a design piece.",
   },
   {
     num: "02",
     title: "Start with a Strong Professional Summary",
     skills: "2–3 lines, 30–50 words, your value proposition",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     desc: "Write a brief summary highlighting your target role, key skills, and unique value. Example: 'Aspiring Junior Developer with hands-on experience in Python, React, and REST APIs. Built 3 full-stack projects. Seeking growth in a collaborative team environment.'",
   },
   {
     num: "03",
     title: "Highlight Real Projects, Not Just Coursework",
     skills: "GitHub links, live demos, measurable outcomes",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     desc: "One solid project with a GitHub link beats 10 certifications. For each project, include 1–2 lines about what you built, technologies used, and measurable outcomes. Example: 'Built E-commerce Platform in React with 50+ SKUs, reducing load time by 40% through lazy loading optimization.'",
   },
   {
     num: "04",
     title: "Use Action Verbs and Measurable Impact",
     skills: "Designed, built, optimized, automated, managed",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     desc: "Instead of 'Responsible for coding', write 'Coded and tested 12 features, reducing production bugs by 30%.' Numbers make impact concrete. Use verbs like developed, designed, implemented, optimized, managed, created.",
   },
   {
     num: "05",
     title: "Keep Your Education Section Lean",
     skills: "Degree, college, graduation date, GPA (if strong)",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     desc: "For freshers, education is crucial but keep it simple. Include degree, college, graduation date, and GPA only if it's 7.5+ or relevant. Skip high school. Add relevant coursework if it strengthens your candidacy (e.g., 'Relevant Coursework: Data Structures, Algorithms, DBMS').",
   },
   {
     num: "06",
     title: "Add a Skills Section with Relevant Keywords",
     skills: "Technical, tools, languages, platforms",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     desc: "List skills under categories: Technical (Python, Java, React), Tools (Git, Figma, Jira), Certifications. Keep it short and relevant to the job. ATS scans this section heavily, so match keywords from job descriptions. Avoid padding with skills you barely know.",
   },
   {
     num: "07",
     title: "Make Your Contact Information Clear",
     skills: "Phone, email, LinkedIn, GitHub, portfolio",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     desc: "Place at the top of your resume. Include professional email (not cuteemail@...), phone number, LinkedIn URL, GitHub profile, and portfolio website if you have one. Make URLs clickable in your PDF for easy access.",
   },
   {
     num: "08",
     title: "Avoid Common Fresher Resume Mistakes",
     skills: "No photo, no irrelevant info, no typos",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     desc: "Skip your photo (unless the job requires it). Avoid mentioning hobbies like 'gaming' or 'watching movies'. No typos or grammatical errors — spell-check is non-negotiable. Don't list outdated technologies unless directly relevant. Keep length to 1 page.",
   },
 ];
@@ -164,17 +164,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -185,7 +185,7 @@ export default function ResumeFresherGuide() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
@@ -214,37 +214,37 @@ export default function ResumeFresherGuide() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Your resume is your first introduction to recruiters and hiring managers. For freshers, a well-structured resume can mean the difference between being shortlisted and overlooked. With <strong className="text-blue-700">thousands of applications</strong> per opening, your resume has only <strong>6–8 seconds</strong> to grab attention.
+            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Your resume is your first introduction to recruiters and hiring managers. For freshers, a well-structured resume can mean the difference between being shortlisted and overlooked. With <strong className="text-blue-700 dark:text-blue-300">thousands of applications</strong> per opening, your resume has only <strong>6–8 seconds</strong> to grab attention.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide covers the best resume format for freshers in 2026, industry expectations, step-by-step strategies, real examples, and actionable templates to help you land interviews.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Why Resume Format Matters for Freshers in 2026</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Resume Format Matters for Freshers in 2026</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Most companies use <strong>Applicant Tracking Systems (ATS)</strong> to scan resumes for keywords before a human ever sees them. A poorly formatted resume — no matter how strong your background — can be filtered out automatically. Additionally, recruiters are scanning resumes faster than ever, expecting clear structure and immediate clarity about your skills and value.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The right resume format is ATS-compatible, mobile-friendly when shared as a link, and optimized for both human readers and automation systems. In 2026, a 1-page resume with relevant projects, skills, and certifications beats a 2-page resume filled with irrelevant information every single time.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A practical 4-step plan to build your perfect resume.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A practical 4-step plan to build your perfect resume.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -253,8 +253,8 @@ export default function ResumeFresherGuide() {
 
           {/* ── RESUME COMPONENTS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Key Resume Components for Freshers</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">What to include and how to structure each section.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Key Resume Components for Freshers</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">What to include and how to structure each section.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {tips.map((tip) => (
                 <div key={tip.num} className={`border rounded-2xl p-5 sm:p-6 ${tip.color} hover:shadow-md transition-shadow`}>
@@ -262,8 +262,8 @@ export default function ResumeFresherGuide() {
                     <span className="text-3xl font-black text-gray-200 leading-none">{tip.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${tip.badge}`}>{tip.skills}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">{tip.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{tip.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">{tip.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{tip.desc}</p>
                 </div>
               ))}
             </div>
@@ -271,7 +271,7 @@ export default function ResumeFresherGuide() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: Before & After Resume Transformation</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: Before & After Resume Transformation</h2>
             <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="bg-red-500/20 rounded-xl p-4 border border-red-300/50">
@@ -305,26 +305,26 @@ export default function ResumeFresherGuide() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -335,7 +335,7 @@ export default function ResumeFresherGuide() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -343,11 +343,11 @@ export default function ResumeFresherGuide() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Your resume is your marketing document — it needs to communicate your value in seconds, not minutes. Follow the format guidelines, highlight real projects and measurable impact, and customize for each role. Remember: quality beats quantity, clarity beats creativity, and proof beats promises.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">A strong resume opens doors. Build it right, and let your skills do the talking.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">A strong resume opens doors. Build it right, and let your skills do the talking.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -358,7 +358,7 @@ export default function ResumeFresherGuide() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-blue-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-blue-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-blue-700 dark:text-blue-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-blue-50 dark:bg-blue-950/30 transition-colors shadow-lg"
             >
               Download Resume Template on GreatHire →
             </a>

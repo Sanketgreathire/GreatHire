@@ -46,8 +46,8 @@ const careers = [
     num: "01",
     title: "IT & Software Development",
     category: "Technology",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Highest Demand",
     ctc: "₹3.5–8 LPA (entry)",
     desc: "India's largest employer of graduates in 2026. Software developers, QA engineers, cloud support, DevOps trainees, and data engineers are all actively hiring freshers. Strong demand in Bangalore, Hyderabad, Pune, Chennai, and increasingly in Tier-2 cities. Best suited for: B.Tech, BCA, B.Sc CS graduates — and increasingly open to other streams with demonstrable skills.",
@@ -57,8 +57,8 @@ const careers = [
     num: "02",
     title: "Data Analytics & Business Intelligence",
     category: "Data & Analytics",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Fastest Growing",
     ctc: "₹3–6 LPA (entry)",
     desc: "One of the fastest-growing career options after graduation in India in 2026. Companies across fintech, e-commerce, consulting, and healthcare are hiring data analysts at the entry level. The barrier is lower than most think: SQL + Excel + Python basics + one visualization tool (Power BI or Tableau) is often enough to land a first role.",
@@ -68,8 +68,8 @@ const careers = [
     num: "03",
     title: "Banking, Financial Services & Insurance (BFSI)",
     category: "Finance",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Stable & Scalable",
     ctc: "₹2.5–5 LPA (entry)",
     desc: "One of India's largest employers across private banks, NBFCs, insurance firms, and fintech companies. Roles range from relationship management and operations to credit analysis and financial advisory. Open to B.Com, BBA, BA Economics, and MBA graduates. Strong growth trajectory with structured appraisals and internal mobility.",
@@ -79,8 +79,8 @@ const careers = [
     num: "04",
     title: "Government Jobs & Public Sector",
     category: "Government",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "High Security",
     ctc: "₹3–7 LPA + benefits",
     desc: "Government careers remain one of the most sought-after options after graduation in India — for good reason. Job security, structured pay scales, pension benefits, and social status make them attractive. Competitive exams include UPSC, SSC CGL, IBPS, State PSCs, and Railway boards. Requires disciplined long-term preparation but offers unmatched stability.",
@@ -90,8 +90,8 @@ const careers = [
     num: "05",
     title: "MBA & Higher Education",
     category: "Education",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "High ROI (if strategic)",
     ctc: "₹6–20 LPA post-MBA",
     desc: "An MBA from a top-tier institution (IIMs, XLRI, ISB) dramatically accelerates career growth and opens doors to management consulting, investment banking, and senior corporate roles. However, an MBA from an average college with average performance has limited ROI. Be strategic: only pursue an MBA if you have a clear goal for what it unlocks.",
@@ -101,8 +101,8 @@ const careers = [
     num: "06",
     title: "Digital Marketing & Content",
     category: "Marketing",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Portfolio-Driven",
     ctc: "₹2.5–5 LPA (entry)",
     desc: "Every company in India needs digital presence — and they're hiring freshers to build and run it. SEO, social media management, content writing, email marketing, and paid ads are all entry-level roles. The barrier to entry is low: build a small personal project (a blog, a social media page) and you already have a portfolio. High creativity required; high demand in startups and agencies.",
@@ -112,8 +112,8 @@ const careers = [
     num: "07",
     title: "Entrepreneurship & Freelancing",
     category: "Independent",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "High Risk, High Reward",
     ctc: "Variable — ₹0 to unlimited",
     desc: "India's startup ecosystem and gig economy have made entrepreneurship and freelancing legitimate post-graduation paths. Freelancing (on Upwork, Fiverr, Toptal) in web development, design, writing, or data work can generate ₹30,000–₹1 lakh/month within 12–18 months with skill and consistency. Starting a business requires deeper capital, timing, and market insight — but the ceiling is unlimited.",
@@ -123,8 +123,8 @@ const careers = [
     num: "08",
     title: "Teaching, EdTech & Research",
     category: "Education",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Purpose-Driven",
     ctc: "₹2.5–5 LPA (entry)",
     desc: "India's EdTech sector boomed and has stabilized into a sustainable employer of subject matter experts, curriculum designers, and online tutors. Teaching roles in K-12 and competitive exam coaching remain steady. Research roles via M.Tech, M.Sc, or direct PhD programs are ideal for graduates passionate about their subject. Good communication skills are the primary asset here.",
@@ -184,12 +184,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-rose-500 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -199,8 +199,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -211,7 +211,7 @@ export default function CareerOptionsAfterGraduationBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-rose-600 via-rose-700 to-pink-800 text-white">
@@ -247,17 +247,17 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 Graduation is one of the most disorienting transitions in a young professional's life.
                 One day you have a structured semester plan — the next, you're staring at an open-ended
                 question:{" "}
-                <strong className="text-rose-600">
+                <strong className="text-rose-600 dark:text-rose-400">
                   what are the best career options after graduation in India?
                 </strong>{" "}
                 The options feel endless and the pressure feels immense.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide cuts through the noise. It maps the top 8 career paths available to Indian
                 graduates in 2026 — what each involves, who it suits, realistic salary expectations, and
                 a step-by-step framework to choose, prepare for, and land in the right one — without
@@ -265,17 +265,17 @@ export default function CareerOptionsAfterGraduationBlog() {
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Post-Graduation Career Decisions Feel Harder in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               India produces over 9 million graduates annually. The options available to them have
               never been more diverse — IT, data, finance, government, entrepreneurship, digital
               marketing, EdTech, and more. But more options without a framework for choosing creates
               paralysis, not opportunity. Most graduates spend 3–6 months after finishing their degree
               in a fog of indecision — comparing options, deferring choices, and losing critical momentum.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The graduates who navigate this period fastest share one trait: they make a focused,
               informed decision early — even if imperfect — and start moving. Clarity comes from action.
               This guide gives you the map to act on.
@@ -284,24 +284,24 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Step-by-Step Guidance to Choosing and Launching Your Career After Graduation
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A 4-step framework to go from confusion to clear career momentum.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -310,10 +310,10 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── CAREER CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Top 8 Career Options After Graduation in India (2026)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Realistic paths with salary ranges, role examples, and who each suits best.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -323,7 +323,7 @@ export default function CareerOptionsAfterGraduationBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${career.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{career.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{career.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${career.badge}`}>
                       {career.badgeLabel}
                     </span>
@@ -331,16 +331,16 @@ export default function CareerOptionsAfterGraduationBlog() {
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
                     {career.category}
                   </p>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{career.title}</h3>
-                  <p className="text-xs text-gray-500 font-medium mb-3">💰 {career.ctc}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{career.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">{career.title}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">💰 {career.ctc}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{career.desc}</p>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
                       Example Roles
                     </p>
                     <ul className="space-y-1">
                       {career.paths.map((path, i) => (
-                        <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                        <li key={i} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
                           <span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" />
                           {path}
                         </li>
@@ -354,7 +354,7 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: From Post-Graduation Confusion to Hired in 90 Days
             </h2>
             <div className="bg-gradient-to-br from-rose-600 to-pink-700 text-white rounded-2xl p-6 sm:p-8">
@@ -404,26 +404,26 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -434,7 +434,7 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -446,15 +446,15 @@ export default function CareerOptionsAfterGraduationBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Post-graduation in India in 2026 offers more opportunity than any previous generation —
               and more confusion too. The graduates who thrive are the ones who pick a direction early,
               commit to it fully, build the skills it requires, and apply consistently until they break
               through. Whether your path is IT, data, finance, government, an MBA, or entrepreneurship,
               the framework is the same: decide, prepare, apply, measure, improve.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Stop waiting for perfect clarity. Make your best decision with the information you have —
               and start moving today.
             </p>
@@ -471,7 +471,7 @@ export default function CareerOptionsAfterGraduationBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-rose-600 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-rose-600 dark:text-rose-400 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 dark:bg-rose-950/30 transition-colors shadow-lg"
             >
               Explore Graduate Jobs on GreatHire →
             </a>

@@ -28,7 +28,7 @@ export default function InsightsDashboard() {
             value={totalInsights}
             icon={<TrendingUp />}
           />
-
+          
           <KpiCard
             title="AI-Generated"
             value={aiInsights}

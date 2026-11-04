@@ -46,8 +46,8 @@ const strategies = [
     num: "01",
     category: "Keyword Discovery",
     title: "Extract Keywords Directly From the Job Posting",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     type: "Research",
     desc: "The job description itself is your best keyword source. Highlight every skill, qualification, tool, and responsibility mentioned. Group them into categories: hard skills (technical tools, certifications), soft skills (communication, leadership), and role-specific terms (job titles, industry jargon). This becomes your target list for that application.",
   },
@@ -55,8 +55,8 @@ const strategies = [
     num: "02",
     category: "Placement Strategy",
     title: "Prioritize High-Visibility Sections",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     type: "Placement",
     desc: "Not all parts of your resume carry equal weight. Your professional summary and skills section are typically scanned first and weighted most heavily by both recruiters and ATS software. Place your 3–5 most important keywords in these sections, then reinforce them within your experience bullets where they naturally fit.",
   },
@@ -64,8 +64,8 @@ const strategies = [
     num: "03",
     category: "Natural Integration",
     title: "Weave Keywords Into Real Achievements",
-    color: "bg-yellow-50 border-yellow-200",
-    badge: "bg-yellow-100 text-yellow-700",
+    color: "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900/50",
+    badge: "bg-yellow-100 dark:bg-yellow-900/60 text-yellow-700 dark:text-yellow-300",
     type: "Writing",
     desc: "A keyword sitting alone in a list is far less convincing than the same keyword embedded in a specific, measurable achievement. Instead of just listing 'Project Management' as a skill, write: 'Led project management for a 6-month product launch, coordinating 5 cross-functional teams.' This satisfies both ATS matching and human readability.",
   },
@@ -73,8 +73,8 @@ const strategies = [
     num: "04",
     category: "Abbreviation Handling",
     title: "Include Both Full Terms and Common Abbreviations",
-    color: "bg-lime-50 border-lime-200",
-    badge: "bg-lime-100 text-lime-700",
+    color: "bg-lime-50 dark:bg-lime-950/30 border-lime-200 dark:border-lime-900/50",
+    badge: "bg-lime-100 dark:bg-lime-900/60 text-lime-700 dark:text-lime-300",
     type: "Keywords",
     desc: "Some ATS systems search for the exact abbreviation used in the job posting, while others search for the full term. Cover both by including each once where natural — for example, 'Search Engine Optimization (SEO)' or 'Customer Relationship Management (CRM) software.'",
   },
@@ -82,8 +82,8 @@ const strategies = [
     num: "05",
     category: "Avoiding Overuse",
     title: "Don't Fall Into Keyword Stuffing",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     type: "Quality Check",
     desc: "Repeating the same keyword unnaturally many times in an attempt to game the system can backfire — some ATS systems flag this as manipulation, and human recruiters will notice immediately. Each keyword should appear a reasonable number of times, always inside a natural, meaningful sentence.",
   },
@@ -91,8 +91,8 @@ const strategies = [
     num: "06",
     category: "Role-Specific Language",
     title: "Match Job Titles to Industry-Standard Terms",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     type: "Alignment",
     desc: "If your actual title differs from the standard industry term for that role, include both. For example, if you held the internal title 'Growth Associate' but the role is generally known as 'Marketing Coordinator,' write 'Growth Associate (Marketing Coordinator)' so both keyword variants are captured.",
   },
@@ -100,8 +100,8 @@ const strategies = [
     num: "07",
     category: "Ongoing Refinement",
     title: "Track Which Keyword Sets Get the Best Response",
-    color: "bg-cyan-50 border-cyan-200",
-    badge: "bg-cyan-100 text-cyan-700",
+    color: "bg-cyan-50 dark:bg-cyan-950/30 border-cyan-200 dark:border-cyan-900/50",
+    badge: "bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300",
     type: "Iteration",
     desc: "Keep a simple log of which resume versions (and which keyword emphasis) you used for which applications, and note which ones led to callbacks. Over time, this reveals which specific phrasing and keyword combinations resonate most in your target industry.",
   },
@@ -109,8 +109,8 @@ const strategies = [
     num: "08",
     category: "Per-Application Tailoring",
     title: "Rebuild Your Keyword List for Every New Role",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     type: "Strategy",
     desc: "Even within the same industry, different companies and different postings prioritize different terms. Resist the urge to reuse one 'master' keyword list across all applications — a few minutes rebuilding your target list for each posting consistently produces stronger keyword matches.",
   },
@@ -164,17 +164,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-amber-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -185,7 +185,7 @@ export default function UsingKeywordsBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-amber-500 via-orange-600 to-yellow-700 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
@@ -214,14 +214,14 @@ export default function UsingKeywordsBlog() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Strategically incorporating <strong className="text-amber-700">industry-specific keywords</strong> into
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Strategically incorporating <strong className="text-amber-700 dark:text-amber-300">industry-specific keywords</strong> into
                 your resume can significantly improve its visibility to Applicant Tracking Systems. By
                 carefully reviewing job descriptions, you can identify the skills, phrases, and
                 qualifications that employers prioritize.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 Naturally weaving these keywords throughout your resume improves ATS matching accuracy
                 and increases the likelihood of your profile being shortlisted. This guide breaks down
                 exactly how to find, place, and refine keywords so your resume speaks the same language
@@ -229,14 +229,14 @@ export default function UsingKeywordsBlog() {
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Why Keyword Strategy Is a Core Resume Skill in 2026</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Keyword Strategy Is a Core Resume Skill in 2026</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Recruiters and ATS software both rely heavily on pattern matching to quickly assess
               whether a candidate fits a role. Keywords are the shorthand that makes this matching
               possible — a resume that uses the same language as the job posting is instantly easier
               to evaluate, both by machines scanning for terms and by humans scanning for relevance.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Two candidates with nearly identical experience can have very different outcomes based
               purely on how well their resume mirrors the specific language of a job posting. Learning
               to identify and naturally apply the right keywords is one of the highest-leverage skills
@@ -246,17 +246,17 @@ export default function UsingKeywordsBlog() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guide to Using Keywords Effectively</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to find, apply, and refine your resume's keyword strategy.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guide to Using Keywords Effectively</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to find, apply, and refine your resume's keyword strategy.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-amber-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -265,18 +265,18 @@ export default function UsingKeywordsBlog() {
 
           {/* ── STRATEGIES ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Proven Keyword Strategies for a Stronger Resume</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">From keyword discovery to natural placement — the complete keyword playbook.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Proven Keyword Strategies for a Stronger Resume</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">From keyword discovery to natural placement — the complete keyword playbook.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {strategies.map((strategy) => (
                 <div key={strategy.num} className={`border rounded-2xl p-5 sm:p-6 ${strategy.color} hover:shadow-md transition-shadow`}>
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{strategy.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{strategy.num}</span>
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${strategy.badge}`}>{strategy.type}</span>
                   </div>
-                  <p className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-widest">{strategy.category}</p>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">{strategy.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{strategy.desc}</p>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-widest">{strategy.category}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">{strategy.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{strategy.desc}</p>
                 </div>
               ))}
             </div>
@@ -284,7 +284,7 @@ export default function UsingKeywordsBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: How Better Keyword Placement Tripled Interview Requests</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: How Better Keyword Placement Tripled Interview Requests</h2>
             <div className="bg-gradient-to-br from-amber-500 to-orange-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">P</div>
@@ -326,26 +326,26 @@ export default function UsingKeywordsBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -356,7 +356,7 @@ export default function UsingKeywordsBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -364,19 +364,19 @@ export default function UsingKeywordsBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Using keywords effectively isn't about tricking a system — it's about speaking the same
               language as the people and software evaluating your resume. When you extract the right
               terms from each job posting and weave them naturally into real achievements, you make it
               far easier for recruiters to see exactly why you're a fit.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               A few extra minutes spent tailoring your keywords for each application consistently pays
               off in higher shortlist rates. Treat it as a core part of your job search process, not an
               optional extra step.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Speak the employer's language. Get shortlisted faster.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Speak the employer's language. Get shortlisted faster.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -388,7 +388,7 @@ export default function UsingKeywordsBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-amber-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-amber-700 dark:text-amber-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 dark:bg-amber-950/30 transition-colors shadow-lg"
             >
               Optimize Your Resume on GreatHire →
             </a>

@@ -45,8 +45,8 @@ const mistakes = [
   {
     num: "01",
     title: "Using Multi-Column Layouts or Creative Formatting",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "ATS Killer",
     desc: "A resume with two columns, a sidebar, headers, footers, or text boxes looks great to humans but is chaos to ATS software. ATS reads resumes linearly, left to right, top to bottom. When it encounters a multi-column layout, it scrambles the content, mixing sections together or skipping entire columns. A fancy design that looks impressive to you becomes unreadable gibberish to the ATS — and your resume gets rejected automatically. This is the #1 ATS formatting mistake.",
     fix: "Use single-column layout only. Standard format: left-aligned text, standard sections stacked vertically. Test your resume in an ATS parser tool to see how it reads.",
@@ -54,8 +54,8 @@ const mistakes = [
   {
     num: "02",
     title: "Using Graphics, Images, or Complex Formatting",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Parsing Failure",
     desc: "Infographic elements, icons, bars (skill level bars), images, QR codes, or decorative elements look modern but break ATS parsing. ATS software can't read images or interpret visual elements. If your resume includes a bar chart showing 'Python: 90%, JavaScript: 80%', the ATS skips it entirely. You lose the opportunity to highlight that skill. Complex formatting also extends parse time — some ATS systems give up if parsing takes too long and auto-reject.",
     fix: "Remove all graphics and visual elements. Use text-only formatting. Express skill levels with simple text: 'Advanced Python' or 'Intermediate JavaScript' instead of visual bars.",
@@ -63,8 +63,8 @@ const mistakes = [
   {
     num: "03",
     title: "Ignoring Keywords from the Job Description",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Ranking Loss",
     desc: "ATS software ranks resumes by keyword match. If the job description emphasizes 'Kubernetes,' 'Docker,' and 'CI/CD pipeline' and your resume doesn't mention these keywords, you'll rank lower than candidates who do — even if you have equivalent skills. Many candidates hide their relevant keywords. They'll write 'containerization experience' instead of 'Docker' or 'deployment automation' instead of 'CI/CD pipeline.' ATS is literal — it doesn't understand synonyms. If you have the skill, use the exact terminology from the job description.",
     fix: "Copy the job description. Highlight technical keywords, tools, certifications, and soft skills mentioned. Ensure these keywords appear in your resume naturally. Use them in experience descriptions and skills sections.",
@@ -72,8 +72,8 @@ const mistakes = [
   {
     num: "04",
     title: "Submitting in the Wrong File Format",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Format Issue",
     desc: "Submitting your resume as a .doc (older Word format) or .pages (Mac format) can cause parsing issues. Some ATS systems accept these formats but don't parse them consistently. PDF is more reliably parsed but can sometimes lose formatting if saved incorrectly. The safest approach: save as PDF, but also keep a clean .docx version for when companies specifically request Word format. However, when given a choice, PDF is usually safer.",
     fix: "Default to PDF format unless the job application specifically requests .doc or .docx. When saving as PDF, use 'Save as PDF' from your word processor, not a third-party converter.",
@@ -81,8 +81,8 @@ const mistakes = [
   {
     num: "05",
     title: "Using Inconsistent Section Headings or Non-Standard Labels",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Parsing Confusion",
     desc: "ATS systems are trained to recognize standard section headings: 'Experience,' 'Education,' 'Skills,' 'Certifications,' 'Projects,' 'Languages.' When you use non-standard headings like 'Career History' instead of 'Experience,' 'My Skills' instead of 'Skills,' or 'Projects I Built' instead of 'Projects,' the ATS has trouble categorizing and ranking your information. Some creative headings are missed entirely. Consistency also helps — if you use 'Experience' but later use 'Work History' or 'Professional Background,' you're confusing the ATS.",
     fix: "Use standard section headings: Experience, Education, Skills, Certifications, Projects, Languages, Volunteer Experience. Be consistent throughout the resume.",
@@ -90,8 +90,8 @@ const mistakes = [
   {
     num: "06",
     title: "Hiding Keywords in Invisible Text or Trying to Game the System",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Black Hat Tactic",
     desc: "Some candidates try to game ATS by adding keywords in white text (invisible to humans but readable to ATS), duplicating keywords, or using keyword stuffing. Modern ATS systems are sophisticated enough to detect these tactics — and they penalize you. Adding 'Python Python Python' or invisible keywords triggers spam filters. You'll get rejected faster. Additionally, if you do make it past the ATS, the recruiter will interview you and discover you don't actually have the skills you claimed. Authenticity works; gaming doesn't.",
     fix: "Use keywords naturally in your experience descriptions and skills section. One mention of each keyword is enough. Focus on genuine skill alignment, not keyword manipulation.",
@@ -99,8 +99,8 @@ const mistakes = [
   {
     num: "07",
     title: "Using Dates in Non-Standard Formats or Leaving Date Gaps Unexplained",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Timeline Issues",
     desc: "ATS systems parse dates to build a timeline of your experience. Non-standard date formats like 'Jan '20' or 'Q3 2020' or 'Summer 2019' confuse the parser. Similarly, unexplained gaps in employment are flagged by ATS algorithms — they look like red flags. Some ATS systems automatically lower your ranking if gaps are detected. Not addressing gaps creates noise in the system.",
     fix: "Use consistent date format: 'January 2020 – May 2021' or 'MM/YYYY – MM/YYYY'. Include all employment dates even if there are gaps. If you have employment gaps, address them briefly in cover letter or during interview.",
@@ -108,8 +108,8 @@ const mistakes = [
   {
     num: "08",
     title: "Forgetting to Customize for Each Application",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Keyword Mismatch",
     desc: "Sending the same generic resume to every application means you're ranking poorly on average. A data scientist applying to 'Data Science' roles should emphasize different keywords than when applying to 'Machine Learning Engineer' roles. ATS rankings are role-specific. If the job description emphasizes 'statistical analysis' and your generic resume emphasizes 'visualization,' you'll rank lower. You're competing against candidates who tailored their resume to include the exact keywords from that specific job description.",
     fix: "For each application, review the job description and tailor your resume's keywords accordingly. Move relevant projects to the top, adjust the skills section to match, and ensure keywords from the job description appear naturally in your experience.",
@@ -172,12 +172,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-slate-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -187,8 +187,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -199,7 +199,7 @@ export default function ResumATSFriendlyBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 text-white">
@@ -235,46 +235,46 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Between 70–80% of resumes submitted to large companies never reach a recruiter's inbox. They're rejected automatically by ATS (Applicant Tracking System) — software designed to filter and rank resumes. If your resume isn't <strong className="text-slate-700">ATS friendly</strong>, your qualifications don't matter. The system will reject you before a human ever sees your name.
+            <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-200 dark:border-slate-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Between 70–80% of resumes submitted to large companies never reach a recruiter's inbox. They're rejected automatically by ATS (Applicant Tracking System) — software designed to filter and rank resumes. If your resume isn't <strong className="text-slate-700 dark:text-slate-300">ATS friendly</strong>, your qualifications don't matter. The system will reject you before a human ever sees your name.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide shows you how ATS systems work, exactly what makes a resume ATS-incompatible, and the precise steps to make your resume pass ATS screening while staying readable and impressive to human recruiters.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why ATS-Friendly Matters More Than Ever in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               In 2026, nearly every medium-to-large company uses ATS software. Companies like Google, Microsoft, Meta, Amazon, and most Fortune 500 companies filter applications through ATS before recruiters see them. If you apply through a corporate careers portal, your resume goes through ATS. If you apply through LinkedIn or a job portal, the company's ATS processes it. There's almost no way to avoid ATS — so you have to optimize for it.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The problem: resumes that look great to humans often get rejected by ATS. A beautifully formatted resume with multiple columns, creative fonts, and design elements will be parsed as gibberish by ATS software. You need to optimize for both machines (ATS) and humans (recruiters). This balance is the key to getting past the first filter and into the recruiter's hands.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               4-Step Framework to Build an ATS-Friendly Resume
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A structured approach to understanding ATS, optimizing your content, and validating your resume.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -283,10 +283,10 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── MISTAKES CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 ATS Resume Mistakes That Get You Auto-Rejected (and How to Fix Them)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each mistake has a root cause and a specific fix.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -296,18 +296,18 @@ export default function ResumATSFriendlyBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${mistake.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{mistake.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{mistake.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${mistake.badge}`}>
                       {mistake.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{mistake.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{mistake.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{mistake.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{mistake.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       The Fix
                     </p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{mistake.fix}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{mistake.fix}</p>
                   </div>
                 </div>
               ))}
@@ -316,7 +316,7 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How Raj Went From 5% to 35% Interview Invite Rate by Fixing ATS Issues
             </h2>
             <div className="bg-gradient-to-br from-slate-700 to-gray-900 text-white rounded-2xl p-6 sm:p-8">
@@ -366,26 +366,26 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {atsMistakesPractices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -396,7 +396,7 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -408,11 +408,11 @@ export default function ResumATSFriendlyBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               An ATS-friendly resume isn't boring or stripped of personality — it's a resume that's structured for machines and readable for humans. The best resume is one that passes ATS screening AND impresses recruiters. This balance is achievable: single-column layout, standard fonts, keyword optimization, and clean formatting serve both purposes.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Optimize for ATS first. Impress recruiters second. You'll get through both gates.
             </p>
           </section>
@@ -427,7 +427,7 @@ export default function ResumATSFriendlyBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-slate-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 transition-colors shadow-lg"
+              className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Optimize Your Profile on GreatHire →
             </a>

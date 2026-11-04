@@ -47,8 +47,8 @@ const mistakes = [
   {
     num: "01",
     title: "Confusing 'Culture Fit' With 'Similarity to Existing Team'",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Bias Risk",
     desc: "Hiring people who think, communicate, and socialize like the existing team feels comfortable and safe, but it produces groupthink and blind spots rather than genuine cultural strength. True cultural fit is about shared values and work ethic, not shared backgrounds, personalities, or communication styles.",
     fix: "Replace 'would I get along with this person socially' with 'does this person demonstrate our core values in how they've actually worked' as the guiding evaluation question.",
@@ -56,8 +56,8 @@ const mistakes = [
   {
     num: "02",
     title: "Using Vague, Unmeasurable Criteria",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Most Common",
     desc: "Evaluating candidates on vague traits like 'good vibes,' 'passionate,' or 'team player' gives interviewers no consistent basis for comparison and opens the door to unconscious bias filling in the gaps. Different interviewers will interpret these vague terms completely differently.",
     fix: "Translate every cultural value into 3–5 specific, observable behaviors before interviews begin, and evaluate candidates against those concrete behaviors.",
@@ -65,8 +65,8 @@ const mistakes = [
   {
     num: "03",
     title: "Assessing Cultural Fit as an Afterthought",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Process Gap",
     desc: "Technical skills often get the bulk of interview time, while cultural and values alignment gets rushed into a final five-minute question. Given that values misalignment is a leading cause of early attrition, this imbalance means the process under-invests in exactly the area most likely to determine long-term retention.",
     fix: "Dedicate a full, structured interview segment specifically to cultural and values alignment — not just a closing question tacked onto a technical round.",
@@ -74,8 +74,8 @@ const mistakes = [
   {
     num: "04",
     title: "Ignoring How Candidates Handle Feedback and Conflict",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Missed Signal",
     desc: "How a candidate has historically responded to critical feedback or disagreement reveals a great deal about their self-awareness, adaptability, and collaboration style — yet many interviews never touch on this, focusing instead on positive team experiences alone.",
     fix: "Include a specific question about receiving difficult feedback or navigating a disagreement, and evaluate the self-awareness and constructiveness in their answer.",
@@ -83,8 +83,8 @@ const mistakes = [
   {
     num: "05",
     title: "Letting One Interviewer's Personal Preference Drive the Decision",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Groupthink",
     desc: "When a single hiring manager's personal comfort level with a candidate becomes the deciding factor on 'culture fit,' the assessment stops being about organizational values and becomes about one person's individual preferences and biases.",
     fix: "Involve multiple interviewers in the cultural assessment, each scoring independently against the same defined behaviors before group discussion.",
@@ -92,8 +92,8 @@ const mistakes = [
   {
     num: "06",
     title: "Overlooking 'Culture Add' in Favor of 'Culture Fit'",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Missed Diversity",
     desc: "Screening exclusively for existing cultural patterns can systematically filter out candidates who bring valuable new perspectives, working styles, or problem-solving approaches the team currently lacks — even when those differences would genuinely strengthen the organization.",
     fix: "Explicitly ask during evaluation: what perspective or strength does this candidate bring that our current team doesn't already have?",
@@ -101,8 +101,8 @@ const mistakes = [
   {
     num: "07",
     title: "Failing to Define Culture Explicitly Before Hiring",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Foundational Gap",
     desc: "If your organization can't clearly articulate its actual values and the specific behaviors that reflect them, cultural fit assessment becomes entirely subjective, inconsistent between interviewers, and vulnerable to unconscious bias filling the void.",
     fix: "Document your organization's core values explicitly, with concrete behavioral examples, before building any cultural fit interview questions.",
@@ -110,8 +110,8 @@ const mistakes = [
   {
     num: "08",
     title: "Not Using Structured Tools to Support Consistent Evaluation",
-    color: "bg-purple-50 border-purple-200",
-    badge: "bg-purple-100 text-purple-700",
+    color: "bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900/50",
+    badge: "bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300",
     badgeLabel: "Missed Efficiency",
     desc: "Assessing cultural fit purely through informal conversation and interviewer memory makes it difficult to compare candidates fairly or track whether your cultural assessments actually predict engagement and retention over time.",
     fix: "Use AI-powered platforms like GreatHire.in to structure values-based question banks and standardize scoring across your entire hiring pipeline.",
@@ -191,12 +191,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-violet-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -206,8 +206,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -218,12 +218,12 @@ export default function CulturalFitAssessmentBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
       {/* ── BACK BUTTON ── */}
   <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
     <Link
       to="/Main_blog_page"
-      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:text-gray-100 dark:hover:text-gray-200 transition-colors"
     >
       <ArrowLeft className="h-4 w-4" />
       Back to Blog
@@ -264,15 +264,15 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                A <strong className="text-violet-700">cultural fit assessment</strong> evaluates how
+            <div className="bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                A <strong className="text-violet-700 dark:text-violet-300">cultural fit assessment</strong> evaluates how
                 well a candidate aligns with an organization's values, team dynamics, and workplace
                 environment. Beyond technical qualifications, it examines communication styles, work
                 ethics, and behavioral tendencies to determine whether a candidate's approach to
                 collaboration and decision-making complements the company's long-term vision.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 Organizations that prioritize cultural alignment tend to see stronger employee
                 engagement, higher retention, and greater overall performance. This guide breaks down
                 exactly how to build a structured, bias-aware cultural fit assessment that genuinely
@@ -280,17 +280,17 @@ export default function CulturalFitAssessmentBlog() {
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Cultural Alignment Matters as Much as Technical Skill
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               A candidate can be technically excellent and still struggle to thrive if their working
               style, communication approach, or values clash with the team around them. Misalignment
               here is one of the most common drivers of early attrition — often surfacing not in
               performance reviews, but in a quiet, gradual disengagement that eventually leads to a
               resignation.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Done well, cultural fit assessment isn't about hiring people who are all alike — it's
               about hiring people who share genuine core values and can collaborate effectively, while
               still bringing diverse perspectives and strengths to the table.
@@ -299,24 +299,24 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Step-by-Step Guidance to Build a Cultural Fit Assessment
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A 4-step framework to define, evaluate, and refine cultural alignment.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-violet-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -325,10 +325,10 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── MISTAKES CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 Most Common Cultural Fit Assessment Mistakes (and How to Fix Them)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each mistake has a root cause, a real impact, and a specific fix.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -338,18 +338,18 @@ export default function CulturalFitAssessmentBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${mistake.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{mistake.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{mistake.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${mistake.badge}`}>
                       {mistake.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{mistake.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{mistake.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{mistake.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{mistake.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       The Fix
                     </p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{mistake.fix}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{mistake.fix}</p>
                   </div>
                 </div>
               ))}
@@ -358,7 +358,7 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How One Agency Cut New-Hire Attrition by 50%
             </h2>
             <div className="bg-gradient-to-br from-violet-600 to-slate-900 text-white rounded-2xl p-6 sm:p-8">
@@ -392,26 +392,26 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {commonMistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -422,7 +422,7 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -434,15 +434,15 @@ export default function CulturalFitAssessmentBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Cultural fit assessment done well isn't about finding people who feel comfortably similar
               to the existing team — it's about clearly defining what your organization actually values,
               translating that into observable behaviors, and evaluating every candidate against those
               specific criteria. Done this way, it becomes one of the strongest predictors of engagement,
               retention, and long-term performance.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Define your values. Evaluate the behavior. Build a team that lasts.
             </p>
           </section>
@@ -458,7 +458,7 @@ export default function CulturalFitAssessmentBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-violet-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-violet-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-violet-800 dark:text-violet-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-violet-50 dark:bg-violet-950/30 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
             </a>

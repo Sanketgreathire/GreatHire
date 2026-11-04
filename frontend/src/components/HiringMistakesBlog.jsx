@@ -45,8 +45,8 @@ const mistakes = [
   {
     num: "01",
     title: "Writing Vague or Unrealistic Job Descriptions",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Most Common",
     desc: "Job descriptions that list 25 requirements for an entry-level role, demand '5 years of experience' for junior positions, or use generic language like 'team player' and 'self-starter' attract the wrong candidates and repel strong ones. A good JD clearly states: what the person will do in the first 90 days, the 3–5 skills that are genuinely required versus nice-to-have, realistic experience requirements, and honest information about the role's challenges. Vague JDs produce vague candidates.",
     fix: "Audit every open JD. Remove inflated requirements. Add a '30-60-90 day expectations' section. Get the hiring manager to validate before posting.",
@@ -54,8 +54,8 @@ const mistakes = [
   {
     num: "02",
     title: "Hiring for Culture Fit Instead of Culture Add",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Bias Risk",
     desc: "Hiring for 'culture fit' often means hiring people who look, think, and communicate like the existing team. This feels safe — but it produces homogeneous teams that lack diverse thinking, blind-spot coverage, and the creative friction that drives innovation. Companies that consistently hire for fit over ability end up with groupthink, not cohesion. The better frame: hire for culture add — what perspective, background, or thinking style does this person bring that we don't already have?",
     fix: "Replace 'culture fit' on scorecards with specific, observable behaviors. Define your culture explicitly so 'fit' means shared values, not shared backgrounds.",
@@ -63,8 +63,8 @@ const mistakes = [
   {
     num: "03",
     title: "Moving Too Slowly Through the Hiring Process",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Costly Delay",
     desc: "In 2026, strong candidates — especially in tech and data roles — receive multiple offers within 1–2 weeks of starting their search. A hiring process that takes 6–8 weeks loses these candidates to faster-moving companies. Common culprits: too many interview rounds, scheduling delays between stages, slow internal approvals, and offer processes that take a week after verbal acceptance. Every unnecessary day in your process is a candidate lost to a competitor.",
     fix: "Audit time-to-offer for your last 20 hires. Cap total interview rounds at 3–4. Set SLAs between stages. Pre-approve offer ranges before the process starts.",
@@ -72,8 +72,8 @@ const mistakes = [
   {
     num: "04",
     title: "Skipping Structured Interviews for Gut-Feel Decisions",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Bias Driver",
     desc: "Unstructured interviews — where different candidates are asked different questions and evaluated on different criteria — are one of the weakest predictors of job performance. Yet most companies still rely on them. 'I just knew within 5 minutes' is not a hiring strategy — it's a bias confirmation story. Candidates who interview well socially often underperform; candidates who seem nervous often outperform. Structured interviews with standardized questions and scorecards dramatically improve both consistency and quality of hire.",
     fix: "Build a 5–7 question interview guide for each role tied to the key competencies. Use the same questions for every candidate. Score immediately after, before discussing with the panel.",
@@ -81,8 +81,8 @@ const mistakes = [
   {
     num: "05",
     title: "Over-Indexing on Pedigree and Under-Indexing on Ability",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Missed Talent",
     desc: "Filtering candidates by college tier, company brand, or degree prestige feels like a quality shortcut — but it's a talent-filtering mistake. India's best developers, analysts, and operators frequently come from Tier-2 colleges with exceptional project portfolios and problem-solving ability. Screening for IIT/IIM pedigree alone means you're competing with every other company doing the same — and missing a vast, high-quality talent pool that doesn't clear your arbitrary filters.",
     fix: "Remove automatic college or company filters from early screening. Replace them with skill-based assessments or portfolio reviews. Judge the work, not the institution.",
@@ -90,8 +90,8 @@ const mistakes = [
   {
     num: "06",
     title: "Neglecting Candidate Experience During the Process",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Brand Impact",
     desc: "Every candidate who goes through your hiring process — whether hired or rejected — forms an opinion of your company that they share with their network. Ghosting candidates after final rounds, providing no feedback on rejection, scheduling interviews with 2-hour notice, or running disorganized panel interviews all damage your employer brand. In 2026, Glassdoor reviews, LinkedIn posts, and candidate word-of-mouth directly affect your ability to attract strong candidates in the future.",
     fix: "Set candidate communication SLAs: respond to all applications within 5 days, give feedback on rejection within 3 days of decision, never ghost after final rounds. Assign ownership to a recruiter for every candidate in the process.",
@@ -99,8 +99,8 @@ const mistakes = [
   {
     num: "07",
     title: "Failing to Define Success Before Hiring",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Process Gap",
     desc: "If your hiring team can't answer 'what does great performance look like in this role at 30, 60, and 90 days?', you're hiring without a target. This leads to mismatched expectations, poor onboarding, and early turnover. The hiring manager and recruiter need to align on success criteria before the first JD goes live — not after the candidate joins.",
     fix: "Create a 30-60-90 day success plan for every role before opening the requisition. Use it to write the JD, design interview questions, and structure onboarding. The plan is the hiring spec.",
@@ -108,8 +108,8 @@ const mistakes = [
   {
     num: "08",
     title: "Treating Onboarding as an Afterthought",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Retention Risk",
     desc: "Most companies spend weeks optimizing hiring and hours on onboarding — then wonder why new hires leave within 6 months. Poor onboarding is the single largest driver of early attrition. A new hire who doesn't have a clear role, a supportive manager, the right tools, or a sense of belonging within the first 4 weeks is already mentally halfway out the door. Strong onboarding dramatically improves retention, time-to-productivity, and new hire satisfaction.",
     fix: "Build a structured 90-day onboarding plan for every role: week 1 orientation, month 1 role clarity, month 2 independent contribution, month 3 performance review. Assign a buddy or mentor for the first 30 days.",
@@ -168,12 +168,12 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-slate-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -183,8 +183,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -195,7 +195,7 @@ export default function HiringMistakesBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 text-white">
@@ -231,32 +231,32 @@ export default function HiringMistakesBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-200 dark:border-slate-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 Hiring is one of the highest-leverage activities a company can do — and one of the
                 most consistently mishandled. In 2026, with India's talent market more competitive and
                 complex than ever,{" "}
-                <strong className="text-slate-700">hiring mistakes companies make</strong> are costing
+                <strong className="text-slate-700 dark:text-slate-300">hiring mistakes companies make</strong> are costing
                 them far more than a bad quarter: they're costing them their best people, their team
                 culture, and their ability to grow.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide breaks down the 8 most common and costly hiring mistakes companies make in
                 India today — what causes each one, the real impact on business outcomes, and exactly
                 what to do differently — so your next hire is faster, smarter, and built to last.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Hiring Mistakes Are More Expensive Than Ever in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               A bad hire at the entry level costs 30–50% of annual salary. A bad senior hire costs
               2–3x. But the financial cost is only the visible part. The hidden costs — team morale
               damage, manager time spent managing underperformance, delayed projects, and the
               institutional knowledge lost when good people leave — often dwarf the direct expense.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               India's job market in 2026 is candidate-rich in volume but quality-scarce at the top.
               Strong candidates have options — and they evaluate companies based on the hiring
               experience itself. Companies that run a disorganized, slow, or biased hiring process lose
@@ -267,24 +267,24 @@ export default function HiringMistakesBlog() {
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Step-by-Step Guidance to Build a Stronger Hiring Process
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A 4-step framework to identify, fix, and continuously improve your talent acquisition.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -293,10 +293,10 @@ export default function HiringMistakesBlog() {
 
           {/* ── MISTAKES CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               8 Most Costly Hiring Mistakes Companies Make (and How to Fix Them)
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Each mistake has a root cause, a real impact, and a specific fix.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -306,18 +306,18 @@ export default function HiringMistakesBlog() {
                   className={`border rounded-2xl p-5 sm:p-6 ${mistake.color} hover:shadow-md transition-shadow`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{mistake.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{mistake.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${mistake.badge}`}>
                       {mistake.badgeLabel}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{mistake.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{mistake.desc}</p>
-                  <div className="pt-3 border-t border-gray-200/70">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{mistake.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{mistake.desc}</p>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
                       The Fix
                     </p>
-                    <p className="text-xs text-gray-600 leading-relaxed">{mistake.fix}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{mistake.fix}</p>
                   </div>
                 </div>
               ))}
@@ -326,7 +326,7 @@ export default function HiringMistakesBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How One Startup Cut Early Attrition by 60% in 6 Months
             </h2>
             <div className="bg-gradient-to-br from-slate-700 to-gray-900 text-white rounded-2xl p-6 sm:p-8">
@@ -376,26 +376,26 @@ export default function HiringMistakesBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {hiringMistakesPractices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -406,7 +406,7 @@ export default function HiringMistakesBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -418,8 +418,8 @@ export default function HiringMistakesBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The hiring mistakes companies make in 2026 are rarely about effort — they're about
               system design. Vague job descriptions, unstructured interviews, slow timelines, poor
               candidate communication, and neglected onboarding are all process failures, not
@@ -427,7 +427,7 @@ export default function HiringMistakesBlog() {
               have better systems, clearer definitions of success, and a commitment to measuring and
               improving every step of their recruiting funnel.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Fix the system. The right people will follow.
             </p>
           </section>
@@ -444,7 +444,7 @@ export default function HiringMistakesBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-slate-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 transition-colors shadow-lg"
+              className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
             </a>

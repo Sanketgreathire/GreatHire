@@ -736,46 +736,24 @@ export default function ResumeAnalyzer() {
         >
 
           {/* ── UPLOAD PANEL ── */}
-          <Panel style={{ padding: 30 }}>
-            <div className="font-syne font-bold text-base mb-5 flex items-center gap-2.5 text-slate-800 dark:text-[#e8edf5]">
-              <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">
-                📄
-              </span>
-              Upload Resume
+          <Panel
+            className={result ? "col-span-full" : ""}
+            style={{ padding: result ? "32px 36px" : 30 }}
+          >
+            <div className="font-syne font-bold text-base mb-5 flex items-center justify-between text-slate-800 dark:text-[#e8edf5]">
+              <div className="flex items-center gap-2.5">
+                <span className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center text-lg bg-sky-100 dark:bg-[#00e5a0]/[0.12]">
+                  📄
+                </span>
+                Upload Resume
+              </div>
+              {result && (
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/50">
+                  Active Analysis
+                </span>
+              )}
             </div>
 
-            {/* Drop zone */}
-            <div
-              onClick={() => fileRef.current.click()}
-              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={onDrop}
-              className={`border-2 border-dashed ${dropZoneBorderColor} ${dropZoneBg} rounded-2xl py-9 px-6 text-center cursor-pointer transition-all duration-200 ${dragging ? "scale-[1.01]" : "scale-100"}`}
-            >
-              <div className="animate-float text-4xl mb-3">
-                {parseError ? "⚠️" : dragging ? "📥" : "⬆️"}
-              </div>
-              <p className="font-dm text-slate-500 dark:text-[#6b7a99] text-sm leading-relaxed m-0">
-                {parseError ? (
-                  <span className="text-red-400">{parseError}</span>
-                ) : (
-                  <>
-                    <strong className="text-sky-500 dark:text-[#00e5a0]">Click or drag &amp; drop</strong>
-                    <br />PDF, DOCX, or TXT — max 5 MB
-                  </>
-                )}
-              </p>
-              <div className="flex justify-center gap-2 mt-3.5">
-                {["PDF", "DOCX", "TXT"].map((f) => (
-                  <span
-                    key={f}
-                    className="font-dm text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full tracking-wide text-slate-500 dark:text-[#6b7a99] bg-sky-50 dark:bg-white/5 border border-[#bae0f7] dark:border-[#1f2d45]"
-                  >
-                    {f}
-                  </span>
-                ))}
-              </div>
-            </div>
             <input
               ref={fileRef}
               type="file"
@@ -784,78 +762,234 @@ export default function ResumeAnalyzer() {
               onChange={(e) => handleFile(e.target.files[0])}
             />
 
-            {/* File preview */}
-            {fileName && !parseError && (
-              <div className="mt-4 bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-2xl p-4 transition-colors duration-300">
-                <div className="flex items-center gap-3">
-                  <span className="text-[1.7rem]">
-                    {fileName.endsWith(".pdf") ? "📕" : fileName.endsWith(".docx") ? "📘" : "📄"}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] overflow-hidden text-ellipsis whitespace-nowrap">
-                      {fileName}
+            {result ? (
+              /* Expanded 2-column layout when analysis results are shown below */
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                {/* Left: Drop zone + File preview */}
+                <div className="flex flex-col gap-4">
+                  <div
+                    onClick={() => fileRef.current.click()}
+                    onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={onDrop}
+                    className={`border-2 border-dashed ${dropZoneBorderColor} ${dropZoneBg} rounded-2xl py-8 px-6 text-center cursor-pointer transition-all duration-200 ${dragging ? "scale-[1.01]" : "scale-100"}`}
+                  >
+                    <div className="animate-float text-4xl mb-3">
+                      {parseError ? "⚠️" : dragging ? "📥" : "⬆️"}
                     </div>
-                    <div className="font-dm text-xs text-slate-500 dark:text-[#6b7a99]">
-                      {fileSize} · {resumeText.split(/\s+/).filter(Boolean).length} words extracted
+                    <p className="font-dm text-slate-500 dark:text-[#6b7a99] text-sm leading-relaxed m-0">
+                      {parseError ? (
+                        <span className="text-red-400">{parseError}</span>
+                      ) : (
+                        <>
+                          <strong className="text-sky-500 dark:text-[#00e5a0]">Click or drag &amp; drop to replace</strong>
+                          <br />PDF, DOCX, or TXT — max 5 MB
+                        </>
+                      )}
+                    </p>
+                    <div className="flex justify-center gap-2 mt-3.5">
+                      {["PDF", "DOCX", "TXT"].map((f) => (
+                        <span
+                          key={f}
+                          className="font-dm text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full tracking-wide text-slate-500 dark:text-[#6b7a99] bg-sky-50 dark:bg-white/5 border border-[#bae0f7] dark:border-[#1f2d45]"
+                        >
+                          {f}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  <button
-                    className="font-dm bg-transparent border border-[#bae0f7] dark:border-[#1f2d45] rounded-lg text-slate-500 dark:text-[#6b7a99] cursor-pointer px-3 py-1 text-[0.72rem] font-semibold transition-all duration-200 hover:border-sky-400 dark:hover:border-[#00e5a0] hover:text-sky-500 dark:hover:text-[#00e5a0]"
-                    onClick={(e) => { e.stopPropagation(); fileRef.current.click(); }}
-                  >
-                    Change
-                  </button>
+
+                  {/* File preview */}
+                  {fileName && !parseError && (
+                    <div className="bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-2xl p-4 transition-colors duration-300">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[1.7rem]">
+                          {fileName.endsWith(".pdf") ? "📕" : fileName.endsWith(".docx") ? "📘" : "📄"}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] overflow-hidden text-ellipsis whitespace-nowrap">
+                            {fileName}
+                          </div>
+                          <div className="font-dm text-xs text-slate-500 dark:text-[#6b7a99]">
+                            {fileSize} · {resumeText.split(/\s+/).filter(Boolean).length} words extracted
+                          </div>
+                        </div>
+                        <button
+                          className="font-dm bg-transparent border border-[#bae0f7] dark:border-[#1f2d45] rounded-lg text-slate-500 dark:text-[#6b7a99] cursor-pointer px-3 py-1 text-[0.72rem] font-semibold transition-all duration-200 hover:border-sky-400 dark:hover:border-[#00e5a0] hover:text-sky-500 dark:hover:text-[#00e5a0]"
+                          onClick={(e) => { e.stopPropagation(); fileRef.current.click(); }}
+                        >
+                          Change
+                        </button>
+                      </div>
+                      {previewText && (
+                        <div className="font-dm mt-3 pt-3 border-t border-[#bae0f7] dark:border-[#1f2d45] text-[0.72rem] text-slate-400 dark:text-[#3d4f6a] leading-relaxed max-h-[105px] overflow-auto whitespace-pre-wrap transition-colors duration-300">
+                          {previewText}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                {previewText && (
-                  <div className="font-dm mt-3 pt-3 border-t border-[#bae0f7] dark:border-[#1f2d45] text-[0.72rem] text-slate-400 dark:text-[#3d4f6a] leading-relaxed max-h-[88px] overflow-auto whitespace-pre-wrap transition-colors duration-300">
-                    {previewText}
+
+                {/* Right: Job Role, Job Desc, and Re-Analyze Button */}
+                <div className="flex flex-col h-full justify-between">
+                  <div>
+                    {/* Job Role */}
+                    <div>
+                      <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
+                        Target Job Role
+                      </label>
+                      <input
+                        type="text"
+                        value={jobRole}
+                        onChange={(e) => setJobRole(e.target.value)}
+                        placeholder="e.g. Frontend Developer, Data Analyst…"
+                        className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
+                      />
+                    </div>
+
+                    {/* Job Desc */}
+                    <div className="mt-4">
+                      <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
+                        Job Description{" "}
+                        <span className="font-normal normal-case tracking-normal text-slate-400 dark:text-[#3d4f6a]">
+                          (optional)
+                        </span>
+                      </label>
+                      <textarea
+                        value={jobDesc}
+                        onChange={(e) => setJobDesc(e.target.value)}
+                        rows={4}
+                        placeholder="Paste the job description for a more tailored analysis…"
+                        className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none resize-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Re-Analyze Button */}
+                  <div className="mt-6">
+                    <button
+                      className="btn-analyze font-syne w-full py-4 rounded-2xl font-black text-base tracking-wide border-none transition-all duration-200"
+                      disabled={!canAnalyze}
+                      onClick={analyzeResume}
+                    >
+                      {loading ? "Analyzing…" : resumeText ? "✦ Re-Analyze Resume" : "Upload a resume first"}
+                    </button>
+                    <p className="font-dm mt-2.5 text-center text-[#a0c8e0] dark:text-[#3d4f6a] text-[0.7rem]">
+                      Free · Supports .pdf · .docx · .txt · Results in ~10 seconds
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Original 1-column layout before analysis */
+              <>
+                {/* Drop zone */}
+                <div
+                  onClick={() => fileRef.current.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={onDrop}
+                  className={`border-2 border-dashed ${dropZoneBorderColor} ${dropZoneBg} rounded-2xl py-9 px-6 text-center cursor-pointer transition-all duration-200 ${dragging ? "scale-[1.01]" : "scale-100"}`}
+                >
+                  <div className="animate-float text-4xl mb-3">
+                    {parseError ? "⚠️" : dragging ? "📥" : "⬆️"}
+                  </div>
+                  <p className="font-dm text-slate-500 dark:text-[#6b7a99] text-sm leading-relaxed m-0">
+                    {parseError ? (
+                      <span className="text-red-400">{parseError}</span>
+                    ) : (
+                      <>
+                        <strong className="text-sky-500 dark:text-[#00e5a0]">Click or drag &amp; drop</strong>
+                        <br />PDF, DOCX, or TXT — max 5 MB
+                      </>
+                    )}
+                  </p>
+                  <div className="flex justify-center gap-2 mt-3.5">
+                    {["PDF", "DOCX", "TXT"].map((f) => (
+                      <span
+                        key={f}
+                        className="font-dm text-[0.68rem] font-bold px-2.5 py-0.5 rounded-full tracking-wide text-slate-500 dark:text-[#6b7a99] bg-sky-50 dark:bg-white/5 border border-[#bae0f7] dark:border-[#1f2d45]"
+                      >
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* File preview */}
+                {fileName && !parseError && (
+                  <div className="mt-4 bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-2xl p-4 transition-colors duration-300">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[1.7rem]">
+                        {fileName.endsWith(".pdf") ? "📕" : fileName.endsWith(".docx") ? "📘" : "📄"}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-dm text-sm font-semibold text-slate-800 dark:text-[#e8edf5] overflow-hidden text-ellipsis whitespace-nowrap">
+                          {fileName}
+                        </div>
+                        <div className="font-dm text-xs text-slate-500 dark:text-[#6b7a99]">
+                          {fileSize} · {resumeText.split(/\s+/).filter(Boolean).length} words extracted
+                        </div>
+                      </div>
+                      <button
+                        className="font-dm bg-transparent border border-[#bae0f7] dark:border-[#1f2d45] rounded-lg text-slate-500 dark:text-[#6b7a99] cursor-pointer px-3 py-1 text-[0.72rem] font-semibold transition-all duration-200 hover:border-sky-400 dark:hover:border-[#00e5a0] hover:text-sky-500 dark:hover:text-[#00e5a0]"
+                        onClick={(e) => { e.stopPropagation(); fileRef.current.click(); }}
+                      >
+                        Change
+                      </button>
+                    </div>
+                    {previewText && (
+                      <div className="font-dm mt-3 pt-3 border-t border-[#bae0f7] dark:border-[#1f2d45] text-[0.72rem] text-slate-400 dark:text-[#3d4f6a] leading-relaxed max-h-[88px] overflow-auto whitespace-pre-wrap transition-colors duration-300">
+                        {previewText}
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+
+                {/* Job Role */}
+                <div className="mt-5">
+                  <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
+                    Target Job Role
+                  </label>
+                  <input
+                    type="text"
+                    value={jobRole}
+                    onChange={(e) => setJobRole(e.target.value)}
+                    placeholder="e.g. Frontend Developer, Data Analyst…"
+                    className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
+                  />
+                </div>
+
+                {/* Job Desc */}
+                <div className="mt-4">
+                  <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
+                    Job Description{" "}
+                    <span className="font-normal normal-case tracking-normal text-slate-400 dark:text-[#3d4f6a]">
+                      (optional)
+                    </span>
+                  </label>
+                  <textarea
+                    value={jobDesc}
+                    onChange={(e) => setJobDesc(e.target.value)}
+                    rows={4}
+                    placeholder="Paste the job description for a more tailored analysis…"
+                    className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none resize-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
+                  />
+                </div>
+
+                {/* Analyze Button */}
+                <button
+                  className="btn-analyze font-syne mt-6 w-full py-4 rounded-2xl font-black text-base tracking-wide border-none transition-all duration-200"
+                  disabled={!canAnalyze}
+                  onClick={analyzeResume}
+                >
+                  {loading ? "Analyzing…" : resumeText ? "✦ Analyze My Resume" : "Upload a resume first"}
+                </button>
+                <p className="font-dm mt-2.5 text-center text-[#a0c8e0] dark:text-[#3d4f6a] text-[0.7rem]">
+                  Free · Supports .pdf · .docx · .txt · Results in ~10 seconds
+                </p>
+              </>
             )}
-
-            {/* Job Role */}
-            <div className="mt-5">
-              <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
-                Target Job Role
-              </label>
-              <input
-                type="text"
-                value={jobRole}
-                onChange={(e) => setJobRole(e.target.value)}
-                placeholder="e.g. Frontend Developer, Data Analyst…"
-                className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
-              />
-            </div>
-
-            {/* Job Desc */}
-            <div className="mt-4">
-              <label className="font-dm block text-[0.72rem] font-bold tracking-widest uppercase text-slate-500 dark:text-[#6b7a99] mb-2">
-                Job Description{" "}
-                <span className="font-normal normal-case tracking-normal text-slate-400 dark:text-[#3d4f6a]">
-                  (optional)
-                </span>
-              </label>
-              <textarea
-                value={jobDesc}
-                onChange={(e) => setJobDesc(e.target.value)}
-                rows={4}
-                placeholder="Paste the job description for a more tailored analysis…"
-                className="font-dm w-full bg-[#f5fbff] dark:bg-[#1a2235] border border-[#bae0f7] dark:border-[#1f2d45] rounded-xl text-slate-800 dark:text-[#e8edf5] text-[0.9rem] px-4 py-3 outline-none resize-none transition-all duration-200 focus:border-sky-400 dark:focus:border-[#00e5a0] focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-[#00e5a0]/20 placeholder:text-slate-400 dark:placeholder:text-[#3d4f6a]"
-              />
-            </div>
-
-            {/* Analyze Button */}
-            <button
-              className="btn-analyze font-syne mt-6 w-full py-4 rounded-2xl font-black text-base tracking-wide border-none transition-all duration-200"
-              disabled={!canAnalyze}
-              onClick={analyzeResume}
-            >
-              {loading ? "Analyzing…" : resumeText ? "✦ Analyze My Resume" : "Upload a resume first"}
-            </button>
-            <p className="font-dm mt-2.5 text-center text-[#a0c8e0] dark:text-[#3d4f6a] text-[0.7rem]">
-              Free · Supports .pdf · .docx · .txt · Results in ~10 seconds
-            </p>
           </Panel>
 
           {/* ── RIGHT: Loading ── */}

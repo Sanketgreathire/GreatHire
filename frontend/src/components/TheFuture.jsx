@@ -17,8 +17,8 @@ const slides = [
     heroGradient: "from-violet-700 via-indigo-700 to-blue-800",
     accentColor: "text-violet-700",
     accentBg: "bg-violet-700",
-    highlightBg: "bg-violet-50 border-violet-200",
-    highlightText: "text-violet-700",
+    highlightBg: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    highlightText: "text-violet-700 dark:text-violet-300",
     faqAccent: "text-violet-600",
     ctaGradient: "from-violet-700 to-blue-800",
     ctaText: "text-violet-700",
@@ -51,10 +51,10 @@ const slides = [
       },
     ],
     cards: [
-      { num: "01", title: "Artificial Intelligence & Generative AI", badge: "Transformative", color: "bg-violet-50 border-violet-200", badgeStyle: "bg-violet-100 text-violet-700", desc: "Generative AI is embedded in software development, content creation, customer service, legal research, and education. AI literacy is rapidly becoming as expected as Excel proficiency was a decade ago.", skills: ["Prompt engineering", "Python + ML basics", "LLM APIs", "AI tool integration"] },
-      { num: "02", title: "Cloud Computing & Edge Infrastructure", badge: "Already Here", color: "bg-sky-50 border-sky-200", badgeStyle: "bg-sky-100 text-sky-700", desc: "AWS, Azure, and Google Cloud dominate enterprise IT. Edge computing — processing data closer to where it's generated — is creating new roles in IoT and real-time systems.", skills: ["AWS / Azure fundamentals", "Kubernetes & containers", "Serverless architecture", "Edge computing basics"] },
-      { num: "03", title: "Cybersecurity & Data Privacy", badge: "Critical Shortage", color: "bg-red-50 border-red-200", badgeStyle: "bg-red-100 text-red-700", desc: "India faces over 800,000 unfilled cybersecurity roles. Entry-level SOC analyst, security auditing, and ethical hacking are all accessible with 6–12 months of focused preparation.", skills: ["Network security basics", "Ethical hacking (CEH)", "SIEM tools", "Incident response"] },
-      { num: "04", title: "Data Science & Advanced Analytics", badge: "High Demand", color: "bg-emerald-50 border-emerald-200", badgeStyle: "bg-emerald-100 text-emerald-700", desc: "Companies are moving beyond basic analytics into real-time decision systems and predictive modelling. Strong SQL, Python, and statistics is enough to begin — the ceiling is one of the highest in tech.", skills: ["Python + Pandas", "SQL and data wrangling", "ML with Scikit-learn", "Power BI / Tableau"] },
+      { num: "01", title: "Artificial Intelligence & Generative AI", badge: "Transformative", color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50", badgeStyle: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300", desc: "Generative AI is embedded in software development, content creation, customer service, legal research, and education. AI literacy is rapidly becoming as expected as Excel proficiency was a decade ago.", skills: ["Prompt engineering", "Python + ML basics", "LLM APIs", "AI tool integration"] },
+      { num: "02", title: "Cloud Computing & Edge Infrastructure", badge: "Already Here", color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50", badgeStyle: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300", desc: "AWS, Azure, and Google Cloud dominate enterprise IT. Edge computing — processing data closer to where it's generated — is creating new roles in IoT and real-time systems.", skills: ["AWS / Azure fundamentals", "Kubernetes & containers", "Serverless architecture", "Edge computing basics"] },
+      { num: "03", title: "Cybersecurity & Data Privacy", badge: "Critical Shortage", color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50", badgeStyle: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300", desc: "India faces over 800,000 unfilled cybersecurity roles. Entry-level SOC analyst, security auditing, and ethical hacking are all accessible with 6–12 months of focused preparation.", skills: ["Network security basics", "Ethical hacking (CEH)", "SIEM tools", "Incident response"] },
+      { num: "04", title: "Data Science & Advanced Analytics", badge: "High Demand", color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50", badgeStyle: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300", desc: "Companies are moving beyond basic analytics into real-time decision systems and predictive modelling. Strong SQL, Python, and statistics is enough to begin — the ceiling is one of the highest in tech.", skills: ["Python + Pandas", "SQL and data wrangling", "ML with Scikit-learn", "Power BI / Tableau"] },
     ],
     example: {
       name: "Aarav",
@@ -89,8 +89,8 @@ const slides = [
     heroGradient: "from-emerald-600 via-teal-700 to-cyan-800",
     accentColor: "text-emerald-700",
     accentBg: "bg-emerald-600",
-    highlightBg: "bg-emerald-50 border-emerald-200",
-    highlightText: "text-emerald-700",
+    highlightBg: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    highlightText: "text-emerald-700 dark:text-emerald-300",
     faqAccent: "text-emerald-600",
     ctaGradient: "from-emerald-600 to-teal-700",
     ctaText: "text-emerald-700",
@@ -123,10 +123,10 @@ const slides = [
       },
     ],
     cards: [
-      { num: "01", title: "Blockchain for Transparency & Trust", badge: "Maturing Fast", color: "bg-amber-50 border-amber-200", badgeStyle: "bg-amber-100 text-amber-700", desc: "Blockchain ensures transparency and security across finance, supply chain, and digital identity. India's CBDC development, trade finance, and land registry digitization are creating real enterprise blockchain demand.", skills: ["Distributed systems basics", "Solidity / smart contracts", "Web3.js / Ethers.js", "DeFi protocol understanding"] },
-      { num: "02", title: "AI-Powered Personalization", badge: "High Impact", color: "bg-violet-50 border-violet-200", badgeStyle: "bg-violet-100 text-violet-700", desc: "AI transforms customer experiences through personalization, automated recommendations, and intelligent response systems — directly driving revenue growth in e-commerce, fintech, and EdTech.", skills: ["Recommendation systems", "NLP for customer data", "A/B testing frameworks", "Customer analytics"] },
-      { num: "03", title: "R&D Investment & Open Innovation", badge: "Growth Engine", color: "bg-emerald-50 border-emerald-200", badgeStyle: "bg-emerald-100 text-emerald-700", desc: "Companies that invest in R&D are better positioned to lead markets and sustain long-term growth. Open innovation — collaborating with startups, academia, and external partners — accelerates development cycles.", skills: ["Design thinking", "Lean startup methodology", "IP and patent basics", "Innovation metrics"] },
-      { num: "04", title: "Automation & Process Innovation", badge: "Operational Edge", color: "bg-sky-50 border-sky-200", badgeStyle: "bg-sky-100 text-sky-700", desc: "Automation reduces manual effort, increases operational efficiency, and frees human capital for higher-value creative work. RPA, workflow automation, and AI-assisted processes are being adopted across every sector.", skills: ["RPA tools (UiPath, Automation Anywhere)", "Process mapping", "BPM fundamentals", "No-code / low-code platforms"] },
+      { num: "01", title: "Blockchain for Transparency & Trust", badge: "Maturing Fast", color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50", badgeStyle: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300", desc: "Blockchain ensures transparency and security across finance, supply chain, and digital identity. India's CBDC development, trade finance, and land registry digitization are creating real enterprise blockchain demand.", skills: ["Distributed systems basics", "Solidity / smart contracts", "Web3.js / Ethers.js", "DeFi protocol understanding"] },
+      { num: "02", title: "AI-Powered Personalization", badge: "High Impact", color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50", badgeStyle: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300", desc: "AI transforms customer experiences through personalization, automated recommendations, and intelligent response systems — directly driving revenue growth in e-commerce, fintech, and EdTech.", skills: ["Recommendation systems", "NLP for customer data", "A/B testing frameworks", "Customer analytics"] },
+      { num: "03", title: "R&D Investment & Open Innovation", badge: "Growth Engine", color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50", badgeStyle: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300", desc: "Companies that invest in R&D are better positioned to lead markets and sustain long-term growth. Open innovation — collaborating with startups, academia, and external partners — accelerates development cycles.", skills: ["Design thinking", "Lean startup methodology", "IP and patent basics", "Innovation metrics"] },
+      { num: "04", title: "Automation & Process Innovation", badge: "Operational Edge", color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50", badgeStyle: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300", desc: "Automation reduces manual effort, increases operational efficiency, and frees human capital for higher-value creative work. RPA, workflow automation, and AI-assisted processes are being adopted across every sector.", skills: ["RPA tools (UiPath, Automation Anywhere)", "Process mapping", "BPM fundamentals", "No-code / low-code platforms"] },
     ],
     example: {
       name: "Priya",
@@ -161,8 +161,8 @@ const slides = [
     heroGradient: "from-blue-600 via-blue-700 to-indigo-800",
     accentColor: "text-blue-700",
     accentBg: "bg-blue-600",
-    highlightBg: "bg-blue-50 border-blue-200",
-    highlightText: "text-blue-700",
+    highlightBg: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    highlightText: "text-blue-700 dark:text-blue-300",
     faqAccent: "text-blue-600",
     ctaGradient: "from-blue-600 to-indigo-700",
     ctaText: "text-blue-700",
@@ -195,10 +195,10 @@ const slides = [
       },
     ],
     cards: [
-      { num: "01", title: "Cloud Migration & Infrastructure", badge: "Foundation Layer", color: "bg-sky-50 border-sky-200", badgeStyle: "bg-sky-100 text-sky-700", desc: "Cloud enables real-time collaboration, remote work capabilities, and improved scalability. Migrating core systems to cloud is typically the first and most consequential step in any digital transformation journey.", skills: ["Cloud architecture basics", "Migration planning", "Cost optimization", "Multi-cloud strategy"] },
-      { num: "02", title: "AI & Automation Integration", badge: "High Impact", color: "bg-violet-50 border-violet-200", badgeStyle: "bg-violet-100 text-violet-700", desc: "AI-powered automation reduces manual work, improves accuracy, and enables real-time decision-making across operations, customer service, finance, and HR functions.", skills: ["RPA implementation", "AI model integration", "Process automation", "Intelligent document processing"] },
-      { num: "03", title: "Data-Driven Decision Making", badge: "Cultural Shift", color: "bg-emerald-50 border-emerald-200", badgeStyle: "bg-emerald-100 text-emerald-700", desc: "Advanced analytics enables organizations to gain insights into customer behavior, predict trends, and optimize decisions. Moving from gut-feel to data-backed choices is one of the most valuable cultural shifts in transformation.", skills: ["Business intelligence", "KPI framework design", "SQL + dashboard tools", "Predictive analytics basics"] },
-      { num: "04", title: "Digital Customer Experience", badge: "Revenue Driver", color: "bg-orange-50 border-orange-200", badgeStyle: "bg-orange-100 text-orange-700", desc: "Digital transformation enables more personalized and engaging customer experiences. Organizations leveraging customer data and intelligent automation to personalize journeys see measurably higher retention, NPS, and lifetime value.", skills: ["CRM platforms (Salesforce, HubSpot)", "UX fundamentals", "Customer journey mapping", "Personalization engines"] },
+      { num: "01", title: "Cloud Migration & Infrastructure", badge: "Foundation Layer", color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50", badgeStyle: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300", desc: "Cloud enables real-time collaboration, remote work capabilities, and improved scalability. Migrating core systems to cloud is typically the first and most consequential step in any digital transformation journey.", skills: ["Cloud architecture basics", "Migration planning", "Cost optimization", "Multi-cloud strategy"] },
+      { num: "02", title: "AI & Automation Integration", badge: "High Impact", color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50", badgeStyle: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300", desc: "AI-powered automation reduces manual work, improves accuracy, and enables real-time decision-making across operations, customer service, finance, and HR functions.", skills: ["RPA implementation", "AI model integration", "Process automation", "Intelligent document processing"] },
+      { num: "03", title: "Data-Driven Decision Making", badge: "Cultural Shift", color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50", badgeStyle: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300", desc: "Advanced analytics enables organizations to gain insights into customer behavior, predict trends, and optimize decisions. Moving from gut-feel to data-backed choices is one of the most valuable cultural shifts in transformation.", skills: ["Business intelligence", "KPI framework design", "SQL + dashboard tools", "Predictive analytics basics"] },
+      { num: "04", title: "Digital Customer Experience", badge: "Revenue Driver", color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50", badgeStyle: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300", desc: "Digital transformation enables more personalized and engaging customer experiences. Organizations leveraging customer data and intelligent automation to personalize journeys see measurably higher retention, NPS, and lifetime value.", skills: ["CRM platforms (Salesforce, HubSpot)", "UX fundamentals", "Customer journey mapping", "Personalization engines"] },
     ],
     example: {
       name: "Rahul",
@@ -233,8 +233,8 @@ const slides = [
     heroGradient: "from-orange-500 via-orange-600 to-rose-700",
     accentColor: "text-orange-600",
     accentBg: "bg-orange-500",
-    highlightBg: "bg-orange-50 border-orange-200",
-    highlightText: "text-orange-600",
+    highlightBg: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    highlightText: "text-orange-600 dark:text-orange-300",
     faqAccent: "text-orange-500",
     ctaGradient: "from-orange-500 to-rose-600",
     ctaText: "text-orange-600",
@@ -267,10 +267,10 @@ const slides = [
       },
     ],
     cards: [
-      { num: "01", title: "Cloud Infrastructure & SaaS Platforms", badge: "Foundation", color: "bg-sky-50 border-sky-200", badgeStyle: "bg-sky-100 text-sky-700", desc: "Cloud-based SaaS solutions reduce infrastructure costs, enable remote work, and provide enterprise-grade capabilities to organizations of all sizes. AWS, Azure, Google Cloud, and their SaaS ecosystems are the backbone of modern business technology.", skills: ["Cloud platform fundamentals", "SaaS evaluation frameworks", "API integration basics", "Total cost of ownership analysis"] },
-      { num: "02", title: "APIs, Microservices & System Integration", badge: "Scalability Key", color: "bg-indigo-50 border-indigo-200", badgeStyle: "bg-indigo-100 text-indigo-700", desc: "Modern technology solutions are built on flexible, composable architectures. APIs and microservices enable organizations to build flexible, resilient applications that can scale independently and integrate seamlessly with existing systems.", skills: ["REST API fundamentals", "Microservices architecture", "Integration platforms (MuleSoft, Zapier)", "Event-driven systems"] },
-      { num: "03", title: "AI-Augmented Business Applications", badge: "Competitive Edge", color: "bg-violet-50 border-violet-200", badgeStyle: "bg-violet-100 text-violet-700", desc: "AI is being embedded into every category of business software — CRM, ERP, HRMS, and analytics platforms. Organizations that use AI-augmented tools effectively make faster, more accurate decisions with less manual effort.", skills: ["AI tool evaluation", "Prompt engineering basics", "AI integration patterns", "Change management for AI adoption"] },
-      { num: "04", title: "Cybersecurity & Compliance Solutions", badge: "Non-Negotiable", color: "bg-red-50 border-red-200", badgeStyle: "bg-red-100 text-red-700", desc: "As technology surface area grows, security and compliance become more critical. Modern technology stacks must include identity management, data encryption, access controls, and compliance monitoring — especially in regulated industries like BFSI and healthcare.", skills: ["Identity & access management", "Data encryption basics", "Compliance frameworks (ISO 27001, GDPR)", "Security-first architecture"] },
+      { num: "01", title: "Cloud Infrastructure & SaaS Platforms", badge: "Foundation", color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50", badgeStyle: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300", desc: "Cloud-based SaaS solutions reduce infrastructure costs, enable remote work, and provide enterprise-grade capabilities to organizations of all sizes. AWS, Azure, Google Cloud, and their SaaS ecosystems are the backbone of modern business technology.", skills: ["Cloud platform fundamentals", "SaaS evaluation frameworks", "API integration basics", "Total cost of ownership analysis"] },
+      { num: "02", title: "APIs, Microservices & System Integration", badge: "Scalability Key", color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50", badgeStyle: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300", desc: "Modern technology solutions are built on flexible, composable architectures. APIs and microservices enable organizations to build flexible, resilient applications that can scale independently and integrate seamlessly with existing systems.", skills: ["REST API fundamentals", "Microservices architecture", "Integration platforms (MuleSoft, Zapier)", "Event-driven systems"] },
+      { num: "03", title: "AI-Augmented Business Applications", badge: "Competitive Edge", color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50", badgeStyle: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300", desc: "AI is being embedded into every category of business software — CRM, ERP, HRMS, and analytics platforms. Organizations that use AI-augmented tools effectively make faster, more accurate decisions with less manual effort.", skills: ["AI tool evaluation", "Prompt engineering basics", "AI integration patterns", "Change management for AI adoption"] },
+      { num: "04", title: "Cybersecurity & Compliance Solutions", badge: "Non-Negotiable", color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50", badgeStyle: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300", desc: "As technology surface area grows, security and compliance become more critical. Modern technology stacks must include identity management, data encryption, access controls, and compliance monitoring — especially in regulated industries like BFSI and healthcare.", skills: ["Identity & access management", "Data encryption basics", "Compliance frameworks (ISO 27001, GDPR)", "Security-first architecture"] },
     ],
     example: {
       name: "Meera",
@@ -301,17 +301,17 @@ const slides = [
 function FAQItem({ q, a, accentColor }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`${accentColor} font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -337,7 +337,7 @@ const TheFuture = () => {
       </Helmet>
       <Navbar />
 
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className={`bg-gradient-to-br ${currentSlide.heroGradient} text-white`}>
@@ -381,32 +381,32 @@ const TheFuture = () => {
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
             <div className={`${currentSlide.highlightBg} border rounded-2xl p-6 sm:p-8 mb-8`}>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 {currentSlide.intro}
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 {currentSlide.introExtra}
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{currentSlide.whyTitle}</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">{currentSlide.whyText1}</p>
-            <p className="text-gray-600 leading-relaxed">{currentSlide.whyText2}</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">{currentSlide.whyTitle}</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">{currentSlide.whyText1}</p>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{currentSlide.whyText2}</p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to understand, build, apply, and continuously improve.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to understand, build, apply, and continuously improve.</p>
             <div className="space-y-5">
               {currentSlide.steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 ${currentSlide.accentBg} text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base`}>
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -415,8 +415,8 @@ const TheFuture = () => {
 
           {/* ── TOPIC CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Key Areas to Know</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">What each area involves, why it matters, and which skills to build.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Key Areas to Know</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">What each area involves, why it matters, and which skills to build.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {currentSlide.cards.map((card) => (
                 <div key={card.num} className={`border rounded-2xl p-5 sm:p-6 ${card.color} hover:shadow-md transition-shadow`}>
@@ -424,13 +424,13 @@ const TheFuture = () => {
                     <span className="text-3xl font-black text-gray-200 leading-none">{card.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${card.badgeStyle}`}>{card.badge}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{card.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{card.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{card.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{card.desc}</p>
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Key Skills</p>
                     <ul className="space-y-1">
                       {card.skills.map((sk, i) => (
-                        <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                        <li key={i} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
                           <span className="w-1.5 h-1.5 rounded-full bg-gray-400 flex-shrink-0" />
                           {sk}
                         </li>
@@ -444,7 +444,7 @@ const TheFuture = () => {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: Structured Steps, Real Results</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: Structured Steps, Real Results</h2>
             <div className={`bg-gradient-to-br ${currentSlide.ctaGradient} text-white rounded-2xl p-6 sm:p-8`}>
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">
@@ -472,26 +472,26 @@ const TheFuture = () => {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {currentSlide.practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {currentSlide.mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -514,7 +514,7 @@ const TheFuture = () => {
                   "Data-driven decision making improves accuracy and strategic planning at every level.",
                   "Security and scalability are non-negotiable in any modern technology investment.",
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
                     <span className={`${currentSlide.highlightText} font-bold mt-0.5 flex-shrink-0`}>→</span>
                     <span>{item}</span>
                   </li>
@@ -525,7 +525,7 @@ const TheFuture = () => {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {currentSlide.faqs.map((faq, i) => (
                 <FAQItem key={i} q={faq.q} a={faq.a} accentColor={currentSlide.faqAccent} />
@@ -550,7 +550,7 @@ const TheFuture = () => {
             {prevSlide ? (
               <button
                 onClick={() => navigate(`/TheFuture/${prevSlide.id}`)}
-                className="flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold text-sm transition-colors"
+                className="flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 dark:text-gray-100 rounded-xl font-semibold text-sm transition-colors"
               >
                 ← <span className="hidden sm:inline">{prevSlide.title}</span><span className="sm:hidden">Previous</span>
               </button>

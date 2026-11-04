@@ -46,8 +46,8 @@ const remoteRoles = [
     num: "01",
     title: "Remote Software Developer",
     category: "Technology",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "High Demand",
     skills: "Python / JavaScript / Java, Git",
     ctc: "₹4–12 LPA",
@@ -57,8 +57,8 @@ const remoteRoles = [
     num: "02",
     title: "Remote Data Analyst",
     category: "Data & Analytics",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Fast Growing",
     skills: "SQL, Python, Excel, Power BI / Tableau",
     ctc: "₹3.5–9 LPA",
@@ -68,8 +68,8 @@ const remoteRoles = [
     num: "03",
     title: "Remote Content Writer / Copywriter",
     category: "Content & Marketing",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Entry Friendly",
     skills: "Writing, SEO basics, Research, CMS tools",
     ctc: "₹2.5–6 LPA",
@@ -79,8 +79,8 @@ const remoteRoles = [
     num: "04",
     title: "Remote Digital Marketing Executive",
     category: "Marketing",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "Wide Openings",
     skills: "Google Ads, Meta Ads, SEO, Analytics, Email",
     ctc: "₹3–7 LPA",
@@ -90,8 +90,8 @@ const remoteRoles = [
     num: "05",
     title: "Remote Customer Success / Support",
     category: "Operations",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Quick Entry",
     skills: "Communication, CRM tools, Problem-solving",
     ctc: "₹2.5–5 LPA",
@@ -101,8 +101,8 @@ const remoteRoles = [
     num: "06",
     title: "Remote UI/UX Designer",
     category: "Design",
-    color: "bg-rose-50 border-rose-200",
-    badge: "bg-rose-100 text-rose-700",
+    color: "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900/50",
+    badge: "bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300",
     badgeLabel: "Portfolio-Driven",
     skills: "Figma, User Research, Prototyping, Design Systems",
     ctc: "₹3.5–10 LPA",
@@ -112,8 +112,8 @@ const remoteRoles = [
     num: "07",
     title: "Remote Financial Analyst / Accountant",
     category: "Finance",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Stable Demand",
     skills: "Excel, Tally, GST, Financial Modelling, QuickBooks",
     ctc: "₹3–7 LPA",
@@ -123,8 +123,8 @@ const remoteRoles = [
     num: "08",
     title: "Remote QA / Software Tester",
     category: "Quality Assurance",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Underrated",
     skills: "Test case writing, Selenium, JIRA, API testing",
     ctc: "₹3–6 LPA",
@@ -180,17 +180,17 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-indigo-500 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -201,7 +201,7 @@ export default function RemoteJobsBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white">
@@ -232,39 +232,39 @@ export default function RemoteJobsBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                <strong className="text-indigo-700">Remote jobs in India</strong> have moved from pandemic necessity to mainstream career choice. In 2026, thousands of Indian professionals — freshers and experienced alike — are building careers entirely from home, working for Indian companies, global startups, and everything in between.
+            <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                <strong className="text-indigo-700 dark:text-indigo-300">Remote jobs in India</strong> have moved from pandemic necessity to mainstream career choice. In 2026, thousands of Indian professionals — freshers and experienced alike — are building careers entirely from home, working for Indian companies, global startups, and everything in between.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide breaks down the most in-demand remote roles in India, the skills that make candidates stand out, a step-by-step plan to find and land remote work, and honest advice on avoiding the common pitfalls that trip up most remote job seekers.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Remote Work in India Is a Real Career Path in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Remote work in India has matured far beyond basic data entry and call centre jobs. Product companies, SaaS startups, global consulting firms, and even traditional Indian enterprises now offer fully remote and hybrid roles across development, design, data, finance, marketing, and operations. India's talent is globally competitive and the infrastructure — internet, tools, remote work culture — has caught up.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               For freshers and professionals in Tier-2 and Tier-3 cities especially, remote work removes the relocation barrier entirely. You can work for a Bangalore-based startup or a US product company from Indore, Jaipur, or Coimbatore — with the right skills and the right strategy to find these roles.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance to Landing a Remote Job in India</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A practical 4-step framework that works for any remote role.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance to Landing a Remote Job in India</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A practical 4-step framework that works for any remote role.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -273,8 +273,8 @@ export default function RemoteJobsBlog() {
 
           {/* ── REMOTE ROLES ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Most In-Demand Remote Jobs in India (2026)</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">Roles actively hiring remotely across India — with skills and salary benchmarks.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Most In-Demand Remote Jobs in India (2026)</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">Roles actively hiring remotely across India — with skills and salary benchmarks.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {remoteRoles.map((role) => (
                 <div key={role.num} className={`border rounded-2xl p-5 sm:p-6 ${role.color} hover:shadow-md transition-shadow`}>
@@ -283,9 +283,9 @@ export default function RemoteJobsBlog() {
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${role.badge}`}>{role.badgeLabel}</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">{role.category}</p>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{role.title}</h3>
-                  <p className="text-xs text-gray-500 font-medium mb-3">🛠 {role.skills} &nbsp;·&nbsp; 💰 {role.ctc}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed">{role.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">{role.title}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">🛠 {role.skills} &nbsp;·&nbsp; 💰 {role.ctc}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{role.desc}</p>
                 </div>
               ))}
             </div>
@@ -293,7 +293,7 @@ export default function RemoteJobsBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: From Tier-2 City to Remote Role in 75 Days</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: From Tier-2 City to Remote Role in 75 Days</h2>
             <div className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">
@@ -337,26 +337,26 @@ export default function RemoteJobsBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -367,7 +367,7 @@ export default function RemoteJobsBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -375,11 +375,11 @@ export default function RemoteJobsBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Remote jobs in India in 2026 are real, growing, and accessible — for freshers and experienced professionals alike. The barrier isn't location or degree. It's preparation: the right skills, a professional remote setup, a strong portfolio, and a focused application strategy on platforms that actually list remote roles. Start with one target role, build proof of ability, apply on the right platforms, and treat your remote job search with the same discipline you'd bring to the job itself.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Your city doesn't limit your career anymore — your preparation does. Start building today.
             </p>
           </section>
@@ -392,7 +392,7 @@ export default function RemoteJobsBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-indigo-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-indigo-700 dark:text-indigo-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 dark:bg-indigo-950/30 transition-colors shadow-lg"
             >
               Explore Remote Jobs on GreatHire →
             </a>

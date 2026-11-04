@@ -45,64 +45,64 @@ const questions = [
   {
     num: "01",
     question: "Tell me about yourself.",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "Always Asked",
     tip: "Structure it: who you are → your education/background → your key skills or projects → why you're excited about this role. Keep it under 2 minutes. Don't recite your resume — tell a story. End by connecting your background to why you applied here.",
   },
   {
     num: "02",
     question: "What are your strengths and weaknesses?",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Classic Trap",
     tip: "Strengths: Pick 2 that are relevant to the role and back each with a specific example. Weaknesses: Be genuine — pick a real weakness you're actively improving. Never say 'I'm a perfectionist' or 'I work too hard.' That answer is transparent and irritating to experienced HRs.",
   },
   {
     num: "03",
     question: "Why do you want to work at this company?",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Research Test",
     tip: "Never say 'It's a good company' or 'Good salary.' Show you've done your homework: mention the company's product, culture, growth, recent news, or something that genuinely excited you. Tie it to your own goals. This is your chance to show you actually want this role, not just any role.",
   },
   {
     num: "04",
     question: "Where do you see yourself in 5 years?",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "Ambition Check",
     tip: "Show ambition without making them feel you'll leave in 6 months. Frame it around growing in your domain, taking on more responsibility, and contributing meaningfully. Align your 5-year vision loosely with the kind of career path the company enables. Avoid mentioning 'starting my own company' unless it's genuinely relevant.",
   },
   {
     num: "05",
     question: "Tell me about a challenge you faced and how you overcame it.",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "STAR Moment",
     tip: "Use the STAR method: Situation → Task → Action → Result. Pick a real example — academic project problem, team conflict, missed deadline. Focus on what you personally did, the decision you made, and what you learned. HRs want to see how you think under pressure, not that you never face problems.",
   },
   {
     num: "06",
     question: "What are your salary expectations?",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     badgeLabel: "Negotiation",
     tip: "Research the market rate for the role and city (Naukri, Glassdoor, AmbitionBox). Give a range, not a single number, based on your research. For freshers, saying 'I'm open to the company's standard fresher package for this role, and I'd love to understand the full compensation structure' is completely acceptable.",
   },
   {
     num: "07",
     question: "Do you have any questions for us?",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     badgeLabel: "Your Turn",
     tip: "Always have 2–3 thoughtful questions ready. Good options: 'What does success look like in this role in the first 6 months?', 'What does the onboarding process look like?', 'What's one thing you love about working here?' Never say 'No, I'm good.' It signals disinterest.",
   },
   {
     num: "08",
     question: "Why should we hire you?",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     badgeLabel: "Closing Shot",
     tip: "This is your 60-second pitch. Combine your top 2 skills + 1 relevant project or achievement + your attitude/eagerness to contribute. Be specific, be confident, and tie it to what the role needs. Avoid generic answers like 'I'm a hard worker and a team player.' Everyone says that.",
   },
@@ -156,17 +156,17 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-orange-500 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -177,7 +177,7 @@ export default function HRInterviewBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-orange-500 via-orange-600 to-rose-600 text-white">
@@ -208,40 +208,40 @@ export default function HRInterviewBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 Most freshers spend weeks preparing for technical rounds — and then walk into the{" "}
-                <strong className="text-orange-600">HR interview</strong> completely underprepared. The result? Vague answers, nervous energy, and offers that slip away despite strong technical performance.
+                <strong className="text-orange-600 dark:text-orange-400">HR interview</strong> completely underprepared. The result? Vague answers, nervous energy, and offers that slip away despite strong technical performance.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
-                This guide covers the most common <strong className="text-orange-600">HR interview questions for freshers</strong>, exactly how to answer them, a step-by-step preparation framework, and real tips that actually work — so you walk in confident and walk out with an offer.
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
+                This guide covers the most common <strong className="text-orange-600 dark:text-orange-400">HR interview questions for freshers</strong>, exactly how to answer them, a step-by-step preparation framework, and real tips that actually work — so you walk in confident and walk out with an offer.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why HR Interviews Matter More Than Most Freshers Realize
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               In 2026, HR rounds are no longer box-ticking exercises. They're genuine cultural fit assessments. Companies invest months training freshers — they want to make sure they're hiring someone who communicates well, handles pressure gracefully, and fits the team. Many candidates who clear technical rounds lose offers in HR because of poor self-presentation, lack of company research, or dishonest answers that get exposed.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               The good news: HR interviews are highly predictable. The same 15–20 questions appear in over 80% of fresher rounds. Prepare them well, practice them out loud, and you'll consistently convert offers while your peers wonder what went wrong.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance to Crack Your HR Interview</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to go from unprepared to offer-ready.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance to Crack Your HR Interview</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to go from unprepared to offer-ready.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
-                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-orange-500 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors">
+                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-orange-50 dark:bg-orange-950/300 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -250,17 +250,17 @@ export default function HRInterviewBlog() {
 
           {/* ── TOP QUESTIONS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Most Common HR Interview Questions for Freshers (+ How to Answer)</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">These questions appear in over 80% of fresher HR rounds — prepare every single one.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Most Common HR Interview Questions for Freshers (+ How to Answer)</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">These questions appear in over 80% of fresher HR rounds — prepare every single one.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {questions.map((q) => (
                 <div key={q.num} className={`border rounded-2xl p-5 sm:p-6 ${q.color} hover:shadow-md transition-shadow`}>
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{q.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{q.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${q.badge}`}>{q.badgeLabel}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">"{q.question}"</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{q.tip}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">"{q.question}"</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{q.tip}</p>
                 </div>
               ))}
             </div>
@@ -268,7 +268,7 @@ export default function HRInterviewBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: From Nervous Fresher to Confident Offer-Getter in 30 Days</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: From Nervous Fresher to Confident Offer-Getter in 30 Days</h2>
             <div className="bg-gradient-to-br from-orange-500 to-rose-600 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">R</div>
@@ -310,26 +310,26 @@ export default function HRInterviewBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -340,7 +340,7 @@ export default function HRInterviewBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -348,11 +348,11 @@ export default function HRInterviewBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Cracking your first HR interview as a fresher isn't about being perfect — it's about being prepared, genuine, and self-aware. Study the common questions, build structured answers, research every company you apply to, and practice out loud until your answers feel natural rather than rehearsed. The HR round rewards freshers who know themselves, communicate clearly, and show genuine interest in the role.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Prepare once, prepare well — and watch the HR round become your strongest asset, not your biggest fear.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Prepare once, prepare well — and watch the HR round become your strongest asset, not your biggest fear.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -363,7 +363,7 @@ export default function HRInterviewBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-orange-600 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-orange-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-orange-600 dark:text-orange-400 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-orange-50 dark:bg-orange-950/30 transition-colors shadow-lg"
             >
               Explore Fresher Jobs on GreatHire →
             </a>

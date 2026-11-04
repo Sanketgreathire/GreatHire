@@ -1534,12 +1534,10 @@ function Moin_blog_page() {
           /* Image Zoom Effect */
           .article-featured-image {
             transition: transform 0.5s ease;
-            filter: brightness(0.8);
           }
 
           .conversations-article-card:hover .article-featured-image {
-            transform: scale(1.1);
-            filter: brightness(0.6);
+            transform: scale(1.05);
           }
 
           /* Overlay Text Animation */
@@ -1556,8 +1554,8 @@ function Moin_blog_page() {
             transition: all 0.3s ease;
           }
 
-          .conversations-article-card:hover .article-content-wrapper {
-            background: rgba(26, 32, 44, 0.98);
+          html.dark .conversations-article-card:hover .article-content-wrapper {
+            background: rgba(31, 41, 55, 0.98);
           }
 
           /* Link Underline Animation */
@@ -2295,17 +2293,19 @@ color: rgb(160, 67, 246);
               </div>
             </div> */}
 
-            <div className="product-card flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
-              <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
+            <div className="product-card flex flex-col bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+              <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gray-100 dark:bg-gray-700">
                 <img
                   src={staticProduct.image}
                   alt={staticProduct.title}
-                  className="product-image-hover w-full aspect-[3/2] sm:aspect-[4/3] md:aspect-[3/2] lg:aspect-[16/10]  object-cover"
+                  className="product-image-hover w-full h-full object-cover"
                 />
 
-                <span className="absolute top-4 left-4 bg-white/95 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
-                  {staticProduct.category}
-                </span>
+                {staticProduct.category && (
+                  <span className="absolute top-4 left-4 bg-white/95 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                    {staticProduct.category}
+                  </span>
+                )}
               </div>
 
               <div className="p-6 flex-grow flex flex-col bg-white dark:bg-gray-800">
@@ -2517,62 +2517,50 @@ color: rgb(160, 67, 246);
       </section>
 
       {/* =================== Hiring Advice Section ================== */}
-      <section className="conversations-articles-section bg-linear-to-br from-gray-900 via-slate-900 to-gray-800 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="conversations-articles-section py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black dark:text-white mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-gray-900 dark:text-white mb-2">
               Hiring <span className="highlight-text">Advices</span>
             </h2>
           </div>
 
           {/* Articles Grid */}
-          <div className="articles-grid-layout grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="articles-grid-layout grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {HiringAdvices.map((article) => (
               <div
                 key={article.id}
-                className="conversations-article-card bg-gray-800 rounded-none overflow-hidden shadow-xl"
+                className="conversations-article-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full border border-gray-100 dark:border-gray-700"
               >
-                {/* Image Section with Overlay */}
-                <div className="article-image-container relative h-80 md:h-72 overflow-hidden">
+                {/* Image Section */}
+                <div className="article-image-container relative h-64 md:h-56 sm:h-52 overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <img
                     src={article.image}
                     alt={article.title}
                     className="article-featured-image w-full h-full object-cover"
                   />
-
-                  {/* Text Overlay on Image */}
-                  {/* <div className="article-image-overlay absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <h3 className="overlay-main-text text-4xl md:text-5xl font-bold text-white mb-2" style={{ fontWeight: 300 }}>
-                      Crafting
-                    </h3>
-                    <h3 className="overlay-highlight-text text-4xl md:text-5xl font-bold text-cyan-400 mb-4">
-                      Tomorrow
-                    </h3>
-                    <p className="overlay-subtext text-sm text-gray-300">
-                      Leaders' perspective on technology
-                    </p>
-                  </div> */}
                 </div>
 
                 {/* Content Section */}
-                <div className="article-content-wrapper bg-gray-900 p-6">
+                <div className="article-content-wrapper p-6 flex-grow flex flex-col bg-white dark:bg-gray-800">
                   {/* Article Title */}
-                  <h3 className="article-card-title text-xl md:text-2xl font-semibold text-white mb-4">
+                  <h3 className="article-card-title text-xl lg:text-2xl md:text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
                     {article.title}
                   </h3>
 
                   {/* Article Description */}
-                  <p className="article-description-text text-sm md:text-base text-gray-400 leading-relaxed mb-6 line-clamp-4">
+                  <p className="article-description-text text-base md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6 flex-grow line-clamp-4">
                     {article.description}
                   </p>
 
                   {/* Read More Link */}
                   <Link
                     to={article.link}
-                    className="article-read-more-link text-cyan-400 text-sm font-semibold hover:text-cyan-300 transition-colors"
+                    className="article-read-more-link text-green-600 font-semibold text-base flex items-center gap-2 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-colors duration-300"
                   >
-                    Read More →
+                    Read More
+                    <span className="text-xl">→</span>
                   </Link>
                 </div>
               </div>
@@ -2583,62 +2571,50 @@ color: rgb(160, 67, 246);
 
       {/* ===================== Trending Topic ================== */}
 
-      <section className="conversations-articles-section bg-linear-to-br from-gray-900 via-slate-900 to-gray-800 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="conversations-articles-section py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         <div className="conversations-articles-container max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="articles-section-header mb-12 text-center">
-            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-black dark:text-white mb-2">
+            <h2 className="conversations-main-title text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-normal text-gray-900 dark:text-white mb-2">
               Trending <span className="highlight-text">Topics</span>
             </h2>
           </div>
 
           {/* Articles Grid */}
-          <div className="articles-grid-layout grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="articles-grid-layout grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {TrendingTopics.map((article) => (
               <div
                 key={article.id}
-                className="conversations-article-card bg-gray-800 rounded-none overflow-hidden shadow-xl"
+                className="conversations-article-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full border border-gray-100 dark:border-gray-700"
               >
-                {/* Image Section with Overlay */}
-                <div className="article-image-container relative h-80 md:h-72 overflow-hidden">
+                {/* Image Section */}
+                <div className="article-image-container relative h-64 md:h-56 sm:h-52 overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <img
                     src={article.image}
                     alt={article.title}
                     className="article-featured-image w-full h-full object-cover"
                   />
-
-                  {/* Text Overlay on Image */}
-                  {/* <div className="article-image-overlay absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <h3 className="overlay-main-text text-4xl md:text-5xl font-bold text-white mb-2" style={{ fontWeight: 300 }}>
-                      Crafting
-                    </h3>
-                    <h3 className="overlay-highlight-text text-4xl md:text-5xl font-bold text-cyan-400 mb-4">
-                      Tomorrow
-                    </h3>
-                    <p className="overlay-subtext text-sm text-gray-300">
-                      Leaders' perspective on technology
-                    </p>
-                  </div> */}
                 </div>
 
                 {/* Content Section */}
-                <div className="article-content-wrapper bg-gray-900 p-6">
+                <div className="article-content-wrapper p-6 flex-grow flex flex-col bg-white dark:bg-gray-800">
                   {/* Article Title */}
-                  <h3 className="article-card-title text-xl md:text-2xl font-semibold text-white mb-4">
+                  <h3 className="article-card-title text-xl lg:text-2xl md:text-lg font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
                     {article.title}
                   </h3>
 
                   {/* Article Description */}
-                  <p className="article-description-text text-sm md:text-base text-gray-400 leading-relaxed mb-6 line-clamp-4">
+                  <p className="article-description-text text-base md:text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6 flex-grow line-clamp-4">
                     {article.description}
                   </p>
 
                   {/* Read More Link */}
                   <Link
                     to={article.link}
-                    className="article-read-more-link text-cyan-400 text-sm font-semibold hover:text-cyan-300 transition-colors"
+                    className="article-read-more-link text-green-600 font-semibold text-base flex items-center gap-2 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-colors duration-300"
                   >
-                    Read More →
+                    Read More
+                    <span className="text-xl">→</span>
                   </Link>
                 </div>
               </div>

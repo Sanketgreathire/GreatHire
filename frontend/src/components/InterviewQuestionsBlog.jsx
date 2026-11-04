@@ -259,25 +259,25 @@ const faqs = [
 
 function QuestionCard({ q }) {
   return (
-    <div className="border border-gray-200 rounded-2xl p-5 sm:p-6 hover:shadow-md transition-shadow bg-white">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 hover:shadow-md transition-shadow bg-white dark:bg-gray-900">
       <div className="flex items-start justify-between mb-3">
-        <span className="text-3xl font-black text-gray-200 leading-none">{q.num}</span>
+        <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{q.num}</span>
         <div className="flex gap-2">
-          <span className="text-xs font-bold px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+          <span className="text-xs font-bold px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">
             {q.category}
           </span>
-          <span className="text-xs font-bold px-2 py-1 rounded-full bg-purple-100 text-purple-700">
+          <span className="text-xs font-bold px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">
             {q.difficulty}
           </span>
         </div>
       </div>
-      <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">{q.title}</h3>
-      <p className="text-gray-600 text-sm leading-relaxed mb-4">{q.desc}</p>
-      <div className="pt-3 border-t border-gray-200/70">
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+      <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3">{q.title}</h3>
+      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{q.desc}</p>
+      <div className="pt-3 border-t border-gray-200 dark:border-gray-800/70">
+        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">
           Example Answer
         </p>
-        <p className="text-xs text-gray-600 leading-relaxed italic">{q.example}</p>
+        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed italic">{q.example}</p>
       </div>
     </div>
   );
@@ -286,12 +286,12 @@ function QuestionCard({ q }) {
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span
           className={`text-slate-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${
             open ? "rotate-45" : ""
@@ -301,8 +301,8 @@ function FAQItem({ q, a }) {
         </span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -313,7 +313,7 @@ export default function InterviewQuestionsBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-slate-700 via-slate-800 to-gray-900 text-white">
@@ -349,46 +349,46 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                Job interviews are where you prove your capability and culture fit. But most candidates go in underprepared, getting tripped up by questions they've heard a dozen times. <strong className="text-slate-700">Common interview questions</strong> aren't tricks — they're predictable, which means you can prepare solid answers that stand out.
+            <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-200 dark:border-slate-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Job interviews are where you prove your capability and culture fit. But most candidates go in underprepared, getting tripped up by questions they've heard a dozen times. <strong className="text-slate-700 dark:text-slate-300">Common interview questions</strong> aren't tricks — they're predictable, which means you can prepare solid answers that stand out.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide covers the 20 most common interview questions, why interviewers ask them, how to answer them in a way that impresses, and real examples that show what strong answers sound like. Prepare these, and you'll walk into interviews with confidence.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Interview Preparation Matters More Than Ever in 2026
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               In 2026, interviews are more structured and standardized. Companies use behavioral interview frameworks, take-home assessments, and detailed rubrics to evaluate candidates. This sounds intimidating — but it actually plays to your advantage. Structured interviews reward preparation. A candidate who prepares gets better results than one who wings it. The bar has risen, but so has the payoff for being ready.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Most candidates lose offers not because they're unqualified, but because they didn't answer well. They rambled, got defensive on a weakness question, or failed to ask thoughtful questions at the end. These are all fixable with preparation. This guide fixes them.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               4-Step Interview Preparation Framework
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               A structured approach to understanding what interviewers want, building credible answers, and practicing effectively.
             </p>
             <div className="space-y-5">
               {steps.map((step) => (
                 <div
                   key={step.num}
-                  className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6"
+                  className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -397,10 +397,10 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── QUESTIONS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               20 Common Interview Questions with Best Answer Strategies
             </h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">
               Organized by category. Each includes why it's asked, how to answer, and an example.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -412,7 +412,7 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Real Example: How Priya Went From Nervous to Confident in 3 Weeks
             </h2>
             <div className="bg-gradient-to-br from-slate-700 to-gray-900 text-white rounded-2xl p-6 sm:p-8">
@@ -462,26 +462,26 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {interviewMistakesPractices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -492,7 +492,7 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -504,11 +504,11 @@ export default function InterviewQuestionsBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Interview questions are predictable because they test the same things: competence, communication, cultural fit, and learning ability. By preparing 20 common questions with specific examples, using the STAR method, and researching your target company, you remove the uncertainty. You walk in prepared, confident, and ready to show why you're the right hire.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">
               Preparation is confidence. Confidence is what gets you hired.
             </p>
           </section>
@@ -523,7 +523,7 @@ export default function InterviewQuestionsBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-slate-800 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 transition-colors shadow-lg"
+              className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Start Preparing on GreatHire →
             </a>

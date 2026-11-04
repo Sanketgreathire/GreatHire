@@ -48,8 +48,8 @@ const strategies = [
     num: "01",
     category: "Job Description Strategy",
     title: "Write Crystal-Clear Job Descriptions",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     type: "Sourcing",
     desc: "Generic job descriptions attract generic candidates. Be specific about role, team, expectations, and growth. Include salary range (attracts serious candidates). Highlight company culture. Add 3–5 screening questions to filter early. Use inclusive language to attract diverse candidates. Include 'nice-to-have' vs 'must-have' skills clearly.",
   },
@@ -57,8 +57,8 @@ const strategies = [
     num: "02",
     category: "Sourcing Strategy",
     title: "Diversify Your Recruiting Channels",
-    color: "bg-green-50 border-green-200",
-    badge: "bg-green-100 text-green-700",
+    color: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900/50",
+    badge: "bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300",
     type: "Sourcing",
     desc: "LinkedIn recruiting: Search, headhunt passives, use job ads. Employee referrals: Incentivize (₹5K–20K bonus). Niche boards: GreatHire (freshers), Cutshort (startups), AngelList (tech). Bootcamps: Partner with coding/analytics bootcamps. University tie-ups: Campus recruitment for freshers. Conferences/Meetups: Sponsor tech meetups. Each channel has different cost/quality profile.",
   },
@@ -66,8 +66,8 @@ const strategies = [
     num: "03",
     category: "Screening Efficiency",
     title: "Async Assessments & Standardized Rubrics",
-    color: "bg-purple-50 border-purple-200",
-    badge: "bg-purple-100 text-purple-700",
+    color: "bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900/50",
+    badge: "bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300",
     type: "Screening",
     desc: "Use technical assessment platforms (HackerRank, LeetCode, Codility) to test skills asynchronously — candidates complete on their schedule, you review results. Use video interviewing for initial rounds — candidates record answers, you watch when convenient. Create standardized evaluation rubric: track 5–7 key competencies. Score candidates objectively. This reduces bias and saves 20+ hours/week.",
   },
@@ -75,8 +75,8 @@ const strategies = [
     num: "04",
     category: "Interview Process",
     title: "Structured Interviews with Clear Evaluation",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     type: "Interviews",
     desc: "Design 45-min interviews covering: technical skills (30 min), problem-solving (10 min), culture fit (5 min). Use same questions for all candidates (enables comparison). Have 2–3 interviewers score independently, then discuss. Avoid 'gut feeling' — use data. Reduce interview rounds to 2–3 max. Schedule interviews back-to-back on same days. Faster process = faster decisions.",
   },
@@ -84,8 +84,8 @@ const strategies = [
     num: "05",
     category: "Speed & Communication",
     title: "Fast Feedback & Rapid Offer Process",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     type: "Speed",
     desc: "Communicate status within 24 hours of each interview. For rejected candidates, send brief, respectful feedback. For selected candidates, prepare offer within 48 hours. Don't drag out negotiations — have clarity on salary band, benefits, start date beforehand. Slow hiring loses best candidates to competitors. Speed signals professionalism and respect.",
   },
@@ -93,8 +93,8 @@ const strategies = [
     num: "06",
     category: "Tools & Platforms",
     title: "Leverage Recruitment Automation Tools",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     type: "Tools",
     desc: "Use ATS (Applicant Tracking System): Workable, Lever, Greenhouse. Use assessment platforms: HackerRank, TestDome, Criterion. Use video interviewing: Willo Recruit, HireVue. Use LinkedIn Recruiter for sourcing. These automate screening, reduce manual work by 60%, and standardize process. Cost: ₹10K–50K/month depending on tool. ROI: hire faster, hire better.",
   },
@@ -102,8 +102,8 @@ const strategies = [
     num: "07",
     category: "Quality Measures",
     title: "Focus on Hire Quality, Not Just Speed",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     type: "Quality",
     desc: "Measure quality-of-hire: How do new hires perform after 6 months? Track performance ratings, retention, promotion velocity. Speed is useless if hires are poor quality. Balance: 30–45 day time-to-hire is healthy; under 15 days risks poor quality. Wrong hire costs 50% of annual salary + 6 months of lost productivity. Better to hire right in 40 days than hire wrong in 15 days.",
   },
@@ -111,8 +111,8 @@ const strategies = [
     num: "08",
     category: "Retention Strategy",
     title: "Onboarding & Retention Planning",
-    color: "bg-pink-50 border-pink-200",
-    badge: "bg-pink-100 text-pink-700",
+    color: "bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-900/50",
+    badge: "bg-pink-100 dark:bg-pink-900/60 text-pink-700 dark:text-pink-300",
     type: "Retention",
     desc: "Hiring doesn't end at offer — it ends at 6-month retention. Plan onboarding: mentor assignment, 30/60/90 day goals, culture integration. Check in regularly: 1-week, 1-month, 3-month, 6-month. Address issues immediately. Celebrate wins. Engaged new hires = retained new hires. Cost of replacing someone you hired: 1.5–2x their salary.",
   },
@@ -174,17 +174,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -195,12 +195,12 @@ export default function HireRightCandidateFaster() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
       {/* ── BACK BUTTON ── */}
   <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
     <Link
       to="/Main_blog_page"
-      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+      className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:text-gray-100 transition-colors"
     >
       <ArrowLeft className="h-4 w-4" />
       Back to Blog
@@ -234,37 +234,37 @@ export default function HireRightCandidateFaster() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                In 2026, good candidates have options. Your time-to-hire isn't 3 months anymore — it's 30–45 days, or the candidate joins your competitor. Yet most companies still use 1990s hiring processes: slow job postings, unstructured interviews, days between communications. <strong className="text-rose-700">The result? Lost deals. Wrong hires. High turnover.</strong>
+            <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                In 2026, good candidates have options. Your time-to-hire isn't 3 months anymore — it's 30–45 days, or the candidate joins your competitor. Yet most companies still use 1990s hiring processes: slow job postings, unstructured interviews, days between communications. <strong className="text-rose-700 dark:text-rose-300">The result? Lost deals. Wrong hires. High turnover.</strong>
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide reveals how to build a hiring system that finds right candidates FAST without sacrificing quality. From defining ideal candidates to streamlined screening to rapid offers — everything you need to hire better, faster.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Why Hiring Speed (Without Sacrificing Quality) Matters in 2026</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Hiring Speed (Without Sacrificing Quality) Matters in 2026</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The talent market is bipolar: <strong>Great candidates have multiple offers within days.</strong> Average candidates take weeks to find anything. Your speed determines which pool you attract. Fast hiring signals: professional process, respect for candidates' time, operational efficiency. Slow hiring signals: chaos, lack of planning, unprofessionalism.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Data from 2026 hiring reports: Companies with 30–45 day time-to-hire have 40% better retention than those with 60+ day hiring. Why? Faster hiring means less time for candidates to second-guess. Less waiting = higher conversion. Plus, your best candidates often accept first good offer — if you're not first, you lose them.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Hiring Framework</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step system for faster, smarter hiring.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Hiring Framework</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step system for faster, smarter hiring.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-rose-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -273,8 +273,8 @@ export default function HireRightCandidateFaster() {
 
           {/* ── STRATEGIES ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 Proven Hiring Strategies for Speed & Quality</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">From job descriptions to retention — the complete hiring playbook.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 Proven Hiring Strategies for Speed & Quality</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">From job descriptions to retention — the complete hiring playbook.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {strategies.map((strategy) => (
                 <div key={strategy.num} className={`border rounded-2xl p-5 sm:p-6 ${strategy.color} hover:shadow-md transition-shadow`}>
@@ -282,9 +282,9 @@ export default function HireRightCandidateFaster() {
                     <span className="text-3xl font-black text-gray-200 leading-none">{strategy.num}</span>
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${strategy.badge}`}>{strategy.type}</span>
                   </div>
-                  <p className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-widest">{strategy.category}</p>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">{strategy.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{strategy.desc}</p>
+                  <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-widest">{strategy.category}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">{strategy.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{strategy.desc}</p>
                 </div>
               ))}
             </div>
@@ -292,7 +292,7 @@ export default function HireRightCandidateFaster() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: From 90-Day to 35-Day Hiring (Case Study)</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: From 90-Day to 35-Day Hiring (Case Study)</h2>
             <div className="bg-gradient-to-br from-rose-600 to-purple-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">T</div>
@@ -334,26 +334,26 @@ export default function HireRightCandidateFaster() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -364,7 +364,7 @@ export default function HireRightCandidateFaster() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -372,14 +372,14 @@ export default function HireRightCandidateFaster() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Hiring fast doesn't mean hiring recklessly. It means building systems: clear candidate definition, diverse sourcing, structured screening, standardized interviews, rapid communication. When optimized, a hiring process that once took 90 days takes 30–45 days — without sacrificing quality.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The companies winning in 2026 aren't those with the biggest budgets — they're those with the most efficient hiring systems. You compete on talent. Talent goes to companies that respect their time and make decisions fast. Your hiring process IS your employer brand.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Build a system. Measure it. Optimize it. Hire right, hire fast.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Build a system. Measure it. Optimize it. Hire right, hire fast.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -390,7 +390,7 @@ export default function HireRightCandidateFaster() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-rose-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-rose-700 dark:text-rose-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 dark:bg-rose-950/30 transition-colors shadow-lg"
             >
               Post Jobs & Find Talent on GreatHire →
             </a>

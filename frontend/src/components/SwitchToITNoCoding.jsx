@@ -46,8 +46,8 @@ const roles = [
     num: "01",
     title: "Business Analyst (BA)",
     salary: "₹3–5.5 LPA (entry), ₹8–15 LPA (3–5 years)",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     coding: "None to Minimal",
     desc: "Bridge between business and technical teams. Gather requirements, write specifications, perform gap analysis. Your communication and business sense matter more than coding. Financial analysts, operations managers, and HR professionals transition here easily. High growth potential: many BAs become Product Managers or IT Directors.",
   },
@@ -55,8 +55,8 @@ const roles = [
     num: "02",
     title: "Quality Assurance (QA) / Software Tester",
     salary: "₹2.5–4.5 LPA (entry), ₹6–12 LPA (3–5 years)",
-    color: "bg-green-50 border-green-200",
-    badge: "bg-green-100 text-green-700",
+    color: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900/50",
+    badge: "bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-300",
     coding: "Minimal (Some scripting basics for automation)",
     desc: "Test software systematically. Write test cases, execute tests, report bugs. Detail-oriented mindset is key. Clear path to automation testing later. Anyone from finance, operations, or customer service can transition. QA roles grow into QA leads and product quality managers.",
   },
@@ -64,8 +64,8 @@ const roles = [
     num: "03",
     title: "IT Project Manager / Scrum Master",
     salary: "₹4–7 LPA (entry), ₹10–20 LPA (3–5 years)",
-    color: "bg-purple-50 border-purple-200",
-    badge: "bg-purple-100 text-purple-700",
+    color: "bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900/50",
+    badge: "bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300",
     coding: "None",
     desc: "Manage IT projects: teams, timelines, budgets. Agile/Scrum expertise needed. Project managers from any field transition easily — your management skills transfer directly. High demand, high growth trajectory. Leadership potential strong. Your domain knowledge is bonus.",
   },
@@ -73,8 +73,8 @@ const roles = [
     num: "04",
     title: "Business Systems Analyst / ERP Consultant",
     salary: "₹4–6.5 LPA (entry), ₹12–25 LPA (3–5 years)",
-    color: "bg-orange-50 border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900/50",
+    badge: "bg-orange-100 dark:bg-orange-900/60 text-orange-700 dark:text-orange-300",
     coding: "None (Configuration, not coding)",
     desc: "Implement business systems: SAP, Oracle, Salesforce. Your domain expertise is crucial here. Finance professionals fit finance module roles, HR professionals fit HRMS roles. Highest salary growth potential among non-coding IT roles. Consulting opportunities abundant.",
   },
@@ -82,8 +82,8 @@ const roles = [
     num: "05",
     title: "Technical Support / Customer Success Engineer",
     salary: "₹2–4 LPA (entry), ₹5–10 LPA (3–5 years)",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     coding: "Basic scripting only",
     desc: "Support technical issues, help customers. Strong communication is critical. Customer service background is perfect. Low barrier to entry but steep learning curve. Strategic advantage: many tech support people transition to product management or solutions engineering roles.",
   },
@@ -91,8 +91,8 @@ const roles = [
     num: "06",
     title: "IT Business Analyst / Solutions Architect",
     salary: "₹5–7.5 LPA (entry), ₹15–30+ LPA (3–5 years)",
-    color: "bg-teal-50 border-teal-200",
-    badge: "bg-teal-100 text-teal-700",
+    color: "bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-900/50",
+    badge: "bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300",
     coding: "None",
     desc: "Design technical solutions for business problems. Requires deep business understanding + technical literacy. Perfect for domain experts transitioning to tech. Highest earning potential among non-coding roles. Requires 2–3 years of IT experience to reach this level.",
   },
@@ -100,8 +100,8 @@ const roles = [
     num: "07",
     title: "Product Manager (Tech/SaaS)",
     salary: "₹4–7 LPA (entry), ₹15–40 LPA (3–5 years)",
-    color: "bg-indigo-50 border-indigo-200",
-    badge: "bg-indigo-100 text-indigo-700",
+    color: "bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900/50",
+    badge: "bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300",
     coding: "None (Technical literacy needed)",
     desc: "Define product roadmap, manage features, understand user needs. Business acumen + communication key. Finance, marketing, or operations backgrounds transition well. Highest salary potential. Requires 2–3 years in IT first (BA → Product Manager is common path).",
   },
@@ -109,8 +109,8 @@ const roles = [
     num: "08",
     title: "IT Training / Technical Documentation Specialist",
     salary: "₹2.5–4 LPA (entry), ₹6–12 LPA (3–5 years)",
-    color: "bg-yellow-50 border-yellow-200",
-    badge: "bg-yellow-100 text-yellow-700",
+    color: "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-900/50",
+    badge: "bg-yellow-100 dark:bg-yellow-900/60 text-yellow-700 dark:text-yellow-300",
     coding: "None",
     desc: "Create documentation, train users, create training materials. Writers, HR training professionals, educators transition easily. Lower salary but stable growth. Good stepping stone to other IT roles. Communication skills are everything.",
   },
@@ -172,17 +172,17 @@ const mistakes = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-green-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -193,7 +193,7 @@ export default function SwitchToITNoCoding() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-cyan-600 via-blue-700 to-purple-800 text-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
@@ -222,37 +222,37 @@ export default function SwitchToITNoCoding() {
         <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-cyan-50 border border-cyan-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-                You're a finance professional, HR manager, operations lead, or business analyst. You've built a solid career outside tech. But now you're wondering: <strong className="text-cyan-700">Can I switch to IT without learning to code?</strong> The answer is a resounding yes — and your non-tech background might actually be your biggest advantage.
+            <div className="bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                You're a finance professional, HR manager, operations lead, or business analyst. You've built a solid career outside tech. But now you're wondering: <strong className="text-cyan-700 dark:text-cyan-300">Can I switch to IT without learning to code?</strong> The answer is a resounding yes — and your non-tech background might actually be your biggest advantage.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 In 2026, companies desperately need professionals who understand BOTH business AND technology. Pure technologists often lack business acumen. Pure business people lack technical literacy. You're positioned to become invaluable. This guide maps exactly how to make that transition, which IT roles suit non-coders, and how to leverage your existing expertise.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Why Non-Tech Backgrounds Are Assets in IT Today</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Non-Tech Backgrounds Are Assets in IT Today</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               The biggest misconception: IT jobs = coding jobs. False. Only ~30% of IT roles require significant coding. The other 70% — Business Analysts, Project Managers, Product Managers, QA, Solutions Architects, Systems Implementers — need business sense + technical literacy, not coding expertise.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Your domain expertise (finance, HR, operations, marketing) is valuable because you understand the problems. A finance professional knows what financial analysts need. An HR person understands HR workflows. An operations manager sees supply chain inefficiencies. Combine that with IT knowledge, and you become the bridge between business and technology — the most valuable professional in any organization.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guidance</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to transition to IT without coding.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guidance</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to transition to IT without coding.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-cyan-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -261,8 +261,8 @@ export default function SwitchToITNoCoding() {
 
           {/* ── NON-CODING IT ROLES ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">8 IT Roles Perfect for Non-Coders</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">Your path from non-tech to tech without writing a single line of code.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">8 IT Roles Perfect for Non-Coders</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">Your path from non-tech to tech without writing a single line of code.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {roles.map((role) => (
                 <div key={role.num} className={`border rounded-2xl p-5 sm:p-6 ${role.color} hover:shadow-md transition-shadow`}>
@@ -270,9 +270,9 @@ export default function SwitchToITNoCoding() {
                     <span className="text-3xl font-black text-gray-200 leading-none">{role.num}</span>
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${role.badge}`}>{role.coding}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{role.title}</h3>
-                  <p className="text-xs text-gray-500 font-medium mb-3">💰 {role.salary}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed">{role.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">{role.title}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">💰 {role.salary}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{role.desc}</p>
                 </div>
               ))}
             </div>
@@ -280,7 +280,7 @@ export default function SwitchToITNoCoding() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: Finance Manager → Business Analyst in 4 Months</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: Finance Manager → Business Analyst in 4 Months</h2>
             <div className="bg-gradient-to-br from-cyan-600 to-purple-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">R</div>
@@ -327,26 +327,26 @@ export default function SwitchToITNoCoding() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5">✗</span>
                     <span>{item}</span>
                   </li>
@@ -357,7 +357,7 @@ export default function SwitchToITNoCoding() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -365,14 +365,14 @@ export default function SwitchToITNoCoding() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Switching to IT without coding isn't just possible — it might be easier than you think. Your domain expertise is your secret weapon. Companies need professionals who understand business problems AND technology solutions. You're positioned to become invaluable.
             </p>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Start with IT fundamentals, pick a non-coding role aligned with your domain, learn specific skills for that role, and apply aggressively. Yes, you might take a salary dip initially. But IT offers faster growth, higher ceilings, and global opportunities. Within 2–3 years, you'll earn more than your non-tech counterparts while having the career satisfaction of solving meaningful technology problems.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Your non-tech background isn't a barrier — it's your competitive advantage. Use it.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Your non-tech background isn't a barrier — it's your competitive advantage. Use it.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -383,7 +383,7 @@ export default function SwitchToITNoCoding() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-cyan-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-cyan-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-cyan-700 dark:text-cyan-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-cyan-50 dark:bg-cyan-950/30 transition-colors shadow-lg"
             >
               Explore Non-Coding IT Roles on GreatHire →
             </a>

@@ -46,8 +46,8 @@ const sectors = [
     num: "01",
     sector: "IT & Software",
     roles: "Junior Developer, QA Tester, Technical Support",
-    color: "bg-blue-50 border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900/50",
+    badge: "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300",
     badgeLabel: "High Volume",
     hotspots: "HITEC City, Madhapur, Gachibowli",
     desc: "Hyderabad's IT corridor is one of the most active walk-in zones in India. Companies like Tech Mahindra, Infosys BPM, Wipro, Cognizant, and dozens of mid-size IT firms regularly hold walk-in drives for freshers and junior developers. Roles include software trainees, QA analysts, technical support engineers, and helpdesk roles. Most require basic programming knowledge and a B.Tech or BCA degree.",
@@ -56,8 +56,8 @@ const sectors = [
     num: "02",
     sector: "BPO & Customer Support",
     roles: "Customer Care Executive, Voice/Non-Voice Process",
-    color: "bg-violet-50 border-violet-200",
-    badge: "bg-violet-100 text-violet-700",
+    color: "bg-violet-50 dark:bg-violet-950/30 border-violet-200 dark:border-violet-900/50",
+    badge: "bg-violet-100 dark:bg-violet-900/60 text-violet-700 dark:text-violet-300",
     badgeLabel: "Freshers Welcome",
     hotspots: "Begumpet, Secunderabad, Gachibowli",
     desc: "BPO walk-ins are among the most frequent in Hyderabad — companies like Concentrix, Teleperformance, HGS, and Sutherland hold weekly drives. Roles are open to any graduate with decent communication skills. Voice processes require clear spoken English; non-voice roles focus on written communication and data accuracy. Shifts vary — confirm timing before joining.",
@@ -66,8 +66,8 @@ const sectors = [
     num: "03",
     sector: "Banking & Finance (BFSI)",
     roles: "Sales Executive, Relationship Manager, Loan Officer",
-    color: "bg-emerald-50 border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50",
+    badge: "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300",
     badgeLabel: "Growing Fast",
     hotspots: "Begumpet, Ameerpet, Himayatnagar",
     desc: "BFSI walk-ins in Hyderabad have surged in 2026, driven by growth in retail banking, insurance, and fintech. Companies like HDFC Bank, ICICI, Bajaj Finserv, and Axis Bank regularly hire freshers as sales executives and relationship managers. Good communication and basic finance knowledge are key. Field sales roles often come with attractive incentive structures.",
@@ -76,8 +76,8 @@ const sectors = [
     num: "04",
     sector: "Healthcare & Pharma",
     roles: "Medical Representative, Healthcare Coordinator",
-    color: "bg-red-50 border-red-200",
-    badge: "bg-red-100 text-red-700",
+    color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900/50",
+    badge: "bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300",
     badgeLabel: "Niche Demand",
     hotspots: "Banjara Hills, Jubilee Hills, Kukatpally",
     desc: "Hyderabad's pharma and life sciences ecosystem creates steady demand for medical representatives, clinical coordinators, and healthcare support roles. Walk-ins in this sector often prefer B.Pharma, B.Sc Life Sciences, or MBA graduates. Companies include Dr. Reddy's, Sun Pharma distributors, and hospital chains. Knowledge of basic medical terminology is a plus.",
@@ -86,8 +86,8 @@ const sectors = [
     num: "05",
     sector: "Retail & E-commerce",
     roles: "Store Executive, Operations Associate, Logistics Coordinator",
-    color: "bg-amber-50 border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50",
+    badge: "bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300",
     badgeLabel: "Any Graduate",
     hotspots: "Kukatpally, Uppal, LB Nagar",
     desc: "Retail and e-commerce walk-ins are among the most accessible for freshers — most roles are open to any graduate with good communication and a willingness to work in a fast-paced environment. Companies like Reliance Retail, Amazon, Flipkart logistics partners, and Big Bazaar frequently hire through walk-in drives across Hyderabad's suburban zones.",
@@ -96,8 +96,8 @@ const sectors = [
     num: "06",
     sector: "Education & Ed-Tech",
     roles: "Academic Counselor, Business Development Executive",
-    color: "bg-sky-50 border-sky-200",
-    badge: "bg-sky-100 text-sky-700",
+    color: "bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50",
+    badge: "bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300",
     badgeLabel: "Communication-First",
     hotspots: "Ameerpet, Dilsukhnagar, Kukatpally",
     desc: "Ed-tech and coaching institutes hold regular walk-ins for counselors, sales executives, and operations staff. Companies like BYJU's, Unacademy, and local coaching chains hire freshers who can communicate clearly and handle target-driven environments. Roles often include incentives. Strong spoken communication and persuasion skills matter most.",
@@ -152,17 +152,17 @@ const faqs = [
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden transition-colors">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
       >
-        <span className="font-semibold text-gray-800 text-sm sm:text-base pr-4">{q}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base pr-4">{q}</span>
         <span className={`text-indigo-600 font-bold text-xl transition-transform duration-300 flex-shrink-0 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
-        <div className="px-5 pb-4 bg-gray-50 border-t border-gray-100">
-          <p className="text-gray-600 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
+        <div className="px-5 pb-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed pt-3">{a}</p>
         </div>
       )}
     </div>
@@ -173,7 +173,7 @@ export default function WalkInHyderabadBlog() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white font-sans">
+      <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
         {/* ── HERO ── */}
         <header className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-800 text-white">
@@ -204,40 +204,40 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── INTRODUCTION ── */}
           <section className="mb-14">
-            <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-6 sm:p-8 mb-8">
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
+            <div className="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 rounded-2xl p-6 sm:p-8 mb-8">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
                 Hyderabad is one of India's most active cities for{" "}
-                <strong className="text-indigo-700">walk-in interviews</strong> — with hundreds of drives happening every week across IT, BPO, BFSI, retail, and healthcare sectors. For freshers and job seekers who want faster access to interviews without the long wait of online application cycles, walk-ins are one of the most direct routes to getting hired.
+                <strong className="text-indigo-700 dark:text-indigo-300">walk-in interviews</strong> — with hundreds of drives happening every week across IT, BPO, BFSI, retail, and healthcare sectors. For freshers and job seekers who want faster access to interviews without the long wait of online application cycles, walk-ins are one of the most direct routes to getting hired.
               </p>
-              <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 text-base sm:text-lg leading-relaxed">
                 This guide tells you everything you need to know — where to find walk-in drives in Hyderabad, which sectors are most active, how to prepare, what to carry, and a step-by-step strategy to convert walk-ins into actual offers.
               </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Why Hyderabad Is One of India's Best Cities for Walk-in Hiring
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Hyderabad's economy is uniquely diversified — it hosts India's second-largest IT corridor (HITEC City), a booming pharma and biotech hub, one of South India's most active BFSI sectors, and a fast-growing startup ecosystem. This combination creates year-round demand for fresher talent across multiple sectors, making walk-in drives a regular, reliable hiring channel — not just a backup option.
             </p>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Unlike cities where walk-ins are seasonal, Hyderabad runs active drives throughout the year. Areas like Madhapur, Gachibowli, Begumpet, and Ameerpet see multiple drives weekly. For freshers who know where to look and how to prepare, walk-ins in Hyderabad offer faster entry into the workforce than most other hiring routes.
             </p>
           </section>
 
           {/* ── STEP BY STEP ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Step-by-Step Guide to Cracking Walk-in Interviews in Hyderabad</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">A 4-step framework to go from drive to offer.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Step-by-Step Guide to Cracking Walk-in Interviews in Hyderabad</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">A 4-step framework to go from drive to offer.</p>
             <div className="space-y-5">
               {steps.map((step) => (
-                <div key={step.num} className="flex gap-5 items-start bg-gray-50 border border-gray-200 rounded-2xl p-5 sm:p-6">
+                <div key={step.num} className="flex gap-5 items-start bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 sm:p-6 transition-colors">
                   <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center font-black text-sm sm:text-base">
                     {step.num}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-2 text-base sm:text-lg">{step.title}</h3>
-                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-base sm:text-lg">{step.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -246,19 +246,19 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── SECTOR CARDS ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Top 6 Sectors with Active Walk-in Drives in Hyderabad</h2>
-            <p className="text-gray-500 mb-8 text-sm sm:text-base">Where the drives are, what roles are open, and which areas to target.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Top 6 Sectors with Active Walk-in Drives in Hyderabad</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm sm:text-base">Where the drives are, what roles are open, and which areas to target.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {sectors.map((s) => (
                 <div key={s.num} className={`border rounded-2xl p-5 sm:p-6 ${s.color} hover:shadow-md transition-shadow`}>
                   <div className="flex items-start justify-between mb-3">
-                    <span className="text-3xl font-black text-gray-200 leading-none">{s.num}</span>
+                    <span className="text-3xl font-black text-gray-200 dark:text-gray-700 dark:text-gray-200 leading-none">{s.num}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${s.badge}`}>{s.badgeLabel}</span>
                   </div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">{s.sector}</p>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{s.roles}</h3>
-                  <p className="text-xs text-gray-500 font-medium mb-3">📍 {s.hotspots}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">{s.roles}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">📍 {s.hotspots}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{s.desc}</p>
                 </div>
               ))}
             </div>
@@ -266,7 +266,7 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── REAL EXAMPLE ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Real Example: How Priya Landed Her First Job Through a Hyderabad Walk-in in 3 Weeks</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Real Example: How Priya Landed Her First Job Through a Hyderabad Walk-in in 3 Weeks</h2>
             <div className="bg-gradient-to-br from-indigo-600 to-blue-700 text-white rounded-2xl p-6 sm:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-white">P</div>
@@ -308,26 +308,26 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── BEST PRACTICES + MISTAKES ── */}
           <section className="mb-14 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
-                <span className="text-emerald-600">✓</span> Best Practices
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">✓</span> Best Practices
               </h3>
               <ul className="space-y-3">
                 {practices.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-emerald-500 font-bold mt-0.5 flex-shrink-0">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-2xl p-6 transition-colors">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-4 flex items-center gap-2">
                 <span className="text-red-500">✗</span> Common Mistakes
               </h3>
               <ul className="space-y-3">
                 {mistakes.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <span className="text-red-400 font-bold mt-0.5 flex-shrink-0">✗</span>
                     <span>{item}</span>
                   </li>
@@ -338,7 +338,7 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── FAQ ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
             <div className="space-y-3">
               {faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}
             </div>
@@ -346,11 +346,11 @@ export default function WalkInHyderabadBlog() {
 
           {/* ── CONCLUSION ── */}
           <section className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Conclusion</h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">Conclusion</h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
               Walk-in interviews in Hyderabad are one of the fastest, most accessible routes into employment for freshers and job seekers in 2026. The city's diverse economy means drives happen year-round across IT, BPO, banking, retail, and healthcare. But showing up isn't enough — arriving early, preparing genuinely, carrying the right documents, and treating each drive as a learning opportunity is what separates candidates who convert from those who keep attending without results.
             </p>
-            <p className="text-gray-800 font-semibold text-lg">Find the right drives, show up prepared, and let consistency do the rest — your offer is closer than you think.</p>
+            <p className="text-gray-800 dark:text-gray-100 font-semibold text-lg">Find the right drives, show up prepared, and let consistency do the rest — your offer is closer than you think.</p>
           </section>
 
           {/* ── CTA ── */}
@@ -361,7 +361,7 @@ export default function WalkInHyderabadBlog() {
             </p>
             <a
               href="https://greathire.in"
-              className="inline-block bg-white text-indigo-700 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 transition-colors shadow-lg"
+              className="inline-block bg-white text-indigo-700 dark:text-indigo-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 dark:bg-indigo-950/30 transition-colors shadow-lg"
             >
               Explore Walk-in Jobs on GreatHire →
             </a>

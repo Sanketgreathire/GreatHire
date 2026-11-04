@@ -112,19 +112,19 @@ const BlogDetail = () => {
         <div className="container mx-auto px-6 py-16">
           <div className="max-w-4xl mx-auto">
 
-            <div className="bg-white rounded-3xl shadow-lg p-8 md:p-12 mb-8">
-              <p className="text-xl text-gray-700 leading-relaxed">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 p-8 md:p-12 mb-8 transition-colors">
+              <p className="text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
                 {blog.content.intro}
               </p>
             </div>
 
             {blog.content.sections.map((section, index) => (
-              <div key={index} className="bg-white rounded-3xl shadow-lg p-8 md:p-12 mb-8">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div key={index} className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 p-8 md:p-12 mb-8 transition-colors">
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
                   <span className={`w-2 h-8 bg-gradient-to-b ${blog.gradient} rounded-full`}></span>
                   {section.heading}
                 </h2>
-                <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                   {section.content}
                 </p>
               </div>
