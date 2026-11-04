@@ -6,13 +6,23 @@ const LEGACY_TOKEN_COOKIE_PATHS = [
 ];
 
 // Locked-in cookie options — DO NOT override at call sites
-const COOKIE_OPTIONS = {
-  domain: ".greathire.in",   // leading dot covers greathire.in AND api.greathire.in
-  path: "/",
-  httpOnly: true,
-  secure: true,              // required when sameSite === "none"
-  sameSite: "none",          // allows cross-subdomain XHR
-};
+// Production keeps the locked-in cross-subdomain settings; local dev must NOT
+// use Domain=.greathire.in (browsers reject that cookie on localhost → no session).
+const IS_PROD = process.env.NODE_ENV === "production";
+const COOKIE_OPTIONS = IS_PROD
+  ? {
+      domain: ".greathire.in", // leading dot covers greathire.in AND api.greathire.in
+      path: "/",
+      httpOnly: true,
+      secure: true, // required when sameSite === "none"
+      sameSite: "none", // allows cross-subdomain XHR
+    }
+  : {
+      path: "/",
+      httpOnly: true,
+      secure: false, // http://localhost is not TLS
+      sameSite: "lax", // same-site dev requests
+    };
 
 const COOKIE_MAX_AGE = 24 * 60 * 60 * 1000; // 1 day
 
@@ -32,8 +42,7 @@ export const clearAuthTokenCookie = (res) => {
   LEGACY_TOKEN_COOKIE_PATHS.forEach((path) =>
     res.clearCookie("token", { path })
   );
-  return res.clearCookie("token", {
-    domain: COOKIE_OPTIONS.domain,
-    path: COOKIE_OPTIONS.path,
-  });
+  const clearOpts = { path: COOKIE_OPTIONS.path };
+  if (COOKIE_OPTIONS.domain) clearOpts.domain = COOKIE_OPTIONS.domain;
+  return res.clearCookie("token", clearOpts);
 };

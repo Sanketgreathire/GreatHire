@@ -52,7 +52,7 @@ export const updateCompanyEmails = async (req, res) => {
     const { companyId, email, adminEmail } = req.body;
 
     // 🔐 Allow only Owner
-    if (!req.user || req.user.role !== "Owner") {
+    if (!req.user || (req.user.role !== "admin" && req.user.role !== "Owner")) {
       return res.status(403).json({
         success: false,
         message: "Only admin can update company emails",

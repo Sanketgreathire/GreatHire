@@ -15,6 +15,11 @@ const UserDetails = () => {
   const [applications, setApplications] = useState([]);
   const navigate = useNavigate();
 
+  // Newest experience first (plural = what signup writes; singular = legacy docs)
+  const primaryExperience =
+    user?.profile?.experiences?.[0] || user?.profile?.experience || null;
+  const isFresher = user?.profile?.hasExperience === false && !primaryExperience;
+
   const fetchUser = useCallback(async () => {
   try {
     setLoading(true);
@@ -146,29 +151,34 @@ useEffect(() => {
                     </div>
                   )}
 
-                  {user?.profile?.experience && (
+                  {primaryExperience ? (
                     <div className="text-sm space-y-1">
                       <h4 className="font-semibold text-gray-900 dark:text-white">Experience</h4>
                       <p className="text-gray-700 dark:text-gray-300">
                         <span className="font-medium text-gray-900 dark:text-white">Company:</span>{" "}
-                        {user.profile.experience.companyName}
+                        {primaryExperience.companyName}
                       </p>
                       <p className="text-gray-700 dark:text-gray-300">
                         <span className="font-medium text-gray-900 dark:text-white">Job Profile:</span>{" "}
-                        {user.profile.experience.jobProfile}
+                        {primaryExperience.jobProfile}
                       </p>
                       <p className="text-gray-700 dark:text-gray-300">
                         <span className="font-medium text-gray-900 dark:text-white">Duration:</span>{" "}
-                        {user.profile.experience.duration}
+                        {primaryExperience.duration}
                       </p>
                       <div>
                         <span className="font-medium text-gray-900 dark:text-white">Details:</span>
                         <p className="max-h-32 overflow-y-auto text-gray-700 dark:text-gray-300 p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700/50 mt-1">
-                          {user.profile.experience.experienceDetails}
+                          {primaryExperience.experienceDetails}
                         </p>
                       </div>
                     </div>
-                  )}
+                  ) : isFresher ? (
+                    <div className="text-sm">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Experience</h4>
+                      <p className="text-gray-700 dark:text-gray-300">Fresher (no work experience)</p>
+                    </div>
+                  ) : null}
 
                   {/* Skills */}
                   <div>

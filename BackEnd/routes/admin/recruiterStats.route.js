@@ -18,7 +18,7 @@ router.post('/test-email', isAuthenticated, async (req, res) => {
     console.log('🧪 Testing email configuration...');
     
     const nodemailer = await import('nodemailer');
-    const transporter = nodemailer.default.createTransporter({
+    const transporter = nodemailer.default.createTransport({
       service: "Gmail",
       auth: {
         user: process.env.EMAIL_USER,

@@ -109,8 +109,15 @@ export const submitEnquiry = async (req, res) => {
 // GET /api/v1/courses/admin/all  (admin)
 export const getAllEnquiries = async (req, res) => {
   try {
-    const { type, page = 1, limit = 20 } = req.query;
-    const filter = type ? { type } : {};
+    const { type, page = 1, limit = 20, search } = req.query;
+    const filter = { ...(type && { type }) };
+
+    // Server-side search across name/email/phone/courseName (regex-escaped)
+    if (search && search.trim()) {
+      const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const rx = new RegExp(escaped, "i");
+      filter.$or = [{ name: rx }, { email: rx }, { phone: rx }, { courseName: rx }];
+    }
     const skip = (Number(page) - 1) * Number(limit);
 
     const [data, total] = await Promise.all([

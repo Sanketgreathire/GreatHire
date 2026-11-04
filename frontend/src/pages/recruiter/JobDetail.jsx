@@ -36,10 +36,11 @@ import { fetchJobStats, fetchApplicationStats } from "@/redux/admin/statsSlice";
 
 const JobDetail = () => {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [jobDetails, setJobDetails] = useState(null);
+  const [jobCompanyId, setJobCompanyId] = useState(null); // company id of the fetched job (needed for admin delete)
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -75,6 +76,7 @@ const JobDetail = () => {
           const jobData = response.data.job.jobDetails || response.data.job;
           setJobDetails(jobData);
           setJobOwner(response?.data.job.created_by);
+          setJobCompanyId(response.data.job?.company?._id ?? null); // real company id (admin has no redux company)
         } else {
           setError(response.data.message || "Job details not found.");
         }
@@ -98,7 +100,7 @@ const JobDetail = () => {
       const response = await axios.delete(
         `${JOB_API_END_POINT}/delete/${jobId}`,
         {
-          data: { companyId: company?._id || null },
+          data: { companyId: jobCompanyId || company?._id || null },
           withCredentials: true,
         }
       );
@@ -158,6 +160,15 @@ const JobDetail = () => {
       if (response.data.success) {
         setJobDetails(response.data.updatedJob.jobDetails);
         setEditMode(false);
+        // Clear ?edit=true so the auto-open effect doesn't re-open the form
+        setSearchParams(
+          (prev) => {
+            const p = new URLSearchParams(prev);
+            p.delete("edit");
+            return p;
+          },
+          { replace: true }
+        );
         toast.success("Job updated successfully 😊");
       } else {
         toast.error(response.data.message || "Failed to update job.");
@@ -174,6 +185,15 @@ const JobDetail = () => {
 
   const handleCancel = () => {
     setEditMode(false);
+    // Clear ?edit=true so the auto-open effect doesn't re-open the form
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        p.delete("edit");
+        return p;
+      },
+      { replace: true }
+    );
   };
 
   const handleEdit = () => {
@@ -198,7 +218,7 @@ const JobDetail = () => {
   // Set editor content when entering edit mode
   useEffect(() => {
     if (editMode && editorRef.current && jobDetails?.details) {
-      editorRef.current.innerHTML = jobDetails.details;
+      editorRef.current.innerHTML = DOMPurify.sanitize(jobDetails.details);
     }
   }, [editMode, jobDetails?.details]);
 

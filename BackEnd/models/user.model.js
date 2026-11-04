@@ -116,7 +116,10 @@ const userSchema = new mongoose.Schema(
 
       hasExperience: {
         type: Boolean,
-        default: false,
+        // null = never answered (distinguishable from an explicit "No/Fresher");
+        // Mongoose defaults do NOT apply in the admin aggregation (raw docs),
+        // so legacy users without the field also stay "N/A".
+        default: null,
       },
 
       experiences: [experienceSchema],

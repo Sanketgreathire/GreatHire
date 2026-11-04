@@ -310,7 +310,7 @@ export const updateRecruiterEmail = async (req, res) => {
     const { email } = req.body;
 
     // 🔐 Allow only Owner
-    if (!req.user || req.user.role !== "Owner") {
+    if (!req.user || (req.user.role !== "admin" && req.user.role !== "Owner")) {
       return res.status(403).json({
         success: false,
         message: "Only admin can update recruiter email",
@@ -394,8 +394,14 @@ export const sendMessage = async (req, res) => {
 
     const recruiter = await Recruiter.findById(recruiterId);
     if (!recruiter) return res.status(404).json({ success: false, message: "Recruiter not found" });
-    email = recruiter.emailId.email;
+    email = recruiter.emailId?.email;
     name = recruiter.fullname;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "This recruiter has no valid email address on file.",
+      });
+    }
     // You can extend this with saving messages in DB or sending email
     console.log(`Message to ${email} ${name}: ${message}`);
 
@@ -463,7 +469,7 @@ export const sendBulkCompanyProfileReminders = async (req, res) => {
 
   try {
     // 🔐 Allow only Owner
-    if (!req.user || req.user.role !== "Owner") {
+    if (!req.user || (req.user.role !== "admin" && req.user.role !== "Owner")) {
       console.log('❌ Access denied. User role:', req.user?.role);
       return res.status(403).json({
         success: false,

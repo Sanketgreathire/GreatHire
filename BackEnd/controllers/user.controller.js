@@ -1009,6 +1009,12 @@ export const updateProfile = async (req, res) => {
       user.profile.experiences = experiencesArray;
     }
 
+    // Persist explicit Fresher/experienced choice (drives admin "Fresher" display).
+    // Guarded so profile edits that don't send the flag never clobber it.
+    if (req.body.hasExperience !== undefined) {
+      user.profile.hasExperience = req.body.hasExperience === "true";
+    }
+
     if (skillsArray.length) user.profile.skills = skillsArray;
 
     // Referral reward: give recruiter +1 job post every 15 candidate profile completions

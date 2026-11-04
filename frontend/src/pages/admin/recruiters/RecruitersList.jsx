@@ -216,7 +216,7 @@ const RecruitersList = () => {
   const dispatch = useDispatch();
 
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All"); // "All" | true | false
+  const [status, setStatus] = useState("All"); // "All" | "true" | "false" (string values from PillSelect)
   const [page, setPage] = useState(1);
 
   const [recruiterList, setRecruiterList] = useState([]);
@@ -726,13 +726,13 @@ const RecruitersList = () => {
       (r.companyName || "").toLowerCase().includes(q) ||
       (r.email || "").toLowerCase().includes(q) ||
       (String(r.phone ?? "")).toLowerCase().includes(q);
-    const matchesStatus = status === "All" ? true : r.isActive === (status === true);
+    const matchesStatus = status === "All" ? true : r.isActive === (status === "true");
     return matchesSearch && matchesStatus;
   });
 
   // Get inactive recruiters for bulk selection
   const inactiveRecruiters = filteredRecruiters.filter(r => !r.isActive);
-  const showCheckboxColumn = status === false;
+  const showCheckboxColumn = status === "false";
 
   // Bulk selection handlers
   const handleSelectAll = (checked) => {

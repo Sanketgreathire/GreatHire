@@ -187,6 +187,7 @@ const Signup = () => {
       if (response?.data?.success){
         toast.success("Account Created ✅");
         dispatch(setUser(response.data.user));
+        localStorage.setItem("token", response.data.token); // header-auth fallback (same as all login flows)
         setStep(2);
         window.scrollTo({ top: 0, behavior: "smooth"});
       }else{
@@ -277,12 +278,18 @@ const Signup = () => {
         formPayload.append("experiences", JSON.stringify([]));
       }
 
+      // Explicit fresher/experienced choice -> drives admin "Fresher" display
+      formPayload.append("hasExperience", String(hasExperience));
+
       formPayload.append("autoApply", input.autoApply);
 
       const response = await axios.put(
         `${USER_API_END_POINT}/profile/update`,
         formPayload,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       if (response?.data?.success) {
         dispatch(setUser(response.data.user));

@@ -103,6 +103,7 @@ const ITEMS_PER_PAGE = 15;
 const Courses = () => {
   const [activeTab, setActiveTab]         = useState("enquiry");
   const [search, setSearch]               = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage]                   = useState(1);
   const [data, setData]                   = useState([]);
   const [total, setTotal]                 = useState(0);
@@ -117,7 +118,7 @@ const Courses = () => {
     setLoading(true);
     try {
       const res = await axios.get(`${COURSE_API_END_POINT}/admin/all`, {
-        params: { type: activeTab, page, limit: ITEMS_PER_PAGE },
+        params: { type: activeTab, page, limit: ITEMS_PER_PAGE, search: debouncedSearch },
         withCredentials: true,
       });
       if (res.data.success) {
@@ -130,9 +131,18 @@ const Courses = () => {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, page]);
+  }, [activeTab, page, debouncedSearch]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Debounce search input → server-side search (350ms) + reset to page 1
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [search]);
 
   const handleTabChange = (tab) => { setActiveTab(tab); setPage(1); setSearch(""); };
 

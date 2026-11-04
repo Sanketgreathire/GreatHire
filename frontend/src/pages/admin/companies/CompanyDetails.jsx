@@ -8,6 +8,7 @@ import {
   COMPANY_API_END_POINT,
   RECRUITER_API_END_POINT,
   ADMIN_API_END_POINT,
+  ADMIN_COMPANY_DATA_API_END_POINT,
 } from "@/utils/ApiEndPoint"; // API endpoints
 import { ArrowLeft } from "lucide-react"; // Back button icon
 // Toast notifications for user feedback
@@ -92,10 +93,36 @@ const CompanyDetails = () => {
 
 
   const handleUpdateEmails = async () => {
+    // Validate before sending: bad input shows a popup instead of a request that only errors in the console
+    const businessEmail = (emailData.email || "").trim();
+    const adminEmailAddress = (emailData.adminEmail || "").trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!businessEmail) {
+      toast.error("Business email cannot be blank");
+      return;
+    }
+    if (!adminEmailAddress) {
+      toast.error("Admin email cannot be blank");
+      return;
+    }
+    if (!emailPattern.test(businessEmail)) {
+      toast.error("Invalid business email format");
+      return;
+    }
+    if (!emailPattern.test(adminEmailAddress)) {
+      toast.error("Invalid admin email format");
+      return;
+    }
+    if (businessEmail.toLowerCase() === adminEmailAddress.toLowerCase()) {
+      toast.error("Business and admin email cannot be the same");
+      return;
+    }
+
     try {
       setEmailLoading(true);
       const response = await axios.put(
-        `/api/v1/admin/company/data/update-emails`,
+        `${ADMIN_COMPANY_DATA_API_END_POINT}/update-emails`,
         {
           companyId,
           email: emailData.email,
@@ -116,8 +143,7 @@ const CompanyDetails = () => {
         toast.error(response.data.message);
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to update emails");
+      toast.error(err?.response?.data?.message || "Failed to update emails");
     } finally {
       setEmailLoading(false);
     }

@@ -99,18 +99,45 @@ export const updateUser = async (req, res) => {
 // ===============================
 // EXPERIENCE SUPPORT
 // ===============================
+// Fresher detection: flag explicitly false AND zero experience records.
+// - Explicit "No (Fresher)" signup -> flag false + empty experiences -> "Fresher"
+// - Experienced users (records exist) -> never mislabeled, regardless of flag
+// - Users who never answered -> flag null/missing -> stays N/A
+const noExperienceRecords = {
+  $and: [
+    { $eq: [{ $size: { $ifNull: ["$profile.experiences", []] } }, 0] },
+    { $eq: [{ $ifNull: ["$profile.experience", null] }, null] },
+  ],
+};
+const isExplicitFresher = {
+  $and: [{ $eq: ["$profile.hasExperience", false] }, noExperienceRecords],
+};
+
 const addExperienceSupport = {
+  hasExperience: "$profile.hasExperience",
   jobRole: {
-    $ifNull: [
-      { $arrayElemAt: ["$profile.experiences.jobProfile", 0] },
-      "$profile.experience.jobProfile",
-    ],
+    $cond: {
+      if: isExplicitFresher,
+      then: "Fresher",
+      else: {
+        $ifNull: [
+          { $arrayElemAt: ["$profile.experiences.jobProfile", 0] },
+          "$profile.experience.jobProfile",
+        ],
+      },
+    },
   },
   duration: {
-    $ifNull: [
-      { $arrayElemAt: ["$profile.experiences.duration", 0] },
-      "$profile.experience.duration",
-    ],
+    $cond: {
+      if: isExplicitFresher,
+      then: "Fresher",
+      else: {
+        $ifNull: [
+          { $arrayElemAt: ["$profile.experiences.duration", 0] },
+          "$profile.experience.duration",
+        ],
+      },
+    },
   },
 };
 
@@ -230,6 +257,7 @@ export const getUsersList = async (req, res) => {
           phoneNumber: 1,
           jobRole: 1,
           duration: 1,
+          hasExperience: 1,
           joined: 1,
           lastActiveAt: 1,
           applicationCount: 1,
