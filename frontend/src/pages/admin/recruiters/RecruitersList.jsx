@@ -432,7 +432,6 @@ const RecruitersList = () => {
         toast.error(response.data.message || "Failed to update status");
       }
     } catch (err) {
-      console.error("toggleActive error", err);
       toast.error(err.response?.data?.message || "Error toggling status");
     } finally {
       setLoadingMap((s) => ({ ...s, [recruiterId]: false }));
@@ -465,7 +464,6 @@ const RecruitersList = () => {
         toast.error(response.data.message || "Failed to update block status");
       }
     } catch (err) {
-      console.error("toggleBlock error", err);
       toast.error(err.response?.data?.message || "Error toggling block status");
     } finally {
       setBlockingMap((s) => ({ ...s, [recruiterId]: false }));
@@ -1078,10 +1076,13 @@ const RecruitersList = () => {
                             ) : (
                               <button
                                 title={
-                                  r.isActive
-                                    ? "Deactivate recruiter"
-                                    : "Activate recruiter"
+                                  !r.companyId
+                                    ? "Company not found — status cannot be changed"
+                                    : r.isActive
+                                      ? "Deactivate recruiter"
+                                      : "Activate recruiter"
                                 }
+                                disabled={!r.companyId}
                                 onClick={() =>
                                   toggleActive(
                                     r.companyId,
@@ -1090,9 +1091,11 @@ const RecruitersList = () => {
                                     r.isAdmin
                                   )
                                 }
-                                className={`p-1.5 rounded transition-colors ${r.isActive
-                                  ? "bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50"
-                                  : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                className={`p-1.5 rounded transition-colors ${!r.companyId
+                                  ? "bg-gray-50 dark:bg-gray-700 opacity-50 cursor-not-allowed"
+                                  : r.isActive
+                                    ? "bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-100/50"
+                                    : "bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                                   }`}
                               >
                                 <UserCheck
@@ -1114,16 +1117,21 @@ const RecruitersList = () => {
                             ) : (
                               <button
                                 title={
-                                  r.isBlocked
-                                    ? "Unblock recruiter"
-                                    : "Block recruiter"
+                                  !r.companyId
+                                    ? "Company not found — status cannot be changed"
+                                    : r.isBlocked
+                                      ? "Unblock recruiter"
+                                      : "Block recruiter"
                                 }
+                                disabled={!r.companyId}
                                 onClick={() =>
                                   toggleBlock(r._id, r.companyId, r.isBlocked)
                                 }
-                                className={`p-1.5 rounded transition-colors ${r.isBlocked
-                                  ? "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                                  : "bg-orange-50 dark:bg-orange-900/30 hover:bg-orange-100 dark:hover:bg-orange-900/50"
+                                className={`p-1.5 rounded transition-colors ${!r.companyId
+                                  ? "bg-gray-50 dark:bg-gray-700 opacity-50 cursor-not-allowed"
+                                  : r.isBlocked
+                                    ? "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                    : "bg-orange-50 dark:bg-orange-900/30 hover:bg-orange-100 dark:hover:bg-orange-900/50"
                                   }`}
                               >
                                 <Ban

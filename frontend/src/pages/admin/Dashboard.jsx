@@ -22,9 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import {
-  Briefcase, UserCheck, ChevronLeft, ChevronRight, Bot, Users,
+  Briefcase, UserCheck, Bot, Users,
   FileText,
   Calendar,
   CheckCircle,
@@ -477,11 +476,6 @@ const Dashboard = () => {
       },
     },
   };
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 5;
-  const totalPages = Math.max(1, Math.ceil(jobPostings.length / jobsPerPage));
-  const displayedJobs = jobPostings.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
   const fetchRecentActivity = async () => {
     try {
@@ -1011,8 +1005,8 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayedJobs.length > 0 ? (
-                    displayedJobs.map((job, index) => (
+                  {jobPostings.length > 0 ? (
+                    jobPostings.map((job, index) => (
                       <TableRow key={job._id || `job-${index}`} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <TableCell className="text-gray-900 dark:text-gray-100 font-medium">{job.jobTitle}</TableCell>
                         <TableCell className="text-gray-900 dark:text-gray-100">{job.company}</TableCell>
@@ -1036,32 +1030,6 @@ const Dashboard = () => {
               </Table>
             </div>
           </div>
-
-          {jobPostings.length > 0 && (
-            <div className="flex items-center justify-center gap-4 mt-6">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="rounded-full px-4 py-2 flex items-center gap-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft size={16} /> Prev
-              </Button>
-
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                Page {currentPage} of {totalPages}
-              </span>
-
-              <Button
-                variant="outline"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="rounded-full px-4 py-2 flex items-center gap-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Next <ChevronRight size={16} />
-              </Button>
-            </div>
-          )}
         </Card>
       </div>
     </>

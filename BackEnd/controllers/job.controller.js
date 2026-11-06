@@ -1100,7 +1100,7 @@ export const getJobByCompanyId = async (req, res) => {
 
     // Fetch jobs by company ID
     const jobs = await Job.find({ company: companyId })
-      .select("jobDetails.title jobDetails.isActive createdAt")
+      .select("jobDetails.title jobDetails.isActive jobDetails.companyName created_by createdAt")
       .sort({ createdAt: -1 });
 
     if (jobs.length === 0) {
