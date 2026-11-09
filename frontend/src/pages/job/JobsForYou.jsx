@@ -23,6 +23,14 @@ import {
   Briefcase,
   Star,
   GraduationCap,
+  MapPin,
+  Building2,
+  Clock,
+  Check,
+  CheckCircle2,
+  Zap,
+  Share2,
+  ArrowRight,
 } from "lucide-react";
 import { slugify } from "@/utils/slugify";
 import { Helmet } from "react-helmet-async";
@@ -574,150 +582,170 @@ const JobsForYou = ({ jobs = [] }) => {
               const isActive = selectedJob?._id === job._id;
               const salary = job?.jobDetails?.salary;
 
+              const activeDays = calculateActiveDays(job?.createdAt);
+              const postedDateStr = (() => {
+                if (activeDays === 0) return "Today";
+                if (activeDays === 1) return "Yesterday";
+                if (activeDays < 7) return `${activeDays}d ago`;
+                if (activeDays < 30) return `${Math.floor(activeDays / 7)}w ago`;
+                if (activeDays < 365) return `${Math.floor(activeDays / 30)}mo ago`;
+                return `${Math.floor(activeDays / 365)}y ago`;
+              })();
+
               return (
                 <div
                   key={job._id}
                   onClick={() => handleJobClick(job)}
-                  className={`relative flex flex-col rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md ${
+                  className={`group relative flex flex-col justify-between rounded-2xl border overflow-hidden cursor-pointer transition-all duration-200 text-left bg-white dark:bg-gray-800 ${
                     isActive
-                      ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 dark:border-blue-400 dark:bg-blue-900/20 dark:ring-blue-500/40"
-                      : "border-gray-200 bg-white hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500"
+                      ? "border-sky-500 ring-2 ring-sky-400/40 shadow-md"
+                      : "border-slate-200 hover:border-sky-300 hover:shadow-lg dark:border-gray-700 dark:hover:border-sky-500 shadow-sm"
                   }`}
                 >
-                  {user && !hasAppliedToJob(job._id) && (
-                    <div
-                      className="absolute top-3 left-3 z-10"
-                      onClick={(e) => toggleJobSelection(e, job._id)}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => {}}
-                        aria-label={`Select ${job?.jobDetails?.title || "job"}`}
-                        className="w-4 h-4 accent-blue-600 cursor-pointer"
-                      />
-                    </div>
-                  )}
+                  {/* Sky Header Accent Top Section */}
+                  <div className="bg-[#f0f8ff] dark:bg-slate-800/80 p-4 border-b border-sky-100/80 dark:border-gray-700/80">
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        {user && !hasAppliedToJob(job._id) && (
+                          <div
+                            className="flex-shrink-0"
+                            onClick={(e) => toggleJobSelection(e, job._id)}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}}
+                              aria-label={`Select ${job?.jobDetails?.title || "job"}`}
+                              className="w-4 h-4 rounded text-blue-600 border-slate-300 dark:border-gray-600 accent-blue-600 cursor-pointer transition-transform hover:scale-105"
+                            />
+                          </div>
+                        )}
 
-                  {/* Top Row */}
-                  <div className="flex items-start justify-between gap-2 mb-3 pl-6">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2">
-                        {job.jobDetails?.title}
-                      </h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-                        {job.jobDetails?.companyName}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
-                      {job?.jobDetails?.urgentHiring === "Yes" && (
-                        <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full whitespace-nowrap dark:text-orange-300 dark:bg-orange-900/30 dark:border-orange-700">
-                          ⚡ Urgent
-                        </span>
-                      )}
-                      {hasAppliedToJob(job._id) && (
-                        <span className="text-[10px] font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full dark:text-green-400 dark:bg-green-900/30 dark:border-green-700">
-                          ✓ Applied
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShareJobId(
-                            shareJobId === job._id ? null : job._id
-                          );
-                        }}
-                        className="p-1.5 hover:bg-gray-100 rounded-full transition-colors dark:hover:bg-gray-700"
-                        title="Share Job"
-                        aria-label="Share Job"
-                      >
-                        <FaShareAlt
-                          size={13}
-                          className="text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
-                        />
-                      </button>
-                    </div>
-                  </div>
 
-                  {/* Share Card */}
-                  {shareJobId === job._id && (
-                    <div
-                      ref={shareCardRef}
-                      onClick={(e) => e.stopPropagation()}
-                      className="relative mb-2"
-                    >
-                      <ShareCard
-                        urlToShare={`${window.location.origin}/jobs/${slugify(
-                          job.jobDetails?.title || "job"
-                        )}-${job._id}`}
-                        jobTitle={job.jobDetails?.title}
-                        jobLocation={job.jobDetails?.location}
-                        jobSalary={job.jobDetails?.salary}
-                        jobDuration={job.jobDetails?.duration}
-                        jobType={job.jobDetails?.jobType}
-                        onClose={() => setShareJobId(null)}
-                      />
-                    </div>
-                  )}
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white leading-tight line-clamp-1 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
+                            title={job.jobDetails?.title}
+                          >
+                            {job.jobDetails?.title}
+                          </h3>
+                          <p
+                            className="text-xs font-normal text-slate-500 dark:text-gray-400 mt-0.5 truncate"
+                            title={job.jobDetails?.companyName}
+                          >
+                            {job.jobDetails?.companyName}
+                          </p>
+                        </div>
+                      </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {job.jobDetails?.location && (
-                      <span
-                        title={job.jobDetails.location}
-                        className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[140px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600"
-                      >
-                        📍 {job.jobDetails.location}
-                      </span>
-                    )}
-                    {job.jobDetails?.workPlaceFlexibility && (
-                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                        🏢 {job.jobDetails.workPlaceFlexibility}
-                      </span>
-                    )}
-                    {job.jobDetails?.jobType && (
-                      <span className="text-[11px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full dark:text-blue-300 dark:bg-blue-900/30 dark:border-blue-700">
-                        💼 {job.jobDetails.jobType}
-                      </span>
-                    )}
-                    {job.jobDetails?.shift && (
-                      <span className="text-[11px] text-gray-600 bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full truncate max-w-[110px] dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
-                        🕐 {job.jobDetails.shift}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Highlights */}
-                  {(job.jobDetails?.benefits?.[0] ||
-                    job.jobDetails?.qualifications?.[0]) && (
-                    <div className="text-[11px] text-gray-500 dark:text-gray-400 space-y-0.5 mb-3">
-                      {job.jobDetails?.benefits?.[0] && (
-                        <p className="flex items-center gap-1.5 truncate">
-                          <span className="text-green-500">✓</span>
-                          {job.jobDetails.benefits[0]}
-                        </p>
-                      )}
-                      {job.jobDetails?.qualifications?.[0] && (
-                        <p
-                          title={job.jobDetails.qualifications[0]}
-                          className="flex items-start gap-1.5 line-clamp-2"
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {job?.jobDetails?.urgentHiring === "Yes" && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#D97706] bg-[#FFFBEB] border border-[#FDE68A] px-2.5 py-0.5 rounded-full whitespace-nowrap dark:bg-amber-950/40 dark:border-amber-700/60 dark:text-amber-300 shadow-2xs">
+                            <Zap size={11} className="fill-amber-500 text-amber-500" />
+                            Urgent
+                          </span>
+                        )}
+                        {hasAppliedToJob(job._id) && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:bg-emerald-950/40 dark:border-emerald-700/60 dark:text-emerald-300 shadow-2xs">
+                            <CheckCircle2 size={11} />
+                            Applied
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShareJobId(
+                              shareJobId === job._id ? null : job._id
+                            );
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-white/60 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                          title="Share Job"
+                          aria-label="Share Job"
                         >
-                          <span className="text-blue-400 shrink-0 mt-0.5">
-                            🎓
-                          </span>
-                          <span className="flex-1">
-                            {job.jobDetails.qualifications[0]}
-                          </span>
-                        </p>
+                          <Share2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Share Card Popover */}
+                    {shareJobId === job._id && (
+                      <div
+                        ref={shareCardRef}
+                        onClick={(e) => e.stopPropagation()}
+                        className="relative mt-2 mb-1 z-10"
+                      >
+                        <ShareCard
+                          urlToShare={`${window.location.origin}/jobs/${slugify(
+                            job.jobDetails?.title || "job"
+                          )}-${job._id}`}
+                          jobTitle={job.jobDetails?.title}
+                          jobLocation={job.jobDetails?.location}
+                          jobSalary={job.jobDetails?.salary}
+                          jobDuration={job.jobDetails?.duration}
+                          jobType={job.jobDetails?.jobType}
+                          onClose={() => setShareJobId(null)}
+                        />
+                      </div>
+                    )}
+
+                    {/* Three Pills: Location, Workplace, Job Type */}
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      {job.jobDetails?.location && (
+                        <span
+                          title={job.jobDetails.location}
+                          className="inline-flex items-center gap-1.5 text-xs font-normal text-slate-700 dark:text-slate-200 bg-white dark:bg-gray-700/80 border border-slate-200/80 dark:border-gray-600 px-2.5 py-1 rounded-lg truncate max-w-[170px] shadow-2xs"
+                        >
+                          <MapPin size={13} className="text-rose-500 flex-shrink-0" />
+                          <span className="truncate">{job.jobDetails.location}</span>
+                        </span>
+                      )}
+                      {job.jobDetails?.workPlaceFlexibility && (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0284C7] dark:text-sky-300 bg-[#EAF5FC] dark:bg-sky-950/50 border border-[#D0E9F9] dark:border-sky-800/60 px-2.5 py-1 rounded-lg">
+                          <Building2 size={13} className="text-[#0284C7] dark:text-sky-300 flex-shrink-0" />
+                          {job.jobDetails.workPlaceFlexibility}
+                        </span>
+                      )}
+                      {job.jobDetails?.jobType && (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2563EB] dark:text-blue-300 bg-[#EBF2FE] dark:bg-blue-950/50 border border-[#D5E4FD] dark:border-blue-800/60 px-2.5 py-1 rounded-lg">
+                          <Briefcase size={13} className="text-[#2563EB] dark:text-blue-300 flex-shrink-0" />
+                          {job.jobDetails.jobType}
+                        </span>
                       )}
                     </div>
-                  )}
+                  </div>
 
-                  {/* Bottom Row */}
-                  <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                  {/* Middle Content Section (White Background) */}
+                  <div className="p-4 sm:p-4.5 flex flex-col gap-2 bg-white dark:bg-gray-800">
+                    {job.jobDetails?.shift && (
+                      <div className="flex items-center gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
+                        <Clock size={14} className="text-[#0EA5E9] flex-shrink-0" />
+                        <span className="truncate">{job.jobDetails.shift}</span>
+                      </div>
+                    )}
+                    {job.jobDetails?.benefits?.[0] && (
+                      <div className="flex items-center gap-2 text-xs sm:text-[13px] text-emerald-800 dark:text-emerald-400 font-medium">
+                        <Check size={14} className="text-emerald-600 font-bold flex-shrink-0" />
+                        <span className="truncate">{job.jobDetails.benefits[0]}</span>
+                      </div>
+                    )}
+                    {job.jobDetails?.qualifications?.[0] && (
+                      <div
+                        title={job.jobDetails.qualifications[0]}
+                        className="flex items-start gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 line-clamp-2"
+                      >
+                        <GraduationCap size={15} className="text-[#0284C7] shrink-0 mt-0.5" />
+                        <span className="flex-1 line-clamp-2 leading-relaxed">
+                          {job.jobDetails.qualifications[0]}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Footer: Salary, Duration & View Details Button */}
+                  <div className="mt-auto px-4 sm:px-4.5 pt-3 pb-4 border-t border-slate-100 dark:border-gray-700/80 flex items-center justify-between gap-3 bg-white dark:bg-gray-800">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none truncate">
                         {typeof salary === "string" && salary.trim() ? (
                           (() => {
                             const parts = salary
@@ -733,24 +761,27 @@ const JobsForYou = ({ jobs = [] }) => {
                         ) : (
                           "Salary not specified"
                         )}
-                      </span>
-                      {job.jobDetails?.duration && (
-                        <span className="text-[11px] text-gray-400 dark:text-gray-500 truncate">
-                          · {job.jobDetails.duration}
-                        </span>
-                      )}
+                      </div>
+                      <div className="text-xs text-slate-400 dark:text-slate-400 mt-1 flex items-center gap-1 truncate">
+                        {job.jobDetails?.duration && (
+                          <span>{job.jobDetails.duration}</span>
+                        )}
+                        {job.jobDetails?.duration && <span>•</span>}
+                        <span>{postedDateStr}</span>
+                      </div>
                     </div>
-                    <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap flex-shrink-0">
-                      {(() => {
-                        const d = calculateActiveDays(job?.createdAt);
-                        if (d === 0) return "Today";
-                        if (d === 1) return "Yesterday";
-                        if (d < 7) return `${d}d ago`;
-                        if (d < 30) return `${Math.floor(d / 7)}w ago`;
-                        if (d < 365) return `${Math.floor(d / 30)}mo ago`;
-                        return `${Math.floor(d / 365)}y ago`;
-                      })()}
-                    </span>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleJobClick(job);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0084D1] hover:bg-[#0074ba] transition-all shadow-xs cursor-pointer flex-shrink-0 active:scale-98"
+                    >
+                      View Details
+                      <ArrowRight size={14} />
+                    </button>
                   </div>
                 </div>
               );
