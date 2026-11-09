@@ -5,7 +5,7 @@ import {
   getApplicants,
   getAppliedJobs,
   updateStatus,
-  scoreApplication,
+ 
   getApplicationDetails,
   deleteApplication,
   getAllApplications,
@@ -43,7 +43,7 @@ router.post(
 router.route("/get").get(isAuthenticated, getAppliedJobs);
 router.route("/bulk-apply").post(isAuthenticated, bulkApplyJobs);
 router.route("/details/:jobId/:candidateId").get(isAuthenticated, getApplicationDetails);
-router.route("/:id/score").post(isAuthenticated, scoreApplication);
+//router.route("/:id/score").post(isAuthenticated, scoreApplication);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.route("/delete/:id").delete(isAuthenticated, deleteApplication);
 router.route("/:id/applicants").get(isAuthenticated, getApplicants);

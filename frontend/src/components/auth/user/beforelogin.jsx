@@ -587,7 +587,7 @@
 
 // export default GreatHireLanding;
 
-import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
+import   { useState, useEffect, useRef, lazy, Suspense } from "react";
 import {
   Users,
   Target,
@@ -604,7 +604,7 @@ import {
 import Footer from "@/components/shared/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useJobDetails } from "@/context/JobDetailsContext";
+//import { useJobDetails } from "@/context/JobDetailsContext";
 import "../../shared/Navbar.css";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -623,7 +623,7 @@ const tabAnimations = {
 };
 
 const GreatHireLanding = () => {
-  const { jobs } = useJobDetails();
+  //const { jobs } = useJobDetails();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const navigate = useNavigate();
@@ -696,7 +696,7 @@ const GreatHireLanding = () => {
       setIndex((prev) => (prev + 1) % tabs.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [tabs.length]);
 
   // Defer below-fold content after initial paint
   useEffect(() => {
@@ -705,14 +705,14 @@ const GreatHireLanding = () => {
   }, []);
 
   // Load animation for active tab on demand
-  useEffect(() => {
+   useEffect(() => {
     const id = tabs[index]?.id;
     if (id && !tabAnimData[id]) {
       tabAnimations[id]().then(mod => {
         setTabAnimData(prev => ({ ...prev, [id]: mod.default }));
       });
     }
-  }, [index]);
+  }, [index]); 
 
   return (
     <>
@@ -745,128 +745,144 @@ const GreatHireLanding = () => {
                 </Link>
 
                 {/* ── DESKTOP RIGHT SIDE ── */}
-                <div className="gh-navbar__desktop hidden lg:flex items-center">
-                  {/* Left Cluster: Navigation Links */}
-                  <div className="gh-navbar__nav-links flex items-center gap-1 xl:gap-2">
-                    {directNavLinks.map((link) => (
-                      <button
-                        key={link.id}
-                        onClick={() => { navigate(link.path); window.scrollTo(0, 0); }}
-                        className="gh-navbar__link text-xs xl:text-sm transition-all duration-300 px-2 xl:px-3 py-2 whitespace-nowrap"
-                      >
-                        {link.label}
-                      </button>
-                    ))}
+                <div className="gh-navbar__desktop hidden lg:flex items-center flex-1">
 
-                    {/* Explore 2-column dropdown */}
-                    <div ref={moreRef} className="relative">
-                      <button
-                        onClick={() => setIsMoreOpen(!isMoreOpen)}
-                        className={`flex items-center gap-1 text-sm font-medium px-3 py-2 rounded-lg transition-all duration-300 ${isMoreOpen
-                            ? "gh-navbar__link gh-navbar__link--active"
-                            : "gh-navbar__link"
-                          }`}
-                        aria-expanded={isMoreOpen}
-                        aria-haspopup="true"
-                      >
-                        Explore
-                        <svg
-                          className={`w-4 h-4 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`}
-                          fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  {/* Pushes everything to the right */}
+                  <div className="flex items-center ml-auto gap-6 xl:gap-8">
+
+                    {/* Navigation Links */}
+                    <div className="flex items-center gap-2 xl:gap-3">
+                      {directNavLinks.map((link) => (
+                        <button
+                          key={link.id}
+                          onClick={() => { navigate(link.path); window.scrollTo(0, 0); }}
+                          className="gh-navbar__link text-sm font-medium transition-all duration-300 px-2 xl:px-3 py-2 whitespace-nowrap"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                          {link.label}
+                        </button>
+                      ))}
 
-                      {isMoreOpen && (
-                        <div
-                          className="absolute right-0 mt-2 z-50 rounded-2xl shadow-2xl border overflow-hidden bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700"
-                          style={{ width: "min(560px, calc(100vw - 2rem))" }}
+                      {/* Explore 2-column dropdown */}
+                      <div ref={moreRef} className="relative">
+                        <button
+                          onClick={() => setIsMoreOpen(!isMoreOpen)}
+                          className={`flex items-center gap-1 text-sm font-medium px-2 xl:px-3 py-2 rounded-lg transition-all duration-300 ${isMoreOpen ? "gh-navbar__link gh-navbar__link--active" : "gh-navbar__link"
+                            }`}
+                          aria-expanded={isMoreOpen}
+                          aria-haspopup="true"
                         >
-                          {/* Header strip */}
-                          <div className="px-5 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Explore everything</span>
-                          </div>
+                          Explore
+                          <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`}
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
 
-                          {/* 2-column grid */}
-                          <div className="grid grid-cols-2">
+                        {isMoreOpen && (
+                          <div
+                            className="absolute right-0 mt-2 z-50 rounded-2xl shadow-2xl border overflow-hidden bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700"
+                            style={{ width: "min(560px, calc(100vw - 2rem))" }}
+                          >
+                            {/* Header strip */}
+                            <div className="px-5 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
+                              <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                                Explore everything
+                              </span>
+                            </div>
 
-                            {/* LEFT — Pages */}
-                            <div className="p-3 border-r border-gray-100 dark:border-gray-700">
-                              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-2 mb-2">Pages</p>
-                              <div className="space-y-0.5">
-                                {[{ label: "Blogs", icon: "✍️", path: "/Main_blog_page" }, { label: "Courses", icon: "🎓", path: "/courses" }, { label: "About Us", icon: "🏢", path: "/about" }, { label: "Contact Us", icon: "📬", path: "/contact" }, { label: "Privacy Policy", icon: "🔒", path: "/policy/privacy-policy" }].map((item) => (
+                            {/* 2-column grid */}
+                            <div className="grid grid-cols-2">
+
+                              {/* LEFT — Pages */}
+                              <div className="p-3 border-r border-gray-100 dark:border-gray-700">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 px-2 mb-2">Pages</p>
+                                <div className="space-y-1">
+                                  {moreLinks.map((link) => (
+                                    <button
+                                      key={link.id}
+                                      onClick={() => { navigate(link.path); window.scrollTo(0, 0); setIsMoreOpen(false); }}
+                                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-150 text-left"
+                                    >
+                                      <span className="text-lg leading-none w-6 text-center shrink-0">
+                                        {link.label === "Blogs" ? "✍️" :
+                                          link.label === "Courses" ? "🎓" :
+                                            link.label === "About Us" ? "🏢" :
+                                              link.label === "Contact Us" ? "📬" : "🔒"}
+                                      </span>
+                                      {/* FORCED DARK TEXT COLOR HERE 👇 */}
+                                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                        {link.label}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* RIGHT — Quick Access */}
+                              <div className="p-4 flex flex-col justify-between gap-3">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 px-1">Quick Access</p>
+
+                                <div className="flex flex-col gap-2.5 flex-1 justify-center">
                                   <button
-                                    key={item.label}
-                                    onClick={() => { navigate(item.path); window.scrollTo(0, 0); setIsMoreOpen(false); }}
-                                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl group hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-all duration-150"
+                                    onClick={() => { navigate("/campus-hiring"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
+                                    className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
                                   >
-                                    <span className="text-base leading-none w-6 text-center shrink-0">{item.icon}</span>
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{item.label}</span>
-                                    <svg className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all text-blue-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                      <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.17 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                    </svg>
+                                    <span className="flex items-center gap-2"><span className="text-lg">🏛️</span>Campus Hiring</span>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Popular</span>
                                   </button>
-                                ))}
+
+                                  <button
+                                    onClick={() => { navigate("/student/signup"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
+                                    className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
+                                  >
+                                    <span className="flex items-center gap-2"><span className="text-lg">🚀</span>Student Sign Up</span>
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Free</span>
+                                  </button>
+                                </div>
+
+                                <p className="text-[11px] text-gray-800 dark:text-gray-400 px-1 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                  Already have an account?{" "}
+                                  <button
+                                    onClick={() => { navigate("/jobseeker-login"); setIsMoreOpen(false); }}
+                                    className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
+                                    aria-label="Sign in to your account"
+                                  >
+                                    Sign in →
+                                  </button>
+                                </p>
                               </div>
-                            </div>
-
-                            {/* RIGHT — Quick Access */}
-                            <div className="p-4 flex flex-col justify-between gap-3">
-                              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 px-1">Quick Access</p>
-
-                              <div className="flex flex-col gap-2.5 flex-1 justify-center">
-                                <button
-                                  onClick={() => { navigate("/campus-hiring"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
-                                  className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-                                >
-                                  <span className="flex items-center gap-2"><span className="text-lg">🏛️</span>Campus Hiring</span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Popular</span>
-                                </button>
-
-                                <button
-                                  onClick={() => { navigate("/student/signup"); window.scrollTo(0, 0); setIsMoreOpen(false); }}
-                                  className="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white font-semibold text-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200"
-                                >
-                                  <span className="flex items-center gap-2"><span className="text-lg">🚀</span>Student Sign Up</span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/25">Free</span>
-                                </button>
-                              </div>
-
-                              <p className="text-[10px] text-gray-400 dark:text-gray-500 px-1 pt-2 border-t border-gray-100 dark:border-gray-700">
-                                Already have an account?{" "}
-                                <button onClick={() => { navigate("/jobseeker-login"); setIsMoreOpen(false); }} className="text-blue-500 hover:underline font-medium" aria-label="Sign in to your account">Sign in →</button>
-                              </p>
                             </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Right Cluster: Tools & Auth Actions */}
-                  <div className="gh-navbar__nav-actions flex items-center gap-3 ml-auto">
-                    {/* Dark Mode Toggle */}
-                    <button
-                      onClick={toggleTheme}
-                      className="p-2 bg-transparent text-white hover:scale-110 transition-all flex-shrink-0"
-                      aria-label="Toggle dark mode"
-                    >
-                      {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-                    </button>
+                    {/* Tools & Auth Actions (Theme + Login) */}
+                    <div className="gh-navbar__nav-actions flex items-center gap-3 pl-4 border-l border-gray-200/20">
+                      {/* Dark Mode Toggle */}
+                      <button
+                        onClick={toggleTheme}
+                        className="p-2 bg-transparent text-white hover:scale-110 transition-all flex-shrink-0"
+                        aria-label="Toggle dark mode"
+                      >
+                        {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                      </button>
 
-                    <button
-                      onClick={() => navigate("/recruiter-login")}
-                       className="gh-navbar__recruiter-login gh-navbar__recruiter-login--blue-border px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
-                    >
-                      Recruiter Login
-                    </button>
-                    <button
-                      onClick={() => navigate("/jobseeker-login")}
-                      className="gh-navbar__jobseeker-login px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
-                    >
-                      Jobseeker Login
-                    </button>
+                      <button
+                        onClick={() => navigate("/recruiter-login")}
+                        className="gh-navbar__recruiter-login gh-navbar__recruiter-login--blue-border px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
+                      >
+                        Recruiter Login
+                      </button>
+                      <button
+                        onClick={() => navigate("/jobseeker-login")}
+                        className="gh-navbar__jobseeker-login px-2.5 xl:px-4 py-2 rounded-xl transition-all text-xs xl:text-sm font-semibold whitespace-nowrap"
+                      >
+                        Jobseeker Login
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -896,10 +912,8 @@ const GreatHireLanding = () => {
             </div>
           </nav>
 
-          {/* ══════════════════════════════════════
-              INTERNSHIP MARQUEE — fixed below navbar
-          ══════════════════════════════════════ */}
-          
+
+
 
           {/* ══════════════════════════════════════
               MOBILE SLIDE-IN OVERLAY MENU
@@ -1174,8 +1188,8 @@ const GreatHireLanding = () => {
                       aria-label={`View ${tab.title}`}
                       aria-pressed={index === i}
                       className={`px-4 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 ${index === i
-                          ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
-                          : "text-gray-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
+                        : "text-gray-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white"
                         }`}
                     >
                       {tab.title}

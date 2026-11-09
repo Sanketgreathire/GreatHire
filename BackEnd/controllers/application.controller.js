@@ -22,7 +22,7 @@ import {
 } from "../services/workflow.service.js";
 import {
   applyApplicationTransition,
-  scoreApplication as scoreExistingApplication,
+  scoreApplication as screeningEngineScoreApplication,  
 } from "../services/screeningEngine.js";
 
 // Only these 4 statuses are valid
@@ -52,7 +52,6 @@ export const applyJob = async (req, res) => {
       answers,
     } = req.body;
     const resume = req.files?.resume;
-    // const { resume } = req.files;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -96,7 +95,6 @@ export const applyJob = async (req, res) => {
     user.profile.experience.jobProfile = jobTitle;
     user.profile.experience.companyName = company;
 
-
     // Upload resume if provided
     if (resume && resume.length > 0) {
       await new Promise((resolve, reject) => {
@@ -117,27 +115,18 @@ export const applyJob = async (req, res) => {
 
     const updateUser = await user.save();
 
-    console.log("========== DUPLICATE APPLICATION CHECK ==========");
-console.log("Job ID:", jobId);
-console.log("User ID:", userId);
+    // ========== DUPLICATE APPLICATION CHECK ==========
+    const existingApplication = await Application.findOne({
+      job: jobId,
+      applicant: userId,
+    });
 
-const existingApplication = await Application.findOne({
-  job: jobId,
-  applicant: userId,
-});
-
-console.log("Existing Application:", existingApplication);
-
-if (existingApplication) {
-  console.log("❌ USER HAS ALREADY APPLIED TO THIS JOB");
-
-  return res.status(400).json({
-    message: "You have already applied for this job",
-    success: false,
-  });
-}
-
-console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
+    if (existingApplication) {
+      return res.status(400).json({
+        message: "You have already applied for this job",
+        success: false,
+      });
+    }
 
     // Create a New application & its always starts as "Pending"
     const newApplication = new Application({
@@ -154,54 +143,64 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
     });
 
     await newApplication.save();
-  //edited try block to calculate match score and save it in the application
- try {
-  const experiences =
-    user.profile?.experiences
-      ?.map((exp) => exp.experienceDetails || "")
-      .filter(Boolean)
-      .join("\n") || "";
 
-  const resumeText = [
-    user.profile?.resume || "",
-    user.profile?.bio || "",
-    user.profile?.coverLetter || "",
-    experiences,
-    ...(user.profile?.skills || []),
-  ]
-    .filter(Boolean)
-    .join("\n");
+    // ========== AI MATCH SCORE CALCULATION ==========
+    try {
+      // 1. Build text from Profile Data (NOT the PDF URL)
+      const experiences =
+        user.profile?.experiences
+          ?.map((exp) => exp.experienceDetails || "")
+          .filter(Boolean)
+          .join("\n") || "";
 
-  const matchData = await calculateMatchScore(
-    resumeText,
-    job.jobDetails.title,
-    job.jobDetails.details,
-    job.jobDetails.skills || []
-  );
+      const combinedResumeText = `
+        PROFILE BIO:
+        ${user.profile?.bio || ""}
+        
+        COVER LETTER:
+        ${user.profile?.coverLetter || ""}
+        
+        WORK EXPERIENCE:
+        ${experiences}
+        
+        PLATFORM PROFILE SKILLS:
+        ${(user.profile?.skills || []).join(", ")}
+      `.trim();
 
-  // Save match score at Application root level
-  newApplication.matchScore = matchData.matchScore;
-  newApplication.matchPercentage = matchData.matchScore;
+      // 2. Calculate score using the combined text
+      const matchData = await calculateMatchScore(
+        combinedResumeText,
+        job.jobDetails.title,
+        job.jobDetails.details,
+        job.jobDetails.skills || []
+      );
 
-  // Save matched/missing skills inside aiInterview
-  newApplication.aiInterview = {
-    ...newApplication.aiInterview,
-    skillsMatched: matchData.skillsMatched || [],
-    missingSkills: matchData.missingSkills || [],
-  };
+      console.log("✅ MATCH SCORE CALCULATED:", matchData.matchScore);
 
-  await newApplication.save();
+      // 3. Save match score at Application root level
+      newApplication.matchScore = matchData.matchScore;
+      newApplication.matchPercentage = matchData.matchScore;
 
-  console.log("✅ Match Score Saved:", matchData.matchScore);
-} catch (error) {
-  console.log("❌ Match Score Error:", error.message);
-}
-    // Push application into job (use $push to avoid re-validating required fields on old jobs)
+      // 4. Save matched/missing skills inside aiInterview
+      newApplication.aiInterview = {
+        ...newApplication.aiInterview,
+        skillsMatched: matchData.skillsMatched || [],
+        missingSkills: matchData.missingSkills || [],
+      };
+
+      await newApplication.save();
+
+      console.log("✅ Match Score Saved:", matchData.matchScore);
+    } catch (error) {
+      console.log("❌ Match Score Error:", error.message);
+    }
+
+    // Push application into job
     await Job.findByIdAndUpdate(jobId, { $push: { application: newApplication._id } });
 
     notifyApplicationWhatsApp({ applicant: user, job });
 
-    // ✅ Create notifications using the notification service
+    // Create notifications using the notification service
     await notificationService.notifyApplicationSubmitted({
       applicantId: userId,
       jobId: jobId,
@@ -211,8 +210,10 @@ console.log("✅ NO EXISTING APPLICATION - CONTINUING APPLICATION");
       applicationId: newApplication._id,
     });
 
-    // WhatsApp: "application sent" to the jobseeker + "new applicant" to the recruiter. Not awaited.
+    // WhatsApp: "application sent" to the jobseeker + "new applicant" to the recruiter.
     notifyApplicationWhatsApp({ applicant: user, job, applicationDate: newApplication?.createdAt || new Date() });
+    
+    // Run screening engine
     await screenApplicationAfterCreate(newApplication, user, job);
 
     res.status(201).json({
@@ -354,106 +355,37 @@ if (job.created_by.toString() !== req.id.toString()) {
 };
 
 
-export const scoreApplication = async (req, res) => {
+export const scoreApplicant = async (req, res) => {
   try {
-    const applicationId = req.params.id;
+    const application = await Application.findById(req.params.id).populate("job");
 
-    if (!applicationId) {
-      return res.status(400).json({
-        success: false,
-        message: "Application ID is required",
-      });
-    }
-
-    const application = await Application.findById(applicationId)
-      .populate("applicant")
-      .populate("job");
-
-    if (!application) {
+    if (!application || !application.job) {
       return res.status(404).json({
         success: false,
         message: "Application not found",
       });
     }
 
-    // Check recruiter ownership
-    const jobOwnerId = application.job?.created_by;
-
-    if (!jobOwnerId || jobOwnerId.toString() !== req.id.toString()) {
+    if (application.job.created_by?.toString() !== req.id?.toString()) {
       return res.status(403).json({
         success: false,
-        message: "You are not authorized to screen this application",
+        message: "You are not authorized to score this application",
       });
     }
 
-    // Get resume/profile experience
-    // Get candidate resume/profile/experience
-const experiences =
-  application.applicant?.profile?.experiences
-    ?.map((exp) => exp.experienceDetails || "")
-    .filter(Boolean)
-    .join("\n") || "";
-
-const resumeText = [
-  application.applicant?.profile?.resume || "",
-  application.applicant?.profile?.bio || "",
-  application.applicant?.profile?.coverLetter || "",
-  experiences,
-  ...(application.applicant?.profile?.skills || []),
-]
-  .filter(Boolean)
-  .join("\n");
-
-console.log("📄 Candidate screening text length:", resumeText.length);
-
-if (!resumeText.trim()) {
-  return res.status(400).json({
-    success: false,
-    message: "Candidate resume/profile/experience is empty",
-  });
-}
-
-    // Calculate AI match score
-    const matchData = await calculateMatchScore(
-      resumeText,
-      application.job.jobDetails.title,
-      application.job.jobDetails.details,
-      application.job.jobDetails.skills || []
-    );
-
-    const score = Number(matchData.matchScore || 0);
-
-    // Save score
-    application.matchScore = score;
-    application.matchPercentage = score;
-
-    // Screening decision
-   application.screeningStatus =
-  score >= 75 ? "Passed" : "Pending";
-  
-    // Save matched/missing skills
-    application.aiInterview = {
-      ...application.aiInterview,
-      skillsMatched: matchData.skillsMatched || [],
-      missingSkills: matchData.missingSkills || [],
-    };
-
-    await application.save();
+    // 👇 USE THE NEW ALIAS HERE
+    const result = await screeningEngineScoreApplication(application._id, req.id);
 
     return res.status(200).json({
       success: true,
-      message: "Resume screening completed successfully",
-      score,
-      screeningStatus: application.screeningStatus,
-      application,
+      result: { score: result.score, breakdown: result.breakdown },
+      application: result.application,
     });
   } catch (error) {
-    console.error("Error screening application:", error);
-
+    console.error("Error scoring application:", error);
     return res.status(500).json({
       success: false,
-      message: "Failed to screen application",
-      error: error.message,
+      message: "Failed to score application",
     });
   }
 };
@@ -597,39 +529,7 @@ export const transitionApplication = async (req, res) => {
   }
 };
 
-export const scoreApplicant = async (req, res) => {
-  try {
-    const application = await Application.findById(req.params.id).populate("job");
 
-    if (!application || !application.job) {
-      return res.status(404).json({
-        success: false,
-        message: "Application not found",
-      });
-    }
-
-    if (application.job.created_by?.toString() !== req.id?.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to score this application",
-      });
-    }
-
-    const result = await scoreExistingApplication(application._id, req.id);
-
-    return res.status(200).json({
-      success: true,
-      result: { score: result.score, breakdown: result.breakdown },
-      application: result.application,
-    });
-  } catch (error) {
-    console.error("Error scoring application:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to score application",
-    });
-  }
-};
 
 export const getApplicationHistory = async (req, res) => {
   try {

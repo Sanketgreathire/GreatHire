@@ -39,34 +39,50 @@ function getRoleKws(role) {
 }
 
 function scoreApplicant(applicant, jobTitle, jobDesc) {
+  // 1. Combine all text sources
   const text = [
     applicant.skills?.join(" ") || "",
     applicant.experience || "",
     applicant.education || "",
-    applicant.bio || "",
+    applicant.bio || "", // This holds the extracted PDF text
   ].join(" ").toLowerCase();
 
+  // 2. Extract keywords
   const roleKws = getRoleKws(jobTitle);
   const jobKws  = jobDesc
     ? [...new Set(jobDesc.toLowerCase().match(/\b[a-z][a-z.+#]{2,}\b/g) || [])].filter(w => w.length > 3).slice(0, 20)
     : [];
   const allKws = [...new Set([...roleKws, ...jobKws])];
 
+  // 3. Find matches
   const found       = allKws.filter(kw => text.includes(kw));
   const missing     = allKws.filter(kw => !text.includes(kw)).slice(0, 4);
+  
+  // 4. Checks
   const hasNumbers  = /\d+%|\$\d+|\d+\s*(users|clients|projects|team|members|million|k\b|years|months)/.test(text);
   const strongCount = STRONG_VERBS.filter(v => text.includes(v)).length;
   const skillCount  = applicant.skills?.length || 0;
   const hasExp      = !!(applicant.experience && applicant.experience.trim());
   const hasEdu      = !!(applicant.education && applicant.education.trim());
+  
+  // 5. NEW: Check if the candidate is a fresher (helps with Telecaller role)
+  const isFresher = text.includes("fresher") || text.includes("b.sc") || text.includes("student");
 
-  let score = 30;
-  score += Math.min(30, found.length * 3);
-  if (hasNumbers)       score += 10;
-  if (strongCount >= 2) score += 8;
-  if (skillCount >= 5)  score += 8;
-  if (hasExp)           score += 8;
-  if (hasEdu)           score += 6;
+  // 6. Calculate score based on keywords and profile info
+  let score = 30; // Base score
+  
+  // Boost score heavily if they match keywords (since they might be a fresher)
+  if (found.length > 0) score += Math.min(40, found.length * 5); 
+  
+  if (hasNumbers)       score += 5;
+  if (strongCount >= 2) score += 5;
+  if (skillCount >= 3)  score += 10; // Award points for having skills listed on profile
+  if (hasExp)           score += 5;
+  if (hasEdu)           score += 5;
+
+  // If they have the skills but no experience (Fresher), don't penalize them too much
+  if (isFresher && skillCount > 0) score += 10;
+
   score = Math.min(100, Math.max(10, score));
 
   const verdict =
@@ -76,22 +92,19 @@ function scoreApplicant(applicant, jobTitle, jobDesc) {
     score >= 35 ? "Weak Match" : "Poor Fit";
 
   const strengths = [];
-  if (found.length >= 4) strengths.push(`Matches ${found.length} key skills for this role`);
-  if (hasNumbers)        strengths.push("Has quantified achievements");
-  if (strongCount >= 2)  strengths.push("Uses strong action verbs");
-  if (skillCount >= 5)   strengths.push(`Lists ${skillCount} relevant skills`);
+  if (found.length >= 2) strengths.push(`Matches ${found.length} key skills for this role`);
+  if (skillCount >= 3)   strengths.push(`Lists ${skillCount} relevant skills on profile`);
   if (hasEdu)            strengths.push("Has relevant educational background");
   if (strengths.length === 0) strengths.push("Has basic profile information");
 
   const gaps = [];
   if (missing.length > 0) gaps.push(`Missing keywords: ${missing.slice(0, 3).join(", ")}`);
   if (!hasNumbers)        gaps.push("No measurable achievements listed");
-  if (skillCount < 3)     gaps.push("Too few skills listed in profile");
-  if (!hasExp)            gaps.push("No work experience information");
+  if (!hasExp && !isFresher) gaps.push("No work experience information");
 
   const recommendation =
     score >= 65
-      ? `Strong candidate for ${jobTitle} — recommend shortlisting for interview.`
+      ? `Strong candidate for ${jobTitle} — recommend shortlisting.`
       : score >= 45
       ? `Moderate fit for ${jobTitle} — consider if pool is small.`
       : `Below threshold for ${jobTitle} — missing key requirements.`;

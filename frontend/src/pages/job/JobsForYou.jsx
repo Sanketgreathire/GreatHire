@@ -23,14 +23,9 @@ import {
   Briefcase,
   Star,
   GraduationCap,
-  MapPin,
-  Building2,
   Clock,
   Check,
-  CheckCircle2,
-  Zap,
   Share2,
-  ArrowRight,
 } from "lucide-react";
 import { slugify } from "@/utils/slugify";
 import { Helmet } from "react-helmet-async";
@@ -76,7 +71,7 @@ const JobsForYou = ({ jobs = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 10;
 
-    useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const targetId = urlParams.get("jobId") || urlParams.get("id");
     let matchedJob = null;
@@ -160,13 +155,13 @@ const JobsForYou = ({ jobs = [] }) => {
     if (!user?._id) return new Set();
     return new Set(
       jobs
-        .filter((job) =>
-          job?.application?.some(
-            (app) =>
-              String(app.applicant) === String(user._id) ||
-              String(app.applicant?._id) === String(user._id)
-          )
-        )
+        .filter((job) => {
+          if (!job.application || !Array.isArray(job.application)) return false;
+          return job.application.some((app) => {
+            const appId = app.applicant?._id || app.applicant;
+            return String(appId) === String(user._id);
+          });
+        })
         .map((job) => String(job._id))
     );
   }, [jobs, user?._id]);
@@ -634,7 +629,6 @@ const JobsForYou = ({ jobs = [] }) => {
                   }`}
                 >
                   <div className="p-4 flex flex-col gap-2.5">
-
                     {/* Row 1: Top badges row + bookmark/share */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 flex-wrap">
