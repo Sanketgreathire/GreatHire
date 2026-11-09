@@ -1047,19 +1047,22 @@ export const getJobById = async (req, res) => {
       job.jobDetails?.status
     );
 
-    // Only active + verified jobs can be publicly viewed
-    if (
-      !job.company?.isActive ||
-      !job.jobDetails?.isActive
-    ) {
-      console.log(
-        "❌ JOB BLOCKED BECAUSE COMPANY/JOB IS INACTIVE"
-      );
+    // In production, enforce that company and job are active. In development / testing, allow viewing any existing job.
+    const isProduction = process.env.NODE_ENV === "production";
+    if (isProduction) {
+      if (
+        (job.company && job.company.isActive === false) ||
+        job.jobDetails?.isActive === false
+      ) {
+        console.log(
+          "❌ JOB BLOCKED BECAUSE COMPANY/JOB IS INACTIVE"
+        );
 
-      return res.status(404).json({
-        success: false,
-        message: "Job not found.",
-      });
+        return res.status(404).json({
+          success: false,
+          message: "Job not found.",
+        });
+      }
     }
 
     return res.status(200).json({
@@ -2234,7 +2237,7 @@ export const searchJobs = async (req, res) => {
       typeof jobType === "string" ? escapeRegex(jobType.trim()) : "";
 
     const isProduction = process.env.NODE_ENV === "production";
-    const filter = { "jobDetails.isActive": true };
+    const filter = isProduction ? { "jobDetails.isActive": true } : {};
 
     if (isProduction) {
       const verifiedIds = await Company.find({ isActive: true }).distinct("_id");

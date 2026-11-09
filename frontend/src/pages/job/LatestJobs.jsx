@@ -2,17 +2,20 @@ import { useEffect } from "react";
 import JobsForYou from "./JobsForYou.jsx";
 import { useJobDetails } from "@/context/JobDetailsContext";
 import { Helmet } from "react-helmet-async";
+import { useSelector } from "react-redux";
 
 const LatestJobs = ({ jobs = [] }) => {
-  console.log("LatestJobs jobs:", jobs);
-  console.log("LatestJobs jobs count:", jobs.length);
-  
   const { setSelectedJob } = useJobDetails();
+  const { user } = useSelector((state) => state.auth);
 
-  // ✅ FIX: Initial load par auto-selection ko null set kar rahe hain taaki grid view render ho
+  // Auto-select first job on desktop if user is logged in
   useEffect(() => {
-    setSelectedJob(null);
-  }, [jobs, setSelectedJob]);
+    if (user && jobs.length > 0 && typeof window !== "undefined" && window.innerWidth >= 768) {
+      setSelectedJob(jobs[0]);
+    } else {
+      setSelectedJob(null);
+    }
+  }, [jobs, user, setSelectedJob]);
 
   return (
     <>

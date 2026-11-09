@@ -153,8 +153,15 @@ export default function JobDescription() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Overview");
 
+  // Extract clean 24-character hex Mongo ObjectId if slug or trailing slash is attached
+  const cleanJobId = useMemo(() => {
+    if (!jobId) return "";
+    const match = jobId.match(/[0-9a-fA-F]{24}/);
+    return match ? match[0] : jobId;
+  }, [jobId]);
+
   useEffect(() => {
-    if (!jobId) {
+    if (!cleanJobId) {
       setError("Job ID is missing.");
       setIsLoading(false);
       return;
@@ -166,7 +173,7 @@ export default function JobDescription() {
         setError(null);
 
         const response = await axios.get(
-          `${JOB_API_END_POINT}/get/${jobId}`,
+          `${JOB_API_END_POINT}/get/${cleanJobId}`,
           {
             withCredentials: true,
           }
@@ -200,7 +207,7 @@ export default function JobDescription() {
     };
 
     fetchJob();
-  }, [jobId]);
+  }, [cleanJobId]);
 
   const activeDays = useMemo(
     () => getActiveDays(job?.createdAt),

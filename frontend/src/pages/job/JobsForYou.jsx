@@ -74,14 +74,34 @@ const JobsForYou = ({ jobs = [] }) => {
   const [, setScrollPosition] = useState(0);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 12;
+  const jobsPerPage = 10;
 
-  useEffect(() => {
-    setCurrentPage(1);
-    setSelectedJob(null);
-    setShowJobDetails(false);
+    useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetId = urlParams.get("jobId") || urlParams.get("id");
+    let matchedJob = null;
+    if (targetId && jobs.length > 0) {
+      matchedJob = jobs.find((j) => String(j._id) === String(targetId));
+      if (matchedJob) {
+        setSelectedJob(matchedJob);
+        setShowJobDetails(true);
+        const idx = jobs.findIndex((j) => String(j._id) === String(targetId));
+        if (idx !== -1) {
+          setCurrentPage(Math.floor(idx / jobsPerPage) + 1);
+        }
+      }
+    }
+    if (!matchedJob) {
+      setCurrentPage(1);
+      if (user && jobs.length > 0 && typeof window !== "undefined" && window.innerWidth >= 768) {
+        setSelectedJob(jobs[0]);
+      } else {
+        setSelectedJob(null);
+      }
+      setShowJobDetails(false);
+    }
     setShareJobId(null);
-  }, [jobs, setSelectedJob]);
+  }, [jobs, user, jobsPerPage, setSelectedJob]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -184,19 +204,19 @@ const JobsForYou = ({ jobs = [] }) => {
     (newPage) => {
       if (newPage < 1 || newPage > totalPages) return;
       setCurrentPage(newPage);
-      setSelectedJob(null);
+      const firstJobOfNewPage = jobs[(newPage - 1) * jobsPerPage];
+      if (user && firstJobOfNewPage && typeof window !== "undefined" && window.innerWidth >= 768) {
+        setSelectedJob(firstJobOfNewPage);
+      } else {
+        setSelectedJob(null);
+      }
       setShowJobDetails(false);
       setShareJobId(null);
       if (jobListRef.current) {
-        jobListRef.current.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      const heading = document.getElementById("job-openings-heading");
-      if (heading) {
-        const y = heading.getBoundingClientRect().top + window.pageYOffset - 100;
-        window.scrollTo({ top: y, behavior: "smooth" });
+        jobListRef.current.scrollTop = 0;
       }
     },
-    [totalPages, setSelectedJob]
+    [totalPages, jobs, jobsPerPage, user, setSelectedJob]
   );
 
   const getPageNumbers = useCallback(() => {
@@ -567,12 +587,11 @@ const JobsForYou = ({ jobs = [] }) => {
                 </div>
               </div>
             )}
-
             <div
               ref={jobListRef}
               className={
                 selectedJob
-                  ? "flex flex-col gap-4 overflow-y-auto scrollbar-hide h-[1080px]"
+                  ? "flex flex-col gap-4 w-full"
                   : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr"
               }
             >
@@ -592,20 +611,33 @@ const JobsForYou = ({ jobs = [] }) => {
                 return `${Math.floor(activeDays / 365)}y ago`;
               })();
 
+              const formattedSalary = (() => {
+                if (typeof salary !== "string" || !salary.trim()) return null;
+                const parts = salary
+                  .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                  .split("-")
+                  .map((p) => p.trim())
+                  .filter(Boolean);
+                if (parts.length === 1) return `₹${parts[0]}`;
+                if (parts.length === 2) return `₹${parts[0]} – ₹${parts[1]}`;
+                return `₹${parts.join(" – ₹")}`;
+              })();
+
               return (
                 <div
                   key={job._id}
                   onClick={() => handleJobClick(job)}
-                  className={`group relative flex flex-col justify-between rounded-2xl border overflow-hidden cursor-pointer transition-all duration-200 text-left bg-white dark:bg-gray-800 ${
+                  className={`group relative flex flex-col rounded-xl border cursor-pointer transition-all duration-200 text-left bg-white dark:bg-gray-800 ${
                     isActive
-                      ? "border-sky-500 ring-2 ring-sky-400/40 shadow-md"
-                      : "border-slate-200 hover:border-sky-300 hover:shadow-lg dark:border-gray-700 dark:hover:border-sky-500 shadow-sm"
+                      ? "border-sky-500 shadow-md ring-2 ring-sky-200 dark:border-sky-400 dark:ring-sky-900/50"
+                      : "border-slate-200 hover:border-sky-300 hover:shadow-md dark:border-gray-700 dark:hover:border-sky-500 shadow-sm"
                   }`}
                 >
-                  {/* Sky Header Accent Top Section */}
-                  <div className="bg-[#f0f8ff] dark:bg-slate-800/80 p-4 border-b border-sky-100/80 dark:border-gray-700/80">
-                    <div className="flex items-start justify-between gap-2.5">
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="p-4 flex flex-col gap-2.5">
+
+                    {/* Row 1: Top badges row + bookmark/share */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         {user && !hasAppliedToJob(job._id) && (
                           <div
                             className="flex-shrink-0"
@@ -616,50 +648,57 @@ const JobsForYou = ({ jobs = [] }) => {
                               checked={isSelected}
                               onChange={() => {}}
                               aria-label={`Select ${job?.jobDetails?.title || "job"}`}
-                              className="w-4 h-4 rounded text-blue-600 border-slate-300 dark:border-gray-600 accent-blue-600 cursor-pointer transition-transform hover:scale-105"
+                              className="w-4 h-4 rounded accent-sky-600 cursor-pointer"
                             />
                           </div>
                         )}
-
-
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white leading-tight line-clamp-1 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
-                            title={job.jobDetails?.title}
-                          >
-                            {job.jobDetails?.title}
-                          </h3>
-                          <p
-                            className="text-xs font-normal text-slate-500 dark:text-gray-400 mt-0.5 truncate"
-                            title={job.jobDetails?.companyName}
-                          >
-                            {job.jobDetails?.companyName}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
                         {job?.jobDetails?.urgentHiring === "Yes" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#D97706] bg-[#FFFBEB] border border-[#FDE68A] px-2.5 py-0.5 rounded-full whitespace-nowrap dark:bg-amber-950/40 dark:border-amber-700/60 dark:text-amber-300 shadow-2xs">
-                            <Zap size={11} className="fill-amber-500 text-amber-500" />
-                            Urgent
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-sky-300 dark:bg-sky-950/40 dark:border-sky-700">
+                            ⚡ Urgent
                           </span>
                         )}
                         {hasAppliedToJob(job._id) && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:bg-emerald-950/40 dark:border-emerald-700/60 dark:text-emerald-300 shadow-2xs">
-                            <CheckCircle2 size={11} />
-                            Applied
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700">
+                            ✓ Applied
                           </span>
+                        )}
+                        {!job?.jobDetails?.urgentHiring && !hasAppliedToJob(job._id) && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-blue-300 dark:bg-blue-950/40 dark:border-blue-700">
+                            Easily apply
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {user && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleBookmark(job._id);
+                            }}
+                            className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer flex-shrink-0"
+                            title={
+                              user?._id && job?.saveJob?.some((id) => String(id) === String(user._id))
+                                ? "Remove bookmark"
+                                : "Save job"
+                            }
+                            aria-label="Save job"
+                          >
+                            {user?._id && job?.saveJob?.some((id) => String(id) === String(user._id)) ? (
+                              <FaBookmark size={14} className="text-sky-600 dark:text-sky-400" />
+                            ) : (
+                              <CiBookmark size={18} className="text-slate-600 hover:text-sky-600 dark:text-slate-300" />
+                            )}
+                          </button>
                         )}
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setShareJobId(
-                              shareJobId === job._id ? null : job._id
-                            );
+                            setShareJobId(shareJobId === job._id ? null : job._id);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-white/60 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer flex-shrink-0"
                           title="Share Job"
                           aria-label="Share Job"
                         >
@@ -673,12 +712,10 @@ const JobsForYou = ({ jobs = [] }) => {
                       <div
                         ref={shareCardRef}
                         onClick={(e) => e.stopPropagation()}
-                        className="relative mt-2 mb-1 z-10"
+                        className="relative z-10"
                       >
                         <ShareCard
-                          urlToShare={`${window.location.origin}/jobs/${slugify(
-                            job.jobDetails?.title || "job"
-                          )}-${job._id}`}
+                          urlToShare={`${window.location.origin}/jobs/${job._id}`}
                           jobTitle={job.jobDetails?.title}
                           jobLocation={job.jobDetails?.location}
                           jobSalary={job.jobDetails?.salary}
@@ -689,99 +726,49 @@ const JobsForYou = ({ jobs = [] }) => {
                       </div>
                     )}
 
-                    {/* Three Pills: Location, Workplace, Job Type */}
-                    <div className="flex flex-wrap items-center gap-2 mt-3">
-                      {job.jobDetails?.location && (
-                        <span
-                          title={job.jobDetails.location}
-                          className="inline-flex items-center gap-1.5 text-xs font-normal text-slate-700 dark:text-slate-200 bg-white dark:bg-gray-700/80 border border-slate-200/80 dark:border-gray-600 px-2.5 py-1 rounded-lg truncate max-w-[170px] shadow-2xs"
-                        >
-                          <MapPin size={13} className="text-rose-500 flex-shrink-0" />
-                          <span className="truncate">{job.jobDetails.location}</span>
-                        </span>
-                      )}
-                      {job.jobDetails?.workPlaceFlexibility && (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#0284C7] dark:text-sky-300 bg-[#EAF5FC] dark:bg-sky-950/50 border border-[#D0E9F9] dark:border-sky-800/60 px-2.5 py-1 rounded-lg">
-                          <Building2 size={13} className="text-[#0284C7] dark:text-sky-300 flex-shrink-0" />
-                          {job.jobDetails.workPlaceFlexibility}
-                        </span>
-                      )}
-                      {job.jobDetails?.jobType && (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2563EB] dark:text-blue-300 bg-[#EBF2FE] dark:bg-blue-950/50 border border-[#D5E4FD] dark:border-blue-800/60 px-2.5 py-1 rounded-lg">
-                          <Briefcase size={13} className="text-[#2563EB] dark:text-blue-300 flex-shrink-0" />
-                          {job.jobDetails.jobType}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Middle Content Section (White Background) */}
-                  <div className="p-4 sm:p-4.5 flex flex-col gap-2 bg-white dark:bg-gray-800">
-                    {job.jobDetails?.shift && (
-                      <div className="flex items-center gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300">
-                        <Clock size={14} className="text-[#0EA5E9] flex-shrink-0" />
-                        <span className="truncate">{job.jobDetails.shift}</span>
-                      </div>
-                    )}
-                    {job.jobDetails?.benefits?.[0] && (
-                      <div className="flex items-center gap-2 text-xs sm:text-[13px] text-emerald-800 dark:text-emerald-400 font-medium">
-                        <Check size={14} className="text-emerald-600 font-bold flex-shrink-0" />
-                        <span className="truncate">{job.jobDetails.benefits[0]}</span>
-                      </div>
-                    )}
-                    {job.jobDetails?.qualifications?.[0] && (
-                      <div
-                        title={job.jobDetails.qualifications[0]}
-                        className="flex items-start gap-2 text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 line-clamp-2"
-                      >
-                        <GraduationCap size={15} className="text-[#0284C7] shrink-0 mt-0.5" />
-                        <span className="flex-1 line-clamp-2 leading-relaxed">
-                          {job.jobDetails.qualifications[0]}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Footer: Salary, Duration & View Details Button */}
-                  <div className="mt-auto px-4 sm:px-4.5 pt-3 pb-4 border-t border-slate-100 dark:border-gray-700/80 flex items-center justify-between gap-3 bg-white dark:bg-gray-800">
-                    <div className="min-w-0 flex-1">
-                      <div className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none truncate">
-                        {typeof salary === "string" && salary.trim() ? (
-                          (() => {
-                            const parts = salary
-                              .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                              .split("-")
-                              .map((p) => p.trim())
-                              .filter(Boolean);
-                            if (parts.length === 1) return `₹${parts[0]}`;
-                            if (parts.length === 2)
-                              return `₹${parts[0]} – ₹${parts[1]}`;
-                            return `₹${parts.join(" – ₹")}`;
-                          })()
-                        ) : (
-                          "Salary not specified"
-                        )}
-                      </div>
-                      <div className="text-xs text-slate-400 dark:text-slate-400 mt-1 flex items-center gap-1 truncate">
-                        {job.jobDetails?.duration && (
-                          <span>{job.jobDetails.duration}</span>
-                        )}
-                        {job.jobDetails?.duration && <span>•</span>}
-                        <span>{postedDateStr}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleJobClick(job);
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#0084D1] hover:bg-[#0074ba] transition-all shadow-xs cursor-pointer flex-shrink-0 active:scale-98"
+                    {/* Row 2: Job Title */}
+                    <h3
+                      className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
+                      title={job.jobDetails?.title}
                     >
-                      View Details
-                      <ArrowRight size={14} />
-                    </button>
+                      {job.jobDetails?.title}
+                    </h3>
+
+                    {/* Row 3: Company + Location */}
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-sm text-slate-600 dark:text-gray-300 truncate font-medium">
+                        {job.jobDetails?.companyName}
+                      </p>
+                      {job.jobDetails?.location && (
+                        <p className="text-sm text-slate-500 dark:text-gray-400 truncate">
+                          {job.jobDetails.location}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Row 4: Salary, Job Type (beside salary in sky blue), and Shift */}
+                    {(formattedSalary || job.jobDetails?.jobType || job.jobDetails?.shift) && (
+                      <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                        {formattedSalary && (
+                          <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-md">
+                            <Check size={12} className="text-emerald-600 flex-shrink-0" />
+                            {formattedSalary} a month
+                          </span>
+                        )}
+                        {job.jobDetails?.jobType && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 px-2.5 py-1 rounded-md">
+                            <Check size={12} className="text-sky-600 dark:text-sky-400 flex-shrink-0" />
+                            {job.jobDetails.jobType}
+                          </span>
+                        )}
+                        {job.jobDetails?.shift && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 px-2.5 py-1 rounded-md">
+                            <Clock size={12} className="text-slate-400 flex-shrink-0" />
+                            {job.jobDetails.shift}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -791,7 +778,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
           {/* RIGHT: DESKTOP JOB DETAILS */}
           {selectedJob && (
-            <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[1080px] dark:border-gray-700 dark:bg-gray-800">
+            <div className="sticky top-[80px] md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-[55%] lg:w-3/5 hidden h-[calc(100vh-100px)] min-h-[600px] max-h-[1080px] dark:border-gray-700 dark:bg-gray-800">
               <div className="flex-shrink-0 bg-gray-100 shadow-lg border-b-2 border-sky-200 px-6 py-5 space-y-4 w-full relative dark:bg-gray-700 dark:border-blue-900">
                 {/* Top-right actions: Bookmark + Close */}
                 <div className="absolute top-3 right-4 flex items-center gap-1.5">
@@ -824,15 +811,7 @@ const JobsForYou = ({ jobs = [] }) => {
                       )}
                     </button>
                   )}
-                  <button
-                    type="button"
-                    onClick={handleCloseJobDetails}
-                    aria-label="Close job details"
-                    title="Close"
-                    className="p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors flex items-center justify-center"
-                  >
-                    <IoMdClose size={25} />
-                  </button>
+                  
                 </div>
 
                 <h3 className="text-2xl font-bold text-sky-900 truncate pr-24 tracking-wide dark:text-white">
@@ -1026,7 +1005,7 @@ const JobsForYou = ({ jobs = [] }) => {
               <div
                 ref={jobContainerRef}
                 onScroll={handleScroll}
-                className="overflow-y-auto scrollbar-hide flex-1 px-4 py-4 dark:text-gray-200"
+                className="overflow-y-auto flex-1 px-4 py-4 dark:text-gray-200"
               >
                 <JobMajorDetails selectedJob={selectedJob} />
               </div>
