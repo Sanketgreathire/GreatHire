@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 import { Search, Brain, Zap, X, Database, Github, Lock } from "lucide-react";
 import PillSelect from "@/components/shared/PillSelect";
+import { toSkillArray } from "@/utils/skills";
 import { useNavigate, useLocation } from "react-router-dom";
 
 
@@ -65,7 +66,9 @@ const normalizeDbCandidate = (c) => {
     designation: exp?.jobProfile || "",
     currentCompany: exp?.companyName || "",
     location: [c.address?.city, c.address?.state].filter(Boolean).join(", "),
-    skills: c.profile?.skills || [],
+    // Bulk-imported rows store skills as a raw comma-separated string, so
+    // coerce here too (the table renderer normalizes again as a backstop).
+    skills: toSkillArray(c.profile?.skills),
     totalExperience: parseExperienceYears(exp?.duration),
     educationText: [qualification, c.collegeName].filter(Boolean).join(" · "),
     profilePhoto: c.profile?.profilePhoto && !c.profile.profilePhoto.includes("github.com") ? c.profile.profilePhoto : "",
@@ -464,10 +467,15 @@ const CandidateList = () => {
   // ---------- Shared candidate results table (used by Database, Free & Paid sections) ----------
   const renderCandidateTable = (list, { accentColor = "purple", mode, onRowClick, tagFor, sectionKey }) => {
     const accentText = accentColor === "green" ? "text-green-600 dark:text-green-400" : accentColor === "blue" ? "text-blue-600 dark:text-blue-400" : "text-purple-600 dark:text-purple-400";
+    // Skills can arrive as a raw comma-separated string (bulk-imported rows
+    // read with .lean()), so normalize once for every table this renders —
+    // otherwise skills.slice(...).map(...) throws and the ErrorBoundary takes
+    // down the whole page.
+    const rows = list.map((c) => ({ ...c, skills: toSkillArray(c.skills) }));
     return (
       <div className="mt-6">
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-          {list.length} candidate{list.length !== 1 ? "s" : ""} found
+          {rows.length} candidate{rows.length !== 1 ? "s" : ""} found
           {mode === "jd_matched" && <span className="ml-2 text-green-600 dark:text-green-400 font-medium">· JD matched &amp; ranked</span>}
           {(mode === "filter_matched" || mode === "recruitkar") && <span className={`ml-2 ${accentText} font-medium`}>· AI matched results</span>}
           {mode === "github" && <span className="ml-2 text-gray-600 dark:text-gray-400 font-medium">· sourced from GitHub</span>}
@@ -485,7 +493,7 @@ const CandidateList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-              {list.map((c, idx) => {
+              {rows.map((c, idx) => {
                 const score = c.matchScore ?? null;
                 const scoreLabel = score == null ? null : score >= 70 ? "Strong" : score >= 40 ? "Good" : "Fair";
                 const scoreLabelCls = score == null ? "" : score >= 70 ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" : score >= 40 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300" : "bg-gray-100 text-gray-500";
@@ -1011,11 +1019,11 @@ const CandidateList = () => {
                     )}
                   </div>
 
-                  {selectedSourcingCandidate.skills?.length > 0 && (
+                  {toSkillArray(selectedSourcingCandidate.skills).length > 0 && (
                     <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
                       <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Skills</h4>
                       <div className="flex flex-wrap gap-1.5">
-                        {selectedSourcingCandidate.skills.map((s, i) => (
+                        {toSkillArray(selectedSourcingCandidate.skills).map((s, i) => (
                           <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs">{s}</Badge>
                         ))}
                       </div>

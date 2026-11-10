@@ -7,6 +7,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { USER_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toSkillArray } from "@/utils/skills";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
@@ -529,9 +530,9 @@ const UserProfile = () => {
                       Edit
                     </button>
                   </div>
-                  {user?.profile?.skills?.length > 0 ? (
+                  {toSkillArray(user?.profile?.skills).length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                      {user.profile.skills.map((skill, i) => (
+                      {toSkillArray(user?.profile?.skills).map((skill, i) => (
                         <span
                           key={i}
                           className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-medium"

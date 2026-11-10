@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { COLLEGE_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toSkillArray } from "@/utils/skills";
 
 // ─── COLLEGE DATA ─────────────────────────────────────────────────────────────
 
@@ -513,7 +514,7 @@ export default function App() {
                         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm">
                           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Skills</h3>
                           <div className="flex flex-wrap gap-1.5">
-                            {student.skills.length > 0 ? student.skills.map((sk, i) => (
+                            {toSkillArray(student.skills).length > 0 ? toSkillArray(student.skills).map((sk, i) => (
                               <span key={i} className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-semibold rounded-xl">{sk}</span>
                             )) : <p className="text-xs text-gray-400">No skills listed</p>}
                           </div>

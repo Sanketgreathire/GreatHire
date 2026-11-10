@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SOURCING_API_END_POINT, BACKEND_URL } from "@/utils/ApiEndPoint";
+import { toSkillArray } from "@/utils/skills";
 
 const INGESTION_API = "/api/v1/ingestion";
 const ITEMS_PER_PAGE = 10;
@@ -746,6 +747,10 @@ const SOURCE_BADGE = {
 function CandidateCard({ candidate, onDelete, showScore }) {
   const [deleting, setDeleting] = useState(false);
 
+  // Skills may arrive as a raw comma-separated string (bulk-imported rows
+  // read with .lean()) — coerce so the chips below can use array methods.
+  const skillList = toSkillArray(candidate.skills);
+
   const handleDelete = async () => {
     if (!window.confirm(`Delete ${candidate.fullName}?`)) return;
     setDeleting(true);
@@ -833,13 +838,13 @@ function CandidateCard({ candidate, onDelete, showScore }) {
         )}
       </div>
 
-      {candidate.skills?.length > 0 && (
+      {skillList.length > 0 && (
         <div className="mt-2.5 flex flex-wrap gap-1">
-          {candidate.skills.slice(0, 5).map((s, i) => (
+          {skillList.slice(0, 5).map((s, i) => (
             <Badge key={i} className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs">{s}</Badge>
           ))}
-          {candidate.skills.length > 5 && (
-            <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 text-xs">+{candidate.skills.length - 5}</Badge>
+          {skillList.length > 5 && (
+            <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-500 text-xs">+{skillList.length - 5}</Badge>
           )}
         </div>
       )}
