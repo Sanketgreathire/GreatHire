@@ -91,10 +91,30 @@ const CandidateInformation = () => {
   }, [candidate?.profile, normalizedExperiences]);
 
   const handleDownloadResume = () => {
-    if (candidate?.profile?.resume)
-      window.open(encodeURI(candidate.profile.resume), "_blank");
-    else toast.error("Resume not available");
-  };
+  const resumeUrl = candidate?.profile?.resume;
+
+  // If resume is missing
+  if (!resumeUrl) {
+    toast.error("Resume not available");
+    return;
+  }
+
+  // If resume is saved as an object (e.g., { url: "..." })
+  const finalUrl = typeof resumeUrl === "object" ? resumeUrl.url : resumeUrl;
+
+  if (!finalUrl) {
+    toast.error("Resume link is invalid");
+    return;
+  }
+
+  // Open in a new tab safely
+  const newWindow = window.open(finalUrl, "_blank");
+  
+  // Fallback if popup is blocked
+  if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+    toast.error("Popup blocked. Please allow popups for this site.");
+  }
+};
 
   const handleShortlistToggle = () => {
     setShortlisted((s) => !s);
