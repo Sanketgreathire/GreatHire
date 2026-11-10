@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { FaUsers, FaBriefcase, FaClipboardList, FaTrophy } from "react-icons/fa";
+import { FaUsers, FaBriefcase, FaClipboardList, FaTrophy, FaUserPlus, FaUserCheck, FaCheckCircle, FaHourglassEnd, FaCoins } from "react-icons/fa";
 import { BsCoin } from "react-icons/bs";
 import { FiGift } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -79,17 +79,17 @@ const RecruiterHome = () => {
       icon: <FaClipboardList className="text-4xl text-pink-600 dark:text-pink-400 bg-pink-100 dark:bg-pink-900/30 rounded-lg p-2" />,
       description: (
         <span>
-          Number of jobs you can post.
+          Job posts left in your plan (not credits).
           {(user?.remainingJobPosts ?? 0) > 0 && (
             <span className="block text-green-500 text-xs mt-0.5">🎁 Includes referral bonus</span>
           )}
         </span>
       ),
     },
-    { title: "Active Jobs", count: jobsStatistics?.activeJobs, icon: <FaBriefcase className="text-4xl text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 rounded-lg p-2" />, description: "Currently active and open jobs." },
-    { title: "Expired Jobs", count: jobsStatistics?.inactiveJobs, icon: <FaBriefcase className="text-4xl text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2" />, description: "Jobs that have expired." },
-    { title: "Applicants", count: jobsStatistics?.totalApplicants, icon: <FaUsers className="text-4xl text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 rounded-lg p-2" />, description: "Total applicants for your jobs." },
-    { title: "Shortlisted Candidates", count: jobsStatistics?.selectedCandidates, icon: <FaUsers className="text-4xl text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-900/30 rounded-lg p-2" />, description: "Candidates who have been shortlisted." },
+    { title: "Active Jobs", count: jobsStatistics?.activeJobs, icon: <FaCheckCircle className="text-4xl text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 rounded-lg p-2" />, description: "Currently active and open jobs." },
+    { title: "Expired Jobs", count: jobsStatistics?.inactiveJobs, icon: <FaHourglassEnd className="text-4xl text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2" />, description: "Jobs that have expired." },
+    { title: "Applicants", count: jobsStatistics?.totalApplicants, icon: <FaUserPlus className="text-4xl text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 rounded-lg p-2" />, description: "Total applicants for your jobs." },
+    { title: "Shortlisted Candidates", count: jobsStatistics?.selectedCandidates, icon: <FaUserCheck className="text-4xl text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-900/30 rounded-lg p-2" />, description: "Candidates who have been shortlisted." },
     {
       title: "Hiring Success Rate",
       count: jobsStatistics?.selectedCandidates && jobsStatistics?.totalApplicants
@@ -99,8 +99,9 @@ const RecruiterHome = () => {
       description: "Percentage of shortlisted candidates.",
     },
     { title: "Invite & Earn", count: <FiGift className="text-3xl text-indigo-500" />, icon: <FiGift className="text-4xl text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-2" />, description: "Refer candidates and earn free job posts.", link: "/recruiter/dashboard/invite-and-earn" },
-    { title: "Credits For Database", count: company?.creditedForCandidates || 0, icon: <BsCoin className="text-4xl text-yellow-500 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg p-2" />, description: "Credits available for candidate database." },
-  ], [recruiters.length, jobsStatistics, remainingJobPosts, user?.remainingJobPosts, company?.creditedForCandidates]);
+    { title: "Candidate Views", count: company?.creditedForCandidates || 0, icon: <BsCoin className="text-4xl text-yellow-500 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg p-2" />, description: "Credits available for candidate database." },
+    { title: "Job Credits", count: company?.creditedForJobs || 0, icon: <FaCoins className="text-4xl text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 rounded-lg p-2" />, description: "Credits available for posting jobs." },
+  ], [recruiters.length, jobsStatistics, remainingJobPosts, user?.remainingJobPosts, company?.creditedForCandidates, company?.creditedForJobs]);
 
   const recruiterPlan = jobPlan?.planName || jobPlan?.title || jobPlan?.name || company?.plan || user?.plan;
 

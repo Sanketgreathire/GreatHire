@@ -19,15 +19,66 @@ import {
 // this function authenticate a recruiter by a company id mean is recruiter belong to particular company
 export const getCandidateInformation = async (req, res) => {
   try {
-    const userId = req.params.id;
-    if (!userId || !/^[0-9a-fA-F]{24}$/.test(userId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid user ID",
-  });
-}
+    // Recruiter id set by the isAuthenticated middleware.
+    const userId = req.id;
+    const candidateId = req.params.id;
 
-    const user = await User.findById(userId).select("-password");
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!candidateId || !/^[0-9a-fA-F]{24}$/.test(candidateId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
+
+    // ── Server-side access control ──────────────────────────────────────
+    // This endpoint returns full candidate PII, so it must never be
+    // reachable for free. Exactly two legitimate bases for access:
+    //   (1) one of the recruiter's companies spent a credit to unlock this
+    //       candidate — ledger written atomically by deductCandidateCredit; or
+    //   (2) the candidate applied to a job owned by one of those companies —
+    //       the applicant flows are free by design (shouldDeductCredit={false}).
+    // The browser's localStorage unlock list is a UI hint only and is never
+    // trusted here.
+    const companies = await Company.find({ "userId.user": userId })
+      .select("_id unlockedCandidateIds")
+      .lean();
+
+    const companyIds = companies.map((c) => c._id);
+    const unlocked =
+      companies.length > 0 &&
+      companies.some((c) =>
+        (c.unlockedCandidateIds || []).some((id) => id.toString() === candidateId)
+      );
+
+    let authorized = unlocked;
+
+    if (!authorized && companyIds.length > 0) {
+      const ownJobIds = (
+        await Job.find({ company: { $in: companyIds } }).select("_id").lean()
+      ).map((j) => j._id);
+
+      if (ownJobIds.length > 0) {
+        authorized = Boolean(
+          await Application.exists({
+            applicant: candidateId,
+            job: { $in: ownJobIds },
+          })
+        );
+      }
+    }
+
+    if (!authorized) {
+      return res.status(403).json({
+        success: false,
+        message: "Unlock this candidate with a credit first.",
+      });
+    }
+
+    const user = await User.findById(candidateId).select("-password");
 
     if (!user) {
       return res.status(404).json({ success: false, message: "Candidate not found" });
@@ -35,7 +86,8 @@ export const getCandidateInformation = async (req, res) => {
 
     return res.status(200).json({ success: true, candidate: user });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error", error });
+    console.error("Error fetching candidate information:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -937,13 +989,62 @@ if (jobDescription !== undefined && jobDescription !== null) {
 
     const query = {};
 
-    // "Job Title" and "Designation" both target the same underlying field
-    // (a candidate's current/most-recent job profile) — either or both may be filled.
-    const titleTerms = [jobTitle, designation].filter((t) => t?.trim()).map((t) => t.trim());
-    if (titleTerms.length) {
-      query["profile.experiences.jobProfile"] = {
-        $regex: new RegExp(titleTerms.map(escapeRegex).join("|"), "i"),
-      };
+    // ── Job Title / Designation ─────────────────────────────────────────
+    // Job Title is a universal search: the candidate's name, their current /
+    // most-recent role, the role they applied with (the legacy
+    // profile.experience.jobProfile written by the apply form), their skills,
+    // and — crucially — anyone who APPLIED to a matching-titled job. The role
+    // applied for is never written to the candidate profile (ApplyForm
+    // prefills jobTitle from the candidate's own profile, not from the job),
+    // so it only exists on jobs + applications. Designation stays profile-
+    // only. Every clause is OR'd inside $and so it composes safely with the
+    // location filter's top-level $or below.
+    const titleRegex = jobTitle?.trim()
+      ? new RegExp(escapeRegex(jobTitle.trim()), "i")
+      : null;
+    const designationRegex = designation?.trim()
+      ? new RegExp(escapeRegex(designation.trim()), "i")
+      : null;
+
+    // Resolve "applied for this role" to candidate ids (two cheap distinct()
+    // calls; empty when no job title matches, contributing no $or branch).
+    let appliedToRole = [];
+    if (titleRegex) {
+      const matchingJobIds = await Job.distinct("_id", {
+        "jobDetails.title": titleRegex,
+      });
+      if (matchingJobIds.length) {
+        appliedToRole = await Application.distinct("applicant", {
+          job: { $in: matchingJobIds },
+        });
+      }
+    }
+
+    if (titleRegex || designationRegex) {
+      const titleClauses = [];
+
+      if (titleRegex) {
+        titleClauses.push({
+          $or: [
+            { fullname: titleRegex },
+            { "profile.experiences.jobProfile": titleRegex },
+            { "profile.experience.jobProfile": titleRegex },
+            { "profile.skills": titleRegex },
+            ...(appliedToRole.length ? [{ _id: { $in: appliedToRole } }] : []),
+          ],
+        });
+      }
+
+      if (designationRegex) {
+        titleClauses.push({
+          $or: [
+            { "profile.experiences.jobProfile": designationRegex },
+            { "profile.experience.jobProfile": designationRegex },
+          ],
+        });
+      }
+
+      query.$and = [...(query.$and || []), ...titleClauses];
     }
 
     if (experience) {
@@ -959,7 +1060,10 @@ if (jobDescription !== undefined && jobDescription !== null) {
     }
 
     if (qualification) {
-      query["profile.qualification"] = qualification;
+      query["profile.qualification"] = new RegExp(
+        `^${escapeRegex(qualification)}$`,
+        "i"
+      );
     }
 
     if (lastActive) {
@@ -1002,7 +1106,6 @@ if (jobDescription !== undefined && jobDescription !== null) {
         "profile.experiences": { $slice: 1 }, // only first experience
         "profile.skills": 1,
         "profile.expectedCTC": 1,
-        "profile.resume": 1,
         "profile.profilePhoto": 1,
         "profile.qualification": 1,
         "profile.otherQualification": 1,
@@ -1074,7 +1177,7 @@ if (jobDescription !== undefined && jobDescription !== null) {
 // if recruiter viewing applicant details, deduct 1 credit
 export const deductCandidateCredit = async (req, res) => {
   try {
-    const { companyId, amount = 1 } = req.body;
+    const { companyId, amount = 1, candidateId } = req.body;
     const userId = req.id;
 
     // Validate company ID
@@ -1093,9 +1196,19 @@ export const deductCandidateCredit = async (req, res) => {
       });
     }
 
+    // Optional — the Find Candidates flow passes it so the unlock can be
+    // recorded server-side; callers that don't simply deduct as before.
+    const hasCandidate = Boolean(candidateId);
+    if (hasCandidate && !/^[0-9a-fA-F]{24}$/.test(candidateId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid candidate ID",
+      });
+    }
+
     // Check company and user authorization
     const company = await Company.findById(companyId)
-      .select("userId creditedForCandidates")
+      .select("userId creditedForCandidates unlockedCandidateIds")
       .lean();
 
     if (!company) {
@@ -1116,30 +1229,72 @@ export const deductCandidateCredit = async (req, res) => {
       });
     }
 
-    // Atomic credit deduction
-    const updatedCompany = await Company.findOneAndUpdate(
-      {
-        _id: companyId,
-        creditedForCandidates: { $gte: amount },
-      },
-      {
-        $inc: { creditedForCandidates: -amount },
-      },
-      {
-        new: true,
-      }
-    ).select("creditedForCandidates");
+    const alreadyUnlocked =
+      hasCandidate &&
+      (company.unlockedCandidateIds || []).some(
+        (id) => id.toString() === candidateId
+      );
+
+    // Already unlocked → free. Never charge twice for the same candidate.
+    if (alreadyUnlocked) {
+      return res.status(200).json({
+        success: true,
+        alreadyUnlocked: true,
+        remainingCredits: company.creditedForCandidates,
+        message: "Candidate already unlocked",
+      });
+    }
+
+    // Atomic credit deduction. When a candidateId is supplied the unlock is
+    // recorded in the SAME update, guarded by $ne so two concurrent clicks
+    // can only ever charge once.
+    const filter = {
+      _id: companyId,
+      creditedForCandidates: { $gte: amount },
+    };
+    const update = { $inc: { creditedForCandidates: -amount } };
+
+    if (hasCandidate) {
+      filter.unlockedCandidateIds = { $ne: candidateId };
+      update.$addToSet = { unlockedCandidateIds: candidateId };
+    }
+
+    const updatedCompany = await Company.findOneAndUpdate(filter, update, {
+      new: true,
+    }).select("creditedForCandidates unlockedCandidateIds");
 
     if (!updatedCompany) {
+      // Either the balance is too low or a concurrent request already
+      // unlocked this candidate — re-read to tell the two apart.
+      if (hasCandidate) {
+        const current = await Company.findById(companyId)
+          .select("creditedForCandidates unlockedCandidateIds")
+          .lean();
+        const nowUnlocked =
+          current &&
+          (current.unlockedCandidateIds || []).some(
+            (id) => id.toString() === candidateId
+          );
+
+        if (nowUnlocked) {
+          return res.status(200).json({
+            success: true,
+            alreadyUnlocked: true,
+            remainingCredits: current.creditedForCandidates,
+            message: "Candidate already unlocked",
+          });
+        }
+      }
+
       return res.status(400).json({
-        message:
-          "Insufficient candidate credits. Please purchase a plan.",
+        message: "Insufficient candidate credits. Please purchase a plan.",
         success: false,
       });
     }
 
     return res.status(200).json({
       success: true,
+      alreadyUnlocked: false,
       remainingCredits: updatedCompany.creditedForCandidates,
       message: "Credit deducted successfully",
     });
@@ -1149,7 +1304,6 @@ export const deductCandidateCredit = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
-      error: error.message,
     });
   }
 };

@@ -37,6 +37,6 @@ router.route("/messages/:messageId/edit").put(isAuthenticated, editMessage);
 router.route("/messages/:messageId/delete").delete(isAuthenticated, deleteMessage);
 
 //Search a messages
-router.get("/messages/search", searchMessages);
+router.get("/messages/search", isAuthenticated, searchMessages);
 
 export default router;

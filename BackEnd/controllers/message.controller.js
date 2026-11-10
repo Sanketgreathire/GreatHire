@@ -510,11 +510,13 @@ export const searchMessages = async (req, res) => {
       .lean();
     const convoIds = convos.map((c) => c._id);
 
-    // Search messages (case-insensitive regex)
+    // Search messages (case-insensitive regex).
+    // Escape user input so patterns like "(" don't throw a 500.
+    const escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     const messages = await Message.find({
       conversation: { $in: convoIds },
       isDeleted: false,
-      content: { $regex: query, $options: "i" },
+      content: { $regex: escapedQuery, $options: "i" },
     })
       .sort({ createdAt: -1 })
       .limit(50)

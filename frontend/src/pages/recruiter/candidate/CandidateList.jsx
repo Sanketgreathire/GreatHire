@@ -217,33 +217,37 @@ const CandidateList = () => {
   };
 
   const handleViewInformation = useCallback(async (candidate) => {
-    if (unlockedCandidates.has(candidate._id)) {
-      navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
-      return;
-    }
-
-    if (company?.creditedForCandidates <= 0) {
-      toast.error("Insufficient credits. Please purchase a plan.");
-      navigate("/packages");
-      return;
-    }
-
+    // The server-side unlock ledger is the source of truth: this endpoint
+    // charges only when the candidate is not already unlocked for the
+    // company, so it is safe to call every time — including for candidates
+    // unlocked before the ledger existed (those the server charges once).
     try {
       const res = await API.post(
         `/v1/company/deduct-candidate-credit`,
-        { companyId: company?._id }
+        { companyId: company?._id, candidateId: candidate._id }
       );
       if (res.data.success) {
-        dispatch(decreaseCandidateCredits(1));
+        const charged = res.data.alreadyUnlocked !== true;
+        if (charged) dispatch(decreaseCandidateCredits(1));
         persistUnlockedCandidate(candidate._id);
         setUnlockedCandidates(new Set(getUnlockedCandidates()));
-        toast.success(`1 credit deducted. ${res.data.remainingCredits} remaining.`);
+        toast.success(
+          charged
+            ? `1 credit deducted. ${res.data.remainingCredits} remaining.`
+            : "Candidate already unlocked."
+        );
         navigate(`/recruiter/dashboard/candidate-information/${candidate._id}`);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to view candidate information");
+      const status = error?.response?.status;
+      const message =
+        error?.response?.data?.message || "Failed to view candidate information";
+      toast.error(message);
+      if (status === 400 && /credit/i.test(message)) {
+        navigate("/packages");
+      }
     }
-  }, [company, dispatch, navigate, unlockedCandidates]);
+  }, [company, dispatch, navigate]);
 
   const totalPages = useMemo(() => Math.ceil(candidates.length / ITEMS_PER_PAGE), [candidates.length]);
   const currentCandidates = useMemo(() => candidates.slice(

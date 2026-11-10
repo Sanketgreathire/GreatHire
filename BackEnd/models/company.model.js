@@ -60,6 +60,16 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 30, // 30 free candidate views
     },
+    // Server-side ledger of candidate profiles this company has unlocked with
+    // a credit. The localStorage copy kept by the browser is only a UI hint —
+    // access to full candidate PII is enforced against THIS list (see
+    // getCandidateInformation / deductCandidateCredit).
+    unlockedCandidateIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     aiSourcingCredits: {
       type: Number,
       default: 0, // AI sourcing credits — added by plan purchase
