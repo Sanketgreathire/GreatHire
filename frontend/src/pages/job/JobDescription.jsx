@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import {
   FiChevronDown,
@@ -96,7 +97,7 @@ function OverviewStat({ icon: Icon, label, value }) {
           {label}
         </p>
 
-        <p className="truncate font-semibold text-gray-900 dark:text-gray-100">
+        <p className="break-words font-semibold text-gray-900 dark:text-gray-100">
           {value || "—"}
         </p>
       </div>
@@ -144,6 +145,74 @@ const getArrayValue = (value) => {
   return [];
 };
 
+// Format salary for display: prefix ₹ only for numeric values, and map the
+// "Not disclosed" placeholder to a clean label instead of "₹Not disclosed".
+const formatSalary = (salary) => {
+  if (typeof salary !== "string") return "Salary not specified";
+  const value = salary.trim();
+  if (!value || /^not\s+disclosed$/i.test(value)) return "Salary not specified";
+  if (value.startsWith("₹")) return value;
+  if (/^\d/.test(value)) return `₹${value}`;
+  return value;
+};
+
+// Normalize stored job HTML so the description renders as proper prose:
+// plain-text JDs become paragraphs, leading bare text before the first tag
+// is promoted into its own paragraph, a dangling truncated tag is removed,
+// and runs of blank lines are collapsed.
+const normalizeJobHtml = (html) => {
+  if (typeof html !== "string" || !html.trim()) {
+    return "<p>No description provided.</p>";
+  }
+
+  let out = html.trim();
+
+  // No HTML at all → paragraph per blank-line block.
+  if (!/<[a-z/!]/i.test(out)) {
+    return out
+      .split(/\n{2,}/)
+      .filter((block) => block.trim())
+      .map((block) => `<p>${block.trim().replace(/\n/g, "<br/>")}</p>`)
+      .join("");
+  }
+
+  // Bare text before the first tag (e.g. a title echo) → its own paragraph.
+  const firstTag = out.search(/<[a-z/!]/i);
+  if (firstTag > 0) {
+    const lead = out.slice(0, firstTag).trim();
+    out = (lead ? `<p>${lead}</p>` : "") + out.slice(firstTag);
+  }
+
+  // Cut a dangling partial tag left by truncated content.
+  const lastLt = out.lastIndexOf("<");
+  const lastGt = out.lastIndexOf(">");
+  if (lastLt > lastGt) out = out.slice(0, lastLt);
+
+  return out.replace(/(\s*\n\s*){3,}/g, "\n\n");
+};
+
+// Skills for the AI Job Snapshot: trimmed, empties dropped, and
+// case-insensitively deduped so chips never repeat ("React" / "react").
+const dedupeSkills = (value) => {
+  const raw = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? value.split(",")
+      : [];
+  const seen = new Set();
+  const out = [];
+  for (const item of raw) {
+    if (typeof item !== "string") continue;
+    const skill = item.trim();
+    if (!skill) continue;
+    const key = skill.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(skill);
+  }
+  return out;
+};
+
 export default function JobDescription() {
   const { jobId } = useParams();
   const navigate = useNavigate();
@@ -152,6 +221,8 @@ export default function JobDescription() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Overview");
+
+  const authUser = useSelector((state) => state.auth?.user);
 
   // Extract clean 24-character hex Mongo ObjectId if slug or trailing slash is attached
   const cleanJobId = useMemo(() => {
@@ -229,17 +300,76 @@ export default function JobDescription() {
     [job?.jobDetails?.benefits]
   );
 
-  const skills = useMemo(
-    () => getArrayValue(job?.jobDetails?.skills),
+  // ── AI Job Snapshot data ─────────────────────────────────────────────
+  // Static render of stored jobDetails (no AI call happens on this page).
+  const snapshotSkills = useMemo(
+    () => dedupeSkills(job?.jobDetails?.skills),
     [job?.jobDetails?.skills]
   );
 
+  const snapshotPairs = useMemo(() => {
+    const jd = job?.jobDetails;
+    if (!jd) return [];
+
+    const pairs = [];
+    const add = (label, value) => {
+      const text = Array.isArray(value)
+        ? value
+            .filter((item) => typeof item === "string" && item.trim())
+            .map((item) => item.trim())
+            .join(", ")
+        : typeof value === "string"
+          ? value.trim()
+          : "";
+      if (text) pairs.push({ label, value: text });
+    };
+
+    add("Education", jd.qualifications);
+    add("Experience", jd.experience);
+    add("Job Type", jd.jobType);
+    add("Workplace", jd.workPlaceFlexibility);
+    if (jd.salary && !/^not\s+disclosed$/i.test(String(jd.salary).trim())) {
+      const salary = String(jd.salary).trim();
+      pairs.push({
+        label: "Salary",
+        value: jd.salaryType ? `${salary} / ${jd.salaryType}` : salary,
+      });
+    }
+
+    return pairs;
+  }, [job?.jobDetails]);
+
+  // Hide the whole card when nothing can be shown — no "—" filler cells.
+  const showSnapshot =
+    snapshotSkills.length > 0 || snapshotPairs.length > 0;
+
   const handleApply = () => {
-    if (!job?._id) {
+    if (!job?._id) return;
+
+    const applyPath = `/apply/${job._id}`;
+
+    // Logged-in users go straight to the application form; the route guard
+    // still validates the role.
+    if (authUser) {
+      navigate(applyPath);
       return;
     }
 
-    navigate(`/apply/${job._id}`);
+    // Automatic routing without asking for an email: a browser that has
+    // logged in before (remembered jobseeker email) is treated as an
+    // existing user → login page with the email prefilled; any other
+    // browser is treated as a new user → signup. Both carry the return
+    // path (?from=… / state.from) and each page links to the other, so a
+    // misguess still lands back on this application in one click.
+    const rememberedEmail = localStorage.getItem("rememberedJobseekerEmail");
+    if (rememberedEmail) {
+      navigate("/jobseeker-login", {
+        state: { from: applyPath, email: rememberedEmail },
+      });
+      return;
+    }
+
+    navigate(`/signup?from=${encodeURIComponent(applyPath)}`);
   };
 
   const handleShare = async () => {
@@ -347,9 +477,7 @@ export default function JobDescription() {
                   </p>
 
                   <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {job?.jobDetails?.salary
-                      ? `₹${job.jobDetails.salary}`
-                      : "Salary not specified"}
+                    {formatSalary(job?.jobDetails?.salary)}
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -470,43 +598,60 @@ export default function JobDescription() {
                 {/* Overview */}
                 {activeTab === "Overview" && (
                   <>
-                    <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 dark:border-blue-900 dark:bg-blue-950/30">
-                      <p className="mb-3 flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
-                        <HiSparkles size={16} />
-                        AI Job Snapshot
-                      </p>
-
-                      <div className="grid gap-4 text-sm sm:grid-cols-2">
-                        <p className="text-gray-600 dark:text-gray-300">
-                          <span className="text-gray-500 dark:text-gray-400">
-                            Skills:{" "}
-                          </span>
-
-                          {skills.length > 0
-                            ? skills.join(", ")
-                            : "—"}
+                    {showSnapshot && (
+                      <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 dark:border-blue-900 dark:bg-blue-950/30">
+                        <p className="mb-4 flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
+                          <HiSparkles size={16} />
+                          AI Job Snapshot
                         </p>
 
-                        <p className="text-gray-600 dark:text-gray-300">
-                          <span className="text-gray-500 dark:text-gray-400">
-                            Salary Type:{" "}
-                          </span>
+                        {snapshotSkills.length > 0 && (
+                          <div className="mb-4">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-500 dark:text-blue-400">
+                              Skills
+                            </p>
 
-                          {job?.jobDetails?.salaryType || "—"}
-                        </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {snapshotSkills.map((skill) => (
+                                <span
+                                  key={skill}
+                                  className="rounded-full border border-blue-200 bg-white px-2.5 py-1 text-xs font-medium text-blue-700 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {snapshotPairs.length > 0 && (
+                          <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-blue-100 pt-4 dark:border-blue-900">
+                            {snapshotPairs.map((pair) => (
+                              <div key={pair.label} className="min-w-0">
+                                <p className="text-xs text-blue-500 dark:text-blue-400">
+                                  {pair.label}
+                                </p>
+
+                                <p className="mt-0.5 break-words text-sm font-medium text-gray-700 dark:text-gray-200">
+                                  {pair.value}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    )}
 
                     <AccordionSection
                       title="About this Role"
                       defaultOpen
                     >
                       <div
-                        className="leading-relaxed text-gray-600 dark:text-gray-300"
+                        className="max-w-none leading-relaxed text-gray-600 dark:text-gray-300 [&_a]:text-blue-600 [&_a]:underline [&_blockquote]:mb-3 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-200 [&_blockquote]:pl-3 [&_blockquote]:italic [&_h1]:mb-2 [&_h1]:text-xl [&_h1]:font-bold [&_h1]:text-gray-900 [&_h2]:mb-2 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h3]:mb-1.5 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-gray-900 [&_hr]:my-4 [&_hr]:border-gray-200 [&_li]:mb-1 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p]:last:mb-0 [&_strong]:font-semibold [&_strong]:text-gray-800 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 dark:[&_blockquote]:border-blue-800 dark:[&_h1]:text-gray-100 dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-100 dark:[&_hr]:border-gray-700 dark:[&_strong]:text-gray-100"
                         dangerouslySetInnerHTML={{
-                          __html:
-                            job?.jobDetails?.details ||
-                            "<p>No description provided.</p>",
+                          __html: normalizeJobHtml(
+                            job?.jobDetails?.details
+                          ),
                         }}
                       />
                     </AccordionSection>

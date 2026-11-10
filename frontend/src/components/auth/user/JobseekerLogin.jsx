@@ -41,7 +41,10 @@ const JobseekerLogin = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState(() => ({
+    email: location.state?.email || "",
+    password: "",
+  }));
   const [rememberMe, setRememberMe] = useState(false);
   const [otp, setOtp] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -52,13 +55,14 @@ const JobseekerLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
+    if (location.state?.email) return; // email passed by the apply gate wins
     const savedEmail = localStorage.getItem("rememberedJobseekerEmail");
     const savedPassword = localStorage.getItem("rememberedJobseekerPassword");
     if (savedEmail && savedPassword) {
       setFormData({ email: savedEmail, password: savedPassword });
       setRememberMe(true);
     }
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,7 +78,17 @@ const JobseekerLogin = () => {
 
   const handleOtpChange = useCallback((e) => setOtp(e.target.value), []);
 
-  const handleSignUpClick = useCallback(() => navigate("/signup"), [navigate]);
+  const handleSignUpClick = useCallback(() => {
+    // Carry the return path (and typed email) through to signup so a user
+    // who started from a shared job link lands back on the application.
+    const params = new URLSearchParams();
+    const from = location.state?.from;
+    const email = location.state?.email || formData.email;
+    if (from) params.set("from", from);
+    if (email.trim()) params.set("email", email.trim());
+    const qs = params.toString();
+    navigate(qs ? `/signup?${qs}` : "/signup");
+  }, [navigate, location, formData.email]);
   const handleForgotPassword = useCallback(() => navigate("/forgot-password"), [navigate]);
 
   const handleOtpClick = useCallback(() => {
@@ -134,7 +148,7 @@ const JobseekerLogin = () => {
         const user = response.data.user;
         const from = location.state?.from;
         if (user.role === "student" || user.role === "candidate") {
-          navigate(user.isFirstLogin ? "/profile" : (from || "/"));
+          navigate(from || (user.isFirstLogin ? "/profile" : "/"));
         } else if (user.role === "recruiter") {
           navigate("/recruiter/dashboard");
         } else if (user.role === "admin") {

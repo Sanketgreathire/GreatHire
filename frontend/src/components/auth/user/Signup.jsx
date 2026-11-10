@@ -66,6 +66,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Prefill referral code from ?ref= share link (Refer & Boost → /signup?ref=CODE)
+  // and email/return-path from the job Apply gate (→ /signup?email=…&from=…)
   const [searchParams] = useSearchParams();
   useEffect(() => {
     const ref = searchParams.get("ref");
@@ -75,6 +76,13 @@ const Signup = () => {
         setFormData((prev) => ({ ...prev, inputReferralCode: clean }));
         toast.success(`Referral code ${clean} applied 🎉`);
       }
+    }
+
+    const emailParam = searchParams.get("email");
+    if (emailParam) {
+      setFormData((prev) =>
+        prev.email ? prev : { ...prev, email: emailParam }
+      );
     }
   }, [searchParams]);
 
@@ -294,7 +302,8 @@ const Signup = () => {
       if (response?.data?.success) {
         dispatch(setUser(response.data.user));
         toast.success("Profile saved! Welcome to GreatHire 🎉");
-        navigate("/profile");
+        // Return to the job the user came from via the Apply gate, if any.
+        navigate(searchParams.get("from") || "/profile");
       } else {
         toast.error(response?.data?.message || "Failed to save profile");
       }
@@ -398,7 +407,19 @@ const Signup = () => {
                   {step === 1 && (
                     <p className="mt-2 text-sm text-blue-600 dark:text-blue-400">
                       Already have an account?{" "}
-                      <span onClick={() => navigate("/jobseeker-login")}
+                      <span
+                        onClick={() => {
+                          // Keep the return path (and typed email) when a
+                          // misrouted user switches from signup to login.
+                          const from = searchParams.get("from");
+                          const email = searchParams.get("email") || formData.email;
+                          navigate("/jobseeker-login", {
+                            state: {
+                              ...(from ? { from } : {}),
+                              ...(email.trim() ? { email: email.trim() } : {}),
+                            },
+                          });
+                        }}
                         className="cursor-pointer underline font-semibold hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
                         Log In
                       </span>
