@@ -448,11 +448,11 @@ export const getCompanyById = async (req, res) => {
     }
 
     if (!/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    message: "Invalid company ID.",
-    success: false,
-  });
-}
+      return res.status(400).json({
+        message: "Invalid company ID.",
+        success: false,
+      });
+    }
 
     // Find company by ID
     const company = await Company.findById(companyId);
@@ -570,7 +570,7 @@ export const activateTrial = async (req, res) => {
     const now = new Date();
     company.trialActive = true;
     company.trialStartedAt = now;
-        company.trialExpiresAt = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
+    company.trialExpiresAt = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
     company.hasUsedTrial = true;
     await company.save();
 
@@ -596,11 +596,11 @@ export const companyByUserId = async (req, res) => {
     }
 
     if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
-  return res.status(400).json({
-    message: "Invalid user ID.",
-    success: false,
-  });
-}
+      return res.status(400).json({
+        message: "Invalid user ID.",
+        success: false,
+      });
+    }
 
     // Query the company where userId matches
     const company = await Company.findOne({
@@ -634,11 +634,11 @@ export const updateCompany = async (req, res) => {
     const userId = req.id;
 
     if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid company ID",
-  });
-}
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
 
     if (!(await isUserAssociated(companyId, userId))) {
       return res
@@ -841,11 +841,11 @@ export const getCurrentPlan = async (req, res) => {
     const userId = req.id;
 
     if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid company ID",
-  });
-}
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
 
     const company = await Company.findById(companyId).select("userId").lean();
     if (!company) return res.status(404).json({ message: "Company not found", success: false });
@@ -900,85 +900,59 @@ export const getCandidateData = async (req, res) => {
     const userId = req.id;
 
     // Validate authenticated user
-if (!userId) {
-  return res.status(401).json({
-    success: false,
-    message: "Unauthorized",
-  });
-}
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-// Validate company ID
-if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid company ID",
-  });
-}
+    // Validate company ID
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
 
-// Validate experience range
-if (minExp !== undefined && minExp !== null) {
-  const min = Number(minExp);
+    // Validate experience range
+    if (minExp !== undefined && minExp !== null) {
+      const min = Number(minExp);
+      if (!Number.isFinite(min) || min < 0) {
+        return res.status(400).json({ success: false, message: "Invalid minimum experience" });
+      }
+    }
 
-  if (!Number.isFinite(min) || min < 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid minimum experience",
-    });
-  }
-}
+    if (maxExp !== undefined && maxExp !== null) {
+      const max = Number(maxExp);
+      if (!Number.isFinite(max) || max < 0) {
+        return res.status(400).json({ success: false, message: "Invalid maximum experience" });
+      }
+    }
 
-if (maxExp !== undefined && maxExp !== null) {
-  const max = Number(maxExp);
+    if (minExp !== undefined && maxExp !== undefined && Number(minExp) > Number(maxExp)) {
+      return res.status(400).json({ success: false, message: "Minimum experience cannot be greater than maximum experience" });
+    }
 
-  if (!Number.isFinite(max) || max < 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid maximum experience",
-    });
-  }
-}
+    // Validate last active days
+    if (lastActive !== undefined && lastActive !== null) {
+      const days = Number(lastActive);
+      if (!Number.isInteger(days) || days < 0) {
+        return res.status(400).json({ success: false, message: "Invalid last active value" });
+      }
+    }
 
-if (
-  minExp !== undefined &&
-  maxExp !== undefined &&
-  Number(minExp) > Number(maxExp)
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Minimum experience cannot be greater than maximum experience",
-  });
-}
+    // Validate job description
+    if (jobDescription !== undefined && jobDescription !== null) {
+      if (typeof jobDescription !== "string") {
+        return res.status(400).json({ success: false, message: "Job description must be a string" });
+      }
+      if (jobDescription.length > 5000) {
+        return res.status(400).json({ success: false, message: "Job description must be within 5000 characters" });
+      }
+    }
 
-// Validate last active days
-if (lastActive !== undefined && lastActive !== null) {
-  const days = Number(lastActive);
-
-  if (!Number.isInteger(days) || days < 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid last active value",
-    });
-  }
-}
-
-// Validate job description
-if (jobDescription !== undefined && jobDescription !== null) {
-  if (typeof jobDescription !== "string") {
-    return res.status(400).json({
-      success: false,
-      message: "Job description must be a string",
-    });
-  }
-
-  if (jobDescription.length > 5000) {
-    return res.status(400).json({
-      success: false,
-      message: "Job description must be within 5000 characters",
-    });
-  }
-}
-
-    // Fast auth check: single query, no Recruiter lookup
+    // Fast auth check
     const company = await Company.findById(companyId).select("userId hasSubscription").lean();
     if (!company) return res.status(403).json({ message: "Company not found", success: false });
     const belongs = company.userId.some(u => u.user.toString() === userId);
@@ -988,6 +962,7 @@ if (jobDescription !== undefined && jobDescription !== null) {
       typeof str === "string" ? str.replace(/[-[\]{}()*+?.,\\^$|#\s><]/g, "\\$&") : "";
 
     const query = {};
+    const orConditions = []; // 👈 We use this to group Title + Skills + Location
 
     // ── Job Title / Designation ─────────────────────────────────────────
     // Job Title is a universal search: the candidate's name, their current /
@@ -1006,13 +981,60 @@ if (jobDescription !== undefined && jobDescription !== null) {
       ? new RegExp(escapeRegex(designation.trim()), "i")
       : null;
 
+    // Significant words of a term: 3+ chars only, so a stray "AI" or "C#"
+    // never becomes an over-broad alternation. A term made only of short
+    // words yields [] and falls back to the plain phrase regex below.
+    const significantWords = (text) =>
+      text.trim().split(/\s+/).filter((word) => word.length > 2);
+
+    // Fields a Job Title may match on a candidate, and the narrower set a
+    // Designation may match (profile-only by design).
+    const titleFields = [
+      "fullname",
+      "profile.experiences.jobProfile",
+      "profile.experience.jobProfile",
+      "profile.skills",
+    ];
+    const designationFields = [
+      "profile.experiences.jobProfile",
+      "profile.experience.jobProfile",
+    ];
+
+    // Word-AND matching — the same shape searchJobs uses in
+    // job.controller.js ("update candidate search to match job"): every word
+    // must be present, but each word may sit in a different field, so
+    // "Frontend React Developer" still finds a "React Developer" who lists
+    // "Frontend" as a skill instead of demanding the exact contiguous
+    // phrase. A single word reduces to the previous phrase match, and the
+    // phrase is always a subset of this, so nothing previously matched is
+    // lost. Kept in $and (not the location filter's top-level $or) so a
+    // title never overrides the location filter.
+    const wordsClause = (words, fields) => ({
+      $and: words.map((word) => {
+        const wordRegex = new RegExp(escapeRegex(word), "i");
+        return { $or: fields.map((field) => ({ [field]: wordRegex })) };
+      }),
+    });
+
+    const titleWords = significantWords(jobTitle || "");
+    const designationWords = significantWords(designation || "");
+
     // Resolve "applied for this role" to candidate ids (two cheap distinct()
-    // calls; empty when no job title matches, contributing no $or branch).
+    // calls; empty when no job title matches, contributing no $and branch).
+    // Job titles are matched word-by-word as well, so "Frontend React
+    // Developer" also picks up applicants of a "React Developer" job.
     let appliedToRole = [];
     if (titleRegex) {
-      const matchingJobIds = await Job.distinct("_id", {
-        "jobDetails.title": titleRegex,
-      });
+      const matchingJobIds = await Job.distinct(
+        "_id",
+        titleWords.length
+          ? {
+              $and: titleWords.map((word) => ({
+                "jobDetails.title": new RegExp(escapeRegex(word), "i"),
+              })),
+            }
+          : { "jobDetails.title": titleRegex }
+      );
       if (matchingJobIds.length) {
         appliedToRole = await Application.distinct("applicant", {
           job: { $in: matchingJobIds },
@@ -1026,27 +1048,59 @@ if (jobDescription !== undefined && jobDescription !== null) {
       if (titleRegex) {
         titleClauses.push({
           $or: [
-            { fullname: titleRegex },
-            { "profile.experiences.jobProfile": titleRegex },
-            { "profile.experience.jobProfile": titleRegex },
-            { "profile.skills": titleRegex },
+            ...(titleWords.length
+              ? [wordsClause(titleWords, titleFields)]
+              : [
+                  {
+                    $or: titleFields.map((field) => ({ [field]: titleRegex })),
+                  },
+                ]),
             ...(appliedToRole.length ? [{ _id: { $in: appliedToRole } }] : []),
           ],
         });
       }
 
       if (designationRegex) {
-        titleClauses.push({
-          $or: [
-            { "profile.experiences.jobProfile": designationRegex },
-            { "profile.experience.jobProfile": designationRegex },
-          ],
-        });
+        titleClauses.push(
+          designationWords.length
+            ? wordsClause(designationWords, designationFields)
+            : {
+                $or: designationFields.map((field) => ({
+                  [field]: designationRegex,
+                })),
+              }
+        );
       }
 
       query.$and = [...(query.$and || []), ...titleClauses];
     }
 
+    // 2. Skills Matching
+    if (skills) {
+      const skillArray = (Array.isArray(skills) ? skills : skills.split(","))
+        .map(s => s.trim()).filter(Boolean);
+      if (skillArray.length > 0) {
+        orConditions.push({
+          "profile.skills": {
+            $in: skillArray.map(s => new RegExp(`^${escapeRegex(s)}$`, "i")),
+          },
+        });
+      }
+    }
+
+    // 3. Location Matching (Fixed: no longer overwrites the $or array)
+    if (location) {
+      const locationRegex = new RegExp(escapeRegex(location.trim()), "i");
+      orConditions.push({ "address.city": locationRegex });
+      orConditions.push({ "address.state": locationRegex });
+    }
+
+    // Combine all "OR" conditions
+    if (orConditions.length > 0) {
+      query.$or = orConditions;
+    }
+
+    // Apply strict AND filters
     if (experience) {
       query["profile.experiences.duration"] = experience;
     }
@@ -1075,29 +1129,9 @@ if (jobDescription !== undefined && jobDescription !== null) {
       }
     }
 
-    if (location) {
-      const locationRegex = new RegExp(escapeRegex(location.trim()), "i");
-      query.$or = [
-        { "address.city": locationRegex },
-        { "address.state": locationRegex },
-      ];
-    }
-
-    if (skills) {
-      const skillArray = (Array.isArray(skills) ? skills : skills.split(","))
-        .map(s => s.trim().toLowerCase()).filter(Boolean);
-      if (skillArray.length > 0) {
-        // Use $in for index-friendly skill matching (any skill match)
-        query["profile.skills"] = {
-          $in: skillArray.map(s => new RegExp(`^${escapeRegex(s)}$`, "i")),
-        };
-      }
-    }
-
     const LIMIT = 200;
     const now = new Date();
     const hasExpRange = minExp !== undefined || maxExp !== undefined;
-    // JD-based ranking is a paid-plan feature
     const jdTrimmed = company.hasSubscription ? jobDescription?.trim() : undefined;
 
     let candidates = await User.find(query)
@@ -1118,8 +1152,7 @@ if (jobDescription !== undefined && jobDescription !== null) {
       .limit(hasExpRange || jdTrimmed ? LIMIT * 2 : LIMIT)
       .lean();
 
-    // Min/Max Experience — duration is free text (e.g. "2"), so filter in-memory
-    // using the first (most recent) experience entry as the candidate's experience.
+    // Min/Max Experience — filter in-memory
     if (hasExpRange) {
       const min = minExp !== undefined ? parseFloat(minExp) : null;
       const max = maxExp !== undefined ? parseFloat(maxExp) : null;
@@ -1133,7 +1166,7 @@ if (jobDescription !== undefined && jobDescription !== null) {
       });
     }
 
-    // Job Description — rank by keyword overlap against skills + job title
+    // Job Description — rank by keyword overlap
     let mode = "filter_matched";
     if (jdTrimmed) {
       const jdKeywords = extractKeywords(jdTrimmed);
@@ -1412,32 +1445,32 @@ export const getCompanyApplicants = async (req, res) => {
     const userId = req.id;
 
     // Validate company ID
-if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid company ID",
-  });
-}
+    if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
 
-// Validate authenticated user
-if (!userId) {
-  return res.status(401).json({
-    success: false,
-    message: "Unauthorized",
-  });
-}
+    // Validate authenticated user
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-// Pagination
-const page = Math.max(parseInt(req.query.page) || 1, 1);
+    // Pagination
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
 
-const limit = Math.min(
-  Math.max(parseInt(req.query.limit) || 20, 1),
-  100
-);
+    const limit = Math.min(
+      Math.max(parseInt(req.query.limit) || 20, 1),
+      100
+    );
 
-const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
-    
+
 
     if (!(await isUserAssociated(companyId, userId))) {
       return res.status(403).json({ message: "You are not authorized", success: false });
@@ -1453,24 +1486,24 @@ const skip = (page - 1) * limit;
     //   .lean();
 
     const totalApplications = await Application.countDocuments({
-  job: { $in: jobIds },
-});
+      job: { $in: jobIds },
+    });
 
-const applications = await Application.find({
-  job: { $in: jobIds },
-})
-  .populate(
-    "applicant",
-    "fullname emailId phoneNumber alternatePhone address isProfileBoosted"
-  )
-  .populate({
-    path: "job",
-    select: "jobDetails.title",
-  })
-  .sort({ createdAt: -1 })
-  .skip(skip)
-  .limit(limit)
-  .lean();
+    const applications = await Application.find({
+      job: { $in: jobIds },
+    })
+      .populate(
+        "applicant",
+        "fullname emailId phoneNumber alternatePhone address isProfileBoosted"
+      )
+      .populate({
+        path: "job",
+        select: "jobDetails.title",
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     // res.status(200).json({
     //   success: true,
@@ -1478,13 +1511,13 @@ const applications = await Application.find({
     //   applications,
     // });
     return res.status(200).json({
-  success: true,
-  totalApplications,
-  currentPage: page,
-  totalPages: Math.ceil(totalApplications / limit),
-  limit,
-  applications,
-});
+      success: true,
+      totalApplications,
+      currentPage: page,
+      totalPages: Math.ceil(totalApplications / limit),
+      limit,
+      applications,
+    });
   } catch (error) {
     console.error("Error fetching applicants:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -1502,39 +1535,39 @@ export const reportJob = async (req, res) => {
 
     // Basic validation
     if (!jobId || !userId || !reportTitle) {
-      
+
       return res
         .status(400)
         .json({ message: "Job ID, User ID, and Report Title are required." });
     }
 
     // Validate Job ID
-if (!/^[0-9a-fA-F]{24}$/.test(jobId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid job ID.",
-  });
-}
+    if (!/^[0-9a-fA-F]{24}$/.test(jobId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid job ID.",
+      });
+    }
 
-// Validate Report Title
-if (
-  typeof reportTitle !== "string" ||
-  reportTitle.trim().length < 3 ||
-  reportTitle.trim().length > 100
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Report title must be between 3 and 100 characters.",
-  });
-}
+    // Validate Report Title
+    if (
+      typeof reportTitle !== "string" ||
+      reportTitle.trim().length < 3 ||
+      reportTitle.trim().length > 100
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Report title must be between 3 and 100 characters.",
+      });
+    }
 
-// Validate Report Type
-if (typeof reportType !== "string") {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid report type.",
-  });
-}
+    // Validate Report Type
+    if (typeof reportType !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid report type.",
+      });
+    }
 
     // Validate reportType is one of the allowed values
     const allowedTypes = ["offensive", "money", "incorrect", "selling", "other"];
@@ -1555,22 +1588,22 @@ if (typeof reportType !== "string") {
 
     // Description max length check
 
-    
-   if (description !== undefined && description !== null) {
-  if (typeof description !== "string") {
-    return res.status(400).json({
-      success: false,
-      message: "Description must be a string.",
-    });
-  }
 
-  if (description.length > 300) {
-    return res.status(400).json({
-      success: false,
-      message: "Description must be within 300 characters.",
-    });
-  }
-}
+    if (description !== undefined && description !== null) {
+      if (typeof description !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Description must be a string.",
+        });
+      }
+
+      if (description.length > 300) {
+        return res.status(400).json({
+          success: false,
+          message: "Description must be within 300 characters.",
+        });
+      }
+    }
 
     // Add this AFTER the basic validation, BEFORE building reportData
     const existingReport = await JobReport.findOne({ userId, jobId });
@@ -1871,18 +1904,18 @@ export const deductAiSourcingCredit = async (req, res) => {
     const userId = req.id;
 
     if (!companyId || !/^[0-9a-fA-F]{24}$/.test(companyId)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid company ID",
-  });
-}
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company ID",
+      });
+    }
 
-if (!Number.isInteger(amount) || amount <= 0) {
-  return res.status(400).json({
-    success: false,
-    message: "Amount must be a positive integer",
-  });
-}
+    if (!Number.isInteger(amount) || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount must be a positive integer",
+      });
+    }
 
     const company = await Company.findById(companyId).select("userId aiSourcingCredits").lean();
     if (!company) return res.status(404).json({ success: false, message: "Company not found" });

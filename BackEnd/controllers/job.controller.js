@@ -34,7 +34,19 @@ export const screenApplicationAfterCreate = async (application, user, job) => {
       application.resume || user.profile?.resume || ""
     );
     const screeningResult = screenCandidate(candidateProfile, job);
-    const decision = screeningResult.score >= 75 ? "Shortlisted" : "Rejected";
+    
+    // ✅ NEW LOGIC: 
+    // 75+ = Auto-Shortlist
+    // 30-74 = Pending (Review manually)
+    // <30 = Auto-Reject
+    let decision;
+    if (screeningResult.score >= 75) {
+      decision = "Shortlisted";
+    } else if (screeningResult.score < 30) {
+      decision = "Rejected";
+    } else {
+      decision = "Pending";
+    }
 
     await applyApplicationTransition({
       application,
@@ -359,7 +371,7 @@ if (
 
 
 await newJob.save();
-// await autoApply(newJob._id);
+await autoApply(newJob._id);
 
 // console.log("========================================");
 // console.log("🚀 NEW JOB SAVED");
@@ -370,26 +382,26 @@ await newJob.save();
 // console.log("========================================");
 
 // Send email ONLY when job is active
-if (jobIsActive) {
-  try {
-    // console.log("📧 STARTING MATCHED JOB SEEKER EMAIL PROCESS...");
+// if (jobIsActive) {
+//   try {
+//     // console.log("📧 STARTING MATCHED JOB SEEKER EMAIL PROCESS...");
 
-    await notifyMatchingJobSeekers(newJob);
+//     await notifyMatchingJobSeekers(newJob);
 
-    console.log(
-      "✅ Matched Job Seeker email notification process completed"
-    );
-  } catch (error) {
-    console.error(
-      "❌ Matched Job Seeker email notification failed:",
-      error
-    );
-  }
-} else {
-  console.log(
-    "⏭️ Email notification skipped because job is pending"
-  );
-}
+//     console.log(
+//       "✅ Matched Job Seeker email notification process completed"
+//     );
+//   } catch (error) {
+//     console.error(
+//       "❌ Matched Job Seeker email notification failed:",
+//       error
+//     );
+//   }
+// } else {
+//   console.log(
+//     "⏭️ Email notification skipped because job is pending"
+//   );
+// }
 
 // existing code continues here
 
@@ -1033,19 +1045,19 @@ export const getJobById = async (req, res) => {
       });
     }
 
-    console.log("✅ JOB FOUND:", job._id);
-    console.log(
-      "🏢 COMPANY ACTIVE:",
-      job.company?.isActive
-    );
-    console.log(
-      "💼 JOB ACTIVE:",
-      job.jobDetails?.isActive
-    );
-    console.log(
-      "📌 JOB STATUS:",
-      job.jobDetails?.status
-    );
+    // console.log("✅ JOB FOUND:", job._id);
+    // console.log(
+    //   "🏢 COMPANY ACTIVE:",
+    //   job.company?.isActive
+    // );
+    // console.log(
+    //   "💼 JOB ACTIVE:",
+    //   job.jobDetails?.isActive
+    // );
+    // console.log(
+    //   "📌 JOB STATUS:",
+    //   job.jobDetails?.status
+    // );
 
     // In production, enforce that company and job are active. In development / testing, allow viewing any existing job.
     const isProduction = process.env.NODE_ENV === "production";

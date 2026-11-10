@@ -7,10 +7,12 @@ import { COMPANY_API_END_POINT, SOURCING_API_END_POINT } from "@/utils/ApiEndPoi
 import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits, decreaseAiSourcingCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+ 
 import { Helmet } from "react-helmet-async";
 import { Search, Brain, Zap, X, Database, Github, Lock } from "lucide-react";
 import PillSelect from "@/components/shared/PillSelect";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 const UNLOCKED_CANDIDATES_KEY = "unlockedCandidateIds";
 const getUnlockedCandidates = () => {
@@ -83,6 +85,7 @@ const CandidateList = () => {
   const [unlockedCandidates, setUnlockedCandidates] = useState(getUnlockedCandidates);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [filters, setFilters] = useState({
     jobTitle: "",
@@ -98,6 +101,57 @@ const CandidateList = () => {
     maxExp: "",
     jobDescription: "",
   });
+
+    useEffect(() => {
+    if (location.state?.matchSearch) {
+      const { jobTitle, skills, jobDescription } = location.state.matchSearch;
+      
+      // 1. Fill the inputs visually
+     setFilters((prev) => ({
+        ...prev,
+        jobTitle: jobTitle || "",
+        skills: skills || "", // Auto-fills the skills field
+        jobDescription: jobDescription || "",
+      }));
+
+      // 2. Automatically trigger the search (Optional)
+      // We use a timeout of 100ms to ensure the state has updated before we call the API
+      const timer = setTimeout(() => {
+        triggerAutoSearch(newFilters);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
+
+  // Create a modified fetch function just for the auto-search
+  const triggerAutoSearch = async (activeFilters) => {
+    if (!company?._id) return;
+    try {
+      setIsLoading(true);
+      const sanitizedFilters = {
+        companyId: company?._id,
+        ...(activeFilters.jobTitle && { jobTitle: activeFilters.jobTitle }),
+        ...(activeFilters.skills && { skills: activeFilters.skills.split(",").map((s) => s.trim()) }),
+        ...(activeFilters.jobDescription && { jobDescription: activeFilters.jobDescription }),
+      };
+
+      const response = await API.post(`/v1/company/candidate-list`, sanitizedFilters);
+
+      if (response.data.success) {
+        if (response.data.candidates.length === 0) setMessage("No Candidate found");
+        setCandidates(response.data.candidates.slice(0, 1000));
+        setDbSearchMode(response.data.mode);
+        setCurrentPage(1);
+        setShowCandidates(true);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error fetching candidates");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [showCandidates, setShowCandidates] = useState(false);

@@ -7,7 +7,7 @@ import { calculateMatchPercentage } from "./resumeMatching.service.js";
 
 
 
-const AUTO_APPLY_THRESHOLD = 65;
+const AUTO_APPLY_THRESHOLD = 60;
 
 export const autoApply = async (jobId) => {
   try {

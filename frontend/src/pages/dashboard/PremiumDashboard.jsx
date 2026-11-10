@@ -16,16 +16,16 @@ import {
 import { ANALYTICS_DASHBOARD_API, BACKEND_URL } from "@/utils/ApiEndPoint";
 import VerifiedRecruiterBadges from "@/components/VerifiedRecruiterBadges";
 
-const ROLE_COLORS  = ["#6366f1", "#8b5cf6", "#ec4899", "#f97316", "#22c55e", "#06b6d4"];
-const CAT_COLORS   = ["#6366f1", "#f97316", "#ec4899", "#8b5cf6", "#22c55e"];
-const HOURS        = ["12 AM", "4 AM", "8 AM", "12 PM", "4 PM", "8 PM", "11 PM"];
-const DAYS         = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const ROLE_COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f97316", "#22c55e", "#06b6d4"];
+const CAT_COLORS = ["#6366f1", "#f97316", "#ec4899", "#8b5cf6", "#22c55e"];
+const HOURS = ["12 AM", "4 AM", "8 AM", "12 PM", "4 PM", "8 PM", "11 PM"];
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function RecruiterEnterpriseDashboard() {
-  const { user }    = useSelector((s) => s.auth);
+  const { user } = useSelector((s) => s.auth);
   const { company } = useSelector((s) => s.company);
   const { jobPlan } = useSelector((s) => s.jobPlan);
-  const navigate    = useNavigate();
+  const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(null);
 
   const fetchDashboard = useCallback(async () => {
@@ -68,31 +68,31 @@ export default function RecruiterEnterpriseDashboard() {
   }
 
   const cards = [
-    { title: "Recruiters",       value: dashboard.recruiters,        icon: Users,     color: "from-violet-500 to-purple-500" },
-    { title: "Posted Jobs",      value: dashboard.postedJobs,        icon: Briefcase, color: "from-blue-500 to-cyan-500" },
-    { title: "Remaining Posts",  value: dashboard.remainingJobPosts, icon: Activity,  color: "from-pink-500 to-rose-500" },
-    { title: "Active Jobs",      value: dashboard.activeJobs,        icon: BarChart3, color: "from-indigo-500 to-violet-500" },
-    { title: "Applicants",       value: dashboard.applicants,        icon: Users,     color: "from-fuchsia-500 to-purple-500" },
-    { title: "Shortlisted",      value: dashboard.shortlisted,       icon: UserCheck, color: "from-cyan-500 to-blue-500" },
-    { title: "Success Rate",     value: `${dashboard.successRate}%`, icon: Trophy,    color: "from-orange-400 to-yellow-500" },
-    { title: "Database Credits", value: dashboard.databaseCredits,   icon: Database,  color: "from-emerald-500 to-green-500" },
+    { title: "Recruiters", value: dashboard.recruiters, icon: Users, color: "from-violet-500 to-purple-500" },
+    { title: "Posted Jobs", value: dashboard.postedJobs, icon: Briefcase, color: "from-blue-500 to-cyan-500" },
+    { title: "Remaining Posts", value: dashboard.remainingJobPosts, icon: Activity, color: "from-pink-500 to-rose-500" },
+    { title: "Active Jobs", value: dashboard.activeJobs, icon: BarChart3, color: "from-indigo-500 to-violet-500" },
+    { title: "Applicants", value: dashboard.applicants, icon: Users, color: "from-fuchsia-500 to-purple-500" },
+    { title: "Shortlisted", value: dashboard.shortlisted, icon: UserCheck, color: "from-cyan-500 to-blue-500" },
+    { title: "Success Rate", value: `${dashboard.successRate}%`, icon: Trophy, color: "from-orange-400 to-yellow-500" },
+    { title: "Database Credits", value: dashboard.databaseCredits, icon: Database, color: "from-emerald-500 to-green-500" },
   ];
 
-  const roleData    = (dashboard.applicationsByRole?.length  ? dashboard.applicationsByRole  : [
-    { role: "Web Developer",      applications: 68 },
-    { role: "UI/UX Designer",     applications: 54 },
-    { role: "Data Analyst",       applications: 48 },
-    { role: "Backend Developer",  applications: 46 },
-    { role: "HR Executive",       applications: 24 },
+  const roleData = (dashboard.applicationsByRole?.length ? dashboard.applicationsByRole : [
+    { role: "Web Developer", applications: 68 },
+    { role: "UI/UX Designer", applications: 54 },
+    { role: "Data Analyst", applications: 48 },
+    { role: "Backend Developer", applications: 46 },
+    { role: "HR Executive", applications: 24 },
   ]);
-  const catData      = (dashboard.topCategories?.length       ? dashboard.topCategories       : [
+  const catData = (dashboard.topCategories?.length ? dashboard.topCategories : [
     { name: "Development", value: 42 },
-    { name: "Design",      value: 18 },
-    { name: "Data Science",value: 15 },
-    { name: "Marketing",   value: 10 },
-    { name: "Others",      value: 15 },
+    { name: "Design", value: 18 },
+    { name: "Data Science", value: 15 },
+    { name: "Marketing", value: 10 },
+    { name: "Others", value: 15 },
   ]);
-  const heatmapData  = (dashboard.heatmap?.length             ? dashboard.heatmap             : [
+  const heatmapData = (dashboard.heatmap?.length ? dashboard.heatmap : [
     { day: "Mon", "12 AM": 1, "4 AM": 0, "8 AM": 3, "12 PM": 8, "4 PM": 12, "8 PM": 6, "11 PM": 2 },
     { day: "Tue", "12 AM": 0, "4 AM": 1, "8 AM": 5, "12 PM": 10, "4 PM": 15, "8 PM": 8, "11 PM": 1 },
     { day: "Wed", "12 AM": 2, "4 AM": 0, "8 AM": 4, "12 PM": 9, "4 PM": 18, "8 PM": 7, "11 PM": 3 },
@@ -123,11 +123,30 @@ export default function RecruiterEnterpriseDashboard() {
               <p className="mt-1 text-violet-100 text-sm">Enterprise Recruitment Intelligence Dashboard</p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <VerifiedRecruiterBadges plan={recruiterPlan} status={jobPlan?.status} expiryDate={jobPlan?.expiryDate} />
-              <div className="rounded-2xl border border-white/20 bg-white/20 px-5 py-3 backdrop-blur-xl">
-                <div className="text-white/70 text-xs">Current Plan</div>
-                <div className="mt-1 text-xl font-bold text-white">{dashboard.plan || "Enterprise"}</div>
-              </div>
+
+              {/* 1. Show Golden Badge ONLY if the plan is NOT Free/Starter */}
+              {dashboard.plan &&
+                dashboard.plan !== "FREE" &&
+                dashboard.plan !== "STARTER" && (
+                  <VerifiedRecruiterBadges
+                    plan={dashboard.plan}
+                    status={jobPlan?.status}
+                    expiryDate={jobPlan?.expiryDate}
+                  />
+                )}
+
+              {/* 2. Show Purple Box ONLY if the plan IS Free/Starter */}
+              {(!dashboard.plan ||
+                dashboard.plan === "FREE" ||
+                dashboard.plan === "STARTER") && (
+                  <div className="rounded-2xl border border-white/20 bg-white/20 px-5 py-3 backdrop-blur-xl">
+                    <div className="text-white/70 text-xs">Current Plan</div>
+                    <div className="mt-1 text-xl font-bold text-white">
+                      {dashboard.plan || "FREE"}
+                    </div>
+                  </div>
+                )}
+
             </div>
           </div>
         </div>
@@ -173,7 +192,7 @@ export default function RecruiterEnterpriseDashboard() {
               <AreaChart data={dashboard.applicationsTrend}>
                 <defs>
                   <linearGradient id="purpleArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#7c3aed" stopOpacity={0.7} />
+                    <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.7} />
                     <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
                   </linearGradient>
                 </defs>
@@ -362,9 +381,9 @@ export default function RecruiterEnterpriseDashboard() {
           <div className="rounded-2xl border border-violet-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800 px-5 py-4 shadow-lg backdrop-blur-xl">
             <h2 className="text-lg font-bold text-violet-700 dark:text-violet-400 mb-4">Usage Analytics</h2>
             <Usage label="Database Credits" value={dashboard.databaseCredits} max={100000} />
-            <Usage label="Job Posts"        value={dashboard.postedJobs}      max={1000000} />
-            <Usage label="Recruiters"       value={dashboard.recruiters}      max={5} />
-            <Usage label="Applicants"       value={dashboard.applicants}      max={5000} />
+            <Usage label="Job Posts" value={dashboard.postedJobs} max={1000000} />
+            <Usage label="Recruiters" value={dashboard.recruiters} max={5} />
+            <Usage label="Applicants" value={dashboard.applicants} max={5000} />
           </div>
         </div>
 
@@ -420,7 +439,7 @@ function HeatmapChart({ data }) {
     if (!val) return "#f1f5f9";
     const t = val / max;
     if (t < 0.25) return "#ddd6fe";
-    if (t < 0.5)  return "#8b5cf6";
+    if (t < 0.5) return "#8b5cf6";
     if (t < 0.75) return "#c026d3";
     return "#f97316";
   };

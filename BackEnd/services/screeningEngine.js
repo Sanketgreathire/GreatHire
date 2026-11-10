@@ -432,8 +432,17 @@ export const scoreApplication = async (applicationId, changedBy = null) => {
     application.job
   );
 
-  const score = screeningResult.score;
-  const decision = score >= 75 ? "Shortlisted" : "Rejected";
+    const score = screeningResult.score;
+  
+  // ✅ NEW LOGIC: Only auto-shortlist if 75+. Auto-reject if below 30. Otherwise, keep Pending.
+  let decision;
+  if (score >= 75) {
+    decision = "Shortlisted";
+  } else if (score < 30) {
+    decision = "Rejected";
+  } else {
+    decision = "Pending"; // 👈 Keeps moderate matches (like 50/100) in the queue for you to review
+  }
 
   await applyApplicationTransition({
     application,
