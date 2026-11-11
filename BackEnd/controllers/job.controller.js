@@ -449,7 +449,8 @@ if (jobIsActive) {
 
       // Notify recruiter
       try {
-        await notificationService.notifyNewJobPosted({ recruiterId: userId, jobId: newJob._id, jobTitle: title, companyName });
+        await notificationService.notifyNewJobPosted({ recruiterId: userId, jobId: newJob._id, 
+          jobTitle: title, companyName,actionUrl: `/recruiter/dashboard/applicants-list?jobId=${newJob._id}` });
       } catch (e) {
         console.error('❌ Job posting notification error:', e);
       }

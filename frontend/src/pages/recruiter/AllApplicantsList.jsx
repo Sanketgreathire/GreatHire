@@ -1,3 +1,4 @@
+import { useNavigate, useSearchParams } from "react-router-dom";
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCandidateCredits } from "@/redux/companySlice";
@@ -7,7 +8,7 @@ import { COMPANY_API_END_POINT, APPLICATION_API_END_POINT, EMAIL_API_END_POINT, 
 import { FiUsers, FiTrash2 } from "react-icons/fi";
 import { X } from "lucide-react";
 import ApplicantDetails from "./ApplicantDetails";
-import { useNavigate } from "react-router-dom";
+
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import { logOut } from "@/redux/authSlice";
@@ -60,6 +61,13 @@ const AllApplicantsList = () => {
   const { user } = useSelector((state) => state.auth);
   const companyId = company?._id;
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // ✅ MOVED TO TOP: Read URL params before using them in useState
+  const [searchParams] = useSearchParams();
+  const jobIdFromUrl = searchParams.get("jobId");
+
   const handle401 = () => {
     dispatch(logOut());
     dispatch(removeCompany());
@@ -69,11 +77,13 @@ const AllApplicantsList = () => {
   const [applicants, setApplicants] = useState(_cachedApplicants);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const [selectedJob, setSelectedJob] = useState("All");
   const [jobsList, setJobsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
-
+  
+  // ✅ FIXED: Initialize with jobIdFromUrl
+  const [selectedJob, setSelectedJob] = useState(jobIdFromUrl || "All");
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
@@ -81,8 +91,6 @@ const AllApplicantsList = () => {
   const [applicant, setApplicant] = useState(null);
   const [applicantId, setApplicantId] = useState(null);
   const [jobId, setJobId] = useState(null);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!companyId) return;
@@ -129,8 +137,24 @@ const AllApplicantsList = () => {
   const filteredApplicants = useMemo(() => {
     setCurrentPage(1);
     let filtered = applicants;
-    if (selectedJob !== "All") filtered = filtered.filter(a => a.job?.jobDetails?.title === selectedJob);
+    
+    if (selectedJob !== "All") {
+      // Check if selectedJob is a valid MongoDB ObjectId (length 24) or a Title
+      const isId = /^[0-9a-fA-F]{24}$/.test(selectedJob);
+      
+      if (isId) {
+        // Filter by Job ID
+        filtered = filtered.filter(a => 
+          String(a.job?._id) === selectedJob || String(a.job) === selectedJob
+        );
+      } else {
+        // Filter by Job Title
+        filtered = filtered.filter(a => a.job?.jobDetails?.title === selectedJob);
+      }
+    }
+    
     if (selectedStatus !== "All") filtered = filtered.filter(a => a.status === selectedStatus);
+    
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(a =>
@@ -316,7 +340,7 @@ const AllApplicantsList = () => {
                     >
                       <option value="All">All Jobs</option>
                       {jobsList.map((job) => (
-                        <option key={job._id} value={job.jobDetails?.title}>{job.jobDetails?.title}</option>
+                        <option key={job._id} value={job._id}>{job.jobDetails?.title}</option>
                       ))}
                     </select>
                   )}

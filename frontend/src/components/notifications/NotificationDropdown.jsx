@@ -55,32 +55,36 @@ const NotificationDropdown = () => {
     setLoading(false);
   }, [markAllAsRead]);
 
-  const handleNotificationClick = async (notification) => {
+    const handleNotificationClick = async (notification) => {
     if (!notification) return;
 
+    // 1. Mark as read
     if (!notification.isRead) {
       await handleMarkAsRead(notification._id);
     }
 
-    if (
-      notification.type === 'application-submitted' &&
-      notification.metadata?.applicationId
-    ) {
-      setIsOpen(false);
+    // 2. Close the dropdown
+    setIsOpen(false);
+
+    // 3. Redirect logic
+    // If the backend gave us an actionUrl, USE IT.
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
+      return;
+    }
+
+    // Fallback logic (if actionUrl is missing)
+    if (notification.type === 'application-submitted' && notification.metadata?.applicationId) {
       const jobId = notification.relatedEntity;
       const candidateId = notification.sender;
-
       navigate(`/recruiter/dashboard/applications/${jobId}/${candidateId}`);
-    }   else if (notification.type === 'auto-apply') {
-  const jobId =
-    notification.relatedEntity ||
-    notification.metadata?.jobId;
-
-  if (jobId) {
-    setIsOpen(false);
-    navigate(`/jobs/${jobId}`);
-  }
-}
+    } else if (notification.type === 'auto-apply') {
+      const jobId = notification.relatedEntity || notification.metadata?.jobId;
+      if (jobId) navigate(`/jobs/${jobId}`);
+    } else if (notification.relatedEntity) {
+      // Generic fallback: go to the job details
+      navigate(`/recruiter/dashboard/job-details/${notification.relatedEntity}`);
+    }
   };
 
   const getTimeAgo = (date) => {
@@ -181,7 +185,7 @@ const NotificationDropdown = () => {
                     hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors
                     ${!notification.isRead
                       ? 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400'
-                        : ''
+                      : ''
                     }`}
                 >
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-snug">

@@ -141,8 +141,8 @@ class NotificationService {
   }
 
   // Recruiter Notifications
-  async notifyNewJobPosted(jobData) {
-    const { recruiterId, jobId, jobTitle, companyName } = jobData;
+    async notifyNewJobPosted(jobData) {
+    const { recruiterId, jobId, jobTitle, companyName, actionUrl } = jobData;
 
     await this.createAndEmit({
       recipient: recruiterId,
@@ -153,7 +153,8 @@ class NotificationService {
       relatedEntity: jobId,
       relatedEntityModel: 'Job',
       priority: 'medium',
-      actionUrl: `/recruiter/jobs/${jobId}`,
+      // ✅ Use the passed URL, OR fall back to the correct applicants-list route
+      actionUrl: actionUrl || `/recruiter/dashboard/applicants-list?jobId=${jobId}`,
       metadata: { jobTitle, companyName, status: 'active' }
     });
   }
