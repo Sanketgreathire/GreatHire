@@ -567,10 +567,10 @@ const JobDetail = () => {
                 <div className="space-y-6">
                   {/* Qualifications */}
                   <div className="flex items-start gap-4">
-                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
+                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full flex-shrink-0">
                       <GraduationCap className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">Qualifications</h4>
                       {editMode ? <input type="text" name="qualifications" value={editedJob.qualifications || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.qualifications?.join(", ") || "Not specified"}</p>}
@@ -578,10 +578,10 @@ const JobDetail = () => {
                   </div>
                   {/* Experience */}
                   <div className="flex items-start gap-4">
-                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
+                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full flex-shrink-0">
                       <Award className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">Experience</h4>
                       {editMode ? <input type="text" name="experience" value={editedJob.experience || ""} onChange={handleInputChange} className="w-full p-2 mt-1 rounded border border-slate-300 dark:bg-gray-700 dark:text-gray-300" />
                         : <p className="text-slate-600 dark:text-slate-300">{jobDetails?.experience || "Not specified"}</p>}
@@ -589,19 +589,10 @@ const JobDetail = () => {
                   </div>
                   {/* Skills */}
                   <div className="flex items-start gap-4">
-                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full">
+                    <div className="bg-slate-100 dark:bg-slate-700 p-3 rounded-full flex-shrink-0">
                       <Wrench className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </div>
-                    {/* <div className="w-full">
-                      <h4 className="font-semibold text-slate-700 dark:text-slate-200">Skills Required</h4>
-                      {editMode ? <textarea name="skills" value={editedJob.skills ? editedJob.skills.join("\n") : ""} onChange={(e) => setEditedJob({ ...editedJob, skills: e.target.value.split('\n') })} className="w-full p-2 mt-1 rounded border border-slate-300" rows={3} />
-                        : <div className="flex flex-wrap gap-2 mt-2">
-                          {jobDetails?.skills?.length > 0 ? jobDetails.skills.map((skill, index) => (
-                            <span key={index} className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">{skill}</span>
-                          )) : <p className="text-slate-500">Not specified</p>}
-                        </div>}
-                    </div> */}
-                    <div className="w-full">
+                    <div className="w-full min-w-0">
                       <h4 className="font-semibold text-slate-700 dark:text-slate-200">
                         Skills Required
                       </h4>
@@ -705,14 +696,19 @@ const JobDetail = () => {
                             );
 
                             return unique.length > 0 ? (
-                              unique.map((skill, index) => (
-                                <span
-                                  key={index}
-                                  className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
-                                >
-                                  {skill}
-                                </span>
-                              ))
+                              unique.map((skill, index) => {
+                                const isLongPara = index === unique.length - 1 || skill.length > 50;
+                                return (
+                                  <span
+                                    key={index}
+                                    className={`inline-block bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200 text-sm font-medium px-3.5 py-2 ${
+                                      isLongPara ? "rounded-none" : "rounded-md"
+                                    } border border-blue-200/80 dark:border-blue-800/80 break-words max-w-full leading-relaxed`}
+                                  >
+                                    {skill}
+                                  </span>
+                                );
+                              })
                             ) : (
                               <p className="text-slate-500">Not specified</p>
                             );

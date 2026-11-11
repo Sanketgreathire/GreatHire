@@ -499,6 +499,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
         return;
       }
 
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      const allowedExtensions = ["pdf", "doc", "docx"];
+      if (!allowedExtensions.includes(fileExtension)) {
+        toast.error("Invalid file format! Only PDF, DOC, and DOCX files are allowed for resume.");
+        e.target.value = "";
+        return;
+      }
+
       setResumeUploading(true);
 
       // Small delay to let the file read complete reliably

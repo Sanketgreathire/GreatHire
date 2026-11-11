@@ -115,6 +115,12 @@ const Signup = () => {
         toast.error("Resume size should be less than 10 MB.");
         return;
       }
+      const ext = file.name.split(".").pop().toLowerCase();
+      if (!["pdf", "doc", "docx"].includes(ext)) {
+        toast.error("Invalid file format! Only PDF, DOC, and DOCX files are allowed for resume.");
+        e.target.value = "";
+        return;
+      }
       setResumeUploading(true);
       // Small delay to let the file read complete reliably
       setTimeout(() => {
@@ -623,7 +629,7 @@ const Signup = () => {
                         <input
                           type="file"
                           id="resumeInput"
-                          accept=".pdf, .doc, .docx"
+                          accept=".pdf,.doc,.docx"
                           onChange={handleFileChange}
                           className="hidden"
                         />

@@ -197,16 +197,20 @@ const handleFileChange = (e) => {
     }
 
     const fileExtension = file.name.split(".").pop().toLowerCase();
-    //console.log("extension:",fileExtension);
+    const allowedExtensions = ["pdf", "doc", "docx"];
+    if (!allowedExtensions.includes(fileExtension)) {
+      alert("Invalid file format. Only PDF, DOC, and DOCX files are accepted for the resume.");
+      e.target.value = "";
+      return;
+    }
+
     setFilename(file.name);  // Update filename with the uploaded file name
-    setFileType(file.name); // Set the file type
+    setFileType(fileExtension); // Set the file type
     if (fileExtension === "pdf") {
       const fileUrl = URL.createObjectURL(file); // Generate URL for PDF preview
       setFileURL(fileUrl);
-      setFileType("pdf"); // Set the file type
     } else {
       setFileURL(null); // No preview for non-PDF files
-      setFileType(fileExtension);
     }
 
     setInput((prevData) => ({
@@ -392,7 +396,7 @@ const handleFileChange = (e) => {
                 </div>
                 <input
                   type="file"
-                  accept=".pdf,.doc,.docx,.txt,.xls,.xlsx"
+                  accept=".pdf,.doc,.docx"
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
@@ -403,7 +407,7 @@ const handleFileChange = (e) => {
               <div className="mt-2 border-2 border-dashed border-blue-700 p-6 rounded-lg text-center">
                 <input
                   type="file"
-                  accept=".pdf,.doc,.docx,.txt"
+                  accept=".pdf,.doc,.docx"
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
@@ -434,7 +438,7 @@ const handleFileChange = (e) => {
                     Browse
                   </span>
                   <span className="text-sm leading-4 font-medium">
-                    Accepted formats: PDF, Word, Text, Excel (.pdf, .doc, .docx, .txt, .xls, .xlsx).
+                    Accepted formats: PDF and Word documents only (.pdf, .doc, .docx).
                   </span>
                 </label>
               </div>

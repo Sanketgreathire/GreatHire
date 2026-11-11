@@ -892,30 +892,53 @@ const canMakeDecision =
               )}
 
               {/* Resume */}
-              {p.resume && (
-                <>
-                  <Divider />
-                  <SectionTitle>Resume</SectionTitle>
+              {p.resume && (() => {
+                const resumeName = p.resumeOriginalName || (typeof p.resume === "string" ? p.resume.split("/").pop() : "Resume");
+                const ext = (resumeName.split(".").pop() || "").toLowerCase();
+                const isAllowed = ["pdf", "doc", "docx"].includes(ext);
 
-                  <a
-                    href={p.resume}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition group"
-                  >
-                    <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-                      <FiFileText size={16} className="text-white" />
+                return (
+                  <>
+                    <Divider />
+                    <div className="flex items-center justify-between">
+                      <SectionTitle>Resume</SectionTitle>
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+                        Accepted: PDF, DOC, DOCX
+                      </span>
                     </div>
 
-                    <div>
-                      <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:underline">
-                        {p.resumeOriginalName || "View Resume"}
-                      </p>
-                      <p className="text-xs text-gray-400">Click to open</p>
-                    </div>
-                  </a>
-                </>
-              )}
+                    <a
+                      href={p.resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                          <FiFileText size={16} className="text-white" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:underline truncate">
+                            {resumeName}
+                          </p>
+                          <p className="text-xs text-gray-400">Click to open</p>
+                        </div>
+                      </div>
+
+                      {isAllowed ? (
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 shrink-0 ml-2">
+                          {ext || "PDF"}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 shrink-0 ml-2">
+                          Non-standard format
+                        </span>
+                      )}
+                    </a>
+                  </>
+                );
+              })()}
 
               {/* Employer Q&A */}
               {app?.answers?.length > 0 && (
