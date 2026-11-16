@@ -1,4 +1,3 @@
-import { MessageProvider } from "../../context/MessageContext";
 import ConversationList from "./ConversationList";
 import ChatInterface from "./ChatInterface";
 import { useMessages } from "../../context/MessageContext";
@@ -301,12 +300,14 @@ const MessagingContent = () => {
   );
 };
 
+// NOTE: no MessageProvider here. App.jsx already mounts one around the whole
+// router, and nesting a second, empty one resets activeConversation to null —
+// which broke QuickMessageButton (Message Jobseeker): startConversation() set
+// the chat target in the outer provider, then this inner provider shadowed it
+// with null, so ChatInterface rendered "No conversation selected" instead of
+// opening the chat.
 const MessagingPage = () => {
-  return (
-    <MessageProvider>
-      <MessagingContent />
-    </MessageProvider>
-  );
+  return <MessagingContent />;
 };
 
 export default MessagingPage;

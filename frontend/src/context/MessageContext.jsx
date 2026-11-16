@@ -304,11 +304,20 @@ export const MessageProvider = ({ children }) => {
 }); 
 
       const conversation = response.data.conversation;
-      setActiveConversation(conversation);
 
-      if (socket) {
-        socket.emit('joinConversation', conversation._id);
-      }
+      // A conversation that was never opened before isn't in the sidebar list
+      // yet (fetchConversations ran earlier), so make sure it shows up.
+      setConversations((prev) =>
+        prev.some((c) => c?._id === conversation?._id)
+          ? prev
+          : [conversation, ...prev]
+      );
+
+      // Reuse the full open-conversation flow instead of the raw setter:
+      // joining the room, clearing unread, AND fetching messages. The raw
+      // setActiveConversation(conversation) left ChatInterface with an empty
+      // message list because nothing ever loaded the thread.
+      setActiveConversationHandler(conversation);
 
       return conversation;
     } catch (error) {

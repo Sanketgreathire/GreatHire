@@ -15,19 +15,6 @@
   padding: 0 24px 0 0 !important;
 }
 
-.gh-jobseeker-login-navbar__inner {
-  align-items: center;
-  justify-content: space-between;
-}
-
-.gh-jobseeker-login-navbar__home {
-  color: rgba(255, 255, 255, .9);
-  white-space: nowrap;
-}
-.gh-jobseeker-login-navbar__home:hover { color: #ffffff; }
-html:not(.dark) .gh-jobseeker-login-navbar__home { color: #334155; }
-html:not(.dark) .gh-jobseeker-login-navbar__home:hover { color: #2563eb; }
-
 .gh-navbar__row {
   display: flex;
   align-items: center;

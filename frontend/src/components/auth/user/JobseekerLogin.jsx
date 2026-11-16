@@ -1,12 +1,12 @@
 import  { useState, useEffect, useCallback } from "react";
 import { toast } from "react-hot-toast";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import API from "@/utils/api";
 //import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Briefcase } from "lucide-react";
-import "@/components/shared/Navbar.css";
+import Navbar from "@/components/shared/Navbar";
 
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -171,21 +171,8 @@ const JobseekerLogin = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <nav className="gh-navbar fixed top-0 left-0 right-0 z-50">
-        <div className="gh-navbar__inner gh-jobseeker-login-navbar__inner w-full">
-          <Link to="/" className="gh-navbar__brand" aria-label="GreatHire home">
-            <img src="/greathire-navbar-logo.png" alt="GreatHire" className="gh-navbar__brand-logo" />
-            <div className="flex flex-col justify-center">
-              <h2>Great<strong>Hire</strong></h2>
-              <p>Careers · Hiring · Growth</p>
-            </div>
-          </Link>
-          <button onClick={() => navigate("/")} className="gh-jobseeker-login-navbar__home px-4 py-2 font-medium transition-colors">
-            ← Back to Home
-          </button>
-        </div>
-      </nav>
-
+      {/* Same shared navbar as the recruiter login page */}
+      <Navbar />
       <div className="flex-1 flex items-center justify-center py-24 px-4">
         <div className="flex w-full max-w-5xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
 
