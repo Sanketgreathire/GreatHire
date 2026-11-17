@@ -454,30 +454,41 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
             )}
           </div>
 
-          {/* Checkbox Filters */}
+          {/* Dropdown Filters — Job Type & Work Place */}
           {["jobType", "workPlace"].map((category) => (
-            <div key={category} className="mb-4 border-b border-blue-300 dark:border-blue-700 pb-4">
-              <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
+            <div key={category} className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6">
+              <label
+                htmlFor={category}
+                className="block text-gray-700 dark:text-gray-200 text-sm sm:text-base font-semibold tracking-wide mb-2"
+              >
                 {formatLabel(category)}
-              </h3>
-              <div className="space-y-2">
+              </label>
+              <select
+                id={category}
+                value={
+                  Array.isArray(filters[category]) && filters[category].length > 0
+                    ? filters[category][0]
+                    : ""
+                }
+                onChange={(e) =>
+                  onFilterChange?.({
+                    ...filters,
+                    [category]: e.target.value ? [e.target.value] : [],
+                  })
+                }
+                className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500 transition"
+              >
+                <option value="">All {formatLabel(category)}</option>
                 {filterOptions[category].map((opt) => (
-                  <label key={opt} className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={
-                        Array.isArray(filters[category]) &&
-                        filters[category].includes(opt)
-                      }
-                      onChange={() => handleCheckboxChange(category, opt)}
-                      className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
-                    />
-                    <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">
-                      {opt}
-                    </span>
-                  </label>
+                  <option
+                    key={opt}
+                    value={opt}
+                    className="text-sm sm:text-base bg-white dark:bg-gray-700 dark:text-white"
+                  >
+                    {opt}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           ))}
 
@@ -507,36 +518,41 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
             </div>
           ))}
 
-          {/* Checkbox Filters */}
-          {/* Added a blue divider */}
-          {["datePosted"].map((category) => (
-            <div
-              key={category}
-              className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-4"
+          {/* Dropdown Filter — Date Posted */}
+          <div className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6">
+            <label
+              htmlFor="datePosted"
+              className="block text-gray-700 dark:text-gray-200 text-sm sm:text-base font-semibold tracking-wide mb-2"
             >
-              <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
-                {formatLabel(category)}
-              </h3>
-              <div className="space-y-2">
-                {filterOptions[category].map((opt) => (
-                  <label key={opt} className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={
-                        Array.isArray(filters[category]) &&
-                        filters[category].includes(opt)
-                      }
-                      onChange={() => handleDatePostedChange(opt)}
-                      className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
-                    />
-                    <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">
-                      {opt}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+              Date Posted
+            </label>
+            <select
+              id="datePosted"
+              value={
+                Array.isArray(filters.datePosted) && filters.datePosted.length > 0
+                  ? filters.datePosted[0]
+                  : ""
+              }
+              onChange={(e) =>
+                onFilterChange?.({
+                  ...filters,
+                  datePosted: e.target.value ? [e.target.value] : [],
+                })
+              }
+              className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:border-blue-400 dark:focus:border-blue-500 transition"
+            >
+              <option value="">Any Time</option>
+              {filterOptions.datePosted.map((opt) => (
+                <option
+                  key={opt}
+                  value={opt}
+                  className="text-sm sm:text-base bg-white dark:bg-gray-700 dark:text-white"
+                >
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Fresher Filters */}
           <div className="mb-6 ">

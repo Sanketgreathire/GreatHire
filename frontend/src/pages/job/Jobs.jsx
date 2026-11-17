@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import FilterCard from "./FilterCard";
 import JobSearch from "./JobSearch";
 import LatestJobs from "./LatestJobs";
+import InlineFilterBar from "./InlineFilterBar";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { FiFilter } from "react-icons/fi";
+import { useSelector } from "react-redux";
 
+// ── Local filter helpers ──────────────────────────────────────────────────────
 const DATE_POSTED_DAYS = {
   "Last 24 hours": 1,
   "Last 7 days": 7,
@@ -47,15 +48,18 @@ const isWithinDays = (job, days) => {
   return Date.now() - posted.getTime() <= days * 24 * 60 * 60 * 1000;
 };
 
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function Jobs() {
   const {
     jobs = [],
     filterJobs,
     resetFilter,
-    fetchJobs, // 👈 Added this to refresh
+    fetchJobs,
     isLoading,
     searchMeta,
   } = useJobDetails();
+
+  const { user } = useSelector((state) => state.auth);
 
   const [filters, setFilters] = useState({
     jobTitle: "",
@@ -68,33 +72,24 @@ export default function Jobs() {
     experienced: false,
   });
 
-  const [searchInfo, setSearchInfo] = useState({
-    titleKeyword: "",
-  });
+  const [searchInfo, setSearchInfo] = useState({ titleKeyword: "" });
 
-  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  // ── Applied pill state (lifted here so we can filter displayedJobs) ────────
+  const [appliedActive, setAppliedActive] = useState(false);
 
-    useEffect(() => {
-    // 1. Refresh immediately
+  // ── Refresh jobs on mount / tab focus ─────────────────────────────────────
+  useEffect(() => {
     if (fetchJobs) fetchJobs();
-
-    // 2. Refresh after 3 seconds (waits for auto-apply to finish in backend)
-    const timer = setTimeout(() => {
-      if (fetchJobs) fetchJobs();
-    }, 3000);
-
-    // 3. Refresh when user switches back to this tab
-    const handleFocus = () => {
-      if (fetchJobs) fetchJobs();
-    };
+    const timer = setTimeout(() => { if (fetchJobs) fetchJobs(); }, 3000);
+    const handleFocus = () => { if (fetchJobs) fetchJobs(); };
     window.addEventListener("focus", handleFocus);
-
     return () => {
       clearTimeout(timer);
       window.removeEventListener("focus", handleFocus);
     };
   }, [fetchJobs]);
 
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleFilterChange = useCallback(
     (newFilters) => {
       setFilters(newFilters);
@@ -120,6 +115,7 @@ export default function Jobs() {
       experienced: false,
     });
     setSearchInfo({ titleKeyword: "" });
+    setAppliedActive(false);
     resetFilter();
   }, [resetFilter]);
 
@@ -127,28 +123,36 @@ export default function Jobs() {
     setSearchInfo((prev) => ({ ...prev, ...update }));
   }, []);
 
-  const hasLocalFilter = Boolean(
-    filters.company ||
-      filters.datePosted?.length ||
-      filters.fresher ||
-      filters.experienced
-  );
-
+  // ── Computed displayed jobs ───────────────────────────────────────────────
   const displayedJobs = useMemo(() => {
     let list = jobs;
 
+    // Company filter
     if (filters.company) {
       list = list.filter((job) => matchesCompany(job, filters.company));
     }
 
+    // Date posted filter
     const days = DATE_POSTED_DAYS[filters.datePosted?.[0]];
     if (days) list = list.filter((job) => isWithinDays(job, days));
 
+    // Experience filter
     if (filters.fresher) list = list.filter(isFresherJob);
     else if (filters.experienced) list = list.filter(isExperiencedJob);
 
+    // Applied pill filter
+    const userId = user?._id ? String(user._id) : null;
+    if (userId && appliedActive) {
+      list = list.filter((job) =>
+        job.application?.some((app) => {
+          const appId = String(app.applicant?._id || app.applicant);
+          return appId === userId;
+        })
+      );
+    }
+
     return list;
-  }, [jobs, filters.company, filters.datePosted, filters.fresher, filters.experienced]);
+  }, [jobs, filters.company, filters.datePosted, filters.fresher, filters.experienced, appliedActive, user?._id]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-gray-950">
@@ -156,7 +160,8 @@ export default function Jobs() {
 
       <main className="flex-1 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
         <div className="mx-auto w-full max-w-[1500px] px-2 sm:px-4 py-4">
-          
+
+          {/* Hero title */}
           <div className="text-center pt-6 pb-2 px-4">
             <span className="inline-block px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 text-xs font-semibold mb-3">
               No. 1 Job Hunt Website
@@ -172,64 +177,41 @@ export default function Jobs() {
             </h1>
           </div>
 
+          {/* Search bar */}
           <JobSearch
             searchInfo={searchInfo}
             onSearchUpdate={handleSearchUpdate}
           />
 
-          <div className="flex items-center justify-between mt-4 mb-2 sm:hidden px-1">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isLoading
-                ? "Loading..."
-                : `${hasLocalFilter ? displayedJobs.length : (searchMeta?.total ?? jobs.length)} jobs found`}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowMobileFilter(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-500 text-blue-600 dark:text-blue-400 text-sm font-semibold"
-            >
-              <FiFilter size={16} />
-              Filters
-            </button>
-          </div>
+          {/* Inline filter bar (all filters + Applied pill) */}
+          <div className="mt-5" />
+          <InlineFilterBar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={handleReset}
+            jobs={jobs}
+            appliedActive={appliedActive}
+            onAppliedToggle={setAppliedActive}
+          />
 
-          <div className="flex gap-4 mt-4 items-start">
-            <aside className="hidden sm:block w-56 lg:w-72 flex-shrink-0 sticky top-[80px] h-[1080px] overflow-y-auto">
-              <FilterCard
-                filters={filters}
-                onFilterChange={handleFilterChange}
-                onReset={handleReset}
-              />
-            </aside>
+          {/* Job count info */}
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-3 mb-1">
+            {isLoading
+              ? "Loading..."
+              : `${displayedJobs.length} jobs found`}
+          </p>
 
-            {showMobileFilter && (
-              <div className="fixed inset-0 z-[100] sm:hidden">
-                <div
-                  className="absolute inset-0 bg-black/50"
-                  onClick={() => setShowMobileFilter(false)}
-                  aria-hidden="true"
-                />
-                <div className="absolute m-1 inset-x-0 top-16 bottom-0 z-[101] overflow-y-auto">
-                  <FilterCard
-                    filters={filters}
-                    onFilterChange={handleFilterChange}
-                    onReset={handleReset}
-                    onClose={() => setShowMobileFilter(false)}
-                  />
-                </div>
+          {/* Job listings — full width, no sidebar */}
+          <div className="mt-2">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
+                Loading jobs...
               </div>
+            ) : (
+              <LatestJobs jobs={displayedJobs} />
             )}
-
-            <div className="flex-1 min-w-0">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-                  Loading jobs...
-                </div>
-              ) : (
-                <LatestJobs jobs={displayedJobs} />
-              )}
-            </div>
           </div>
+
         </div>
       </main>
 
