@@ -90,29 +90,35 @@ const CandidateInformation = () => {
     };
   }, [candidate?.profile, normalizedExperiences]);
 
-  const handleDownloadResume = () => {
+  const handleDownloadResume = async () => {
   const resumeUrl = candidate?.profile?.resume;
+  const finalUrl = typeof resumeUrl === "object" ? resumeUrl?.url : resumeUrl;
 
-  // If resume is missing
-  if (!resumeUrl) {
+  if (!finalUrl) {
     toast.error("Resume not available");
     return;
   }
 
-  // If resume is saved as an object (e.g., { url: "..." })
-  const finalUrl = typeof resumeUrl === "object" ? resumeUrl.url : resumeUrl;
-
-  if (!finalUrl) {
-    toast.error("Resume link is invalid");
+  // Word files can't be displayed in a browser tab, so just open the link
+  const name = candidate?.profile?.resumeOriginalName || "";
+  const isPdf = !name || name.toLowerCase().endsWith(".pdf");
+  if (!isPdf) {
+    window.open(finalUrl, "_blank");
     return;
   }
 
-  // Open in a new tab safely
-  const newWindow = window.open(finalUrl, "_blank");
-  
-  // Fallback if popup is blocked
-  if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-    toast.error("Popup blocked. Please allow popups for this site.");
+  // Open the tab first so the popup blocker doesn't stop it
+  const newTab = window.open("", "_blank");
+  try {
+    const res = await axios.get(finalUrl, { responseType: "blob" });
+    const blobUrl = URL.createObjectURL(
+      new Blob([res.data], { type: "application/pdf" })
+    );
+    if (newTab) newTab.location.href = blobUrl;
+    else window.open(blobUrl, "_blank");
+  } catch {
+    if (newTab) newTab.close();
+    toast.error("Could not open resume");
   }
 };
 

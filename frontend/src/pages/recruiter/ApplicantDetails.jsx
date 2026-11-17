@@ -897,47 +897,94 @@ const canMakeDecision =
                 const ext = (resumeName.split(".").pop() || "").toLowerCase();
                 const isAllowed = ["pdf", "doc", "docx"].includes(ext);
 
+                const openResumeInTab = async () => {
+  if (ext === "pdf") {
+    const tab = window.open("", "_blank");
+    try {
+      const res = await fetch(p.resume);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+      if (tab) tab.location.href = url;
+    } catch {
+      if (tab) tab.location.href = p.resume;
+    }
+  } else {
+    // Chrome can't display Word files, so use Google's viewer
+    window.open(
+      `https://docs.google.com/viewer?url=${encodeURIComponent(p.resume)}&embedded=false`,
+      "_blank"
+    );
+  }
+};
+
+const downloadResumeFile = async () => {
+  try {
+    const res = await fetch(p.resume);
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = resumeName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  } catch {
+    window.open(p.resume.replace("/upload/", "/upload/fl_attachment/"), "_blank");
+  }
+};
+
                 return (
-                  <>
-                    <Divider />
-                    <div className="flex items-center justify-between">
-                      <SectionTitle>Resume</SectionTitle>
-                      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
-                        Accepted: PDF, DOC, DOCX
-                      </span>
-                    </div>
+  <>
+    <Divider />
+    <div className="flex items-center justify-between">
+      <SectionTitle>Resume</SectionTitle>
+      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+        Accepted: PDF, DOC, DOCX
+      </span>
+    </div>
 
-                    <a
-                      href={p.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-                          <FiFileText size={16} className="text-white" />
-                        </div>
+    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+          <FiFileText size={16} className="text-white" />
+        </div>
 
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 group-hover:underline truncate">
-                            {resumeName}
-                          </p>
-                          <p className="text-xs text-gray-400">Click to open</p>
-                        </div>
-                      </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 truncate">
+            {resumeName}
+          </p>
+        </div>
+      </div>
 
-                      {isAllowed ? (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 shrink-0 ml-2">
-                          {ext || "PDF"}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-semibold px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 shrink-0 ml-2">
-                          Non-standard format
-                        </span>
-                      )}
-                    </a>
-                  </>
-                );
+      {isAllowed ? (
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 shrink-0 ml-2">
+          {ext || "PDF"}
+        </span>
+      ) : (
+        <span className="text-[10px] font-semibold px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 shrink-0 ml-2">
+          Non-standard format
+        </span>
+      )}
+    </div>
+
+    <div className="flex gap-2 mt-2">
+      <button
+        type="button"
+        onClick={openResumeInTab}
+        className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition"
+      >
+        Open in new tab
+      </button>
+      <button
+        type="button"
+        onClick={downloadResumeFile}
+        className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg text-sm font-semibold transition"
+      >
+        Download
+      </button>
+    </div>
+  </>
+);
               })()}
 
               {/* Employer Q&A */}

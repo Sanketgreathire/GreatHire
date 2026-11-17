@@ -742,6 +742,15 @@ export const getAllApplications = async (req, res) => {
   }
 };
 
+const getResumeContentType = (fileName = "") => {
+  const ext = path.extname(fileName).toLowerCase();
+  const types = {
+    ".pdf": "application/pdf",
+    ".doc": "application/msword",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  };
+  return types[ext] || "application/octet-stream";
+};
 
 // ===== Download resume with proper content-type headers =====
 export const downloadResume = async (req, res) => {
@@ -759,6 +768,9 @@ export const downloadResume = async (req, res) => {
     const originalName =
       application.applicant?.profile?.resumeOriginalName || "resume.pdf";
 
+      const disposition = req.query.view === "true" ? "inline" : "attachment";
+const contentType = getResumeContentType(originalName);
+
     if (!resumeUrl) {
       return res.status(404).json({ message: "Resume not uploaded" });
     }
@@ -769,8 +781,8 @@ export const downloadResume = async (req, res) => {
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({ message: "File not found" });
       }
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+res.setHeader("Content-Type", contentType);
+res.setHeader("Content-Disposition", `${disposition}; filename="${originalName}"`);
       return fs.createReadStream(filePath).pipe(res);
     }
 
@@ -779,8 +791,8 @@ export const downloadResume = async (req, res) => {
       responseType: "arraybuffer",
     });
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename="${originalName}"`);
+    res.setHeader("Content-Type", contentType);
+res.setHeader("Content-Disposition", `${disposition}; filename="${originalName}"`);
     return res.send(Buffer.from(response.data));
   } catch (error) {
     console.error("Resume download error:", error.message);
